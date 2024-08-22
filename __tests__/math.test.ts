@@ -1,4 +1,4 @@
-import { clamp, normalizeValue } from "@/math";
+import { clamp, normalizeValue, rawValue, skewWithCenterCenter, stepValue } from "@/math";
 
 describe('unit', () => {
   test('clamp()', () => {
@@ -17,8 +17,27 @@ describe('unit', () => {
   })
 
   test('rawValue()', () => {
+    expect(stepValue(rawValue(0.34, 0, 100), 1)).toBe(34)
+    expect(stepValue(rawValue(normalizeValue(Math.PI, 0, 100), 0, 100), 10e-7)).toBe(3.141593) // 3.1415927...
   })
 
   test('stepValue()', () => {
+    expect(() => {
+      expect(stepValue(3.14, 0))
+    }).toThrow(RangeError)
+    expect(stepValue(3.14, 1)).toBe(3)
+    expect(stepValue(3.14, 10)).toBe(0)
+    expect(stepValue(3.14, 0.1)).toBe(3.1)
+    expect(stepValue(3.14, 0.01)).toBe(3.14)
+    expect(stepValue(3.18, 0.1)).toBe(3.2)
+    expect(stepValue(3.14, 0.3)).toBe(3.0)
+    expect(stepValue(3.15, 0.3)).toBe(3.3)
+    expect(stepValue(5.9, 4)).toBe(4)
+    expect(stepValue(6, 4)).toBe(8)
+  })
+
+  test('skewWithCenterCenter()', () => {
+    const skew = skewWithCenterCenter(100, 10, 1000)
+    expect(stepValue(rawValue(0.5, 10, 1000, skew), 1)).toBe(100)
   })
 })

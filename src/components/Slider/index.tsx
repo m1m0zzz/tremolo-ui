@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { css } from "@emotion/react";
+import { css, Global } from "@emotion/react";
 import { Children, CSSProperties, isValidElement, ReactNode, useRef, useState } from "react";
 import { normalizeValue, rawValue, stepValue } from "@/math";
 import { useWindowEvent } from "@/hooks/windowEvent";
@@ -48,6 +48,7 @@ interface SliderProps {
   color?: string;
   bg?: string;
   style?: CSSProperties;
+  bodyNoSelect?: boolean;
   onChange?: (value: number) => void;
   children?: ReactNode; // SliderThumb
 }
@@ -64,6 +65,7 @@ export function Slider({
   color = "#4e76e6",
   bg = "#eee",
   style,
+  bodyNoSelect = true,
   onChange,
   children
 }: SliderProps){
@@ -100,6 +102,7 @@ export function Slider({
       const mouseY = event.clientY
       // console.log(mouseX, mouseY);
       if (thumbDragged.current) {
+        if (bodyNoSelect) document.body.classList.add("no-select")
         const n = isHorizontal(direction) ? normalizeValue(mouseX, x1, x2) : normalizeValue(mouseY, y1, y2)
         const v = rawValue(isReversed(direction) ? 1 - n : n, min, max)
         const s = stepValue(v, step)
@@ -111,6 +114,7 @@ export function Slider({
 
   useWindowEvent('mouseup', () => {
     thumbDragged.current = false
+    if (bodyNoSelect) document.body.classList.remove("no-select")
   });
 
   return (
@@ -123,6 +127,13 @@ export function Slider({
         padding: 0,
       })}
     >
+      <Global
+        styles={{
+          ".no-select": {
+            userSelect: "none"
+          }
+        }}
+      />
       <div
         ref={baseElement}
         className="tremolo-slider-base"
@@ -145,13 +156,14 @@ export function Slider({
             className="tremolo-slider-thumb"
             css={css({
               background: color,
-              width: "1.4em",
-              height: "1.4em",
+              width: "1.4rem",
+              height: "1.4rem",
               borderRadius: "50%",
               position: "absolute",
-              top: isHorizontal(direction) ? "calc(50% - 0.7em)" : `calc(-0.7em + ${percent}%)`,
-              left: isHorizontal(direction) ? `calc(-0.7em + ${percent}%)` : "calc(50% - 0.7em)",
-              zIndex: 100,
+              top: isHorizontal(direction) ? "50%" : `${percent}%`,
+              left: isHorizontal(direction) ? `${percent}%` : "50%",
+              translate: "-50% -50%",
+              zIndex: 10,
               cursor: "pointer"
             })}
             onMouseDown={() => {
