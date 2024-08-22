@@ -16,7 +16,7 @@ export function rawValue(normalizedValue: number, min: number, max: number, skew
   return min + v * (max - min)
 }
 
-export function skewWithCenterCenter(centerValue: number, min: number, max: number) {
+export function skewWithCenterValue(centerValue: number, min: number, max: number) {
   return Math.log(0.5) / Math.log((centerValue - min) / (max - min));
 }
 
