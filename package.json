@@ -10,9 +10,13 @@
     "format": "prettier --write .",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test": "jest"
+    "test": "jest",
+    "chromatic": "npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"
   },
-  "author": "mimoz <contact.m1m0zzz@gmail.com>",
+  "author": {
+    "name": "mimoz",
+    "email": "contact.m1m0zzz@gmail.com"
+  },
   "license": "MIT",
   "devDependencies": {
     "@chromatic-com/storybook": "^1.6.1",
@@ -30,6 +34,7 @@
     "@storybook/test": "^8.2.9",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.3.3",
+    "chromatic": "^11.7.1",
     "eslint": "^9.9.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.35.0",
