@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { css, Global } from "@emotion/react";
-import { Children, CSSProperties, isValidElement, ReactNode, useRef, useState } from "react";
-import { normalizeValue, rawValue, stepValue } from "@/math";
-import { useWindowEvent } from "@/hooks/windowEvent";
+import React, { Children, CSSProperties, isValidElement, ReactNode, useRef, useState } from "react";
+import { clamp, normalizeValue, rawValue, stepValue } from "@/math";
+import { useEventListener } from "@/hooks/useEventListener";
 
 interface SliderThumbProps {
 
@@ -36,7 +36,8 @@ function gradientDirection(d: Direction) {
   if (d == "down") return "bottom"
 }
 
-type SkewFunction = (x: number) => number;
+type SkewFunction = (x: number) => number
+type WheelOption = ["normalized" | "raw", number]
 
 interface SliderProps {
   value: number;
@@ -49,8 +50,10 @@ interface SliderProps {
   thickness?: number | string;
   color?: string;
   bg?: string;
+  cursor?: string;
   style?: CSSProperties;
   bodyNoSelect?: boolean;
+  enableWheel?: WheelOption;
   onChange?: (value: number) => void;
   children?: ReactNode; // SliderThumb
 }
@@ -66,26 +69,27 @@ export function Slider({
   thickness = 10,
   color = "#4e76e6",
   bg = "#eee",
+  cursor = "pointer",
   style,
   bodyNoSelect = true,
+  enableWheel,
   onChange,
   children
 }: SliderProps){
-  const [val, setVal] = useState(value);
-  const baseElement = useRef<HTMLDivElement>(null);
-
+  const wrapperElement = useRef<HTMLDivElement>(null);
+  const baseWrapperElement = useRef<HTMLDivElement>(null);
   let defaultThumb = true;
-  const percent = normalizeValue(val, min, max, skew) * 100
+  const percent = normalizeValue(value, min, max, skew) * 100
   const percentRev = isReversed(direction) ? 100 - percent : percent
 
   if (children != undefined) {
     const childElements = Children.toArray(children);
     const lastElement = childElements[childElements.length - 1];
     if (isValidElement(lastElement)) {
+      defaultThumb = false;
       if (lastElement.type == SliderThumb) {
-        defaultThumb = false;
       } else {
-        throw new Error("children must be <SliderThumb />")
+        // throw new Error("children must be <SliderThumb />")
       }
     } else {
       throw new Error("children is an invalid element.")
@@ -93,42 +97,64 @@ export function Slider({
   }
 
   const thumbDragged = useRef(false);
-  useWindowEvent('mousemove', (event) => {
-    if (baseElement.current) {
-      const rect = baseElement.current.getBoundingClientRect()
-      const x1 = rect.left
-      const y1 = rect.top
-      const x2 = rect.right
-      const y2 = rect.bottom
+  const handleValue = (event: MouseEvent | React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (baseWrapperElement.current && thumbDragged.current) {
+      if (bodyNoSelect) document.body.classList.add("no-select")
+      const {
+        left: x1,
+        top: y1,
+        right: x2,
+        bottom: y2
+      } = baseWrapperElement.current.getBoundingClientRect()
       const mouseX = event.clientX
       const mouseY = event.clientY
-      // console.log(mouseX, mouseY);
-      if (thumbDragged.current) {
-        if (bodyNoSelect) document.body.classList.add("no-select")
-        const n = isHorizontal(direction) ?
-          normalizeValue(mouseX, x1, x2) : normalizeValue(mouseY, y1, y2)
-        const v = rawValue(isReversed(direction) ? 1 - n : n, min, max, skew)
-        const s = stepValue(v, step)
-        setVal(s)
-        onChange && onChange(s)
-      }
+      const n = isHorizontal(direction) ?
+        normalizeValue(mouseX, x1, x2) : normalizeValue(mouseY, y1, y2)
+      const v = rawValue(isReversed(direction) ? 1 - n : n, min, max, skew)
+      const s = stepValue(v, step)
+      onChange && onChange(s)
     }
+  }
+
+  useEventListener(window, 'mousemove', (event) => {
+    handleValue(event)
   })
 
-  useWindowEvent('mouseup', () => {
+  useEventListener(window, 'mouseup', () => {
     thumbDragged.current = false
     if (bodyNoSelect) document.body.classList.remove("no-select")
   });
 
+  useEventListener(wrapperElement.current, 'wheel', (event) => {
+    if (enableWheel) {
+      event.preventDefault()
+      let x = event.deltaY > 0 ? enableWheel[1] : -enableWheel[1]
+      if (isReversed(direction)) x *= -1
+      let v;
+      if (enableWheel[0] == "normalized") {
+        const n = normalizeValue(value, min, max, skew)
+        v = rawValue(n + x, min, max, skew)
+      } else {
+        v = value + x
+      }
+      onChange && onChange(stepValue(clamp(v, min, max), step))
+    }
+  }, { passive: false });
+
   return (
     <div
+      ref={wrapperElement}
       className="tremolo-slider-wrapper"
       css={css({
         display: "inline-block",
         boxSizing: "border-box",
-        margin: isHorizontal(direction) ? "0.5rem 0" : "0 0.5rem",
+        margin: 0,
         padding: 0,
       })}
+      onMouseDown={(event) => {
+        thumbDragged.current = true
+        handleValue(event)
+      }}
     >
       <Global
         styles={{
@@ -138,7 +164,7 @@ export function Slider({
         }}
       />
       <div
-        ref={baseElement}
+        ref={baseWrapperElement}
         className="tremolo-slider-base"
         css={css({
           // background: bg,
@@ -149,32 +175,39 @@ export function Slider({
           borderWidth: 2,
           width: isHorizontal(direction) ? length : thickness,
           height: isHorizontal(direction) ? thickness : length,
+          margin: "0.7rem",
           position: "relative",
           zIndex: 1,
+          cursor: cursor,
           ...style
         })}
       >
-        {defaultThumb ?
-          <div
-            className="tremolo-slider-thumb"
-            css={css({
-              background: color,
-              width: "1.4rem",
-              height: "1.4rem",
-              borderRadius: "50%",
-              position: "absolute",
-              top: isHorizontal(direction) ? "50%" : `${percentRev}%`,
-              left: isHorizontal(direction) ? `${percentRev}%` : "50%",
-              translate: "-50% -50%",
-              zIndex: 10,
-              cursor: "pointer"
-            })}
-            onMouseDown={() => {
-              thumbDragged.current = true
-            }}
-          ></div> :
-          children
-        }
+        <div
+          className="tremolo-slider-thumb-wrapper"
+          css={css({
+            width: "fix-content",
+            height: "fix-content",
+            position: "absolute",
+            top: isHorizontal(direction) ? "50%" : `${percentRev}%`,
+            left: isHorizontal(direction) ? `${percentRev}%` : "50%",
+            translate: "-50% -50%",
+            zIndex: 10,
+            cursor: cursor
+          })}
+        >
+          {children ?
+            children :
+            <div
+              className="tremolo-slider-thumb"
+              css={css({
+                background: color,
+                width: "1.4rem",
+                height: "1.4rem",
+                borderRadius: "50%",
+              })}
+            ></div>
+          }
+        </div>
       </div>
     </div>
   )
