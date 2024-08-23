@@ -1,7 +1,7 @@
 import { Meter } from '../src/components/Meter';
 
 export default {
-  title: 'Meter',
+  title: 'Components/Meter',
   component: Meter,
 };
 

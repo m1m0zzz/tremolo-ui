@@ -1,32 +1,18 @@
 import { useState } from 'react';
 import { Direction as SliderDirection, Slider } from '../src/components/Slider';
+import { skewWithCenterValue } from '@/math';
 
 export default {
-  title: 'Slider',
+  title: 'Components/Slider',
   component: Slider,
 };
-
-export const Minimal = () => {
-  const [value, setValue] = useState(32)
-
-  return (
-    <>
-      <Slider
-        value={value}
-        min={0}
-        max={100}
-        onChange={(v) => setValue(v)}
-      ></Slider>
-      <p>value: {value}</p>
-    </>
-  )
-}
 
 export const Basic = () => {
   const [value, setValue] = useState(32)
 
   return (
     <>
+      <h1>Slider with React.useState</h1>
       <Slider
         value={value}
         min={0}
@@ -106,44 +92,22 @@ export const Direction = () => {
   )
 }
 
-export const DarkMode = () => {
-  const [value, setValue] = useState(0.8)
-
-  return (
-    <div
-      style={{
-        backgroundColor: "#352F44",
-        color: "#eee",
-        margin: 0,
-        padding: "1rem 3rem"
-      }}
-    >
-      <h2>dark mode</h2>
-      <Slider
-        value={value}
-        min={0}
-        max={1}
-        step={0.01}
-        onChange={(v) => setValue(v)}
-        color="#FAF0E6"
-        bg="#B9B4C7"
-      ></Slider>
-      <p>value: {value}</p>
-    </div>
-  )
-}
-
 export const VolumeFader = () => {
   const [value, setValue] = useState(0)
 
   return (
     <div style={{padding: "1rem"}}>
+      <h1>Logarithmic parameter</h1>
+      <p>props: skew={'{'}skewWithCenterValue(centerValue, min, max){'}'}</p>
+      <p>centerValue = -10</p>
+      <p>min = -100, max = 0</p>
       <Slider
         value={value}
         min={-100}
         max={0}
-        skewFactor={1}
+        skew={skewWithCenterValue(-10, -100, 0)}
         direction='up'
+        step={0.1}
         onChange={(v) => setValue(v)}
       ></Slider>
       <p>{value <= -100 ? "-inf" : value} dB</p>

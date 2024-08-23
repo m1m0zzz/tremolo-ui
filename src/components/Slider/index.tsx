@@ -36,13 +36,15 @@ function gradientDirection(d: Direction) {
   if (d == "down") return "bottom"
 }
 
+type SkewFunction = (x: number) => number;
+
 interface SliderProps {
   value: number;
   min: number;
   max: number;
   step?: number;
   direction?: Direction;
-  skewFactor?: number;
+  skew?: number; // | SkewFunction
   length?: number | string;
   thickness?: number | string;
   color?: string;
@@ -59,7 +61,7 @@ export function Slider({
   max,
   step = 1,
   direction = 'right',
-  skewFactor,
+  skew = 1,
   length = 140,
   thickness = 10,
   color = "#4e76e6",
@@ -73,8 +75,8 @@ export function Slider({
   const baseElement = useRef<HTMLDivElement>(null);
 
   let defaultThumb = true;
-  const per = normalizeValue(val, min, max) * 100
-  const percent = isReversed(direction) ? 100 - per : per
+  const percent = normalizeValue(val, min, max, skew) * 100
+  const percentRev = isReversed(direction) ? 100 - percent : percent
 
   if (children != undefined) {
     const childElements = Children.toArray(children);
@@ -103,8 +105,9 @@ export function Slider({
       // console.log(mouseX, mouseY);
       if (thumbDragged.current) {
         if (bodyNoSelect) document.body.classList.add("no-select")
-        const n = isHorizontal(direction) ? normalizeValue(mouseX, x1, x2) : normalizeValue(mouseY, y1, y2)
-        const v = rawValue(isReversed(direction) ? 1 - n : n, min, max)
+        const n = isHorizontal(direction) ?
+          normalizeValue(mouseX, x1, x2) : normalizeValue(mouseY, y1, y2)
+        const v = rawValue(isReversed(direction) ? 1 - n : n, min, max, skew)
         const s = stepValue(v, step)
         setVal(s)
         onChange && onChange(s)
@@ -139,7 +142,7 @@ export function Slider({
         className="tremolo-slider-base"
         css={css({
           // background: bg,
-          background: `linear-gradient(to ${gradientDirection(direction)}, ${color} ${per}%, ${bg} ${per}%)`,
+          background: `linear-gradient(to ${gradientDirection(direction)}, ${color} ${percent}%, ${bg} ${percent}%)`,
           borderRadius: typeof thickness == "number" ? thickness / 2 : `calc(${thickness} / 2)`,
           borderStyle: "solid",
           borderColor: "#ccc",
@@ -160,8 +163,8 @@ export function Slider({
               height: "1.4rem",
               borderRadius: "50%",
               position: "absolute",
-              top: isHorizontal(direction) ? "50%" : `${percent}%`,
-              left: isHorizontal(direction) ? `${percent}%` : "50%",
+              top: isHorizontal(direction) ? "50%" : `${percentRev}%`,
+              left: isHorizontal(direction) ? `${percentRev}%` : "50%",
               translate: "-50% -50%",
               zIndex: 10,
               cursor: "pointer"

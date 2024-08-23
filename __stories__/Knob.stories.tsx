@@ -1,7 +1,7 @@
 import { Knob } from '../src/components/Knob';
 
 export default {
-  title: 'Knob',
+  title: 'Components/Knob',
   component: Knob,
 };
 

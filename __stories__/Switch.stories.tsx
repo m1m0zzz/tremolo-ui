@@ -1,7 +1,7 @@
 import { Switch } from '../src/components/Switch';
 
 export default {
-  title: 'Switch',
+  title: 'Components/Switch',
   component: Switch,
 };
 
