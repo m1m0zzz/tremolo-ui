@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Direction as SliderDirection, Slider } from '../src/components/Slider';
+import { Direction as SliderDirection, Slider } from '@/components/Slider';
 import { skewWithCenterValue } from '@/math';
 
-import thumbImage from "./static/tremolo-slider-thumb.png"
+// import thumbImage from "./assets/tremolo-slider-thumb.png"
 
 export default {
   title: 'Components/Slider',
@@ -137,12 +137,73 @@ export const CustomImage = () => {
         }}
       >
         <img
-          src={thumbImage}
+          src={"/__stories__/assets/tremolo-slider-thumb.png"} // TODO: use staticDirs
           draggable={false}
           style={{display: "block"}} // remove bottom gap
         />
       </Slider>
       <p>value: {value}</p>
+    </>
+  )
+}
+
+export const Scale = () => {
+  const [value, setValue] = useState(32)
+  const [value2, setValue2] = useState(32)
+  const [value3, setValue3] = useState(32)
+
+  return (
+    <>
+      <section style={{marginBottom: "2rem"}}>
+        <p>calibrate (with number)</p>
+        <p>scale: mark, scaleTo: 10</p>
+        <Slider
+          value={value}
+          min={0}
+          max={100}
+          onChange={(v) => setValue(v)}
+          scale={[
+            {at: 0, type: 'mark-number'},
+            {at: 25, type: 'mark'},
+            {at: 50, type: 'mark-number'},
+            {at: 75, type: 'mark'},
+            {at: 100, type: 'mark-number'}
+          ]}
+        ></Slider>
+        <p>value: {value}</p>
+      </section>
+      <section style={{marginBottom: "2rem"}}>
+        <Slider
+          value={value2}
+          min={0}
+          max={100}
+          onChange={(v) => setValue2(v)}
+          direction='up'
+          scale={[
+            {at: 0, type: 'mark-number', style: {labelColor: "red", length: "1rem"}},
+            {at: 25, type: 'mark'},
+            {at: 50, type: 'mark-number', style: {length: "0.75rem"}},
+            {at: 75, type: 'mark'},
+            {at: 100, type: 'mark-number', style: {labelColor: "blue", length: "1rem"}}
+          ]}
+        />
+        <p>value: {value2}</p>
+      </section>
+      <section style={{marginBottom: "2rem"}}>
+        <Slider
+          value={value3}
+          min={-23.4}
+          max={55.5}
+          step={0.1}
+          onChange={(v) => setValue3(v)}
+          direction='down'
+          scale={[10, "mark-number"]}
+          scaleOption={{
+            gap: 20
+          }}
+        />
+        <p>value: {value3}</p>
+      </section>
     </>
   )
 }

@@ -1,8 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { css, Global } from "@emotion/react";
-import React, { Children, CSSProperties, isValidElement, ReactNode, useRef, useState } from "react";
-import { clamp, normalizeValue, rawValue, stepValue } from "@/math";
+import React, { Children, isValidElement, ReactNode, useRef } from "react";
+import { clamp, decimalPart, normalizeValue, rawValue, stepValue, toFixed } from "@/math";
 import { useEventListener } from "@/hooks/useEventListener";
+import { Direction, gradientDirection, isHorizontal, isReversed, isVertical, ScaleOption, ScaleOrderList, ScaleType, WheelOption } from "./type";
+import { styleHelper } from "@/util";
 
 interface SliderThumbProps {
 
@@ -14,44 +16,24 @@ export function SliderThumb({}: SliderThumbProps) {
   )
 }
 
-export type Horizontal = "right" | "left"
-export type Vertical = "up" | "down"
-export type Direction = Horizontal | Vertical
-
-function isHorizontal(d: Direction) {
-  return d == "right" || d == "left"
-}
-
-function isVertical(d: Direction) {
-  return d == "up" || d == "down"
-}
-
-function isReversed(d: Direction) {
-  return d == "left" || d == "up"
-}
-
-function gradientDirection(d: Direction) {
-  if (d == "left" || d == "right") return d
-  if (d == "up") return "top"
-  if (d == "down") return "bottom"
-}
-
-type SkewFunction = (x: number) => number
-type WheelOption = ["normalized" | "raw", number]
-
 interface SliderProps {
+  // required
   value: number;
   min: number;
   max: number;
+
+  // optional
   step?: number;
-  direction?: Direction;
-  skew?: number; // | SkewFunction
   length?: number | string;
   thickness?: number | string;
+  direction?: Direction;
+  skew?: number; // | SkewFunction
+  scale?: ["step", ScaleType] | [number, ScaleType] | ScaleOrderList[]
+  scaleOption?: ScaleOption;
   color?: string;
   bg?: string;
   cursor?: string;
-  style?: CSSProperties;
+  style?: React.CSSProperties;
   bodyNoSelect?: boolean;
   enableWheel?: WheelOption;
   onChange?: (value: number) => void;
@@ -63,10 +45,12 @@ export function Slider({
   min,
   max,
   step = 1,
-  direction = 'right',
-  skew = 1,
   length = 140,
   thickness = 10,
+  direction = 'right',
+  skew = 1,
+  scale,
+  scaleOption,
   color = "#4e76e6",
   bg = "#eee",
   cursor = "pointer",
@@ -101,10 +85,8 @@ export function Slider({
     if (baseWrapperElement.current && thumbDragged.current) {
       if (bodyNoSelect) document.body.classList.add("no-select")
       const {
-        left: x1,
-        top: y1,
-        right: x2,
-        bottom: y2
+        left: x1, top: y1,
+        right: x2, bottom: y2
       } = baseWrapperElement.current.getBoundingClientRect()
       const mouseX = event.clientX
       const mouseY = event.clientY
@@ -116,6 +98,27 @@ export function Slider({
     }
   }
 
+  let scalesList: ScaleOrderList[] = [];
+  if (!scale) {
+  } else if (typeof scale[0] == "object") {
+    scalesList = scale
+  } else {
+    const per = scale[0] == "step" ? step : scale[0]
+    const dec = decimalPart(per)?.length
+    let offset = 0
+    if (toFixed(min % per, dec) == 0) offset++
+    // TODO
+    const count = Math.floor(max / per) - Math.floor(min / per)
+
+    for (let i = 0; i < count; i++) {
+      const at = toFixed(min + per * i, dec)
+      scalesList.push({at: at, type: scale[1]})
+    }
+  }
+  if (isReversed(direction)) {
+    scalesList.reverse()
+  }
+
   useEventListener(window, 'mousemove', (event) => {
     handleValue(event)
   })
@@ -125,6 +128,9 @@ export function Slider({
     if (bodyNoSelect) document.body.classList.remove("no-select")
   });
 
+  // NOTE: ReactでprependDefault()するには、eventListener を使う必要がある
+  // TODO: 初期状態では wrapperRef.current が null なので、target が document となる
+  // その結果ホバーしていなくてもすべてのスライダーが動いてしまう(一回のみ)
   useEventListener(wrapperElement.current, 'wheel', (event) => {
     if (enableWheel) {
       event.preventDefault()
@@ -144,13 +150,14 @@ export function Slider({
   return (
     <div
       ref={wrapperElement}
-      className="tremolo-slider-wrapper"
-      css={css({
+      className="tremolo-slider"
+      style={{
         display: "inline-block",
         boxSizing: "border-box",
-        margin: 0,
+        margin: "0.7rem",
         padding: 0,
-      })}
+        cursor: cursor,
+      }}
       onMouseDown={(event) => {
         thumbDragged.current = true
         handleValue(event)
@@ -164,51 +171,106 @@ export function Slider({
         }}
       />
       <div
-        ref={baseWrapperElement}
-        className="tremolo-slider-base"
-        css={css({
-          // background: bg,
-          background: `linear-gradient(to ${gradientDirection(direction)}, ${color} ${percent}%, ${bg} ${percent}%)`,
-          borderRadius: typeof thickness == "number" ? thickness / 2 : `calc(${thickness} / 2)`,
-          borderStyle: "solid",
-          borderColor: "#ccc",
-          borderWidth: 2,
-          width: isHorizontal(direction) ? length : thickness,
-          height: isHorizontal(direction) ? thickness : length,
-          margin: "0.7rem",
-          position: "relative",
-          zIndex: 1,
-          cursor: cursor,
-          ...style
-        })}
+        style={{
+          display: "flex",
+          flexDirection: isHorizontal(direction) ? "column" : "row"
+        }}
       >
         <div
-          className="tremolo-slider-thumb-wrapper"
+          ref={baseWrapperElement}
           css={css({
-            width: "fix-content",
-            height: "fix-content",
-            position: "absolute",
-            top: isHorizontal(direction) ? "50%" : `${percentRev}%`,
-            left: isHorizontal(direction) ? `${percentRev}%` : "50%",
-            translate: "-50% -50%",
-            zIndex: 10,
-            cursor: cursor
+            background: `linear-gradient(to ${gradientDirection(direction)}, ${color} ${percent}%, ${bg} ${percent}%)`,
+            borderRadius: typeof thickness == "number" ? thickness / 2 : `calc(${thickness} / 2)`,
+            borderStyle: "solid",
+            borderColor: "#ccc",
+            borderWidth: 2,
+            width: isHorizontal(direction) ? length : thickness,
+            height: isHorizontal(direction) ? thickness : length,
+            position: "relative",
+            zIndex: 1,
+            ...style
           })}
         >
-          {children ?
-            children :
-            <div
-              className="tremolo-slider-thumb"
-              css={css({
-                background: color,
-                width: "1.4rem",
-                height: "1.4rem",
-                borderRadius: "50%",
-              })}
-            ></div>
-          }
+          <div
+            className="tremolo-slider-thumb-wrapper"
+            style={{
+              width: "fix-content",
+              height: "fix-content",
+              position: "absolute",
+              top: isHorizontal(direction) ? "50%" : `${percentRev}%`,
+              left: isHorizontal(direction) ? `${percentRev}%` : "50%",
+              translate: "-50% -50%",
+              zIndex: 10,
+            }}
+          >
+            {children ?
+              children :
+              <div
+                className="tremolo-slider-thumb"
+                style={{
+                  background: color,
+                  width: "1.4rem",
+                  height: "1.4rem",
+                  borderRadius: "50%",
+                }}
+              ></div>
+            }
+          </div>
         </div>
+        {scale &&
+          <div
+            className="tremolo-slider-scale-wrapper"
+            style={{
+              display: "flex",
+              flexDirection: isHorizontal(direction) ? "row" : "column",
+              width: isHorizontal(direction) ? length : undefined,
+              height: isVertical(direction) ? length : undefined,
+              marginLeft: isHorizontal(direction) ? 2 :
+                (scaleOption?.gap || `calc((1.4rem - ${styleHelper(thickness)}) / 2)`),
+              marginTop: isVertical(direction) ? 2 :
+                (scaleOption?.gap || `calc((1.4rem - ${styleHelper(thickness)}) / 2)`),
+              justifyContent: "space-between",
+            }}
+          >
+            {scalesList.map((item, index) =>
+              <div
+                key={index}
+                className="tremolo-slider-scale"
+                css={css({
+                  display: "flex",
+                  flexDirection: isHorizontal(direction) ? "column" : "row",
+                  ...scaleOption?.style,
+                  ...item.style
+                })}
+              >
+                {item.type != "number" &&
+                <span
+                  className="tremolo-slider-scale-mark"
+                  style={{
+                    width: isHorizontal(direction) ? (item.style?.thickness || 1) : (item.style?.length || "0.5rem"),
+                    height: isVertical(direction) ? (item.style?.thickness || 1) : (item.style?.length || "0.5rem"),
+                    backgroundColor: item.style?.markColor || scaleOption?.markColor || "black",
+                    marginBottom: isHorizontal(direction) ? 2 : undefined,
+                    marginRight: isVertical(direction) ? 2 : undefined,
+                  }}
+                ></span>}
+                {item.type != "mark" &&
+                <span
+                  className="tremolo-slider-scale-number"
+                  style={{
+                    color: item.style?.labelColor || scaleOption?.labelColor,
+                    width: isHorizontal(direction) ? 1 : undefined,
+                    height: isVertical(direction) ? 1 : undefined,
+                    transform: isVertical(direction) ? "translateY(-0.5rem)" : undefined
+                  }}
+                >{item.at}</span>}
+              </div>
+            )}
+          </div>
+        }
       </div>
     </div>
   )
 }
+
+export * from "./type"
