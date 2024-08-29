@@ -2,7 +2,11 @@ import type { StorybookConfig } from '@storybook/react-vite';
 import path from "path"
 
 const config: StorybookConfig = {
-  stories: ['../__stories__/**/*.mdx', '../__stories__/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  stories: [
+    '../__stories__/**/*.mdx',
+    '../__stories__/**/*.stories.@(js|jsx|mjs|ts|tsx)'
+  ],
+  // staticDirs: ['../__stories__/assets'], TODO: doesn't working?
   addons: [
     '@storybook/addon-onboarding',
     '@storybook/addon-links',
