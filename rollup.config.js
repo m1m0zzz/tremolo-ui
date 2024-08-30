@@ -3,6 +3,7 @@
 import commonjs from '@rollup/plugin-commonjs'
 import typescript from '@rollup/plugin-typescript'
 import dts from 'rollup-plugin-dts'
+
 const pkg = require('./package.json')
 
 export default [
