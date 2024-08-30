@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import { css, Global } from "@emotion/react";
 import React, { Children, isValidElement, ReactNode, useRef } from "react";
-import { clamp, decimalPart, normalizeValue, rawValue, stepValue, toFixed } from "@/math";
+import { clamp, normalizeValue, rawValue, stepValue } from "@/math";
 import { useEventListener } from "@/hooks/useEventListener";
-import { Direction, gradientDirection, isHorizontal, isReversed, isVertical, ScaleOption, ScaleOrderList, ScaleType, WheelOption } from "./type";
+import { Direction, gradientDirection, isHorizontal, isReversed, isVertical, parseScaleOrderList, ScaleOption, ScaleOrderList, ScaleType, WheelOption } from "./type";
 import { styleHelper } from "@/util";
 
 interface SliderThumbProps {
@@ -60,12 +60,18 @@ export function Slider({
   onChange,
   children
 }: SliderProps){
+  // -- state and ref ---
   const wrapperElement = useRef<HTMLDivElement>(null);
   const baseWrapperElement = useRef<HTMLDivElement>(null);
-  let defaultThumb = true;
+
+  // --- interpret props ---
   const percent = normalizeValue(value, min, max, skew) * 100
   const percentRev = isReversed(direction) ? 100 - percent : percent
 
+  const scalesList = parseScaleOrderList(scale, min, max, step)
+  if (isReversed(direction)) scalesList.reverse()
+
+  let defaultThumb = true;
   if (children != undefined) {
     const childElements = Children.toArray(children);
     const lastElement = childElements[childElements.length - 1];
@@ -93,32 +99,12 @@ export function Slider({
       const n = isHorizontal(direction) ?
         normalizeValue(mouseX, x1, x2) : normalizeValue(mouseY, y1, y2)
       const v = rawValue(isReversed(direction) ? 1 - n : n, min, max, skew)
-      const s = stepValue(v, step)
-      onChange && onChange(s)
+      const v2 = clamp(stepValue(v, step), min, max)
+      onChange && onChange(v2)
     }
   }
 
-  let scalesList: ScaleOrderList[] = [];
-  if (!scale) {
-  } else if (typeof scale[0] == "object") {
-    scalesList = scale
-  } else {
-    const per = scale[0] == "step" ? step : scale[0]
-    const dec = decimalPart(per)?.length
-    let offset = 0
-    if (toFixed(min % per, dec) == 0) offset++
-    // TODO
-    const count = Math.floor(max / per) - Math.floor(min / per)
-
-    for (let i = 0; i < count; i++) {
-      const at = toFixed(min + per * i, dec)
-      scalesList.push({at: at, type: scale[1]})
-    }
-  }
-  if (isReversed(direction)) {
-    scalesList.reverse()
-  }
-
+  // --- hooks ---
   useEventListener(window, 'mousemove', (event) => {
     handleValue(event)
   })
@@ -143,7 +129,7 @@ export function Slider({
       } else {
         v = value + x
       }
-      onChange && onChange(stepValue(clamp(v, min, max), step))
+      onChange && onChange(clamp(stepValue(v, step), min, max))
     }
   }, { passive: false });
 
@@ -200,7 +186,7 @@ export function Slider({
               top: isHorizontal(direction) ? "50%" : `${percentRev}%`,
               left: isHorizontal(direction) ? `${percentRev}%` : "50%",
               translate: "-50% -50%",
-              zIndex: 10,
+              zIndex: 100,
             }}
           >
             {children ?
@@ -221,49 +207,58 @@ export function Slider({
           <div
             className="tremolo-slider-scale-wrapper"
             style={{
-              display: "flex",
-              flexDirection: isHorizontal(direction) ? "row" : "column",
+              position: "relative",
               width: isHorizontal(direction) ? length : undefined,
               height: isVertical(direction) ? length : undefined,
               marginLeft: isHorizontal(direction) ? 2 :
-                (scaleOption?.gap || `calc((1.4rem - ${styleHelper(thickness)}) / 2)`),
+                (scaleOption?.gap ?? `calc((1.4rem - ${styleHelper(thickness)}) / 2)`),
               marginTop: isVertical(direction) ? 2 :
-                (scaleOption?.gap || `calc((1.4rem - ${styleHelper(thickness)}) / 2)`),
-              justifyContent: "space-between",
+                (scaleOption?.gap ?? `calc((1.4rem - ${styleHelper(thickness)}) / 2)`),
+              ...scaleOption?.style,
             }}
           >
             {scalesList.map((item, index) =>
               <div
-                key={index}
-                className="tremolo-slider-scale"
-                css={css({
+                style={{
                   display: "flex",
                   flexDirection: isHorizontal(direction) ? "column" : "row",
-                  ...scaleOption?.style,
-                  ...item.style
-                })}
+                  justifyContent: "center",
+                  alignItems: "center",
+                  position: "absolute",
+                  left: isHorizontal(direction) ?
+                    `${isReversed(direction) ?
+                      100 - normalizeValue(item.at, min, max, skew) * 100 :
+                            normalizeValue(item.at, min, max, skew) * 100}%` :
+                    undefined,
+                  top: isVertical(direction) ?
+                    `${isReversed(direction) ?
+                      100 - normalizeValue(item.at, min, max, skew) * 100 :
+                            normalizeValue(item.at, min, max, skew) * 100}%` :
+                    undefined,
+                  translate: isHorizontal(direction) ? "-50% 0" : "0 -50%",
+                  zIndex: 10
+                }}
               >
                 {item.type != "number" &&
-                <span
+                <div
+                  key={`number-${index}`}
                   className="tremolo-slider-scale-mark"
                   style={{
-                    width: isHorizontal(direction) ? (item.style?.thickness || 1) : (item.style?.length || "0.5rem"),
-                    height: isVertical(direction) ? (item.style?.thickness || 1) : (item.style?.length || "0.5rem"),
-                    backgroundColor: item.style?.markColor || scaleOption?.markColor || "black",
+                    width: isHorizontal(direction) ? (item.style?.thickness ?? 1) : (item.style?.length ?? "0.5rem"),
+                    height: isVertical(direction) ? (item.style?.thickness ?? 1) : (item.style?.length ?? "0.5rem"),
+                    backgroundColor: item.style?.markColor ?? scaleOption?.markColor ?? "#222",
                     marginBottom: isHorizontal(direction) ? 2 : undefined,
                     marginRight: isVertical(direction) ? 2 : undefined,
                   }}
-                ></span>}
+                ></div>}
                 {item.type != "mark" &&
-                <span
+                <div
+                  key={`mark-${index}`}
                   className="tremolo-slider-scale-number"
                   style={{
-                    color: item.style?.labelColor || scaleOption?.labelColor,
-                    width: isHorizontal(direction) ? 1 : undefined,
-                    height: isVertical(direction) ? 1 : undefined,
-                    transform: isVertical(direction) ? "translateY(-0.5rem)" : undefined
+                    color: item.style?.labelColor ?? scaleOption?.labelColor
                   }}
-                >{item.at}</span>}
+                >{item.at}</div>}
               </div>
             )}
           </div>

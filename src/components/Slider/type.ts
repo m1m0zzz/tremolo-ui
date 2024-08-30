@@ -1,3 +1,5 @@
+import { decimalPart, toFixed } from "@/math"
+
 export type Horizontal = "right" | "left"
 export type Vertical = "up" | "down"
 export type Direction = Horizontal | Vertical
@@ -32,6 +34,25 @@ export type ScaleOrderList = {
     length?: number | string,
     thickness?: number | string,
   }
+}
+
+export function parseScaleOrderList(
+  scale: ["step", ScaleType] | [number, ScaleType] | ScaleOrderList[] | undefined,
+  min: number, max: number, step: number
+) {
+  let scalesList: ScaleOrderList[] = [];
+  if (!scale) {
+  } else if (typeof scale[0] == "object") {
+    scalesList = scale
+  } else {
+    const per = scale[0] == "step" ? step : scale[0]
+    let count = Math.floor(max / per) - Math.ceil(min / per) + 1
+    for (let i = 0; i < count; i++) {
+      const at = toFixed(per * (Math.ceil(min / per) + i), decimalPart(per)?.length)
+      scalesList.push({at: at, type: scale[1]})
+    }
+  }
+  return scalesList
 }
 
 export type ScaleOption = {

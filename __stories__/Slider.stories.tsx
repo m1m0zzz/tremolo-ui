@@ -150,7 +150,7 @@ export const CustomImage = () => {
 export const Scale = () => {
   const [value, setValue] = useState(32)
   const [value2, setValue2] = useState(32)
-  const [value3, setValue3] = useState(32)
+  const [value3, setValue3] = useState(-10)
 
   return (
     <>
@@ -186,21 +186,23 @@ export const Scale = () => {
             {at: 75, type: 'mark'},
             {at: 100, type: 'mark-number', style: {labelColor: "blue", length: "1rem"}}
           ]}
+          scaleOption={{
+            gap: 0,
+            markColor: "grey",
+            labelColor: "green"
+          }}
         />
         <p>value: {value2}</p>
       </section>
       <section style={{marginBottom: "2rem"}}>
         <Slider
           value={value3}
-          min={-23.4}
-          max={55.5}
-          step={0.1}
+          min={-39}
+          max={0}
+          step={10}
           onChange={(v) => setValue3(v)}
-          direction='down'
-          scale={[10, "mark-number"]}
-          scaleOption={{
-            gap: 20
-          }}
+          direction='up'
+          scale={["step", "number"]}
         />
         <p>value: {value3}</p>
       </section>
