@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Direction as SliderDirection, Slider } from '@/components/Slider';
 import { skewWithCenterValue } from '@/math';
 
-// import thumbImage from "./assets/tremolo-slider-thumb.png"
+import thumbImage from "./assets/tremolo-slider-thumb.png"
 
 export default {
   title: 'Components/Slider',
@@ -137,7 +137,7 @@ export const CustomImage = () => {
         }}
       >
         <img
-          src={"/__stories__/assets/tremolo-slider-thumb.png"} // TODO: use staticDirs
+          src={thumbImage} // TODO: use staticDirs
           draggable={false}
           style={{display: "block"}} // remove bottom gap
         />
