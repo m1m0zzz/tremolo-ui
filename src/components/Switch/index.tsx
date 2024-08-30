@@ -1,5 +1,3 @@
-interface SwitchProps {}
-
-export function Switch({}: SwitchProps) {
+export function Switch() {
   return <div>TODO: Switch</div>
 }

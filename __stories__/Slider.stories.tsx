@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Direction as SliderDirection, Slider } from '@/components/Slider'
-import { skewWithCenterValue } from '@/math'
 
 import thumbImage from './assets/tremolo-slider-thumb.png'
+
+import { Direction as SliderDirection, Slider } from '@/components/Slider'
+import { skewWithCenterValue } from '@/math'
 
 export default {
   title: 'Components/Slider',
@@ -15,12 +16,7 @@ export const Basic = () => {
   return (
     <>
       <h1>Slider with React.useState</h1>
-      <Slider
-        value={value}
-        min={0}
-        max={100}
-        onChange={(v) => setValue(v)}
-      ></Slider>
+      <Slider value={value} min={0} max={100} onChange={(v) => setValue(v)} />
       <p>value: {value}</p>
     </>
   )
@@ -68,7 +64,7 @@ export const Direction = () => {
         flexWrap: 'wrap',
       }}
     >
-      {item.map(({ direction, color, value, setter }, i) => {
+      {item.map(({ direction, color, value, setter }) => {
         return (
           <div
             key={direction}

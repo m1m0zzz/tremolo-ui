@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+
 import { useCallbackRef } from './useCallbackRef'
 
 type Target = EventTarget | null | (() => EventTarget | null)

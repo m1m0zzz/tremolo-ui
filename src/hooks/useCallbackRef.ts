@@ -16,6 +16,5 @@ export function useCallbackRef<Args extends unknown[], Return>(
     callbackRef.current = callback
   })
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useCallback((...args: Args) => callbackRef.current?.(...args), deps)
 }

@@ -6,7 +6,7 @@
   "module": "dist/esm/index.js",
   "scripts": {
     "build": "rollup -c",
-    "lint": "eslint --fix './**/*.ts[x]'",
+    "lint": "eslint --fix --ext .ts,.tsx .",
     "format": "prettier --write .",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",

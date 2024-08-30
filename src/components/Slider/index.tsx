@@ -1,8 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css, Global } from '@emotion/react'
 import React, { Children, isValidElement, ReactNode, useRef } from 'react'
-import { clamp, normalizeValue, rawValue, stepValue } from '@/math'
-import { useEventListener } from '@/hooks/useEventListener'
+
 import {
   Direction,
   gradientDirection,
@@ -15,11 +14,14 @@ import {
   ScaleType,
   WheelOption,
 } from './type'
+
+import { useEventListener } from '@/hooks/useEventListener'
+import { clamp, normalizeValue, rawValue, stepValue } from '@/math'
 import { styleHelper } from '@/util'
 
-interface SliderThumbProps {}
+// interface SliderThumbProps {}
 
-export function SliderThumb({}: SliderThumbProps) {
+export function SliderThumb(/* {}: SliderThumbProps */) {
   return <div></div>
 }
 
@@ -78,13 +80,14 @@ export function Slider({
   const scalesList = parseScaleOrderList(scale, min, max, step)
   if (isReversed(direction)) scalesList.reverse()
 
-  let defaultThumb = true
+  // let defaultThumb = true
   if (children != undefined) {
     const childElements = Children.toArray(children)
     const lastElement = childElements[childElements.length - 1]
     if (isValidElement(lastElement)) {
-      defaultThumb = false
+      // defaultThumb = false
       if (lastElement.type == SliderThumb) {
+        // do something
       } else {
         // throw new Error("children must be <SliderThumb />")
       }
@@ -112,7 +115,7 @@ export function Slider({
         : normalizeValue(mouseY, y1, y2)
       const v = rawValue(isReversed(direction) ? 1 - n : n, min, max, skew)
       const v2 = clamp(stepValue(v, step), min, max)
-      onChange && onChange(v2)
+      if (onChange) onChange(v2)
     }
   }
 
@@ -144,7 +147,7 @@ export function Slider({
         } else {
           v = value + x
         }
-        onChange && onChange(clamp(stepValue(v, step), min, max))
+        if (onChange) onChange(clamp(stepValue(v, step), min, max))
       }
     },
     { passive: false },
@@ -244,6 +247,7 @@ export function Slider({
           >
             {scalesList.map((item, index) => (
               <div
+                key={index}
                 style={{
                   display: 'flex',
                   flexDirection: isHorizontal(direction) ? 'column' : 'row',
@@ -270,7 +274,6 @@ export function Slider({
               >
                 {item.type != 'number' && (
                   <div
-                    key={`number-${index}`}
                     className="tremolo-slider-scale-mark"
                     style={{
                       width: isHorizontal(direction)
@@ -290,7 +293,6 @@ export function Slider({
                 )}
                 {item.type != 'mark' && (
                   <div
-                    key={`mark-${index}`}
                     className="tremolo-slider-scale-number"
                     style={{
                       color: item.style?.labelColor ?? scaleOption?.labelColor,

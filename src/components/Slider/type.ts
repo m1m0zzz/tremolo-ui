@@ -48,11 +48,12 @@ export function parseScaleOrderList(
 ) {
   let scalesList: ScaleOrderList[] = []
   if (!scale) {
+    // return empty array
   } else if (typeof scale[0] == 'object') {
     scalesList = scale
   } else {
     const per = scale[0] == 'step' ? step : scale[0]
-    let count = Math.floor(max / per) - Math.ceil(min / per) + 1
+    const count = Math.floor(max / per) - Math.ceil(min / per) + 1
     for (let i = 0; i < count; i++) {
       const at = toFixed(
         per * (Math.ceil(min / per) + i),

@@ -1,5 +1,3 @@
-interface KnobProps {}
-
-export function Knob({}: KnobProps) {
+export function Knob() {
   return <div>TODO: Knob</div>
 }
