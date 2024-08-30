@@ -1,6 +1,5 @@
-interface KnobProps {
-}
+interface KnobProps {}
 
-export function Knob({} :KnobProps) {
-  return (<div>TODO: Knob</div>)
+export function Knob({}: KnobProps) {
+  return <div>TODO: Knob</div>
 }

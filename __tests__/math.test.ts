@@ -1,4 +1,10 @@
-import { clamp, normalizeValue, rawValue, skewWithCenterValue, stepValue } from "@/math";
+import {
+  clamp,
+  normalizeValue,
+  rawValue,
+  skewWithCenterValue,
+  stepValue,
+} from '@/math'
 
 describe('unit', () => {
   test('clamp()', () => {
@@ -19,12 +25,13 @@ describe('unit', () => {
     expect(normalizeValue(2000, 20, 20_000, skew)).toBe(0.5)
     skew = skewWithCenterValue(-10, -100, 0)
     expect(normalizeValue(-10, -100, 0, skew)).toBe(0.5)
-
   })
 
   test('rawValue()', () => {
     expect(stepValue(rawValue(0.34, 0, 100), 1)).toBe(34)
-    expect(stepValue(rawValue(normalizeValue(Math.PI, 0, 100), 0, 100), 10e-7)).toBe(3.141593) // 3.1415927...
+    expect(
+      stepValue(rawValue(normalizeValue(Math.PI, 0, 100), 0, 100), 10e-7),
+    ).toBe(3.141593) // 3.1415927...
 
     // TODO: skewed raw value
   })

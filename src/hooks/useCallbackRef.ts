@@ -1,4 +1,4 @@
-import { useCallback, useInsertionEffect, useRef } from "react"
+import { useCallback, useInsertionEffect, useRef } from 'react'
 
 /**
  * This hook is user-land implementation of the experimental `useEffectEvent` hook.
@@ -9,7 +9,7 @@ export function useCallbackRef<Args extends unknown[], Return>(
   deps: React.DependencyList = [],
 ) {
   const callbackRef = useRef<typeof callback>(() => {
-    throw new Error("Cannot call an event handler while rendering.")
+    throw new Error('Cannot call an event handler while rendering.')
   })
 
   useInsertionEffect(() => {

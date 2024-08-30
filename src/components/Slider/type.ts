@@ -1,65 +1,74 @@
-import { decimalPart, toFixed } from "@/math"
+import { decimalPart, toFixed } from '@/math'
 
-export type Horizontal = "right" | "left"
-export type Vertical = "up" | "down"
+export type Horizontal = 'right' | 'left'
+export type Vertical = 'up' | 'down'
 export type Direction = Horizontal | Vertical
 
 export function isHorizontal(d: Direction) {
-  return d == "right" || d == "left"
+  return d == 'right' || d == 'left'
 }
 
 export function isVertical(d: Direction) {
-  return d == "up" || d == "down"
+  return d == 'up' || d == 'down'
 }
 
 export function isReversed(d: Direction) {
-  return d == "left" || d == "up"
+  return d == 'left' || d == 'up'
 }
 
 export function gradientDirection(d: Direction) {
-  if (d == "left" || d == "right") return d
-  if (d == "up") return "top"
-  if (d == "down") return "bottom"
+  if (d == 'left' || d == 'right') return d
+  if (d == 'up') return 'top'
+  if (d == 'down') return 'bottom'
 }
 
 // export type SkewFunction = (x: number) => number
 
-export type ScaleType = "mark" | "mark-number" | "number"
+export type ScaleType = 'mark' | 'mark-number' | 'number'
 export type ScaleOrderList = {
-  at: number,
-  type: ScaleType,
+  at: number
+  type: ScaleType
   style?: {
-    markColor?: string,
-    labelColor?: string,
-    length?: number | string,
-    thickness?: number | string,
+    markColor?: string
+    labelColor?: string
+    length?: number | string
+    thickness?: number | string
   }
 }
 
 export function parseScaleOrderList(
-  scale: ["step", ScaleType] | [number, ScaleType] | ScaleOrderList[] | undefined,
-  min: number, max: number, step: number
+  scale:
+    | ['step', ScaleType]
+    | [number, ScaleType]
+    | ScaleOrderList[]
+    | undefined,
+  min: number,
+  max: number,
+  step: number,
 ) {
-  let scalesList: ScaleOrderList[] = [];
+  let scalesList: ScaleOrderList[] = []
   if (!scale) {
-  } else if (typeof scale[0] == "object") {
+  } else if (typeof scale[0] == 'object') {
     scalesList = scale
   } else {
-    const per = scale[0] == "step" ? step : scale[0]
+    const per = scale[0] == 'step' ? step : scale[0]
     let count = Math.floor(max / per) - Math.ceil(min / per) + 1
     for (let i = 0; i < count; i++) {
-      const at = toFixed(per * (Math.ceil(min / per) + i), decimalPart(per)?.length)
-      scalesList.push({at: at, type: scale[1]})
+      const at = toFixed(
+        per * (Math.ceil(min / per) + i),
+        decimalPart(per)?.length,
+      )
+      scalesList.push({ at: at, type: scale[1] })
     }
   }
   return scalesList
 }
 
 export type ScaleOption = {
-  markColor?: string,
-  labelColor?: string,
-  gap?: number | string,
+  markColor?: string
+  labelColor?: string
+  gap?: number | string
   style?: React.CSSProperties
 }
 
-export type WheelOption = ["normalized" | "raw", number]
+export type WheelOption = ['normalized' | 'raw', number]

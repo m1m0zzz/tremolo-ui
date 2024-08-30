@@ -1,6 +1,5 @@
-interface MeterProps {
-}
+interface MeterProps {}
 
-export function Meter({} :MeterProps) {
-  return (<div>TODO: Meter</div>)
+export function Meter({}: MeterProps) {
+  return <div>TODO: Meter</div>
 }
