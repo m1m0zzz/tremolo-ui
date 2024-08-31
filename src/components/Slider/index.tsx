@@ -1,6 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import { css, Global } from '@emotion/react'
-import React, { Children, isValidElement, ReactNode, useRef } from 'react'
+import React, {
+  Children,
+  isValidElement,
+  ReactNode,
+  useMemo,
+  useRef,
+} from 'react'
 
 import {
   Direction,
@@ -70,7 +76,6 @@ export function Slider({
   children,
 }: SliderProps) {
   // -- state and ref ---
-  const wrapperElement = useRef<HTMLDivElement>(null)
   const baseWrapperElement = useRef<HTMLDivElement>(null)
 
   // --- interpret props ---
@@ -120,6 +125,44 @@ export function Slider({
   }
 
   // --- hooks ---
+  const wrapperRef = useMemo(() => {
+    let cleanup: (() => void) | undefined
+    return (div: HTMLDivElement | null) => {
+      if (!div) {
+        cleanup?.()
+        return
+      }
+      const controller = new AbortController()
+
+      div.addEventListener(
+        'wheel',
+        (event) => {
+          if (!enableWheel) return
+          event.preventDefault()
+          let x = event.deltaY > 0 ? enableWheel[1] : -enableWheel[1]
+          if (isReversed(direction)) x *= -1
+          let v
+          if (enableWheel[0] == 'normalized') {
+            const n = normalizeValue(value, min, max, skew)
+            v = rawValue(n + x, min, max, skew)
+          } else {
+            v = value + x
+          }
+          if (onChange) onChange(clamp(stepValue(v, step), min, max))
+        },
+        {
+          signal: controller.signal,
+          passive: false,
+        },
+      )
+
+      cleanup = () => {
+        // console.log("cleanup")
+        controller.abort()
+      }
+    }
+  }, [value])
+
   useEventListener(window, 'mousemove', (event) => {
     handleValue(event)
   })
@@ -129,33 +172,9 @@ export function Slider({
     if (bodyNoSelect) document.body.classList.remove('no-select')
   })
 
-  // NOTE: ReactでprependDefault()するには、eventListener を使う必要がある
-  // TODO: 初期状態では wrapperRef.current が null なので、target が document となる
-  // その結果ホバーしていなくてもすべてのスライダーが動いてしまう(一回のみ)
-  useEventListener(
-    wrapperElement.current,
-    'wheel',
-    (event) => {
-      if (enableWheel) {
-        event.preventDefault()
-        let x = event.deltaY > 0 ? enableWheel[1] : -enableWheel[1]
-        if (isReversed(direction)) x *= -1
-        let v
-        if (enableWheel[0] == 'normalized') {
-          const n = normalizeValue(value, min, max, skew)
-          v = rawValue(n + x, min, max, skew)
-        } else {
-          v = value + x
-        }
-        if (onChange) onChange(clamp(stepValue(v, step), min, max))
-      }
-    },
-    { passive: false },
-  )
-
   return (
     <div
-      ref={wrapperElement}
+      ref={wrapperRef}
       className="tremolo-slider"
       style={{
         display: 'inline-block',
