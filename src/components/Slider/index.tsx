@@ -18,9 +18,9 @@ import {
   ScaleOption,
   ScaleOrderList,
   ScaleType,
-  WheelOption,
 } from './type'
 
+import { WheelOption } from '@/global-type'
 import { useEventListener } from '@/hooks/useEventListener'
 import { clamp, normalizeValue, rawValue, stepValue } from '@/math'
 import { styleHelper } from '@/util'

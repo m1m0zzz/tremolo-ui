@@ -71,5 +71,3 @@ export type ScaleOption = {
   gap?: number | string
   style?: React.CSSProperties
 }
-
-export type WheelOption = ['normalized' | 'raw', number]
