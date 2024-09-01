@@ -2,11 +2,10 @@
 import { css, Global } from '@emotion/react'
 import { useMemo, useRef } from 'react'
 
-import { WheelOption } from "@/global-type"
+import { WheelOption } from '@/global-type'
 import { useEventListener } from '@/hooks/useEventListener'
 import { clamp, normalizeValue, rawValue, stepValue } from '@/math'
 import { styleHelper } from '@/util'
-
 
 interface KnobProps {
   // required
@@ -40,8 +39,8 @@ export function Knob({
   size = 50,
   active = '#7998ec',
   inactive = '#eee',
-  bg = "#ccc",
-  thumb = "#4e76e6",
+  bg = '#ccc',
+  thumb = '#4e76e6',
   lineWeight = 12,
   thumbWeight = 4,
   cursor = 'pointer',
@@ -127,26 +126,25 @@ export function Knob({
         handleValue(event)
       }}
       style={{
-        display: "inline-block",
+        display: 'inline-block',
         width: size,
         height: size,
-        ...style
+        ...style,
       }}
     >
       <div
         css={css({
-          display: "inline-block",
+          display: 'inline-block',
           width: size,
           height: size,
-          background:
-            `conic-gradient(${active} ${percent * 270}deg, ${inactive} ${percent * 270}deg, ${inactive} ${270}deg, ${bg} 90deg)`,
-          borderRadius: "50%",
-          position: "relative",
+          background: `conic-gradient(${active} ${percent * 270}deg, ${inactive} ${percent * 270}deg, ${inactive} ${270}deg, ${bg} 90deg)`,
+          borderRadius: '50%',
+          position: 'relative',
           cursor: cursor,
-          rotate: "-135deg",
-          "&::before": {
-            display: "block",
-            position: "absolute",
+          rotate: '-135deg',
+          '&::before': {
+            display: 'block',
+            position: 'absolute',
             right: 0,
             left: 0,
             top: 0,
@@ -156,11 +154,11 @@ export function Knob({
             width: `calc(${styleHelper(size)} - ${styleHelper(lineWeight)})`,
             height: `calc(${styleHelper(size)} - ${styleHelper(lineWeight)})`,
             backgroundColor: bg,
-            borderRadius: "50%",
+            borderRadius: '50%',
           },
-          "&::after": {
-            display: "block",
-            position: "absolute",
+          '&::after': {
+            display: 'block',
+            position: 'absolute',
             top: 0,
             bottom: 0,
             // left: lineWeight,
@@ -171,8 +169,8 @@ export function Knob({
             borderRadius: thumbWeight,
             backgroundColor: thumb,
             rotate: `${90 + percent * 270}deg`,
-            transformOrigin: "100% 50%",
-          }
+            transformOrigin: '100% 50%',
+          },
         })}
       >
         <Global

@@ -17,7 +17,7 @@ export const Basic = () => {
         min={0}
         max={100}
         onChange={(v) => setValue(v)}
-        enableWheel={["normalized", 0.1]}
+        enableWheel={['normalized', 0.1]}
       />
       <p>value: {value}</p>
     </div>
