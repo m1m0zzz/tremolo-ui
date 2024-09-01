@@ -4,6 +4,8 @@
   "description": "React component library for audio app",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
+  "type": "module",
+  "types": "dist/cjs/index.d.ts",
   "scripts": {
     "build": "rollup -c",
     "lint": "eslint --fix --ext .ts,.tsx .",

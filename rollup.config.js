@@ -4,7 +4,7 @@ import commonjs from '@rollup/plugin-commonjs'
 import typescript from '@rollup/plugin-typescript'
 import dts from 'rollup-plugin-dts'
 
-const pkg = require('./package.json')
+import pkg from './package.json' assert { type: 'json' }
 
 export default [
   {
@@ -13,12 +13,12 @@ export default [
       {
         file: pkg.main,
         format: 'cjs',
-        sourcemap: false,
+        sourcemap: true,
       },
       {
         file: pkg.module,
         format: 'esm',
-        sourcemap: false,
+        sourcemap: true,
       },
     ],
     plugins: [
@@ -27,18 +27,18 @@ export default [
       }),
       typescript({
         tsconfig: './tsconfig.json',
-        exclude: ['**/__tests__/**'],
+        exclude: ['**/__tests__/**', '**/__stories__/**'],
       }),
     ],
-    external: ['react', 'react-dom', '@emotion/styled', '@emotion/react'],
+    external: ['react', 'react-dom', '@emotion/react'],
   },
   {
-    input: 'dist/cjs/types/index.d.ts',
+    input: 'dist/cjs/types/src/index.d.ts',
     output: [{ file: 'dist/cjs/index.d.ts', format: 'cjs' }],
     plugins: [dts()],
   },
   {
-    input: 'dist/esm/types/index.d.ts',
+    input: 'dist/esm/types/src/index.d.ts',
     output: [{ file: 'dist/esm/index.d.ts', format: 'esm' }],
     plugins: [dts()],
   },
