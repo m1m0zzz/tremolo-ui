@@ -51,7 +51,9 @@ documentation w/ Storybook
 
 
 ## 🦝 Contributing
-TODO
+Please see [contribution guide](./CONTRIBUTING.md)
+
+日本語版は [コントリビューション ガイド](./CONTRIBUTING.ja.md) を参照してください。
 
 ## 📜 LICENSE
-TODO: tremolo-ui is [license-name](./blob/main/LICENSE)
+tremolo-ui is [MIT License](./LICENSE)
