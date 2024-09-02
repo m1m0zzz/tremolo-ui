@@ -1,5 +1,7 @@
 .rollup.cache/
 
+storybook-static/
+
 # Logs
 logs
 *.log
