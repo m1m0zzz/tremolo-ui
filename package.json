@@ -1,6 +1,6 @@
 {
   "name": "@tremolo-ui/react",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "React component library for audio app",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -18,17 +18,34 @@
     "clean:storybook": "rimraf ./storybook-static",
     "chromatic": "npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"
   },
-  "author": {
-    "name": "mimoz",
-    "email": "contact.m1m0zzz@gmail.com"
-  },
   "files": [
     "package.json",
     "README.md",
     "LICENSE",
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "mimoz",
+    "email": "contact.m1m0zzz@gmail.com"
+  },
   "license": "MIT",
+  "homepage": "https://github.com/m1m0zzz/tremolo-ui",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/m1m0zzz/tremolo-ui"
+  },
+  "keywords": [
+    "react",
+    "ui",
+    "react-components",
+    "components",
+    "web-audio",
+    "emotion",
+    "library"
+  ],
   "devDependencies": {
     "@chromatic-com/storybook": "^1.6.1",
     "@emotion/react": "^11.13.0",
@@ -66,8 +83,8 @@
     "typescript-eslint": "^8.1.0"
   },
   "peerDependencies": {
-    "@emotion/react": ">=11",
-    "react": ">=18",
-    "react-dom": ">=18"
+    "@emotion/react": "11.x",
+    "react": "18.x",
+    "react-dom": "18.x"
   }
 }
