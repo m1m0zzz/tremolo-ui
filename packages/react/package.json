@@ -32,7 +32,8 @@
   "homepage": "https://github.com/m1m0zzz/tremolo-ui",
   "repository": {
     "type": "git",
-    "url": "https://github.com/m1m0zzz/tremolo-ui"
+    "url": "https://github.com/m1m0zzz/tremolo-ui",
+    "directory": "packages/react"
   },
   "keywords": [
     "react",

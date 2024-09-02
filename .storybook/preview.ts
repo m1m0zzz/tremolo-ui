@@ -10,7 +10,7 @@ const preview: Preview = {
     },
     options: {
       storySort: {
-        order: ['Components', ['Slider']],
+        order: ['React', ['Components', ['Slider']]],
       },
     },
   },
