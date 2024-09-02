@@ -35,6 +35,27 @@ And install dependencies
 npm install --save-dev react react-dom @emotion/react
 ```
 
+```jsx
+import { useState } from 'react'
+import { Slider, Knob } from '@tremolo-ui/react'
+
+function App() {
+  const [value, setValue] = useState(0)
+
+  return (
+    <>
+      <Slider
+        value={value}
+        min={0}
+        max={100}
+        onChange={(v) => setValue(v)}
+      />
+      <p>value: {value}</p>
+    </>
+  )
+}
+```
+
 ### Web Components
 
 Install tremolo-ui
