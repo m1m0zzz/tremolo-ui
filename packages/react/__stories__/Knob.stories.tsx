@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
-import { Knob } from '@/components/Knob'
+import { Knob } from '../src/components/Knob'
 
 export default {
-  title: 'Components/Knob',
+  title: 'React/Components/Knob',
   component: Knob,
 }
 

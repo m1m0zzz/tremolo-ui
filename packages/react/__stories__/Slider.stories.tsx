@@ -2,11 +2,11 @@ import { useState } from 'react'
 
 import thumbImage from './assets/tremolo-slider-thumb.png'
 
-import { Direction as SliderDirection, Slider } from '@/components/Slider'
-import { skewWithCenterValue } from '@/math'
+import { Direction as SliderDirection, Slider } from '../src/components/Slider'
+import { skewWithCenterValue } from '../src/math'
 
 export default {
-  title: 'Components/Slider',
+  title: 'React/Components/Slider',
   component: Slider,
 }
 

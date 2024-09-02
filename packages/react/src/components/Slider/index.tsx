@@ -8,6 +8,11 @@ import React, {
   useRef,
 } from 'react'
 
+import { useEventListener } from '../../hooks/useEventListener'
+import { clamp, normalizeValue, rawValue, stepValue } from '../../math'
+import { WheelOption } from '../../types'
+import { styleHelper } from '../../util'
+
 import {
   Direction,
   gradientDirection,
@@ -19,11 +24,6 @@ import {
   ScaleOrderList,
   ScaleType,
 } from './type'
-
-import { useEventListener } from '@/hooks/useEventListener'
-import { clamp, normalizeValue, rawValue, stepValue } from '@/math'
-import { WheelOption } from '@/types'
-import { styleHelper } from '@/util'
 
 // interface SliderThumbProps {}
 

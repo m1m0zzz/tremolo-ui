@@ -4,7 +4,7 @@ import {
   rawValue,
   skewWithCenterValue,
   stepValue,
-} from '@/math'
+} from '../src/math'
 
 describe('unit', () => {
   test('clamp()', () => {
