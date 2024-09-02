@@ -2,9 +2,9 @@
 import { css, Global } from '@emotion/react'
 import { useMemo, useRef } from 'react'
 
-import { WheelOption } from '@/global-type'
 import { useEventListener } from '@/hooks/useEventListener'
 import { clamp, normalizeValue, rawValue, stepValue } from '@/math'
+import { WheelOption } from '@/types'
 import { styleHelper } from '@/util'
 
 interface KnobProps {

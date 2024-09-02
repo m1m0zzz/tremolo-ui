@@ -20,9 +20,9 @@ import {
   ScaleType,
 } from './type'
 
-import { WheelOption } from '@/global-type'
 import { useEventListener } from '@/hooks/useEventListener'
 import { clamp, normalizeValue, rawValue, stepValue } from '@/math'
+import { WheelOption } from '@/types'
 import { styleHelper } from '@/util'
 
 // interface SliderThumbProps {}
