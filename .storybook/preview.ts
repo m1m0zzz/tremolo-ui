@@ -8,11 +8,6 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-    options: {
-      storySort: {
-        order: ['React', ['Components', ['Slider']]],
-      },
-    },
   },
 }
 

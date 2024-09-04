@@ -5,6 +5,7 @@ import { Knob } from '../src/components/Knob'
 export default {
   title: 'React/Components/Knob',
   component: Knob,
+  tags: ['autodocs'],
 }
 
 export const Basic = () => {

@@ -1,21 +1,23 @@
 import { useState } from 'react'
 
-import thumbImage from './assets/tremolo-slider-thumb.png'
-
 import { Direction as SliderDirection, Slider } from '../src/components/Slider'
 import { skewWithCenterValue } from '../src/math'
+
+import thumbImage from './assets/tremolo-slider-thumb.png'
+
+import type { Meta } from '@storybook/react'
 
 export default {
   title: 'React/Components/Slider',
   component: Slider,
-}
+  tags: ['autodocs'],
+} satisfies Meta<typeof Slider>
 
 export const Basic = () => {
   const [value, setValue] = useState(32)
 
   return (
     <>
-      <h1>Slider with React.useState</h1>
       <Slider value={value} min={0} max={100} onChange={(v) => setValue(v)} />
       <p>value: {value}</p>
     </>
