@@ -68,7 +68,7 @@ npm install --save-dev @tremolo-ui/web-components
 
 documentation w/ Storybook
 
-[Docs](https://main--66c84646f5ab3514847ae4d5.chromatic.com/)
+[Docs on Vercel](https://tremolo-ui.vercel.app/)
 
 
 ## 🦝 Contributing
