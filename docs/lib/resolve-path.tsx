@@ -1,9 +1,7 @@
 export function resolve(path: string, _currentPath?: string) {
-  const m = path.match(/^\.\/(.+)(\.\w+)?$/)
-  console.log(m)
+  const m = path.match(/^\.\/(.+)(\.\w+)$/)
   if (m) {
     const s = m[1].toLowerCase().replace(/\/|\.|\s/g, '-')
-    console.log(m)
     return '/?path=/docs/docs-' + s + '--docs'
   }
   return path
