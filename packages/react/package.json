@@ -10,7 +10,7 @@
     "lint": "eslint --fix --ext .ts,.tsx .",
     "format": "prettier --write .",
     "test": "jest",
-    "build": "rollup -c",
+    "build:package": "rollup -c",
     "clean": "npm run clean:build && npm run clean:storybook",
     "clean:build": "rimraf ./dist .rollup.cache",
     "clean:storybook": "rimraf ./storybook-static"
