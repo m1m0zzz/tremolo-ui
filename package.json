@@ -15,8 +15,7 @@
     "build:package": "npm run build:package --workspaces",
     "clean": "npm run clean:build && npm run clean:storybook",
     "clean:build": "npm run clean:build --workspaces",
-    "clean:storybook": "rimraf ./storybook-static",
-    "chromatic": "npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"
+    "clean:storybook": "rimraf ./storybook-static"
   },
   "author": {
     "name": "mimoz",
@@ -43,7 +42,6 @@
     "@types/eslint__js": "^8.42.3",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.3.3",
-    "chromatic": "^11.7.1",
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-react": "^7.35.0",
