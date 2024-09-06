@@ -1,14 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import { css, Global } from '@emotion/react'
-import React, {
-  Children,
-  isValidElement,
-  ReactNode,
-  useMemo,
-  useRef,
-} from 'react'
+import React, { Children, isValidElement, ReactNode, useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
+import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { clamp, normalizeValue, rawValue, stepValue } from '../../math'
 import { WheelOption } from '../../types'
 import { styleHelper } from '../../util'
@@ -125,43 +120,27 @@ export function Slider({
   }
 
   // --- hooks ---
-  const wrapperRef = useMemo(() => {
-    let cleanup: (() => void) | undefined
-    return (div: HTMLDivElement | null) => {
-      if (!div) {
-        cleanup?.()
-        return
+  const wrapperRef = useRefCallbackEvent(
+    'wheel',
+    (event) => {
+      if (!enableWheel) return
+      event.preventDefault()
+      let x = event.deltaY > 0 ? enableWheel[1] : -enableWheel[1]
+      if (isReversed(direction)) x *= -1
+      let v
+      if (enableWheel[0] == 'normalized') {
+        const n = normalizeValue(value, min, max, skew)
+        v = rawValue(n + x, min, max, skew)
+      } else {
+        v = value + x
       }
-      const controller = new AbortController()
-
-      div.addEventListener(
-        'wheel',
-        (event) => {
-          if (!enableWheel) return
-          event.preventDefault()
-          let x = event.deltaY > 0 ? enableWheel[1] : -enableWheel[1]
-          if (isReversed(direction)) x *= -1
-          let v
-          if (enableWheel[0] == 'normalized') {
-            const n = normalizeValue(value, min, max, skew)
-            v = rawValue(n + x, min, max, skew)
-          } else {
-            v = value + x
-          }
-          if (onChange) onChange(clamp(stepValue(v, step), min, max))
-        },
-        {
-          signal: controller.signal,
-          passive: false,
-        },
-      )
-
-      cleanup = () => {
-        // console.log("cleanup")
-        controller.abort()
-      }
-    }
-  }, [value])
+      if (onChange) onChange(clamp(stepValue(v, step), min, max))
+    },
+    {
+      passive: false,
+    },
+    [value],
+  )
 
   useEventListener(window, 'mousemove', (event) => {
     handleValue(event)
