@@ -13,6 +13,8 @@
     "format": "prettier --write",
     "test": "npm run test --workspaces",
     "build:package": "npm run build:package --workspaces",
+    "docs": "npm run start -w site",
+    "build:docs": "npm run build -w site",
     "clean": "npm run clean:build && npm run clean:storybook",
     "clean:build": "npm run clean:build --workspaces",
     "clean:storybook": "rimraf ./storybook-static"
@@ -24,7 +26,8 @@
   "license": "UNLICENSED",
   "workspaces": [
     "packages/react",
-    "packages/web-components"
+    "packages/web-components",
+    "site"
   ],
   "devDependencies": {
     "@chromatic-com/storybook": "^1.6.1",
