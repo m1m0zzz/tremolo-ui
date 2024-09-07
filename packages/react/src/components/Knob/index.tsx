@@ -1,12 +1,11 @@
 /** @jsxImportSource @emotion/react */
-import { css, Global } from '@emotion/react'
-import { useRef } from 'react'
+import { Global } from '@emotion/react'
+import { useEffect, useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
-import { clamp, normalizeValue, rawValue, stepValue } from '../../math'
+import { clamp, normalizeValue, radian, rawValue, stepValue } from '../../math'
 import { WheelOption } from '../../types'
-import { styleHelper } from '../../util'
 
 interface KnobProps {
   // required
@@ -18,13 +17,15 @@ interface KnobProps {
   step?: number
   skew?: number // | SkewFunction
   size?: number | string
+  width?: number | string
+  height?: number | string
   options?: {
     active?: string
     inactive?: string
     bg?: string
     thumb?: string
-    lineWeight?: number | string
-    thumbWeight?: number | string
+    lineWeight?: number
+    thumbWeight?: number
   }
   draw?: (
     context: CanvasRenderingContext2D,
@@ -44,7 +45,7 @@ const defaultOptions = {
   inactive: '#eee',
   bg: '#ccc',
   thumb: '#4e76e6',
-  lineWeight: 12,
+  lineWeight: 6,
   thumbWeight: 4,
 }
 
@@ -54,8 +55,11 @@ export function Knob({
   max,
   step = 1,
   skew = 1,
-  size = 50,
+  size,
+  width,
+  height,
   options = defaultOptions,
+  draw,
   cursor = 'pointer',
   style,
   bodyNoSelect = true,
@@ -65,10 +69,12 @@ export function Knob({
   // -- state and ref ---
   // const [privateValue, setPrivateValue] = useState(value);
   const dragOffsetY = useRef<number | undefined>(undefined)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
 
   // --- interpret props ---
   const opts = { ...defaultOptions, ...options }
-  const percent = normalizeValue(value, min, max, skew)
+  const defaultSize = 50
+  // const percent = normalizeValue(value, min, max, skew)
 
   const handleValue = (
     event: MouseEvent | React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -113,6 +119,72 @@ export function Knob({
     if (bodyNoSelect) document.body.classList.remove('no-select')
   })
 
+  useEffect(() => {
+    if (!canvasRef.current) return
+    const context = canvasRef.current.getContext(
+      '2d',
+    ) as CanvasRenderingContext2D
+    const w = canvasRef.current.width
+    const h = canvasRef.current.height
+    if (draw) {
+      draw(context, value, w, h)
+    } else {
+      // draw default
+      const p = normalizeValue(value, min, max, skew)
+      const cx = w / 2
+      const cy = h / 2
+      const r = cx
+      // reset
+      context.clearRect(0, 0, w, h)
+      context.lineCap = 'butt'
+      // bg
+      context.beginPath()
+      context.fillStyle = opts.bg
+      context.arc(cx, cy, r - 0.5, 0, 2 * Math.PI)
+      context.fill()
+      // active rotary
+      context.lineWidth = opts.lineWeight
+      if (p > 0) {
+        context.beginPath()
+        context.strokeStyle = opts.active
+        context.arc(
+          cx,
+          cy,
+          r - 0.5 - opts.lineWeight / 2,
+          radian(135),
+          radian(135 + 270 * p),
+          false,
+        )
+        context.stroke()
+      }
+      // inactive rotary
+      if (p < 1) {
+        context.beginPath()
+        context.strokeStyle = opts.inactive
+        context.arc(
+          cx,
+          cy,
+          cx - 0.5 - opts.lineWeight / 2,
+          radian(135 + 270 * p),
+          radian(45),
+          false,
+        )
+        context.stroke()
+      }
+      // thumb
+      context.beginPath()
+      context.moveTo(cx, cy)
+      context.lineTo(
+        cx + Math.cos(radian(135 + 270 * p)) * (r - 0.5 - opts.thumbWeight / 2),
+        cy + Math.sin(radian(135 + 270 * p)) * (r - 0.5 - opts.thumbWeight / 2),
+      )
+      context.strokeStyle = opts.thumb
+      context.lineWidth = opts.thumbWeight
+      context.lineCap = 'round'
+      context.stroke()
+    }
+  }, [value, min, max, skew])
+
   return (
     <div
       className="tremolo-knob"
@@ -123,60 +195,28 @@ export function Knob({
       }}
       style={{
         display: 'inline-block',
-        width: size,
-        height: size,
+        width: size ?? width ?? defaultSize,
+        height: size ?? height ?? defaultSize,
+        position: 'relative',
+        cursor: cursor,
         ...style,
       }}
     >
-      <div
-        css={css({
-          display: 'inline-block',
-          width: size,
-          height: size,
-          background: `conic-gradient(${opts.active} ${percent * 270}deg, ${opts.inactive} ${percent * 270}deg, ${opts.inactive} ${270}deg, ${opts.bg} 90deg)`,
-          borderRadius: '50%',
-          position: 'relative',
-          cursor: cursor,
-          rotate: '-135deg',
-          '&::before': {
-            display: 'block',
-            position: 'absolute',
-            right: 0,
-            left: 0,
-            top: 0,
-            bottom: 0,
-            margin: 'auto',
-            content: '""',
-            width: `calc(${styleHelper(size)} - ${styleHelper(opts.lineWeight)})`,
-            height: `calc(${styleHelper(size)} - ${styleHelper(opts.lineWeight)})`,
-            backgroundColor: opts.bg,
-            borderRadius: '50%',
+      <Global
+        styles={{
+          '.no-select': {
+            userSelect: 'none',
           },
-          '&::after': {
-            display: 'block',
-            position: 'absolute',
-            top: 0,
-            bottom: 0,
-            // left: lineWeight,
-            margin: 'auto 0',
-            content: '""',
-            width: `calc(0.5 * ${styleHelper(size)})`,
-            height: opts.thumbWeight,
-            borderRadius: opts.thumbWeight,
-            backgroundColor: opts.thumb,
-            rotate: `${90 + percent * 270}deg`,
-            transformOrigin: '100% 50%',
-          },
-        })}
-      >
-        <Global
-          styles={{
-            '.no-select': {
-              userSelect: 'none',
-            },
-          }}
-        />
-      </div>
+        }}
+      />
+      <canvas
+        ref={canvasRef}
+        width={size ?? width ?? defaultSize}
+        height={size ?? height ?? defaultSize}
+        style={{
+          background: '#0000',
+        }}
+      ></canvas>
     </div>
   )
 }

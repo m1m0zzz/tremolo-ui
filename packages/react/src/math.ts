@@ -53,3 +53,11 @@ export function toFixed(x: number, fractionDigits?: number) {
 export function decimalPart(x: number | string): string | undefined {
   return String(x).split('.')[1]
 }
+
+export function radian(degree: number) {
+  return (Math.PI * degree) / 180
+}
+
+export function degree(radian: number) {
+  return (180 * radian) / Math.PI
+}
