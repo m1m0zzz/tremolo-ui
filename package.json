@@ -11,7 +11,7 @@
     "lint": "eslint --ext .ts,.tsx",
     "lint:fix": "eslint --fix --ext .ts,.tsx",
     "format": "prettier --write",
-    "test": "npm run test --workspaces",
+    "test": "npm run test --workspaces --if-present",
     "build:package": "npm run build:package --workspaces",
     "docs": "npm run start -w site",
     "build:docs": "npm run build -w site",
