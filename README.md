@@ -16,7 +16,7 @@
 
 ---
 
-# [tremolo-ui](https://github.io/m1m0zzz/tremolo-ui)
+# [tremolo-ui](https://github.com/m1m0zzz/tremolo-ui)
 
 UI library for Web Audio App
 
@@ -66,9 +66,13 @@ npm install --save-dev @tremolo-ui/web-components
 
 ## 📚 Docs
 
-documentation w/ Storybook
+**Tutorial & API**
 
-[Docs on Vercel](https://tremolo-ui.vercel.app/)
+https://tremolo-ui.vercel.app/
+
+**Storybook UI Catalog**
+
+https://tremolo-ui-sb.vercel.app/
 
 
 ## 🦝 Contributing
