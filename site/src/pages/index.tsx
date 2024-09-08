@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import Link from '@docusaurus/Link'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import HomepageFeatures from '@site/src/components/HomepageFeatures'
+import StorybookIcon from '@site/static/img/storybook-icon.svg'
 import Heading from '@theme/Heading'
 import Layout from '@theme/Layout'
 import clsx from 'clsx'
@@ -20,8 +22,32 @@ function HomepageHeader() {
           <Link
             className="button button--secondary button--lg"
             to="/docs/intro"
+            style={{
+              maxWidth: 200,
+              flex: '1 1 0px',
+            }}
           >
-            Docusaurus Tutorial - 5min ⏱️
+            Getting Started
+          </Link>
+          <Link
+            className="button button--secondary button--lg"
+            to="https://tremolo-ui-sb.vercel.app/"
+            style={{
+              maxWidth: 200,
+              flex: '1 1 0px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+            }}
+          >
+            <StorybookIcon
+              role="img"
+              className={styles.icon}
+              width={18}
+              height={25}
+            />
+            Storybook
           </Link>
         </div>
       </div>

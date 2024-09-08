@@ -65,6 +65,11 @@ const config: Config = {
           label: 'Tutorial',
         },
         {
+          href: 'https://tremolo-ui-sb.vercel.app/',
+          label: 'Storybook',
+          position: 'right',
+        },
+        {
           href: 'https://github.com/m1m0zzz/tremolo-ui',
           label: 'GitHub',
           position: 'right',

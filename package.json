@@ -15,6 +15,7 @@
     "build:package": "npm run build:package --workspaces",
     "docs": "npm run start -w site",
     "build:docs": "npm run build -w site",
+    "serve:docs": "http-server ./site/build",
     "clean": "npm run clean:build && npm run clean:storybook",
     "clean:build": "npm run clean:build --workspaces",
     "clean:storybook": "rimraf ./storybook-static"

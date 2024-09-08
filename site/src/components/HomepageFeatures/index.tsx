@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import Heading from '@theme/Heading'
 import clsx from 'clsx'
 
@@ -12,7 +13,6 @@ type FeatureItem = {
 const FeatureList: FeatureItem[] = [
   {
     title: 'Easy to Use',
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
@@ -23,7 +23,6 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Focus on What Matters',
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
@@ -34,7 +33,6 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Powered by React',
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
