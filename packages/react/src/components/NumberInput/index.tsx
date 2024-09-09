@@ -1,9 +1,14 @@
-import { useState } from 'react'
+/** @jsxImportSource @emotion/react */
+import { ChangeEvent, useState } from 'react'
 
 import { parseValue, Units } from './type'
 
 interface NumberInputProps {
-  value: number
+  value: number | string
+
+  min?: number
+  max?: number
+  disabled?: boolean
 
   /**
    * @example
@@ -24,57 +29,78 @@ interface NumberInputProps {
    * 3 ... 100Hz, 1.60Hz
    */
   digit?: number
+  selectWithFocus?: 'all' | 'number'
   style?: React.CSSProperties
-
-  onChange?: (value: number) => void
-  onBlur?: (value: number) => void
+  onChange?: (value: number, event: ChangeEvent<HTMLInputElement>) => void
+  onFocus?: (
+    value: number,
+    event: React.FocusEvent<HTMLInputElement, Element>,
+  ) => void
+  onBlur?: (
+    value: number,
+    event: React.FocusEvent<HTMLInputElement, Element>,
+  ) => void
 }
-
-type CustomHTMLInputProps = Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  'value' | 'onChange' | 'onBlur' | 'style'
->
 
 export function NumberInput({
   value,
+  // min,
+  // max,
   units,
+  disabled = false,
   strict = false,
-  onChange,
-  onBlur,
+  digit,
+  selectWithFocus,
   style,
-  ...props
-}: NumberInputProps & CustomHTMLInputProps) {
+  onChange,
+  onFocus,
+  onBlur,
+}: NumberInputProps) {
   const [showValue, setShowValue] = useState(
-    parseValue(String(value), units).formatValue,
+    parseValue(String(value), units, digit).formatValue,
   )
   const calculatedStrict = units ? false : strict
-
-  const { type, ...other } = props
 
   return (
     <input
       className="tremolo-ui-number-input"
       value={showValue}
       type={calculatedStrict ? 'number' : 'text'}
-      onChange={(event) => {
-        const v = event.currentTarget.value
-        setShowValue(v)
-        if (onChange) onChange(parseValue(v, units).rawValue)
-      }}
-      onBlur={(event) => {
-        const v = event.currentTarget.value
-        const parsed = parseValue(v, units)
-        setShowValue(parsed.formatValue)
-        if (onBlur) onBlur(parsed.rawValue)
-      }}
+      spellCheck={'false'}
+      disabled={disabled}
       style={{
         display: 'inline-block',
+        height: '2rem',
         font: 'inherit',
-        padding: 10,
+        paddingLeft: 10,
+        paddingRight: 10,
         outline: 'none',
         ...style,
       }}
-      {...other}
+      onChange={(event) => {
+        const v = event.currentTarget.value
+        setShowValue(v)
+        if (onChange) onChange(parseValue(v, units, digit).rawValue, event)
+      }}
+      onFocus={(event) => {
+        const v = event.currentTarget.value
+        const parsed = parseValue(v, units, digit)
+        if (selectWithFocus == 'all') {
+          event.currentTarget.setSelectionRange(0, v.length)
+        } else if (selectWithFocus == 'number') {
+          event.currentTarget.setSelectionRange(
+            0,
+            parsed.formatValue.length - parsed.unit.length,
+          )
+        }
+        if (onFocus) onFocus(parsed.rawValue, event)
+      }}
+      onBlur={(event) => {
+        const v = event.currentTarget.value
+        const parsed = parseValue(v, units, digit)
+        setShowValue(parsed.formatValue)
+        if (onBlur) onBlur(parsed.rawValue, event)
+      }}
     />
   )
 }

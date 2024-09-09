@@ -17,7 +17,11 @@ export function selectUnit(units: Units, value: number): [string, number] {
   return units[Math.max(0, i - 1)]
 }
 
-export function parseValue(inputString: string, units?: string | Units) {
+export function parseValue(
+  inputString: string,
+  units?: string | Units,
+  digit?: number,
+) {
   if (!units) {
     return {
       rawValue: Number(inputString.trim()) || 0,
@@ -44,11 +48,13 @@ export function parseValue(inputString: string, units?: string | Units) {
     if (inputUnit != '' && unitList.indexOf(inputUnit) != -1) {
       rawValue *= scaleList[unitList.indexOf(inputUnit)]
       const s = selectUnit(units, rawValue)
-      formatValue = `${rawValue / s[1]}${s[0]}`
+      const v = rawValue / s[1]
+      formatValue = `${digit != undefined ? toFixed(v, digit) : v}${s[0]}`
       unit = s[0]
     } else {
       const [u, scale] = selectUnit(units, rawValue)
-      formatValue = `${rawValue / scale}${u}`
+      const v = rawValue / scale
+      formatValue = `${digit != undefined ? toFixed(v, digit) : v}${u}`
       unit = u
     }
   }
