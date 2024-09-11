@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { ChangeEvent, useState } from 'react'
 
+import { BaseElement } from '../../system/BaseElement'
 import { UserActionPseudoProps } from '../../system/pseudo'
-import { isEmpty } from '../../util'
 
 import { parseValue, Units } from './type'
 
@@ -78,17 +78,15 @@ export function NumberInput({
     outlineColor: '#4e76e6',
     outlineWidth: 2,
   },
-}: NumberInputProps & Partial<UserActionPseudoProps>) {
+}: NumberInputProps & UserActionPseudoProps) {
   const [showValue, setShowValue] = useState(
     parseValue(String(value), units, digit).formatValue,
   )
   const calculatedStrict = units ? false : strict
-  const [overrideStyle, setOverrideStyle] = useState<
-    Partial<UserActionPseudoProps>
-  >({})
 
   return (
-    <input
+    <BaseElement
+      as={'input'}
       className="tremolo-number-input"
       value={showValue}
       type={calculatedStrict ? 'number' : 'text'}
@@ -97,6 +95,9 @@ export function NumberInput({
       placeholder={placeholder}
       readOnly={readOnly}
       tabIndex={tabIndex}
+      _active={_active}
+      _hover={_hover}
+      _focus={_focus}
       style={{
         display: 'inline-block',
         height: '2rem',
@@ -114,9 +115,6 @@ export function NumberInput({
         borderColor: '#bbb',
         borderRadius: 4,
         ...style,
-        ...overrideStyle._active,
-        ...overrideStyle._hover,
-        ...overrideStyle._focus,
       }}
       onChange={(event) => {
         const v = event.currentTarget.value
@@ -124,10 +122,6 @@ export function NumberInput({
         if (onChange) onChange(parseValue(v, units, digit).rawValue, event)
       }}
       onFocus={(event) => {
-        // pseudo
-        if (!isEmpty(_focus))
-          setOverrideStyle({ ...overrideStyle, _focus: _focus })
-        // update value
         const v = event.currentTarget.value
         const parsed = parseValue(v, units, digit)
         if (selectWithFocus == 'all') {
@@ -141,8 +135,6 @@ export function NumberInput({
         if (onFocus) onFocus(parsed.rawValue, event)
       }}
       onBlur={(event) => {
-        // pseudo
-        if (!isEmpty(_focus)) setOverrideStyle({ ...overrideStyle, _focus: {} })
         // update value
         const v = event.currentTarget.value
         const parsed = parseValue(v, units, digit)
@@ -152,25 +144,6 @@ export function NumberInput({
       onKeyDown={(event) => {
         if (blurWithEnter && event.key == 'Enter') {
           event.currentTarget.blur()
-        }
-      }}
-      onMouseOver={() => {
-        if (!isEmpty(_hover))
-          setOverrideStyle({ ...overrideStyle, _hover: _hover })
-      }}
-      onMouseLeave={() => {
-        if (!isEmpty(_hover)) {
-          setOverrideStyle({ ...overrideStyle, _hover: {} })
-        }
-      }}
-      onMouseDown={() => {
-        if (!isEmpty(_active)) {
-          setOverrideStyle({ ...overrideStyle, _active: _active })
-        }
-      }}
-      onMouseUp={() => {
-        if (!isEmpty(_active)) {
-          setOverrideStyle({ ...overrideStyle, _active: {} })
         }
       }}
     />

@@ -48,6 +48,6 @@ export const userActionPseudoPropNames = [
 ] as const
 
 export type UserActionPseudos = (typeof userActionPseudoPropNames)[number]
-export type UserActionPseudoProps = {
+export type UserActionPseudoProps = Partial<{
   [key in UserActionPseudos]: React.CSSProperties
-}
+}>
