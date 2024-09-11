@@ -50,6 +50,7 @@ export const Digit = () => {
         ['kHz', 1000],
       ]}
       digit={1}
+      _hover={{ outlineColor: 'red' }}
       onChange={(v) => setValue(v)}
     />
   )

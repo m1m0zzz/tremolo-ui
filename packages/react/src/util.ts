@@ -5,3 +5,7 @@ export function styleHelper(property: string | number) {
     return property
   }
 }
+
+export function isEmpty(obj: object) {
+  return Object.keys(obj).length == 0
+}
