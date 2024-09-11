@@ -8,13 +8,13 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:storybook/recommended',
-    'plugin:storybook/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
+    sourceType: 'module',
   },
   plugins: ['@typescript-eslint', 'react', 'import', 'unused-imports'],
   rules: {
