@@ -1,0 +1,19 @@
+{
+  "reactfc": {
+    "scope": "typescriptreact",
+    "prefix": "reactfc",
+    "body": [
+      "interface Props {",
+      "  ${1:prop}: any",
+      "}",
+      "",
+      "export function Hello({ ${1:prop} }: Props) {",
+      "  return (",
+      "    <div>$3</div>",
+      "  )",
+      "}",
+      ""
+    ],
+    "description": "React Component Template"
+  }
+}
