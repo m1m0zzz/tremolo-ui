@@ -7,7 +7,6 @@ const config: StorybookConfig = {
   ],
   // staticDirs: ['../__stories__/assets'], TODO: doesn't working?
   addons: [
-    '@storybook/addon-onboarding',
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@chromatic-com/storybook',
