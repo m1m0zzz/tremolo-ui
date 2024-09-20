@@ -1,9 +1,6 @@
-/** @jsxImportSource @emotion/react */
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, CSSProperties, useState } from 'react'
 
-import { BaseElement } from '../../system/BaseElement'
-import { UserActionPseudoProps } from '../../system/pseudo'
-
+import styles from './styles.module.css'
 import { parseValue, Units } from './type'
 
 interface NumberInputProps {
@@ -40,7 +37,8 @@ interface NumberInputProps {
   digit?: number
   selectWithFocus?: 'all' | 'number' | 'none'
   blurWithEnter?: boolean
-  style?: React.CSSProperties
+  className?: string
+  style?: CSSProperties
   onChange?: (value: number, event: ChangeEvent<HTMLInputElement>) => void
   onFocus?: (
     value: number,
@@ -66,28 +64,20 @@ export function NumberInput({
   digit,
   selectWithFocus = 'none',
   blurWithEnter = true,
+  className,
   style,
   onChange,
   onFocus,
   onBlur,
-  _active = {},
-  _hover = {
-    outlineColor: '#bbb',
-  },
-  _focus = {
-    outlineColor: '#4e76e6',
-    outlineWidth: 2,
-  },
-}: NumberInputProps & UserActionPseudoProps) {
+}: NumberInputProps) {
   const [showValue, setShowValue] = useState(
     parseValue(String(value), units, digit).formatValue,
   )
   const calculatedStrict = units ? false : strict
 
   return (
-    <BaseElement
-      as={'input'}
-      className="tremolo-number-input"
+    <input
+      className={styles.tremolo_ui_slider + (className ? ` ${className}` : '')}
       value={showValue}
       type={calculatedStrict ? 'number' : 'text'}
       spellCheck={'false'}
@@ -95,27 +85,7 @@ export function NumberInput({
       placeholder={placeholder}
       readOnly={readOnly}
       tabIndex={tabIndex}
-      _active={_active}
-      _hover={_hover}
-      _focus={_focus}
-      style={{
-        display: 'inline-block',
-        height: '2rem',
-        font: 'inherit',
-        margin: 0,
-        paddingLeft: 10,
-        paddingRight: 10,
-        outlineColor: 'transparent',
-        outlineStyle: 'solid',
-        outlineWidth: 1,
-        background: 'inherit',
-        appearance: 'none',
-        borderStyle: 'solid',
-        borderWidth: 1,
-        borderColor: '#bbb',
-        borderRadius: 4,
-        ...style,
-      }}
+      style={style}
       onChange={(event) => {
         const v = event.currentTarget.value
         setShowValue(v)
