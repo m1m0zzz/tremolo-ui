@@ -5,14 +5,15 @@ import {
   BenchResultsType,
 } from 'react-component-benchmark'
 
-import { NumberInput } from '../../src/components/NumberInput'
+import { ModuleCSSAndClassName } from './components/ModuleCSSAndClassName'
+import overrideStyle from './components/override.module.css'
 
 export default {
   title: 'React/Components/__benchmark__/NumberInput',
-  component: MyComponentBenchmark,
+  component: ComponentBenchmark,
 }
 
-export function MyComponentBenchmark() {
+export function ComponentBenchmark() {
   const ref = useRef<BenchmarkRef>(null)
 
   const handleComplete = useCallback((results: BenchResultsType) => {
@@ -27,7 +28,7 @@ export function MyComponentBenchmark() {
     <div>
       <button onClick={handleStart}>Run</button>
       <Benchmark
-        component={NumberInput}
+        component={ModuleCSSAndClassName}
         componentProps={{
           value: 20,
         }}
@@ -39,4 +40,8 @@ export function MyComponentBenchmark() {
       />
     </div>
   )
+}
+
+export function _ModuleCSSAndClassName() {
+  return <ModuleCSSAndClassName value={32} className={overrideStyle.or} />
 }

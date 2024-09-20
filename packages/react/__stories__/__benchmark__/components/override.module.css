@@ -1,0 +1,7 @@
+.or {
+  outline-color: blue;
+
+  &:hover {
+    background-color: azure;
+  }
+}
