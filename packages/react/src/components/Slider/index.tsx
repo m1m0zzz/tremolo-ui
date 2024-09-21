@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { css, Global } from '@emotion/react'
 import React, { Children, isValidElement, ReactNode, useRef } from 'react'
 

@@ -1,7 +1,8 @@
 import { ChangeEvent, CSSProperties, useState } from 'react'
 
-import styles from '../../../src/components/NumberInput/styles.module.css'
 import { parseValue, Units } from '../../../src/components/NumberInput/type'
+
+import styles from './styles.module.css'
 
 interface NumberInputProps {
   value: number | string

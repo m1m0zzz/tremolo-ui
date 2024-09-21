@@ -1,6 +1,6 @@
+import { css } from '@emotion/react'
 import { ChangeEvent, CSSProperties, useState } from 'react'
 
-import styles from './styles.module.css'
 import { parseValue, Units } from './type'
 
 interface NumberInputProps {
@@ -18,7 +18,7 @@ interface NumberInputProps {
 
   /**
    * @example
-   * units={'Hz}
+   * units='Hz'
    * units={[['Hz', 1], ['kHz', 1000]]}
    * units={[['ms', 1], ['s', 1000]]}
    */
@@ -77,7 +77,7 @@ export function NumberInput({
 
   return (
     <input
-      className={styles.tremolo_ui_slider + (className ? ` ${className}` : '')}
+      className={'tremolo-slider' + (className ? ` ${className}` : '')}
       value={showValue}
       type={calculatedStrict ? 'number' : 'text'}
       spellCheck={'false'}
@@ -85,7 +85,31 @@ export function NumberInput({
       placeholder={placeholder}
       readOnly={readOnly}
       tabIndex={tabIndex}
-      style={style}
+      css={css({
+        display: 'inline-block',
+        height: '2rem',
+        font: 'inherit',
+        margin: 0,
+        paddingLeft: 10,
+        paddingRight: 10,
+        outlineColor: 'transparent',
+        outlineStyle: 'solid',
+        outlineWidth: 1,
+        background: 'inherit',
+        appearance: 'none',
+        borderStyle: 'solid',
+        borderWidth: 1,
+        borderColor: '#bbb',
+        borderRadius: 4,
+        '&:hover': {
+          outlineColor: '#bbb',
+        },
+        '&:focus': {
+          outlineColor: '#4e76e6',
+          outlineWidth: 2,
+        },
+        ...style,
+      })}
       onChange={(event) => {
         const v = event.currentTarget.value
         setShowValue(v)

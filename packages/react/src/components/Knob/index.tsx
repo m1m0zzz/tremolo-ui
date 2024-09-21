@@ -1,5 +1,4 @@
-/** @jsxImportSource @emotion/react */
-import { Global } from '@emotion/react'
+import { css, Global } from '@emotion/react'
 import { useEffect, useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
@@ -193,14 +192,14 @@ export function Knob({
         dragOffsetY.current = event.screenY
         handleValue(event)
       }}
-      style={{
+      css={css({
         display: 'inline-block',
         width: size ?? width ?? defaultSize,
         height: size ?? height ?? defaultSize,
         position: 'relative',
         cursor: cursor,
         ...style,
-      }}
+      })}
     >
       <Global
         styles={{
@@ -213,9 +212,9 @@ export function Knob({
         ref={canvasRef}
         width={size ?? width ?? defaultSize}
         height={size ?? height ?? defaultSize}
-        style={{
+        css={css({
           background: '#0000',
-        }}
+        })}
       ></canvas>
     </div>
   )
