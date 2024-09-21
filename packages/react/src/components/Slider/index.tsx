@@ -34,18 +34,18 @@ interface SliderProps {
 
   // optional
   step?: number
+  skew?: number // | SkewFunction
   length?: number | string
   thickness?: number | string
   direction?: Direction
-  skew?: number // | SkewFunction
   scale?: ['step', ScaleType] | [number, ScaleType] | ScaleOrderList[]
   scaleOption?: ScaleOption
   color?: string
   bg?: string
-  cursor?: string
-  style?: React.CSSProperties
   bodyNoSelect?: boolean
   enableWheel?: WheelOption
+  className?: string
+  style?: React.CSSProperties
   onChange?: (value: number) => void
   children?: ReactNode // SliderThumb
 }
@@ -63,7 +63,7 @@ export function Slider({
   scaleOption,
   color = '#4e76e6',
   bg = '#eee',
-  cursor = 'pointer',
+  className,
   style,
   bodyNoSelect = true,
   enableWheel,
@@ -154,14 +154,14 @@ export function Slider({
   return (
     <div
       ref={wrapperRef}
-      className="tremolo-slider"
-      style={{
+      className={'tremolo-slider' + className ? ` ${className}` : ''}
+      css={css({
         display: 'inline-block',
         boxSizing: 'border-box',
         margin: '0.7rem',
         padding: 0,
-        cursor: cursor,
-      }}
+        cursor: 'pointer',
+      })}
       onMouseDown={(event) => {
         thumbDragged.current = true
         handleValue(event)
@@ -175,12 +175,13 @@ export function Slider({
         }}
       />
       <div
-        style={{
+        css={css({
           display: 'flex',
           flexDirection: isHorizontal(direction) ? 'column' : 'row',
-        }}
+        })}
       >
         <div
+          className="tremolo-slider-track"
           ref={baseWrapperElement}
           css={css({
             background: `linear-gradient(to ${gradientDirection(direction)}, ${color} ${percent}%, ${bg} ${percent}%)`,
@@ -200,7 +201,7 @@ export function Slider({
         >
           <div
             className="tremolo-slider-thumb-wrapper"
-            style={{
+            css={css({
               width: 'fix-content',
               height: 'fix-content',
               position: 'absolute',
@@ -208,19 +209,19 @@ export function Slider({
               left: isHorizontal(direction) ? `${percentRev}%` : '50%',
               translate: '-50% -50%',
               zIndex: 100,
-            }}
+            })}
           >
             {children ? (
               children
             ) : (
               <div
                 className="tremolo-slider-thumb"
-                style={{
+                css={css({
                   background: color,
                   width: '1.4rem',
                   height: '1.4rem',
                   borderRadius: '50%',
-                }}
+                })}
               ></div>
             )}
           </div>
@@ -228,7 +229,7 @@ export function Slider({
         {scale && (
           <div
             className="tremolo-slider-scale-wrapper"
-            style={{
+            css={css({
               position: 'relative',
               width: isHorizontal(direction) ? length : undefined,
               height: isVertical(direction) ? length : undefined,
@@ -241,12 +242,12 @@ export function Slider({
                 : (scaleOption?.gap ??
                   `calc((1.4rem - ${styleHelper(thickness)}) / 2)`),
               ...scaleOption?.style,
-            }}
+            })}
           >
             {scalesList.map((item, index) => (
               <div
                 key={index}
-                style={{
+                css={css({
                   display: 'flex',
                   flexDirection: isHorizontal(direction) ? 'column' : 'row',
                   justifyContent: 'center',
@@ -268,12 +269,12 @@ export function Slider({
                     : undefined,
                   translate: isHorizontal(direction) ? '-50% 0' : '0 -50%',
                   zIndex: 10,
-                }}
+                })}
               >
                 {item.type != 'number' && (
                   <div
                     className="tremolo-slider-scale-mark"
-                    style={{
+                    css={css({
                       width: isHorizontal(direction)
                         ? (item.style?.thickness ?? 1)
                         : (item.style?.length ?? '0.5rem'),
@@ -286,15 +287,15 @@ export function Slider({
                         '#222',
                       marginBottom: isHorizontal(direction) ? 2 : undefined,
                       marginRight: isVertical(direction) ? 2 : undefined,
-                    }}
+                    })}
                   ></div>
                 )}
                 {item.type != 'mark' && (
                   <div
                     className="tremolo-slider-scale-number"
-                    style={{
+                    css={css({
                       color: item.style?.labelColor ?? scaleOption?.labelColor,
-                    }}
+                    })}
                   >
                     {item.at}
                   </div>
