@@ -3,14 +3,13 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build:docs": "tsc && vite build",
+    "storybook": "storybook dev -p 6007",
+    "build:storybook": "storybook build",
+    "serve": "http-server ./storybook-static",
     "build:package": "rollup -c",
     "preview": "vite preview",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "format": "prettier --write .",
-    "storybook": "storybook dev -p 6007",
-    "build:storybook": "storybook build",
     "clean:storybook": "rimraf ./storybook-static"
   },
   "dependencies": {
