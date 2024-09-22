@@ -7,6 +7,9 @@
   "type": "module",
   "types": "dist/cjs/index.d.ts",
   "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build:storybook": "storybook build",
+    "serve": "http-server ./storybook-static",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "format": "prettier --write .",
     "test": "jest",
@@ -46,6 +49,8 @@
   ],
   "devDependencies": {
     "@emotion/react": "^11.13.0",
+    "@storybook/react": "^8.2.9",
+    "@storybook/react-vite": "^8.2.9",
     "@testing-library/react": "^16.0.1",
     "jest-environment-jsdom": "^29.7.0",
     "react": "^18.3.1",

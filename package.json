@@ -5,9 +5,6 @@
   "type": "module",
   "scripts": {
     "prepare": "husky",
-    "storybook": "storybook dev -p 6006",
-    "build:storybook": "storybook build",
-    "serve": "http-server ./storybook-static",
     "lint": "eslint --ext .ts,.tsx",
     "lint:fix": "eslint --fix --ext .ts,.tsx",
     "format": "prettier --write",
@@ -16,9 +13,8 @@
     "docs": "npm run start -w site",
     "build:docs": "npm run build -w site",
     "serve:docs": "http-server ./site/build",
-    "clean": "npm run clean:build && npm run clean:storybook",
-    "clean:build": "npm run clean:build --workspaces",
-    "clean:storybook": "rimraf ./storybook-static"
+    "clean": "npm run clean:build",
+    "clean:build": "npm run clean:build --workspaces"
   },
   "author": {
     "name": "mimoz",
@@ -39,8 +35,6 @@
     "@storybook/addon-interactions": "^8.2.9",
     "@storybook/addon-links": "^8.2.9",
     "@storybook/blocks": "^8.2.9",
-    "@storybook/react": "^8.2.9",
-    "@storybook/react-vite": "^8.2.9",
     "@storybook/test": "^8.2.9",
     "@types/eslint__js": "^8.42.3",
     "@types/jest": "^29.5.12",
