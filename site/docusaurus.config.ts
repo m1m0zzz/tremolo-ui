@@ -1,12 +1,20 @@
 import { themes as prismThemes } from 'prism-react-renderer'
+import twemoji from 'twemoji'
 
 import type * as Preset from '@docusaurus/preset-classic'
 import type { Config } from '@docusaurus/types'
 
+function emojiUrl(emoji: string, format: 'svg' | 'png' = 'svg') {
+  const codePoint = twemoji.convert.toCodePoint(emoji)
+  const fmt = format == 'svg' ? format : '72x72'
+  return `https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/${fmt}/${codePoint.split('-')[0]}.${format}`
+}
+
 const config: Config = {
   title: '@tremolo-ui',
   tagline: 'UI library for Web Audio App',
-  favicon: 'img/favicon.ico',
+  favicon: emojiUrl('🎸', 'svg'),
+  // favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
   url: 'https://tremolo-ui.vercel.app/',
@@ -27,7 +35,15 @@ const config: Config = {
   // may want to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en', 'ja'],
+    localeConfigs: {
+      en: {
+        label: 'English',
+      },
+      ja: {
+        label: '日本語',
+      },
+    },
   },
 
   presets: [
@@ -51,11 +67,16 @@ const config: Config = {
   themeConfig: {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
+    docs: {
+      sidebar: {
+        autoCollapseCategories: true,
+      },
+    },
     navbar: {
       title: '@tremolo-ui',
       logo: {
         alt: 'My Site Logo',
-        src: 'img/logo.svg',
+        src: emojiUrl('🎸', 'svg'),
       },
       items: [
         {
@@ -63,6 +84,10 @@ const config: Config = {
           sidebarId: 'tutorialSidebar',
           position: 'left',
           label: 'Tutorial',
+        },
+        {
+          type: 'localeDropdown',
+          position: 'left',
         },
         {
           href: 'https://tremolo-ui-sb-react.vercel.app/',
@@ -89,7 +114,7 @@ const config: Config = {
           items: [
             {
               label: 'Tutorial',
-              to: '/docs/intro',
+              to: '/docs/hello',
             },
           ],
         },
@@ -117,10 +142,14 @@ const config: Config = {
               label: 'GitHub',
               href: 'https://github.com/m1m0zzz/tremolo-ui',
             },
+            {
+              label: 'npm',
+              href: 'https://www.npmjs.com/org/tremolo-ui',
+            },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} mimoz. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} mimoz.`,
     },
     prism: {
       theme: prismThemes.github,
