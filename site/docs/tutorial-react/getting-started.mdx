@@ -3,16 +3,43 @@ sidebar_position: 1
 title: Getting Started
 ---
 
-# Install @tremolo-ui/react
+# React
+
+## Install @tremolo-ui/react
 
 1. Install tremolo-ui
 
-```bash
+```bash npm2yarn
 npm install @tremolo-ui/react
 ```
 
 2. Install dependecies
 
-```bash
+```bash npm2yarn
 npm install react react-dom @emotion/react
 ```
+
+## First Step
+
+Below is an example of a simple knob component.
+
+```jsx
+import { useState } from 'react'
+import { Knob } from '@tremolo-ui/react'
+
+export default function App() {
+  const [value, setValue] = useState(32)
+
+  return (
+    <div>
+      <Knob value={value} min={0} max={100} onChange={(v) => setValue(v)} />
+      <p>value: {value}</p>
+    </div>
+  )
+}
+```
+
+Check out the look and feel in the storybook!
+
+[Storybook - React Knob](https://tremolo-ui-sb-react.vercel.app/?path=/docs/react-components-knob--docs)
+

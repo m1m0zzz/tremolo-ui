@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import { themes as prismThemes } from 'prism-react-renderer'
 import twemoji from 'twemoji'
 
@@ -55,6 +56,9 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl: 'https://github.com/m1m0zzz/tremolo-ui/tree/main/site/',
+          remarkPlugins: [
+            [require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }],
+          ],
         },
         blog: false,
         theme: {
