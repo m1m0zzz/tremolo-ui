@@ -86,10 +86,6 @@ const config: Config = {
           label: 'Tutorial',
         },
         {
-          type: 'localeDropdown',
-          position: 'left',
-        },
-        {
           href: 'https://tremolo-ui-sb-react.vercel.app/',
           label: 'React',
           position: 'right',
@@ -102,6 +98,10 @@ const config: Config = {
         {
           href: 'https://github.com/m1m0zzz/tremolo-ui',
           label: 'GitHub',
+          position: 'right',
+        },
+        {
+          type: 'localeDropdown',
           position: 'right',
         },
       ],

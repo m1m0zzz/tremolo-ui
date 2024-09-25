@@ -1,0 +1,22 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.tutorialSidebar.category.Tutorial - React": {
+    "message": "Tutorial - React",
+    "description": "The label for category Tutorial - React in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Tutorial - React.link.generated-index.description": {
+    "message": "Getting started with tremolo-ui in React.",
+    "description": "The generated-index page description for category Tutorial - React in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Tutorial - Web Components": {
+    "message": "Tutorial - Web Components",
+    "description": "The label for category Tutorial - Web Components in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Tutorial - Web Components.link.generated-index.description": {
+    "message": "Getting started with tremolo-ui in Web Components",
+    "description": "The generated-index page description for category Tutorial - Web Components in sidebar tutorialSidebar"
+  }
+}
