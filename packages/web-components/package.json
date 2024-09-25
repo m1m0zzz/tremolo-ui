@@ -16,14 +16,18 @@
     "lit": "^3.2.0"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^2.0.2",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
+    "@storybook/addon-essentials": "^8.3.3",
+    "@storybook/addon-links": "^8.3.3",
     "@storybook/web-components": "^8.2.9",
     "@storybook/web-components-vite": "^8.2.9",
     "@web/rollup-plugin-copy": "^0.5.1",
     "@web/rollup-plugin-html": "^2.3.0",
     "rollup-plugin-minify-html-literals": "^1.2.6",
     "rollup-plugin-summary": "^2.0.1",
+    "storybook": "^8.3.3",
     "typescript": "^5.5.3",
     "vite": "^5.4.1"
   }
