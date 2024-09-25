@@ -7,6 +7,8 @@ import Heading from '@theme/Heading'
 import Layout from '@theme/Layout'
 import clsx from 'clsx'
 
+import { Emoji } from '../components/Emoji'
+
 import styles from './index.module.css'
 
 function HomepageHeader() {
@@ -23,17 +25,18 @@ function HomepageHeader() {
             className="button button--secondary button--lg"
             to="/docs/intro"
             style={{
-              maxWidth: 200,
+              maxWidth: 240,
               flex: '1 1 0px',
             }}
           >
+            <Emoji emoji="💡" />
             Getting Started
           </Link>
           <Link
             className="button button--secondary button--lg"
-            to="https://tremolo-ui-sb.vercel.app/"
+            to="https://tremolo-ui-sb-react.vercel.app/"
             style={{
-              maxWidth: 200,
+              maxWidth: 240,
               flex: '1 1 0px',
               display: 'flex',
               alignItems: 'center',
@@ -47,7 +50,27 @@ function HomepageHeader() {
               width={18}
               height={25}
             />
-            Storybook
+            React
+          </Link>
+          <Link
+            className="button button--secondary button--lg"
+            to="https://tremolo-ui-sb-web-components.vercel.app/"
+            style={{
+              maxWidth: 240,
+              flex: '1 1 0px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+            }}
+          >
+            <StorybookIcon
+              role="img"
+              className={styles.icon}
+              width={18}
+              height={25}
+            />
+            Web Components
           </Link>
         </div>
       </div>
