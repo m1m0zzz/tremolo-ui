@@ -27,15 +27,9 @@
     "site"
   ],
   "devDependencies": {
-    "@chromatic-com/storybook": "^1.6.1",
     "@eslint/js": "^9.9.0",
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-typescript": "^11.1.6",
-    "@storybook/addon-essentials": "^8.2.9",
-    "@storybook/addon-interactions": "^8.2.9",
-    "@storybook/addon-links": "^8.2.9",
-    "@storybook/blocks": "^8.2.9",
-    "@storybook/test": "^8.2.9",
     "@types/eslint__js": "^8.42.3",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.3.3",
@@ -52,7 +46,6 @@
     "rimraf": "^6.0.1",
     "rollup": "^4.20.0",
     "rollup-plugin-dts": "^6.1.1",
-    "storybook": "^8.2.9",
     "ts-jest": "^29.2.4",
     "tslib": "^2.6.3",
     "typescript": "^5.5.4",

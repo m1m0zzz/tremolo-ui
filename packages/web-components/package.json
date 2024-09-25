@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "format": "prettier --write .",
+    "clean": "npm run clean:storybook",
     "clean:storybook": "rimraf ./storybook-static"
   },
   "dependencies": {

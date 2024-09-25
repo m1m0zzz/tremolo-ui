@@ -48,11 +48,18 @@
     "library"
   ],
   "devDependencies": {
+    "@chromatic-com/storybook": "^1.6.1",
     "@emotion/react": "^11.13.0",
     "@storybook/react": "^8.2.9",
     "@storybook/react-vite": "^8.2.9",
+    "@storybook/addon-essentials": "^8.2.9",
+    "@storybook/addon-interactions": "^8.2.9",
+    "@storybook/addon-links": "^8.2.9",
+    "@storybook/blocks": "^8.2.9",
+    "@storybook/test": "^8.2.9",
     "@testing-library/react": "^16.0.1",
     "jest-environment-jsdom": "^29.7.0",
+    "storybook": "^8.2.9",
     "react": "^18.3.1",
     "react-component-benchmark": "^2.0.0",
     "react-dom": "^18.3.1"
