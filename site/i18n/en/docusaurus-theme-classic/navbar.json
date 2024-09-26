@@ -1,0 +1,26 @@
+{
+  "title": {
+    "message": "@tremolo-ui",
+    "description": "The title in the navbar"
+  },
+  "logo.alt": {
+    "message": "My Site Logo",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.Tutorial": {
+    "message": "Tutorial",
+    "description": "Navbar item with label Tutorial"
+  },
+  "item.label.React": {
+    "message": "React",
+    "description": "Navbar item with label React"
+  },
+  "item.label.Web Components": {
+    "message": "Web Components",
+    "description": "Navbar item with label Web Components"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Navbar item with label GitHub"
+  }
+}
