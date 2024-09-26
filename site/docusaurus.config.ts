@@ -123,19 +123,15 @@ const config: Config = {
           ],
         },
         {
-          title: 'Community',
+          title: 'UI Catalog',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+              label: 'React',
+              href: 'https://tremolo-ui-sb-react.vercel.app/',
             },
             {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
+              label: 'Web Components',
+              href: 'https://tremolo-ui-sb-web-components.vercel.app/',
             },
           ],
         },
