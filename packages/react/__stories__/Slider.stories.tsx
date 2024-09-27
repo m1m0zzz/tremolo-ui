@@ -1,7 +1,7 @@
+import { skewWithCenterValue } from 'common/math'
 import { useState } from 'react'
 
 import { Direction as SliderDirection, Slider } from '../src/components/Slider'
-import { skewWithCenterValue } from '../src/math'
 
 import thumbImage from './assets/tremolo-slider-thumb.png'
 

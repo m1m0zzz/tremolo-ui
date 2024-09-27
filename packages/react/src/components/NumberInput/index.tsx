@@ -1,7 +1,6 @@
 import { css } from '@emotion/react'
+import { parseValue, Units } from 'common/components/NumberInput/type'
 import { ChangeEvent, CSSProperties, useState } from 'react'
-
-import { parseValue, Units } from './type'
 
 interface NumberInputProps {
   value: number | string

@@ -1,12 +1,4 @@
 import { css, Global } from '@emotion/react'
-import React, { Children, isValidElement, ReactNode, useRef } from 'react'
-
-import { useEventListener } from '../../hooks/useEventListener'
-import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
-import { clamp, normalizeValue, rawValue, stepValue } from '../../math'
-import { WheelOption } from '../../types'
-import { styleHelper } from '../../util'
-
 import {
   Direction,
   gradientDirection,
@@ -17,7 +9,14 @@ import {
   ScaleOption,
   ScaleOrderList,
   ScaleType,
-} from './type'
+} from 'common/components/Slider/type'
+import { clamp, normalizeValue, rawValue, stepValue } from 'common/math'
+import { WheelOption } from 'common/types'
+import { styleHelper } from 'common/util'
+import React, { Children, isValidElement, ReactNode, useRef } from 'react'
+
+import { useEventListener } from '../../hooks/useEventListener'
+import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 
 // interface SliderThumbProps {}
 
@@ -308,4 +307,4 @@ export function Slider({
   )
 }
 
-export * from './type'
+export * from 'common/components/Slider/type'

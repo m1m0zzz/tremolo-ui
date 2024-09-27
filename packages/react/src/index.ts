@@ -1,5 +1,5 @@
-export * from './math'
-export type * from './types'
+export * from 'common/math'
+export type * from 'common/types'
 
 export { Knob } from './components/Knob'
 export { Slider } from './components/Slider'

@@ -1,10 +1,10 @@
 import { css, Global } from '@emotion/react'
+import { clamp, normalizeValue, radian, rawValue, stepValue } from 'common/math'
+import { WheelOption } from 'common/types'
 import { useEffect, useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
-import { clamp, normalizeValue, radian, rawValue, stepValue } from '../../math'
-import { WheelOption } from '../../types'
 
 interface KnobProps {
   // required

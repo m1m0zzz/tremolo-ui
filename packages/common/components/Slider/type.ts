@@ -1,4 +1,4 @@
-import { decimalPart, toFixed } from '../../math'
+import { decimalPart, toFixed } from 'common/math'
 
 export type Horizontal = 'right' | 'left'
 export type Vertical = 'up' | 'down'
@@ -69,5 +69,6 @@ export type ScaleOption = {
   markColor?: string
   labelColor?: string
   gap?: number | string
+  // TODO: anyにして、それぞれのプロジェクトにあった方法にオーバーライドする
   style?: React.CSSProperties
 }

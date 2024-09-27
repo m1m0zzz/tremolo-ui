@@ -1,6 +1,5 @@
+import { isEmpty } from 'common/util'
 import { ElementType, ComponentPropsWithoutRef, useState } from 'react'
-
-import { isEmpty } from '../util'
 
 import { UserActionPseudoProps } from './pseudo'
 
