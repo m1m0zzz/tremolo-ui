@@ -1,4 +1,4 @@
-import type { StorybookConfig } from '@storybook/web-components-vite'
+import type { StorybookConfig } from '@storybook/html-vite'
 
 const config: StorybookConfig = {
   stories: [
@@ -11,7 +11,7 @@ const config: StorybookConfig = {
     '@chromatic-com/storybook',
   ],
   framework: {
-    name: '@storybook/web-components-vite',
+    name: '@storybook/html-vite',
     options: {},
   },
 }
