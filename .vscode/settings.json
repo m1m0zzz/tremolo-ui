@@ -3,6 +3,7 @@
     "autodocs",
     "clsx",
     "csspart",
-    "mimoz"
+    "mimoz",
+    "slotchange"
   ]
 }
