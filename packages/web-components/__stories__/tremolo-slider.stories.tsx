@@ -1,12 +1,11 @@
 import { Meta } from '@storybook/html'
 
-// import html from './tremolo-slider.html'
+import { createSlider } from './tremolo-slider'
 
 export default {
   title: 'Web Components/Components/Slider',
   tags: ['autodocs'],
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  render: (args) => `<tremolo-slider />`,
+  render: (args) => createSlider(args),
   // render: (args) => {
   //   return createComponent(args)
   // },
@@ -15,5 +14,8 @@ export default {
 export const Basic = {
   args: {
     value: 32,
+    min: 0,
+    max: 100,
+    children: `bbb`,
   },
 }
