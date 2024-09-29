@@ -69,7 +69,7 @@ export function Slider({
   children,
 }: SliderProps) {
   // -- state and ref ---
-  const baseWrapperElement = useRef<HTMLDivElement>(null)
+  const trackElementRef = useRef<HTMLDivElement>(null)
 
   // --- interpret props ---
   const percent = normalizeValue(value, min, max, skew) * 100
@@ -98,14 +98,14 @@ export function Slider({
   const handleValue = (
     event: MouseEvent | React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
-    if (baseWrapperElement.current && thumbDragged.current) {
+    if (trackElementRef.current && thumbDragged.current) {
       if (bodyNoSelect) document.body.classList.add('no-select')
       const {
         left: x1,
         top: y1,
         right: x2,
         bottom: y2,
-      } = baseWrapperElement.current.getBoundingClientRect()
+      } = trackElementRef.current.getBoundingClientRect()
       const mouseX = event.clientX
       const mouseY = event.clientY
       const n = isHorizontal(direction)
@@ -124,7 +124,7 @@ export function Slider({
       if (!enableWheel) return
       event.preventDefault()
       let x = event.deltaY > 0 ? enableWheel[1] : -enableWheel[1]
-      if (isReversed(direction)) x *= -1
+      if (isReversed(direction) || isHorizontal(direction)) x *= -1
       let v
       if (enableWheel[0] == 'normalized') {
         const n = normalizeValue(value, min, max, skew)
@@ -180,7 +180,7 @@ export function Slider({
       >
         <div
           className="tremolo-slider-track"
-          ref={baseWrapperElement}
+          ref={trackElementRef}
           css={css({
             background: `linear-gradient(to ${gradientDirection(direction)}, ${color} ${percent}%, ${bg} ${percent}%)`,
             borderRadius:
@@ -200,8 +200,8 @@ export function Slider({
           <div
             className="tremolo-slider-thumb-wrapper"
             css={css({
-              width: 'fix-content',
-              height: 'fix-content',
+              width: 'fit-content',
+              height: 'fit-content',
               position: 'absolute',
               top: isHorizontal(direction) ? '50%' : `${percentRev}%`,
               left: isHorizontal(direction) ? `${percentRev}%` : '50%',

@@ -65,10 +65,12 @@ export function parseScaleOrderList(
   return scalesList
 }
 
+// TODO: anyにして、それぞれのプロジェクトにあった方法にオーバーライドする
+// style
+
 export type ScaleOption = {
   markColor?: string
   labelColor?: string
   gap?: number | string
-  // TODO: anyにして、それぞれのプロジェクトにあった方法にオーバーライドする
   style?: React.CSSProperties
 }
