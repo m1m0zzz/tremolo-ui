@@ -63,6 +63,9 @@ Install tremolo-ui
 npm install --save-dev @tremolo-ui/web-components
 ```
 
+```html
+<tremolo-slider value="32" min="0" max="100" />
+```
 
 ## 📚 Docs
 
