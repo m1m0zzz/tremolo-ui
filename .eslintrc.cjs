@@ -9,6 +9,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:storybook/recommended',
     'plugin:jsx-a11y/recommended',
+    'plugin:lit-a11y/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -23,6 +24,7 @@ module.exports = {
     'import',
     'unused-imports',
     'jsx-a11y',
+    'lit-a11y',
   ],
   rules: {
     'react/jsx-uses-react': 'error',
