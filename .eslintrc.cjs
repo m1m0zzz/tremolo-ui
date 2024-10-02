@@ -8,6 +8,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:storybook/recommended',
+    'plugin:jsx-a11y/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -16,7 +17,13 @@ module.exports = {
     },
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint', 'react', 'import', 'unused-imports'],
+  plugins: [
+    '@typescript-eslint',
+    'react',
+    'import',
+    'unused-imports',
+    'jsx-a11y',
+  ],
   rules: {
     'react/jsx-uses-react': 'error',
     'react/jsx-uses-vars': 'error',
