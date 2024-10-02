@@ -138,6 +138,7 @@ export const CustomImage = () => {
       >
         <img
           src={thumbImage} // TODO: use staticDirs
+          alt="slider thumb"
           draggable={false}
           style={{ display: 'block' }} // remove bottom gap
         />

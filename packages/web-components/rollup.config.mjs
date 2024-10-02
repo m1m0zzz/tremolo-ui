@@ -1,10 +1,10 @@
 /* eslint-disable import/order */
-import { rollupPluginHTML } from '@web/rollup-plugin-html';
-import {copy} from '@web/rollup-plugin-copy';
-import resolve from '@rollup/plugin-node-resolve';
-import terser from '@rollup/plugin-terser';
+import { rollupPluginHTML } from '@web/rollup-plugin-html'
+import { copy } from '@web/rollup-plugin-copy'
+import resolve from '@rollup/plugin-node-resolve'
+import terser from '@rollup/plugin-terser'
 // import minifyHTML from 'rollup-plugin-minify-html-literals';
-import summary from 'rollup-plugin-summary';
+import summary from 'rollup-plugin-summary'
 
 export default {
   plugins: [
@@ -34,4 +34,4 @@ export default {
     dir: 'build',
   },
   preserveEntrySignatures: 'strict',
-};
+}

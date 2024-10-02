@@ -188,10 +188,11 @@ export function Knob({
     <div
       className="tremolo-knob"
       ref={wrapperRef}
-      onMouseDown={(event) => {
-        dragOffsetY.current = event.screenY
-        handleValue(event)
-      }}
+      role="slider"
+      tabIndex={0}
+      aria-valuenow={value}
+      aria-valuemax={max}
+      aria-valuemin={min}
       css={css({
         display: 'inline-block',
         width: size ?? width ?? defaultSize,
@@ -200,6 +201,10 @@ export function Knob({
         cursor: cursor,
         ...style,
       })}
+      onMouseDown={(event) => {
+        dragOffsetY.current = event.screenY
+        handleValue(event)
+      }}
     >
       <Global
         styles={{

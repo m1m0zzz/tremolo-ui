@@ -151,8 +151,13 @@ export function Slider({
 
   return (
     <div
-      ref={wrapperRef}
       className={'tremolo-slider' + className ? ` ${className}` : ''}
+      ref={wrapperRef}
+      role="slider"
+      tabIndex={0}
+      aria-valuenow={value}
+      aria-valuemax={max}
+      aria-valuemin={min}
       css={css({
         display: 'inline-block',
         boxSizing: 'border-box',

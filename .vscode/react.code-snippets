@@ -12,8 +12,8 @@
       "    <div>$3</div>",
       "  )",
       "}",
-      ""
+      "",
     ],
-    "description": "React Component Template"
-  }
+    "description": "React Component Template",
+  },
 }
