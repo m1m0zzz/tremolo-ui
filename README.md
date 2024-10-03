@@ -75,8 +75,8 @@ https://tremolo-ui.vercel.app/
 
 **Storybook UI Catalog**
 
-https://tremolo-ui-sb.vercel.app/
-
+- [React](https://tremolo-ui-sb-react.vercel.app/)
+- [Web Components](https://tremolo-ui-sb-web-components.vercel.app/)
 
 ## 🦝 Contributing
 Please see [contribution guide](./CONTRIBUTING.md)
