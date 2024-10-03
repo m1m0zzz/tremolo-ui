@@ -1,10 +1,11 @@
-import { css, Global } from '@emotion/react'
+import { css, CSSObject, Global } from '@emotion/react'
 import { clamp, normalizeValue, radian, rawValue, stepValue } from 'common/math'
 import { WheelOption } from 'common/types'
 import { useEffect, useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
+import { UserActionPseudoProps } from '../../system/pseudo'
 
 interface KnobProps {
   // required
@@ -33,7 +34,7 @@ interface KnobProps {
     h?: number,
   ) => void
   cursor?: string
-  style?: React.CSSProperties
+  style?: CSSObject
   bodyNoSelect?: boolean
   enableWheel?: WheelOption
   onChange?: (value: number) => void
@@ -55,8 +56,8 @@ export function Knob({
   step = 1,
   skew = 1,
   size,
-  width,
-  height,
+  width = 50,
+  height = 50,
   options = defaultOptions,
   draw,
   cursor = 'pointer',
@@ -64,15 +65,16 @@ export function Knob({
   bodyNoSelect = true,
   enableWheel,
   onChange,
-}: KnobProps) {
+  ...pseudo
+}: KnobProps & UserActionPseudoProps) {
   // -- state and ref ---
   // const [privateValue, setPrivateValue] = useState(value);
   const dragOffsetY = useRef<number | undefined>(undefined)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   // --- interpret props ---
+  const { _active, _focus, _hover } = pseudo
   const opts = { ...defaultOptions, ...options }
-  const defaultSize = 50
   // const percent = normalizeValue(value, min, max, skew)
 
   const handleValue = (
@@ -195,8 +197,8 @@ export function Knob({
       aria-valuemin={min}
       css={css({
         display: 'inline-block',
-        width: size ?? width ?? defaultSize,
-        height: size ?? height ?? defaultSize,
+        width: size ?? width,
+        height: size ?? height,
         position: 'relative',
         cursor: cursor,
         ...style,
@@ -215,8 +217,8 @@ export function Knob({
       />
       <canvas
         ref={canvasRef}
-        width={size ?? width ?? defaultSize}
-        height={size ?? height ?? defaultSize}
+        width={size ?? width}
+        height={size ?? height}
         css={css({
           background: '#0000',
         })}

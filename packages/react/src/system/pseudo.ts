@@ -1,4 +1,4 @@
-import React from 'react'
+import { CSSObject } from '@emotion/react'
 
 function _toPropName(str: string) {
   return str.replace(/-\w/, (s) => s.toUpperCase()).replace(/^::?/, '_')
@@ -7,16 +7,16 @@ function _toPropName(str: string) {
 // ref. https://developer.mozilla.org/ja/docs/Web/CSS/Pseudo-classes
 
 export const inputPseudoSelectors = [
-  ':enabled',
-  ':disabled',
-  ':read-only',
-  ':read-write',
-  ':placeholder-shown',
-  ':blank',
-  ':valid',
-  ':invalid',
-  ':in-range',
-  ':out-of-range',
+  '&:enabled',
+  '&:disabled',
+  '&:read-only',
+  '&:read-write',
+  '&:placeholder-shown',
+  '&:blank',
+  '&:valid',
+  '&:invalid',
+  '&:in-range',
+  '&:out-of-range',
 ] as const
 
 export const inputPseudoPropNames = [
@@ -33,12 +33,12 @@ export const inputPseudoPropNames = [
 ] as const
 
 export type InputPseudos = (typeof inputPseudoPropNames)[number]
-export type InputPseudoProps = { [key in InputPseudos]: React.CSSProperties }
+export type InputPseudoProps = { [key in InputPseudos]: CSSObject }
 
 export const userActionPseudoSelectors = [
-  ':hover',
-  ':active',
-  ':focus',
+  '&:hover',
+  '&:active',
+  '&:focus',
 ] as const
 
 export const userActionPseudoPropNames = [
@@ -49,5 +49,5 @@ export const userActionPseudoPropNames = [
 
 export type UserActionPseudos = (typeof userActionPseudoPropNames)[number]
 export type UserActionPseudoProps = Partial<{
-  [key in UserActionPseudos]: React.CSSProperties
+  [key in UserActionPseudos]: CSSObject
 }>

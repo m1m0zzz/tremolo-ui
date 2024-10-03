@@ -1,4 +1,4 @@
-import { css, Global } from '@emotion/react'
+import { css, CSSObject, Global } from '@emotion/react'
 import {
   Direction,
   gradientDirection,
@@ -6,17 +6,19 @@ import {
   isReversed,
   isVertical,
   parseScaleOrderList,
-  ScaleOption,
   ScaleOrderList,
   ScaleType,
 } from 'common/components/Slider/type'
 import { clamp, normalizeValue, rawValue, stepValue } from 'common/math'
 import { WheelOption } from 'common/types'
 import { styleHelper } from 'common/util'
-import React, { Children, isValidElement, ReactNode, useRef } from 'react'
+import React, { ReactNode, useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
+import { UserActionPseudoProps } from '../../system/pseudo'
+
+import { ScaleOption } from './type'
 
 // interface SliderThumbProps {}
 
@@ -43,7 +45,7 @@ interface SliderProps {
   bodyNoSelect?: boolean
   enableWheel?: WheelOption
   className?: string
-  style?: React.CSSProperties
+  style?: CSSObject
   onChange?: (value: number) => void
   children?: ReactNode // SliderThumb
 }
@@ -67,24 +69,28 @@ export function Slider({
   enableWheel,
   onChange,
   children,
-}: SliderProps) {
+  ...pseudo
+}: SliderProps & UserActionPseudoProps) {
   // -- state and ref ---
   const trackElementRef = useRef<HTMLDivElement>(null)
 
   // --- interpret props ---
+  const { _active, _focus, _hover } = pseudo
   const percent = normalizeValue(value, min, max, skew) * 100
   const percentRev = isReversed(direction) ? 100 - percent : percent
 
   const scalesList = parseScaleOrderList(scale, min, max, step)
   if (isReversed(direction)) scalesList.reverse()
 
-  // let defaultThumb = true
+  // let trackElement: ReactElement
+  // let thumbElement: ReactElement
   if (children != undefined) {
-    const childElements = Children.toArray(children)
+    const childElements = React.Children.toArray(children)
     const lastElement = childElements[childElements.length - 1]
-    if (isValidElement(lastElement)) {
+    if (React.isValidElement(lastElement)) {
       // defaultThumb = false
       if (lastElement.type == SliderThumb) {
+        // thumbElement = lastElement
         // do something
       } else {
         // throw new Error("children must be <SliderThumb />")
@@ -153,8 +159,8 @@ export function Slider({
     <div
       className={'tremolo-slider' + className ? ` ${className}` : ''}
       ref={wrapperRef}
+      tabIndex={-1}
       role="slider"
-      tabIndex={0}
       aria-valuenow={value}
       aria-valuemax={max}
       aria-valuemin={min}
@@ -199,7 +205,7 @@ export function Slider({
             height: isHorizontal(direction) ? thickness : length,
             position: 'relative',
             zIndex: 1,
-            ...style,
+            // ...style,
           })}
         >
           <div
@@ -217,8 +223,11 @@ export function Slider({
             {children ? (
               children
             ) : (
+              // default slider thumb
               <div
                 className="tremolo-slider-thumb"
+                // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+                tabIndex={0}
                 css={css({
                   background: color,
                   width: '1.4rem',

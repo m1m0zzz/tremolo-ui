@@ -72,5 +72,5 @@ export type ScaleOption = {
   markColor?: string
   labelColor?: string
   gap?: number | string
-  style?: React.CSSProperties
+  style?: unknown
 }

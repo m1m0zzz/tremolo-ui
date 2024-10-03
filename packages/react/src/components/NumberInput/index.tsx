@@ -1,6 +1,8 @@
-import { css } from '@emotion/react'
+import { css, CSSObject } from '@emotion/react'
 import { parseValue, Units } from 'common/components/NumberInput/type'
-import { ChangeEvent, CSSProperties, useState } from 'react'
+import { ChangeEvent, useState } from 'react'
+
+import { InputPseudoProps, UserActionPseudoProps } from '../../system/pseudo'
 
 interface NumberInputProps {
   value: number | string
@@ -37,7 +39,7 @@ interface NumberInputProps {
   selectWithFocus?: 'all' | 'number' | 'none'
   blurWithEnter?: boolean
   className?: string
-  style?: CSSProperties
+  style?: CSSObject
   onChange?: (value: number, event: ChangeEvent<HTMLInputElement>) => void
   onFocus?: (
     value: number,
@@ -51,9 +53,9 @@ interface NumberInputProps {
 
 export function NumberInput({
   value,
-  // min,
-  // max,
-  // step,
+  min, // TODO
+  max, // TODO
+  step, // TODO
   units,
   disabled = false,
   placeholder,
@@ -68,11 +70,13 @@ export function NumberInput({
   onChange,
   onFocus,
   onBlur,
-}: NumberInputProps) {
+  ...pseudo
+}: NumberInputProps & UserActionPseudoProps & InputPseudoProps) {
   const [showValue, setShowValue] = useState(
     parseValue(String(value), units, digit).formatValue,
   )
   const calculatedStrict = units ? false : strict
+  const { _active, _focus, _hover } = pseudo
 
   return (
     <input
@@ -102,11 +106,14 @@ export function NumberInput({
         borderRadius: 4,
         '&:hover': {
           outlineColor: '#bbb',
+          ..._hover,
         },
         '&:focus': {
           outlineColor: '#4e76e6',
           outlineWidth: 2,
+          ..._focus,
         },
+        ...(_active && { '&:active': { ..._active } }),
         ...style,
       })}
       onChange={(event) => {
