@@ -27,7 +27,8 @@ export function gradientDirection(d: Direction) {
 export type ScaleType = 'mark' | 'mark-number' | 'number'
 export type ScaleOrderList = {
   at: number
-  type: ScaleType
+  type?: ScaleType
+  text?: string
   style?: {
     markColor?: string
     labelColor?: string
@@ -69,8 +70,13 @@ export function parseScaleOrderList(
 // style
 
 export type ScaleOption = {
+  /**
+   * @default 'mark-number'
+   */
+  defaultType?: ScaleType
   markColor?: string
   labelColor?: string
   gap?: number | string
+  labelWidth?: number | string
   style?: unknown
 }

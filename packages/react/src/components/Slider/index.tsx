@@ -98,7 +98,6 @@ export function Slider({
       }
     })
   }
-  console.log(thumbProps)
 
   const thumbDragged = useRef(false)
   const handleValue = (
@@ -195,10 +194,7 @@ export function Slider({
         <div
           className="tremolo-slider-track-wrapper"
           ref={trackElementRef}
-          css={css({
-            position: 'relative',
-            zIndex: 1,
-          })}
+          css={css({ position: 'relative' })}
         >
           <SliderTrack
             __css={{
@@ -209,6 +205,7 @@ export function Slider({
               borderWidth: 2,
               width: isHorizontal(direction) ? length : thickness,
               height: isHorizontal(direction) ? thickness : length,
+              zIndex: 1,
             }}
             {...trackProps}
           />
@@ -237,6 +234,7 @@ export function Slider({
                 : (scaleOption?.gap ??
                   `calc((1.4rem - ${styleHelper(thickness)}) / 2)`),
               ...scaleOption?.style,
+              // zIndex: 10,
             })}
           >
             {scalesList.map((item, index) => (
@@ -266,7 +264,8 @@ export function Slider({
                   zIndex: 10,
                 })}
               >
-                {item.type != 'number' && (
+                {(item.type ?? scaleOption?.defaultType ?? 'mark-number') !=
+                  'number' && (
                   <div
                     className="tremolo-slider-scale-mark"
                     css={css({
@@ -285,14 +284,17 @@ export function Slider({
                     })}
                   ></div>
                 )}
-                {item.type != 'mark' && (
+                {(item.type ?? scaleOption?.defaultType ?? 'mark-number') !=
+                  'mark' && (
                   <div
                     className="tremolo-slider-scale-number"
                     css={css({
                       color: item.style?.labelColor ?? scaleOption?.labelColor,
+                      width: scaleOption?.labelWidth,
+                      textAlign: 'right',
                     })}
                   >
-                    {item.at}
+                    {item.text ?? item.at}
                   </div>
                 )}
               </div>
