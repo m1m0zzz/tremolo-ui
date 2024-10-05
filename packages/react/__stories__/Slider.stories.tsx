@@ -1,6 +1,8 @@
+import { Meta } from '@storybook/react'
 import { skewWithCenterValue } from 'common/math'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
+import { AnimationCanvas } from '../src/components/AnimationCanvas'
 import {
   Direction as SliderDirection,
   Slider,
@@ -9,8 +11,6 @@ import {
 } from '../src/components/Slider'
 
 import thumbImage from './assets/tremolo-slider-thumb.png'
-
-import type { Meta } from '@storybook/react'
 
 export default {
   title: 'React/Components/Slider',
@@ -229,23 +229,82 @@ export const Scale = () => {
 
 export const VolumeFader = () => {
   const [volume, setVolume] = useState(0)
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null)
+  const [_gainNode, setGainNode] = useState<GainNode | null>(null)
+  const [_analyzerNode, setAnalyzerNode] = useState<AnalyserNode | null>(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const dataArray = useRef<Float32Array>()
+
+  const handleAudio = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!audioRef.current) return
+    const file = event.target.files?.[0]
+    if (!file) return
+    const fileUrl = URL.createObjectURL(file)
+    let ctx: AudioContext
+    if (audioContext) {
+      ctx = audioContext
+    } else {
+      ctx = new AudioContext()
+
+      const audioIn = new MediaElementAudioSourceNode(ctx, {
+        mediaElement: audioRef.current,
+      })
+      const _gainNode = new GainNode(ctx)
+      const _analyzerNode = new AnalyserNode(ctx)
+      audioIn.connect(_gainNode)
+      _gainNode.connect(_analyzerNode)
+      _analyzerNode.connect(ctx.destination)
+
+      dataArray.current = new Float32Array(_analyzerNode.frequencyBinCount)
+
+      setAudioContext(ctx)
+      setGainNode(_gainNode)
+      setAnalyzerNode(_analyzerNode)
+    }
+    console.log(ctx)
+
+    audioRef.current.src = fileUrl
+    audioRef.current.load()
+  }
 
   return (
     <div style={{ padding: '1rem' }}>
+      <h1>Extra Example: Volume Fader</h1>
+      <div style={{ marginBottom: '2rem' }}>
+        <input
+          type="file"
+          accept="audio/*"
+          style={{ marginBottom: '1rem' }}
+          onChange={(event) => {
+            handleAudio(event)
+          }}
+        />
+        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+        <audio ref={audioRef} controls={true} controlsList="nodownload" />
+      </div>
+
       <Slider
         value={volume}
         min={-100}
-        max={0}
+        max={6}
         skew={skewWithCenterValue(-10, -100, 0)}
         direction="up"
         step={0.1}
         onChange={(v) => setVolume(v)}
         enableWheel={['normalized', 0.1]}
+        color="#555"
+        bg="#555"
         scale={[
-          { at: 0, type: 'mark-number' },
-          { at: -10, type: 'mark-number' },
-          { at: -100, type: 'mark-number' },
+          { at: 6 },
+          { at: 0 },
+          { at: -6 },
+          { at: -12 },
+          { at: -24 },
+          { at: -100, text: '-inf' },
         ]}
+        scaleOption={{
+          labelWidth: 30,
+        }}
       >
         <SliderThumb
           style={{
@@ -263,7 +322,23 @@ export const VolumeFader = () => {
             borderColor: '#aaa',
             borderWidth: 1,
           }}
-        ></SliderTrack>
+        >
+          <AnimationCanvas
+            width={100}
+            height={100}
+            relativeSize={true}
+            draw={(ctx, w, h) => {
+              ctx.clearRect(0, 0, w, h)
+              // TODO
+              // if (analyzerNode && dataArray.current) {
+              //   analyzerNode.getFloatTimeDomainData(dataArray.current);
+              // }
+              const r = Math.random() * h
+              ctx.fillStyle = '#42eb53'
+              ctx.fillRect(0, h - r, w, r)
+            }}
+          />
+        </SliderTrack>
       </Slider>
       <p>{volume <= -100 ? '-inf' : volume} dB</p>
     </div>
