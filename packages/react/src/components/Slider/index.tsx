@@ -12,19 +12,15 @@ import {
 import { clamp, normalizeValue, rawValue, stepValue } from 'common/math'
 import { WheelOption } from 'common/types'
 import { styleHelper } from 'common/util'
-import React, { ReactNode, useRef } from 'react'
+import React, { ReactElement, useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { UserActionPseudoProps } from '../../system/pseudo'
 
+import { SliderThumb } from './Thumb'
+import { SliderTrack } from './Track'
 import { ScaleOption } from './type'
-
-// interface SliderThumbProps {}
-
-export function SliderThumb(/* {}: SliderThumbProps */) {
-  return <div></div>
-}
 
 interface SliderProps {
   // required
@@ -47,7 +43,8 @@ interface SliderProps {
   className?: string
   style?: CSSObject
   onChange?: (value: number) => void
-  children?: ReactNode // SliderThumb
+  children?: ReactElement | ReactElement[]
+  // ReactElement<typeof SliderThumb, typeof SliderTrack>[]
 }
 
 export function Slider({
@@ -82,23 +79,26 @@ export function Slider({
   const scalesList = parseScaleOrderList(scale, min, max, step)
   if (isReversed(direction)) scalesList.reverse()
 
-  // let trackElement: ReactElement
-  // let thumbElement: ReactElement
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let trackProps: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let thumbProps: any
   if (children != undefined) {
-    const childElements = React.Children.toArray(children)
-    const lastElement = childElements[childElements.length - 1]
-    if (React.isValidElement(lastElement)) {
-      // defaultThumb = false
-      if (lastElement.type == SliderThumb) {
-        // thumbElement = lastElement
-        // do something
+    React.Children.forEach(children, (child) => {
+      if (React.isValidElement(child)) {
+        if (child.type == SliderThumb) {
+          thumbProps = child.props
+        } else if (child.type == SliderTrack) {
+          trackProps = child.props
+        } else {
+          throw new Error('only <SliderThumb> or <SliderTrack>')
+        }
       } else {
-        // throw new Error("children must be <SliderThumb />")
+        throw new Error('children is an invalid element.')
       }
-    } else {
-      throw new Error('children is an invalid element.')
-    }
+    })
   }
+  console.log(thumbProps)
 
   const thumbDragged = useRef(false)
   const handleValue = (
@@ -157,19 +157,21 @@ export function Slider({
 
   return (
     <div
-      className={'tremolo-slider' + className ? ` ${className}` : ''}
+      className={'tremolo-slider' + (className ? ` ${className}` : '')}
       ref={wrapperRef}
       tabIndex={-1}
       role="slider"
       aria-valuenow={value}
       aria-valuemax={max}
       aria-valuemin={min}
+      aria-orientation={isHorizontal(direction) ? 'horizontal' : 'vertical'}
       css={css({
         display: 'inline-block',
         boxSizing: 'border-box',
         margin: '0.7rem',
         padding: 0,
         cursor: 'pointer',
+        ...style,
       })}
       onMouseDown={(event) => {
         thumbDragged.current = true
@@ -189,54 +191,35 @@ export function Slider({
           flexDirection: isHorizontal(direction) ? 'column' : 'row',
         })}
       >
+        {/* trackProps */}
         <div
-          className="tremolo-slider-track"
+          className="tremolo-slider-track-wrapper"
           ref={trackElementRef}
           css={css({
-            background: `linear-gradient(to ${gradientDirection(direction)}, ${color} ${percent}%, ${bg} ${percent}%)`,
-            borderRadius:
-              typeof thickness == 'number'
-                ? thickness / 2
-                : `calc(${thickness} / 2)`,
-            borderStyle: 'solid',
-            borderColor: '#ccc',
-            borderWidth: 2,
-            width: isHorizontal(direction) ? length : thickness,
-            height: isHorizontal(direction) ? thickness : length,
             position: 'relative',
             zIndex: 1,
-            // ...style,
           })}
         >
-          <div
-            className="tremolo-slider-thumb-wrapper"
-            css={css({
-              width: 'fit-content',
-              height: 'fit-content',
-              position: 'absolute',
+          <SliderTrack
+            __css={{
+              background: `linear-gradient(to ${gradientDirection(direction)}, ${color} ${percent}%, ${bg} ${percent}%)`,
+              borderRadius: styleHelper(thickness, '/', 2),
+              borderStyle: 'solid',
+              borderColor: '#ccc',
+              borderWidth: 2,
+              width: isHorizontal(direction) ? length : thickness,
+              height: isHorizontal(direction) ? thickness : length,
+            }}
+            {...trackProps}
+          />
+          <SliderThumb
+            color={color}
+            __css={{
               top: isHorizontal(direction) ? '50%' : `${percentRev}%`,
               left: isHorizontal(direction) ? `${percentRev}%` : '50%',
-              translate: '-50% -50%',
-              zIndex: 100,
-            })}
-          >
-            {children ? (
-              children
-            ) : (
-              // default slider thumb
-              <div
-                className="tremolo-slider-thumb"
-                // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-                tabIndex={0}
-                css={css({
-                  background: color,
-                  width: '1.4rem',
-                  height: '1.4rem',
-                  borderRadius: '50%',
-                })}
-              ></div>
-            )}
-          </div>
+            }}
+            {...thumbProps}
+          />
         </div>
         {scale && (
           <div
@@ -321,4 +304,6 @@ export function Slider({
   )
 }
 
+export { SliderThumb } from './Thumb'
+export { SliderTrack } from './Track'
 export * from 'common/components/Slider/type'

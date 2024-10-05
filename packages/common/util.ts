@@ -1,8 +1,31 @@
-export function styleHelper(property: string | number) {
-  if (typeof property == 'number') {
-    return `${property}px`
+type Operator = '+' | '-' | '*' | '/'
+
+export function styleHelper(value: string | number): string
+export function styleHelper(
+  value: string | number,
+  op: Operator,
+  influencer?: number,
+): string
+export function styleHelper(
+  value: string | number,
+  op?: Operator,
+  influencer?: number,
+) {
+  if (op && influencer) {
+    if (typeof value == 'number') {
+      if (op == '+') return `${value + influencer}px`
+      if (op == '-') return `${value - influencer}px`
+      if (op == '*') return `${value * influencer}px`
+      if (op == '/') return `${value / influencer}px`
+    } else {
+      return `calc(${value}px ${op} ${influencer})`
+    }
   } else {
-    return property
+    if (typeof value == 'number') {
+      return `${value}px`
+    } else {
+      return value
+    }
   }
 }
 

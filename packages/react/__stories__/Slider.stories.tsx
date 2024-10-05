@@ -1,7 +1,12 @@
 import { skewWithCenterValue } from 'common/math'
 import { useState } from 'react'
 
-import { Direction as SliderDirection, Slider } from '../src/components/Slider'
+import {
+  Direction as SliderDirection,
+  Slider,
+  SliderThumb,
+  SliderTrack,
+} from '../src/components/Slider'
 
 import thumbImage from './assets/tremolo-slider-thumb.png'
 
@@ -84,7 +89,7 @@ export const Direction = () => {
               direction={direction as SliderDirection}
               enableWheel={['raw', 5]}
               onChange={(v) => setter(v)}
-            ></Slider>
+            />
             <p>value: {value}%</p>
           </div>
         )
@@ -93,7 +98,7 @@ export const Direction = () => {
   )
 }
 
-export const VolumeFader = () => {
+export const LogarithmicParameter = () => {
   const [value, setValue] = useState(0)
 
   return (
@@ -113,7 +118,7 @@ export const VolumeFader = () => {
         step={0.1}
         onChange={(v) => setValue(v)}
         enableWheel={['normalized', 0.1]}
-      ></Slider>
+      />
       <p>{value <= -100 ? '-inf' : value} dB</p>
     </div>
   )
@@ -136,12 +141,15 @@ export const CustomImage = () => {
           borderRadius: 0,
         }}
       >
-        <img
-          src={thumbImage} // TODO: use staticDirs
-          alt="slider thumb"
-          draggable={false}
-          style={{ display: 'block' }} // remove bottom gap
-        />
+        <SliderTrack></SliderTrack>
+        <SliderThumb>
+          <img
+            src={thumbImage} // TODO: use staticDirs
+            alt="slider thumb"
+            draggable={false}
+            style={{ display: 'block' }} // remove bottom gap
+          />
+        </SliderThumb>
       </Slider>
       <p>value: {value}</p>
     </>
@@ -170,7 +178,7 @@ export const Scale = () => {
             { at: 75, type: 'mark' },
             { at: 100, type: 'mark-number' },
           ]}
-        ></Slider>
+        />
         <p>value: {value}</p>
       </section>
       <section style={{ marginBottom: '2rem' }}>
@@ -216,5 +224,48 @@ export const Scale = () => {
         <p>value: {value3}</p>
       </section>
     </>
+  )
+}
+
+export const VolumeFader = () => {
+  const [volume, setVolume] = useState(0)
+
+  return (
+    <div style={{ padding: '1rem' }}>
+      <Slider
+        value={volume}
+        min={-100}
+        max={0}
+        skew={skewWithCenterValue(-10, -100, 0)}
+        direction="up"
+        step={0.1}
+        onChange={(v) => setVolume(v)}
+        enableWheel={['normalized', 0.1]}
+        scale={[
+          { at: 0, type: 'mark-number' },
+          { at: -10, type: 'mark-number' },
+          { at: -100, type: 'mark-number' },
+        ]}
+      >
+        <SliderThumb
+          style={{
+            backgroundColor: '#eee',
+            width: '2.4rem',
+            height: '1.2rem',
+            borderRadius: '0.6rem',
+            borderWidth: 1,
+            borderStyle: 'solid',
+            borderColor: '#aaa',
+          }}
+        />
+        <SliderTrack
+          style={{
+            borderColor: '#aaa',
+            borderWidth: 1,
+          }}
+        ></SliderTrack>
+      </Slider>
+      <p>{volume <= -100 ? '-inf' : volume} dB</p>
+    </div>
   )
 }
