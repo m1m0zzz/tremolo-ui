@@ -5,6 +5,7 @@ type DrawFunc = (
   context: CanvasRenderingContext2D,
   width: number,
   height: number,
+  count: number,
 ) => void
 
 interface AnimationCanvasProps {
@@ -31,9 +32,12 @@ export function AnimationCanvas({
     context: CanvasRenderingContext2D,
     width: number,
     height: number,
+    count: number,
   ) => {
-    reqIdRef.current = requestAnimationFrame(() => loop(context, width, height))
-    draw(context, width, height)
+    reqIdRef.current = requestAnimationFrame(() =>
+      loop(context, width, height, count + 1),
+    )
+    draw(context, width, height, count + 1)
   }
 
   useEffect(() => {
@@ -43,25 +47,18 @@ export function AnimationCanvas({
     ) as CanvasRenderingContext2D
     let w: number, h: number
     if (relativeSize) {
-      console.log(canvasRef.current.parentElement)
-      console.log(canvasRef.current.parentElement?.clientWidth)
-      console.log(canvasRef.current.parentElement?.clientHeight)
-      w = Math.floor(
-        ((canvasRef.current.parentElement?.clientWidth ?? 0) * (width ?? 100)) /
-          100,
-      )
-      h = Math.floor(
-        ((canvasRef.current.parentElement?.clientHeight ?? 0) *
-          (height ?? 100)) /
-          100,
-      )
+      const parentWidth = canvasRef.current.parentElement?.clientWidth ?? 0
+      const parentHeight = canvasRef.current.parentElement?.clientHeight ?? 0
+      w = Math.floor((parentWidth * (width ?? 100)) / 100)
+      h = Math.floor((parentHeight * (height ?? 100)) / 100)
       canvasRef.current.width = w
       canvasRef.current.height = h
+    } else {
+      w = canvasRef.current.width
+      h = canvasRef.current.height
     }
-    w = canvasRef.current.width
-    h = canvasRef.current.height
-    if (init) init(context, w, h)
-    loop(context, w, h)
+    if (init) init(context, w, h, 0)
+    loop(context, w, h, 0)
 
     return () => {
       if (reqIdRef.current) cancelAnimationFrame(reqIdRef.current)

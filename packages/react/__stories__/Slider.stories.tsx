@@ -1,5 +1,5 @@
 import { Meta } from '@storybook/react'
-import { skewWithCenterValue } from 'common/math'
+import { normalizeValue, skewWithCenterValue } from 'common/math'
 import { useRef, useState } from 'react'
 
 import { AnimationCanvas } from '../src/components/AnimationCanvas'
@@ -11,6 +11,7 @@ import {
 } from '../src/components/Slider'
 
 import thumbImage from './assets/tremolo-slider-thumb.png'
+import { getRMS } from './lib/dsp'
 
 export default {
   title: 'React/Components/Slider',
@@ -230,10 +231,14 @@ export const Scale = () => {
 export const VolumeFader = () => {
   const [volume, setVolume] = useState(0)
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null)
-  const [_gainNode, setGainNode] = useState<GainNode | null>(null)
-  const [_analyzerNode, setAnalyzerNode] = useState<AnalyserNode | null>(null)
+  const [gainNode, setGainNode] = useState<GainNode | null>(null)
+  const [analyzerNode, setAnalyzerNode] = useState<AnalyserNode | null>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
   const dataArray = useRef<Float32Array>()
+
+  const min = -100
+  const max = 6
+  const skew = skewWithCenterValue(-10, min, max)
 
   const handleAudio = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!audioRef.current) return
@@ -274,7 +279,10 @@ export const VolumeFader = () => {
         <input
           type="file"
           accept="audio/*"
-          style={{ marginBottom: '1rem' }}
+          style={{
+            display: 'block',
+            marginBottom: '1rem',
+          }}
           onChange={(event) => {
             handleAudio(event)
           }}
@@ -285,12 +293,16 @@ export const VolumeFader = () => {
 
       <Slider
         value={volume}
-        min={-100}
-        max={6}
-        skew={skewWithCenterValue(-10, -100, 0)}
+        min={min}
+        max={max}
+        skew={skew}
         direction="up"
         step={0.1}
-        onChange={(v) => setVolume(v)}
+        onChange={(v) => {
+          setVolume(v)
+          if (!gainNode) return
+          gainNode.gain.value = normalizeValue(v, min, max, skew)
+        }}
         enableWheel={['normalized', 0.1]}
         color="#555"
         bg="#555"
@@ -312,30 +324,28 @@ export const VolumeFader = () => {
             width: '2.4rem',
             height: '1.2rem',
             borderRadius: '0.6rem',
-            borderWidth: 1,
-            borderStyle: 'solid',
-            borderColor: '#aaa',
+            border: '1px solid #aaa',
           }}
         />
         <SliderTrack
           style={{
-            borderColor: '#aaa',
-            borderWidth: 1,
+            border: '1px solid #aaa',
           }}
         >
           <AnimationCanvas
             width={100}
             height={100}
             relativeSize={true}
+            init={(ctx) => {
+              ctx.fillStyle = '#42eb53'
+            }}
             draw={(ctx, w, h) => {
               ctx.clearRect(0, 0, w, h)
-              // TODO
-              // if (analyzerNode && dataArray.current) {
-              //   analyzerNode.getFloatTimeDomainData(dataArray.current);
-              // }
-              const r = Math.random() * h
-              ctx.fillStyle = '#42eb53'
-              ctx.fillRect(0, h - r, w, r)
+              if (!analyzerNode || !dataArray.current) return
+              analyzerNode.getFloatTimeDomainData(dataArray.current)
+              const rms = getRMS(dataArray.current)
+              const barH = normalizeValue(rms, min, max, skew) * h
+              ctx.fillRect(0, h - barH, w, h)
             }}
           />
         </SliderTrack>

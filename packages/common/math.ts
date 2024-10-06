@@ -61,3 +61,11 @@ export function radian(degree: number) {
 export function degree(radian: number) {
   return (180 * radian) / Math.PI
 }
+
+export function dbToGain(db: number) {
+  return Math.pow(10, db / 20)
+}
+
+export function gainToDb(gain: number) {
+  return 20 * (Math.log(gain) / Math.LN10)
+}
