@@ -1,7 +1,7 @@
 import { css, CSSObject, Global } from '@emotion/react'
 import { clamp, normalizeValue, radian, rawValue, stepValue } from 'common/math'
 import { WheelOption } from 'common/types'
-import { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
@@ -14,6 +14,8 @@ interface KnobProps {
   max: number
 
   // optional
+  defaultValue?: number
+  startValue?: number
   step?: number
   skew?: number // | SkewFunction
   size?: number | string
@@ -29,7 +31,7 @@ interface KnobProps {
   }
   draw?: (
     context: CanvasRenderingContext2D,
-    value: number,
+    currentValue: number,
     w?: number,
     h?: number,
   ) => void
@@ -37,6 +39,7 @@ interface KnobProps {
   style?: CSSObject
   bodyNoSelect?: boolean
   enableWheel?: WheelOption
+  enableDoubleClickDefault?: boolean
   onChange?: (value: number) => void
 }
 
@@ -49,10 +52,15 @@ const defaultOptions = {
   thumbWeight: 4,
 }
 
+/**
+ * simple rotary Knob.
+ */
 export function Knob({
   value,
   min,
   max,
+  defaultValue = min,
+  startValue = min,
   step = 1,
   skew = 1,
   size,
@@ -64,6 +72,7 @@ export function Knob({
   style,
   bodyNoSelect = true,
   enableWheel,
+  enableDoubleClickDefault = true,
   onChange,
   ...pseudo
 }: KnobProps & UserActionPseudoProps) {
@@ -132,46 +141,49 @@ export function Knob({
     } else {
       // draw default
       const p = normalizeValue(value, min, max, skew)
+      const startP = normalizeValue(startValue, min, max, skew)
       const cx = w / 2
       const cy = h / 2
       const r = cx
+
       // reset
       context.clearRect(0, 0, w, h)
       context.lineCap = 'butt'
+
       // bg
       context.beginPath()
       context.fillStyle = opts.bg
       context.arc(cx, cy, r - 0.5, 0, 2 * Math.PI)
       context.fill()
-      // active rotary
+
+      context.lineCap = 'round'
       context.lineWidth = opts.lineWeight
-      if (p > 0) {
-        context.beginPath()
-        context.strokeStyle = opts.active
-        context.arc(
-          cx,
-          cy,
-          r - 0.5 - opts.lineWeight / 2,
-          radian(135),
-          radian(135 + 270 * p),
-          false,
-        )
-        context.stroke()
-      }
+
       // inactive rotary
-      if (p < 1) {
-        context.beginPath()
-        context.strokeStyle = opts.inactive
-        context.arc(
-          cx,
-          cy,
-          cx - 0.5 - opts.lineWeight / 2,
-          radian(135 + 270 * p),
-          radian(45),
-          false,
-        )
-        context.stroke()
-      }
+      context.beginPath()
+      context.strokeStyle = opts.inactive
+      context.arc(
+        cx,
+        cy,
+        r - 0.5 - opts.lineWeight / 2,
+        radian(135),
+        radian(45),
+      )
+      context.stroke()
+
+      // active rotary
+      context.beginPath()
+      context.strokeStyle = opts.active
+      context.arc(
+        cx,
+        cy,
+        r - 0.5 - opts.lineWeight / 2,
+        radian(135 + 270 * startP),
+        radian(135 + 270 * p),
+        p < startP,
+      )
+      context.stroke()
+
       // thumb
       context.beginPath()
       context.moveTo(cx, cy)
@@ -181,7 +193,6 @@ export function Knob({
       )
       context.strokeStyle = opts.thumb
       context.lineWidth = opts.thumbWeight
-      context.lineCap = 'round'
       context.stroke()
     }
   }, [value, min, max, skew])
@@ -206,6 +217,11 @@ export function Knob({
       onMouseDown={(event) => {
         dragOffsetY.current = event.screenY
         handleValue(event)
+      }}
+      onDoubleClick={() => {
+        if (enableDoubleClickDefault && onChange) {
+          onChange(defaultValue)
+        }
       }}
     >
       <Global
