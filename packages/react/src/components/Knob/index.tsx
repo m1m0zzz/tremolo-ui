@@ -74,15 +74,23 @@ export function Knob({
   enableWheel,
   enableDoubleClickDefault = true,
   onChange,
-  ...pseudo
-}: KnobProps & UserActionPseudoProps) {
+  _active,
+  _focus,
+  _hover,
+  ...props
+}: KnobProps &
+  UserActionPseudoProps &
+  Omit<
+    React.ClassAttributes<HTMLDivElement> &
+      React.HTMLAttributes<HTMLDivElement>,
+    'onChange'
+  >) {
   // -- state and ref ---
   // const [privateValue, setPrivateValue] = useState(value);
   const dragOffsetY = useRef<number | undefined>(undefined)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   // --- interpret props ---
-  const { _active, _focus, _hover } = pseudo
   const opts = { ...defaultOptions, ...options }
   // const percent = normalizeValue(value, min, max, skew)
 
@@ -120,11 +128,13 @@ export function Knob({
     [value],
   )
 
-  useEventListener(window, 'mousemove', (event) => {
-    handleValue(event)
+  useEventListener(window, 'pointermove', (event) => {
+    console.log('pointer move')
+    if (dragOffsetY.current) event.preventDefault()
+    // handleValue(event)
   })
 
-  useEventListener(window, 'mouseup', () => {
+  useEventListener(window, 'pointerup', () => {
     dragOffsetY.current = undefined
     if (bodyNoSelect) document.body.classList.remove('no-select')
   })
@@ -213,16 +223,28 @@ export function Knob({
         position: 'relative',
         cursor: cursor,
         ...style,
+        ':active': {
+          ..._active,
+        },
+        ':focus': {
+          ..._focus,
+        },
+        ':hover': {
+          ..._hover,
+        },
       })}
-      onMouseDown={(event) => {
+      onPointerDown={(event) => {
+        console.log('pointer down')
         dragOffsetY.current = event.screenY
         handleValue(event)
       }}
       onDoubleClick={() => {
+        console.log('db click')
         if (enableDoubleClickDefault && onChange) {
           onChange(defaultValue)
         }
       }}
+      {...props}
     >
       <Global
         styles={{
