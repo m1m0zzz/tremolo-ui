@@ -47,6 +47,9 @@ interface SliderProps {
   // ReactElement<typeof SliderThumb, typeof SliderTrack>[]
 }
 
+/**
+ * Customizable slider
+ */
 export function Slider({
   value,
   min,

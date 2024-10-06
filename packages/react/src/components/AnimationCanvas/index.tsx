@@ -17,6 +17,9 @@ interface AnimationCanvasProps {
   draw: DrawFunc
 }
 
+/**
+ * A simple animatable canvas with requestAnimationFrame()
+ */
 export function AnimationCanvas({
   width,
   height,

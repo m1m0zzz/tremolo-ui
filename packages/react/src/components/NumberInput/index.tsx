@@ -51,6 +51,9 @@ interface NumberInputProps {
   ) => void
 }
 
+/**
+ * Input with some useful functions for entering numerical values.
+ */
 export function NumberInput({
   value,
   min, // TODO
