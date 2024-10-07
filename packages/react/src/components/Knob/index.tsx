@@ -131,7 +131,7 @@ export function Knob({
   useEventListener(window, 'pointermove', (event) => {
     console.log('pointer move')
     if (dragOffsetY.current) event.preventDefault()
-    // handleValue(event)
+    handleValue(event)
   })
 
   useEventListener(window, 'pointerup', () => {
