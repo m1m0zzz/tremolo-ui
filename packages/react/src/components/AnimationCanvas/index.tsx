@@ -67,15 +67,13 @@ export function AnimationCanvas({
     if (!canvasRef.current) return
     const canvas = canvasRef.current
     const context = canvas.getContext('2d', options)
-    if (!context) {
-      throw new Error('Cannot get canvas context.')
-    }
+    if (!context) throw new Error('Cannot get canvas context.')
     const dpr = window.devicePixelRatio
+
     if (relativeSize) {
       const parent = canvas.parentElement
-      if (!parent) {
-        throw new Error("Canvas doesn't have a parent element.")
-      }
+      if (!parent) throw new Error("Canvas doesn't have a parent element.")
+
       const resizeObserver = new ResizeObserver(() => {
         // Prevents loss of some context when the canvas is resized
         const contextMemo = {} as DrawingContext
@@ -106,7 +104,7 @@ export function AnimationCanvas({
 
       return () => {
         if (reqIdRef.current) cancelAnimationFrame(reqIdRef.current)
-        if (resizeObserver) resizeObserver.unobserve(parent)
+        resizeObserver.unobserve(parent)
       }
     } else {
       const rect = canvas.getBoundingClientRect()
