@@ -340,12 +340,12 @@ export const VolumeFader = () => {
               ctx.fillStyle = '#42eb53'
             }}
             draw={(ctx, w, h) => {
-              ctx.clearRect(0, 0, w, h)
+              ctx.clearRect(0, 0, w.current, h.current)
               if (!analyzerNode || !dataArray.current) return
               analyzerNode.getFloatTimeDomainData(dataArray.current)
               const rms = getRMS(dataArray.current)
-              const barH = normalizeValue(rms, min, max, skew) * h
-              ctx.fillRect(0, h - barH, w, h)
+              const barH = normalizeValue(rms, min, max, skew) * h.current
+              ctx.fillRect(0, h.current - barH, w.current, h.current)
             }}
           />
         </SliderTrack>

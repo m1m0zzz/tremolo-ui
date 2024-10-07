@@ -64,54 +64,21 @@ export const RelativeSize = () => {
       <AnimationCanvas
         relativeSize={true}
         draw={(ctx, w, h) => {
-          ctx.strokeStyle = 'black'
-          // bg
-          ctx.rect(0, 0, w.current, h.current)
-          ctx.fillStyle = 'white'
-          ctx.fill()
+          ctx.clearRect(0, 0, w.current, h.current)
 
           // frame
-          const len = 40
-          const pad = 20
-          const lines: [number, number][][] = [
-            [
-              [pad, pad + len],
-              [0, -len],
-              [len, 0],
-            ],
-            [
-              [w.current - pad - len, pad],
-              [len, 0],
-              [0, len],
-            ],
-            [
-              [w.current - pad, h.current - pad - len],
-              [0, len],
-              [-len, 0],
-            ],
-            [
-              [pad + len, h.current - pad],
-              [-len, 0],
-              [0, -len],
-            ],
-          ]
-          lines.forEach((group) => {
+          const pad = 30
+          const interval = 30
+          ctx.strokeStyle = 'black'
+          for (let x = 0; x < w.current + h.current; x += interval) {
             ctx.beginPath()
-            let beforeX = 0,
-              beforeY = 0
-            group.forEach((line, i) => {
-              if (i == 0) {
-                beforeX = line[0]
-                beforeY = line[1]
-                ctx.moveTo(...line)
-              } else {
-                beforeX += line[0]
-                beforeY += line[1]
-                ctx.lineTo(beforeX, beforeY)
-              }
-            })
+            ctx.moveTo(x, 0)
+            ctx.lineTo(0, x)
             ctx.stroke()
-          })
+          }
+          ctx.rect(pad, pad, w.current - pad * 2, h.current - pad * 2)
+          ctx.fillStyle = 'white'
+          ctx.fill()
 
           // text
           ctx.fillStyle = 'black'
