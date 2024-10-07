@@ -1,7 +1,7 @@
 import { css, CSSObject } from '@emotion/react'
 import { MutableRefObject, useEffect, useRef } from 'react'
 
-import { DrawingState, isDrawingState } from './canvas'
+import { DrawingState, DrawingStateValue, isDrawingState } from './canvas'
 
 type DrawFunc = (
   context: CanvasRenderingContext2D,
@@ -62,10 +62,10 @@ export function AnimationCanvas({
         throw new Error("canvas doesn't have a parent element")
       }
       const resizeObserver = new ResizeObserver(() => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const obj: { [k in DrawingState]: any } = {}
+        const contextMemo: Partial<{ [k in DrawingState]: DrawingStateValue }> =
+          {}
         for (const prop in context) {
-          if (isDrawingState(prop)) obj[prop] = context[prop]
+          if (isDrawingState(prop)) contextMemo[prop] = context[prop]
         }
 
         widthRef.current = canvas.width = Math.floor(
@@ -75,8 +75,8 @@ export function AnimationCanvas({
           (parent.clientHeight * (height ?? 100)) / 100,
         )
 
-        for (const prop in obj) {
-          context[prop as DrawingState] = obj[prop as DrawingState]
+        for (const prop of Object.keys(contextMemo)) {
+          context[prop] = contextMemo[prop as DrawingState]
         }
       })
       resizeObserver.observe(parent)

@@ -21,6 +21,7 @@ export const drawingState = [
 ] as const
 
 export type DrawingState = (typeof drawingState)[number]
+export type DrawingStateValue = CanvasRenderingContext2D[DrawingState]
 
 export function isDrawingState(obj: unknown): obj is DrawingState {
   const d: string[] = [...drawingState]
