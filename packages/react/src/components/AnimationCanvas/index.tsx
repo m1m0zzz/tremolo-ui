@@ -1,7 +1,21 @@
 import { css, CSSObject } from '@emotion/react'
 import { MutableRefObject, useEffect, useRef } from 'react'
 
-import { DrawingState, DrawingStateValue, isDrawingState } from './canvas'
+import { DrawingContext, drawingState, DrawingStateValue } from './canvas'
+
+function setDprConfig(
+  canvas: HTMLCanvasElement,
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  dpr: number,
+) {
+  canvas.width = width * dpr
+  canvas.height = height * dpr
+  context.scale(dpr, dpr)
+  canvas.style.width = `${width}px`
+  canvas.style.height = `${height}px`
+}
 
 type DrawFunc = (
   context: CanvasRenderingContext2D,
@@ -52,39 +66,40 @@ export function AnimationCanvas({
   useEffect(() => {
     if (!canvasRef.current) return
     const canvas = canvasRef.current
-    const context = canvas.getContext('2d', options) as CanvasRenderingContext2D
+    const context = canvas.getContext('2d', options)
+    if (!context) {
+      throw new Error('Cannot get canvas context.')
+    }
     const dpr = window.devicePixelRatio
-    // console.log(dpr)
-    const rect = canvas.getBoundingClientRect()
     if (relativeSize) {
       const parent = canvas.parentElement
       if (!parent) {
-        throw new Error("canvas doesn't have a parent element")
+        throw new Error("Canvas doesn't have a parent element.")
       }
       const resizeObserver = new ResizeObserver(() => {
-        const contextMemo: Partial<{ [k in DrawingState]: DrawingStateValue }> =
-          {}
-        for (const prop in context) {
-          if (isDrawingState(prop)) contextMemo[prop] = context[prop]
+        // Prevents loss of some context when the canvas is resized
+        const contextMemo = {} as DrawingContext
+        for (const prop of drawingState) {
+          (contextMemo[prop] as DrawingStateValue) = context[prop]
         }
 
-        widthRef.current = canvas.width = Math.floor(
-          (parent.clientWidth * (width ?? 100)) / 100,
-        )
-        heightRef.current = canvas.height = Math.floor(
-          (parent.clientHeight * (height ?? 100)) / 100,
-        )
+        const w = Math.floor((parent.clientWidth * (width ?? 100)) / 100)
+        const h = Math.floor((parent.clientHeight * (height ?? 100)) / 100)
+        setDprConfig(canvas, context, w, h, dpr)
+        widthRef.current = w
+        heightRef.current = h
 
-        for (const prop of Object.keys(contextMemo)) {
-          context[prop] = contextMemo[prop as DrawingState]
+        for (const prop of drawingState) {
+          (context[prop] as DrawingStateValue) = contextMemo[prop]
         }
       })
       resizeObserver.observe(parent)
 
       const w = Math.floor((parent.clientWidth * (width ?? 100)) / 100)
       const h = Math.floor((parent.clientHeight * (height ?? 100)) / 100)
-      widthRef.current = canvas.width = w
-      heightRef.current = canvas.height = h
+      setDprConfig(canvas, context, w, h, dpr)
+      widthRef.current = w
+      heightRef.current = h
 
       if (init) init(context, widthRef, heightRef, 0)
       loop(context, widthRef, heightRef, 0)
@@ -94,11 +109,8 @@ export function AnimationCanvas({
         if (resizeObserver) resizeObserver.unobserve(parent)
       }
     } else {
-      canvas.width = rect.width * dpr
-      canvas.height = rect.height * dpr
-      context.scale(dpr, dpr)
-      canvas.style.width = `${rect.width}px`
-      canvas.style.height = `${rect.height}px`
+      const rect = canvas.getBoundingClientRect()
+      setDprConfig(canvas, context, rect.width, rect.height, dpr)
       widthRef.current = rect.width
       heightRef.current = rect.height
 
