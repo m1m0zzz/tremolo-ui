@@ -45,7 +45,13 @@ export function AnimationCanvas({
   options,
   init,
   draw,
-}: AnimationCanvasProps) {
+  ...props
+}: AnimationCanvasProps &
+  Omit<
+    React.ClassAttributes<HTMLCanvasElement> &
+      React.CanvasHTMLAttributes<HTMLCanvasElement>,
+    'ref' | 'width' | 'height' | 'style'
+  >) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const reqIdRef = useRef<number>()
   const widthRef = useRef(0)
@@ -127,6 +133,7 @@ export function AnimationCanvas({
       height={relativeSize ? 0 : height}
       css={css(style)}
       ref={canvasRef}
+      {...props}
     ></canvas>
   )
 }

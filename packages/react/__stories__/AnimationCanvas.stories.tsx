@@ -63,6 +63,7 @@ export const RelativeSize = () => {
     >
       <AnimationCanvas
         relativeSize={true}
+        onContextMenu={(e) => e.preventDefault()}
         draw={(ctx, w, h, count) => {
           ctx.clearRect(0, 0, w.current, h.current)
 
