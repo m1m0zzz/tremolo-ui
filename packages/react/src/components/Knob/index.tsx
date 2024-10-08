@@ -101,7 +101,7 @@ export function Knob({
       | TouchEvent,
   ) => {
     const isTouch = event instanceof TouchEvent
-    if (isTouch) event.preventDefault()
+    if (isTouch && event.cancelable) event.preventDefault()
     if (dragOffsetY.current) {
       if (bodyNoSelect) document.body.classList.add('no-select')
       const screenY = isTouch ? event.touches[0].screenY : event.screenY
