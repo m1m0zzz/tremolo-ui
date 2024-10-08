@@ -38,8 +38,8 @@ interface AnimationCanvasProps {
  * A simple animatable canvas with requestAnimationFrame()
  */
 export function AnimationCanvas({
-  width,
-  height,
+  width = 100,
+  height = 100,
   style,
   relativeSize = false,
   options,
@@ -81,8 +81,8 @@ export function AnimationCanvas({
           (contextMemo[prop] as DrawingStateValue) = context[prop]
         }
 
-        const w = Math.floor((parent.clientWidth * (width ?? 100)) / 100)
-        const h = Math.floor((parent.clientHeight * (height ?? 100)) / 100)
+        const w = Math.floor((parent.clientWidth * width) / 100)
+        const h = Math.floor((parent.clientHeight * height) / 100)
         setDprConfig(canvas, context, w, h, dpr)
         widthRef.current = w
         heightRef.current = h
@@ -93,8 +93,8 @@ export function AnimationCanvas({
       })
       resizeObserver.observe(parent)
 
-      const w = Math.floor((parent.clientWidth * (width ?? 100)) / 100)
-      const h = Math.floor((parent.clientHeight * (height ?? 100)) / 100)
+      const w = Math.floor((parent.clientWidth * width) / 100)
+      const h = Math.floor((parent.clientHeight * height) / 100)
       setDprConfig(canvas, context, w, h, dpr)
       widthRef.current = w
       heightRef.current = h
