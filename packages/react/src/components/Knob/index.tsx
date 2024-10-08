@@ -95,26 +95,18 @@ export function Knob({
   // const percent = normalizeValue(value, min, max, skew)
 
   const handleEvent = (
-    event: MouseEvent | React.MouseEvent<HTMLDivElement, MouseEvent>,
+    event:
+      | MouseEvent
+      | React.MouseEvent<HTMLDivElement, MouseEvent>
+      | TouchEvent,
   ) => {
+    const isTouch = event instanceof TouchEvent
+    if (isTouch) event.preventDefault()
     if (dragOffsetY.current) {
       if (bodyNoSelect) document.body.classList.add('no-select')
-      const delta = dragOffsetY.current - event.screenY
-      dragOffsetY.current = event.screenY
-      const n = normalizeValue(value, min, max, skew)
-      const v = rawValue(n + delta / 100, min, max, skew)
-      const v2 = clamp(stepValue(v, step), min, max)
-      if (onChange) onChange(v2)
-    }
-  }
-
-  const handleTouch = (event: TouchEvent) => {
-    event.preventDefault()
-    // console.log(event)
-    if (dragOffsetY.current) {
-      if (bodyNoSelect) document.body.classList.add('no-select')
-      const delta = dragOffsetY.current - event.touches[0].screenY
-      dragOffsetY.current = event.touches[0].screenY
+      const screenY = isTouch ? event.touches[0].screenY : event.screenY
+      const delta = dragOffsetY.current - screenY
+      dragOffsetY.current = screenY
       const n = normalizeValue(value, min, max, skew)
       const v = rawValue(n + delta / 100, min, max, skew)
       const v2 = clamp(stepValue(v, step), min, max)
@@ -143,22 +135,12 @@ export function Knob({
   )
 
   useEventListener(window, 'mousemove', (event) => {
-    console.log('mouse move')
     handleEvent(event)
   })
 
-  useEventListener(
-    window,
-    'touchmove',
-    (event) => {
-      console.log('touch move')
-      handleTouch(event)
-    },
-    { passive: false },
-  )
+  useEventListener(window, 'touchmove', handleEvent, { passive: false })
 
   useEventListener(window, 'pointerup', () => {
-    console.log('pointer up')
     dragOffsetY.current = undefined
     if (bodyNoSelect) document.body.classList.remove('no-select')
   })
@@ -258,12 +240,10 @@ export function Knob({
         },
       })}
       onPointerDown={(event) => {
-        console.log('pointer down')
         dragOffsetY.current = event.screenY
         handleEvent(event)
       }}
       onDoubleClick={() => {
-        console.log('db click')
         if (enableDoubleClickDefault && onChange) {
           onChange(defaultValue)
         }
