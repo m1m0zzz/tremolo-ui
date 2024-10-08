@@ -94,13 +94,27 @@ export function Knob({
   const opts = { ...defaultOptions, ...options }
   // const percent = normalizeValue(value, min, max, skew)
 
-  const handleValue = (
+  const handleEvent = (
     event: MouseEvent | React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     if (dragOffsetY.current) {
       if (bodyNoSelect) document.body.classList.add('no-select')
       const delta = dragOffsetY.current - event.screenY
       dragOffsetY.current = event.screenY
+      const n = normalizeValue(value, min, max, skew)
+      const v = rawValue(n + delta / 100, min, max, skew)
+      const v2 = clamp(stepValue(v, step), min, max)
+      if (onChange) onChange(v2)
+    }
+  }
+
+  const handleTouch = (event: TouchEvent) => {
+    event.preventDefault()
+    // console.log(event)
+    if (dragOffsetY.current) {
+      if (bodyNoSelect) document.body.classList.add('no-select')
+      const delta = dragOffsetY.current - event.touches[0].screenY
+      dragOffsetY.current = event.touches[0].screenY
       const n = normalizeValue(value, min, max, skew)
       const v = rawValue(n + delta / 100, min, max, skew)
       const v2 = clamp(stepValue(v, step), min, max)
@@ -128,13 +142,23 @@ export function Knob({
     [value],
   )
 
-  useEventListener(window, 'pointermove', (event) => {
-    console.log('pointer move')
-    if (dragOffsetY.current) event.preventDefault()
-    handleValue(event)
+  useEventListener(window, 'mousemove', (event) => {
+    console.log('mouse move')
+    handleEvent(event)
   })
 
+  useEventListener(
+    window,
+    'touchmove',
+    (event) => {
+      console.log('touch move')
+      handleTouch(event)
+    },
+    { passive: false },
+  )
+
   useEventListener(window, 'pointerup', () => {
+    console.log('pointer up')
     dragOffsetY.current = undefined
     if (bodyNoSelect) document.body.classList.remove('no-select')
   })
@@ -236,7 +260,7 @@ export function Knob({
       onPointerDown={(event) => {
         console.log('pointer down')
         dragOffsetY.current = event.screenY
-        handleValue(event)
+        handleEvent(event)
       }}
       onDoubleClick={() => {
         console.log('db click')
