@@ -115,7 +115,7 @@ export function Knob({
   }
 
   // --- hooks ---
-  const wrapperRef = useRefCallbackEvent(
+  const wheelRefCallback = useRefCallbackEvent(
     'wheel',
     (event) => {
       if (!enableWheel) return
@@ -131,11 +131,17 @@ export function Knob({
       if (onChange) onChange(clamp(stepValue(v, step), min, max))
     },
     { passive: false },
-    [value],
+    [enableWheel, value, min, max, skew, step, onChange],
+  )
+
+  const touchMoveRefCallback = useRefCallbackEvent(
+    'touchmove',
+    handleEvent,
+    { passive: false },
+    [value, min, max, skew, step, onChange, bodyNoSelect],
   )
 
   useEventListener(window, 'mousemove', handleEvent)
-  useEventListener(window, 'touchmove', handleEvent, { passive: false })
 
   useEventListener(window, 'pointerup', () => {
     dragOffsetY.current = undefined
@@ -213,7 +219,10 @@ export function Knob({
   return (
     <div
       className="tremolo-knob"
-      ref={wrapperRef}
+      ref={(div) => {
+        wheelRefCallback(div)
+        touchMoveRefCallback(div)
+      }}
       role="slider"
       tabIndex={0}
       aria-valuenow={value}
