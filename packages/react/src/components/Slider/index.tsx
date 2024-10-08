@@ -104,29 +104,37 @@ export function Slider({
 
   const thumbDragged = useRef(false)
   const handleValue = (
-    event: MouseEvent | React.MouseEvent<HTMLDivElement, MouseEvent>,
+    event: MouseEvent | React.PointerEvent<HTMLDivElement> | TouchEvent,
   ) => {
-    if (trackElementRef.current && thumbDragged.current) {
-      if (bodyNoSelect) document.body.classList.add('no-select')
-      const {
-        left: x1,
-        top: y1,
-        right: x2,
-        bottom: y2,
-      } = trackElementRef.current.getBoundingClientRect()
-      const mouseX = event.clientX
-      const mouseY = event.clientY
-      const n = isHorizontal(direction)
-        ? normalizeValue(mouseX, x1, x2)
-        : normalizeValue(mouseY, y1, y2)
-      const v = rawValue(isReversed(direction) ? 1 - n : n, min, max, skew)
-      const v2 = clamp(stepValue(v, step), min, max)
-      if (onChange) onChange(v2)
-    }
+    if (!trackElementRef.current || !thumbDragged.current) return
+    const isTouch = event instanceof TouchEvent
+    if (isTouch && event.cancelable) event.preventDefault()
+    if (bodyNoSelect) document.body.classList.add('no-select')
+    const {
+      left: x1,
+      top: y1,
+      right: x2,
+      bottom: y2,
+    } = trackElementRef.current.getBoundingClientRect()
+    const mouseX = isTouch ? event.touches[0].clientX : event.clientX
+    const mouseY = isTouch ? event.touches[0].clientY : event.clientY
+    const n = isHorizontal(direction)
+      ? normalizeValue(mouseX, x1, x2)
+      : normalizeValue(mouseY, y1, y2)
+    const v = rawValue(isReversed(direction) ? 1 - n : n, min, max, skew)
+    const v2 = clamp(stepValue(v, step), min, max)
+    if (onChange) onChange(v2)
   }
 
   // --- hooks ---
-  const wrapperRef = useRefCallbackEvent(
+  const touchMoveRefCallback = useRefCallbackEvent(
+    'touchmove',
+    handleValue,
+    { passive: false },
+    [min, max, skew, step, direction, onChange],
+  )
+
+  const wheelRefCallback = useRefCallbackEvent(
     'wheel',
     (event) => {
       if (!enableWheel) return
@@ -145,7 +153,7 @@ export function Slider({
     {
       passive: false,
     },
-    [value],
+    [enableWheel, value, min, max, skew, step],
   )
 
   useEventListener(window, 'mousemove', (event) => {
@@ -160,7 +168,10 @@ export function Slider({
   return (
     <div
       className={'tremolo-slider' + (className ? ` ${className}` : '')}
-      ref={wrapperRef}
+      ref={(div) => {
+        wheelRefCallback(div)
+        touchMoveRefCallback(div)
+      }}
       tabIndex={-1}
       role="slider"
       aria-valuenow={value}
@@ -175,7 +186,7 @@ export function Slider({
         cursor: 'pointer',
         ...style,
       })}
-      onMouseDown={(event) => {
+      onPointerDown={(event) => {
         thumbDragged.current = true
         handleValue(event)
       }}
