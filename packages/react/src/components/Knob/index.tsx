@@ -134,10 +134,7 @@ export function Knob({
     [value],
   )
 
-  useEventListener(window, 'mousemove', (event) => {
-    handleEvent(event)
-  })
-
+  useEventListener(window, 'mousemove', handleEvent)
   useEventListener(window, 'touchmove', handleEvent, { passive: false })
 
   useEventListener(window, 'pointerup', () => {
