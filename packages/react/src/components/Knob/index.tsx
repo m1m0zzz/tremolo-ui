@@ -50,7 +50,7 @@ const defaultOptions = {
   thumb: '#4e76e6',
   lineWeight: 6,
   thumbWeight: 4,
-}
+} as const
 
 /**
  * simple rotary Knob.
@@ -257,9 +257,6 @@ export function Knob({
         ref={canvasRef}
         width={size ?? width}
         height={size ?? height}
-        css={css({
-          background: '#0000',
-        })}
       ></canvas>
     </div>
   )

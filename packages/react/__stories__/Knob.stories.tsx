@@ -41,6 +41,8 @@ export const Options = () => {
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
+        background: '#666',
+        color: 'white',
       }}
     >
       <p>Pan</p>

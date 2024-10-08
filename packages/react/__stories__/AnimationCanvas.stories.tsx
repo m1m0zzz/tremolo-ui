@@ -63,7 +63,7 @@ export const RelativeSize = () => {
     >
       <AnimationCanvas
         relativeSize={true}
-        draw={(ctx, w, h) => {
+        draw={(ctx, w, h, count) => {
           ctx.clearRect(0, 0, w.current, h.current)
 
           // frame
@@ -89,6 +89,12 @@ export const RelativeSize = () => {
             `h: ${h.current}`,
             w.current / 2,
             h.current / 2 + 20,
+          )
+          fillTextCenter(
+            ctx,
+            `count: ${count}`,
+            w.current / 2,
+            h.current / 2 + 40,
           )
         }}
       />
