@@ -28,6 +28,8 @@ interface AnimationCanvasProps {
   width?: number
   height?: number
   relativeSize?: boolean
+  /** only available relativeSize=true */
+  reduceFlickering?: boolean
   options?: CanvasRenderingContext2DSettings
   style?: CSSObject
   init?: DrawFunc
@@ -42,6 +44,7 @@ export function AnimationCanvas({
   height = 100,
   style,
   relativeSize = false,
+  reduceFlickering = true,
   options,
   init,
   draw,
@@ -53,6 +56,7 @@ export function AnimationCanvas({
     'ref' | 'width' | 'height' | 'style'
   >) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const memoCanvasRef = useRef<HTMLCanvasElement>(null)
   const reqIdRef = useRef<number>()
   const widthRef = useRef(0)
   const heightRef = useRef(0)
@@ -79,16 +83,27 @@ export function AnimationCanvas({
     if (relativeSize) {
       const parent = canvas.parentElement
       if (!parent) throw new Error("Canvas doesn't have a parent element.")
+      const memoCanvas = memoCanvasRef.current
+      const memoContext = memoCanvas?.getContext('2d', options)
 
       const resizeObserver = new ResizeObserver(() => {
+        console.log('resize')
         // Prevents loss of some context when the canvas is resized
         const contextMemo = {} as DrawingContext
         for (const prop of drawingState) {
           (contextMemo[prop] as DrawingStateValue) = context[prop]
         }
 
-        const w = Math.floor((parent.clientWidth * width) / 100)
-        const h = Math.floor((parent.clientHeight * height) / 100)
+        const w = Math.floor(parent.clientWidth)
+        const h = Math.floor(parent.clientHeight)
+
+        if (reduceFlickering && memoCanvas && memoContext) {
+          memoCanvas.width = w * dpr
+          memoCanvas.height = h * dpr
+          memoContext.scale(1 / dpr, 1 / dpr)
+          memoContext.drawImage(context.canvas, 0, 0)
+        }
+
         setDprConfig(canvas, context, w, h, dpr)
         widthRef.current = w
         heightRef.current = h
@@ -96,11 +111,15 @@ export function AnimationCanvas({
         for (const prop of drawingState) {
           (context[prop] as DrawingStateValue) = contextMemo[prop]
         }
+
+        if (reduceFlickering && memoContext) {
+          context.drawImage(memoContext.canvas, 0, 0)
+        }
       })
       resizeObserver.observe(parent)
 
-      const w = Math.floor((parent.clientWidth * width) / 100)
-      const h = Math.floor((parent.clientHeight * height) / 100)
+      const w = Math.floor(parent.clientWidth)
+      const h = Math.floor(parent.clientHeight)
       setDprConfig(canvas, context, w, h, dpr)
       widthRef.current = w
       heightRef.current = h
@@ -128,12 +147,22 @@ export function AnimationCanvas({
   }, [loop])
 
   return (
-    <canvas
-      width={relativeSize ? 0 : width}
-      height={relativeSize ? 0 : height}
-      css={css(style)}
-      ref={canvasRef}
-      {...props}
-    ></canvas>
+    <>
+      <canvas
+        width={relativeSize ? 0 : width}
+        height={relativeSize ? 0 : height}
+        css={css(style)}
+        ref={canvasRef}
+        {...props}
+      ></canvas>
+      {relativeSize && reduceFlickering && (
+        <canvas
+          style={{ display: 'none' }}
+          width={relativeSize ? 0 : width}
+          height={relativeSize ? 0 : height}
+          ref={memoCanvasRef}
+        ></canvas>
+      )}
+    </>
   )
 }

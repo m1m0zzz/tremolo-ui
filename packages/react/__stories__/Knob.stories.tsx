@@ -25,6 +25,33 @@ export const Basic = () => {
   )
 }
 
+export const Size = () => {
+  const [value, setValue] = useState(10)
+
+  return (
+    <div
+      style={{
+        backgroundColor: 'azure',
+        width: '100%',
+        height: 300,
+        resize: 'both',
+        overflow: 'hidden',
+      }}
+    >
+      <Knob
+        width={'100%'}
+        height={'100%'}
+        value={value}
+        min={0}
+        max={100}
+        onChange={(v) => setValue(v)}
+        enableWheel={['normalized', 0.1]}
+      />
+      <p>value: {value}</p>
+    </div>
+  )
+}
+
 export const Options = () => {
   const [value, setValue] = useState(0)
 

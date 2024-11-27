@@ -1,11 +1,12 @@
 import { css, CSSObject, Global } from '@emotion/react'
 import { clamp, normalizeValue, radian, rawValue, stepValue } from 'common/math'
 import { WheelOption } from 'common/types'
-import React, { useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { UserActionPseudoProps } from '../../system/pseudo'
+import { AnimationCanvas } from '../AnimationCanvas'
 
 interface KnobProps {
   // required
@@ -18,9 +19,9 @@ interface KnobProps {
   startValue?: number
   step?: number
   skew?: number // | SkewFunction
-  size?: number | string
-  width?: number | string
-  height?: number | string
+  size?: number | `${number}%`
+  width?: number | `${number}%`
+  height?: number | `${number}%`
   options?: {
     active?: string
     inactive?: string
@@ -29,12 +30,13 @@ interface KnobProps {
     lineWeight?: number
     thumbWeight?: number
   }
-  draw?: (
-    context: CanvasRenderingContext2D,
-    currentValue: number,
-    w?: number,
-    h?: number,
-  ) => void
+  // TODO: need?
+  // draw?: (
+  //   context: CanvasRenderingContext2D,
+  //   currentValue: number,
+  //   w?: number,
+  //   h?: number,
+  // ) => void
   cursor?: string
   style?: CSSObject
   bodyNoSelect?: boolean
@@ -67,7 +69,7 @@ export function Knob({
   width = 50,
   height = 50,
   options = defaultOptions,
-  draw,
+  // draw,
   cursor = 'pointer',
   style,
   bodyNoSelect = true,
@@ -88,11 +90,19 @@ export function Knob({
   // -- state and ref ---
   // const [privateValue, setPrivateValue] = useState(value);
   const dragOffsetY = useRef<number | undefined>(undefined)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
 
   // --- interpret props ---
   const opts = { ...defaultOptions, ...options }
   // const percent = normalizeValue(value, min, max, skew)
+
+  const isRelativeSize = typeof (size ?? width) == 'string'
+  const adaptSize = (size: number | `${number}%`) => {
+    if (typeof size == 'string') {
+      return Number(size.slice(0, -1))
+    } else {
+      return size
+    }
+  }
 
   const handleEvent = (
     event:
@@ -148,74 +158,6 @@ export function Knob({
     if (bodyNoSelect) document.body.classList.remove('no-select')
   })
 
-  useEffect(() => {
-    if (!canvasRef.current) return
-    const context = canvasRef.current.getContext(
-      '2d',
-    ) as CanvasRenderingContext2D
-    const w = canvasRef.current.width
-    const h = canvasRef.current.height
-    if (draw) {
-      draw(context, value, w, h)
-    } else {
-      // draw default
-      const p = normalizeValue(value, min, max, skew)
-      const startP = normalizeValue(startValue, min, max, skew)
-      const cx = w / 2
-      const cy = h / 2
-      const r = cx
-
-      // reset
-      context.clearRect(0, 0, w, h)
-      context.lineCap = 'butt'
-
-      // bg
-      context.beginPath()
-      context.fillStyle = opts.bg
-      context.arc(cx, cy, r - 0.5, 0, 2 * Math.PI)
-      context.fill()
-
-      context.lineCap = 'round'
-      context.lineWidth = opts.lineWeight
-
-      // inactive rotary
-      context.beginPath()
-      context.strokeStyle = opts.inactive
-      context.arc(
-        cx,
-        cy,
-        r - 0.5 - opts.lineWeight / 2,
-        radian(135),
-        radian(45),
-      )
-      context.stroke()
-
-      // active rotary
-      context.beginPath()
-      context.strokeStyle = opts.active
-      context.arc(
-        cx,
-        cy,
-        r - 0.5 - opts.lineWeight / 2,
-        radian(135 + 270 * startP),
-        radian(135 + 270 * p),
-        p < startP,
-      )
-      context.stroke()
-
-      // thumb
-      context.beginPath()
-      context.moveTo(cx, cy)
-      context.lineTo(
-        cx + Math.cos(radian(135 + 270 * p)) * (r - 0.5 - opts.thumbWeight / 2),
-        cy + Math.sin(radian(135 + 270 * p)) * (r - 0.5 - opts.thumbWeight / 2),
-      )
-      context.strokeStyle = opts.thumb
-      context.lineWidth = opts.thumbWeight
-      context.stroke()
-    }
-  }, [value, min, max, skew])
-
   return (
     <div
       className="tremolo-knob"
@@ -232,7 +174,6 @@ export function Knob({
         display: 'inline-block',
         width: size ?? width,
         height: size ?? height,
-        position: 'relative',
         cursor: cursor,
         ...style,
         ':active': {
@@ -263,11 +204,75 @@ export function Knob({
           },
         }}
       />
-      <canvas
-        ref={canvasRef}
-        width={size ?? width}
-        height={size ?? height}
-      ></canvas>
+      <AnimationCanvas
+        width={adaptSize(size ?? width)}
+        height={adaptSize(size ?? height)}
+        relativeSize={isRelativeSize}
+        // TODO
+        // reduceFlickering={false}
+        draw={(ctx, _w, _h) => {
+          const p = normalizeValue(value, min, max, skew)
+          const startP = normalizeValue(startValue, min, max, skew)
+          const w = _w.current,
+            cx = w / 2
+          const h = _h.current,
+            cy = h / 2
+          const r = Math.min(cx, cy)
+
+          // reset
+          ctx.clearRect(0, 0, w, h)
+          ctx.lineCap = 'butt'
+
+          // bg
+          ctx.beginPath()
+          ctx.fillStyle = opts.bg
+          ctx.arc(cx, cy, r - 0.5, 0, 2 * Math.PI)
+          ctx.fill()
+
+          ctx.lineCap = 'round'
+          ctx.lineWidth = opts.lineWeight
+
+          // inactive rotary
+          ctx.beginPath()
+          ctx.strokeStyle = opts.inactive
+          ctx.arc(
+            cx,
+            cy,
+            r - 0.5 - opts.lineWeight / 2,
+            radian(135),
+            radian(45),
+          )
+          ctx.stroke()
+
+          // active rotary
+          ctx.beginPath()
+          ctx.strokeStyle = opts.active
+          ctx.arc(
+            cx,
+            cy,
+            r - 0.5 - opts.lineWeight / 2,
+            radian(135 + 270 * startP),
+            radian(135 + 270 * p),
+            p < startP,
+          )
+          ctx.stroke()
+
+          // thumb
+          ctx.beginPath()
+          ctx.moveTo(cx, cy)
+          ctx.lineTo(
+            cx +
+              Math.cos(radian(135 + 270 * p)) *
+                (r - 0.5 - opts.thumbWeight / 2),
+            cy +
+              Math.sin(radian(135 + 270 * p)) *
+                (r - 0.5 - opts.thumbWeight / 2),
+          )
+          ctx.strokeStyle = opts.thumb
+          ctx.lineWidth = opts.thumbWeight
+          ctx.stroke()
+        }}
+      />
     </div>
   )
 }
