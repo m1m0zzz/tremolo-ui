@@ -12,14 +12,7 @@ export const Basic = () => {
   const [value, setValue] = useState(32)
 
   return (
-    <NumberInput
-      value={value}
-      units={[
-        ['Hz', 1],
-        ['kHz', 1000],
-      ]}
-      onChange={(v) => setValue(v)}
-    />
+    <NumberInput value={value} strict={true} onChange={(v) => setValue(v)} />
   )
 }
 
@@ -29,7 +22,6 @@ export const Strict = () => {
   return (
     <NumberInput
       value={value}
-      strict={true}
       units={[
         ['Hz', 1],
         ['kHz', 1000],
@@ -44,7 +36,6 @@ export const Digit = () => {
   return (
     <NumberInput
       value={value}
-      strict={true}
       units={[
         ['Hz', 1],
         ['kHz', 1000],

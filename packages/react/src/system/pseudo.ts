@@ -33,7 +33,9 @@ export const inputPseudoPropNames = [
 ] as const
 
 export type InputPseudos = (typeof inputPseudoPropNames)[number]
-export type InputPseudoProps = { [key in InputPseudos]: CSSObject }
+export type InputPseudoProps = Partial<{
+  [key in InputPseudos]: CSSObject
+}>
 
 export const userActionPseudoSelectors = [
   '&:hover',

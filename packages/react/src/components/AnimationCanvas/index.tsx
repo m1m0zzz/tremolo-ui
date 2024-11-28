@@ -121,8 +121,6 @@ export function AnimationCanvas({
       const w = Math.floor(parent.clientWidth)
       const h = Math.floor(parent.clientHeight)
       setDprConfig(canvas, context, w, h, dpr)
-      widthRef.current = w
-      heightRef.current = h
 
       if (init) init(context, widthRef, heightRef, 0)
       loop(context, widthRef, heightRef, 0)
