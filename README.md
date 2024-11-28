@@ -26,13 +26,13 @@ UI library for Web Audio App
 
 Install tremolo-ui
 ```bash
-npm install --save-dev @tremolo-ui/react
+npm install @tremolo-ui/react
 ```
 
 And install dependencies
 
 ```bash
-npm install --save-dev react react-dom @emotion/react
+npm install react react-dom @emotion/react
 ```
 
 ```jsx
@@ -58,9 +58,11 @@ function App() {
 
 ### Web Components
 
+*draft now*
+
 Install tremolo-ui
 ```bash
-npm install --save-dev @tremolo-ui/web-components
+npm install @tremolo-ui/web-components
 ```
 
 ```html
