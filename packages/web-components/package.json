@@ -3,15 +3,15 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "storybook": "storybook dev -p 6007",
-    "build:storybook": "storybook build",
+    "sb": "storybook dev -p 6007",
+    "build:sb": "storybook build",
     "serve": "http-server ./storybook-static",
     "build:package": "rollup -c",
     "preview": "vite preview",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "format": "prettier --write .",
-    "clean": "npm run clean:storybook",
-    "clean:storybook": "rimraf ./storybook-static"
+    "clean": "npm run clean:sb",
+    "clean:sb": "rimraf ./storybook-static"
   },
   "dependencies": {
     "lit": "^3.2.0"
