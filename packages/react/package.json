@@ -58,7 +58,6 @@
     "@storybook/react-vite": "^8.3.3",
     "@storybook/test": "^8.3.3",
     "@testing-library/react": "^16.0.1",
-    "common": "file:../common",
     "jest-environment-jsdom": "^29.7.0",
     "react": "^18.3.1",
     "react-component-benchmark": "^2.0.0",
@@ -69,5 +68,8 @@
     "@emotion/react": "11.x",
     "react": "18.x",
     "react-dom": "18.x"
+  },
+  "dependencies": {
+    "@tremolo-ui/common": "file:../common"
   }
 }

@@ -33,7 +33,7 @@ function getConfig(format) {
           exclude: ['**/__tests__/**', '**/__stories__/**'],
         }),
       ],
-      external: ['react', 'react-dom', '@emotion/react'],
+      external: ['react', 'react-dom', '@emotion/react', '@emotion/react/jsx-runtime'],
     },
     {
       input: `dist/${format}/types/src/index.d.ts`,
