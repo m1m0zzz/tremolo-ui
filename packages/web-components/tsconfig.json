@@ -6,6 +6,7 @@
     "module": "es2015",
     "lib": ["ES2021", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
+    "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative module names. */
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -18,7 +19,11 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    "paths": {
+      "functions/*": ["@tremolo-ui/functions/*"]
+    }
   },
   "include": ["src"]
 }
