@@ -4,9 +4,9 @@
 UI library for Web Audio App
 
 [![Build Node.js](https://github.com/m1m0zzz/tremolo-ui/actions/workflows/build.yml/badge.svg)](https://github.com/m1m0zzz/tremolo-ui/actions/workflows/build.yml)
-[![Vercel Deploy](https://deploy-badge.vercel.app/vercel/tremolo-ui?name=Docs)](https://tremolo-ui.vercel.app/)
-[![Vercel Deploy](https://deploy-badge.vercel.app/vercel/tremolo-ui-sb-react?name=Storybook+React)](https://tremolo-ui-sb-react.vercel.app/)
-[![Vercel Deploy](https://deploy-badge.vercel.app/vercel/tremolo-ui-sb-web-components?name=Storybook+Web+Components)](https://tremolo-ui-sb-web-components.vercel.app/)
+[![Vercel Deploy](https://deploy-badge.vercel.app/vercel/tremolo-ui?logo=docusaurus&name=Docs)](https://tremolo-ui.vercel.app/)
+[![Vercel Deploy](https://deploy-badge.vercel.app/vercel/tremolo-ui-sb-react?logo=storybook&name=React)](https://tremolo-ui-sb-react.vercel.app/)
+[![Vercel Deploy](https://deploy-badge.vercel.app/vercel/tremolo-ui-sb-web-components?logo=storybook&name=Web+Components)](https://tremolo-ui-sb-web-components.vercel.app/)
 
 *tremolo-ui is now WIP*
 
@@ -36,7 +36,7 @@ npm install react react-dom @emotion/react
 
 ```jsx
 import { useState } from 'react'
-import { Slider, Knob } from '@tremolo-ui/react'
+import { Slider } from '@tremolo-ui/react'
 
 function App() {
   const [value, setValue] = useState(0)
