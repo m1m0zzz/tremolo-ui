@@ -1,12 +1,16 @@
 
-<!-- TODO: set cover image URL, and image size.
-<div align="center">
-  <img src="https://live.staticflickr.com/635/21189618838_b1a1e7f12e_b.jpg" alt="cover image" width="70%" />
-</div> -->
+# [tremolo-ui](https://github.com/m1m0zzz/tremolo-ui)
+
+UI library for Web Audio App
+
+[![Build Node.js](https://github.com/m1m0zzz/tremolo-ui/actions/workflows/build.yml/badge.svg)](https://github.com/m1m0zzz/tremolo-ui/actions/workflows/build.yml)
+[![Vercel Deploy](https://deploy-badge.vercel.app/vercel/tremolo-ui?name=Docs)](https://tremolo-ui.vercel.app/)
+[![Vercel Deploy](https://deploy-badge.vercel.app/vercel/tremolo-ui-sb-react?name=Storybook+React)](https://tremolo-ui-sb-react.vercel.app/)
+[![Vercel Deploy](https://deploy-badge.vercel.app/vercel/tremolo-ui-sb-web-components?name=Storybook+Web+Components)](https://tremolo-ui-sb-web-components.vercel.app/)
 
 *tremolo-ui is now WIP*
 
-# 🚩 Goals
+## 🚩 Goals
 
 - Components with usability and flexibility
 - Mobile Support
@@ -14,11 +18,6 @@
   - React
   - Web Components
 
----
-
-# [tremolo-ui](https://github.com/m1m0zzz/tremolo-ui)
-
-UI library for Web Audio App
 
 ## 🧬 Installation
 
@@ -79,6 +78,7 @@ https://tremolo-ui.vercel.app/
 
 - [React](https://tremolo-ui-sb-react.vercel.app/)
 - [Web Components](https://tremolo-ui-sb-web-components.vercel.app/)
+
 
 ## 🦝 Contributing
 Please see [contribution guide](./CONTRIBUTING.md)
