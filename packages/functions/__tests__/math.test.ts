@@ -4,7 +4,7 @@ import {
   rawValue,
   skewWithCenterValue,
   stepValue,
-} from '@tremolo-ui/functions/math'
+} from '../math'
 
 describe('unit', () => {
   test('clamp()', () => {

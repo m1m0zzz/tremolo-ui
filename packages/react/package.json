@@ -12,7 +12,7 @@
     "serve": "http-server ./storybook-static",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "format": "prettier --write .",
-    "test": "jest",
+    "test": "echo 'No test yet.'",
     "build:package": "rollup -c",
     "clean": "npm run clean:build && npm run clean:sb",
     "clean:build": "rimraf ./dist .rollup.cache",

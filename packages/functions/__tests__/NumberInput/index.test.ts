@@ -1,4 +1,4 @@
-import { selectUnit } from '@tremolo-ui/functions/components/NumberInput/type'
+import { selectUnit } from '../../components/NumberInput/type'
 
 describe('unit', () => {
   test('selectUnit()', () => {

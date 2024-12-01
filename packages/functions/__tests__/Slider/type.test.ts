@@ -1,4 +1,4 @@
-import { parseScaleOrderList } from '@tremolo-ui/functions/components/Slider/type'
+import { parseScaleOrderList } from '../../components/Slider/type'
 
 describe('unit', () => {
   test('parseScaleOrderList()', () => {
