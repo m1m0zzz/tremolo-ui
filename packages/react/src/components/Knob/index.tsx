@@ -218,6 +218,7 @@ export function Knob({
           const h = _h.current,
             cy = h / 2
           const r = Math.min(cx, cy)
+          if (r <= 0) return
 
           // reset
           ctx.clearRect(0, 0, w, h)
