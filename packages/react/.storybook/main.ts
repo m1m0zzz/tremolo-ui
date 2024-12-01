@@ -25,12 +25,5 @@ const config: StorybookConfig = {
     name: getAbsolutePath('@storybook/react-vite'),
     options: {},
   },
-  viteFinal: async (config) => {
-		config.resolve!.alias = {
-			...config.resolve?.alias,
-			'functions': '@tremolo-ui/functions',
-		}
-		return config
-	},
 }
 export default config

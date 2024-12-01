@@ -3,8 +3,6 @@
   "compilerOptions": {
     "jsx": "react-jsx",                                /* Specify what JSX code is generated. */
     "jsxImportSource": "@emotion/react",
-    "paths": {
-      "functions/*": ["@tremolo-ui/functions/*"]
-    }
+    "baseUrl": "./",
   }
 }

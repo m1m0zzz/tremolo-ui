@@ -8,10 +8,10 @@ import {
   parseScaleOrderList,
   ScaleOrderList,
   ScaleType,
-} from 'functions/components/Slider/type'
-import { clamp, normalizeValue, rawValue, stepValue } from 'functions/math'
-import { WheelOption } from 'functions/types'
-import { styleHelper } from 'functions/util'
+} from '@tremolo-ui/functions/components/Slider/type'
+import { clamp, normalizeValue, rawValue, stepValue } from '@tremolo-ui/functions/math'
+import { WheelOption } from '@tremolo-ui/functions/types'
+import { styleHelper } from '@tremolo-ui/functions/util'
 import React, { ReactElement, useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
@@ -322,4 +322,4 @@ export function Slider({
 
 export { SliderThumb } from './Thumb'
 export { SliderTrack } from './Track'
-export * from 'functions/components/Slider/type'
+export * from '@tremolo-ui/functions/components/Slider/type'

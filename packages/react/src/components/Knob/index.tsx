@@ -1,6 +1,6 @@
 import { css, CSSObject, Global } from '@emotion/react'
-import { clamp, normalizeValue, radian, rawValue, stepValue } from 'functions/math'
-import { WheelOption } from 'functions/types'
+import { clamp, normalizeValue, radian, rawValue, stepValue } from '@tremolo-ui/functions/math'
+import { WheelOption } from '@tremolo-ui/functions/types'
 import React, { useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'

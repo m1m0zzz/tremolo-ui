@@ -1,5 +1,5 @@
 import { css, CSSObject } from '@emotion/react'
-import { parseValue, Units } from 'functions/components/NumberInput/type'
+import { parseValue, Units } from '@tremolo-ui/functions/components/NumberInput/type'
 import { ChangeEvent, useState } from 'react'
 
 import { InputPseudoProps, UserActionPseudoProps } from '../../system/pseudo'

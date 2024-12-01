@@ -1,4 +1,4 @@
-import { toFixed } from 'functions/math'
+import { toFixed } from '../../math'
 
 /**
  * [unit, scale][]
