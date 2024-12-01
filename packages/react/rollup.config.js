@@ -1,5 +1,6 @@
 import path from 'path'
 import commonjs from '@rollup/plugin-commonjs'
+import resolve from '@rollup/plugin-node-resolve'
 import typescript from '@rollup/plugin-typescript'
 import dts from 'rollup-plugin-dts'
 
@@ -26,6 +27,7 @@ function getConfig(format) {
         commonjs({
           include: ['node_modules/**'],
         }),
+        resolve(),
         typescript({
           tsconfig: './tsconfig.json',
           outDir: `dist/${format}`,
@@ -36,7 +38,7 @@ function getConfig(format) {
       external: ['react', 'react-dom', '@emotion/react', '@emotion/react/jsx-runtime'],
     },
     {
-      input: `dist/${format}/types/src/index.d.ts`,
+      input: `dist/${format}/types/packages/react/src/index.d.ts`,
       output: [{ file: `dist/${format}/index.d.ts`, format: format }],
       plugins: [dts()],
     },
