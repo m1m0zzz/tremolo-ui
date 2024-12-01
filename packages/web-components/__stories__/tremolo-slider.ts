@@ -4,8 +4,8 @@ import {
   ScaleType,
   ScaleOrderList,
   ScaleOption,
-} from 'common/components/Slider/type'
-import { WheelOption } from 'common/types'
+} from 'functions/components/Slider/type'
+import { WheelOption } from 'functions/types'
 
 export interface SliderProps {
   value: number

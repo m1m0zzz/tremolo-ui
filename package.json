@@ -24,7 +24,7 @@
   },
   "license": "UNLICENSED",
   "workspaces": [
-    "packages/common",
+    "packages/functions",
     "packages/react",
     "packages/web-components",
     "site"

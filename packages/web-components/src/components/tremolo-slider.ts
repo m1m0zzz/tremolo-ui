@@ -6,10 +6,10 @@ import {
   ScaleOption,
   ScaleOrderList,
   ScaleType,
-} from 'common/components/Slider/type'
-import { clamp, normalizeValue, rawValue, stepValue } from 'common/math'
-import { WheelOption } from 'common/types'
-import { isEmpty, styleHelper } from 'common/util'
+} from 'functions/components/Slider/type'
+import { clamp, normalizeValue, rawValue, stepValue } from 'functions/math'
+import { WheelOption } from 'functions/types'
+import { isEmpty, styleHelper } from 'functions/util'
 import { LitElement, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { ifDefined } from 'lit/directives/if-defined.js'

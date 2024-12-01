@@ -4,7 +4,7 @@
     "jsx": "react-jsx",                                /* Specify what JSX code is generated. */
     "jsxImportSource": "@emotion/react",
     "paths": {
-      "common/*": ["@tremolo-ui/common/*"]
+      "functions/*": ["@tremolo-ui/functions/*"]
     }
   }
 }

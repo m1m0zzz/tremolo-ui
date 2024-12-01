@@ -8,10 +8,10 @@ import {
   parseScaleOrderList,
   ScaleOrderList,
   ScaleType,
-} from 'common/components/Slider/type'
-import { clamp, normalizeValue, rawValue, stepValue } from 'common/math'
-import { WheelOption } from 'common/types'
-import { styleHelper } from 'common/util'
+} from 'functions/components/Slider/type'
+import { clamp, normalizeValue, rawValue, stepValue } from 'functions/math'
+import { WheelOption } from 'functions/types'
+import { styleHelper } from 'functions/util'
 import React, { ReactElement, useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
@@ -322,4 +322,4 @@ export function Slider({
 
 export { SliderThumb } from './Thumb'
 export { SliderTrack } from './Track'
-export * from 'common/components/Slider/type'
+export * from 'functions/components/Slider/type'

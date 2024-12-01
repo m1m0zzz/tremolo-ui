@@ -1,5 +1,5 @@
 import { Meta } from '@storybook/react'
-import { normalizeValue, skewWithCenterValue } from 'common/math'
+import { normalizeValue, skewWithCenterValue } from 'functions/math'
 import { useRef, useState } from 'react'
 
 import { AnimationCanvas } from '../src/components/AnimationCanvas'

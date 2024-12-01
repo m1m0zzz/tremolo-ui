@@ -1,4 +1,4 @@
-import { decimalPart, toFixed } from 'common/math'
+import { decimalPart, toFixed } from 'functions/math'
 
 export type Horizontal = 'right' | 'left'
 export type Vertical = 'up' | 'down'
