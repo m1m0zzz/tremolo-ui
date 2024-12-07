@@ -1,5 +1,5 @@
 import { CSSObject, css } from '@emotion/react'
-import { ReactNode, ReactElement } from 'react'
+import { ReactNode } from 'react'
 
 interface SliderThumbProps {
   color?: string
@@ -13,7 +13,7 @@ export function SliderThumb({
   children,
   style,
   __css,
-}: SliderThumbProps): ReactElement {
+}: SliderThumbProps) {
   return (
     <div
       className="tremolo-slider-thumb-wrapper"
@@ -39,6 +39,12 @@ export function SliderThumb({
             width: '1.4rem',
             height: '1.4rem',
             borderRadius: '50%',
+            '&:hover': {
+              background: `color-mix(in srgb, ${color} 95%, black)`
+            },
+            '&:active': {
+              boxShadow: '0px 0px 0px 3px rgba(var(--tremolo-theme-color-rgb), 0.2)',
+            },
             ...style,
           })}
         ></div>

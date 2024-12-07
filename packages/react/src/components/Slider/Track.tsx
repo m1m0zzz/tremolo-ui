@@ -11,7 +11,7 @@ export function SliderTrack({
   children,
   style,
   __css,
-}: SliderTrackProps): ReactElement {
+}: SliderTrackProps) {
   return (
     <div className="tremolo-slider-track" css={css({ ...__css, ...style })}>
       {children}

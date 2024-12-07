@@ -1,9 +1,12 @@
 import { css, CSSObject } from '@emotion/react'
+import { clamp } from '@tremolo-ui/functions/math'
 import { parseValue, Units } from '@tremolo-ui/functions/components/NumberInput/type'
 import { ChangeEvent, useState } from 'react'
 import clsx from 'clsx'
 
 import { InputPseudoProps, UserActionPseudoProps } from '../../system/pseudo'
+
+import '../../styles/variables.css'
 
 interface NumberInputProps {
   value: number | string
@@ -11,6 +14,7 @@ interface NumberInputProps {
   min?: number
   max?: number
   step?: number
+  defaultValue?: number
 
   // wrapping html input
   disabled?: boolean
@@ -57,9 +61,10 @@ interface NumberInputProps {
  */
 export function NumberInput({
   value,
-  min, // TODO
-  max, // TODO
-  step, // TODO
+  min,
+  max,
+  step,
+  defaultValue = min,
   units,
   disabled = false,
   placeholder,
@@ -77,7 +82,7 @@ export function NumberInput({
   ...pseudo
 }: NumberInputProps & UserActionPseudoProps & InputPseudoProps) {
   const [showValue, setShowValue] = useState(
-    parseValue(String(value), units, digit).formatValue,
+    parseValue(String(value), units, digit, defaultValue).formatValue,
   )
   const calculatedStrict = units ? false : strict
   const { _active, _focus, _hover } = pseudo
@@ -86,6 +91,9 @@ export function NumberInput({
     <input
       className={clsx('tremolo-number-input', className)}
       value={showValue}
+      min={min}
+      max={max}
+      step={step}
       type={calculatedStrict ? 'number' : 'text'}
       spellCheck={'false'}
       disabled={disabled}
@@ -93,28 +101,27 @@ export function NumberInput({
       readOnly={readOnly}
       tabIndex={tabIndex}
       css={css({
-        display: 'inline-block',
-        height: '2rem',
+        display: 'block',
         font: 'inherit',
         margin: 0,
+        paddingTop: 6,
+        paddingBottom: 6,
         paddingLeft: 10,
         paddingRight: 10,
-        outlineColor: 'transparent',
-        outlineStyle: 'solid',
-        outlineWidth: 1,
-        background: 'inherit',
-        appearance: 'none',
         borderStyle: 'solid',
         borderWidth: 1,
         borderColor: '#bbb',
         borderRadius: 4,
+        outline: 0,
+        transition: 'all 0.1s linear',
+        appearance: 'textfield',
         '&:hover': {
-          outlineColor: '#bbb',
+          borderColor: 'var(--tremolo-theme-color)',
           ..._hover,
         },
         '&:focus': {
-          outlineColor: '#4e76e6',
-          outlineWidth: 2,
+          borderColor: 'var(--tremolo-theme-color)',
+          boxShadow: '0px 0px 0px 2px rgba(var(--tremolo-theme-color-rgb), 0.1)',
           ..._focus,
         },
         ...(_active && { '&:active': { ..._active } }),
@@ -123,11 +130,16 @@ export function NumberInput({
       onChange={(event) => {
         const v = event.currentTarget.value
         setShowValue(v)
-        if (onChange) onChange(parseValue(v, units, digit).rawValue, event)
+        const newValue = clamp(
+          parseValue(v, units, digit, defaultValue).rawValue,
+          min ?? -Infinity,
+          max ?? Infinity
+        )
+        if (onChange) onChange(newValue, event)
       }}
       onFocus={(event) => {
         const v = event.currentTarget.value
-        const parsed = parseValue(v, units, digit)
+        const parsed = parseValue(v, units, digit, defaultValue)
         if (selectWithFocus == 'all') {
           event.currentTarget.setSelectionRange(0, v.length)
         } else if (selectWithFocus == 'number') {
@@ -141,7 +153,7 @@ export function NumberInput({
       onBlur={(event) => {
         // update value
         const v = event.currentTarget.value
-        const parsed = parseValue(v, units, digit)
+        const parsed = parseValue(v, units, digit, defaultValue)
         setShowValue(parsed.formatValue)
         if (onBlur) onBlur(parsed.rawValue, event)
       }}

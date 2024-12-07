@@ -21,27 +21,30 @@ export function parseValue(
   inputString: string,
   units?: string | Units,
   digit?: number,
+  defaultValue = 0,
 ) {
+  let str = inputString.trim()
+  if (str == '') str = String(defaultValue)
   if (!units) {
     return {
-      rawValue: Number(inputString.trim()) || 0,
-      formatValue: inputString.trim(),
+      rawValue: Number(str) || defaultValue,
+      formatValue: str,
       unit: '',
     }
   } else if (typeof units == 'string') {
     return {
-      rawValue: Number(inputString.trim()) || 0,
-      formatValue: `${inputString.trim()}${units}`,
+      rawValue: Number(str) || defaultValue,
+      formatValue: `${str}${units}`,
       unit: units,
     }
   }
 
   const unitList = units.map(([u, _s]) => u)
   const scaleList = units.map(([_u, s]) => s)
-  let rawValue = 0
+  let rawValue = defaultValue
   let formatValue = `${scaleList[0]}`
   let unit = unitList[0]
-  const m = inputString.trim().match(/^(-?\d+(\.\d+)?)\s*(\w*)$/)
+  const m = str.match(/^(-?\d+(\.\d+)?)\s*(\w*)$/)
   if (m) {
     rawValue = Number(m[1]) || 0
     const inputUnit = m[3]

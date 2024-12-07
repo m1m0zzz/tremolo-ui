@@ -321,6 +321,6 @@ export function Slider({
   )
 }
 
-export { SliderThumb } from './Thumb'
-export { SliderTrack } from './Track'
-export * from '@tremolo-ui/functions/components/Slider/type'
+export * from './Thumb'
+export * from './Track'
+export * from './type'

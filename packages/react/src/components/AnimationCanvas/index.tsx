@@ -89,7 +89,7 @@ export function AnimationCanvas({
       const memoContext = memoCanvas?.getContext('2d', options)
 
       const resizeObserver = new ResizeObserver(() => {
-        console.log('resize')
+        // console.log('resize')
         // Prevents loss of some context when the canvas is resized
         const contextMemo = {} as DrawingContext
         for (const prop of drawingState) {

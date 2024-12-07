@@ -22,6 +22,8 @@ export const Strict = () => {
   return (
     <NumberInput
       value={value}
+      min={1}
+      max={20000}
       units={[
         ['Hz', 1],
         ['kHz', 1000],
@@ -41,7 +43,7 @@ export const Digit = () => {
         ['kHz', 1000],
       ]}
       digit={1}
-      _hover={{ outlineColor: 'red' }}
+      _hover={{ borderColor: 'red' }}
       onChange={(v) => setValue(v)}
     />
   )
