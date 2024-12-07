@@ -70,6 +70,7 @@
     "react-dom": "18.x"
   },
   "dependencies": {
-    "@tremolo-ui/functions": "file:../functions"
+    "@tremolo-ui/functions": "file:../functions",
+    "clsx": "^2.1.1"
   }
 }
