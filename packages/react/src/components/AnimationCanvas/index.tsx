@@ -1,5 +1,6 @@
 import { css, CSSObject } from '@emotion/react'
 import { MutableRefObject, useEffect, useRef } from 'react'
+import clsx from 'clsx'
 
 import { DrawingContext, drawingState, DrawingStateValue } from './canvas'
 
@@ -48,6 +49,7 @@ export function AnimationCanvas({
   options,
   init,
   draw,
+  className,
   ...props
 }: AnimationCanvasProps &
   Omit<
@@ -147,6 +149,7 @@ export function AnimationCanvas({
   return (
     <>
       <canvas
+        className={clsx('tremolo-animation-canvas', className)}
         width={relativeSize ? 0 : width}
         height={relativeSize ? 0 : height}
         css={css(style)}

@@ -2,6 +2,7 @@ import { css, CSSObject, Global } from '@emotion/react'
 import { clamp, normalizeValue, radian, rawValue, stepValue } from '@tremolo-ui/functions/math'
 import { WheelOption } from '@tremolo-ui/functions/types'
 import React, { useRef } from 'react'
+import clsx from 'clsx'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
@@ -75,6 +76,7 @@ export function Knob({
   bodyNoSelect = true,
   enableWheel,
   enableDoubleClickDefault = true,
+  className,
   onChange,
   _active,
   _focus,
@@ -160,7 +162,7 @@ export function Knob({
 
   return (
     <div
-      className="tremolo-knob"
+      className={clsx('tremolo-knob', className)}
       ref={(div) => {
         wheelRefCallback(div)
         touchMoveRefCallback(div)

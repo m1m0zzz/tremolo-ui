@@ -1,6 +1,7 @@
 import { css, CSSObject } from '@emotion/react'
 import { parseValue, Units } from '@tremolo-ui/functions/components/NumberInput/type'
 import { ChangeEvent, useState } from 'react'
+import clsx from 'clsx'
 
 import { InputPseudoProps, UserActionPseudoProps } from '../../system/pseudo'
 
@@ -83,7 +84,7 @@ export function NumberInput({
 
   return (
     <input
-      className={'tremolo-slider' + (className ? ` ${className}` : '')}
+      className={clsx('tremolo-number-input', className)}
       value={showValue}
       type={calculatedStrict ? 'number' : 'text'}
       spellCheck={'false'}

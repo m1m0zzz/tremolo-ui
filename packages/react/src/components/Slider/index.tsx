@@ -13,6 +13,7 @@ import { clamp, normalizeValue, rawValue, stepValue } from '@tremolo-ui/function
 import { WheelOption } from '@tremolo-ui/functions/types'
 import { styleHelper } from '@tremolo-ui/functions/util'
 import React, { ReactElement, useRef } from 'react'
+import clsx from 'clsx'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
@@ -167,7 +168,7 @@ export function Slider({
 
   return (
     <div
-      className={'tremolo-slider' + (className ? ` ${className}` : '')}
+      className={clsx('tremolo-slider', className)}
       ref={(div) => {
         wheelRefCallback(div)
         touchMoveRefCallback(div)
