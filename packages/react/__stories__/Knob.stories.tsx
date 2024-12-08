@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { CSSProperties, useState } from 'react'
 
 import { Knob } from '../src/components/Knob'
 import { normalizeValue } from '@tremolo-ui/functions'
@@ -95,50 +95,35 @@ export const Options = () => {
   )
 }
 
-function drawEdge(ctx: CanvasRenderingContext2D, w: number, h: number) {
-  const len = w * 0.3
-  const lines: [number, number][][] = [
-    [
-      [0, len],
-      [0, -len],
-      [len, 0],
-    ],
-    [
-      [w - len, 0],
-      [len, 0],
-      [0, len],
-    ],
-    [
-      [w, h - len],
-      [0, len],
-      [-len, 0],
-    ],
-    [
-      [len, h],
-      [-len, 0],
-      [0, -len],
-    ],
-  ]
-  lines.forEach((group) => {
-    ctx.beginPath()
-    let beforeX = 0, beforeY = 0
-    group.forEach((line, i) => {
-      if (i == 0) {
-        beforeX = line[0]
-        beforeY = line[1]
-        ctx.moveTo(...line)
-      } else {
-        beforeX += line[0]
-        beforeY += line[1]
-        ctx.lineTo(beforeX, beforeY)
-      }
-    })
-    ctx.stroke()
-  })
-}
-
 export const AdvancedImagiroKnob = () => {
   const [value, setValue] = useState(50)
+
+  const borderStyles: CSSProperties[] = [
+    {
+      top: 0,
+      left: 0,
+      borderTopWidth: 4,
+      borderLeftWidth: 4,
+    },
+    {
+      top: 0,
+      right: 0,
+      borderTopWidth: 4,
+      borderRightWidth: 4,
+    },
+    {
+      bottom: 0,
+      right: 0,
+      borderBottomWidth: 4,
+      borderRightWidth: 4,
+    },
+    {
+      bottom: 0,
+      left: 0,
+      borderBottomWidth: 4,
+      borderLeftWidth: 4,
+    },
+  ]
 
   return (
     <div
@@ -175,9 +160,25 @@ export const AdvancedImagiroKnob = () => {
 
             ctx.strokeStyle = '#507C5E'
             ctx.lineWidth = 8
-            drawEdge(ctx, w, h)
           }}
         />
+        {borderStyles.map((style) => {
+          return (
+            <div
+              style={{
+                position: 'absolute',
+                width: '30%',
+                height: '30%',
+                borderWidth: 0,
+                borderColor: '#507C5E',
+                borderStyle: 'solid',
+                pointerEvents: 'none',
+                ...style
+              }}
+            >
+            </div>
+          )
+        })}
         <div
           style={{
             position: 'absolute',
