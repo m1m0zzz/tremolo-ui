@@ -6,8 +6,6 @@ import clsx from 'clsx'
 
 import { InputPseudoProps, UserActionPseudoProps } from '../../system/pseudo'
 
-import '../../styles/variables.css'
-
 interface NumberInputProps {
   value: number | string
 

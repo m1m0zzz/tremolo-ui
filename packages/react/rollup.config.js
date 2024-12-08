@@ -3,6 +3,7 @@ import commonjs from '@rollup/plugin-commonjs'
 import resolve from '@rollup/plugin-node-resolve'
 import typescript from '@rollup/plugin-typescript'
 import dts from 'rollup-plugin-dts'
+import copy from 'rollup-plugin-copy'
 
 import pkg from './package.json' with { type: 'json' }
 
@@ -34,6 +35,11 @@ function getConfig(format) {
           declarationDir: `dist/${format}/types`,
           exclude: ['**/__tests__/**', '**/__stories__/**'],
         }),
+        copy({
+          targets: [
+            { src: './src/styles/*.css', dest: 'dist/styles' },
+          ]
+        })
       ],
       external: ['react', 'react-dom', '@emotion/react', '@emotion/react/jsx-runtime'],
     },
