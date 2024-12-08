@@ -7,7 +7,7 @@ import clsx from 'clsx'
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { UserActionPseudoProps } from '../../system/pseudo'
-import { AnimationCanvas } from '../AnimationCanvas'
+import { AnimationCanvas, DrawFunction } from '../AnimationCanvas'
 
 interface KnobProps {
   // required
@@ -16,33 +16,45 @@ interface KnobProps {
   max: number
 
   // optional
+  /**
+   * value set when double-clicking
+   * @see enableDoubleClickDefault
+   */
   defaultValue?: number
+
+  /**
+   * Value to be used as the starting point of the line when drawing.
+   * @default min
+   */
   startValue?: number
+
   step?: number
   skew?: number // | SkewFunction
+
+  /** Priority over width or height */
   size?: number | `${number}%`
+
   width?: number | `${number}%`
   height?: number | `${number}%`
+
+  /** drawing options */
   options?: {
-    active?: string
-    inactive?: string
-    bg?: string
-    thumb?: string
-    lineWeight?: number
-    thumbWeight?: number
+    active?: string // active line color
+    inactive?: string // inactive line color
+    bg?: string // background color
+    thumb?: string // thumb color
+    lineWeight?: number // line color
+    thumbWeight?: number // thumb weight
   }
   // TODO: need?
-  // draw?: (
-  //   context: CanvasRenderingContext2D,
-  //   currentValue: number,
-  //   w?: number,
-  //   h?: number,
-  // ) => void
-  cursor?: string
-  style?: CSSObject
+  draw?: DrawFunction
+
+  /** Whether to apply {use-select: none} when dragging */
   bodyNoSelect?: boolean
+
   enableWheel?: WheelOption
   enableDoubleClickDefault?: boolean
+  style?: CSSObject
   onChange?: (value: number) => void
 }
 
@@ -70,12 +82,11 @@ export function Knob({
   width = 50,
   height = 50,
   options = defaultOptions,
-  // draw,
-  cursor = 'pointer',
-  style,
+  draw,
   bodyNoSelect = true,
   enableWheel,
   enableDoubleClickDefault = true,
+  style,
   className,
   onChange,
   _active,
@@ -176,7 +187,7 @@ export function Knob({
         display: 'block',
         width: size ?? width,
         height: size ?? height,
-        cursor: cursor,
+        cursor: 'pointer',
         ...style,
         ':active': {
           ..._active,
@@ -212,12 +223,12 @@ export function Knob({
         relativeSize={isRelativeSize}
         // TODO
         // reduceFlickering={false}
-        draw={(ctx, _w, _h) => {
+        draw={draw ? draw : (ctx, width, height) => {
           const p = normalizeValue(value, min, max, skew)
           const startP = normalizeValue(startValue, min, max, skew)
-          const w = _w.current,
+          const w = width.current,
             cx = w / 2
-          const h = _h.current,
+          const h = height.current,
             cy = h / 2
           const r = Math.min(cx, cy)
           if (r <= 0) return

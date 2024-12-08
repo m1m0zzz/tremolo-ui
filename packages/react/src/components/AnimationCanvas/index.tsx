@@ -18,7 +18,7 @@ function setDprConfig(
   canvas.style.height = `${height}px`
 }
 
-type DrawFunc = (
+export type DrawFunction = (
   context: CanvasRenderingContext2D,
   width: MutableRefObject<number>,
   height: MutableRefObject<number>,
@@ -33,8 +33,8 @@ interface AnimationCanvasProps {
   reduceFlickering?: boolean
   options?: CanvasRenderingContext2DSettings
   style?: CSSObject
-  init?: DrawFunc
-  draw: DrawFunc
+  init?: DrawFunction
+  draw: DrawFunction
 }
 
 /**
