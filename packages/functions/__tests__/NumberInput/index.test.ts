@@ -1,4 +1,4 @@
-import { selectUnit } from '../../components/NumberInput/type'
+import { selectUnit } from '../../src/components/NumberInput/type'
 
 describe('unit', () => {
   test('selectUnit()', () => {

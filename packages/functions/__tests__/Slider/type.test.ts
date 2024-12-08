@@ -1,4 +1,4 @@
-import { parseScaleOrderList } from '../../components/Slider/type'
+import { parseScaleOrderList } from '../../src/components/Slider/type'
 
 describe('unit', () => {
   test('parseScaleOrderList()', () => {

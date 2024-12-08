@@ -2,11 +2,33 @@
   "name": "@tremolo-ui/functions",
   "version": "0.0.0",
   "description": "",
-  "main": "index.js",
-  "devDependencies": {},
+  "type": "module",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build:package": "rollup -c",
+    "clean": "npm run clean:build",
+    "clean:build": "rimraf ./dist .rollup.cache",
+    "lint": "eslint --fix --ext .ts,.tsx .",
+    "format": "prettier --write ."
   },
+  "exports": {
+		".": {
+			"require": "./dist/cjs/index.js",
+			"import": "./dist/esm/index.js"
+		},
+		"./NumberInput": {
+			"require": "./dist/cjs/components/NumberInput/type.js",
+			"import": "./dist/esm/components/NumberInput/type.js"
+		},
+		"./Slider": {
+			"require": "./dist/cjs/components/Slider/type.js",
+			"import": "./dist/esm/components/Slider/type.js"
+		}
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
   "author": "mimoz <contact.m1m0zzzz@gmail.com> (https://m1m0zzz.github.io/)",
   "license": "MIT"
 }
