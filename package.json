@@ -9,7 +9,7 @@
     "lint:fix": "eslint --fix --ext .ts,.tsx",
     "format": "prettier --write",
     "test": "npm run test --workspaces --if-present",
-    "build:package": "npm run build:package --workspaces",
+    "build:package": "npm run build:package --workspaces --if-present",
     "docs": "npm run start -w site --",
     "docs:wtr": "npm run write-translations -w site --",
     "build:docs": "npm run build -w site",
