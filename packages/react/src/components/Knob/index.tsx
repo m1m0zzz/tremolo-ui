@@ -184,7 +184,7 @@ export function Knob({
       aria-valuemax={max}
       aria-valuemin={min}
       css={css({
-        display: 'block',
+        display: 'inline-block',
         width: size ?? width,
         height: size ?? height,
         cursor: 'pointer',

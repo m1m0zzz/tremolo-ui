@@ -99,7 +99,7 @@ export function NumberInput({
       readOnly={readOnly}
       tabIndex={tabIndex}
       css={css({
-        display: 'block',
+        display: 'inline-block',
         font: 'inherit',
         margin: 0,
         paddingTop: 6,
