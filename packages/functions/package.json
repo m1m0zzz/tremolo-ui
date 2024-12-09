@@ -1,7 +1,7 @@
 {
   "name": "@tremolo-ui/functions",
-  "version": "0.0.0",
-  "description": "",
+  "version": "0.0.4",
+  "description": "functions used in @tremolo-ui/react",
   "type": "module",
   "scripts": {
     "test": "jest",
@@ -47,6 +47,22 @@
     "dist",
     "src"
   ],
-  "author": "mimoz <contact.m1m0zzzz@gmail.com> (https://m1m0zzz.github.io/)",
-  "license": "MIT"
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "mimoz",
+    "email": "contact.m1m0zzz@gmail.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/m1m0zzz/tremolo-ui",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/m1m0zzz/tremolo-ui",
+    "directory": "packages/functions"
+  },
+  "keywords": [
+    "web-audio",
+    "math"
+  ]
 }

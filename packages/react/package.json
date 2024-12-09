@@ -1,6 +1,6 @@
 {
   "name": "@tremolo-ui/react",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "React component library for audio app",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -54,12 +54,11 @@
   },
   "keywords": [
     "react",
-    "ui",
     "react-components",
+    "ui",
     "components",
     "web-audio",
-    "emotion",
-    "library"
+    "emotion"
   ],
   "devDependencies": {
     "@chromatic-com/storybook": "^1.6.1",
