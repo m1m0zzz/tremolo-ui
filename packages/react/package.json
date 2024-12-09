@@ -32,9 +32,6 @@
     "./styles": "./src/styles"
   },
   "files": [
-    "package.json",
-    "README.md",
-    "LICENSE",
     "dist",
     "src"
   ],
