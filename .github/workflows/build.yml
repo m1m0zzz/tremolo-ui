@@ -6,8 +6,6 @@ name: test & package build
 on:
   push:
     branches: [ "main" ]
-    tags-ignore:
-      - 'v*'
   pull_request:
     branches: [ "main" ]
 
