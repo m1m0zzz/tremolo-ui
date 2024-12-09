@@ -13,16 +13,34 @@
   },
   "exports": {
 		".": {
-			"require": "./dist/cjs/index.js",
-			"import": "./dist/esm/index.js"
+      "require": {
+        "default": "./dist/cjs/index.js",
+        "types": "./dist/cjs/types/index.d.ts"
+      },
+			"import": {
+        "default": "./dist/esm/index.js",
+        "types": "./dist/esm/types/index.d.ts"
+      }
 		},
 		"./NumberInput": {
-			"require": "./dist/cjs/components/NumberInput/type.js",
-			"import": "./dist/esm/components/NumberInput/type.js"
+			"require": {
+        "default": "./dist/cjs/components/NumberInput/type.js",
+        "types": "./dist/cjs/types/components/NumberInput/type.d.ts"
+      },
+			"import": {
+        "default": "./dist/esm/components/NumberInput/type.js",
+        "types": "./dist/esm/types/components/NumberInput/type.d.ts"
+      }
 		},
 		"./Slider": {
-			"require": "./dist/cjs/components/Slider/type.js",
-			"import": "./dist/esm/components/Slider/type.js"
+      "require": {
+        "default": "./dist/cjs/components/Slider/type.js",
+        "types": "./dist/cjs/types/components/Slider/type.d.ts"
+      },
+      "import": {
+        "default": "./dist/esm/components/Slider/type.js",
+        "types": "./dist/esm/types/components/Slider/type.d.ts"
+      }
 		}
   },
   "files": [
