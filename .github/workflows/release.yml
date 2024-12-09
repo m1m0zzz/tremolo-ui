@@ -3,6 +3,8 @@ name: Release package
 on:
   push:
     branches: [ "release" ]
+    tags:
+      - 'v*'
 
 jobs:
   build:
