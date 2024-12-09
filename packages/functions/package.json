@@ -12,27 +12,27 @@
     "format": "prettier --write ."
   },
   "exports": {
-		".": {
+    ".": {
       "require": {
         "default": "./dist/cjs/index.js",
         "types": "./dist/cjs/types/index.d.ts"
       },
-			"import": {
+      "import": {
         "default": "./dist/esm/index.js",
         "types": "./dist/esm/types/index.d.ts"
       }
-		},
-		"./NumberInput": {
-			"require": {
+    },
+    "./NumberInput": {
+      "require": {
         "default": "./dist/cjs/components/NumberInput/type.js",
         "types": "./dist/cjs/types/components/NumberInput/type.d.ts"
       },
-			"import": {
+      "import": {
         "default": "./dist/esm/components/NumberInput/type.js",
         "types": "./dist/esm/types/components/NumberInput/type.d.ts"
       }
-		},
-		"./Slider": {
+    },
+    "./Slider": {
       "require": {
         "default": "./dist/cjs/components/Slider/type.js",
         "types": "./dist/cjs/types/components/Slider/type.d.ts"
@@ -41,7 +41,7 @@
         "default": "./dist/esm/components/Slider/type.js",
         "types": "./dist/esm/types/components/Slider/type.d.ts"
       }
-		}
+    }
   },
   "files": [
     "dist",
@@ -58,7 +58,7 @@
   "homepage": "https://github.com/m1m0zzz/tremolo-ui",
   "repository": {
     "type": "git",
-    "url": "https://github.com/m1m0zzz/tremolo-ui",
+    "url": "git+https://github.com/m1m0zzz/tremolo-ui.git",
     "directory": "packages/functions"
   },
   "keywords": [

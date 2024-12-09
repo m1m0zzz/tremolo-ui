@@ -24,11 +24,11 @@
         "default": "./dist/cjs/index.js",
         "types": "./dist/cjs/types/index.d.ts"
       },
-			"import": {
+      "import": {
         "default": "./dist/esm/index.js",
         "types": "./dist/esm/types/index.d.ts"
       }
-		},
+    },
     "./styles": "./src/styles"
   },
   "files": [
@@ -49,7 +49,7 @@
   "homepage": "https://github.com/m1m0zzz/tremolo-ui",
   "repository": {
     "type": "git",
-    "url": "https://github.com/m1m0zzz/tremolo-ui",
+    "url": "git+https://github.com/m1m0zzz/tremolo-ui.git",
     "directory": "packages/react"
   },
   "keywords": [
