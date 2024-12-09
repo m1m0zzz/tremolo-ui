@@ -1,4 +1,4 @@
-import { gainToDb } from '@tremolo-ui/functions/math'
+import { gainToDb } from '@tremolo-ui/functions'
 
 // ref. https://github.com/Tonejs/Tone.js/blob/d44ff079dfd718a7b410baaab3acc8658e54a090/Tone/component/analysis/Meter.ts
 

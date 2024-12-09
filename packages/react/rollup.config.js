@@ -2,8 +2,8 @@ import path from 'path'
 import commonjs from '@rollup/plugin-commonjs'
 import resolve from '@rollup/plugin-node-resolve'
 import typescript from '@rollup/plugin-typescript'
-import dts from 'rollup-plugin-dts'
 import copy from 'rollup-plugin-copy'
+import del from 'rollup-plugin-delete'
 
 import pkg from './package.json' with { type: 'json' }
 
@@ -33,21 +33,21 @@ function getConfig(format) {
           tsconfig: './tsconfig.json',
           outDir: `dist/${format}`,
           declarationDir: `dist/${format}/types`,
+          rootDir: './src',
           exclude: ['**/__tests__/**', '**/__stories__/**'],
+        }),
+        del({
+          targets: 'dist/tsconfig.tsbuildinfo',
+          hook: 'closeBundle'
         }),
         copy({
           targets: [
             { src: './src/styles/*.css', dest: 'dist/styles' },
           ]
-        })
+        }),
       ],
       external: ['react', 'react-dom', '@emotion/react', '@emotion/react/jsx-runtime'],
-    },
-    {
-      input: `dist/${format}/types/packages/react/src/index.d.ts`,
-      output: [{ file: `dist/${format}/index.d.ts`, format: format }],
-      plugins: [dts()],
-    },
+    }
   ]
 }
 

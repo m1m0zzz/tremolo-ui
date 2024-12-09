@@ -1,6 +1,6 @@
 import { css, CSSObject } from '@emotion/react'
-import { clamp } from '@tremolo-ui/functions/math'
-import { parseValue, Units } from '@tremolo-ui/functions/components/NumberInput/type'
+import { clamp } from '@tremolo-ui/functions'
+import { parseValue, Units } from '@tremolo-ui/functions/NumberInput'
 import { ChangeEvent, useState } from 'react'
 import clsx from 'clsx'
 

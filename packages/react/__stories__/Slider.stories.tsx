@@ -1,5 +1,5 @@
 import { Meta } from '@storybook/react'
-import { normalizeValue, skewWithCenterValue } from '@tremolo-ui/functions/math'
+import { normalizeValue, skewWithCenterValue } from '@tremolo-ui/functions'
 import { useRef, useState } from 'react'
 
 import { AnimationCanvas } from '../src/components/AnimationCanvas'

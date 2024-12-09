@@ -8,10 +8,10 @@ import {
   parseScaleOrderList,
   ScaleOrderList,
   ScaleType,
-} from '@tremolo-ui/functions/components/Slider/type'
-import { clamp, normalizeValue, rawValue, stepValue } from '@tremolo-ui/functions/math'
-import { WheelOption } from '@tremolo-ui/functions/types'
-import { styleHelper } from '@tremolo-ui/functions/util'
+} from '@tremolo-ui/functions/Slider'
+import { clamp, normalizeValue, rawValue, stepValue } from '@tremolo-ui/functions'
+import { WheelOption } from '@tremolo-ui/functions'
+import { styleHelper } from '@tremolo-ui/functions'
 import React, { ReactElement, useRef } from 'react'
 import clsx from 'clsx'
 

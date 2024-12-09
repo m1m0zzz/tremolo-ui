@@ -5,7 +5,7 @@
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "type": "module",
-  "types": "dist/cjs/index.d.ts",
+  "types": "dist/cjs/types/index.d.ts",
   "scripts": {
     "sb": "storybook dev -p 6006",
     "build:sb": "storybook build",
@@ -17,6 +17,19 @@
     "clean": "npm run clean:build && npm run clean:sb",
     "clean:build": "rimraf ./dist .rollup.cache",
     "clean:sb": "rimraf ./storybook-static"
+  },
+  "exports": {
+    ".": {
+      "require": {
+        "default": "./dist/cjs/index.js",
+        "types": "./dist/cjs/types/index.d.ts"
+      },
+			"import": {
+        "default": "./dist/esm/index.js",
+        "types": "./dist/esm/types/index.d.ts"
+      }
+		},
+    "./styles": "./src/styles"
   },
   "files": [
     "package.json",
