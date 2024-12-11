@@ -294,6 +294,8 @@ export const VolumeFader = () => {
         <SliderTrack
           activeBg='#555'
           inactiveBg='#555'
+          activeHoverBg='#555'
+          inactiveHoverBg='#555'
           style={{
             border: '1px solid #aaa',
           }}
