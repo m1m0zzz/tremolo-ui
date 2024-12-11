@@ -1,7 +1,6 @@
 import { css, CSSObject, Global } from '@emotion/react'
 import {
   Direction,
-  gradientDirection,
   isHorizontal,
   isReversed,
   isVertical,
@@ -9,7 +8,7 @@ import {
   ScaleOrderList,
   ScaleType,
 } from '@tremolo-ui/functions/Slider'
-import { clamp, normalizeValue, rawValue, stepValue } from '@tremolo-ui/functions'
+import { clamp, normalizeValue, rawValue, stepValue, toFixed } from '@tremolo-ui/functions'
 import { WheelOption } from '@tremolo-ui/functions'
 import { styleHelper } from '@tremolo-ui/functions'
 import React, { ReactElement, useRef } from 'react'
@@ -24,6 +23,7 @@ import { SliderTrack } from './Track'
 import { ScaleOption } from './type'
 
 interface SliderProps {
+  // TODO: property docs
   // required
   value: number
   min: number
@@ -32,13 +32,10 @@ interface SliderProps {
   // optional
   step?: number
   skew?: number // | SkewFunction
-  length?: number | string
-  thickness?: number | string
-  direction?: Direction
+  direction?: Direction // TODO: vertical & reverse
+  // TODO: scales component
   scale?: ['step', ScaleType] | [number, ScaleType] | ScaleOrderList[]
   scaleOption?: ScaleOption
-  color?: string
-  bg?: string
   bodyNoSelect?: boolean
   enableWheel?: WheelOption
   className?: string
@@ -57,13 +54,9 @@ export function Slider({
   max,
   step = 1,
   skew = 1,
-  length = 140,
-  thickness = 10,
   direction = 'right',
   scale,
   scaleOption,
-  color = '#4e76e6',
-  bg = '#eee',
   className,
   style,
   bodyNoSelect = true,
@@ -77,8 +70,15 @@ export function Slider({
 
   // --- interpret props ---
   const { _active, _focus, _hover } = pseudo
-  const percent = normalizeValue(value, min, max, skew) * 100
-  const percentRev = isReversed(direction) ? 100 - percent : percent
+  const percent = toFixed(normalizeValue(value, min, max, skew) * 100)
+  const percentRev = isReversed(direction) ? toFixed(100 - percent) : percent
+  const calcPercent = (v: number) => {
+    return toFixed(
+      isReversed(direction)
+        ? 100 - normalizeValue(v, min, max, skew) * 100
+        : normalizeValue(v, min, max, skew) * 100
+    )
+  }
 
   const scalesList = parseScaleOrderList(scale, min, max, step)
   if (isReversed(direction)) scalesList.reverse()
@@ -176,14 +176,12 @@ export function Slider({
       tabIndex={-1}
       role="slider"
       aria-valuenow={value}
-      aria-valuemax={max}
       aria-valuemin={min}
+      aria-valuemax={max}
       aria-orientation={isHorizontal(direction) ? 'horizontal' : 'vertical'}
       css={css({
         display: 'inline-block',
-        boxSizing: 'border-box',
-        margin: '0.7rem',
-        padding: 0,
+        margin: `calc(${styleHelper(thumbProps?.size ?? 22)} / 2)`, // half thumb size
         cursor: 'pointer',
         ...style,
       })}
@@ -205,27 +203,17 @@ export function Slider({
           flexDirection: isHorizontal(direction) ? 'column' : 'row',
         })}
       >
-        {/* trackProps */}
         <div
           className="tremolo-slider-track-wrapper"
           ref={trackElementRef}
           css={css({ position: 'relative' })}
         >
           <SliderTrack
-            __css={{
-              background: `linear-gradient(to ${gradientDirection(direction)}, ${color} ${percent}%, ${bg} ${percent}%)`,
-              borderRadius: styleHelper(thickness, '/', 2),
-              borderStyle: 'solid',
-              borderColor: '#ccc',
-              borderWidth: 2,
-              width: isHorizontal(direction) ? length : thickness,
-              height: isHorizontal(direction) ? thickness : length,
-              zIndex: 1,
-            }}
+            __direction={direction}
+            __percent={percent}
             {...trackProps}
           />
           <SliderThumb
-            color={color}
             __css={{
               top: isHorizontal(direction) ? '50%' : `${percentRev}%`,
               left: isHorizontal(direction) ? `${percentRev}%` : '50%',
@@ -233,21 +221,21 @@ export function Slider({
             {...thumbProps}
           />
         </div>
+        {/* TODO: scales component */}
         {scale && (
           <div
             className="tremolo-slider-scale-wrapper"
             css={css({
+              display: 'block',
               position: 'relative',
-              width: isHorizontal(direction) ? length : undefined,
-              height: isVertical(direction) ? length : undefined,
-              marginLeft: isHorizontal(direction)
-                ? 2
-                : (scaleOption?.gap ??
-                  `calc((1.4rem - ${styleHelper(thickness)}) / 2)`),
-              marginTop: isVertical(direction)
-                ? 2
-                : (scaleOption?.gap ??
-                  `calc((1.4rem - ${styleHelper(thickness)}) / 2)`),
+              marginLeft: isVertical(direction)
+                ? (scaleOption?.gap ??
+                  `calc((22px - ${styleHelper(trackProps?.thickness ?? 10)}) / 2)`)
+                : undefined,
+              marginTop: isHorizontal(direction)
+                ? (scaleOption?.gap ??
+                  `calc((22px - ${styleHelper(trackProps?.thickness ?? 10)}) / 2)`)
+                : undefined,
               ...scaleOption?.style,
               // zIndex: 10,
             })}
@@ -261,20 +249,8 @@ export function Slider({
                   justifyContent: 'center',
                   alignItems: 'center',
                   position: 'absolute',
-                  left: isHorizontal(direction)
-                    ? `${
-                        isReversed(direction)
-                          ? 100 - normalizeValue(item.at, min, max, skew) * 100
-                          : normalizeValue(item.at, min, max, skew) * 100
-                      }%`
-                    : undefined,
-                  top: isVertical(direction)
-                    ? `${
-                        isReversed(direction)
-                          ? 100 - normalizeValue(item.at, min, max, skew) * 100
-                          : normalizeValue(item.at, min, max, skew) * 100
-                      }%`
-                    : undefined,
+                  left: isHorizontal(direction) ? `${calcPercent(item.at)}%` : undefined,
+                  top: isVertical(direction) ? `${calcPercent(item.at)}%` : undefined,
                   translate: isHorizontal(direction) ? '-50% 0' : '0 -50%',
                   zIndex: 10,
                 })}

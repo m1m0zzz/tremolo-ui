@@ -31,70 +31,33 @@ export const Basic = () => {
 }
 
 export const Direction = () => {
-  const [value1, setValue1] = useState(32)
-  const [value2, setValue2] = useState(32)
-  const [value3, setValue3] = useState(32)
-  const [value4, setValue4] = useState(32)
+  const [value, setValue] = useState(32)
+  const [direction, setDirection] = useState('right')
 
-  const item = [
-    {
-      direction: 'right',
-      color: '#ffdbc9',
-      value: value1,
-      setter: setValue1,
-    },
-    {
-      direction: 'left',
-      color: '#fffcc9',
-      value: value2,
-      setter: setValue2,
-    },
-    {
-      direction: 'down',
-      color: '#c9ffd4',
-      value: value3,
-      setter: setValue3,
-    },
-    {
-      direction: 'up',
-      color: '#cdc9ff',
-      value: value4,
-      setter: setValue4,
-    },
-  ]
+  const directions = ['right', 'left', 'down', 'up']
 
   return (
-    <div
-      style={{
-        boxSizing: 'border-box',
-        display: 'flex',
-        width: '100%',
-        flexWrap: 'wrap',
-      }}
-    >
-      {item.map(({ direction, color, value, setter }) => {
-        return (
-          <div
-            key={direction}
-            style={{
-              width: 'calc(50% - 2rem)',
-              border: `0.5rem solid ${color}`,
-              padding: '0.5rem',
-            }}
-          >
-            <p>{direction}</p>
-            <Slider
-              value={value}
-              min={0}
-              max={100}
-              direction={direction as SliderDirection}
-              enableWheel={['raw', 5]}
-              onChange={(v) => setter(v)}
-            />
-            <p>value: {value}%</p>
-          </div>
-        )
-      })}
+    <div>
+      <select
+        style={{
+          display: 'block',
+          marginBottom: '1rem'
+        }}
+        onChange={(e) => setDirection(e.currentTarget.value)}
+      >
+        {directions.map((d) =>
+          <option key={d} value={d}>{d}</option>
+        )}
+      </select>
+      <Slider
+        value={value}
+        min={0}
+        max={100}
+        direction={direction as SliderDirection}
+        enableWheel={['raw', 5]}
+        onChange={(v) => setValue(v)}
+      />
+      <p>value: {value}</p>
     </div>
   )
 }
@@ -135,14 +98,17 @@ export const CustomImage = () => {
         value={value}
         min={0}
         max={100}
-        length={200}
-        color="rgb(149,234,231)"
         onChange={(v) => setValue(v)}
         style={{
           borderRadius: 0,
         }}
       >
-        <SliderTrack></SliderTrack>
+        <SliderTrack
+          activeBg="rgb(149,234,231)"
+          activeHoverBg="rgb(149,234,231)"
+          length={200}
+          style={{ borderRadius: 0 }}
+        ></SliderTrack>
         <SliderThumb>
           <img
             src={thumbImage} // TODO: use staticDirs
@@ -304,8 +270,6 @@ export const VolumeFader = () => {
           gainNode.gain.value = normalizeValue(v, min, max, skew)
         }}
         enableWheel={['normalized', 0.1]}
-        color="#555"
-        bg="#555"
         scale={[
           { at: 6 },
           { at: 0 },
@@ -319,8 +283,8 @@ export const VolumeFader = () => {
         }}
       >
         <SliderThumb
+          color="#eee"
           style={{
-            backgroundColor: '#eee',
             width: '2.4rem',
             height: '1.2rem',
             borderRadius: '0.6rem',
@@ -328,6 +292,8 @@ export const VolumeFader = () => {
           }}
         />
         <SliderTrack
+          activeBg='#555'
+          inactiveBg='#555'
           style={{
             border: '1px solid #aaa',
           }}

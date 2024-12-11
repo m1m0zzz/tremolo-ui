@@ -2,27 +2,37 @@ import { CSSObject, css } from '@emotion/react'
 import { ReactNode } from 'react'
 
 interface SliderThumbProps {
+  size?: number | string
+  width?: number | string
+  height?: number | string
   color?: string
+  hoverColor?: string
+  zIndex?: number
   style?: CSSObject
   __css?: CSSObject
+  // __inheritColor?: string
   children?: ReactNode
 }
 
 export function SliderThumb({
-  color,
+  size,
+  width = 22,
+  height = 22,
+  color = '#4e76e6',
+  hoverColor = color,
+  zIndex = 100,
   children,
   style,
+  // __inheritColor, // TODO
   __css,
 }: SliderThumbProps) {
   return (
     <div
       className="tremolo-slider-thumb-wrapper"
       css={css({
-        width: 'fit-content',
-        height: 'fit-content',
         position: 'absolute',
         translate: '-50% -50%',
-        zIndex: 100,
+        zIndex: zIndex,
         ...__css,
       })}
     >
@@ -36,13 +46,14 @@ export function SliderThumb({
           tabIndex={0}
           css={css({
             background: color,
-            width: '1.4rem',
-            height: '1.4rem',
+            width: size ?? width,
+            height: size ?? height,
             borderRadius: '50%',
+            outline: 'none',
             '&:hover': {
-              background: `color-mix(in srgb, ${color} 95%, black)`
+              background: hoverColor
             },
-            '&:active': {
+            '&:focus': {
               boxShadow: '0px 0px 0px 3px rgba(var(--tremolo-theme-color-rgb), 0.2)',
             },
             ...style,

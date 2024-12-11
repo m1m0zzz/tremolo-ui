@@ -147,6 +147,7 @@ export const AdvancedImagiroKnob = () => {
           size={70}
           onChange={(v) => setValue(v)}
           enableWheel={['normalized', 0.1]}
+          style={{ display: 'block' }}
           draw={(ctx, width, height) => {
             const w = width.current
             const h = height.current
