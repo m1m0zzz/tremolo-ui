@@ -11,14 +11,14 @@ import {
 import { clamp, normalizeValue, rawValue, stepValue, toFixed } from '@tremolo-ui/functions'
 import { WheelOption } from '@tremolo-ui/functions'
 import { styleHelper } from '@tremolo-ui/functions'
-import React, { ReactElement, useRef } from 'react'
+import React, { forwardRef, ReactElement, useImperativeHandle, useRef } from 'react'
 import clsx from 'clsx'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { UserActionPseudoProps } from '../../system/pseudo'
 
-import { SliderThumb } from './Thumb'
+import { SliderThumb, SliderThumbMethods } from './Thumb'
 import { SliderTrack } from './Track'
 import { ScaleOption } from './type'
 
@@ -31,13 +31,14 @@ interface SliderProps {
 
   // optional
   step?: number
-  skew?: number // | SkewFunction
+  skew?: number // TODO | SkewFunction
   direction?: Direction // TODO: vertical & reverse
   // TODO: scales component
   scale?: ['step', ScaleType] | [number, ScaleType] | ScaleOrderList[]
   scaleOption?: ScaleOption
   bodyNoSelect?: boolean
   enableWheel?: WheelOption
+  enableKey?: boolean
   className?: string
   style?: CSSObject
   onChange?: (value: number) => void
@@ -45,10 +46,15 @@ interface SliderProps {
   // ReactElement<typeof SliderThumb, typeof SliderTrack>[]
 }
 
+export interface SliderMethods {
+  focus: () => void
+  blur: () => void
+}
+
 /**
  * Customizable slider
  */
-export function Slider({
+ export const Slider = forwardRef<SliderMethods, SliderProps>(({
   value,
   min,
   max,
@@ -61,12 +67,14 @@ export function Slider({
   style,
   bodyNoSelect = true,
   enableWheel,
+  enableKey = true,
   onChange,
   children,
   ...pseudo
-}: SliderProps & UserActionPseudoProps) {
+}: SliderProps & UserActionPseudoProps, ref) => {
   // -- state and ref ---
   const trackElementRef = useRef<HTMLDivElement>(null)
+  const thumbRef = useRef<SliderThumbMethods>(null)
 
   // --- interpret props ---
   const { _active, _focus, _hover } = pseudo
@@ -84,9 +92,7 @@ export function Slider({
   if (isReversed(direction)) scalesList.reverse()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let trackProps: any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let thumbProps: any
+  let trackProps: any, thumbProps: any
   if (children != undefined) {
     React.Children.forEach(children, (child) => {
       if (React.isValidElement(child)) {
@@ -166,6 +172,17 @@ export function Slider({
     if (bodyNoSelect) document.body.classList.remove('no-select')
   })
 
+  useImperativeHandle(ref, () => {
+    return {
+      focus() {
+        thumbRef.current?.focus()
+      },
+      blur() {
+        thumbRef.current?.blur()
+      },
+    }
+  }, [])
+
   return (
     <div
       className={clsx('tremolo-slider', className)}
@@ -183,12 +200,25 @@ export function Slider({
         display: 'inline-block',
         margin: `calc(${styleHelper(thumbProps?.size ?? 22)} / 2)`, // half thumb size
         cursor: 'pointer',
+        outline: 0,
         ...style,
       })}
       onPointerDown={(event) => {
         thumbDragged.current = true
         handleValue(event)
       }}
+      onKeyDown={(event) => {
+        // TODO: key option
+        if (!enableKey || !onChange) return
+        const key = event.key
+        if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
+          event.preventDefault()
+          const sign = (key == 'ArrowRight' || key == 'ArrowUp') ? 1 : -1
+          onChange(clamp(stepValue(value + sign, step), min, max))
+        }
+      }}
+      onFocus={thumbRef.current?.focus}
+      onBlur={thumbRef.current?.blur}
     >
       <Global
         styles={{
@@ -214,6 +244,7 @@ export function Slider({
             {...trackProps}
           />
           <SliderThumb
+            ref={thumbRef}
             __css={{
               top: isHorizontal(direction) ? '50%' : `${percentRev}%`,
               left: isHorizontal(direction) ? `${percentRev}%` : '50%',
@@ -295,7 +326,7 @@ export function Slider({
       </div>
     </div>
   )
-}
+})
 
 export * from './Thumb'
 export * from './Track'

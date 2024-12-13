@@ -1,5 +1,5 @@
 import { CSSObject, css } from '@emotion/react'
-import { ReactNode } from 'react'
+import { forwardRef, ReactNode, useImperativeHandle, useRef } from 'react'
 
 interface SliderThumbProps {
   size?: number | string
@@ -14,7 +14,12 @@ interface SliderThumbProps {
   children?: ReactNode
 }
 
-export function SliderThumb({
+export interface SliderThumbMethods {
+  focus: () => void
+  blur: () => void
+}
+
+ export const SliderThumb = forwardRef<SliderThumbMethods, SliderThumbProps>(({
   size,
   width = 22,
   height = 22,
@@ -23,9 +28,21 @@ export function SliderThumb({
   zIndex = 100,
   children,
   style,
-  // __inheritColor, // TODO
   __css,
-}: SliderThumbProps) {
+}: SliderThumbProps, ref) => {
+  const wrapperRef = useRef<HTMLDivElement>(null)
+
+  useImperativeHandle(ref, () => {
+    return {
+      focus() {
+        wrapperRef.current?.focus()
+      },
+      blur() {
+        wrapperRef.current?.blur()
+      },
+    }
+  }, [])
+
   return (
     <div
       className="tremolo-slider-thumb-wrapper"
@@ -36,11 +53,13 @@ export function SliderThumb({
         ...__css,
       })}
     >
+      {/* TODO: add ref object */}
       {children ? (
         children
       ) : (
         // default slider thumb
         <div
+          ref={wrapperRef}
           className="tremolo-slider-thumb"
           // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
           tabIndex={0}
@@ -62,4 +81,4 @@ export function SliderThumb({
       )}
     </div>
   )
-}
+})
