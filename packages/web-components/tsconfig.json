@@ -20,10 +20,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-
-    "paths": {
-      "functions/*": ["@tremolo-ui/functions/*"]
-    }
   },
   "include": ["src"]
 }
