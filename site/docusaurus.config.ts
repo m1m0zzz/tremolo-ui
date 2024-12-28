@@ -47,9 +47,40 @@ const config: Config = {
     },
   },
 
+  plugins: [
+    [
+      'docusaurus-plugin-typedoc',
+      {
+        id: 'functions',
+        entryPoints: ['../packages/functions/src/index.ts'],
+        tsconfig: '../packages/functions/tsconfig.json',
+        out: './docs/api/functions',
+      },
+    ],
+    [
+      'docusaurus-plugin-typedoc',
+      {
+        id: 'react',
+        entryPoints: ['../packages/react/src/index.ts'],
+        tsconfig: '../packages/react/tsconfig.json',
+        out: './docs/api/react',
+      },
+    ],
+    // [
+    //   'docusaurus-plugin-typedoc',
+    //   {
+    //     id: 'web-components',
+    //     entryPoints: ['../packages/web-components/src/index.ts'],
+    //     tsconfig: '../packages/web-components/tsconfig.json',
+    //     out: './docs/api/web-components',
+    //   },
+    // ],
+  ],
+
   presets: [
     [
       'classic',
+      /** @type {import('@docusaurus/preset-classic').Options} */
       {
         docs: {
           sidebarPath: './sidebars.ts',
@@ -87,17 +118,31 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Docs',
         },
         {
-          href: 'https://tremolo-ui-sb-react.vercel.app/',
-          label: 'React',
+          type: 'docSidebar',
+          sidebarId: 'typedocSidebar',
+          position: 'left',
+          label: 'API',
+        },
+        {
+          type: 'localeDropdown',
           position: 'right',
         },
         {
-          href: 'https://tremolo-ui-sb-web-components.vercel.app/',
-          label: 'Web Components',
+          label: 'Storybook',
           position: 'right',
+          items: [
+            {
+              href: 'https://tremolo-ui-sb-react.vercel.app/',
+              label: 'React',
+            },
+            {
+              href: 'https://tremolo-ui-sb-web-components.vercel.app/',
+              label: 'Web Components',
+            },
+          ]
         },
         {
           href: 'https://github.com/m1m0zzz/tremolo-ui',
@@ -105,7 +150,8 @@ const config: Config = {
           position: 'right',
         },
         {
-          type: 'localeDropdown',
+          href: 'https://www.npmjs.com/org/tremolo-ui',
+          label: 'npm',
           position: 'right',
         },
       ],
@@ -117,8 +163,17 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Tutorial',
-              to: '/docs/hello',
+              label: 'Docs',
+              to: '/docs/',
+            },
+          ],
+        },
+        {
+          title: 'API',
+          items: [
+            {
+              label: 'API',
+              to: '/docs/api/functions',
             },
           ],
         },

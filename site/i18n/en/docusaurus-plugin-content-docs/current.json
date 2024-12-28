@@ -18,5 +18,149 @@
   "sidebar.tutorialSidebar.category.Tutorial - Web Components.link.generated-index.description": {
     "message": "Getting started with tremolo-ui in Web Components",
     "description": "The generated-index page description for category Tutorial - Web Components in sidebar tutorialSidebar"
+  },
+  "sidebar.typedocSidebar.category.@tremolo-ui/functions": {
+    "message": "@tremolo-ui/functions",
+    "description": "The label for category @tremolo-ui/functions in sidebar typedocSidebar"
+  },
+  "sidebar.typedocSidebar.category.Type Aliases": {
+    "message": "Type Aliases",
+    "description": "The label for category Type Aliases in sidebar typedocSidebar"
+  },
+  "sidebar.typedocSidebar.category.Functions": {
+    "message": "Functions",
+    "description": "The label for category Functions in sidebar typedocSidebar"
+  },
+  "sidebar.typedocSidebar.category.@tremolo-ui/react": {
+    "message": "@tremolo-ui/react",
+    "description": "The label for category @tremolo-ui/react in sidebar typedocSidebar"
+  },
+  "sidebar.typedocSidebar.category.Interfaces": {
+    "message": "Interfaces",
+    "description": "The label for category Interfaces in sidebar typedocSidebar"
+  },
+  "sidebar.typedocSidebar.doc.InputEventOption": {
+    "message": "InputEventOption",
+    "description": "The label for the doc item InputEventOption in sidebar typedocSidebar, linking to the doc api/functions/type-aliases/InputEventOption"
+  },
+  "sidebar.typedocSidebar.doc.clamp": {
+    "message": "clamp",
+    "description": "The label for the doc item clamp in sidebar typedocSidebar, linking to the doc api/functions/functions/clamp"
+  },
+  "sidebar.typedocSidebar.doc.dbToGain": {
+    "message": "dbToGain",
+    "description": "The label for the doc item dbToGain in sidebar typedocSidebar, linking to the doc api/functions/functions/dbToGain"
+  },
+  "sidebar.typedocSidebar.doc.decimalPart": {
+    "message": "decimalPart",
+    "description": "The label for the doc item decimalPart in sidebar typedocSidebar, linking to the doc api/functions/functions/decimalPart"
+  },
+  "sidebar.typedocSidebar.doc.degree": {
+    "message": "degree",
+    "description": "The label for the doc item degree in sidebar typedocSidebar, linking to the doc api/functions/functions/degree"
+  },
+  "sidebar.typedocSidebar.doc.gainToDb": {
+    "message": "gainToDb",
+    "description": "The label for the doc item gainToDb in sidebar typedocSidebar, linking to the doc api/functions/functions/gainToDb"
+  },
+  "sidebar.typedocSidebar.doc.isEmpty": {
+    "message": "isEmpty",
+    "description": "The label for the doc item isEmpty in sidebar typedocSidebar, linking to the doc api/functions/functions/isEmpty"
+  },
+  "sidebar.typedocSidebar.doc.normalizeValue": {
+    "message": "normalizeValue",
+    "description": "The label for the doc item normalizeValue in sidebar typedocSidebar, linking to the doc api/functions/functions/normalizeValue"
+  },
+  "sidebar.typedocSidebar.doc.radian": {
+    "message": "radian",
+    "description": "The label for the doc item radian in sidebar typedocSidebar, linking to the doc api/functions/functions/radian"
+  },
+  "sidebar.typedocSidebar.doc.rawValue": {
+    "message": "rawValue",
+    "description": "The label for the doc item rawValue in sidebar typedocSidebar, linking to the doc api/functions/functions/rawValue"
+  },
+  "sidebar.typedocSidebar.doc.skewWithCenterValue": {
+    "message": "skewWithCenterValue",
+    "description": "The label for the doc item skewWithCenterValue in sidebar typedocSidebar, linking to the doc api/functions/functions/skewWithCenterValue"
+  },
+  "sidebar.typedocSidebar.doc.stepValue": {
+    "message": "stepValue",
+    "description": "The label for the doc item stepValue in sidebar typedocSidebar, linking to the doc api/functions/functions/stepValue"
+  },
+  "sidebar.typedocSidebar.doc.styleHelper": {
+    "message": "styleHelper",
+    "description": "The label for the doc item styleHelper in sidebar typedocSidebar, linking to the doc api/functions/functions/styleHelper"
+  },
+  "sidebar.typedocSidebar.doc.toFixed": {
+    "message": "toFixed",
+    "description": "The label for the doc item toFixed in sidebar typedocSidebar, linking to the doc api/functions/functions/toFixed"
+  },
+  "sidebar.typedocSidebar.doc.SliderMethods": {
+    "message": "SliderMethods",
+    "description": "The label for the doc item SliderMethods in sidebar typedocSidebar, linking to the doc api/react/interfaces/SliderMethods"
+  },
+  "sidebar.typedocSidebar.doc.SliderProps": {
+    "message": "SliderProps",
+    "description": "The label for the doc item SliderProps in sidebar typedocSidebar, linking to the doc api/react/interfaces/SliderProps"
+  },
+  "sidebar.typedocSidebar.doc.SliderThumbMethods": {
+    "message": "SliderThumbMethods",
+    "description": "The label for the doc item SliderThumbMethods in sidebar typedocSidebar, linking to the doc api/react/interfaces/SliderThumbMethods"
+  },
+  "sidebar.typedocSidebar.doc.Direction": {
+    "message": "Direction",
+    "description": "The label for the doc item Direction in sidebar typedocSidebar, linking to the doc api/react/type-aliases/Direction"
+  },
+  "sidebar.typedocSidebar.doc.DrawFunction": {
+    "message": "DrawFunction",
+    "description": "The label for the doc item DrawFunction in sidebar typedocSidebar, linking to the doc api/react/type-aliases/DrawFunction"
+  },
+  "sidebar.typedocSidebar.doc.Horizontal": {
+    "message": "Horizontal",
+    "description": "The label for the doc item Horizontal in sidebar typedocSidebar, linking to the doc api/react/type-aliases/Horizontal"
+  },
+  "sidebar.typedocSidebar.doc.ScaleOption": {
+    "message": "ScaleOption",
+    "description": "The label for the doc item ScaleOption in sidebar typedocSidebar, linking to the doc api/react/type-aliases/ScaleOption"
+  },
+  "sidebar.typedocSidebar.doc.ScaleOrderList": {
+    "message": "ScaleOrderList",
+    "description": "The label for the doc item ScaleOrderList in sidebar typedocSidebar, linking to the doc api/react/type-aliases/ScaleOrderList"
+  },
+  "sidebar.typedocSidebar.doc.ScaleType": {
+    "message": "ScaleType",
+    "description": "The label for the doc item ScaleType in sidebar typedocSidebar, linking to the doc api/react/type-aliases/ScaleType"
+  },
+  "sidebar.typedocSidebar.doc.Vertical": {
+    "message": "Vertical",
+    "description": "The label for the doc item Vertical in sidebar typedocSidebar, linking to the doc api/react/type-aliases/Vertical"
+  },
+  "sidebar.typedocSidebar.doc.AnimationCanvas": {
+    "message": "AnimationCanvas",
+    "description": "The label for the doc item AnimationCanvas in sidebar typedocSidebar, linking to the doc api/react/functions/AnimationCanvas"
+  },
+  "sidebar.typedocSidebar.doc.gradientDirection": {
+    "message": "gradientDirection",
+    "description": "The label for the doc item gradientDirection in sidebar typedocSidebar, linking to the doc api/react/functions/gradientDirection"
+  },
+  "sidebar.typedocSidebar.doc.Knob": {
+    "message": "Knob",
+    "description": "The label for the doc item Knob in sidebar typedocSidebar, linking to the doc api/react/functions/Knob"
+  },
+  "sidebar.typedocSidebar.doc.NumberInput": {
+    "message": "NumberInput",
+    "description": "The label for the doc item NumberInput in sidebar typedocSidebar, linking to the doc api/react/functions/NumberInput"
+  },
+  "sidebar.typedocSidebar.doc.Slider": {
+    "message": "Slider",
+    "description": "The label for the doc item Slider in sidebar typedocSidebar, linking to the doc api/react/functions/Slider"
+  },
+  "sidebar.typedocSidebar.doc.SliderThumb": {
+    "message": "SliderThumb",
+    "description": "The label for the doc item SliderThumb in sidebar typedocSidebar, linking to the doc api/react/functions/SliderThumb"
+  },
+  "sidebar.typedocSidebar.doc.SliderTrack": {
+    "message": "SliderTrack",
+    "description": "The label for the doc item SliderTrack in sidebar typedocSidebar, linking to the doc api/react/functions/SliderTrack"
   }
 }
