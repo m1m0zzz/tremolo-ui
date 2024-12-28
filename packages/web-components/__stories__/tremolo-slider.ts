@@ -5,7 +5,7 @@ import {
   ScaleOrderList,
   ScaleOption,
 } from 'functions/components/Slider/type'
-import { WheelOption } from 'functions/types'
+import { InputEventOption } from 'functions/types'
 
 export interface SliderProps {
   value: number
@@ -24,7 +24,7 @@ export interface SliderProps {
   color?: string
   bg?: string
   bodyNoSelect?: boolean
-  enableWheel?: WheelOption
+  enableWheel?: InputEventOption
   className?: string
   style?: string
   onChange?: (value: number) => void

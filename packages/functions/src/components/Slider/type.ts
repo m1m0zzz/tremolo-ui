@@ -1,5 +1,9 @@
 import { decimalPart, toFixed } from '../../math'
 
+//  -   | vertical | horizontal
+//  -   |   down   |    right
+// rev  |    up    |    left
+
 export type Horizontal = 'right' | 'left'
 export type Vertical = 'up' | 'down'
 export type Direction = Horizontal | Vertical

@@ -9,9 +9,9 @@ import {
   ScaleType,
 } from '@tremolo-ui/functions/Slider'
 import { clamp, normalizeValue, rawValue, stepValue, toFixed } from '@tremolo-ui/functions'
-import { WheelOption } from '@tremolo-ui/functions'
+import { InputEventOption } from '@tremolo-ui/functions'
 import { styleHelper } from '@tremolo-ui/functions'
-import React, { forwardRef, ReactElement, useImperativeHandle, useRef } from 'react'
+import React, { forwardRef, ReactElement, useCallback, useImperativeHandle, useRef } from 'react'
 import clsx from 'clsx'
 
 import { useEventListener } from '../../hooks/useEventListener'
@@ -22,7 +22,7 @@ import { SliderThumb, SliderThumbMethods } from './Thumb'
 import { SliderTrack } from './Track'
 import { ScaleOption } from './type'
 
-interface SliderProps {
+export interface SliderProps {
   // TODO: property docs
   // required
   value: number
@@ -37,8 +37,16 @@ interface SliderProps {
   scale?: ['step', ScaleType] | [number, ScaleType] | ScaleOrderList[]
   scaleOption?: ScaleOption
   bodyNoSelect?: boolean
-  enableWheel?: WheelOption
-  enableKey?: boolean
+  /**
+   * wheel control option
+   */
+  wheel?: InputEventOption
+  /**
+   * keyboard control option
+   */
+  keyboard?: InputEventOption
+  disabled?: boolean
+  readonly?: boolean
   className?: string
   style?: CSSObject
   onChange?: (value: number) => void
@@ -66,8 +74,10 @@ export interface SliderMethods {
   className,
   style,
   bodyNoSelect = true,
-  enableWheel,
-  enableKey = true,
+  wheel = ['raw', 1],
+  keyboard = ['raw', 1],
+  disabled = false,
+  readonly = false,
   onChange,
   children,
   ...pseudo
@@ -86,6 +96,12 @@ export interface SliderMethods {
         ? 100 - normalizeValue(v, min, max, skew) * 100
         : normalizeValue(v, min, max, skew) * 100
     )
+  }
+  if (wheel.length != 2) {
+    throw new Error(`Slider.wheel expect ['normalized' | 'raw', number]`)
+  }
+  if (keyboard.length != 2) {
+    throw new Error(`Slider.keyboard expect ['normalized' | 'raw', number]`)
   }
 
   const scalesList = parseScaleOrderList(scale, min, max, step)
@@ -113,7 +129,7 @@ export interface SliderMethods {
   const handleValue = (
     event: MouseEvent | React.PointerEvent<HTMLDivElement> | TouchEvent,
   ) => {
-    if (!trackElementRef.current || !thumbDragged.current) return
+    if (!trackElementRef.current || !thumbDragged.current || !onChange || readonly) return
     const isTouch = event instanceof TouchEvent
     if (isTouch && event.cancelable) event.preventDefault()
     if (bodyNoSelect) document.body.classList.add('no-select')
@@ -129,38 +145,55 @@ export interface SliderMethods {
       ? normalizeValue(mouseX, x1, x2)
       : normalizeValue(mouseY, y1, y2)
     const v = rawValue(isReversed(direction) ? 1 - n : n, min, max, skew)
-    const v2 = clamp(stepValue(v, step), min, max)
-    if (onChange) onChange(v2)
+    onChange(clamp(stepValue(v, step), min, max))
   }
+
+  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!keyboard || !onChange || readonly) return
+    const key = event.key
+    if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
+      event.preventDefault()
+      let x = (key == 'ArrowRight' || key == 'ArrowUp') ? keyboard[1] : -keyboard[1]
+      if (direction == 'down' || direction == 'left') x *= -1
+      let v
+      if (keyboard[0] == 'normalized') {
+        const n = normalizeValue(value, min, max, skew)
+        v = rawValue(n + x, min, max, skew)
+      } else {
+        v = value + x
+      }
+      onChange(clamp(stepValue(v, step), min, max))
+    }
+  }, [value, min, max, step, skew, direction, keyboard, onChange, readonly])
 
   // --- hooks ---
   const touchMoveRefCallback = useRefCallbackEvent(
     'touchmove',
     handleValue,
     { passive: false },
-    [min, max, skew, step, direction, onChange],
+    [min, max, skew, step, direction, onChange, readonly],
   )
 
   const wheelRefCallback = useRefCallbackEvent(
     'wheel',
     (event) => {
-      if (!enableWheel) return
+      if (!wheel || !onChange || readonly) return
       event.preventDefault()
-      let x = event.deltaY > 0 ? enableWheel[1] : -enableWheel[1]
+      let x = event.deltaY > 0 ? wheel[1] : -wheel[1]
       if (isReversed(direction) || isHorizontal(direction)) x *= -1
       let v
-      if (enableWheel[0] == 'normalized') {
+      if (wheel[0] == 'normalized') {
         const n = normalizeValue(value, min, max, skew)
         v = rawValue(n + x, min, max, skew)
       } else {
         v = value + x
       }
-      if (onChange) onChange(clamp(stepValue(v, step), min, max))
+      onChange(clamp(stepValue(v, step), min, max))
     },
     {
       passive: false,
     },
-    [enableWheel, value, min, max, skew, step],
+    [wheel, value, min, max, skew, step],
   )
 
   useEventListener(window, 'mousemove', (event) => {
@@ -207,16 +240,7 @@ export interface SliderMethods {
         thumbDragged.current = true
         handleValue(event)
       }}
-      onKeyDown={(event) => {
-        // TODO: key option
-        if (!enableKey || !onChange) return
-        const key = event.key
-        if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
-          event.preventDefault()
-          const sign = (key == 'ArrowRight' || key == 'ArrowUp') ? 1 : -1
-          onChange(clamp(stepValue(value + sign, step), min, max))
-        }
-      }}
+      onKeyDown={handleKeyDown}
       onFocus={thumbRef.current?.focus}
       onBlur={thumbRef.current?.blur}
     >
@@ -236,20 +260,21 @@ export interface SliderMethods {
         <div
           className="tremolo-slider-track-wrapper"
           ref={trackElementRef}
-          css={css({ position: 'relative' })}
         >
           <SliderTrack
             __direction={direction}
             __percent={percent}
+            __thumb={
+              <SliderThumb
+                ref={thumbRef}
+                __css={{
+                  top: isHorizontal(direction) ? '50%' : `${percentRev}%`,
+                  left: isHorizontal(direction) ? `${percentRev}%` : '50%',
+                }}
+                {...thumbProps}
+              />
+            }
             {...trackProps}
-          />
-          <SliderThumb
-            ref={thumbRef}
-            __css={{
-              top: isHorizontal(direction) ? '50%' : `${percentRev}%`,
-              left: isHorizontal(direction) ? `${percentRev}%` : '50%',
-            }}
-            {...thumbProps}
           />
         </div>
         {/* TODO: scales component */}

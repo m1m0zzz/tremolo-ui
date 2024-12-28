@@ -54,7 +54,6 @@ export const Direction = () => {
         min={0}
         max={100}
         direction={direction as SliderDirection}
-        enableWheel={['raw', 5]}
         onChange={(v) => setValue(v)}
       />
       <p>value: {value}</p>
@@ -81,7 +80,8 @@ export const LogarithmicParameter = () => {
         direction="up"
         step={0.1}
         onChange={(v) => setValue(v)}
-        enableWheel={['normalized', 0.1]}
+        wheel={['normalized', 0.1]}
+        keyboard={['normalized', 0.1]}
       />
       <p>{value <= -100 ? '-inf' : value} dB</p>
     </div>
@@ -269,7 +269,7 @@ export const VolumeFader = () => {
           if (!gainNode) return
           gainNode.gain.value = normalizeValue(v, min, max, skew)
         }}
-        enableWheel={['normalized', 0.1]}
+        wheel={['normalized', 0.1]}
         scale={[
           { at: 6 },
           { at: 0 },

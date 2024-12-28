@@ -1,1 +1,4 @@
-export type WheelOption = ['normalized' | 'raw', number]
+/**
+ * Options for setting the amount of keyboard and mouse wheel changes.
+ */
+export type InputEventOption = ['normalized' | 'raw', number]

@@ -1,6 +1,6 @@
 import { css, CSSObject, Global } from '@emotion/react'
 import { clamp, normalizeValue, radian, rawValue, stepValue } from '@tremolo-ui/functions'
-import { WheelOption } from '@tremolo-ui/functions'
+import { InputEventOption } from '@tremolo-ui/functions'
 import React, { useRef } from 'react'
 import clsx from 'clsx'
 
@@ -52,7 +52,7 @@ interface KnobProps {
   /** Whether to apply {use-select: none} when dragging */
   bodyNoSelect?: boolean
 
-  enableWheel?: WheelOption
+  wheel?: InputEventOption
   enableDoubleClickDefault?: boolean
   style?: CSSObject
   onChange?: (value: number) => void
@@ -84,7 +84,7 @@ export function Knob({
   options = defaultOptions,
   draw,
   bodyNoSelect = true,
-  enableWheel,
+  wheel,
   enableDoubleClickDefault = true,
   style,
   className,
@@ -141,11 +141,11 @@ export function Knob({
   const wheelRefCallback = useRefCallbackEvent(
     'wheel',
     (event) => {
-      if (!enableWheel) return
+      if (!wheel) return
       event.preventDefault()
-      const x = event.deltaY > 0 ? -enableWheel[1] : enableWheel[1]
+      const x = event.deltaY > 0 ? -wheel[1] : wheel[1]
       let v
-      if (enableWheel[0] == 'normalized') {
+      if (wheel[0] == 'normalized') {
         const n = normalizeValue(value, min, max, skew)
         v = rawValue(n + x, min, max, skew)
       } else {
@@ -154,7 +154,7 @@ export function Knob({
       if (onChange) onChange(clamp(stepValue(v, step), min, max))
     },
     { passive: false },
-    [enableWheel, value, min, max, skew, step, onChange],
+    [wheel, value, min, max, skew, step, onChange],
   )
 
   const touchMoveRefCallback = useRefCallbackEvent(

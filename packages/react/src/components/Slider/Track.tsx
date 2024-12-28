@@ -18,6 +18,8 @@ interface SliderTrackProps {
   children?: ReactElement
 
   /** inherit */
+  __thumb?: ReactElement
+  /** inherit */
   __direction?: Direction
   /** internal */
   __percent?: number
@@ -30,15 +32,17 @@ export function SliderTrack({
   inactiveBg = '#eee',
   activeHoverBg = '#6387e9',
   inactiveHoverBg = '#e0e0e0',
-  __direction,
   children,
   style,
+  __thumb,
+  __direction,
   __percent,
 }: SliderTrackProps) {
   return (
     <div
       className="tremolo-slider-track"
       css={css({
+        position: 'relative',
         background: `linear-gradient(to ${gradientDirection(__direction!)}, ${activeBg} ${__percent}%, ${inactiveBg} ${__percent}%)`,
         borderRadius: styleHelper(thickness!, '/', 2),
         width: isHorizontal(__direction!) ? length : thickness,
@@ -50,6 +54,7 @@ export function SliderTrack({
       })}
     >
       {children}
+      {__thumb}
     </div>
   )
 }

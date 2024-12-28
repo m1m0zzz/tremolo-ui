@@ -8,7 +8,7 @@ import {
   ScaleType,
 } from 'functions/components/Slider/type'
 import { clamp, normalizeValue, rawValue, stepValue } from 'functions/math'
-import { WheelOption } from 'functions/types'
+import { InputEventOption } from 'functions/types'
 import { isEmpty, styleHelper } from 'functions/util'
 import { LitElement, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
@@ -64,7 +64,7 @@ export class TremoloSlider extends LitElement {
   bodyNoSelect?: boolean = true
 
   @property({ type: Array })
-  enableWheel?: WheelOption
+  enableWheel?: InputEventOption
 
   @property({ attribute: 'class-name' })
   _className?: string = undefined

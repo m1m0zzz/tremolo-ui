@@ -19,7 +19,7 @@ export const Basic = () => {
         min={0}
         max={100}
         onChange={(v) => setValue(v)}
-        enableWheel={['normalized', 0.1]}
+        wheel={['normalized', 0.1]}
       />
       <p>value: {value}</p>
     </div>
@@ -46,7 +46,7 @@ export const Size = () => {
         min={0}
         max={100}
         onChange={(v) => setValue(v)}
-        enableWheel={['normalized', 0.1]}
+        wheel={['normalized', 0.1]}
       />
       <p>value: {value}</p>
     </div>
@@ -88,7 +88,7 @@ export const Options = () => {
           lineWeight: 4,
         }}
         onChange={(v) => setValue(v)}
-        enableWheel={['normalized', 0.1]}
+        wheel={['normalized', 0.1]}
       />
       <span>{fmt(value)}</span>
     </div>
@@ -146,7 +146,7 @@ export const AdvancedImagiroKnob = () => {
           max={100}
           size={70}
           onChange={(v) => setValue(v)}
-          enableWheel={['normalized', 0.1]}
+          wheel={['normalized', 0.1]}
           style={{ display: 'block' }}
           draw={(ctx, width, height) => {
             const w = width.current
