@@ -29,7 +29,11 @@ UI catalog and documentation are available on storybook.
 
 ## API
 
-TODO
+API documentation by typedoc.
+
+- [@tremolo-ui/functions](./api/functions/globals)
+- [@tremolo-ui/react](./api/react/globals)
+
 
 ## About This Document
 
