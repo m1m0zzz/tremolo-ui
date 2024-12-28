@@ -16,4 +16,23 @@
     ],
     "description": "React Component Template",
   },
+  "reactfc:cssmodule": {
+    "scope": "typescriptreact",
+    "prefix": "reactfc:cssmodules",
+    "body": [
+      "import style from './index.module.css'",
+      "",
+      "interface Props {",
+      "  ${1:prop}: any",
+      "}",
+      "",
+      "export function Hello({ ${1:prop} }: Props) {",
+      "  return (",
+      "    <div className={style.container}>$3</div>",
+      "  )",
+      "}",
+      "",
+    ],
+    "description": "React Component Template with CSS Modules",
+  },
 }
