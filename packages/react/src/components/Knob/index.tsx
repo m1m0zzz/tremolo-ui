@@ -1,6 +1,5 @@
 import { css, CSSObject, Global } from '@emotion/react'
-import { clamp, normalizeValue, radian, rawValue, stepValue } from '@tremolo-ui/functions'
-import { InputEventOption } from '@tremolo-ui/functions'
+import { clamp, normalizeValue, radian, rawValue, stepValue, InputEventOption } from '@tremolo-ui/functions'
 import React, { useRef } from 'react'
 import clsx from 'clsx'
 

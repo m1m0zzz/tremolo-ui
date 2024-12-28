@@ -8,9 +8,7 @@ import {
   ScaleOrderList,
   ScaleType,
 } from '@tremolo-ui/functions/Slider'
-import { clamp, normalizeValue, rawValue, stepValue, toFixed } from '@tremolo-ui/functions'
-import { InputEventOption } from '@tremolo-ui/functions'
-import { styleHelper } from '@tremolo-ui/functions'
+import { clamp, normalizeValue, rawValue, stepValue, toFixed, InputEventOption, styleHelper } from '@tremolo-ui/functions'
 import React, { forwardRef, ReactElement, useCallback, useImperativeHandle, useRef } from 'react'
 import clsx from 'clsx'
 
