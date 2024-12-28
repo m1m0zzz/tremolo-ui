@@ -1,0 +1,50 @@
+name: Automated npm update
+
+on:
+  schedule:
+    - cron: '0 0 1 * *' # 分 時 日 月 曜日
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  npm-update:
+    env:
+      pr_title: '[Automated] Update NPM dependencies'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Update packages
+        run: npm update
+
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        if: ${{ steps.git-check.outputs.changes == 'true' }}
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          add-paths: package-lock.json
+          commit-message: Update npm dependencies
+          title: ${{ env.pr_title }}
+          body: 'Automated changes by GitHub Actions'
+          branch: automated-npm-update
+          delete-branch: true
