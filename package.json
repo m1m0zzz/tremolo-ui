@@ -13,6 +13,7 @@
     "docs": "npm run start -w site --",
     "docs:wtr": "npm run write-translations -w site --",
     "build:docs": "npm run build -w site",
+    "build:docs:production": "npm run build:package && npm run build -w site",
     "serve:docs": "http-server ./site/build",
     "clean": "npm run clean --workspaces --if-present",
     "clean:build": "npm run clean:build --workspaces --if-present"
