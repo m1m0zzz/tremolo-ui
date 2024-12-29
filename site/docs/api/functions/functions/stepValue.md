@@ -18,4 +18,4 @@
 
 ## Defined in
 
-[math.ts:40](https://github.com/m1m0zzz/tremolo-ui/blob/7d11785da2668f64368eae498b8e04db28c30096/packages/functions/src/math.ts#L40)
+[math.ts:40](https://github.com/m1m0zzz/tremolo-ui/blob/b56a5f0b94efb6c6ac5cbeb66aa5dd9883f9257e/packages/functions/src/math.ts#L40)

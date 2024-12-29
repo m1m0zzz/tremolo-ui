@@ -1,11 +1,27 @@
 # @tremolo-ui/react
 
-## Install
+## Interfaces
 
-```bash
-npm i @tremolo-ui/react
-```
+- [SliderMethods](interfaces/SliderMethods.md)
+- [SliderProps](interfaces/SliderProps.md)
+- [SliderThumbMethods](interfaces/SliderThumbMethods.md)
 
-## Note
+## Type Aliases
 
-See https://github.com/m1m0zzz/tremolo-ui
+- [Direction](type-aliases/Direction.md)
+- [DrawFunction](type-aliases/DrawFunction.md)
+- [Horizontal](type-aliases/Horizontal.md)
+- [ScaleOption](type-aliases/ScaleOption.md)
+- [ScaleOrderList](type-aliases/ScaleOrderList.md)
+- [ScaleType](type-aliases/ScaleType.md)
+- [Vertical](type-aliases/Vertical.md)
+
+## Functions
+
+- [AnimationCanvas](functions/AnimationCanvas.md)
+- [gradientDirection](functions/gradientDirection.md)
+- [Knob](functions/Knob.md)
+- [NumberInput](functions/NumberInput.md)
+- [Slider](functions/Slider.md)
+- [SliderThumb](functions/SliderThumb.md)
+- [SliderTrack](functions/SliderTrack.md)

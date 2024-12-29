@@ -12,7 +12,7 @@
 
 #### Defined in
 
-[packages/react/src/components/Slider/Thumb.tsx:19](https://github.com/m1m0zzz/tremolo-ui/blob/7d11785da2668f64368eae498b8e04db28c30096/packages/react/src/components/Slider/Thumb.tsx#L19)
+[packages/react/src/components/Slider/Thumb.tsx:19](https://github.com/m1m0zzz/tremolo-ui/blob/b56a5f0b94efb6c6ac5cbeb66aa5dd9883f9257e/packages/react/src/components/Slider/Thumb.tsx#L19)
 
 ***
 
@@ -26,4 +26,4 @@
 
 #### Defined in
 
-[packages/react/src/components/Slider/Thumb.tsx:18](https://github.com/m1m0zzz/tremolo-ui/blob/7d11785da2668f64368eae498b8e04db28c30096/packages/react/src/components/Slider/Thumb.tsx#L18)
+[packages/react/src/components/Slider/Thumb.tsx:18](https://github.com/m1m0zzz/tremolo-ui/blob/b56a5f0b94efb6c6ac5cbeb66aa5dd9883f9257e/packages/react/src/components/Slider/Thumb.tsx#L18)

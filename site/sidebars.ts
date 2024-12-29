@@ -42,7 +42,7 @@ const sidebars: SidebarsConfig = {
       label: '@tremolo-ui/functions',
       link: {
         type: 'doc',
-        id: 'api/functions/globals',
+        id: 'api/functions/index',
       },
       items: require('./docs/api/functions/typedoc-sidebar.cjs'),
     },
@@ -51,7 +51,7 @@ const sidebars: SidebarsConfig = {
       label: '@tremolo-ui/react',
       link: {
         type: 'doc',
-        id: 'api/react/globals',
+        id: 'api/react/index',
       },
       items: require('./docs/api/react/typedoc-sidebar.cjs'),
     },

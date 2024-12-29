@@ -55,6 +55,7 @@ const config: Config = {
         entryPoints: ['../packages/functions/src/index.ts'],
         tsconfig: '../packages/functions/tsconfig.json',
         out: './docs/api/functions',
+        readme: 'none',
       },
     ],
     [
@@ -64,6 +65,7 @@ const config: Config = {
         entryPoints: ['../packages/react/src/index.ts'],
         tsconfig: '../packages/react/tsconfig.json',
         out: './docs/api/react',
+        readme: 'none',
       },
     ],
     // [
@@ -162,7 +164,7 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Docs',
+              label: 'introduction',
               to: '/docs/',
             },
           ],
@@ -171,8 +173,12 @@ const config: Config = {
           title: 'API',
           items: [
             {
-              label: 'API',
+              label: 'functions',
               to: '/docs/api/functions',
+            },
+            {
+              label: 'React',
+              to: '/docs/api/react',
             },
           ],
         },
