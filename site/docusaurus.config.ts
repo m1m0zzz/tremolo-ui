@@ -148,14 +148,16 @@ const config: Config = {
           ]
         },
         {
-          href: 'https://github.com/m1m0zzz/tremolo-ui',
-          label: 'GitHub',
+          type: 'custom-github-icon',
           position: 'right',
+          href: 'https://github.com/m1m0zzz/tremolo-ui',
+          title: 'GitHub'
         },
         {
-          href: 'https://www.npmjs.com/org/tremolo-ui',
-          label: 'npm',
+          type: 'custom-npm-icon',
           position: 'right',
+          href: 'https://www.npmjs.com/org/tremolo-ui',
+          title: 'npm'
         },
       ],
     },

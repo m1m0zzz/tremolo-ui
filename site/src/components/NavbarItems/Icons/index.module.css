@@ -1,0 +1,10 @@
+.anchor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin: 4px;
+  border-radius: 50%;
+  color: inherit;
+}
