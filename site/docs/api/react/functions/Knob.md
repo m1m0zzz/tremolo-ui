@@ -16,4 +16,4 @@ simple rotary Knob.
 
 ## Defined in
 
-[packages/react/src/components/Knob/index.tsx:72](https://github.com/m1m0zzz/tremolo-ui/blob/b56a5f0b94efb6c6ac5cbeb66aa5dd9883f9257e/packages/react/src/components/Knob/index.tsx#L72)
+[packages/react/src/components/Knob/index.tsx:72](https://github.com/m1m0zzz/tremolo-ui/blob/fdce4edd99400093675f850873baf6353f59c74b/packages/react/src/components/Knob/index.tsx#L72)

@@ -23,16 +23,19 @@ npm install react react-dom @emotion/react
 
 Below is an example of a simple knob component.
 
-```jsx
-import { useState } from 'react'
-import { Knob } from '@tremolo-ui/react'
-
-export default function App() {
-  const [value, setValue] = useState(32)
+```jsx live showLineNumbers
+function App() {
+  const [value, setValue] = useState(64)
 
   return (
     <div>
-      <Knob value={value} min={0} max={100} onChange={(v) => setValue(v)} />
+      <Knob
+        value={value}
+        min={0}
+        max={100}
+        size={50}
+        onChange={(v) => setValue(v)}
+      />
       <p>value: {value}</p>
     </div>
   )
