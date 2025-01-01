@@ -3,6 +3,7 @@ name: Automated npm update
 on:
   schedule:
     - cron: '0 0 1 * *' # 分 時 日 月 曜日
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -42,7 +43,7 @@ jobs:
           commit-message: Update npm dependencies
           title: '[bot] Update dependencies'
           body: 'Automated changes by GitHub Actions'
-          branch: automated-npm-update
+          branch: bot/automated-npm-update
           delete-branch: true
           reviewers: m1m0zzz
           labels: dependencies
