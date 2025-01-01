@@ -43,11 +43,8 @@ jobs:
           script: |
             const options = { ignoreReturnCode: true }
             const { stdout } = await exec.getExecOutput('npm', ['outdated', '--json'], options)
-          
             const json = JSON.parse(stdout)
-            const table = []
-            const header = ['Package', 'Current', 'Wanted', 'Latest', 'Depended by']
-
+            
             function row(row) {
               return `| ${row.join(' | ')} |\n`
             }
