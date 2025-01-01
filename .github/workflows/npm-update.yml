@@ -41,7 +41,7 @@ jobs:
         id: set-result
         with:
           script: |
-            const { stdout } = await exec('npm', ['outdated', '--json'])
+            const { stdout } = await exec.exec('npm', ['outdated', '--json'])
             
           result-encoding: string
           debug: true
