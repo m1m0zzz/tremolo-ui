@@ -12,11 +12,11 @@ export const Basic = () => {
   const [value, setValue] = useState(32)
 
   return (
-    <NumberInput value={value} strict={true} onChange={(v) => setValue(v)} />
+    <NumberInput value={value} typeNumber={true} onChange={(v) => setValue(v)} />
   )
 }
 
-export const Strict = () => {
+export const TypeNumber = () => {
   const [value, setValue] = useState(32)
 
   return (

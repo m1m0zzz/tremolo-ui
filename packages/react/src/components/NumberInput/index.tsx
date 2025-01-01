@@ -31,12 +31,16 @@ interface NumberInputProps {
   /**
    * NOTE: If units is specified, it is forced to `false`
    */
-  strict?: boolean
+  typeNumber?: boolean // TODO: rename typeNumber
 
   /**
+   * Digits for rounding numbers.
    * @example
-   * with units-{[['Hz', 1], ['kHz', 1000]]}
-   * 3 ... 100Hz, 1.60Hz
+   * with:
+   * units={[['Hz', 1], ['kHz', 1000]]}
+   * digit={3}
+   * results:
+   * value=100 -> 100Hz, value=1600 -> 1.60Hz
    */
   digit?: number
   selectWithFocus?: 'all' | 'number' | 'none'
@@ -68,7 +72,7 @@ export function NumberInput({
   placeholder,
   readOnly,
   tabIndex,
-  strict = false,
+  typeNumber = false,
   digit,
   selectWithFocus = 'none',
   blurWithEnter = true,
@@ -82,7 +86,7 @@ export function NumberInput({
   const [showValue, setShowValue] = useState(
     parseValue(String(value), units, digit, defaultValue).formatValue,
   )
-  const calculatedStrict = units ? false : strict
+  const calculatedTypeNumber = units ? false : typeNumber
   const { _active, _focus, _hover } = pseudo
 
   return (
@@ -92,7 +96,7 @@ export function NumberInput({
       min={min}
       max={max}
       step={step}
-      type={calculatedStrict ? 'number' : 'text'}
+      type={calculatedTypeNumber ? 'number' : 'text'}
       spellCheck={'false'}
       disabled={disabled}
       placeholder={placeholder}
