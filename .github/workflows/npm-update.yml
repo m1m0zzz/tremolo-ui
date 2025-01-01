@@ -39,8 +39,8 @@ jobs:
       - name: Create GitHub issue body as a markdown file
         if: steps.outdated-check.outputs.outdated == 'true'
         run: |
-          echo "| Package | Current Version | Latest Version |" > issue_body.md
-          echo "|---------|-----------------|----------------|" >> issue_body.md
+          echo "| Package | Current Version | Latest Version |" > body.md
+          echo "|---------|-----------------|----------------|" >> body.md
           npm outdated --json || echo "{}" | jq -r '. | to_entries | .[] | "| \(.key) | \(.value.current) | \(.value.latest) |"' >> body.md
 
       - name: Update packages
