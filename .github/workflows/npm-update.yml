@@ -42,33 +42,39 @@ jobs:
         with:
           script: |
             const options = { ignoreReturnCode: true }
-            const { exitCode, stdout } = await exec.getExecOutput('npm', ['outdated', '--json'], options)
-            console.log(exitCode, stdout)
+            const { stdout } = await exec.getExecOutput('npm', ['outdated', '--json'], options)
           
             const json = JSON.parse(stdout)
             const table = []
             const header = ['Package', 'Current', 'Wanted', 'Latest', 'Depended by']
+
+            function row(row) {
+              return `| ${row.join(' | ')} |\n`
+            }
+
+            function status(current, wanted) {
+              return current == wanted ? '✅' : '👷‍♀️'
+            }
+
+            const table = []
+            const header = ['Package', 'Status', 'Current', 'Wanted', 'Latest', 'Depended by']
 
             for (const [key, value] of Object.entries(json)) {
               console.log(`${key}: ${value}`)
               if (Array.isArray(value)) {
                 for (let i = 0; i < value.length; i++) {
                   const v = value[i]
-                  table.push([key, v.current, v.wanted, v.latest, v.dependent])
+                  table.push([key, status(v.current, v.wanted), v.current, v.wanted, v.latest, v.dependent])
                 }
               } else {
-                table.push([key, value.current, value.wanted, value.latest, value.dependent])
+                table.push([key, status(value.current, value.wanted), value.current, value.wanted, value.latest, value.dependent])
               }
-            }
-
-            function row(row) {
-              return `| ${row.join(' | ')} |\n`
             }
 
             return (
               row(header) +
               row(new Array(header.length).fill('---')) +
-              table.map(r => row(r)).join()
+              table.map(r => row(r)).join('')
             )
           result-encoding: string
           debug: true
