@@ -25,6 +25,23 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+    
+      - name: Check if there is outdated packages and set an environment variable
+        id: outdated-check
+        run: |
+          if [ "$(npm outdated --json || echo '{}')" != "{}" ]; then
+            echo "Outdated packages found."
+            echo "outdated=true" >> $GITHUB_OUTPUT
+          else
+            echo "No outdated packages." && exit 0
+          fi
+
+      - name: Create GitHub issue body as a markdown file
+        if: steps.outdated-check.outputs.outdated == 'true'
+        run: |
+          echo "| Package | Current Version | Latest Version |" > issue_body.md
+          echo "|---------|-----------------|----------------|" >> issue_body.md
+          npm outdated --json || echo "{}" | jq -r '. | to_entries | .[] | "| \(.key) | \(.value.current) | \(.value.latest) |"' >> body.md
 
       - name: Update packages
         run: npm update
@@ -42,8 +59,9 @@ jobs:
           add-paths: package-lock.json
           commit-message: Update npm dependencies
           title: '[bot] Update dependencies'
-          body: 'Automated changes by GitHub Actions'
+          body-path: ./body.md
           branch: bot/automated-npm-update
           delete-branch: true
           reviewers: m1m0zzz
           labels: dependencies
+          sign-commits: true
