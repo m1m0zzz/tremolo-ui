@@ -10,9 +10,6 @@ permissions:
 
 jobs:
   npm-update:
-    env:
-      pr_title: '[Automated] Update NPM dependencies'
-
     runs-on: ubuntu-latest
 
     steps:
@@ -38,13 +35,14 @@ jobs:
 
       - name: Create Pull Request
         if: ${{ steps.git-check.outputs.changes == 'true' }}
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           base: main
           add-paths: package-lock.json
           commit-message: Update npm dependencies
-          title: ${{ env.pr_title }}
+          title: '[bot] Update dependencies'
           body: 'Automated changes by GitHub Actions'
           branch: automated-npm-update
           delete-branch: true
+          reviewers: m1m0zzz
+          labels: dependencies
