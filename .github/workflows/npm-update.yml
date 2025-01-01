@@ -36,12 +36,16 @@ jobs:
             echo "No outdated packages." && exit 0
           fi
 
-      - name: Create GitHub issue body as a markdown file
+      - uses: actions/github-script@v7
         if: steps.outdated-check.outputs.outdated == 'true'
-        run: |
-          echo "| Package | Current Version | Latest Version |" > body.md
-          echo "|---------|-----------------|----------------|" >> body.md
-          npm outdated --json || echo "{}" | jq -r '. | to_entries | .[] | "| \(.key) | \(.value.current) | \(.value.latest) |"' >> body.md
+        id: set-result
+        with:
+          script: |
+            const exec = require('@actions/exec')
+            const { stdout } = await exec.exec('npm', ['outdated', '--json'])
+            
+          result-encoding: string
+          debug: true
 
       - name: Update packages
         run: npm update
@@ -59,7 +63,7 @@ jobs:
           add-paths: package-lock.json
           commit-message: Update npm dependencies
           title: '[bot] Update dependencies'
-          body-path: ./body.md
+          body: ${{ steps.set-result.outputs.result }}
           branch: bot/automated-npm-update
           delete-branch: true
           reviewers: m1m0zzz
