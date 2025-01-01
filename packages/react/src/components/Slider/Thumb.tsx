@@ -1,5 +1,6 @@
 import { CSSObject, css } from '@emotion/react'
 import { forwardRef, ReactNode, useImperativeHandle, useRef } from 'react'
+import clsx from 'clsx'
 
 interface SliderThumbProps {
   size?: number | string
@@ -7,11 +8,18 @@ interface SliderThumbProps {
   height?: number | string
   color?: string
   hoverColor?: string
+  disabledColor?: string
+  disabledHoverColor?: string
   zIndex?: number
+
+  className?: string
   style?: CSSObject
-  __css?: CSSObject
-  // __inheritColor?: string
   children?: ReactNode
+
+  /** internal */
+  __disabled?: boolean
+  /** internal */
+  __css?: CSSObject
 }
 
 export interface SliderThumbMethods {
@@ -25,9 +33,13 @@ export interface SliderThumbMethods {
   height = 22,
   color = '#4e76e6',
   hoverColor = color,
+  disabledColor = '#5d6478',
+  disabledHoverColor = disabledColor,
   zIndex = 100,
   children,
+  className,
   style,
+  __disabled,
   __css,
 }: SliderThumbProps, ref) => {
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -53,26 +65,25 @@ export interface SliderThumbMethods {
         ...__css,
       })}
     >
-      {/* TODO: add ref object */}
       {children ? (
         children
       ) : (
         // default slider thumb
         <div
           ref={wrapperRef}
-          className="tremolo-slider-thumb"
+          className={clsx('tremolo-slider-thumb', className)}
           // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
           tabIndex={0}
           css={css({
-            background: color,
+            background: __disabled ? disabledColor : color,
             width: size ?? width,
             height: size ?? height,
             borderRadius: '50%',
             outline: 'none',
             '&:hover': {
-              background: hoverColor
+              background: __disabled ? disabledHoverColor : hoverColor
             },
-            '&:focus': {
+            '&:focus': !__disabled && {
               boxShadow: '0px 0px 0px 3px rgba(var(--tremolo-theme-color-rgb), 0.2)',
             },
             ...style,

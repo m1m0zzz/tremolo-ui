@@ -1,0 +1,9 @@
+/* TODO */
+
+.thumb {
+  background-color: red;
+}
+
+.thumb:focus {
+  box-shadow: none;
+}

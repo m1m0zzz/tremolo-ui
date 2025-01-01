@@ -12,6 +12,10 @@ import {
 
 import thumbImage from './assets/tremolo-slider-thumb.png'
 import { getRMS } from './lib/dsp'
+import Select from './lib/Select'
+import Checkbox from './lib/Checkbox'
+
+import styles from './styles/Slider.module.css'
 
 export default {
   title: 'React/Components/Slider',
@@ -38,17 +42,7 @@ export const Direction = () => {
 
   return (
     <div>
-      <select
-        style={{
-          display: 'block',
-          marginBottom: '1rem'
-        }}
-        onChange={(e) => setDirection(e.currentTarget.value)}
-      >
-        {directions.map((d) =>
-          <option key={d} value={d}>{d}</option>
-        )}
-      </select>
+      <Select options={directions} onChange={setDirection} />
       <Slider
         value={value}
         min={0}
@@ -194,6 +188,45 @@ export const Scale = () => {
   )
 }
 
+export const Readonly = () => {
+  const [value, setValue] = useState(32)
+
+  return (
+    <>
+      <Slider
+        value={value}
+        min={0}
+        max={100}
+        onChange={(v) => setValue(v)}
+        readonly
+      />
+      <p>value: {value}</p>
+    </>
+  )
+}
+
+/**
+ * set disabled color (Only looks)
+ */
+export const Disable = () => {
+  const [value, setValue] = useState(32)
+  const [disabled, setDisabled] = useState(true)
+
+  return (
+    <>
+      <Checkbox checked={disabled} onChange={setDisabled} label='disabled' />
+      <Slider
+        value={value}
+        min={0}
+        max={100}
+        onChange={(v) => setValue(v)}
+        disabled={disabled}
+      />
+      <p>value: {value}</p>
+    </>
+  )
+}
+
 export const VolumeFader = () => {
   const [volume, setVolume] = useState(0)
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null)
@@ -283,6 +316,7 @@ export const VolumeFader = () => {
         }}
       >
         <SliderThumb
+          className={styles.thumb}
           color="#eee"
           style={{
             width: '2.4rem',

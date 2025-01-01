@@ -1,4 +1,5 @@
 import { css, CSSObject, Global } from '@emotion/react'
+import clsx from 'clsx'
 import {
   Direction,
   isHorizontal,
@@ -10,7 +11,6 @@ import {
 } from '@tremolo-ui/functions/Slider'
 import { clamp, normalizeValue, rawValue, stepValue, toFixed, InputEventOption, styleHelper } from '@tremolo-ui/functions'
 import React, { forwardRef, ReactElement, useCallback, useImperativeHandle, useRef } from 'react'
-import clsx from 'clsx'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
@@ -227,10 +227,12 @@ export interface SliderMethods {
       aria-valuemin={min}
       aria-valuemax={max}
       aria-orientation={isHorizontal(direction) ? 'horizontal' : 'vertical'}
+      aria-disabled={disabled}
+      aria-readonly={readonly}
       css={css({
         display: 'inline-block',
         margin: `calc(${styleHelper(thumbProps?.size ?? 22)} / 2)`, // half thumb size
-        cursor: 'pointer',
+        cursor: readonly ? 'not-allowed' : 'pointer',
         outline: 0,
         ...style,
       })}
@@ -261,10 +263,12 @@ export interface SliderMethods {
         >
           <SliderTrack
             __direction={direction}
+            __disabled={disabled}
             __percent={percent}
             __thumb={
               <SliderThumb
                 ref={thumbRef}
+                __disabled={disabled}
                 __css={{
                   top: isHorizontal(direction) ? '50%' : `${percentRev}%`,
                   left: isHorizontal(direction) ? `${percentRev}%` : '50%',

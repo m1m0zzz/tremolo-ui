@@ -10,7 +10,7 @@ interface Props {
   children?: ReactNode;
 }
 
-export function LinkTo({
+export default function LinkTo({
   story = 'docs',
   children,
   ...props
