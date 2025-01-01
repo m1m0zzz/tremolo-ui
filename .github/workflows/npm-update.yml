@@ -41,8 +41,8 @@ jobs:
         id: set-result
         with:
           script: |
-            const { stdout } = await exec.getExecOutput('npm', ['outdated', '--json'])
-            return 'ok'
+            const { stdout } = await exec.getExecOutput('echo', ['hello', 'world'])
+            return stdout
           result-encoding: string
           debug: true
 
