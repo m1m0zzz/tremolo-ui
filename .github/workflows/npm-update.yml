@@ -41,8 +41,15 @@ jobs:
         id: set-result
         with:
           script: |
-            const { stdout } = await exec.getExecOutput('npm', ['outdated', '--json'])
-            return stdout
+            let jsonText = ''
+            try {
+              const { exitCode, stdout } = await exec.getExecOutput('npm', ['outdated', '--json'])
+              console.log(exitCode, stdout)
+              jsonText = stdout
+            } catch {
+              console.log('catch')
+            }
+            return jsonText
           result-encoding: string
           debug: true
 
