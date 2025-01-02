@@ -26,15 +26,24 @@ export default async function outdatedTable({ exec, context, packageJson }) {
   }
 
   /**
+   * @template T
+   * @param {T[]} array
+   * @returns {T}
+   */
+  function lastItem(array) {
+    return array[array.length - 1]
+  }
+
+  /**
    * @param {string} dependent
    */
   function workspaceLink(dependent) {
 
     let workspace = ''
     if (dependent != 'tremolo-ui') {
-      workspace = workspaces.find((w) => w.split('/')[-1] == dependent)[0]
+      workspace = workspaces.find((w) => lastItem(w.split('/')) == dependent)[0]
     }
-    const branchName = context.ref.split('/')[-1]
+    const branchName = lastItem(context.ref.split('/'))
     const url = `https://github.com/${context.repo.owner}/${context.repo.repo}/tree/${branchName}/${workspace}`
     return `[${workspace}](${url})`
   }
