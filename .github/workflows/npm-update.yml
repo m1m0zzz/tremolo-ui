@@ -2,7 +2,7 @@ name: Automated npm update
 
 on:
   schedule:
-    - cron: '0 0 1 * *' # 分 時 日 月 曜日
+    - cron: '0 0 * * 6' # 分 時 日 月 曜日
   workflow_dispatch:
 
 permissions:
@@ -42,7 +42,8 @@ jobs:
         with:
           script: |
             const { default: outdatedTable } = await import('${{ github.workspace }}/scripts/outdated-table.js')
-            return await outdatedTable({ exec })
+            const { default: packageJson } = await import('${{ github.workspace }}/package.json')
+            return await outdatedTable({ exec, packageJson })
           result-encoding: string
           debug: true
 
