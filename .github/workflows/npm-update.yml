@@ -42,7 +42,7 @@ jobs:
         with:
           script: |
             const { default: outdatedTable } = await import('${{ github.workspace }}/scripts/outdated-table.js')
-            return await outdatedTable()
+            return await outdatedTable({ exec })
           result-encoding: string
           debug: true
 
