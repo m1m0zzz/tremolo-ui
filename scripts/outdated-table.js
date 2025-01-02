@@ -1,9 +1,12 @@
 /** @param {import('github-script').AsyncFunctionArguments} AsyncFunctionArguments */
 export default async function outdatedTable({ exec, context, packageJson }) {
-
   const options = { ignoreReturnCode: true }
   const { stdout } = await exec.getExecOutput('npm', ['outdated', '--json'], options)
   const json = JSON.parse(stdout)
+
+  /** @type {string[]} */
+  const workspaces = packageJson['workspaces']
+  console.log(workspaces)
 
   /**
    * @param {string[]} row
@@ -26,8 +29,7 @@ export default async function outdatedTable({ exec, context, packageJson }) {
    * @param {string} dependent
    */
   function workspaceLink(dependent) {
-    /** @type {string[]} */
-    const workspaces = packageJson.workspaces
+
     let workspace = ''
     if (dependent != 'tremolo-ui') {
       workspace = workspaces.find((w) => w.split('/')[-1] == dependent)[0]
