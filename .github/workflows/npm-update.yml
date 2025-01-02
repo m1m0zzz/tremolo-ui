@@ -42,9 +42,8 @@ jobs:
         with:
           script: |
             const { default: outdatedTable } = await import('${{ github.workspace }}/scripts/outdated-table.js')
-            const { default: packageJson } = await import('${{ github.workspace }}/package.json', { with: { type: 'json' }})
-            console.log(packageJson)
-            return await outdatedTable({ exec, context, packageJson })
+            const { default: pkg } = await import('${{ github.workspace }}/package.json', { with: { type: 'json' }})
+            return await outdatedTable({ exec, context, pkg })
           result-encoding: string
           debug: true
 

@@ -1,12 +1,11 @@
 /** @param {import('github-script').AsyncFunctionArguments} AsyncFunctionArguments */
-export default async function outdatedTable({ exec, context, packageJson }) {
+export default async function outdatedTable({ exec, context, pkg }) {
   const options = { ignoreReturnCode: true }
   const { stdout } = await exec.getExecOutput('npm', ['outdated', '--json'], options)
   const json = JSON.parse(stdout)
 
   /** @type {string[]} */
-  const workspaces = packageJson['workspaces']
-  console.log(workspaces)
+  const workspaces = pkg.workspaces
 
   /**
    * @param {string[]} row
@@ -41,11 +40,11 @@ export default async function outdatedTable({ exec, context, packageJson }) {
 
     let workspace = ''
     if (dependent != 'tremolo-ui') {
-      workspace = workspaces.find((w) => lastItem(w.split('/')) == dependent)[0]
+      workspace = workspaces.find((w) => lastItem(w.split('/')) == dependent)
     }
     const branchName = lastItem(context.ref.split('/'))
     const url = `https://github.com/${context.repo.owner}/${context.repo.repo}/tree/${branchName}/${workspace}`
-    return `[${workspace}](${url})`
+    return `[${workspace == '' ? '/' : workspace}](${url})`
   }
 
   const table = []
@@ -53,7 +52,6 @@ export default async function outdatedTable({ exec, context, packageJson }) {
   const divider = ['---', ':---:', '---', '---', '---', '---']
 
   for (const [key, value] of Object.entries(json)) {
-    console.log(`${key}: ${value}`)
     if (Array.isArray(value)) {
       for (let i = 0; i < value.length; i++) {
         const v = value[i]
