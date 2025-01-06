@@ -56,6 +56,7 @@ const config: Config = {
         tsconfig: '../packages/functions/tsconfig.json',
         out: './docs/api/functions',
         readme: 'none',
+        useCodeBlocks: true,
       },
     ],
     [
@@ -66,6 +67,7 @@ const config: Config = {
         tsconfig: '../packages/react/tsconfig.json',
         out: './docs/api/react',
         readme: 'none',
+        useCodeBlocks: true,
       },
     ],
     // [
