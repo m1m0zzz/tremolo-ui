@@ -56,7 +56,9 @@ const config: Config = {
         tsconfig: '../packages/functions/tsconfig.json',
         out: './docs/api/functions',
         readme: 'none',
-        useCodeBlocks: true,
+        // sourceLinkTemplate: 'https://github.com/m1m0zzz/tremolo-ui/blob/{gitRevision}/{path}#L{line}',
+        // gitRemote: 'https://github.com/m1m0zzz/tremolo-ui.git',
+        // gitRevision: 'xxxx',
       },
     ],
     [
@@ -67,7 +69,6 @@ const config: Config = {
         tsconfig: '../packages/react/tsconfig.json',
         out: './docs/api/react',
         readme: 'none',
-        useCodeBlocks: true,
       },
     ],
     // [
