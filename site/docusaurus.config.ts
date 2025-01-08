@@ -103,6 +103,14 @@ const config: Config = {
         theme: {
           customCss: './src/css/custom.css',
         },
+        sitemap: {
+          lastmod: 'date',
+          ignorePatterns: ['/tags/**'],
+        },
+        gtag: {
+          trackingID: 'G-DL281M7CR5',
+          anonymizeIP: true,
+        },
       } satisfies Preset.Options,
     ],
   ],
