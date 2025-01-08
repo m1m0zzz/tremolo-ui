@@ -1,5 +1,6 @@
 import { Meta } from '@storybook/react'
 
+import { noteNumber } from '@tremolo-ui/functions'
 import { Piano } from '../src/components/Piano'
 
 export default {
@@ -10,6 +11,8 @@ export default {
 
 export const Basic = () => {
   return (
-    <Piano />
+    <Piano
+      noteRange={{ first: noteNumber('C3'), last: noteNumber('B5') }}
+    />
   )
 }
