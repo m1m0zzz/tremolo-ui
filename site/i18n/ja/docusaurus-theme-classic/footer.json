@@ -62,5 +62,13 @@
   "link.item.label.API": {
     "message": "API",
     "description": "The label of footer link with label=API linking to /docs/api/functions"
+  },
+  "link.item.label.introduction": {
+    "message": "introduction",
+    "description": "The label of footer link with label=introduction linking to /docs/"
+  },
+  "link.item.label.functions": {
+    "message": "functions",
+    "description": "The label of footer link with label=functions linking to /docs/api/functions"
   }
 }

@@ -4,7 +4,7 @@
     "description": "The label for version current"
   },
   "sidebar.tutorialSidebar.category.Tutorial - React": {
-    "message": "Tutorial - React",
+    "message": "チュートリアル - React",
     "description": "The label for category Tutorial - React in sidebar tutorialSidebar"
   },
   "sidebar.tutorialSidebar.category.Tutorial - React.link.generated-index.description": {
@@ -12,7 +12,7 @@
     "description": "The generated-index page description for category Tutorial - React in sidebar tutorialSidebar"
   },
   "sidebar.tutorialSidebar.category.Tutorial - Web Components": {
-    "message": "Tutorial - Web Components",
+    "message": "チュートリアル - Web Components",
     "description": "The label for category Tutorial - Web Components in sidebar tutorialSidebar"
   },
   "sidebar.tutorialSidebar.category.Tutorial - Web Components.link.generated-index.description": {
@@ -41,59 +41,59 @@
   },
   "sidebar.typedocSidebar.doc.InputEventOption": {
     "message": "InputEventOption",
-    "description": "The label for the doc item InputEventOption in sidebar typedocSidebar, linking to the doc api/functions/type-aliases/InputEventOption"
+    "description": "The label for the doc item InputEventOption in sidebar typedocSidebar, linking to the doc api/functions/top-level/type-aliases/InputEventOption"
   },
   "sidebar.typedocSidebar.doc.clamp": {
     "message": "clamp",
-    "description": "The label for the doc item clamp in sidebar typedocSidebar, linking to the doc api/functions/functions/clamp"
+    "description": "The label for the doc item clamp in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/clamp"
   },
   "sidebar.typedocSidebar.doc.dbToGain": {
     "message": "dbToGain",
-    "description": "The label for the doc item dbToGain in sidebar typedocSidebar, linking to the doc api/functions/functions/dbToGain"
+    "description": "The label for the doc item dbToGain in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/dbToGain"
   },
   "sidebar.typedocSidebar.doc.decimalPart": {
     "message": "decimalPart",
-    "description": "The label for the doc item decimalPart in sidebar typedocSidebar, linking to the doc api/functions/functions/decimalPart"
+    "description": "The label for the doc item decimalPart in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/decimalPart"
   },
   "sidebar.typedocSidebar.doc.degree": {
     "message": "degree",
-    "description": "The label for the doc item degree in sidebar typedocSidebar, linking to the doc api/functions/functions/degree"
+    "description": "The label for the doc item degree in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/degree"
   },
   "sidebar.typedocSidebar.doc.gainToDb": {
     "message": "gainToDb",
-    "description": "The label for the doc item gainToDb in sidebar typedocSidebar, linking to the doc api/functions/functions/gainToDb"
+    "description": "The label for the doc item gainToDb in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/gainToDb"
   },
   "sidebar.typedocSidebar.doc.isEmpty": {
     "message": "isEmpty",
-    "description": "The label for the doc item isEmpty in sidebar typedocSidebar, linking to the doc api/functions/functions/isEmpty"
+    "description": "The label for the doc item isEmpty in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/isEmpty"
   },
   "sidebar.typedocSidebar.doc.normalizeValue": {
     "message": "normalizeValue",
-    "description": "The label for the doc item normalizeValue in sidebar typedocSidebar, linking to the doc api/functions/functions/normalizeValue"
+    "description": "The label for the doc item normalizeValue in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/normalizeValue"
   },
   "sidebar.typedocSidebar.doc.radian": {
     "message": "radian",
-    "description": "The label for the doc item radian in sidebar typedocSidebar, linking to the doc api/functions/functions/radian"
+    "description": "The label for the doc item radian in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/radian"
   },
   "sidebar.typedocSidebar.doc.rawValue": {
     "message": "rawValue",
-    "description": "The label for the doc item rawValue in sidebar typedocSidebar, linking to the doc api/functions/functions/rawValue"
+    "description": "The label for the doc item rawValue in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/rawValue"
   },
   "sidebar.typedocSidebar.doc.skewWithCenterValue": {
     "message": "skewWithCenterValue",
-    "description": "The label for the doc item skewWithCenterValue in sidebar typedocSidebar, linking to the doc api/functions/functions/skewWithCenterValue"
+    "description": "The label for the doc item skewWithCenterValue in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/skewWithCenterValue"
   },
   "sidebar.typedocSidebar.doc.stepValue": {
     "message": "stepValue",
-    "description": "The label for the doc item stepValue in sidebar typedocSidebar, linking to the doc api/functions/functions/stepValue"
+    "description": "The label for the doc item stepValue in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/stepValue"
   },
   "sidebar.typedocSidebar.doc.styleHelper": {
     "message": "styleHelper",
-    "description": "The label for the doc item styleHelper in sidebar typedocSidebar, linking to the doc api/functions/functions/styleHelper"
+    "description": "The label for the doc item styleHelper in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/styleHelper"
   },
   "sidebar.typedocSidebar.doc.toFixed": {
     "message": "toFixed",
-    "description": "The label for the doc item toFixed in sidebar typedocSidebar, linking to the doc api/functions/functions/toFixed"
+    "description": "The label for the doc item toFixed in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/toFixed"
   },
   "sidebar.typedocSidebar.doc.SliderMethods": {
     "message": "SliderMethods",
@@ -162,5 +162,113 @@
   "sidebar.typedocSidebar.doc.SliderTrack": {
     "message": "SliderTrack",
     "description": "The label for the doc item SliderTrack in sidebar typedocSidebar, linking to the doc api/react/functions/SliderTrack"
+  },
+  "sidebar.typedocSidebar.category.NumberInput": {
+    "message": "NumberInput",
+    "description": "The label for category NumberInput in sidebar typedocSidebar"
+  },
+  "sidebar.typedocSidebar.category.Slider": {
+    "message": "Slider",
+    "description": "The label for category Slider in sidebar typedocSidebar"
+  },
+  "sidebar.typedocSidebar.category.top-level": {
+    "message": "top-level",
+    "description": "The label for category top-level in sidebar typedocSidebar"
+  },
+  "sidebar.typedocSidebar.category.MIDI": {
+    "message": "MIDI",
+    "description": "The label for category MIDI in sidebar typedocSidebar"
+  },
+  "sidebar.typedocSidebar.category.Math": {
+    "message": "Math",
+    "description": "The label for category Math in sidebar typedocSidebar"
+  },
+  "sidebar.typedocSidebar.category.Types": {
+    "message": "Types",
+    "description": "The label for category Types in sidebar typedocSidebar"
+  },
+  "sidebar.typedocSidebar.category.Utility": {
+    "message": "Utility",
+    "description": "The label for category Utility in sidebar typedocSidebar"
+  },
+  "sidebar.typedocSidebar.doc.Units": {
+    "message": "Units",
+    "description": "The label for the doc item Units in sidebar typedocSidebar, linking to the doc api/functions/NumberInput/type-aliases/Units"
+  },
+  "sidebar.typedocSidebar.doc.formatValue": {
+    "message": "formatValue",
+    "description": "The label for the doc item formatValue in sidebar typedocSidebar, linking to the doc api/functions/NumberInput/functions/formatValue"
+  },
+  "sidebar.typedocSidebar.doc.parseValue": {
+    "message": "parseValue",
+    "description": "The label for the doc item parseValue in sidebar typedocSidebar, linking to the doc api/functions/NumberInput/functions/parseValue"
+  },
+  "sidebar.typedocSidebar.doc.selectUnit": {
+    "message": "selectUnit",
+    "description": "The label for the doc item selectUnit in sidebar typedocSidebar, linking to the doc api/functions/NumberInput/functions/selectUnit"
+  },
+  "sidebar.typedocSidebar.doc.isHorizontal": {
+    "message": "isHorizontal",
+    "description": "The label for the doc item isHorizontal in sidebar typedocSidebar, linking to the doc api/functions/Slider/functions/isHorizontal"
+  },
+  "sidebar.typedocSidebar.doc.isReversed": {
+    "message": "isReversed",
+    "description": "The label for the doc item isReversed in sidebar typedocSidebar, linking to the doc api/functions/Slider/functions/isReversed"
+  },
+  "sidebar.typedocSidebar.doc.isVertical": {
+    "message": "isVertical",
+    "description": "The label for the doc item isVertical in sidebar typedocSidebar, linking to the doc api/functions/Slider/functions/isVertical"
+  },
+  "sidebar.typedocSidebar.doc.parseScaleOrderList": {
+    "message": "parseScaleOrderList",
+    "description": "The label for the doc item parseScaleOrderList in sidebar typedocSidebar, linking to the doc api/functions/Slider/functions/parseScaleOrderList"
+  },
+  "sidebar.typedocSidebar.doc.NoteName": {
+    "message": "NoteName",
+    "description": "The label for the doc item NoteName in sidebar typedocSidebar, linking to the doc api/functions/top-level/type-aliases/NoteName"
+  },
+  "sidebar.typedocSidebar.doc.WhiteNoteName": {
+    "message": "WhiteNoteName",
+    "description": "The label for the doc item WhiteNoteName in sidebar typedocSidebar, linking to the doc api/functions/top-level/type-aliases/WhiteNoteName"
+  },
+  "sidebar.typedocSidebar.doc.noteNames": {
+    "message": "noteNames",
+    "description": "The label for the doc item noteNames in sidebar typedocSidebar, linking to the doc api/functions/top-level/variables/noteNames"
+  },
+  "sidebar.typedocSidebar.doc.whiteNoteNames": {
+    "message": "whiteNoteNames",
+    "description": "The label for the doc item whiteNoteNames in sidebar typedocSidebar, linking to the doc api/functions/top-level/variables/whiteNoteNames"
+  },
+  "sidebar.typedocSidebar.doc.isNatural": {
+    "message": "isNatural",
+    "description": "The label for the doc item isNatural in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/isNatural"
+  },
+  "sidebar.typedocSidebar.doc.noteName": {
+    "message": "noteName",
+    "description": "The label for the doc item noteName in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/noteName"
+  },
+  "sidebar.typedocSidebar.doc.noteNumber": {
+    "message": "noteNumber",
+    "description": "The label for the doc item noteNumber in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/noteNumber"
+  },
+  "sidebar.typedocSidebar.doc.parseNoteName": {
+    "message": "parseNoteName",
+    "description": "The label for the doc item parseNoteName in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/parseNoteName"
+  },
+  "sidebar.typedocSidebar.doc.mod": {
+    "message": "mod",
+    "description": "The label for the doc item mod in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/mod"
+  },
+  "sidebar.typedocSidebar.doc.AnimationCanvasProps": {
+    "message": "AnimationCanvasProps",
+    "description": "The label for the doc item AnimationCanvasProps in sidebar typedocSidebar, linking to the doc api/react/interfaces/AnimationCanvasProps"
+  },
+  "sidebar.typedocSidebar.doc.KnobProps": {
+    "message": "KnobProps",
+    "description": "The label for the doc item KnobProps in sidebar typedocSidebar, linking to the doc api/react/interfaces/KnobProps"
+  },
+  "sidebar.typedocSidebar.doc.NumberInputProps": {
+    "message": "NumberInputProps",
+    "description": "The label for the doc item NumberInputProps in sidebar typedocSidebar, linking to the doc api/react/interfaces/NumberInputProps"
   }
 }

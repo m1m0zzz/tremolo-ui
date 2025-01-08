@@ -1,12 +1,12 @@
 import Link from '@docusaurus/Link'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
+import Translate from '@docusaurus/Translate'
 import HomepageFeatures from '@site/src/components/HomepageFeatures'
+import { Emoji } from '@site/src/components/Emoji'
 import StorybookIcon from '@site/static/img/storybook-icon.svg'
 import Heading from '@theme/Heading'
 import Layout from '@theme/Layout'
 import clsx from 'clsx'
-
-import { Emoji } from '../components/Emoji'
 
 import styles from './index.module.css'
 
@@ -29,7 +29,9 @@ function HomepageHeader() {
             }}
           >
             <Emoji emoji="💡" />
-            Getting Started
+            <Translate id="homepage.getting-started">
+              Getting Started
+            </Translate>
           </Link>
           <Link
             className="button button--secondary button--lg"

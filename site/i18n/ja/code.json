@@ -305,5 +305,38 @@
   "theme.tags.tagsPageTitle": {
     "message": "タグ",
     "description": "The title of the tag list page"
+  },
+  "theme.Playground.result": {
+    "message": "結果",
+    "description": "The result label of the live codeblocks"
+  },
+  "theme.Playground.liveEditor": {
+    "message": "ライブエディター",
+    "description": "The live editor label of the live codeblocks"
+  },
+  "theme.blog.author.noPosts": {
+    "message": "この著者による投稿はまだありません。",
+    "description": "The text for authors with 0 blog post"
+  },
+  "homepage.getting-started": {
+    "message": "はじめよう"
+  },
+  "homepage.features.easy-to-use.title": {
+    "message": "使いやすさ"
+  },
+  "homepage.features.easy-to-use.description": {
+    "message": "tremolo-uiは使いやすく、カスタマイズしやすいように設計されています。"
+  },
+  "homepage.features.mobile-support.title": {
+    "message": "モバイルサポート"
+  },
+  "homepage.features.mobile-support.description": {
+    "message": "tremolo-uiはモバイル特有のアクションにも対応しています。"
+  },
+  "homepage.features.headless-ui-like.title": {
+    "message": "ヘッドレスUIライク"
+  },
+  "homepage.features.headless-ui-like.description": {
+    "message": "リッチなデフォルトUIと、カスタマイズが容易なDOMライクなコンポーネント・システムを提供します。"
   }
 }

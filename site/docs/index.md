@@ -24,7 +24,7 @@ See the tutorial for the package you are using.
 UI catalog and documentation are available on storybook.
 
 - [React Storybook](https://tremolo-ui-sb-react.vercel.app/)
-- [Web COmponents Storybook](https://tremolo-ui-sb-web-components.vercel.app/)
+- [Web Components Storybook](https://tremolo-ui-sb-web-components.vercel.app/)
 
 
 ## API
