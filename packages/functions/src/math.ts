@@ -1,7 +1,15 @@
+/**
+ * clamp value between min and max
+ * @category Math
+ */
 export function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(value, max))
 }
 
+/**
+ * Normalize the value from 0 to 1
+ * @category Math
+ */
 export function normalizeValue(
   rawValue: number,
   min: number,
@@ -13,6 +21,10 @@ export function normalizeValue(
   return Math.pow(v, skew)
 }
 
+/**
+ * Convert normalized values back to raw values.
+ * @category Math
+ */
 export function rawValue(
   normalizedValue: number,
   min: number,
@@ -27,6 +39,10 @@ export function rawValue(
   return min + v * (max - min)
 }
 
+/**
+ *
+ * @category Math
+ */
 export function skewWithCenterValue(
   centerValue: number,
   min: number,
@@ -37,6 +53,10 @@ export function skewWithCenterValue(
   return Math.log(0.5) / Math.log((centerValue - min) / (max - min))
 }
 
+/**
+ *
+ * @category Math
+ */
 export function stepValue(value: number, step: number) {
   if (step <= 0) throw new RangeError('requirements: step > 0')
   const quotient = Math.floor(value / step)
@@ -46,26 +66,50 @@ export function stepValue(value: number, step: number) {
   return Math.abs(value - v) < Math.abs(value - next) ? v : next
 }
 
+/**
+ *
+ * @category Math
+ */
 export function toFixed(x: number, fractionDigits?: number) {
   return Number(x.toFixed(fractionDigits))
 }
 
+/**
+ *
+ * @category Math
+ */
 export function decimalPart(x: number | string): string | undefined {
   return String(x).split('.')[1]
 }
 
+/**
+ *
+ * @category Math
+ */
 export function radian(degree: number) {
   return (Math.PI * degree) / 180
 }
 
+/**
+ *
+ * @category Math
+ */
 export function degree(radian: number) {
   return (180 * radian) / Math.PI
 }
 
+/**
+ *
+ * @category Math
+ */
 export function dbToGain(db: number) {
   return Math.pow(10, db / 20)
 }
 
+/**
+ *
+ * @category Math
+ */
 export function gainToDb(gain: number) {
   return 20 * (Math.log(gain) / Math.LN10)
 }

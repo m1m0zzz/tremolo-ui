@@ -1,5 +1,8 @@
 type Operator = '+' | '-' | '*' | '/'
 
+/**
+ * @category Utility
+ */
 export function styleHelper(value: string | number): string
 export function styleHelper(
   value: string | number,
@@ -29,10 +32,16 @@ export function styleHelper(
   }
 }
 
+/**
+ * @category Utility
+ */
 export function isEmpty(obj: object) {
   return Object.keys(obj).length == 0
 }
 
+/**
+ * @category Utility
+ */
 export function mod(n: number, m: number) {
   return (((n % m) + m) % m)
 }

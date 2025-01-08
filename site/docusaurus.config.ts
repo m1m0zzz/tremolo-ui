@@ -52,7 +52,11 @@ const config: Config = {
       'docusaurus-plugin-typedoc',
       {
         id: 'functions',
-        entryPoints: ['../packages/functions/src/index.ts'],
+        entryPoints: [
+          '../packages/functions/src/index.ts',
+          '../packages/functions/src/components/Slider/type.ts',
+          '../packages/functions/src/components/NumberInput/type.ts',
+        ],
         tsconfig: '../packages/functions/tsconfig.json',
         out: './docs/api/functions',
         readme: 'none',
