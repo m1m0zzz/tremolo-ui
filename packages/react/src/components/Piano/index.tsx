@@ -1,5 +1,5 @@
 import { css } from "@emotion/react"
-import { isNatural, NoteName, noteName } from "@tremolo-ui/functions"
+import { isNatural, NoteName, noteName, parseNoteName } from "@tremolo-ui/functions"
 
 const pitchPositions: Record<NoteName, number> = {
   C: 0,
@@ -18,24 +18,28 @@ const pitchPositions: Record<NoteName, number> = {
 
 interface Props {
   noteRange: { first: number, last: number }
+  max?: number
   playNote?: (noteNumber: number) => void
   stopNote?: (noteNumber: number) => void
 }
 
 export function Piano({
   noteRange,
+  max = 127,
   playNote,
   stopNote,
 }: Props) {
   const noteRangeArray = Array.from({ length: noteRange.last - noteRange.first + 1 }, (_, i) => i + noteRange.first)
-  const noteNameRangeArray = noteRangeArray.map(noteName)
-  console.log(noteRangeArray)
   const noteWidth = 40
 
   function notePosition(note: number) {
     const cToB = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
-    const _noteName = noteName(note).slice(0, -1) as NoteName
-    const firstNoteName = noteName(noteRange.first).slice(0, -1) as NoteName
+    const toNoteName = (n: number) => {
+      const { letter, accidental } = parseNoteName(noteName(n))
+      return (letter + accidental) as NoteName
+    }
+    const _noteName = toNoteName(note)
+    const firstNoteName = toNoteName(noteRange.first)
     const pos = pitchPositions[_noteName] - pitchPositions[firstNoteName]
     const octave = Math.floor((note - noteRange.first) / 12)
     const octaveOffset = cToB.indexOf(firstNoteName) > cToB.indexOf(_noteName) ? 1 : 0
@@ -65,6 +69,7 @@ export function Piano({
           <div
             key={note}
             className="tremolo-piano-note"
+            aria-disabled={note > max}
             css={css({
               position: 'absolute',
               backgroundColor: isNatural(note) ? 'white' : '#333',
@@ -74,11 +79,11 @@ export function Piano({
               height: isNatural(note) ? '100%' : '60%',
               border: '1px solid #555',
               borderRadius: '0 0 8px 8px',
-              cursor: 'pointer',
+              cursor: note > max ? 'not-allowed' : 'pointer',
               zIndex: isNatural(note) ? 1 : 2,
-              '&:active': {
+              '&:active': (note > max) ? {} : {
                 backgroundColor: isNatural(note) ? '#ccc' : '#666',
-              }
+              },
             })}
             onPointerDown={() => {
               console.log('pointer down', note)

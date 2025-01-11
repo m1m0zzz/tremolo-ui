@@ -3,6 +3,7 @@ import { noteNumber, noteName } from '@tremolo-ui/functions'
 import { useState } from 'react'
 
 import { Piano } from '../src/components/Piano'
+import { NumberInput } from '../src/components/NumberInput'
 
 export default {
   title: 'React/Components/Piano',
@@ -15,7 +16,11 @@ export const Basic = () => {
   const [last, setLast] = useState(noteNumber('B5'))
   return (
     <div>
-      <div>
+      <div
+        style={{
+          marginBottom: '1rem',
+        }}
+      >
         <label>first note:{' '}
           <select onChange={(e) => setFirst(parseInt(e.target.value))}>
             {[...Array(127)].map((_, i) => (
@@ -38,6 +43,25 @@ export const Basic = () => {
       </div>
       <Piano
         noteRange={{ first: first, last: last }}
+      />
+    </div>
+  )
+}
+
+export const OneOctave = () => {
+  const [octave, setOctave] = useState(3)
+  return (
+    <div>
+      <NumberInput
+        value={octave}
+        min={-1}
+        max={9}
+        onChange={(v) => setOctave(v)}
+        typeNumber
+        style={{ display: 'block', marginBottom: '1rem' }}
+      />
+      <Piano
+        noteRange={{ first: noteNumber(`C${octave}`), last: noteNumber(`B${octave + 1}`) }}
       />
     </div>
   )
