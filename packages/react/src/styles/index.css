@@ -2,3 +2,7 @@
   --tremolo-theme-color: #4e76e6;
   --tremolo-theme-color-rgb: 78, 118, 230;
 }
+
+.tremolo-no-select {
+  user-select: none;
+}
