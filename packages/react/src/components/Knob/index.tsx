@@ -1,14 +1,15 @@
 import { css, CSSObject, Global } from '@emotion/react'
 import { clamp, normalizeValue, radian, rawValue, stepValue, InputEventOption } from '@tremolo-ui/functions'
-import React, { useRef } from 'react'
+import React, { ComponentPropsWithRef, useRef } from 'react'
 import clsx from 'clsx'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { UserActionPseudoProps } from '../../system/pseudo'
 import { AnimationCanvas, DrawFunction } from '../AnimationCanvas'
+import { addNoSelect, removeNoSelect } from '../_util'
 
-interface KnobProps {
+export interface KnobProps {
   // required
   value: number
   min: number
@@ -45,10 +46,10 @@ interface KnobProps {
     lineWeight?: number // line color
     thumbWeight?: number // thumb weight
   }
-  // TODO: need?
+
   draw?: DrawFunction
 
-  /** Whether to apply {use-select: none} when dragging */
+  /** Whether to apply `{use-select: none}` when dragging */
   bodyNoSelect?: boolean
 
   wheel?: InputEventOption
@@ -94,11 +95,7 @@ export function Knob({
   ...props
 }: KnobProps &
   UserActionPseudoProps &
-  Omit<
-    React.ClassAttributes<HTMLDivElement> &
-      React.HTMLAttributes<HTMLDivElement>,
-    'onChange'
-  >) {
+  Omit<ComponentPropsWithRef<'div'>, keyof KnobProps>) {
   // -- state and ref ---
   // const [privateValue, setPrivateValue] = useState(value);
   const dragOffsetY = useRef<number | undefined>(undefined)
@@ -125,7 +122,7 @@ export function Knob({
     const isTouch = event instanceof TouchEvent
     if (isTouch && event.cancelable) event.preventDefault()
     if (dragOffsetY.current) {
-      if (bodyNoSelect) document.body.classList.add('no-select')
+      if (bodyNoSelect) addNoSelect()
       const screenY = isTouch ? event.touches[0].screenY : event.screenY
       const delta = dragOffsetY.current - screenY
       dragOffsetY.current = screenY
@@ -167,7 +164,7 @@ export function Knob({
 
   useEventListener(window, 'pointerup', () => {
     dragOffsetY.current = undefined
-    if (bodyNoSelect) document.body.classList.remove('no-select')
+    if (bodyNoSelect) removeNoSelect()
   })
 
   return (

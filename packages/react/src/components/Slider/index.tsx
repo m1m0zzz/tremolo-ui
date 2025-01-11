@@ -15,6 +15,7 @@ import React, { forwardRef, ReactElement, useCallback, useImperativeHandle, useR
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { UserActionPseudoProps } from '../../system/pseudo'
+import { addNoSelect, removeNoSelect } from '../_util'
 
 import { SliderThumb, SliderThumbMethods } from './Thumb'
 import { SliderTrack } from './Track'
@@ -130,7 +131,7 @@ export interface SliderMethods {
     if (!trackElementRef.current || !thumbDragged.current || !onChange || readonly) return
     const isTouch = event instanceof TouchEvent
     if (isTouch && event.cancelable) event.preventDefault()
-    if (bodyNoSelect) document.body.classList.add('no-select')
+    if (bodyNoSelect) addNoSelect()
     const {
       left: x1,
       top: y1,
@@ -200,7 +201,7 @@ export interface SliderMethods {
 
   useEventListener(window, 'mouseup', () => {
     thumbDragged.current = false
-    if (bodyNoSelect) document.body.classList.remove('no-select')
+    if (bodyNoSelect) removeNoSelect()
   })
 
   useImperativeHandle(ref, () => {

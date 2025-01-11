@@ -1,12 +1,12 @@
 import { css, CSSObject } from '@emotion/react'
 import { clamp } from '@tremolo-ui/functions'
 import { parseValue, Units } from '@tremolo-ui/functions/NumberInput'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, ComponentPropsWithoutRef, useState } from 'react'
 import clsx from 'clsx'
 
 import { InputPseudoProps, UserActionPseudoProps } from '../../system/pseudo'
 
-interface NumberInputProps {
+export interface NumberInputProps {
   value: number | string
 
   min?: number
@@ -81,13 +81,15 @@ export function NumberInput({
   onChange,
   onFocus,
   onBlur,
-  ...pseudo
-}: NumberInputProps & UserActionPseudoProps & InputPseudoProps) {
+  ...props
+}: NumberInputProps & UserActionPseudoProps & InputPseudoProps &
+  Omit<ComponentPropsWithoutRef<'input'>, keyof NumberInputProps>
+) {
   const [showValue, setShowValue] = useState(
     parseValue(String(value), units, digit, defaultValue).formatValue,
   )
   const calculatedTypeNumber = units ? false : typeNumber
-  const { _active, _focus, _hover } = pseudo
+  const { _active, _focus, _hover, ...rest } = props
 
   return (
     <input
@@ -164,6 +166,7 @@ export function NumberInput({
           event.currentTarget.blur()
         }
       }}
+      {...rest}
     />
   )
 }

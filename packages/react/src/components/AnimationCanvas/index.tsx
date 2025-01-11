@@ -1,5 +1,5 @@
 import { css, CSSObject } from '@emotion/react'
-import { MutableRefObject, useEffect, useRef } from 'react'
+import { ComponentPropsWithRef, MutableRefObject, useEffect, useRef } from 'react'
 import clsx from 'clsx'
 
 import { DrawingContext, drawingState, DrawingStateValue } from './canvas'
@@ -25,7 +25,7 @@ export type DrawFunction = (
   count: number,
 ) => void
 
-interface AnimationCanvasProps {
+export interface AnimationCanvasProps {
   width?: number
   height?: number
   relativeSize?: boolean
@@ -52,11 +52,7 @@ export function AnimationCanvas({
   className,
   ...props
 }: AnimationCanvasProps &
-  Omit<
-    React.ClassAttributes<HTMLCanvasElement> &
-      React.CanvasHTMLAttributes<HTMLCanvasElement>,
-    'ref' | 'width' | 'height' | 'style'
-  >) {
+  Omit<ComponentPropsWithRef<'canvas'>, keyof AnimationCanvasProps>) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const memoCanvasRef = useRef<HTMLCanvasElement>(null)
   const reqIdRef = useRef<number>()
