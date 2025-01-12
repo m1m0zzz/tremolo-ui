@@ -1,32 +1,27 @@
 import { mod } from './util'
 
 /**
- *
  * @category MIDI
  */
-export const whiteNoteNames = ['A', 'B', 'C', 'D', 'E', 'F', 'G'] as const
+export const whiteKeys = ['A', 'B', 'C', 'D', 'E', 'F', 'G'] as const
 
 /**
- *
  * @category MIDI
  */
-export type WhiteNoteName = typeof whiteNoteNames[number]
+export type WhiteKey = typeof whiteKeys[number]
 
 /**
- *
  * @category MIDI
  */
 export const noteNames = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'] as const
 
 /**
- *
  * @category MIDI
  */
 export type NoteName = typeof noteNames[number]
 
 
 /**
- *
  * @category MIDI
  */
 export function parseNoteName(noteName: string) {
@@ -34,7 +29,7 @@ export function parseNoteName(noteName: string) {
   if (!m) throw new Error('Invalid note name')
   const [, letter, accidental, octave] = m
   return {
-    letter: letter.toLocaleUpperCase() as WhiteNoteName,
+    letter: letter.toLocaleUpperCase() as WhiteKey,
     accidental: accidental as '#' | '##' | 'b' | 'bb' | '',
     octave: Number(octave),
   }
@@ -66,17 +61,31 @@ export function noteName(noteNumber: number) {
 }
 
 /**
- *
  * @category MIDI
  */
-export function isNatural(noteNumber: number) {
+export function isWhiteKey(note: number | string) {
+  const n = typeof note == 'string' ? noteNumber(note) : note
   return (
-    mod(noteNumber, 12) == 0 ||
-    mod(noteNumber, 12) == 2 ||
-    mod(noteNumber, 12) == 4 ||
-    mod(noteNumber, 12) == 5 ||
-    mod(noteNumber, 12) == 7 ||
-    mod(noteNumber, 12) == 9 ||
-    mod(noteNumber, 12) == 11
+    mod(n, 12) == 0 ||
+    mod(n, 12) == 2 ||
+    mod(n, 12) == 4 ||
+    mod(n, 12) == 5 ||
+    mod(n, 12) == 7 ||
+    mod(n, 12) == 9 ||
+    mod(n, 12) == 11
   )
 }
+
+/**
+ * @category MIDI
+ */
+export function isBlackKey(noteNumber: number | string) {
+  return !isWhiteKey(noteNumber)
+}
+
+export const scaleNames = [
+  'major',
+  'minor',
+  'natural minor',
+  'pentatonic',
+]
