@@ -16,9 +16,9 @@ interface SliderThumbProps {
   style?: CSSObject
   children?: ReactNode
 
-  /** internal */
+  /** @internal */
   __disabled?: boolean
-  /** internal */
+  /** @internal */
   __css?: CSSObject
 }
 

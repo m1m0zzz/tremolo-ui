@@ -1,4 +1,3 @@
-import { Meta } from '@storybook/react'
 import { normalizeValue, skewWithCenterValue } from '@tremolo-ui/functions'
 import { useRef, useState } from 'react'
 
@@ -21,7 +20,7 @@ export default {
   title: 'React/Components/Slider',
   component: Slider,
   tags: ['autodocs'],
-} satisfies Meta<typeof Slider>
+}
 
 export const Basic = () => {
   const [value, setValue] = useState(32)

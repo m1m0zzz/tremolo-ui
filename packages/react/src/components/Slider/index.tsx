@@ -84,6 +84,7 @@ export interface SliderMethods {
   // -- state and ref ---
   const trackElementRef = useRef<HTMLDivElement>(null)
   const thumbRef = useRef<SliderThumbMethods>(null)
+  const thumbDragged = useRef(false)
 
   // --- interpret props ---
   const { _active, _focus, _hover } = pseudo
@@ -124,7 +125,7 @@ export interface SliderMethods {
     })
   }
 
-  const thumbDragged = useRef(false)
+  // --- internal functions ---
   const handleValue = (
     event: MouseEvent | React.PointerEvent<HTMLDivElement> | TouchEvent,
   ) => {
