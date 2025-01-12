@@ -2,7 +2,7 @@ import { Meta } from '@storybook/react'
 import { noteNumber, noteName } from '@tremolo-ui/functions'
 import { useState } from 'react'
 
-import { Piano } from '../src/components/Piano'
+import { BlackKey, Piano, WhiteKey } from '../src/components/Piano'
 import { NumberInput } from '../src/components/NumberInput'
 
 export default {
@@ -46,6 +46,25 @@ export const Basic = () => {
       />
     </div>
   )
+}
+
+export const Custom = () => {
+ return (
+    <Piano
+      noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}
+    >
+      <WhiteKey
+        width={60}
+        style={{
+          backgroundColor: 'aquamarine',
+          ':active': {
+            backgroundColor: '#73e6c0'
+          }
+        }}
+      />
+      <BlackKey width={60 * 0.65} />
+    </Piano>
+ )
 }
 
 export const OneOctave = () => {

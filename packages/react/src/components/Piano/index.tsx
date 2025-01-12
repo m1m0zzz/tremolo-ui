@@ -1,5 +1,17 @@
 import { css } from "@emotion/react"
-import { isNatural, NoteName, noteName, parseNoteName } from "@tremolo-ui/functions"
+import { isWhiteKey, NoteName, noteName, parseNoteName } from "@tremolo-ui/functions"
+import React, { ReactElement } from "react"
+import { useRef } from "react"
+import { WhiteKey } from "./WhiteKey"
+import { BlackKey } from "./BlackKey"
+
+/**
+ * Piano component
+ *
+ * TODO:
+ * - add playNote and stopNote functions
+ * - add highlighting notes
+ */
 
 const pitchPositions: Record<NoteName, number> = {
   C: 0,
@@ -18,20 +30,50 @@ const pitchPositions: Record<NoteName, number> = {
 
 interface Props {
   noteRange: { first: number, last: number }
-  max?: number
+  midiMax?: number
+  fill?: boolean
   playNote?: (noteNumber: number) => void
   stopNote?: (noteNumber: number) => void
+  children?: ReactElement | ReactElement[]
 }
 
 export function Piano({
   noteRange,
-  max = 127,
+  midiMax = 127,
+  fill = false,
   playNote,
   stopNote,
+  children,
 }: Props) {
-  const noteRangeArray = Array.from({ length: noteRange.last - noteRange.first + 1 }, (_, i) => i + noteRange.first)
-  const noteWidth = 40
+  // -- state and ref ---
+  const noteRangeArray = Array.from(
+    { length: noteRange.last - noteRange.first + 1 },
+    (_, i) => i + noteRange.first
+  )
+  const isPressed = useRef(false)
 
+  // --- interpret props ---
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let whiteKeyProps: any, blackKeyProps: any
+  if (children != undefined) {
+    React.Children.forEach(children, (child) => {
+      if (React.isValidElement(child)) {
+        if (child.type == WhiteKey) {
+          whiteKeyProps = child.props
+        } else if (child.type == BlackKey) {
+          blackKeyProps = child.props
+        } else {
+          throw new Error('only <WhiteKey> or <BlackKey>')
+        }
+      } else {
+        throw new Error('children is an invalid element.')
+      }
+    })
+  }
+
+  // --- internal functions ---
+  const noteWidth = whiteKeyProps?.width || 40
   function notePosition(note: number) {
     const cToB = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
     const toNoteName = (n: number) => {
@@ -43,81 +85,47 @@ export function Piano({
     const pos = pitchPositions[_noteName] - pitchPositions[firstNoteName]
     const octave = Math.floor((note - noteRange.first) / 12)
     const octaveOffset = cToB.indexOf(firstNoteName) > cToB.indexOf(_noteName) ? 1 : 0
-    return pos * (noteWidth + 3) + (octave + octaveOffset) * 7 * (noteWidth + 3)
+    const length = noteWidth + 3
+    return pos * length + (octave + octaveOffset) * 7 * length
   }
+
+  // --- hooks ---
 
   return (
     <div
-      className="tremolo-piano-wrapper"
+      className="tremolo-piano"
       style={{
         display: 'inline-block',
         boxSizing: 'border-box',
         userSelect: 'none',
+        height: 160,
+        position: 'relative',
       }}
     >
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          height: 160,
-          gap: 1,
-          position: 'relative',
-        }}
-      >
       {noteRangeArray.map((note) => {
         return (
-          <div
-            key={note}
-            className="tremolo-piano-note"
-            aria-disabled={note > max}
-            css={css({
-              position: 'absolute',
-              backgroundColor: isNatural(note) ? 'white' : '#333',
-              color: isNatural(note) ? 'black' : 'white',
-              left: notePosition(note),
-              width: isNatural(note) ? noteWidth : noteWidth * 0.65,
-              height: isNatural(note) ? '100%' : '60%',
-              border: '1px solid #555',
-              borderRadius: '0 0 8px 8px',
-              cursor: note > max ? 'not-allowed' : 'pointer',
-              zIndex: isNatural(note) ? 1 : 2,
-              '&:active': (note > max) ? {} : {
-                backgroundColor: isNatural(note) ? '#ccc' : '#666',
-              },
-            })}
-            onPointerDown={() => {
-              console.log('pointer down', note)
-            }}
-            onPointerEnter={() => {
-              console.log('mouse enter', note)
-            }}
-            onPointerLeave={() => {}}
-          >
-            <div
-              className="tremolo-piano-note-label"
-              css={css({
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'end',
-                height: '100%',
-                fontSize: '0.6rem',
-                textAlign: 'center',
-              })}
-            >
-              <div
-                css={css({
-                  marginTop: 8,
-                  marginBottom: 8,
-                  padding: 4,
-                  borderRadius: 4,
-                })}
-              >{noteName(note)}</div>
-            </div>
-          </div>
+          isWhiteKey(note) ? (
+            <WhiteKey
+              key={note}
+              __position={notePosition(note)}
+              __note={note}
+              __disabled={note > midiMax}
+              {...whiteKeyProps}
+            />
+          ) : (
+            <BlackKey
+              key={note}
+              __position={notePosition(note)}
+              __note={note}
+              __disabled={note > midiMax}
+              {...blackKeyProps}
+            />
+          )
         )
       })}
-      </div>
     </div>
   )
 }
 
+export { WhiteKey } from "./WhiteKey"
+export { BlackKey } from "./BlackKey"
