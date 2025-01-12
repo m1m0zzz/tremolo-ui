@@ -1,6 +1,6 @@
 import { css } from "@emotion/react"
 import { isWhiteKey, NoteName, noteName, parseNoteName } from "@tremolo-ui/functions"
-import React, { ReactElement } from "react"
+import React, { ReactElement, useState } from "react"
 import { useRef } from "react"
 import { WhiteKey } from "./WhiteKey"
 import { BlackKey } from "./BlackKey"
@@ -28,29 +28,39 @@ const pitchPositions: Record<NoteName, number> = {
   B: 6,
 }
 
-interface Props {
+export interface PianoProps {
+  // required
   noteRange: { first: number, last: number }
+
+  // optional
+  height?: number | string
+
+  glissando?: boolean
   midiMax?: number
   fill?: boolean
+
   playNote?: (noteNumber: number) => void
   stopNote?: (noteNumber: number) => void
+
   children?: ReactElement | ReactElement[]
 }
 
 export function Piano({
   noteRange,
+  height = 160,
+  glissando = true,
   midiMax = 127,
   fill = false,
   playNote,
   stopNote,
   children,
-}: Props) {
+}: PianoProps) {
   // -- state and ref ---
   const noteRangeArray = Array.from(
     { length: noteRange.last - noteRange.first + 1 },
     (_, i) => i + noteRange.first
   )
-  const isPressed = useRef(false)
+  const [pressed, setPressed] = useState(false)
 
   // --- interpret props ---
 
@@ -98,8 +108,14 @@ export function Piano({
         display: 'inline-block',
         boxSizing: 'border-box',
         userSelect: 'none',
-        height: 160,
+        height: height,
         position: 'relative',
+      }}
+      onPointerDown={() => {
+        setPressed(true)
+      }}
+      onPointerUp={() => {
+        setPressed(false)
       }}
     >
       {noteRangeArray.map((note) => {
@@ -107,6 +123,7 @@ export function Piano({
           isWhiteKey(note) ? (
             <WhiteKey
               key={note}
+              __glissando={glissando && pressed}
               __position={notePosition(note)}
               __note={note}
               __disabled={note > midiMax}
@@ -115,6 +132,7 @@ export function Piano({
           ) : (
             <BlackKey
               key={note}
+              __glissando={glissando && pressed}
               __position={notePosition(note)}
               __note={note}
               __disabled={note > midiMax}

@@ -22,9 +22,9 @@ export const Basic = () => {
         }}
       >
         <label>first note:{' '}
-          <select onChange={(e) => setFirst(parseInt(e.target.value))}>
+          <select value={first} onChange={(e) => setFirst(parseInt(e.target.value))}>
             {[...Array(127)].map((_, i) => (
-              <option key={i} value={i} disabled={i >= last} selected={i === first}>
+              <option key={i} value={i} disabled={i > last}>
                 {noteName(i)}
               </option>
             ))}
@@ -32,9 +32,9 @@ export const Basic = () => {
         </label>
         <br />
         <label>last note:{' '}
-          <select onChange={(e) => setLast(parseInt(e.target.value))}>
+          <select value={last} onChange={(e) => setLast(parseInt(e.target.value))}>
           {[...Array(127)].map((_, i) => (
-            <option key={i} value={i} disabled={i <= first} selected={i === last}>
+            <option key={i} value={i} disabled={i < first}>
               {noteName(i)}
             </option>
           ))}
@@ -48,19 +48,15 @@ export const Basic = () => {
   )
 }
 
-export const Custom = () => {
+export const Styling = () => {
  return (
     <Piano
       noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}
     >
       <WhiteKey
         width={60}
-        style={{
-          backgroundColor: 'aquamarine',
-          ':active': {
-            backgroundColor: '#73e6c0'
-          }
-        }}
+        bg='aquamarine'
+        activeBg='#73e6c0'
       />
       <BlackKey width={60 * 0.65} />
     </Piano>

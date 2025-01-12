@@ -1,12 +1,17 @@
 import { css, CSSObject } from "@emotion/react"
 import { noteName } from "@tremolo-ui/functions"
+import { useState } from "react"
 
 interface Props {
   width?: number
   height?: number | string
 
+  bg?: string
+  activeBg?: string
   style?: CSSObject
 
+  /** @internal */
+  __glissando?: boolean
   /** @internal */
   __position?: number
   /** @internal */
@@ -18,18 +23,23 @@ interface Props {
 export function BlackKey({
   width = 40 * 0.65,
   height = '60%',
+  bg = '#333',
+  activeBg = '#666',
   style,
+  __glissando,
   __position,
   __note,
   __disabled,
 }: Props) {
+  const [entered, setEntered] = useState(false)
+
   return (
     <div
       className={`tremolo-piano-black-key`}
       aria-disabled={__disabled}
       css={css({
         position: 'absolute',
-        backgroundColor: '#333',
+        backgroundColor: entered ? activeBg : bg,
         color: 'white',
         left: __position,
         width: width,
@@ -38,19 +48,29 @@ export function BlackKey({
         borderRadius: '0 0 8px 8px',
         cursor: __disabled ? 'not-allowed' : 'pointer',
         zIndex: 2,
-        '&:active': __disabled ? {} : {
-          backgroundColor: '#666',
-        },
         ...style,
       })}
       onPointerDown={() => {
-        console.log('pointer down', __note)
-        // isPressed.current = true
+        if (__disabled) return
+        setEntered(true)
+        console.log('play: ', __note)
+      }}
+      onPointerUp={() => {
+        if (__disabled) return
+        setEntered(false)
       }}
       onPointerEnter={() => {
-        console.log('mouse enter', __note)
+        if (__disabled) return
+        if (__glissando) {
+          setEntered(true)
+          console.log('play: ', __note)
+        }
       }}
-      onPointerLeave={() => {}}
+      onPointerLeave={(e) => {
+        if (__disabled) return
+        e.preventDefault()
+        setEntered(false)
+      }}
     >
       <div
         className="tremolo-piano-note-label"
