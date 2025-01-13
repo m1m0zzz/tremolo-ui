@@ -1,0 +1,46 @@
+---
+sidebar_position: 1
+title: はじめよう
+---
+
+# Install @tremolo-ui/react
+
+1. Install tremolo-ui
+
+```bash
+npm install @tremolo-ui/react
+```
+
+2. Install dependecies
+
+```bash
+npm install react react-dom @emotion/react
+```
+
+## First Step
+
+Below is an example of a simple knob component.
+
+```jsx live showLineNumbers
+function App() {
+  const [value, setValue] = useState(64)
+
+  return (
+    <div>
+      <Knob
+        value={value}
+        min={0}
+        max={100}
+        size={50}
+        onChange={(v) => setValue(v)}
+      />
+      <p>value: {value}</p>
+    </div>
+  )
+}
+```
+
+Check out the look and feel in the storybook!
+
+[Storybook - React Knob](https://tremolo-ui-sb-react.vercel.app/?path=/docs/react-components-knob--docs)
+

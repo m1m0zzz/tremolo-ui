@@ -7,10 +7,6 @@
     "message": "My Site Logo",
     "description": "The alt text of navbar logo"
   },
-  "item.label.Tutorial": {
-    "message": "Tutorial",
-    "description": "Navbar item with label Tutorial"
-  },
   "item.label.React": {
     "message": "React",
     "description": "Navbar item with label React"
@@ -18,10 +14,6 @@
   "item.label.Web Components": {
     "message": "Web Components",
     "description": "Navbar item with label Web Components"
-  },
-  "item.label.GitHub": {
-    "message": "GitHub",
-    "description": "Navbar item with label GitHub"
   },
   "item.label.Docs": {
     "message": "Docs",
@@ -34,10 +26,6 @@
   "item.label.Storybook": {
     "message": "Storybook",
     "description": "Navbar item with label Storybook"
-  },
-  "item.label.npm": {
-    "message": "npm",
-    "description": "Navbar item with label npm"
   },
   "item.label.Template": {
     "message": "Template",

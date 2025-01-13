@@ -3,22 +3,6 @@
     "message": "Next",
     "description": "The label for version current"
   },
-  "sidebar.tutorialSidebar.category.Tutorial - React": {
-    "message": "チュートリアル - React",
-    "description": "The label for category Tutorial - React in sidebar tutorialSidebar"
-  },
-  "sidebar.tutorialSidebar.category.Tutorial - React.link.generated-index.description": {
-    "message": "Getting started with tremolo-ui in React.",
-    "description": "The generated-index page description for category Tutorial - React in sidebar tutorialSidebar"
-  },
-  "sidebar.tutorialSidebar.category.Tutorial - Web Components": {
-    "message": "チュートリアル - Web Components",
-    "description": "The label for category Tutorial - Web Components in sidebar tutorialSidebar"
-  },
-  "sidebar.tutorialSidebar.category.Tutorial - Web Components.link.generated-index.description": {
-    "message": "Getting started with tremolo-ui in Web Components",
-    "description": "The generated-index page description for category Tutorial - Web Components in sidebar tutorialSidebar"
-  },
   "sidebar.typedocSidebar.category.@tremolo-ui/functions": {
     "message": "@tremolo-ui/functions",
     "description": "The label for category @tremolo-ui/functions in sidebar typedocSidebar"
@@ -227,21 +211,9 @@
     "message": "NoteName",
     "description": "The label for the doc item NoteName in sidebar typedocSidebar, linking to the doc api/functions/top-level/type-aliases/NoteName"
   },
-  "sidebar.typedocSidebar.doc.WhiteNoteName": {
-    "message": "WhiteNoteName",
-    "description": "The label for the doc item WhiteNoteName in sidebar typedocSidebar, linking to the doc api/functions/top-level/type-aliases/WhiteNoteName"
-  },
   "sidebar.typedocSidebar.doc.noteNames": {
     "message": "noteNames",
     "description": "The label for the doc item noteNames in sidebar typedocSidebar, linking to the doc api/functions/top-level/variables/noteNames"
-  },
-  "sidebar.typedocSidebar.doc.whiteNoteNames": {
-    "message": "whiteNoteNames",
-    "description": "The label for the doc item whiteNoteNames in sidebar typedocSidebar, linking to the doc api/functions/top-level/variables/whiteNoteNames"
-  },
-  "sidebar.typedocSidebar.doc.isNatural": {
-    "message": "isNatural",
-    "description": "The label for the doc item isNatural in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/isNatural"
   },
   "sidebar.typedocSidebar.doc.noteName": {
     "message": "noteName",
@@ -270,5 +242,49 @@
   "sidebar.typedocSidebar.doc.NumberInputProps": {
     "message": "NumberInputProps",
     "description": "The label for the doc item NumberInputProps in sidebar typedocSidebar, linking to the doc api/react/interfaces/NumberInputProps"
+  },
+  "sidebar.tutorialSidebar.category.Tutorials": {
+    "message": "Tutorials",
+    "description": "The label for category Tutorials in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.React": {
+    "message": "React",
+    "description": "The label for category React in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Web Components": {
+    "message": "Web Components",
+    "description": "The label for category Web Components in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Guides": {
+    "message": "Guides",
+    "description": "The label for category Guides in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Support": {
+    "message": "Support",
+    "description": "The label for category Support in sidebar tutorialSidebar"
+  },
+  "sidebar.typedocSidebar.category.Other": {
+    "message": "Other",
+    "description": "The label for category Other in sidebar typedocSidebar"
+  },
+  "sidebar.typedocSidebar.doc.WhiteKey": {
+    "message": "WhiteKey",
+    "description": "The label for the doc item WhiteKey in sidebar typedocSidebar, linking to the doc api/functions/top-level/type-aliases/WhiteKey"
+  },
+  "sidebar.typedocSidebar.doc.whiteKeys": {
+    "message": "whiteKeys",
+    "description": "The label for the doc item whiteKeys in sidebar typedocSidebar, linking to the doc api/functions/top-level/variables/whiteKeys"
+  },
+  "sidebar.typedocSidebar.doc.isBlackKey": {
+    "message": "isBlackKey",
+    "description": "The label for the doc item isBlackKey in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/isBlackKey"
+  },
+  "sidebar.typedocSidebar.doc.isWhiteKey": {
+    "message": "isWhiteKey",
+    "description": "The label for the doc item isWhiteKey in sidebar typedocSidebar, linking to the doc api/functions/top-level/functions/isWhiteKey"
+  },
+  "sidebar.typedocSidebar.doc.scaleNames": {
+    "message": "scaleNames",
+    "description": "The label for the doc item scaleNames in sidebar typedocSidebar, linking to the doc api/functions/top-level/variables/scaleNames"
   }
 }

@@ -10,12 +10,12 @@ tremolo-ui について簡単に紹介します。
 tremolo-uiは、オーディオアプリ向けのUIライブラリです。
 ReactとWeb Componentsに対応しており、npmでパッケージを配布しています。
 
-## Install
+## インストール
 
 使用するパッケージのチュートリアルを参照してください。
 
-- [Tutorial - React](./tutorial-react/getting-started.mdx)
-- [Tutorial - Web Components](./tutorial-web-components/getting-started.mdx)
+- [Tutorial - React](./tutorials/react/getting-started/)
+- [Tutorial - Web Components](./tutorials/web-components/getting-started/)
 
 ## UI Catalog
 
@@ -26,9 +26,13 @@ UIカタログとドキュメントを Storybook上で確認できます。
 
 ## API
 
-TODO
+typedoc によるAPIドキュメント
 
-## About This Document
+- [@tremolo-ui/functions](./api/functions/)
+- [@tremolo-ui/react](./api/react/)
+
+
+## このドキュメントについて
 
 このドキュメントは [Docusaurus](https://docusaurus.io/) を使用して作成されました。
 
