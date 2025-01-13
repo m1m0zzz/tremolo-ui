@@ -1,6 +1,7 @@
 import { Meta } from '@storybook/react'
 import { noteNumber, noteName } from '@tremolo-ui/functions'
 import { useState } from 'react'
+import * as Tone from "tone"
 
 import { BlackKey, Piano, WhiteKey } from '../src/components/Piano'
 import { NumberInput } from '../src/components/NumberInput'
@@ -12,8 +13,30 @@ export default {
 } satisfies Meta<typeof Piano>
 
 export const Basic = () => {
+  const synth = new Tone.PolySynth().toDestination()
+
+  return (
+    <div>
+      <p>Basic piano example with{' '}
+        <a href="https://tonejs.github.io/" target="_blank" rel="noopener noreferrer">Tone.js</a>
+        {' '}PolySynth.
+      </p>
+      <Piano
+        noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}
+        playNote={(noteNumber) => {
+          synth.triggerAttack(noteName(noteNumber))
+        }}
+        stopNote={(noteNumber) => {
+          synth.triggerRelease(noteName(noteNumber))
+        }}
+      />
+    </div>
+  )
+}
+
+export const Range = () => {
   const [first, setFirst] = useState(noteNumber('C3'))
-  const [last, setLast] = useState(noteNumber('B5'))
+  const [last, setLast] = useState(noteNumber('B4'))
   return (
     <div>
       <div
@@ -51,7 +74,7 @@ export const Basic = () => {
 export const Styling = () => {
  return (
     <Piano
-      noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}
+      noteRange={{ first: noteNumber('C3'), last: noteNumber('B3') }}
     >
       <WhiteKey
         width={60}
@@ -76,7 +99,7 @@ export const OneOctave = () => {
         style={{ display: 'block', marginBottom: '1rem' }}
       />
       <Piano
-        noteRange={{ first: noteNumber(`C${octave}`), last: noteNumber(`B${octave + 1}`) }}
+        noteRange={{ first: noteNumber(`C${octave}`), last: noteNumber(`B${octave}`) }}
       />
     </div>
   )

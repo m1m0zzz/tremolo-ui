@@ -18,6 +18,10 @@ interface Props {
   __note?: number
   /** @internal */
   __disabled?: boolean
+  /** @internal */
+  __playNote?: (noteNumber: number) => void
+  /** @internal */
+  __stopNote?: (noteNumber: number) => void
 }
 
 export function BlackKey({
@@ -30,6 +34,8 @@ export function BlackKey({
   __position,
   __note,
   __disabled,
+  __playNote,
+  __stopNote,
 }: Props) {
   const [entered, setEntered] = useState(false)
 
@@ -53,23 +59,24 @@ export function BlackKey({
       onPointerDown={() => {
         if (__disabled) return
         setEntered(true)
-        console.log('play: ', __note)
-      }}
-      onPointerUp={() => {
-        if (__disabled) return
-        setEntered(false)
+        if (__playNote) __playNote(__note!)
       }}
       onPointerEnter={() => {
         if (__disabled) return
         if (__glissando) {
           setEntered(true)
-          console.log('play: ', __note)
+          if (__playNote) __playNote(__note!)
         }
       }}
-      onPointerLeave={(e) => {
+      onPointerUp={() => {
         if (__disabled) return
-        e.preventDefault()
         setEntered(false)
+        if (__stopNote) __stopNote(__note!)
+      }}
+      onPointerLeave={() => {
+        if (__disabled) return
+        setEntered(false)
+        if (__stopNote) __stopNote(__note!)
       }}
     >
       <div

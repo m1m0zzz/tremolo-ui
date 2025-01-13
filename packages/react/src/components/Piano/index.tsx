@@ -1,7 +1,5 @@
-import { css } from "@emotion/react"
 import { isWhiteKey, NoteName, noteName, parseNoteName } from "@tremolo-ui/functions"
 import React, { ReactElement, useState } from "react"
-import { useRef } from "react"
 import { WhiteKey } from "./WhiteKey"
 import { BlackKey } from "./BlackKey"
 
@@ -127,6 +125,8 @@ export function Piano({
               __position={notePosition(note)}
               __note={note}
               __disabled={note > midiMax}
+              __playNote={playNote}
+              __stopNote={stopNote}
               {...whiteKeyProps}
             />
           ) : (
@@ -136,6 +136,8 @@ export function Piano({
               __position={notePosition(note)}
               __note={note}
               __disabled={note > midiMax}
+              __playNote={playNote}
+              __stopNote={stopNote}
               {...blackKeyProps}
             />
           )
