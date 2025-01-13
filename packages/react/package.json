@@ -71,7 +71,8 @@
     "react": "^18.3.1",
     "react-component-benchmark": "^2.0.0",
     "react-dom": "^18.3.1",
-    "storybook": "^8.3.3"
+    "storybook": "^8.3.3",
+    "tone": "^15.0.4"
   },
   "peerDependencies": {
     "@emotion/react": "11.x",
