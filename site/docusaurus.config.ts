@@ -125,6 +125,9 @@ const config: Config = {
         autoCollapseCategories: true,
       },
     },
+    colorMode: {
+      respectPrefersColorScheme: true,
+    },
     navbar: {
       title: '@tremolo-ui',
       logo: {
@@ -167,16 +170,16 @@ const config: Config = {
           ]
         },
         {
-          type: 'custom-github-icon',
-          position: 'right',
           href: 'https://github.com/m1m0zzz/tremolo-ui',
-          title: 'GitHub'
+          position: 'right',
+          className: 'header-github-link',
+          'aria-label': 'GitHub repository',
         },
         {
-          type: 'custom-npm-icon',
-          position: 'right',
           href: 'https://www.npmjs.com/org/tremolo-ui',
-          title: 'npm'
+          position: 'right',
+          className: 'header-npm-link',
+          'aria-label': 'npm',
         },
       ],
     },
