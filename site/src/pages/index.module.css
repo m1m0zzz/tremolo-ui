@@ -10,6 +10,10 @@
   overflow: hidden;
 }
 
+html[data-theme='dark'] .heroBanner {
+  background-color: var(--ifm-color-primary-darker);
+}
+
 @media screen and (max-width: 996px) {
   .heroBanner {
     padding: 2rem;

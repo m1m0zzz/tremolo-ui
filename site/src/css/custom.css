@@ -25,3 +25,15 @@
   --ifm-color-primary-lighter: #d9d2f2;
   --ifm-color-primary-lightest: #ffffff;
 }
+
+html[data-theme='light'] .navbar {
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+html[data-theme='dark'] .navbar {
+  background-color: rgba(36, 37, 38, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
