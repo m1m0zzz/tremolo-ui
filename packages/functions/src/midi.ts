@@ -13,7 +13,7 @@ export type WhiteKey = typeof whiteKeys[number]
 /**
  * @category MIDI
  */
-export const noteNames = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'] as const
+export const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'] as const
 
 /**
  * @category MIDI
@@ -47,7 +47,7 @@ export function noteNumber(noteName: string) {
   } = parseNoteName(noteName)
   const noteIndex = noteNames.indexOf(letter.toLocaleUpperCase() as NoteName)
   const accidentalValue = (accidental[0] == 'b' ? -1 : 1) * accidental.length
-  return noteIndex - 3 + 12 * (Number(octave) + 1) + accidentalValue
+  return noteIndex + 12 * (Number(octave) + 1) + accidentalValue
 }
 
 /**
@@ -55,8 +55,8 @@ export function noteNumber(noteName: string) {
  * @category MIDI
  */
 export function noteName(noteNumber: number) {
-  const noteIndex = mod((noteNumber + 3), 12)
-  const octave = Math.floor((noteNumber + 3) / 12) - 1
+  const noteIndex = mod(noteNumber, 12)
+  const octave = Math.floor(noteNumber / 12) - 1
   return noteNames[noteIndex] + octave
 }
 
