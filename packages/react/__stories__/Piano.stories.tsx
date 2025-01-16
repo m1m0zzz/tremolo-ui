@@ -1,9 +1,9 @@
 import { Meta } from '@storybook/react'
 import { noteNumber, noteName } from '@tremolo-ui/functions'
 import { useState } from 'react'
-import * as Tone from "tone"
+import * as Tone from 'tone'
 
-import { BlackKey, Piano, WhiteKey } from '../src/components/Piano'
+import { BlackKey, KeyLabel, Piano, WhiteKey } from '../src/components/Piano'
 import { NumberInput } from '../src/components/NumberInput'
 
 export default {
@@ -37,6 +37,7 @@ export const Basic = () => {
 export const Range = () => {
   const [first, setFirst] = useState(noteNumber('C3'))
   const [last, setLast] = useState(noteNumber('B4'))
+  const label = <KeyLabel label={(note) => noteName(note)} />
   return (
     <div>
       <div
@@ -66,22 +67,32 @@ export const Range = () => {
       </div>
       <Piano
         noteRange={{ first: first, last: last }}
-      />
+      >
+        <BlackKey>{label}</BlackKey>
+        <WhiteKey>{label}</WhiteKey>
+      </Piano>
     </div>
   )
 }
 
 export const Styling = () => {
- return (
+  return (
     <Piano
-      noteRange={{ first: noteNumber('C3'), last: noteNumber('B3') }}
+      noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}
     >
       <WhiteKey
         width={60}
         bg='aquamarine'
         activeBg='#73e6c0'
-      />
-      <BlackKey width={60 * 0.65} />
+      >
+        <KeyLabel
+          label={(note) => {
+            const name = noteName(note)
+            return name.startsWith('C') ? name : undefined
+          }}
+        />
+      </WhiteKey>
+      <BlackKey width={60 * 0.65}/>
     </Piano>
  )
 }

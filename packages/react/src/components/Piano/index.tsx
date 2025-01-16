@@ -1,7 +1,7 @@
-import { isWhiteKey, NoteName, noteName, parseNoteName } from "@tremolo-ui/functions"
-import React, { ReactElement, useState } from "react"
-import { WhiteKey } from "./WhiteKey"
-import { BlackKey } from "./BlackKey"
+import { isWhiteKey, NoteName, noteName, parseNoteName } from '@tremolo-ui/functions'
+import React, { ReactElement, useState } from 'react'
+import { WhiteKey } from './WhiteKey'
+import { BlackKey } from './BlackKey'
 
 /**
  * Piano component
@@ -40,6 +40,9 @@ export interface PianoProps {
   playNote?: (noteNumber: number) => void
   stopNote?: (noteNumber: number) => void
 
+  /**
+   * \<WhiteKey /> | \<BlackKey />
+   */
   children?: ReactElement | ReactElement[]
 }
 
@@ -147,5 +150,6 @@ export function Piano({
   )
 }
 
-export { WhiteKey } from "./WhiteKey"
-export { BlackKey } from "./BlackKey"
+export { WhiteKey } from './WhiteKey'
+export { BlackKey } from './BlackKey'
+export { KeyLabel } from './KeyLabel'

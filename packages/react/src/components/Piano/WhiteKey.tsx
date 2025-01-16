@@ -1,6 +1,8 @@
 import { css, CSSObject } from "@emotion/react"
 import {noteName } from "@tremolo-ui/functions"
-import { useState } from "react"
+import React from "react"
+import { ReactElement, useState } from "react"
+import { KeyLabel } from "./KeyLabel"
 
 interface Props {
   width?: number
@@ -9,6 +11,11 @@ interface Props {
   bg?: string
   activeBg?: string
   style?: CSSObject
+
+  /**
+   * \<KeyLabel />
+   */
+  children?: ReactElement
 
   /** @internal */
   __glissando?: boolean
@@ -30,6 +37,7 @@ export function WhiteKey({
   bg = 'white',
   activeBg = '#ccc',
   style,
+  children,
   __glissando,
   __position,
   __note,
@@ -38,6 +46,22 @@ export function WhiteKey({
   __stopNote,
 }: Props) {
   const [entered, setEntered] = useState(false)
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let keyLabelProps: any
+  if (children != undefined) {
+    React.Children.forEach(children, (child) => {
+      if (React.isValidElement(child)) {
+        if (child.type == KeyLabel) {
+          keyLabelProps = child.props
+        } else {
+          throw new Error('only <KeyLabel>')
+        }
+      } else {
+        throw new Error('children is an invalid element.')
+      }
+    })
+  }
 
   return (
     <div
@@ -79,26 +103,10 @@ export function WhiteKey({
         if (__stopNote) __stopNote(__note!)
       }}
     >
-      <div
-        className="tremolo-piano-note-label"
-        css={css({
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'end',
-          height: '100%',
-          fontSize: '0.6rem',
-          textAlign: 'center',
-        })}
-      >
-        <div
-          css={css({
-            marginTop: 8,
-            marginBottom: 8,
-            padding: 4,
-            borderRadius: 4,
-          })}
-        >{noteName(__note!)}</div>
-      </div>
+      <KeyLabel
+        __note={__note}
+        {...keyLabelProps}
+      />
     </div>
   )
 }
