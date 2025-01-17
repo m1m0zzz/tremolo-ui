@@ -1,14 +1,18 @@
 import { isWhiteKey, NoteName, noteName, parseNoteName } from '@tremolo-ui/functions'
-import React, { ReactElement, useState } from 'react'
+import React, { createRef, ReactElement, ReactNode, RefObject, useRef, useState } from 'react'
+
+import { useEventListener } from '../../hooks/useEventListener'
+
+import { KeyMethods } from './key'
 import { WhiteKey } from './WhiteKey'
 import { BlackKey } from './BlackKey'
+import { KeyBoardShortcuts } from './keyboardShortcuts'
 
 /**
  * Piano component
  *
  * TODO:
- * - add playNote and stopNote functions
- * - add highlighting notes
+ * - add scale highlight
  */
 
 const pitchPositions: Record<NoteName, number> = {
@@ -35,10 +39,13 @@ export interface PianoProps {
 
   glissando?: boolean
   midiMax?: number
+  keyboardShortcuts?: KeyBoardShortcuts
   fill?: boolean
 
   playNote?: (noteNumber: number) => void
   stopNote?: (noteNumber: number) => void
+
+  label?: (note: number, index: number) => ReactNode
 
   /**
    * \<WhiteKey /> | \<BlackKey />
@@ -51,17 +58,24 @@ export function Piano({
   height = 160,
   glissando = true,
   midiMax = 127,
+  keyboardShortcuts,
   fill = false,
   playNote,
   stopNote,
+  label,
   children,
 }: PianoProps) {
+  console.log('re rendering')
   // -- state and ref ---
   const noteRangeArray = Array.from(
     { length: noteRange.last - noteRange.first + 1 },
     (_, i) => i + noteRange.first
   )
   const [pressed, setPressed] = useState(false)
+  const keyRefs = useRef<RefObject<KeyMethods>[]>([])
+  noteRangeArray.forEach((_, index) => {
+    keyRefs.current[index] = createRef<KeyMethods>()
+  })
 
   // --- interpret props ---
 
@@ -101,6 +115,27 @@ export function Piano({
   }
 
   // --- hooks ---
+  useEventListener(window, 'keydown', (e) => {
+    if (e.repeat) return
+    if (!keyboardShortcuts) return
+    const index = keyboardShortcuts.keys.indexOf(e.key)
+    if (index != -1) {
+      console.log('play: ', noteRangeArray[index])
+      if (!keyRefs.current[index]?.current?.played()) {
+        keyRefs.current[index]?.current?.play()
+      }
+    }
+  })
+
+  useEventListener(window, 'keyup', (e) => {
+    if (e.repeat) return
+    if (!keyboardShortcuts) return
+    const index = keyboardShortcuts.keys.indexOf(e.key)
+    if (index != -1) {
+      console.log('stop: ', noteRangeArray[index])
+      keyRefs.current[index]?.current?.stop()
+    }
+  })
 
   return (
     <div
@@ -119,28 +154,34 @@ export function Piano({
         setPressed(false)
       }}
     >
-      {noteRangeArray.map((note) => {
+      {noteRangeArray.map((note, index) => {
         return (
           isWhiteKey(note) ? (
             <WhiteKey
               key={note}
+              ref={keyRefs.current[index]}
               __glissando={glissando && pressed}
               __position={notePosition(note)}
               __note={note}
               __disabled={note > midiMax}
+              __index={index}
               __playNote={playNote}
               __stopNote={stopNote}
+              __label={label}
               {...whiteKeyProps}
             />
           ) : (
             <BlackKey
               key={note}
+              ref={keyRefs.current[index]}
               __glissando={glissando && pressed}
               __position={notePosition(note)}
               __note={note}
               __disabled={note > midiMax}
+              __index={index}
               __playNote={playNote}
               __stopNote={stopNote}
+              __label={label}
               {...blackKeyProps}
             />
           )
@@ -150,6 +191,9 @@ export function Piano({
   )
 }
 
+export * from './key'
 export { WhiteKey } from './WhiteKey'
 export { BlackKey } from './BlackKey'
 export { KeyLabel } from './KeyLabel'
+
+export * from './keyboardShortcuts'

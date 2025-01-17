@@ -3,7 +3,7 @@ import clsx from "clsx"
 import { ReactNode } from "react"
 
 interface Props {
-  label?: (note: number) => ReactNode
+  label?: (note: number, index: number) => ReactNode
 
 
   className?: string
@@ -12,6 +12,10 @@ interface Props {
 
   /** @internal */
   __note?: number
+  /** @internal */
+  __index?: number
+  /** @internal */
+  __label?: (note: number, index: number) => ReactNode
 }
 
 export function KeyLabel({
@@ -20,6 +24,8 @@ export function KeyLabel({
   style,
   children,
   __note,
+  __index,
+  __label,
 }: Props) {
   return (
     children ? children :
@@ -42,7 +48,12 @@ export function KeyLabel({
             padding: 4,
             borderRadius: 4,
           }}
-        >{label && label(__note!)}</div>
+        >
+          {
+            label ? label(__note!, __index!) :
+            __label ? __label(__note!, __index!) : undefined
+          }
+        </div>
       </div>
   )
 }

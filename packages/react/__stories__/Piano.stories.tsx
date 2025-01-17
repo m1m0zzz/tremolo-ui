@@ -3,7 +3,7 @@ import { noteNumber, noteName } from '@tremolo-ui/functions'
 import { useState } from 'react'
 import * as Tone from 'tone'
 
-import { BlackKey, KeyLabel, Piano, WhiteKey } from '../src/components/Piano'
+import { BlackKey, KeyLabel, Piano, Shortcuts, WhiteKey } from '../src/components/Piano'
 import { NumberInput } from '../src/components/NumberInput'
 
 export default {
@@ -24,11 +24,14 @@ export const Basic = () => {
       <Piano
         noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}
         playNote={(noteNumber) => {
+          console.log('play on top function')
           synth.triggerAttack(noteName(noteNumber))
         }}
         stopNote={(noteNumber) => {
           synth.triggerRelease(noteName(noteNumber))
         }}
+        keyboardShortcuts={Shortcuts.HOME_ROW}
+        label={(_, i) => Shortcuts.HOME_ROW.keys[i]?.toUpperCase()}
       />
     </div>
   )
@@ -37,7 +40,6 @@ export const Basic = () => {
 export const Range = () => {
   const [first, setFirst] = useState(noteNumber('C3'))
   const [last, setLast] = useState(noteNumber('B4'))
-  const label = <KeyLabel label={(note) => noteName(note)} />
   return (
     <div>
       <div
@@ -67,9 +69,14 @@ export const Range = () => {
       </div>
       <Piano
         noteRange={{ first: first, last: last }}
+        label={(note) => noteName(note)}
       >
-        <BlackKey>{label}</BlackKey>
-        <WhiteKey>{label}</WhiteKey>
+        <WhiteKey>
+          <KeyLabel label={(note) => noteName(note)} />
+        </WhiteKey>
+        <BlackKey>
+          <KeyLabel label={() => ''} />
+        </BlackKey>
       </Piano>
     </div>
   )

@@ -1,36 +1,10 @@
-import { css, CSSObject } from "@emotion/react"
-import React from "react"
-import { ReactElement, useState } from "react"
+import { css } from "@emotion/react"
+import React, { forwardRef, useImperativeHandle, useRef, useState } from "react"
+
 import { KeyLabel } from "./KeyLabel"
+import { KeyMethods, KeyProps } from "./key"
 
-interface Props {
-  width?: number
-  height?: number | string
-
-  bg?: string
-  activeBg?: string
-  style?: CSSObject
-
-  /**
-   * \<KeyLabel />
-   */
-  children?: ReactElement
-
-  /** @internal */
-  __glissando?: boolean
-  /** @internal */
-  __position?: number
-  /** @internal */
-  __note?: number
-  /** @internal */
-  __disabled?: boolean
-  /** @internal */
-  __playNote?: (noteNumber: number) => void
-  /** @internal */
-  __stopNote?: (noteNumber: number) => void
-}
-
-export function BlackKey({
+export const BlackKey = forwardRef<KeyMethods, KeyProps>(({
   width = 40 * 0.65,
   height = '60%',
   bg = '#333',
@@ -41,10 +15,29 @@ export function BlackKey({
   __position,
   __note,
   __disabled,
+  __index,
   __playNote,
   __stopNote,
-}: Props) {
-  const [entered, setEntered] = useState(false)
+  __label,
+}: KeyProps, ref) => {
+  const [played, setPlayed] = useState(false)
+
+  useImperativeHandle(ref, () => {
+    return {
+      play() {
+        if (__disabled) return
+        setPlayed(true)
+        if (__playNote) __playNote(__note!)
+      },
+      stop() {
+        setPlayed(false)
+        if (__stopNote) __stopNote(__note!)
+      },
+      played() {
+        return played
+      }
+    }
+  }, [])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let keyLabelProps: any
@@ -68,7 +61,7 @@ export function BlackKey({
       aria-disabled={__disabled}
       css={css({
         position: 'absolute',
-        backgroundColor: entered ? activeBg : bg,
+        backgroundColor: played ? activeBg : bg,
         color: 'white',
         left: __position,
         width: width,
@@ -81,32 +74,33 @@ export function BlackKey({
       })}
       onPointerDown={() => {
         if (__disabled) return
-        setEntered(true)
+        setPlayed(true)
         if (__playNote) __playNote(__note!)
       }}
       onPointerEnter={() => {
         if (__disabled) return
         if (__glissando) {
-          setEntered(true)
+          setPlayed(true)
           if (__playNote) __playNote(__note!)
         }
       }}
       onPointerUp={() => {
         if (__disabled) return
-        setEntered(false)
+        setPlayed(false)
         if (__stopNote) __stopNote(__note!)
       }}
       onPointerLeave={() => {
         if (__disabled) return
-        setEntered(false)
+        setPlayed(false)
         if (__stopNote) __stopNote(__note!)
       }}
     >
       <KeyLabel
         __note={__note}
+        __label={__label}
+        __index={__index}
         {...keyLabelProps}
       />
     </div>
   )
-}
-
+})
