@@ -3,12 +3,14 @@ import clsx from "clsx"
 import { ReactNode } from "react"
 
 interface Props {
+  /**
+   * override Piano.label
+   */
   label?: (note: number, index: number) => ReactNode
-
 
   className?: string
   style?: CSSObject
-  children?: ReactNode
+  wrapperStyle?: CSSObject
 
   /** @internal */
   __note?: number
@@ -22,38 +24,53 @@ export function KeyLabel({
   label,
   className,
   style,
-  children,
+  wrapperStyle,
   __note,
   __index,
   __label,
 }: Props) {
+  function isNullish(obj: any): obj is undefined | null {
+    return obj == undefined || obj == null
+  }
+
+  let content: ReactNode = label && label(__note!, __index!)
+  if (isNullish(content) && __label) {
+    content = __label(__note!, __index!)
+  }
+
   return (
-    children ? children :
+    !isNullish(content) &&
+    <div
+      className='tremolo-piano-key-label-wrapper'
+      css={css({
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'end',
+        height: '100%',
+        ...wrapperStyle
+      })}
+    >
       <div
         className={clsx('tremolo-piano-key-label', className)}
         css={css({
           display: 'flex',
           justifyContent: 'center',
-          alignItems: 'end',
-          height: '100%',
+          alignItems: 'center',
           fontSize: '0.6rem',
-          textAlign: 'center',
+          height: 10,
+          marginBottom: 10,
+          padding: 4,
+          borderRadius: 4,
+          borderStyle: 'solid',
+          borderWidth: 1,
+          borderColor: '#888',
+          aspectRatio: 1,
+          maxWidth: 'calc(100% - 16px)',
           ...style
         })}
       >
-        <div
-          css={{
-            marginTop: 8,
-            marginBottom: 8,
-            padding: 4,
-            borderRadius: 4,
-          }}
-        >
-          {
-            label ? label(__note!, __index!) :
-            __label ? __label(__note!, __index!) : undefined
-          }
-        </div>
+        {content}
       </div>
+    </div>
   )
 }

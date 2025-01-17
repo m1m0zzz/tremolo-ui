@@ -1,5 +1,6 @@
-import { isWhiteKey, NoteName, noteName, parseNoteName } from '@tremolo-ui/functions'
 import React, { createRef, ReactElement, ReactNode, RefObject, useRef, useState } from 'react'
+import { css, CSSObject } from '@emotion/react'
+import { isWhiteKey, NoteName, noteName, parseNoteName } from '@tremolo-ui/functions'
 
 import { useEventListener } from '../../hooks/useEventListener'
 
@@ -42,6 +43,8 @@ export interface PianoProps {
   keyboardShortcuts?: KeyBoardShortcuts
   fill?: boolean
 
+  style?: CSSObject
+
   playNote?: (noteNumber: number) => void
   stopNote?: (noteNumber: number) => void
 
@@ -60,6 +63,7 @@ export function Piano({
   midiMax = 127,
   keyboardShortcuts,
   fill = false,
+  style,
   playNote,
   stopNote,
   label,
@@ -137,13 +141,14 @@ export function Piano({
   return (
     <div
       className="tremolo-piano"
-      style={{
+      css={css({
         display: 'inline-block',
         boxSizing: 'border-box',
         userSelect: 'none',
         height: height,
         position: 'relative',
-      }}
+        ...style
+      })}
       onPointerDown={() => {
         setPressed(true)
       }}

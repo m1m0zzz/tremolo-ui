@@ -80,7 +80,7 @@ export const Range = () => {
           <KeyLabel label={(note) => noteName(note)} />
         </WhiteKey>
         <BlackKey>
-          <KeyLabel label={() => ''} />
+          <KeyLabel />
         </BlackKey>
       </Piano>
     </div>
@@ -94,17 +94,27 @@ export const Styling = () => {
     >
       <WhiteKey
         width={60}
-        bg='aquamarine'
-        activeBg='#73e6c0'
+        bg='#83888a'
+        activeBg='#5acee8'
       >
         <KeyLabel
           label={(note) => {
             const name = noteName(note)
             return name.startsWith('C') ? name : undefined
           }}
+          style={{
+            border: 'none',
+            color: 'white'
+          }}
         />
       </WhiteKey>
-      <BlackKey width={60 * 0.65}/>
+      <BlackKey
+        width={60 * 0.65}
+        bg='#333536'
+        activeBg='#5acee8'
+      >
+        <KeyLabel />
+      </BlackKey>
     </Piano>
  )
 }
