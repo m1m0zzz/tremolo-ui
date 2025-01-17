@@ -77,10 +77,11 @@ export const Range = () => {
         label={(note) => noteName(note)}
       >
         <WhiteKey>
-          <KeyLabel label={(note) => noteName(note)} />
+          <KeyLabel />
         </WhiteKey>
         <BlackKey>
-          <KeyLabel />
+          {/* remove label */}
+          <KeyLabel label={() => undefined} />
         </BlackKey>
       </Piano>
     </div>

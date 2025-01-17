@@ -29,17 +29,10 @@ export function KeyLabel({
   __index,
   __label,
 }: Props) {
-  function isNullish(obj: any): obj is undefined | null {
-    return obj == undefined || obj == null
-  }
-
-  let content: ReactNode = label && label(__note!, __index!)
-  if (isNullish(content) && __label) {
-    content = __label(__note!, __index!)
-  }
+  const content = label ? label(__note!, __index!) : __label && __label(__note!, __index!)
 
   return (
-    !isNullish(content) &&
+    (content != undefined || content != null) &&
     <div
       className='tremolo-piano-key-label-wrapper'
       css={css({
