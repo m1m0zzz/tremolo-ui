@@ -14,6 +14,12 @@ export default {
 
 export const Basic = () => {
   const synth = new Tone.PolySynth().toDestination()
+  synth.volume.value = -6 // dB
+  // synth.set({
+  //   oscillator: {
+  //     type: 'sine'
+  //   }
+  // })
 
   return (
     <div>
@@ -24,7 +30,6 @@ export const Basic = () => {
       <Piano
         noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}
         playNote={(noteNumber) => {
-          console.log('play on top function')
           synth.triggerAttack(noteName(noteNumber))
         }}
         stopNote={(noteNumber) => {

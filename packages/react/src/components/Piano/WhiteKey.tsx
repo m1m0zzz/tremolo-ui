@@ -26,7 +26,6 @@ export const WhiteKey = forwardRef<KeyMethods, KeyProps>(({
   useImperativeHandle(ref, () => {
       return {
         play() {
-          console.log('call on white key')
           if (__disabled) return
           setPlayed(true)
           if (__playNote) __playNote(__note!)

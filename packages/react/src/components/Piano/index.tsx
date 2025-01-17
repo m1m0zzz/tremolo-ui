@@ -65,7 +65,6 @@ export function Piano({
   label,
   children,
 }: PianoProps) {
-  console.log('re rendering')
   // -- state and ref ---
   const noteRangeArray = Array.from(
     { length: noteRange.last - noteRange.first + 1 },
@@ -120,7 +119,6 @@ export function Piano({
     if (!keyboardShortcuts) return
     const index = keyboardShortcuts.keys.indexOf(e.key)
     if (index != -1) {
-      console.log('play: ', noteRangeArray[index])
       if (!keyRefs.current[index]?.current?.played()) {
         keyRefs.current[index]?.current?.play()
       }
@@ -132,7 +130,6 @@ export function Piano({
     if (!keyboardShortcuts) return
     const index = keyboardShortcuts.keys.indexOf(e.key)
     if (index != -1) {
-      console.log('stop: ', noteRangeArray[index])
       keyRefs.current[index]?.current?.stop()
     }
   })
