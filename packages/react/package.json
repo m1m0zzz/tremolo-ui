@@ -21,12 +21,12 @@
   "exports": {
     ".": {
       "require": {
-        "default": "./dist/cjs/index.js",
-        "types": "./dist/cjs/types/index.d.ts"
+        "types": "./dist/cjs/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
       },
       "import": {
-        "default": "./dist/esm/index.js",
-        "types": "./dist/esm/types/index.d.ts"
+        "types": "./dist/esm/types/index.d.ts",
+        "default": "./dist/esm/index.js"
       }
     },
     "./styles": "./src/styles"
