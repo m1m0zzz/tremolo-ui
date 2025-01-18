@@ -1,6 +1,6 @@
-import React, { createRef, ReactElement, ReactNode, RefObject, useRef, useState } from 'react'
+import React, { createRef, ReactElement, ReactNode, RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { css, CSSObject } from '@emotion/react'
-import { isWhiteKey, NoteName, noteName, parseNoteName } from '@tremolo-ui/functions'
+import { isWhiteKey, NoteName, noteName, noteNames, parseNoteName } from '@tremolo-ui/functions'
 
 import { useEventListener } from '../../hooks/useEventListener'
 
@@ -15,21 +15,6 @@ import { KeyBoardShortcuts } from './keyboardShortcuts'
  * TODO:
  * - add scale highlight
  */
-
-const pitchPositions: Record<NoteName, number> = {
-  C: 0,
-  'C#': 0.55,
-  D: 1,
-  'D#': 1.8,
-  E: 2,
-  F: 3,
-  'F#': 3.5,
-  G: 4,
-  'G#': 4.7,
-  A: 5,
-  'A#': 5.85,
-  B: 6,
-}
 
 export interface PianoProps {
   // required
@@ -58,11 +43,11 @@ export interface PianoProps {
 
 export function Piano({
   noteRange,
-  height = 160,
   glissando = true,
   midiMax = 127,
   keyboardShortcuts,
   fill = false,
+  height = fill ? '100%' : 160,
   style,
   playNote,
   stopNote,
@@ -70,17 +55,20 @@ export function Piano({
   children,
 }: PianoProps) {
   // -- state and ref ---
+  const [pressed, setPressed] = useState(false)
+  const [whiteNoteWidth, setWhiteNoteWidth] = useState(-1)
+  const keyRefs = useRef<RefObject<KeyMethods>[]>([])
+  for (let i = 0; i < noteRange.last - noteRange.first + 1; i++) {
+    keyRefs.current[i] = createRef<KeyMethods>()
+  }
+  const pianoRef = useRef<HTMLDivElement>(null)
+
+  // --- interpret props ---
   const noteRangeArray = Array.from(
     { length: noteRange.last - noteRange.first + 1 },
     (_, i) => i + noteRange.first
   )
-  const [pressed, setPressed] = useState(false)
-  const keyRefs = useRef<RefObject<KeyMethods>[]>([])
-  noteRangeArray.forEach((_, index) => {
-    keyRefs.current[index] = createRef<KeyMethods>()
-  })
-
-  // --- interpret props ---
+  const whiteNoteCount = noteRangeArray.filter((v) => isWhiteKey(v)).length
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let whiteKeyProps: any, blackKeyProps: any
@@ -101,9 +89,22 @@ export function Piano({
   }
 
   // --- internal functions ---
-  const noteWidth = whiteKeyProps?.width || 40
   function notePosition(note: number) {
-    const cToB = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+    const pitchPositions: Record<NoteName, number> = {
+      C: 0,
+      'C#': 0.55,
+      D: 1,
+      'D#': 1.8,
+      E: 2,
+      F: 3,
+      'F#': 3.5,
+      G: 4,
+      'G#': 4.7,
+      A: 5,
+      'A#': 5.85,
+      B: 6,
+    }
+
     const toNoteName = (n: number) => {
       const { letter, accidental } = parseNoteName(noteName(n))
       return (letter + accidental) as NoteName
@@ -112,12 +113,26 @@ export function Piano({
     const firstNoteName = toNoteName(noteRange.first)
     const pos = pitchPositions[_noteName] - pitchPositions[firstNoteName]
     const octave = Math.floor((note - noteRange.first) / 12)
-    const octaveOffset = cToB.indexOf(firstNoteName) > cToB.indexOf(_noteName) ? 1 : 0
-    const length = noteWidth + 3
+    const octaveOffset = noteNames.indexOf(firstNoteName) > noteNames.indexOf(_noteName) ? 1 : 0
+    const length = whiteNoteWidth + 3
     return pos * length + (octave + octaveOffset) * 7 * length
   }
 
   // --- hooks ---
+  useEffect(() => {
+    if (fill && pianoRef.current) {
+      const parent = pianoRef.current.parentElement
+      if (!parent) throw new Error("doesn't have a parent element.")
+      const resizeObserver = new ResizeObserver(() => {
+        const w = pianoRef.current!.clientWidth
+        setWhiteNoteWidth(w / whiteNoteCount - 3)
+      })
+      resizeObserver.observe(parent)
+    } else {
+      setWhiteNoteWidth(whiteKeyProps?.width || 40)
+    }
+  }, [])
+
   useEventListener(window, 'keydown', (e) => {
     if (e.repeat) return
     if (!keyboardShortcuts) return
@@ -140,11 +155,13 @@ export function Piano({
 
   return (
     <div
+      ref={pianoRef}
       className="tremolo-piano"
       css={css({
         display: 'inline-block',
         boxSizing: 'border-box',
         userSelect: 'none',
+        width: fill ? '100%' : undefined,
         height: height,
         position: 'relative',
         ...style
@@ -167,6 +184,8 @@ export function Piano({
               __note={note}
               __disabled={note > midiMax}
               __index={index}
+              __fill={fill}
+              __width={whiteNoteWidth}
               __playNote={playNote}
               __stopNote={stopNote}
               __label={label}
@@ -181,6 +200,8 @@ export function Piano({
               __note={note}
               __disabled={note > midiMax}
               __index={index}
+              __fill={fill}
+              __width={whiteNoteWidth * 0.65}
               __playNote={playNote}
               __stopNote={stopNote}
               __label={label}

@@ -25,6 +25,10 @@ export interface KeyProps {
   /** @internal */
   __index?: number
   /** @internal */
+  __fill?: boolean
+  /** @internal */
+  __width?: number
+  /** @internal */
   __playNote?: (noteNumber: number) => void
   /** @internal */
   __stopNote?: (noteNumber: number) => void

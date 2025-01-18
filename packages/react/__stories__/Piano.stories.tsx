@@ -138,3 +138,26 @@ export const OneOctave = () => {
     </div>
   )
 }
+
+export const Fill = () => {
+  return (
+    <div
+      style={{
+        resize: 'both',
+        overflow: 'hidden',
+        border: 'solid 1px',
+        padding: '1rem',
+        height: 240,
+        minWidth: 320,
+        minHeight: 120,
+      }}
+    >
+      <Piano
+        noteRange={{ first: noteNumber('C3'), last: noteNumber('B3') }}
+        keyboardShortcuts={Shortcuts.HOME_ROW}
+        label={(_, i) => Shortcuts.HOME_ROW.keys[i]?.toUpperCase()}
+        fill
+      />
+    </div>
+  )
+}
