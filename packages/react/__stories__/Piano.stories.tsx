@@ -36,6 +36,7 @@ export const Basic = () => {
           synth.triggerRelease(noteName(noteNumber))
         }}
         keyboardShortcuts={Shortcuts.HOME_ROW}
+        // Notice: need optional chaining (?.)
         label={(_, i) => Shortcuts.HOME_ROW.keys[i]?.toUpperCase()}
       />
     </div>
@@ -154,8 +155,6 @@ export const Fill = () => {
     >
       <Piano
         noteRange={{ first: noteNumber('C3'), last: noteNumber('B3') }}
-        keyboardShortcuts={Shortcuts.HOME_ROW}
-        label={(_, i) => Shortcuts.HOME_ROW.keys[i]?.toUpperCase()}
         fill
       />
     </div>
