@@ -3,11 +3,11 @@ import Layout from '@theme/Layout'
 
 import styles from './index.module.css'
 
-export default function Template(): JSX.Element {
+export default function Templates(): JSX.Element {
   return (
     <Layout>
       <main className={styles.main}>
-        <Heading as="h1">Template</Heading>
+        <Heading as="h1">Templates</Heading>
         <p>TODO</p>
       </main>
     </Layout>

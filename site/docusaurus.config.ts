@@ -148,8 +148,8 @@ const config: Config = {
           label: 'API',
         },
         {
-          label: 'Template',
-          to: '/template',
+          label: 'Templates',
+          to: '/templates/',
         },
         {
           type: 'localeDropdown',

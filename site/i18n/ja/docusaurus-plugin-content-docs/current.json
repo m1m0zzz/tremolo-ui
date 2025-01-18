@@ -244,7 +244,7 @@
     "description": "The label for the doc item NumberInputProps in sidebar typedocSidebar, linking to the doc api/react/interfaces/NumberInputProps"
   },
   "sidebar.tutorialSidebar.category.Tutorials": {
-    "message": "Tutorials",
+    "message": "チュートリアル",
     "description": "The label for category Tutorials in sidebar tutorialSidebar"
   },
   "sidebar.tutorialSidebar.category.React": {
@@ -256,20 +256,20 @@
     "description": "The label for category Web Components in sidebar tutorialSidebar"
   },
   "sidebar.tutorialSidebar.category.Guides": {
-    "message": "Guides",
+    "message": "ガイド",
     "description": "The label for category Guides in sidebar tutorialSidebar"
   },
   "sidebar.tutorialSidebar.category.Support": {
-    "message": "Support",
+    "message": "サポート",
     "description": "The label for category Support in sidebar tutorialSidebar"
   },
   "sidebar.typedocSidebar.category.Other": {
-    "message": "Other",
+    "message": "その他",
     "description": "The label for category Other in sidebar typedocSidebar"
   },
   "sidebar.typedocSidebar.doc.WhiteKey": {
     "message": "WhiteKey",
-    "description": "The label for the doc item WhiteKey in sidebar typedocSidebar, linking to the doc api/functions/top-level/type-aliases/WhiteKey"
+    "description": "The label for the doc item WhiteKey in sidebar typedocSidebar, linking to the doc api/react/functions/WhiteKey"
   },
   "sidebar.typedocSidebar.doc.whiteKeys": {
     "message": "whiteKeys",
@@ -286,5 +286,41 @@
   "sidebar.typedocSidebar.doc.scaleNames": {
     "message": "scaleNames",
     "description": "The label for the doc item scaleNames in sidebar typedocSidebar, linking to the doc api/functions/top-level/variables/scaleNames"
+  },
+  "sidebar.typedocSidebar.category.Variables": {
+    "message": "Variables",
+    "description": "The label for category Variables in sidebar typedocSidebar"
+  },
+  "sidebar.typedocSidebar.doc.KeyMethods": {
+    "message": "KeyMethods",
+    "description": "The label for the doc item KeyMethods in sidebar typedocSidebar, linking to the doc api/react/interfaces/KeyMethods"
+  },
+  "sidebar.typedocSidebar.doc.KeyProps": {
+    "message": "KeyProps",
+    "description": "The label for the doc item KeyProps in sidebar typedocSidebar, linking to the doc api/react/interfaces/KeyProps"
+  },
+  "sidebar.typedocSidebar.doc.PianoProps": {
+    "message": "PianoProps",
+    "description": "The label for the doc item PianoProps in sidebar typedocSidebar, linking to the doc api/react/interfaces/PianoProps"
+  },
+  "sidebar.typedocSidebar.doc.KeyBoardShortcuts": {
+    "message": "KeyBoardShortcuts",
+    "description": "The label for the doc item KeyBoardShortcuts in sidebar typedocSidebar, linking to the doc api/react/type-aliases/KeyBoardShortcuts"
+  },
+  "sidebar.typedocSidebar.doc.Shortcuts": {
+    "message": "Shortcuts",
+    "description": "The label for the doc item Shortcuts in sidebar typedocSidebar, linking to the doc api/react/variables/Shortcuts"
+  },
+  "sidebar.typedocSidebar.doc.BlackKey": {
+    "message": "BlackKey",
+    "description": "The label for the doc item BlackKey in sidebar typedocSidebar, linking to the doc api/react/functions/BlackKey"
+  },
+  "sidebar.typedocSidebar.doc.KeyLabel": {
+    "message": "KeyLabel",
+    "description": "The label for the doc item KeyLabel in sidebar typedocSidebar, linking to the doc api/react/functions/KeyLabel"
+  },
+  "sidebar.typedocSidebar.doc.Piano": {
+    "message": "Piano",
+    "description": "The label for the doc item Piano in sidebar typedocSidebar, linking to the doc api/react/functions/Piano"
   }
 }

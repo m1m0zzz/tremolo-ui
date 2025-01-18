@@ -1,5 +1,5 @@
 import React from 'react';
-import { AnimationCanvas, Knob, NumberInput, Slider } from '@tremolo-ui/react'
+import { AnimationCanvas, Knob, Piano, NumberInput, Slider } from '@tremolo-ui/react'
 
 // Add react-live imports you need here
 const ReactLiveScope: unknown = {
@@ -8,6 +8,7 @@ const ReactLiveScope: unknown = {
   AnimationCanvas,
   Knob,
   NumberInput,
+  Piano,
   Slider,
 };
 
