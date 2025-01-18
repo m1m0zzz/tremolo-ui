@@ -215,8 +215,8 @@ export function Piano({
 }
 
 export * from './key'
+export * from './keyboardShortcuts'
+
 export { WhiteKey } from './WhiteKey'
 export { BlackKey } from './BlackKey'
 export { KeyLabel } from './KeyLabel'
-
-export * from './keyboardShortcuts'

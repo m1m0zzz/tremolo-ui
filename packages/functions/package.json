@@ -64,6 +64,8 @@
   },
   "keywords": [
     "web-audio",
-    "math"
+    "math",
+    "midi",
+    "dsp"
   ]
 }
