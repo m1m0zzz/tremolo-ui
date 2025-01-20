@@ -128,6 +128,9 @@ const config: Config = {
     colorMode: {
       respectPrefersColorScheme: true,
     },
+    liveCodeBlock: {
+      playgroundPosition: 'top'
+    },
     navbar: {
       title: '@tremolo-ui',
       logo: {
