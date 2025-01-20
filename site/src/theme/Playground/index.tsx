@@ -1,4 +1,4 @@
-import React, {forwardRef, useImperativeHandle, useRef, useState, type ReactNode} from 'react';
+import React, {useCallback, useState, type ReactNode} from 'react';
 import clsx from 'clsx';
 import useIsBrowser from '@docusaurus/useIsBrowser';
 import {LiveProvider, LiveEditor, LiveError, LivePreview} from 'react-live';
@@ -18,6 +18,7 @@ import { RiCodeSSlashLine, RiCodeSLine, RiFileCopyLine, RiCheckLine, RiCodepenLi
 import { FiCodesandbox, FiGithub } from 'react-icons/fi';
 import { generateCodeSandboxUrl } from './codeSandbox';
 import { parse } from './parser';
+import { SiStackblitz } from 'react-icons/si';
 
 function CopyButton({ copyCode }: { copyCode?: () => void }) {
   const [clicked, setClicked] = useState(false)
@@ -76,6 +77,15 @@ function Controls({
         }
         <a
           className={styles.iconButton}
+          title='Open in Stackblitz'
+          href='#'
+          // target="_blank"
+          // rel="noopener noreferrer"
+        >
+          <SiStackblitz />
+        </a>
+        <a
+          className={styles.iconButton}
           title='Open in CodeSandbox'
           href={generateCodeSandboxUrl(code)}
           target="_blank"
@@ -87,8 +97,8 @@ function Controls({
           className={styles.iconButton}
           title='Open in CodePen'
           href='#'
-          target="_blank"
-          rel="noopener noreferrer"
+          // target="_blank"
+          // rel="noopener noreferrer"
         >
           <RiCodepenLine />
         </a>
@@ -188,8 +198,8 @@ export default function Playground({
   const defaultExpanded = custom?.defaultExpanded
   const githubLink = custom?.githubLink
   const { sourcePath } = props as any
-  const prismTheme = usePrismTheme();
-  const [showCode, setShowCode] = useState(defaultShowCode || false);
+  const prismTheme = usePrismTheme()
+  const [showCode, setShowCode] = useState(defaultShowCode || false)
   const [expanded, setExpanded] = useState(defaultExpanded || false)
 
   const noInline = props.metastring?.includes('noInline') ?? false;
@@ -198,16 +208,16 @@ export default function Playground({
   }
   const github = (githubLink?.replace(/\/$/, '') || '') + '/' + String(sourcePath)
 
-  const copyCode = () => {
-    navigator.clipboard.writeText(children)
-  }
+  const { expand, collapse } = parse(children?.replace(/\n$/, ''))
 
-  const { exec, expand, collapse } = parse(children?.replace(/\n$/, ''))
+  const copyCode = useCallback(() => {
+    navigator.clipboard.writeText(expanded ? expand : collapse)
+  }, [expanded])
 
   return (
     <div className={styles.playgroundContainer}>
       <LiveProvider
-        code={exec}
+        code={collapse}
         disabled={expanded}
         noInline={noInline}
         transformCode={transformCode ?? DEFAULT_TRANSFORM_CODE}
