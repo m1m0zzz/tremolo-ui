@@ -17,27 +17,27 @@ export function parse(code: string) {
     
     if (magicComment == 'expand begin') {
       expandZone = true
-    } else if (magicComment == 'expand alt') {
-      expandAltZone = true
+    // } else if (magicComment == 'expand alt') {
+      // expandAltZone = true
     } else if (magicComment == 'expand end') {
       expandZone = false
       expandAltZone = false
     } else {
-      if (expandAltZone) {
-        if (isComment) {
-          if (magicComment?.startsWith("\\")) {
-            const content = magicComment?.replace(/^\\/, '') || ''
-            const fmt = isSlashComment ? `// ${content}` : `{/* ${content} */}`
-            collapsed.push(indent + fmt)
-          } else {
-            collapsed.push(indent + magicComment)
-          }
-        } else {
-          expanded.push(line)
-          executed.push(line)
-        }
-        continue
-      }
+      // if (expandAltZone) {
+      //   if (isComment) {
+      //     if (magicComment?.startsWith("\\")) {
+      //       const content = magicComment?.replace(/^\\/, '') || ''
+      //       const fmt = isSlashComment ? `// ${content}` : `{/* ${content} */}`
+      //       collapsed.push(indent + fmt)
+      //     } else {
+      //       collapsed.push(indent + magicComment)
+      //     }
+      //   } else {
+      //     expanded.push(line)
+      //     executed.push(line)
+      //   }
+      //   continue
+      // }
 
       if (!expandZone) {
         collapsed.push(line)

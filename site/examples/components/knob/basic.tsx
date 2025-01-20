@@ -7,8 +7,6 @@ function App() {
   const [value, setValue] = useState(64)
 
   return (
-    // expand alt
-    // <>
     <div
       style={{
         display: 'flex',
@@ -17,7 +15,6 @@ function App() {
         flexDirection: 'column'
       }}
     >
-    {/* expand end */}
       <Knob
         value={value}
         min={0}
@@ -26,8 +23,6 @@ function App() {
         onChange={(v) => setValue(v)}
       />
       {value}
-    {/* expand alt */}
-    {/* </> */}
     </div>
     // expand end
   )
