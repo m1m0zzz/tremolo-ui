@@ -11,43 +11,12 @@ function emojiUrl(emoji: string, format: 'svg' | 'png' = 'svg') {
   return `https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/${fmt}/${codePoint.split('-')[0]}.${format}`
 }
 
-const config: Config = {
-  title: '@tremolo-ui',
-  tagline: 'UI library for Web Audio App',
-  favicon: emojiUrl('🎸', 'svg'),
-  // favicon: 'img/favicon.ico',
-
-  // Set the production url of your site here
-  url: 'https://tremolo-ui.vercel.app/',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
-
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  // organizationName: 'm1m0zzz', // Usually your GitHub org/user name.
-  // projectName: 'tremolo-ui', // Usually your repo name.
-
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
-
-  // Even if you don't use internationalization, you can use this field to set
-  // useful metadata like html lang. For example, if your site is Chinese, you
-  // may want to replace "en" with "zh-Hans".
-  i18n: {
-    defaultLocale: 'en',
-    locales: ['en', 'ja'],
-    localeConfigs: {
-      en: {
-        label: 'English',
-      },
-      ja: {
-        label: '日本語',
-      },
-    },
-  },
-
-  plugins: [
+function typedocPlugins() {
+  if (process.env.SKIP_API) {
+    console.warn('skip typedoc generate')
+    return []
+  }
+  return [
     [
       'docusaurus-plugin-typedoc',
       {
@@ -84,6 +53,53 @@ const config: Config = {
     //     out: './docs/api/web-components',
     //   },
     // ],
+  ]
+}
+
+const config: Config = {
+  title: '@tremolo-ui',
+  tagline: 'UI library for Web Audio App',
+  favicon: emojiUrl('🎸', 'svg'),
+  // favicon: 'img/favicon.ico',
+
+  // Set the production url of your site here
+  url: 'https://tremolo-ui.vercel.app/',
+  // Set the /<baseUrl>/ pathname under which your site is served
+  // For GitHub pages deployment, it is often '/<projectName>/'
+  baseUrl: '/',
+
+  // GitHub pages deployment config.
+  // If you aren't using GitHub pages, you don't need these.
+  // organizationName: 'm1m0zzz', // Usually your GitHub org/user name.
+  // projectName: 'tremolo-ui', // Usually your repo name.
+
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'warn',
+
+  // Even if you don't use internationalization, you can use this field to set
+  // useful metadata like html lang. For example, if your site is Chinese, you
+  // may want to replace "en" with "zh-Hans".
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'ja'],
+    localeConfigs: {
+      en: {
+        label: 'English',
+      },
+      ja: {
+        label: '日本語',
+      },
+    },
+  },
+
+  customFields: {
+    liveCodeBlock: {
+      githubLink: 'https://github.com/m1m0zzz/tremolo-ui/blob/main/site'
+    }
+  },
+
+  plugins: [
+    ...typedocPlugins()
   ],
 
   presets: [
@@ -127,9 +143,6 @@ const config: Config = {
     },
     colorMode: {
       respectPrefersColorScheme: true,
-    },
-    liveCodeBlock: {
-      playgroundPosition: 'top'
     },
     navbar: {
       title: '@tremolo-ui',

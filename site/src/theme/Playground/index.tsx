@@ -15,7 +15,7 @@ import type {ThemeConfig} from '@docusaurus/theme-live-codeblock';
 
 import styles from './styles.module.css';
 import { RiCodeSSlashLine, RiCodeSLine, RiFileCopyLine, RiCheckLine, RiCodepenLine } from 'react-icons/ri';
-import { FiCodesandbox } from 'react-icons/fi';
+import { FiCodesandbox, FiGithub } from 'react-icons/fi';
 import { generateCodeSandboxUrl } from './codeSandbox';
 import { parse } from './parser';
 
@@ -42,6 +42,7 @@ function CopyButton({ copyCode }: { copyCode?: () => void }) {
 
 interface ControlsProps {
   code: string
+  github?: string
   showCode?: boolean
   setShowCode?: (arg: boolean | (() => boolean)) => void
   expanded?: boolean
@@ -52,6 +53,7 @@ interface ControlsProps {
 
 function Controls({
   code,
+  github,
   showCode,
   setShowCode,
   expanded,
@@ -64,7 +66,7 @@ function Controls({
         className={styles.iconButtons}
       >
         {
-          showCode && 
+          showCode &&
           <button
             className={clsx(styles.iconButton, styles.expandButton)}
             onClick={() => setExpanded?.(() => !expanded)}
@@ -89,6 +91,15 @@ function Controls({
           rel="noopener noreferrer"
         >
           <RiCodepenLine />
+        </a>
+        <a
+          className={styles.iconButton}
+          title='Open in GitHub'
+          href={github}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FiGithub />
         </a>
         <CopyButton copyCode={copyCode} />
         <button
@@ -155,11 +166,13 @@ function ThemedLiveEditor({ code }: { code?: string }) {
 // see https://github.com/facebook/docusaurus/issues/9630#issuecomment-1855682643
 const DEFAULT_TRANSFORM_CODE = (code: string) => `${code};`;
 
-type ExtendsThemeConfig = ThemeConfig & {
-  liveCodeBlock: {
-    defaultShowCode?: boolean
-    defaultExpanded?: boolean
-  }
+type customLiveCodeBlock = {
+  defaultShowCode?: boolean
+  defaultExpanded?: boolean
+  /**
+   * @example https://github.com/m1m0zzz/tremolo-ui/blob/main/site
+   */
+  githubLink?: string
 }
 
 export default function Playground({
@@ -168,66 +181,50 @@ export default function Playground({
   ...props
 }: Props): ReactNode {
   const {
-    siteConfig: {themeConfig},
+    siteConfig: { customFields }
   } = useDocusaurusContext();
-  const {
-    liveCodeBlock: {
-      playgroundPosition,
-      defaultShowCode,
-      defaultExpanded
-    },
-  } = themeConfig as ExtendsThemeConfig;
+  const custom = customFields?.liveCodeBlock as customLiveCodeBlock | undefined
+  const defaultShowCode = custom?.defaultShowCode
+  const defaultExpanded = custom?.defaultExpanded
+  const githubLink = custom?.githubLink
+  const { sourcePath } = props as any
   const prismTheme = usePrismTheme();
-  const [showCode, setShowCode] = useState(defaultShowCode ?? false);
-  const [expanded, setExpanded] = useState(defaultExpanded ?? false)
+  const [showCode, setShowCode] = useState(defaultShowCode || false);
+  const [expanded, setExpanded] = useState(defaultExpanded || false)
 
   const noInline = props.metastring?.includes('noInline') ?? false;
+  if (typeof githubLink != 'string') {
+    console.warn('unknown config (themeConfig.liveCodeBlock.githubLink)')
+  }
+  const github = (githubLink?.replace(/\/$/, '') || '') + '/' + String(sourcePath)
 
   const copyCode = () => {
     navigator.clipboard.writeText(children)
   }
 
-  const { expand, collapse } = parse(children?.replace(/\n$/, ''))
-
-  console.log({ expand, collapse })
+  const { exec, expand, collapse } = parse(children?.replace(/\n$/, ''))
 
   return (
     <div className={styles.playgroundContainer}>
       <LiveProvider
-        code={collapse} // executed code
+        code={exec}
         disabled={expanded}
         noInline={noInline}
         transformCode={transformCode ?? DEFAULT_TRANSFORM_CODE}
         theme={prismTheme}
         {...props}
       >
-        {playgroundPosition === 'top' ? (
-          <>
-            <Result />
-            <Controls
-              code={expand}
-              showCode={showCode}
-              setShowCode={setShowCode}
-              expanded={expanded}
-              setExpanded={setExpanded}
-              copyCode={() => copyCode()}
-            />
-            {showCode && <ThemedLiveEditor code={expanded ? expand : collapse} />}
-          </>
-        ) : (
-          <>
-            {showCode && <ThemedLiveEditor code={expanded ? expand : collapse} />}
-            <Controls
-              code={expand}
-              showCode={showCode}
-              setShowCode={setShowCode}
-              expanded={expanded}
-              setExpanded={setExpanded}
-              copyCode={() => copyCode()}
-            />
-            <Result />
-          </>
-        )}
+        <Result />
+        <Controls
+          code={expand}
+          showCode={showCode}
+          setShowCode={setShowCode}
+          expanded={expanded}
+          setExpanded={setExpanded}
+          copyCode={() => copyCode()}
+          github={github}
+        />
+        {showCode && <ThemedLiveEditor code={expanded ? expand : collapse} />}
       </LiveProvider>
     </div>
   );

@@ -3,6 +3,9 @@ sidebar_position: 1
 title: Getting Started
 ---
 
+import CodeBlock from '@theme/CodeBlock'
+import example from '!!raw-loader!@site/examples/tutorials/react/getting-started'
+
 # Getting Started with React
 
 ## Install @tremolo-ui/react
@@ -13,7 +16,7 @@ title: Getting Started
 npm install @tremolo-ui/react
 ```
 
-2. Install dependecies
+2. Install dependencies
 
 ```bash npm2yarn
 npm install react react-dom @emotion/react
@@ -23,38 +26,11 @@ npm install react react-dom @emotion/react
 
 Below is an example of a simple knob component.
 
-```jsx live
-// expand begin
-import { Knob } from '@tremolo-ui/react'
-import { useState } from 'react'
-// expand end
-
-function App() {
-  const [value, setValue] = useState(64)
-
-  return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexDirection: 'column'
-    }}>
-      <Knob
-        value={value}
-        min={0}
-        max={100}
-        size={50}
-        onChange={(v) => setValue(v)}
-      />
-      {value}
-    </div>
-  )
-}
-
-// expand begin
-export default App
-// expand end
-```
+<CodeBlock
+  jsx
+  live
+  sourcePath={"examples/tutorials/react/getting-started.tsx"}
+>{example}</CodeBlock>
 
 Check out the look and feel in the storybook!
 
