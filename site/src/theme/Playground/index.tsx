@@ -13,12 +13,16 @@ import ErrorBoundary from '@docusaurus/ErrorBoundary';
 import type {Props} from '@theme/Playground';
 import type {ThemeConfig} from '@docusaurus/theme-live-codeblock';
 
-import styles from './styles.module.css';
 import { RiCodeSSlashLine, RiCodeSLine, RiFileCopyLine, RiCheckLine, RiCodepenLine } from 'react-icons/ri';
 import { FiCodesandbox, FiGithub } from 'react-icons/fi';
-import { generateCodeSandboxUrl } from './codeSandbox';
-import { parse } from './parser';
 import { SiStackblitz } from 'react-icons/si';
+import { parse } from './parser';
+import { generateCodeSandboxUrl } from './external/codesandbox';
+import { CodePenForm } from './external/codepen';
+import { openStackblitz } from './external/stackblitz';
+
+import styles from './styles.module.css';
+
 
 function CopyButton({ copyCode }: { copyCode?: () => void }) {
   const [clicked, setClicked] = useState(false)
@@ -43,7 +47,7 @@ function CopyButton({ copyCode }: { copyCode?: () => void }) {
 
 interface ControlsProps {
   code: string
-  github?: string
+  githubPath?: string
   showCode?: boolean
   setShowCode?: (arg: boolean | (() => boolean)) => void
   expanded?: boolean
@@ -54,7 +58,7 @@ interface ControlsProps {
 
 function Controls({
   code,
-  github,
+  githubPath,
   showCode,
   setShowCode,
   expanded,
@@ -75,15 +79,13 @@ function Controls({
             {expanded ? `Collapse code` : `Expand code`}
           </button>
         }
-        <a
+        <button
           className={styles.iconButton}
           title='Open in Stackblitz'
-          href='#'
-          // target="_blank"
-          // rel="noopener noreferrer"
+          onClick={() => openStackblitz(code)}
         >
           <SiStackblitz />
-        </a>
+        </button>
         <a
           className={styles.iconButton}
           title='Open in CodeSandbox'
@@ -93,19 +95,19 @@ function Controls({
         >
           <FiCodesandbox />
         </a>
-        <a
-          className={styles.iconButton}
-          title='Open in CodePen'
-          href='#'
-          // target="_blank"
-          // rel="noopener noreferrer"
-        >
-          <RiCodepenLine />
-        </a>
+        <CodePenForm code={code}>
+          <button
+            type="submit"
+            className={styles.iconButton}
+            title='Open in CodePen'
+          >
+            <RiCodepenLine />
+          </button>
+        </CodePenForm>
         <a
           className={styles.iconButton}
           title='Open in GitHub'
-          href={github}
+          href={githubPath}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -177,12 +179,14 @@ function ThemedLiveEditor({ code }: { code?: string }) {
 const DEFAULT_TRANSFORM_CODE = (code: string) => `${code};`;
 
 type customLiveCodeBlock = {
-  defaultShowCode?: boolean
-  defaultExpanded?: boolean
-  /**
-   * @example https://github.com/m1m0zzz/tremolo-ui/blob/main/site
-   */
-  githubLink?: string
+  liveCodeBlock?: {
+    defaultShowCode?: boolean
+    defaultExpanded?: boolean
+    /**
+     * @example https://github.com/m1m0zzz/tremolo-ui/blob/main/site
+     */
+    githubLink?: string
+  }
 }
 
 interface ExtendProps {
@@ -195,22 +199,18 @@ export default function Playground({
   sourcePath = '',
   ...props
 }: Props & ExtendProps): ReactNode {
-  const {
-    siteConfig: { customFields }
-  } = useDocusaurusContext();
-  const custom = customFields?.liveCodeBlock as customLiveCodeBlock | undefined
-  const defaultShowCode = custom?.defaultShowCode
-  const defaultExpanded = custom?.defaultExpanded
-  const githubLink = custom?.githubLink
+  const { siteConfig } = useDocusaurusContext();
+  const customFields = siteConfig?.customFields as customLiveCodeBlock
+  const defaultShowCode = customFields?.liveCodeBlock?.defaultShowCode
+  const defaultExpanded = customFields?.liveCodeBlock?.defaultExpanded
+  const githubLink = customFields?.liveCodeBlock?.githubLink
+  const githubPath = (githubLink?.replace(/\/$/, '') || '') + '/' + sourcePath
+
   const prismTheme = usePrismTheme()
   const [showCode, setShowCode] = useState(defaultShowCode || false)
   const [expanded, setExpanded] = useState(defaultExpanded || false)
 
-  const noInline = props.metastring?.includes('noInline') ?? false;
-  if (typeof githubLink != 'string') {
-    console.warn('unknown config (themeConfig.liveCodeBlock.githubLink)')
-  }
-  const github = (githubLink?.replace(/\/$/, '') || '') + '/' + sourcePath
+  const noInline = props.metastring?.includes('noInline') ?? false
 
   const { expand, collapse } = parse(children?.replace(/\n$/, ''))
 
@@ -236,7 +236,7 @@ export default function Playground({
           expanded={expanded}
           setExpanded={setExpanded}
           copyCode={() => copyCode()}
-          github={github}
+          githubPath={githubPath}
         />
         {showCode && <ThemedLiveEditor code={expanded ? expand : collapse} />}
       </LiveProvider>
