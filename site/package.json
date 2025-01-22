@@ -22,6 +22,7 @@
     "@docusaurus/remark-plugin-npm2yarn": "^3.6.3",
     "@docusaurus/theme-live-codeblock": "^3.6.3",
     "@mdx-js/react": "^3.0.0",
+    "@stackblitz/sdk": "^1.11.0",
     "clsx": "^2.0.0",
     "codesandbox-import-utils": "^2.2.3",
     "prism-react-renderer": "^2.3.0",
