@@ -23,7 +23,7 @@
     "@docusaurus/theme-live-codeblock": "^3.6.3",
     "@mdx-js/react": "^3.0.0",
     "clsx": "^2.0.0",
-    "codesandbox": "^2.2.3",
+    "codesandbox-import-utils": "^2.2.3",
     "prism-react-renderer": "^2.3.0",
     "raw-loader": "^4.0.2",
     "react": "^18.0.0",

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { getParameters } from "codesandbox/lib/api/define";
+import { getParameters } from "codesandbox-import-utils/lib/api/define";
 
 const indexJs = `import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
