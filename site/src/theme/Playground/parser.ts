@@ -14,7 +14,7 @@ export function parse(code: string) {
     const indent = m?.[1] || m?.[3] || ''
     const magicComment = (m?.[2] || m?.[4])?.trim()
     const isSlashComment = !!m?.[2]
-    
+
     if (magicComment == 'expand begin') {
       expandZone = true
     // } else if (magicComment == 'expand alt') {
@@ -47,7 +47,6 @@ export function parse(code: string) {
     }
   }
   return {
-    exec: executed.join('\n').trim(),
     expand: expanded.join('\n').trim(),
     collapse: collapsed.join('\n').trim()
   }

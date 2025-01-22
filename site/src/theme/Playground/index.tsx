@@ -185,11 +185,16 @@ type customLiveCodeBlock = {
   githubLink?: string
 }
 
+interface ExtendProps {
+  sourcePath?: string
+}
+
 export default function Playground({
   children,
   transformCode,
+  sourcePath = '',
   ...props
-}: Props): ReactNode {
+}: Props & ExtendProps): ReactNode {
   const {
     siteConfig: { customFields }
   } = useDocusaurusContext();
@@ -197,7 +202,6 @@ export default function Playground({
   const defaultShowCode = custom?.defaultShowCode
   const defaultExpanded = custom?.defaultExpanded
   const githubLink = custom?.githubLink
-  const { sourcePath } = props as any
   const prismTheme = usePrismTheme()
   const [showCode, setShowCode] = useState(defaultShowCode || false)
   const [expanded, setExpanded] = useState(defaultExpanded || false)
@@ -206,7 +210,7 @@ export default function Playground({
   if (typeof githubLink != 'string') {
     console.warn('unknown config (themeConfig.liveCodeBlock.githubLink)')
   }
-  const github = (githubLink?.replace(/\/$/, '') || '') + '/' + String(sourcePath)
+  const github = (githubLink?.replace(/\/$/, '') || '') + '/' + sourcePath
 
   const { expand, collapse } = parse(children?.replace(/\n$/, ''))
 
