@@ -10,9 +10,13 @@ const html = `<body>
 </body>
 `
 
-const jsHeader = `const { useState, useRef } = React;`
-const jsFooter = `const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+const jsHeader = `import ReactDOM from "https://esm.sh/react-dom@18";
+import React from "https://esm.sh/react@18";
+`
+const jsFooter = `ReactDOM.render(
+  <App />,
+  document.getElementById('root')
+);
 `
 
 export function covert(data: object) {
@@ -35,8 +39,8 @@ export function CodePenForm({ code, children }: Props) {
     head: `<meta name='viewport' content='width=device-width'>`,
     js_pre_processor: 'typescript',
     js_external: [
-      'https://unpkg.com/react@18/umd/react.development.js',
-      'https://unpkg.com/react-dom@18/umd/react-dom.development.js',
+      // 'https://unpkg.com/react@18/umd/react.development.js',
+      // 'https://unpkg.com/react-dom@18/umd/react-dom.development.js',
     ]
   }
   return (

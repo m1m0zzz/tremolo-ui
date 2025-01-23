@@ -95,7 +95,7 @@ function Controls({
         >
           <FiCodesandbox />
         </a>
-        <CodePenForm code={code}>
+        {/* <CodePenForm code={code}>
           <button
             type="submit"
             className={styles.iconButton}
@@ -103,7 +103,7 @@ function Controls({
           >
             <RiCodepenLine />
           </button>
-        </CodePenForm>
+        </CodePenForm> */}
         <a
           className={styles.iconButton}
           title='Open in GitHub'
