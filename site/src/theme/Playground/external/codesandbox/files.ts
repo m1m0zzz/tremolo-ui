@@ -1,4 +1,4 @@
-export const indexJs = `import { StrictMode } from 'react';
+const indexTs = `import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import App from './App';
@@ -13,7 +13,7 @@ root.render(
 );
 `
 
-export const indexHtml = `<!DOCTYPE html>
+const indexHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -28,12 +28,13 @@ export const indexHtml = `<!DOCTYPE html>
 </body>
 </html>
 `
-export const packageJSON = `{
+const packageJSON = `{
   "name": "tremolo-ui-react-example",
   "version": "0.0.0",
   "private": true,
-  "main": "src/index.ts",
+  "main": "src/index.tsx",
   "dependencies": {
+    "@tremolo-ui/react": "latest",
     "react": "^18.2.6",
     "react-dom": "^18.2.6"
   },
@@ -50,3 +51,34 @@ export const packageJSON = `{
   }
 }
 `
+
+const tsconfigJson = `{
+  "include": [
+    "./src/**/*"
+  ],
+  "compilerOptions": {
+    "strict": true,
+    "esModuleInterop": true,
+    "lib": [
+      "dom",
+      "es2015"
+    ],
+    "jsx": "react-jsx"
+  }
+}
+`
+
+export const files = {
+  "public/index.html": {
+    content: indexHtml
+  },
+  "src/index.tsx": {
+    content: indexTs
+  },
+  "package.json": {
+    content: packageJSON
+  },
+  "tsconfig.json": {
+    content: tsconfigJson
+  }
+}
