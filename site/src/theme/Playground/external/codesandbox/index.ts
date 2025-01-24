@@ -6,7 +6,7 @@ import { files } from "./files";
 // https://codesandbox.io/docs/learn/sandboxes/cli-api
 
 export function generateCodeSandboxUrl(code: string) {
-  console.log('hello')
+  // console.log('hello')
   const parameters = getParameters({
     files: {
       "src/App.tsx": {

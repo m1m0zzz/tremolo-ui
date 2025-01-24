@@ -1,15 +1,13 @@
 import React from 'react';
-import { AnimationCanvas, Knob, Piano, NumberInput, Slider } from '@tremolo-ui/react'
+import * as tremoloUI from '@tremolo-ui/react'
+import * as functions from '@tremolo-ui/functions'
 
 // Add react-live imports you need here
 const ReactLiveScope: unknown = {
   React,
   ...React,
-  AnimationCanvas,
-  Knob,
-  NumberInput,
-  Piano,
-  Slider,
+  ...tremoloUI,
+  ...functions
 };
 
 export default ReactLiveScope;
