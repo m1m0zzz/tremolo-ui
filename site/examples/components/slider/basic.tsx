@@ -1,5 +1,5 @@
 // expand begin
-import { Knob } from '@tremolo-ui/react'
+import { Slider } from '@tremolo-ui/react'
 import { useState } from 'react'
 // expand end
 
@@ -12,18 +12,24 @@ function App() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        flexDirection: 'column'
+        gap: 8,
       }}
     >
-      <Knob
+      <Slider
         value={value}
         min={0}
         max={100}
-        size={50}
         onChange={(v) => setValue(v)}
       />
-      {value}
+      <span
+        style={{
+          width: '2rem',
+        }}
+      >
+        {value}
+      </span>
     </div>
+    // expand end
   )
 }
 
