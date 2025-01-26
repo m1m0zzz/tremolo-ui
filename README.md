@@ -18,56 +18,6 @@ UI library for Web Audio App
   - React
   - Web Components
 
-
-## 🧬 Installation
-
-### React
-
-Install tremolo-ui
-```bash
-npm install @tremolo-ui/react
-```
-
-And install dependencies
-
-```bash
-npm install react react-dom @emotion/react
-```
-
-```jsx
-import { useState } from 'react'
-import { Slider } from '@tremolo-ui/react'
-
-function App() {
-  const [value, setValue] = useState(0)
-
-  return (
-    <>
-      <Slider
-        value={value}
-        min={0}
-        max={100}
-        onChange={(v) => setValue(v)}
-      />
-      <p>value: {value}</p>
-    </>
-  )
-}
-```
-
-### Web Components
-
-*draft now*
-
-Install tremolo-ui
-```bash
-npm install @tremolo-ui/web-components
-```
-
-```html
-<tremolo-slider value="32" min="0" max="100" />
-```
-
 ## 📚 Docs
 
 **Tutorial & API**
@@ -81,9 +31,12 @@ https://tremolo-ui.vercel.app/
 
 
 ## 🦝 Contributing
-Please see [contribution guide](./CONTRIBUTING.md)
+Please see [Contribution Guide](https://tremolo-ui.vercel.app/docs/guides/CONTRIBUTING)
 
-日本語版は [コントリビューション ガイド](./CONTRIBUTING.ja.md) を参照してください。
+## 🦺 Changelog
+
+Please see [CHANGELOG](https://tremolo-ui.vercel.app/docs/support/CHANGELOG)
+
 
 ## 📜 LICENSE
 tremolo-ui is [MIT License](./LICENSE)
