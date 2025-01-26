@@ -30,5 +30,9 @@
   "item.label.Template": {
     "message": "Template",
     "description": "Navbar item with label Template"
+  },
+  "item.label.Templates": {
+    "message": "Templates",
+    "description": "Navbar item with label Templates"
   }
 }

@@ -62,5 +62,13 @@
   "link.item.label.Web Components": {
     "message": "Web Components",
     "description": "The label of footer link with label=Web Components linking to https://tremolo-ui-sb-web-components.vercel.app/"
+  },
+  "link.item.label.introduction": {
+    "message": "introduction",
+    "description": "The label of footer link with label=introduction linking to /docs/"
+  },
+  "link.item.label.functions": {
+    "message": "functions",
+    "description": "The label of footer link with label=functions linking to /docs/api/functions"
   }
 }

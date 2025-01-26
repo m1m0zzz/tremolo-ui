@@ -322,5 +322,9 @@
   "sidebar.typedocSidebar.doc.Piano": {
     "message": "Piano",
     "description": "The label for the doc item Piano in sidebar typedocSidebar, linking to the doc api/react/functions/Piano"
+  },
+  "sidebar.tutorialSidebar.category.Components": {
+    "message": "Components",
+    "description": "The label for category Components in sidebar tutorialSidebar"
   }
 }

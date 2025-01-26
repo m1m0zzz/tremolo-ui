@@ -305,5 +305,20 @@
   "theme.tags.tagsPageTitle": {
     "message": "Tags",
     "description": "The title of the tag list page"
+  },
+  "homepage.getting-started": {
+    "message": "Getting Started"
+  },
+  "theme.Playground.result": {
+    "message": "Result",
+    "description": "The result label of the live codeblocks"
+  },
+  "theme.Playground.liveEditor": {
+    "message": "Live Editor",
+    "description": "The live editor label of the live codeblocks"
+  },
+  "theme.blog.author.noPosts": {
+    "message": "This author has not written any posts yet.",
+    "description": "The text for authors with 0 blog post"
   }
 }

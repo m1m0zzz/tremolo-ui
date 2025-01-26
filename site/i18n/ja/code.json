@@ -321,6 +321,9 @@
   "homepage.getting-started": {
     "message": "はじめよう"
   },
+  "homepage.tagline": {
+    "message": "ウェブ・オーディオ・アプリのためのUIライブラリ"
+  },
   "homepage.features.easy-to-use.title": {
     "message": "使いやすさ"
   },
