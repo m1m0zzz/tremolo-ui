@@ -1,0 +1,21 @@
+{
+  "language": "en,en-gb",
+  "words": [
+    "autodocs",
+    "clsx",
+    "Codepen",
+    "Codesandbox",
+    "csspart",
+    "mimoz",
+    "slotchange",
+    "stackblitz"
+  ],
+  "ignorePaths": [
+    "**/dist",
+    "**/node_modules",
+    "**/package.json",
+    "**/package-lock.json",
+    "**/*.config.*",
+    "**/*.log"
+  ]
+}
