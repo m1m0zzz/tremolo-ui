@@ -1,4 +1,4 @@
-import { css, CSSObject, Global } from '@emotion/react'
+import { css, CSSObject } from '@emotion/react'
 import { clamp, normalizeValue, radian, rawValue, stepValue, InputEventOption } from '@tremolo-ui/functions'
 import React, { ComponentPropsWithRef, useRef } from 'react'
 import clsx from 'clsx'
@@ -206,13 +206,6 @@ export function Knob({
       }}
       {...props}
     >
-      <Global
-        styles={{
-          '.no-select': {
-            userSelect: 'none',
-          },
-        }}
-      />
       <AnimationCanvas
         width={adaptSize(size ?? width)}
         height={adaptSize(size ?? height)}

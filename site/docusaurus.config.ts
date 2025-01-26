@@ -117,7 +117,7 @@ const config: Config = {
         },
         blog: false,
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: ['./src/css/custom.css', '../packages/react/src/styles/index.css'],
         },
         sitemap: {
           lastmod: 'date',

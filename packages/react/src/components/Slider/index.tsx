@@ -1,4 +1,4 @@
-import { css, CSSObject, Global } from '@emotion/react'
+import { css, CSSObject } from '@emotion/react'
 import clsx from 'clsx'
 import {
   Direction,
@@ -246,13 +246,6 @@ export interface SliderMethods {
       onFocus={thumbRef.current?.focus}
       onBlur={thumbRef.current?.blur}
     >
-      <Global
-        styles={{
-          '.no-select': {
-            userSelect: 'none',
-          },
-        }}
-      />
       <div
         css={css({
           display: 'flex',

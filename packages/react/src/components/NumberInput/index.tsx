@@ -31,7 +31,7 @@ export interface NumberInputProps {
   /**
    * NOTE: If units is specified, it is forced to `false`
    */
-  typeNumber?: boolean // TODO: rename typeNumber
+  typeNumber?: boolean
 
   /**
    * Digits for rounding numbers.
@@ -83,7 +83,7 @@ export function NumberInput({
   onBlur,
   ...props
 }: NumberInputProps & UserActionPseudoProps & InputPseudoProps &
-  Omit<ComponentPropsWithoutRef<'input'>, keyof NumberInputProps>
+  Omit<ComponentPropsWithoutRef<'input'>, keyof NumberInputProps | 'type'>
 ) {
   const [showValue, setShowValue] = useState(
     parseValue(String(value), units, digit, defaultValue).formatValue,
