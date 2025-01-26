@@ -26,6 +26,13 @@
   --ifm-color-primary-lightest: #ffffff;
 }
 
+.markdown h1:first-child {
+  --ifm-h1-font-size: 2.5rem;
+}
+
+.markdown > h2 {
+  --ifm-h2-font-size: 1.8rem;
+}
 
 /* is not opened */
 html[data-theme='light'] .navbar:not(.navbar-sidebar--show) {

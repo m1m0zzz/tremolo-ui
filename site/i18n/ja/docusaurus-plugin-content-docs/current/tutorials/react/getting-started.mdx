@@ -3,44 +3,39 @@ sidebar_position: 1
 title: はじめよう
 ---
 
-# Install @tremolo-ui/react
+import CodeBlock from '@theme/CodeBlock'
+import example from '!!raw-loader!@site/examples/tutorials/react/getting-started'
 
-1. Install tremolo-ui
+# Reactではじめる
+
+## Install @tremolo-ui/react
+
+1. tremolo-uiをインストールします
 
 ```bash npm2yarn
 npm install @tremolo-ui/react
 ```
 
-2. Install dependecies
+2. 依存関係をインストールします
 
 ```bash npm2yarn
 npm install react react-dom @emotion/react
 ```
 
-## First Step
+## はじめのいっぽ
 
-Below is an example of a simple knob component.
+以下はシンプルなロータリー・ノブ・コンポーネントの例です。
 
-```jsx live showLineNumbers
-function App() {
-  const [value, setValue] = useState(64)
+コードアイコンをクリックしてコードを確認してください！
 
-  return (
-    <div>
-      <Knob
-        value={value}
-        min={0}
-        max={100}
-        size={50}
-        onChange={(v) => setValue(v)}
-      />
-      <p>value: {value}</p>
-    </div>
-  )
-}
-```
+<CodeBlock
+  jsx
+  live
+  sourcePath={"examples/tutorials/react/getting-started.tsx"}
+>{example}</CodeBlock>
 
-Check out the look and feel in the storybook!
+## 次のステップ
 
-[Storybook - React Knob](https://tremolo-ui-sb-react.vercel.app/?path=/docs/react-components-knob--docs)
+tremolo-uiが提供するコンポーネントを見てみましょう。
 
+[Components - Knob](../../components/knob/)
