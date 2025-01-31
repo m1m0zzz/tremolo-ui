@@ -6,7 +6,7 @@ import { isHorizontal } from '@tremolo-ui/functions/Slider'
 
 import { Direction, gradientDirection } from './type'
 
-interface SliderTrackProps {
+export interface SliderTrackProps {
   length?: number | string
   thickness?: number | string
 

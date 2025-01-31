@@ -2,7 +2,7 @@ import { CSSObject, css } from '@emotion/react'
 import { forwardRef, ReactNode, useImperativeHandle, useRef } from 'react'
 import clsx from 'clsx'
 
-interface SliderThumbProps {
+export interface SliderThumbProps {
   size?: number | string
   width?: number | string
   height?: number | string

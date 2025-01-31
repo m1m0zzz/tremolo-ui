@@ -88,7 +88,7 @@ export const Options = () => {
           lineWeight: 4,
         }}
         onChange={(v) => setValue(v)}
-        wheel={['normalized', 0.1]}
+        wheel={null}
       />
       <span>{fmt(value)}</span>
     </div>
@@ -163,9 +163,10 @@ export const AdvancedImagiroKnob = () => {
             ctx.lineWidth = 8
           }}
         />
-        {borderStyles.map((style) => {
+        {borderStyles.map((style, i) => {
           return (
             <div
+              key={i}
               style={{
                 position: 'absolute',
                 width: '30%',

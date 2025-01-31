@@ -52,7 +52,7 @@ export interface KnobProps {
   /** Whether to apply `{use-select: none}` when dragging */
   bodyNoSelect?: boolean
 
-  wheel?: InputEventOption
+  wheel?: InputEventOption | null
   enableDoubleClickDefault?: boolean
   style?: CSSObject
   onChange?: (value: number) => void
@@ -184,6 +184,7 @@ export function Knob({
         width: size ?? width,
         height: size ?? height,
         cursor: 'pointer',
+        WebkitTapHighlightColor: 'transparent',
         ...style,
         ':active': {
           ..._active,
@@ -204,6 +205,7 @@ export function Knob({
           onChange(defaultValue)
         }
       }}
+      onContextMenu={(e) => e.preventDefault()}
       {...props}
     >
       <AnimationCanvas

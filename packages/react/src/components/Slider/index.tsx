@@ -17,8 +17,8 @@ import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { UserActionPseudoProps } from '../../system/pseudo'
 import { addNoSelect, removeNoSelect } from '../_util'
 
-import { SliderThumb, SliderThumbMethods } from './Thumb'
-import { SliderTrack } from './Track'
+import { SliderThumb, SliderThumbMethods, SliderThumbProps } from './Thumb'
+import { SliderTrack, SliderTrackProps } from './Track'
 import { ScaleOption } from './type'
 
 export interface SliderProps {
@@ -39,11 +39,11 @@ export interface SliderProps {
   /**
    * wheel control option
    */
-  wheel?: InputEventOption
+  wheel?: InputEventOption | null
   /**
    * keyboard control option
    */
-  keyboard?: InputEventOption
+  keyboard?: InputEventOption | null
   disabled?: boolean
   readonly?: boolean
   className?: string
@@ -97,25 +97,24 @@ export interface SliderMethods {
         : normalizeValue(v, min, max, skew) * 100
     )
   }
-  if (wheel.length != 2) {
+  if (wheel != null && wheel.length != 2) {
     throw new Error(`Slider.wheel expect ['normalized' | 'raw', number]`)
   }
-  if (keyboard.length != 2) {
+  if (keyboard != null && keyboard.length != 2) {
     throw new Error(`Slider.keyboard expect ['normalized' | 'raw', number]`)
   }
 
   const scalesList = parseScaleOrderList(scale, min, max, step)
   if (isReversed(direction)) scalesList.reverse()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let trackProps: any, thumbProps: any
+  let trackProps: SliderTrackProps = {}, thumbProps: SliderThumbProps = {}
   if (children != undefined) {
     React.Children.forEach(children, (child) => {
       if (React.isValidElement(child)) {
         if (child.type == SliderThumb) {
-          thumbProps = child.props
+          thumbProps = child.props as SliderThumbProps
         } else if (child.type == SliderTrack) {
-          trackProps = child.props
+          trackProps = child.props as SliderTrackProps
         } else {
           throw new Error('only <SliderThumb> or <SliderTrack>')
         }
@@ -236,6 +235,7 @@ export interface SliderMethods {
         margin: `calc(${styleHelper(thumbProps?.size ?? 22)} / 2)`, // half thumb size
         cursor: readonly ? 'not-allowed' : 'pointer',
         outline: 0,
+        WebkitTapHighlightColor: 'transparent',
         ...style,
       })}
       onPointerDown={(event) => {
