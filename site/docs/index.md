@@ -10,16 +10,15 @@ Here is a brief introduction about tremolo-ui.
 tremolo-ui is a UI library for audio applications.
 It is compatible with React and Web Components, and the package is distributed through npm.
 
-
-## Install
+## 🧬Install
 
 See the tutorial for the package you are using.
 
-- [Tutorial - React](./tutorials/react/getting-started/)
-- [Tutorial - Web Components](./tutorials/web-components/getting-started/)
+- [Tutorial > React](./tutorials/react/getting-started/)
+- [Tutorial > Web Components](./tutorials/web-components/getting-started/)
 
 
-## UI Catalog
+## 🧩UI Catalog
 
 UI catalog and documentation are available on storybook.
 
@@ -27,7 +26,7 @@ UI catalog and documentation are available on storybook.
 - [Web Components Storybook](https://tremolo-ui-sb-web-components.vercel.app/)
 
 
-## API
+## 📦API
 
 API documentation by typedoc.
 
@@ -35,7 +34,7 @@ API documentation by typedoc.
 - [@tremolo-ui/react](./api/react/)
 
 
-## About This Document
+## 🦖About This Document
 
 This document was created using [Docusaurus](https://docusaurus.io/).
 
