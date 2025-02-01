@@ -1,4 +1,8 @@
-# Contribution Guide
+---
+title: Contributing
+---
+
+# 🦝Contribution Guide
 
 First, make sure that the program so far works correctly in your environment.
 If it does not work properly, please report a bug at [Issues](https://github.com/m1m0zzz/tremolo-ui/issues/new?template=bug_report.md).
