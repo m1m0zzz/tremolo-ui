@@ -86,3 +86,9 @@ html[data-theme='dark'] .navbar.navbar-sidebar--show {
   background-color: var(--ifm-navbar-link-hover-color);
 }
 
+.emoji {
+  height: 0.9em;
+  width: 0.9em;
+  margin: 0 0.2em 0 0.1em;
+  vertical-align: -0.1em;
+}

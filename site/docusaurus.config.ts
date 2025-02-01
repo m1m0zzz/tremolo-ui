@@ -1,14 +1,20 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { themes as prismThemes } from 'prism-react-renderer'
-import twemoji from 'twemoji'
 
 import type * as Preset from '@docusaurus/preset-classic'
 import type { Config } from '@docusaurus/types'
+import remarkNpm2Yarn from '@docusaurus/remark-plugin-npm2yarn'
+
+import twemoji from '@twemoji/api'
+
+import rehypeTwemoj from './src/rehype/twemoji';
+
+const emojiBaseUrl = 'https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets'
 
 function emojiUrl(emoji: string, format: 'svg' | 'png' = 'svg') {
   const codePoint = twemoji.convert.toCodePoint(emoji)
   const fmt = format == 'svg' ? format : '72x72'
-  return `https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/${fmt}/${codePoint.split('-')[0]}.${format}`
+  return emojiBaseUrl + `/${fmt}/${codePoint.split('-')[0]}.${format}`
 }
 
 function typedocPlugins() {
@@ -112,8 +118,9 @@ const config: Config = {
           // Remove this to remove the "edit this page" links.
           editUrl: 'https://github.com/m1m0zzz/tremolo-ui/tree/main/site/',
           remarkPlugins: [
-            [require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }],
+            [remarkNpm2Yarn, { sync: true }],
           ],
+          rehypePlugins: [rehypeTwemoj]
         },
         blog: false,
         theme: {
