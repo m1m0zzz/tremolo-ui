@@ -3,6 +3,8 @@ import { ReactElement } from 'react'
 import clsx from 'clsx'
 
 export interface AreaProps {
+  width?: number | string
+  height?: number | string
   bg?: string
   className?: string
   style?: CSSObject
@@ -13,6 +15,8 @@ export interface AreaProps {
 }
 
 export function XYPadArea({
+  width = 120,
+  height = 120,
   bg = '#eee',
   children,
   className,
@@ -24,8 +28,8 @@ export function XYPadArea({
       className={clsx('tremolo-xy-pad-area', className)}
       css={css({
         position: 'relative',
-        width: 120,
-        height: 120,
+        width: width,
+        height: height,
         background: bg,
         ...style
       })}

@@ -20,13 +20,7 @@ export interface ValueOptions {
   // optional
   step?: number
   skew?: number
-}
-
-export interface XYPadProps {
-  x: ValueOptions
-  y: ValueOptions
-
-  bodyNoSelect?: boolean
+  reverse?: boolean
   /**
    * wheel control option
    */
@@ -35,6 +29,13 @@ export interface XYPadProps {
    * keyboard control option
    */
   keyboard?: InputEventOption | null
+}
+
+export interface XYPadProps {
+  x: ValueOptions
+  y: ValueOptions
+
+  bodyNoSelect?: boolean
   disabled?: boolean
   readonly?: boolean
   className?: string
@@ -48,6 +49,14 @@ export interface XYPadMethods {
   blur: () => void
 }
 
+const defaultValueOptions = {
+  skew: 1,
+  step: 1,
+  reverse: false,
+  wheel: ['raw', 1] as InputEventOption,
+  keyboard: ['raw', 1] as InputEventOption,
+}
+
 /**
  * Simple XYPad
  */
@@ -57,16 +66,14 @@ export interface XYPadMethods {
   className,
   style,
   bodyNoSelect = true,
-  wheel = ['raw', 1],
-  keyboard = ['raw', 1],
   disabled = false,
   readonly = false,
   onChange,
   children,
   ...pseudo
 }: XYPadProps & UserActionPseudoProps, ref) => {
-  const x = { skew: 1, step: 1, ..._x }
-  const y = { skew: 1, step: 1, ..._y }
+  const x = { ...defaultValueOptions, ..._x }
+  const y = { ...defaultValueOptions, ..._y }
 
   // -- state and ref ---
   const areaElementRef = useRef<HTMLDivElement>(null)
@@ -74,15 +81,10 @@ export interface XYPadMethods {
   const thumbDragged = useRef(false)
 
   // --- interpret props ---
-  const percentX = toFixed(normalizeValue(x.value, x.min, x.max, x.skew) * 100)
-  const percentY = toFixed(normalizeValue(y.value, y.min, y.max, y.skew) * 100)
-
-  if (wheel != null && wheel.length != 2) {
-    throw new Error(`XYPad.wheel expect ['normalized' | 'raw', number]`)
-  }
-  if (keyboard != null && keyboard.length != 2) {
-    throw new Error(`XYPad.keyboard expect ['normalized' | 'raw', number]`)
-  }
+  const nx = normalizeValue(x.value, x.min, x.max, x.skew)
+  const ny = normalizeValue(y.value, y.min, y.max, y.skew)
+  const percentX = toFixed((x.reverse ? 1 - nx : nx) * 100)
+  const percentY = toFixed((y.reverse ? 1 - ny : ny) * 100)
 
   let areaProps: AreaProps = {}, thumbProps: ThumbProps = {}
   if (children != undefined) {
@@ -117,23 +119,28 @@ export interface XYPadMethods {
     } = areaElementRef.current.getBoundingClientRect()
     const mouseX = isTouch ? event.touches[0].clientX : event.clientX
     const mouseY = isTouch ? event.touches[0].clientY : event.clientY
-    const vx = rawValue(normalizeValue(mouseX, x1, x2), x.min, x.max, x.skew)
-    const vy = rawValue(normalizeValue(mouseY, y1, y2), y.min, y.max, y.skew)
+    const nx = normalizeValue(mouseX, x1, x2)
+    const ny = normalizeValue(mouseY, y1, y2)
+    const vx = rawValue(x.reverse ? 1 - nx : nx, x.min, x.max, x.skew)
+    const vy = rawValue(y.reverse ? 1 - ny : ny, y.min, y.max, y.skew)
     const newX = clamp(stepValue(vx, x.step), x.min, x.max)
     const newY = clamp(stepValue(vy, y.step), y.min, y.max)
     onChange(newX, newY)
   }
 
   const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (!keyboard || !onChange || readonly) return
+    if ((!x.keyboard && y.keyboard) || !onChange || readonly) return
     const key = event.key
     if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
       event.preventDefault()
       const isHorizontal = key == 'ArrowRight' || key == 'ArrowLeft'
       const target = isHorizontal ? x : y
-      const delta = (key == 'ArrowRight' || key == 'ArrowDown') ? keyboard[1] : -keyboard[1]
+      if (!target.keyboard) return
+      let delta = target.keyboard[1]
+      if (key == 'ArrowLeft' || key == 'ArrowUp') delta *= -1
+      if (target.reverse) delta *= -1
       let v
-      if (keyboard[0] == 'normalized') {
+      if (target.keyboard[0] == 'normalized') {
         const n = normalizeValue(target.value, target.min, target.max, target.skew)
         v = rawValue(n + delta, target.min, target.max, target.skew)
       } else {
@@ -146,7 +153,7 @@ export interface XYPadMethods {
         onChange(x.value, newValue)
       }
     }
-  }, [x, keyboard, onChange, readonly])
+  }, [x, y, onChange, readonly])
 
   // --- hooks ---
   const touchMoveRefCallback = useRefCallbackEvent(
@@ -159,12 +166,15 @@ export interface XYPadMethods {
   const wheelRefCallback = useRefCallbackEvent(
     'wheel',
     (event) => {
-      if (!wheel || !onChange || readonly) return
+      if ((!x.wheel && !y.wheel) || !onChange || readonly) return
       event.preventDefault()
-      let delta = event.deltaY > 0 ? wheel[1] : -wheel[1]
       const target = event.shiftKey ? x : y
+      if (!target.wheel) return
+      let delta = target.wheel[1]
+      if (event.deltaY < 0) delta *= -1
+      if (target.reverse) delta *= -1
       let v
-      if (wheel[0] == 'normalized') {
+      if (target.wheel[0] == 'normalized') {
         const n = normalizeValue(target.value, target.min, target.max, target.skew)
         v = rawValue(n + delta, target.min, target.max, target.skew)
       } else {
@@ -180,7 +190,7 @@ export interface XYPadMethods {
     {
       passive: false,
     },
-    [wheel, x, y],
+    [x, y],
   )
 
   useEventListener(window, 'mousemove', (event) => {
