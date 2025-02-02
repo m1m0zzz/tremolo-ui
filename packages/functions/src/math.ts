@@ -79,6 +79,9 @@ export function toFixed(x: number, fractionDigits?: number) {
  * @category Math
  */
 export function integerPart(x: number | string): string | undefined {
+  if (Number.isNaN(x)) {
+    return undefined
+  }
   return String(x).split('.')[0]
 }
 

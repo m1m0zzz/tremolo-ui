@@ -64,8 +64,11 @@ describe('unit', () => {
     expect(decimalPart('3.14')).toBe('14')
     expect(decimalPart('-3.14')).toBe('14')
     expect(decimalPart('3')).toBe(undefined)
+    expect(decimalPart(3.00)).toBe(undefined)
+    expect(decimalPart('3.00')).toBe('00')
     expect(decimalPart(NaN)).toBe(undefined)
     expect(decimalPart(Infinity)).toBe(undefined)
+    expect(decimalPart(-Infinity)).toBe(undefined)
   })
 
   test('integerPart', () => {
@@ -73,7 +76,8 @@ describe('unit', () => {
     expect(integerPart(-Math.PI)).toBe('-3')
     expect(integerPart(100)).toBe('100')
     expect(integerPart(.123)).toBe('0')
-    expect(integerPart(NaN)).toBe('NaN')
+    expect(integerPart(NaN)).toBe(undefined)
     expect(integerPart(Infinity)).toBe('Infinity')
+    expect(integerPart(-Infinity)).toBe('-Infinity')
   })
 })
