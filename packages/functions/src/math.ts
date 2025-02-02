@@ -78,6 +78,14 @@ export function toFixed(x: number, fractionDigits?: number) {
  *
  * @category Math
  */
+export function integerPart(x: number | string): string | undefined {
+  return String(x).split('.')[0]
+}
+
+/**
+ *
+ * @category Math
+ */
 export function decimalPart(x: number | string): string | undefined {
   return String(x).split('.')[1]
 }

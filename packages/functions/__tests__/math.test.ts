@@ -4,6 +4,8 @@ import {
   rawValue,
   skewWithCenterValue,
   stepValue,
+  decimalPart,
+  integerPart,
 } from '../src/math'
 
 describe('unit', () => {
@@ -55,5 +57,23 @@ describe('unit', () => {
   test('skewWithCenterValue()', () => {
     const skew = skewWithCenterValue(100, 10, 1000)
     expect(stepValue(rawValue(0.5, 10, 1000, skew), 1)).toBe(100)
+  })
+
+  test('decimalPart', () => {
+    expect(decimalPart(3.14)).toBe('14')
+    expect(decimalPart('3.14')).toBe('14')
+    expect(decimalPart('-3.14')).toBe('14')
+    expect(decimalPart('3')).toBe(undefined)
+    expect(decimalPart(NaN)).toBe(undefined)
+    expect(decimalPart(Infinity)).toBe(undefined)
+  })
+
+  test('integerPart', () => {
+    expect(integerPart(3.14)).toBe('3')
+    expect(integerPart(-Math.PI)).toBe('-3')
+    expect(integerPart(100)).toBe('100')
+    expect(integerPart(.123)).toBe('0')
+    expect(integerPart(NaN)).toBe('NaN')
+    expect(integerPart(Infinity)).toBe('Infinity')
   })
 })
