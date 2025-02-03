@@ -129,13 +129,13 @@ const defaultValueOptions = {
   }
 
   const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
-    if ((!x.keyboard && y.keyboard) || !onChange || readonly) return
+    if (!onChange || readonly) return
     const key = event.key
     if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
-      event.preventDefault()
       const isHorizontal = key == 'ArrowRight' || key == 'ArrowLeft'
       const target = isHorizontal ? x : y
       if (!target.keyboard) return
+      event.preventDefault()
       let delta = target.keyboard[1]
       if (key == 'ArrowLeft' || key == 'ArrowUp') delta *= -1
       if (target.reverse) delta *= -1
@@ -166,10 +166,10 @@ const defaultValueOptions = {
   const wheelRefCallback = useRefCallbackEvent(
     'wheel',
     (event) => {
-      if ((!x.wheel && !y.wheel) || !onChange || readonly) return
-      event.preventDefault()
+      if (!onChange || readonly) return
       const target = event.shiftKey ? x : y
       if (!target.wheel) return
+      event.preventDefault()
       let delta = target.wheel[1]
       if (event.deltaY < 0) delta *= -1
       if (target.reverse) delta *= -1
@@ -240,29 +240,23 @@ const defaultValueOptions = {
       onBlur={thumbRef.current?.blur}
     >
       <div
-        css={css({
-          display: 'flex',
-        })}
+        className="tremolo-xy-pad-area-wrapper"
+        ref={areaElementRef}
       >
-        <div
-          className="tremolo-xy-pad-area-wrapper"
-          ref={areaElementRef}
-        >
-          <XYPadArea
-            __thumb={
-              <XYPadThumb
-                ref={thumbRef}
-                __disabled={disabled}
-                __css={{
-                  top: `${percentY}%`,
-                  left: `${percentX}%`,
-                }}
-                {...thumbProps}
-              />
-            }
-            {...areaProps}
-          />
-        </div>
+        <XYPadArea
+          __thumb={
+            <XYPadThumb
+              ref={thumbRef}
+              __disabled={disabled}
+              __css={{
+                top: `${percentY}%`,
+                left: `${percentX}%`,
+              }}
+              {...thumbProps}
+            />
+          }
+          {...areaProps}
+        />
       </div>
     </div>
   )
