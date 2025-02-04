@@ -9,7 +9,6 @@ import {
   SliderTrack,
 } from '../src/components/Slider'
 
-import thumbImage from './assets/tremolo-slider-thumb.png'
 import { getRMS } from './lib/dsp'
 import Select from './lib/Select'
 import Checkbox from './lib/Checkbox'
@@ -104,7 +103,7 @@ export const CustomImage = () => {
         ></SliderTrack>
         <SliderThumb>
           <img
-            src={thumbImage} // TODO: use staticDirs
+            src={'/tremolo-slider-thumb.png'}
             alt="slider thumb"
             draggable={false}
             style={{ display: 'block' }} // remove bottom gap
