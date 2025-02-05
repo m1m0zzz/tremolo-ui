@@ -1,10 +1,10 @@
 import { css, CSSObject } from '@emotion/react'
 import { ReactElement } from 'react'
 import clsx from 'clsx'
-import { styleHelper } from '@tremolo-ui/functions'
-import { isHorizontal } from '@tremolo-ui/functions/Slider'
+import { styleHelper, xor } from '@tremolo-ui/functions'
 
-import { Direction, gradientDirection } from './type'
+export const defaultLength = 140
+export const defaultThickness = 10
 
 export interface SliderTrackProps {
   length?: number | string
@@ -27,7 +27,9 @@ export interface SliderTrackProps {
   /** inherit */
   __thumb?: ReactElement
   /** inherit */
-  __direction?: Direction
+  __vertical?: boolean
+  /** inherit */
+  __reverse?: boolean
   /** inherit */
   __disabled?: boolean
   /** internal */
@@ -35,8 +37,8 @@ export interface SliderTrackProps {
 }
 
 export function SliderTrack({
-  length = 140,
-  thickness = 10,
+  length = defaultLength,
+  thickness = defaultThickness,
   activeBg = '#7998ec',
   inactiveBg = '#eee',
   activeHoverBg = '#6387e9',
@@ -49,7 +51,8 @@ export function SliderTrack({
   className,
   style,
   __thumb,
-  __direction,
+  __vertical,
+  __reverse,
   __disabled,
   __percent,
 }: SliderTrackProps) {
@@ -57,17 +60,26 @@ export function SliderTrack({
   const inactive = __disabled ? disabledInactiveBg : inactiveBg
   const activeHover = __disabled ? disabledActiveHoverBg : activeHoverBg
   const inactiveHover = __disabled ? disabledInactiveHoverBg : inactiveHoverBg
+
+  const direction = __vertical ? 'bottom' : 'right'
+
   return (
     <div
       className={clsx('tremolo-slider-track', className)}
       css={css({
         position: 'relative',
-        background: `linear-gradient(to ${gradientDirection(__direction!)}, ${active} ${__percent}%, ${inactive} ${__percent}%)`,
+        background:
+          xor(__vertical, __reverse) ?
+          `linear-gradient(to ${direction}, ${inactive} ${__percent}%, ${active} ${__percent}%)` :
+          `linear-gradient(to ${direction}, ${active} ${__percent}%, ${inactive} ${__percent}%)`,
         borderRadius: styleHelper(thickness!, '/', 2),
-        width: isHorizontal(__direction!) ? length : thickness,
-        height: isHorizontal(__direction!) ? thickness : length,
+        width: !__vertical ? length : thickness,
+        height: __vertical ? length : thickness,
         ':hover': {
-          background: `linear-gradient(to ${gradientDirection(__direction!)}, ${activeHover} ${__percent}%, ${inactiveHover} ${__percent}%)`
+          background:
+            xor(__vertical, __reverse) ?
+            `linear-gradient(to ${direction}, ${inactiveHover} ${__percent}%, ${activeHover} ${__percent}%)` :
+            `linear-gradient(to ${direction}, ${activeHover} ${__percent}%, ${inactiveHover} ${__percent}%)`,
         },
         ...style
       })}

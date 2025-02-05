@@ -1,15 +1,11 @@
 import { css, CSSObject } from '@emotion/react'
 import clsx from 'clsx'
 import {
-  Direction,
-  isHorizontal,
-  isReversed,
-  isVertical,
   parseScaleOrderList,
   ScaleOrderList,
   ScaleType,
 } from '@tremolo-ui/functions/Slider'
-import { clamp, normalizeValue, rawValue, stepValue, toFixed, InputEventOption, styleHelper } from '@tremolo-ui/functions'
+import { clamp, normalizeValue, rawValue, stepValue, toFixed, InputEventOption, styleHelper, xor } from '@tremolo-ui/functions'
 import React, { forwardRef, ReactElement, useCallback, useImperativeHandle, useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
@@ -31,7 +27,8 @@ export interface SliderProps {
   // optional
   step?: number
   skew?: number // TODO | SkewFunction
-  direction?: Direction // TODO: vertical & reverse
+  vertical?: boolean
+  reverse?: boolean
   // TODO: scales component
   scale?: ['step', ScaleType] | [number, ScaleType] | ScaleOrderList[]
   scaleOption?: ScaleOption
@@ -67,7 +64,8 @@ export interface SliderMethods {
   max,
   step = 1,
   skew = 1,
-  direction = 'right',
+  vertical = false,
+  reverse = false,
   scale,
   scaleOption,
   className,
@@ -88,24 +86,25 @@ export interface SliderMethods {
 
   // --- interpret props ---
   const { _active, _focus, _hover } = pseudo
-  const percent = toFixed(normalizeValue(value, min, max, skew) * 100)
-  const percentRev = isReversed(direction) ? toFixed(100 - percent) : percent
-  const calcPercent = (v: number) => {
+  const p = toFixed(normalizeValue(value, min, max, skew) * 100)
+  const rev = toFixed(100 - p)
+  // NOTE
+  // normal -> normal (right)
+  // vertical -> rev (up)
+  // reverse -> rev (left)
+  // vertical & reverse -> normal (down)
+  const displayReversed = xor(vertical, reverse)
+  const percent = displayReversed ? rev : p
+  const calcPercent = (rawV: number) => {
     return toFixed(
-      isReversed(direction)
-        ? 100 - normalizeValue(v, min, max, skew) * 100
-        : normalizeValue(v, min, max, skew) * 100
+      displayReversed
+        ? 100 - normalizeValue(rawV, min, max, skew) * 100
+        : normalizeValue(rawV, min, max, skew) * 100
     )
-  }
-  if (wheel != null && wheel.length != 2) {
-    throw new Error(`Slider.wheel expect ['normalized' | 'raw', number]`)
-  }
-  if (keyboard != null && keyboard.length != 2) {
-    throw new Error(`Slider.keyboard expect ['normalized' | 'raw', number]`)
   }
 
   const scalesList = parseScaleOrderList(scale, min, max, step)
-  if (isReversed(direction)) scalesList.reverse()
+  if (displayReversed) scalesList.reverse()
 
   let trackProps: SliderTrackProps = {}, thumbProps: SliderThumbProps = {}
   if (children != undefined) {
@@ -140,10 +139,10 @@ export interface SliderMethods {
     } = trackElementRef.current.getBoundingClientRect()
     const mouseX = isTouch ? event.touches[0].clientX : event.clientX
     const mouseY = isTouch ? event.touches[0].clientY : event.clientY
-    const n = isHorizontal(direction)
-      ? normalizeValue(mouseX, x1, x2)
-      : normalizeValue(mouseY, y1, y2)
-    const v = rawValue(isReversed(direction) ? 1 - n : n, min, max, skew)
+    const n = vertical
+      ? normalizeValue(mouseY, y1, y2)
+      : normalizeValue(mouseX, x1, x2)
+    const v = rawValue(displayReversed ? 1 - n : n, min, max, skew)
     onChange(clamp(stepValue(v, step), min, max))
   }
 
@@ -153,7 +152,7 @@ export interface SliderMethods {
     if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
       event.preventDefault()
       let x = (key == 'ArrowRight' || key == 'ArrowUp') ? keyboard[1] : -keyboard[1]
-      if (direction == 'down' || direction == 'left') x *= -1
+      if (reverse) x *= -1
       let v
       if (keyboard[0] == 'normalized') {
         const n = normalizeValue(value, min, max, skew)
@@ -163,14 +162,14 @@ export interface SliderMethods {
       }
       onChange(clamp(stepValue(v, step), min, max))
     }
-  }, [value, min, max, step, skew, direction, keyboard, onChange, readonly])
+  }, [value, min, max, step, skew, vertical, reverse, keyboard, onChange, readonly])
 
   // --- hooks ---
   const touchMoveRefCallback = useRefCallbackEvent(
     'touchmove',
     handleValue,
     { passive: false },
-    [min, max, skew, step, direction, onChange, readonly],
+    [min, max, skew, step, vertical, reverse, onChange, readonly],
   )
 
   const wheelRefCallback = useRefCallbackEvent(
@@ -178,8 +177,10 @@ export interface SliderMethods {
     (event) => {
       if (!wheel || !onChange || readonly) return
       event.preventDefault()
+      // TODO: deltaX
+      // console.log(event.deltaX, event.deltaY)
       let x = event.deltaY > 0 ? wheel[1] : -wheel[1]
-      if (isReversed(direction) || isHorizontal(direction)) x *= -1
+      if (reverse || !vertical) x *= -1
       let v
       if (wheel[0] == 'normalized') {
         const n = normalizeValue(value, min, max, skew)
@@ -227,7 +228,7 @@ export interface SliderMethods {
       aria-valuenow={value}
       aria-valuemin={min}
       aria-valuemax={max}
-      aria-orientation={isHorizontal(direction) ? 'horizontal' : 'vertical'}
+      aria-orientation={vertical ? 'vertical' : 'horizontal'}
       aria-disabled={disabled}
       aria-readonly={readonly}
       css={css({
@@ -249,7 +250,7 @@ export interface SliderMethods {
       <div
         css={css({
           display: 'flex',
-          flexDirection: isHorizontal(direction) ? 'column' : 'row',
+          flexDirection: vertical ? 'row' : 'column',
         })}
       >
         <div
@@ -257,7 +258,8 @@ export interface SliderMethods {
           ref={trackElementRef}
         >
           <SliderTrack
-            __direction={direction}
+            __vertical={vertical}
+            __reverse={reverse}
             __disabled={disabled}
             __percent={percent}
             __thumb={
@@ -265,8 +267,8 @@ export interface SliderMethods {
                 ref={thumbRef}
                 __disabled={disabled}
                 __css={{
-                  top: isHorizontal(direction) ? '50%' : `${percentRev}%`,
-                  left: isHorizontal(direction) ? `${percentRev}%` : '50%',
+                  top: vertical ? `${percent}%` : '50%',
+                  left: !vertical ? `${percent}%` : '50%',
                 }}
                 {...thumbProps}
               />
@@ -281,11 +283,11 @@ export interface SliderMethods {
             css={css({
               display: 'block',
               position: 'relative',
-              marginLeft: isVertical(direction)
+              marginLeft: vertical
                 ? (scaleOption?.gap ??
                   `calc((22px - ${styleHelper(trackProps?.thickness ?? 10)}) / 2)`)
                 : undefined,
-              marginTop: isHorizontal(direction)
+              marginTop: !vertical
                 ? (scaleOption?.gap ??
                   `calc((22px - ${styleHelper(trackProps?.thickness ?? 10)}) / 2)`)
                 : undefined,
@@ -298,13 +300,13 @@ export interface SliderMethods {
                 key={index}
                 css={css({
                   display: 'flex',
-                  flexDirection: isHorizontal(direction) ? 'column' : 'row',
+                  flexDirection: !vertical ? 'column' : 'row',
                   justifyContent: 'center',
                   alignItems: 'center',
                   position: 'absolute',
-                  left: isHorizontal(direction) ? `${calcPercent(item.at)}%` : undefined,
-                  top: isVertical(direction) ? `${calcPercent(item.at)}%` : undefined,
-                  translate: isHorizontal(direction) ? '-50% 0' : '0 -50%',
+                  left: !vertical ? `${calcPercent(item.at)}%` : undefined,
+                  top: vertical ? `${calcPercent(item.at)}%` : undefined,
+                  translate: !vertical ? '-50% 0' : '0 -50%',
                   zIndex: 10,
                 })}
               >
@@ -313,18 +315,18 @@ export interface SliderMethods {
                   <div
                     className="tremolo-slider-scale-mark"
                     css={css({
-                      width: isHorizontal(direction)
+                      width: !vertical
                         ? (item.style?.thickness ?? 1)
                         : (item.style?.length ?? '0.5rem'),
-                      height: isVertical(direction)
+                      height: vertical
                         ? (item.style?.thickness ?? 1)
                         : (item.style?.length ?? '0.5rem'),
                       backgroundColor:
                         item.style?.markColor ??
                         scaleOption?.markColor ??
                         '#222',
-                      marginBottom: isHorizontal(direction) ? 2 : undefined,
-                      marginRight: isVertical(direction) ? 2 : undefined,
+                      marginBottom: !vertical ? 2 : undefined,
+                      marginRight: vertical ? 2 : undefined,
                     })}
                   ></div>
                 )}

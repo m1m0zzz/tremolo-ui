@@ -34,18 +34,21 @@ export const Basic = () => {
 
 export const Direction = () => {
   const [value, setValue] = useState(32)
-  const [direction, setDirection] = useState('right')
+  const [vertical, setVertical] = useState(false)
+  const [reverse, setReverse] = useState(false)
 
   const directions = ['right', 'left', 'down', 'up']
 
   return (
     <div>
-      <Select options={directions} onChange={setDirection} />
+      <Checkbox checked={vertical} onChange={setVertical} label='vertical' />
+      <Checkbox checked={reverse} onChange={setReverse} label='reverse' />
       <Slider
         value={value}
         min={0}
         max={100}
-        direction={direction as SliderDirection}
+        vertical={vertical}
+        reverse={reverse}
         onChange={(v) => setValue(v)}
       />
       <p>value: {value}</p>
@@ -69,7 +72,6 @@ export const LogarithmicParameter = () => {
         min={-100}
         max={0}
         skew={skewWithCenterValue(-10, -100, 0)}
-        direction="up"
         step={0.1}
         onChange={(v) => setValue(v)}
         wheel={['normalized', 0.1]}
@@ -146,7 +148,6 @@ export const Scale = () => {
           min={0}
           max={100}
           onChange={(v) => setValue2(v)}
-          direction="up"
           scale={[
             {
               at: 0,
@@ -177,7 +178,6 @@ export const Scale = () => {
           max={0}
           step={10}
           onChange={(v) => setValue3(v)}
-          direction="up"
           scale={['step', 'number']}
         />
         <p>value: {value3}</p>
@@ -293,7 +293,6 @@ export const VolumeFader = () => {
         min={min}
         max={max}
         skew={skew}
-        direction="up"
         step={0.1}
         onChange={(v) => {
           setVolume(v)
