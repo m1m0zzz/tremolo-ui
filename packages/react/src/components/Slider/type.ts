@@ -7,10 +7,6 @@ export type ScaleOption = Opt & {
 }
 
 export {
-  type Direction,
-  type Horizontal,
   type ScaleOrderList,
   type ScaleType,
-  type Vertical,
-  gradientDirection
 } from '@tremolo-ui/functions/Slider'
