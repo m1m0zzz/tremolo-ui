@@ -3,14 +3,12 @@ import { useRef, useState } from 'react'
 
 import { AnimationCanvas } from '../src/components/AnimationCanvas'
 import {
-  Direction as SliderDirection,
   Slider,
   SliderThumb,
   SliderTrack,
 } from '../src/components/Slider'
 
 import { getRMS } from './lib/dsp'
-import Select from './lib/Select'
 import Checkbox from './lib/Checkbox'
 
 import styles from './styles/Slider.module.css'
@@ -36,8 +34,6 @@ export const Direction = () => {
   const [value, setValue] = useState(32)
   const [vertical, setVertical] = useState(false)
   const [reverse, setReverse] = useState(false)
-
-  const directions = ['right', 'left', 'down', 'up']
 
   return (
     <div>
