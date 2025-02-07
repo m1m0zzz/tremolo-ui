@@ -84,34 +84,38 @@ export function AnimationCanvas({
       const memoCanvas = memoCanvasRef.current
       const memoContext = memoCanvas?.getContext('2d', options)
 
-      const resizeObserver = new ResizeObserver(() => {
-        // console.log('resize')
-        // Prevents loss of some context when the canvas is resized
-        const contextMemo = {} as DrawingContext
-        for (const prop of drawingState) {
-          (contextMemo[prop] as DrawingStateValue) = context[prop]
-        }
+      const resizeObserver = new ResizeObserver((entries) => {
+        // TODO: If the parent element has no absolute height, the height increases infinitely.
+        //     : 親要素に絶対的な高さを持たない場合、高さは無限に増加します。
+        // https://zenn.dev/megeton/articles/be1c677e174c84#%E6%A0%B9%E6%9C%AC%E7%9A%84%E3%81%AB-resizeobserver-loop-limit-exceeded-%E3%81%8C%E5%87%BA%E3%82%8B%E5%95%8F%E9%A1%8C%E3%81%AB%E5%90%91%E3%81%8D%E5%90%88%E3%81%86
+        for (const entry of entries) {
+          // Prevents loss of some context when the canvas is resized
+          const contextMemo = {} as DrawingContext
+          for (const prop of drawingState) {
+            (contextMemo[prop] as DrawingStateValue) = context[prop]
+          }
 
-        const w = Math.floor(parent.clientWidth)
-        const h = Math.floor(parent.clientHeight)
+          const w = Math.floor(entry.contentRect.width)
+          const h = Math.floor(entry.contentRect.height)
 
-        if (reduceFlickering && memoCanvas && memoContext) {
-          memoCanvas.width = w * dpr
-          memoCanvas.height = h * dpr
-          memoContext.scale(1 / dpr, 1 / dpr)
-          memoContext.drawImage(context.canvas, 0, 0)
-        }
+          if (reduceFlickering && memoCanvas && memoContext) {
+            memoCanvas.width = w * dpr
+            memoCanvas.height = h * dpr
+            memoContext.scale(1 / dpr, 1 / dpr)
+            memoContext.drawImage(context.canvas, 0, 0)
+          }
 
-        setDprConfig(canvas, context, w, h, dpr)
-        widthRef.current = w
-        heightRef.current = h
+          setDprConfig(canvas, context, w, h, dpr)
+          widthRef.current = w
+          heightRef.current = h
 
-        for (const prop of drawingState) {
-          (context[prop] as DrawingStateValue) = contextMemo[prop]
-        }
+          for (const prop of drawingState) {
+            (context[prop] as DrawingStateValue) = contextMemo[prop]
+          }
 
-        if (reduceFlickering && memoContext) {
-          context.drawImage(memoContext.canvas, 0, 0)
+          if (reduceFlickering && memoContext) {
+            context.drawImage(memoContext.canvas, 0, 0)
+          }
         }
       })
       resizeObserver.observe(parent)
@@ -155,8 +159,6 @@ export function AnimationCanvas({
       {relativeSize && reduceFlickering && (
         <canvas
           style={{ display: 'none' }}
-          width={relativeSize ? 0 : width}
-          height={relativeSize ? 0 : height}
           ref={memoCanvasRef}
         ></canvas>
       )}
