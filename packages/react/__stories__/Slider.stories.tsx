@@ -69,6 +69,7 @@ export const LogarithmicParameter = () => {
         max={0}
         skew={skewWithCenterValue(-10, -100, 0)}
         step={0.1}
+        vertical
         onChange={(v) => setValue(v)}
         wheel={['normalized', 0.1]}
         keyboard={['normalized', 0.1]}
@@ -128,6 +129,7 @@ export const Scale = () => {
           min={0}
           max={100}
           onChange={(v) => setValue(v)}
+          vertical
           scale={[
             { at: 0, type: 'mark-number' },
             { at: 25, type: 'mark' },
@@ -144,6 +146,7 @@ export const Scale = () => {
           min={0}
           max={100}
           onChange={(v) => setValue2(v)}
+          vertical
           scale={[
             {
               at: 0,
@@ -174,6 +177,7 @@ export const Scale = () => {
           max={0}
           step={10}
           onChange={(v) => setValue3(v)}
+          vertical
           scale={['step', 'number']}
         />
         <p>value: {value3}</p>
@@ -295,6 +299,7 @@ export const VolumeFader = () => {
           if (!gainNode) return
           gainNode.gain.value = normalizeValue(v, min, max, skew)
         }}
+        vertical
         wheel={['normalized', 0.1]}
         scale={[
           { at: 6 },
