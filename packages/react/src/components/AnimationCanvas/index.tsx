@@ -1,5 +1,5 @@
 import { css, CSSObject } from '@emotion/react'
-import { ComponentPropsWithRef, MutableRefObject, useEffect, useRef } from 'react'
+import { ComponentPropsWithRef, MutableRefObject, ReactElement, useEffect, useRef } from 'react'
 import clsx from 'clsx'
 
 import { DrawingContext, drawingState, DrawingStateValue } from './canvas'
@@ -25,21 +25,30 @@ export type DrawFunction = (
   count: number,
 ) => void
 
-export interface AnimationCanvasProps {
-  width?: number
-  height?: number
-  relativeSize?: boolean
-  /** only available relativeSize=true */
-  reduceFlickering?: boolean
+interface CommonProps {
   options?: CanvasRenderingContext2DSettings
   style?: CSSObject
   init?: DrawFunction
   draw: DrawFunction
 }
 
+interface AbsoluteSizingProps {
+  width?: number
+  height?: number
+}
+
+interface RelativeSizingProps {
+  relativeSize?: boolean
+  reduceFlickering?: boolean
+}
+
+export type AnimationCanvasProps = AbsoluteSizingProps & RelativeSizingProps & CommonProps
+
 /**
  * A simple animatable canvas with requestAnimationFrame()
  */
+export function AnimationCanvas(props: AbsoluteSizingProps & CommonProps): ReactElement
+export function AnimationCanvas(props: RelativeSizingProps & CommonProps): ReactElement
 export function AnimationCanvas({
   width = 100,
   height = 100,
@@ -52,7 +61,7 @@ export function AnimationCanvas({
   className,
   ...props
 }: AnimationCanvasProps &
-  Omit<ComponentPropsWithRef<'canvas'>, keyof AnimationCanvasProps>) {
+  Omit<ComponentPropsWithRef<'canvas'>, keyof AnimationCanvasProps>): ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const memoCanvasRef = useRef<HTMLCanvasElement>(null)
   const reqIdRef = useRef<number>()

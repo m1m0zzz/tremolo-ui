@@ -328,8 +328,6 @@ export const VolumeFader = () => {
           }}
         >
           <AnimationCanvas
-            width={100}
-            height={100}
             relativeSize={true}
             init={(ctx) => {
               ctx.fillStyle = '#42eb53'

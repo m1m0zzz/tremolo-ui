@@ -104,14 +104,7 @@ export function Knob({
   const opts = { ...defaultOptions, ...options }
   // const percent = normalizeValue(value, min, max, skew)
 
-  const isRelativeSize = typeof (size ?? width) == 'string'
-  const adaptSize = (size: number | `${number}%`) => {
-    if (typeof size == 'string') {
-      return Number(size.slice(0, -1))
-    } else {
-      return size
-    }
-  }
+  const isRelativeSize = typeof (size ?? width) == 'string' || typeof height == 'string'
 
   const handleEvent = (
     event:
@@ -209,11 +202,14 @@ export function Knob({
       {...props}
     >
       <AnimationCanvas
-        width={adaptSize(size ?? width)}
-        height={adaptSize(size ?? height)}
-        relativeSize={isRelativeSize}
-        // TODO
-        // reduceFlickering={false}
+        {
+          ...isRelativeSize ?
+          { relativeSize: true } :
+          {
+            width: size ?? width,
+            height: size ?? height
+          }
+        }
         draw={draw ? draw : (ctx, width, height) => {
           const p = normalizeValue(value, min, max, skew)
           const startP = normalizeValue(startValue, min, max, skew)
