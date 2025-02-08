@@ -47,8 +47,14 @@ export type AnimationCanvasProps = AbsoluteSizingProps & RelativeSizingProps & C
 /**
  * A simple animatable canvas with requestAnimationFrame()
  */
-export function AnimationCanvas(props: AbsoluteSizingProps & CommonProps): ReactElement
-export function AnimationCanvas(props: RelativeSizingProps & CommonProps): ReactElement
+export function AnimationCanvas(
+  props: AbsoluteSizingProps & CommonProps &
+  Omit<ComponentPropsWithRef<'canvas'>, keyof AnimationCanvasProps>
+): ReactElement
+export function AnimationCanvas(
+  props: RelativeSizingProps & CommonProps &
+  Omit<ComponentPropsWithRef<'canvas'>, keyof AnimationCanvasProps>
+): ReactElement
 export function AnimationCanvas({
   width = 100,
   height = 100,
