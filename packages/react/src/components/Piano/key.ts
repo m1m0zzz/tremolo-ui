@@ -3,7 +3,7 @@ import { ReactElement, ReactNode } from "react"
 
 export interface KeyProps {
   width?: number
-  height?: number | string
+  height?: number | `${number}%`
 
   bg?: string
   activeBg?: string
@@ -33,7 +33,7 @@ export interface KeyProps {
   /** @internal */
   __stopNote?: (noteNumber: number) => void
   /** @internal */
-  __label?: (note: number) => ReactNode
+  __label?: (note: number, index: number) => ReactNode
 }
 
 export interface KeyMethods {

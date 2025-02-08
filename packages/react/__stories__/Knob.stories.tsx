@@ -2,28 +2,71 @@ import { CSSProperties, useState } from 'react'
 
 import { Knob } from '../src/components/Knob'
 import { normalizeValue } from '@tremolo-ui/functions'
+import { Meta, StoryObj } from '@storybook/react'
+
+import { inputEventOptionType, sizesOptionType } from './lib/typeUtils'
 
 export default {
   title: 'React/Components/Knob',
   component: Knob,
-  tags: ['autodocs'],
-}
+  argTypes: {
+    value: {
+      control: false,
+    },
+    size: {
+      table: {
+        type: sizesOptionType
+      }
+    },
+    width: {
+      table: {
+        type: sizesOptionType
+      }
+    },
+    height: {
+      table: {
+        type: sizesOptionType
+      }
+    },
+    wheel: {
+      table: {
+        type: inputEventOptionType
+      }
+    },
+    keyboard: {
+      table: {
+        type: inputEventOptionType
+      }
+    },
+    thumb: {
+      control: 'color'
+    },
+  }
+} satisfies Meta<typeof Knob>
 
-export const Basic = () => {
-  const [value, setValue] = useState(10)
+type Story = StoryObj<typeof Knob>
 
-  return (
-    <div>
-      <Knob
-        value={value}
-        min={0}
-        max={100}
-        onChange={(v) => setValue(v)}
-        wheel={['normalized', 0.1]}
-      />
-      <p>value: {value}</p>
-    </div>
-  )
+export const Basic: Story = {
+  args: {
+    min: 0,
+    max: 100,
+    wheel: ['normalized', 0.05],
+    keyboard: ['normalized', 0.05]
+  },
+  render: args => {
+    const [value, setValue] = useState(10)
+
+    return (
+      <>
+        <Knob
+          {...args}
+          value={value}
+          onChange={(v) => setValue(v)}
+        />
+        <p>value: {value}</p>
+      </>
+    )
+  }
 }
 
 export const Size = () => {
@@ -80,13 +123,11 @@ export const Options = () => {
         defaultValue={0}
         min={-50}
         max={50}
-        options={{
-          active: '#6ED8E6',
-          inactive: '#161616',
-          thumb: '#161616',
-          bg: '#0000',
-          lineWeight: 4,
-        }}
+        activeColor='#6ED8E6'
+        inactiveColor='#161616'
+        thumb='#161616'
+        bg='#0000'
+        lineWeight={4}
         onChange={(v) => setValue(v)}
         wheel={null}
       />

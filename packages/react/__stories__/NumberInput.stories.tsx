@@ -1,52 +1,66 @@
 import { useState } from 'react'
 
 import { NumberInput } from '../src/components/NumberInput'
+import { Meta, StoryObj } from '@storybook/react'
 
 export default {
   title: 'React/Components/NumberInput',
   component: NumberInput,
-  tags: ['autodocs'],
+  argTypes: {
+    value: {
+      control: false,
+      table: {
+        type: {
+          summary: 'number | string'
+        }
+      }
+    },
+    units: {
+      table: {
+        type: {
+          summary: 'string | Units',
+          detail: 'string | [string, number][]'
+        }
+      }
+    }
+  }
+} satisfies Meta<typeof NumberInput>
+
+type Story = StoryObj<typeof NumberInput>
+
+export const Basic: Story = {
+  args: {
+    typeNumber: true
+  },
+  render: args => {
+    const [value, setValue] = useState(32)
+
+    return (
+      <NumberInput {...args} value={value} onChange={(v) => setValue(v)} />
+    )
+  }
 }
 
-export const Basic = () => {
-  const [value, setValue] = useState(32)
+export const UnitsAndDigit: Story = {
+  args: {
+    units: [
+      ['Hz', 1],
+      ['kHz', 1000],
+    ],
+    digit: 1,
+    _hover: { borderColor: 'red' }
+  },
+  render: args => {
+    const [value, setValue] = useState(4321)
 
-  return (
-    <NumberInput value={value} typeNumber={true} onChange={(v) => setValue(v)} />
-  )
-}
-
-export const TypeNumber = () => {
-  const [value, setValue] = useState(32)
-
-  return (
-    <NumberInput
-      value={value}
-      min={1}
-      max={20000}
-      units={[
-        ['Hz', 1],
-        ['kHz', 1000],
-      ]}
-      onChange={(v) => setValue(v)}
-    />
-  )
-}
-export const Digit = () => {
-  const [value, setValue] = useState(4321)
-
-  return (
-    <NumberInput
-      value={value}
-      units={[
-        ['Hz', 1],
-        ['kHz', 1000],
-      ]}
-      digit={1}
-      _hover={{ borderColor: 'red' }}
-      onChange={(v) => setValue(v)}
-    />
-  )
+    return (
+      <NumberInput
+        {...args}
+        value={value}
+        onChange={(v) => setValue(v)}
+      />
+    )
+  }
 }
 
 export const SelectWithFocus = () => {

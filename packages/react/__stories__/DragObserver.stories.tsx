@@ -4,7 +4,6 @@ import { DragObserver } from '../src/components/DragObserver'
 export default {
   title: 'React/Base Components/DragObserver',
   component: DragObserver,
-  tags: ['autodocs'],
 }
 
 export const Basic = () => {

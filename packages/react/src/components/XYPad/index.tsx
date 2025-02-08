@@ -41,6 +41,7 @@ export interface XYPadProps {
   className?: string
   style?: CSSObject
   onChange?: (valueX: number, valueY: number) => void
+  /** \<XYPadThumb /> | \<XYPadArea /> */
   children?: ReactElement | ReactElement[]
 }
 

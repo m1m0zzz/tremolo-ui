@@ -13,29 +13,68 @@ import {
 import { getRMS } from './lib/dsp'
 
 import styles from './styles/Slider.module.css'
+import { inputEventOptionType } from './lib/typeUtils'
+
+const scaleTypeDetail = `[
+  'step' | number,
+  'mark' | 'mark-number' | 'number'
+] |
+{
+  at: number
+  type?: 'mark' | 'mark-number' | 'number'
+  text?: string
+  style?: {
+    markColor?: string
+    labelColor?: string
+    length?: number | string
+    thickness?: number | string
+  }
+}[]`
+
+const scaleOptionDetail = `{
+  defaultType?: 'mark' | 'mark-number' | 'number'
+  markColor?: string
+  labelColor?: string
+  gap?: number | string
+  labelWidth?: number | string
+  style?: CSSObject
+}`
 
 export default {
   title: 'React/Components/Slider',
   component: Slider,
-  tags: ['autodocs'],
-  parameters: {
-    controls: {
-      exclude: ['value', 'onChange', 'children']
-    }
-  },
   argTypes: {
     value: {
-      description: 'ccc'
+      control: false,
     },
-    min: {
-      control: 'number'
-    },
-    max: {
-      control: 'number'
+    children: {
+      control: false,
     },
     wheel: {
-      control: 'object',
-      options: [['raw', 1], ['normalized', 0.1]]
+      table: {
+        type: inputEventOptionType
+      }
+    },
+    keyboard: {
+      table: {
+        type: inputEventOptionType
+      }
+    },
+    scale: {
+      table: {
+        type: {
+          summary: `['step' | number, ScaleType] | ScaleOrderList[]`,
+          detail: scaleTypeDetail
+        }
+      }
+    },
+    scaleOption: {
+      table: {
+        type: {
+          summary: 'ScaleOption',
+          detail: scaleOptionDetail
+        }
+      }
     }
   }
 } satisfies Meta<typeof Slider>
@@ -58,6 +97,7 @@ export const Basic: Story = {
     )
   }
 }
+
 export const LogarithmicParameter: Story = {
   args: {
     min: -100,

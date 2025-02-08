@@ -26,6 +26,9 @@ export type DrawFunction = (
 ) => void
 
 interface CommonProps {
+  /**
+   * @see https://developer.mozilla.org/docs/Web/API/HTMLCanvasElement/getContext#contextattributes
+   */
   options?: CanvasRenderingContext2DSettings
   style?: CSSObject
   init?: DrawFunction

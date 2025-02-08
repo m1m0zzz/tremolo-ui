@@ -9,7 +9,7 @@ import { UserActionPseudoProps } from '../../system/pseudo'
 import { AnimationCanvas, DrawFunction } from '../AnimationCanvas'
 import { addNoSelect, removeNoSelect } from '../_util'
 
-export interface KnobProps {
+export type KnobProps = {
   // required
   value: number
   min: number
@@ -37,15 +37,16 @@ export interface KnobProps {
   width?: number | `${number}%`
   height?: number | `${number}%`
 
-  /** drawing options */
-  options?: {
-    active?: string // active line color
-    inactive?: string // inactive line color
-    bg?: string // background color
-    thumb?: string // thumb color
-    lineWeight?: number // line color
-    thumbWeight?: number // thumb weight
-  }
+  /** active line color */
+  activeColor?: string
+  /** inactive line color */
+  inactiveColor?: string
+  /** background color */
+  bg?: string
+  /** thumb color */
+  thumb?: string
+  lineWeight?: number
+  thumbWeight?: number
 
   draw?: DrawFunction
 
@@ -53,19 +54,12 @@ export interface KnobProps {
   bodyNoSelect?: boolean
 
   wheel?: InputEventOption | null
+  // TODO
+  keyboard?: InputEventOption | null
   enableDoubleClickDefault?: boolean
   style?: CSSObject
   onChange?: (value: number) => void
 }
-
-const defaultOptions = {
-  active: '#7998ec',
-  inactive: '#eee',
-  bg: '#ccc',
-  thumb: '#4e76e6',
-  lineWeight: 6,
-  thumbWeight: 4,
-} as const
 
 /**
  * simple rotary Knob.
@@ -81,10 +75,16 @@ export function Knob({
   size,
   width = 50,
   height = 50,
-  options = defaultOptions,
+  activeColor = '#7998ec',
+  inactiveColor = '#eee',
+  bg = '#ccc',
+  thumb = '#4e76e6',
+  lineWeight = 6,
+  thumbWeight = 4,
   draw,
   bodyNoSelect = true,
-  wheel,
+  wheel = ['raw', 1],
+  keyboard = ['raw', 1],
   enableDoubleClickDefault = true,
   style,
   className,
@@ -101,7 +101,6 @@ export function Knob({
   const dragOffsetY = useRef<number | undefined>(undefined)
 
   // --- interpret props ---
-  const opts = { ...defaultOptions, ...options }
   // const percent = normalizeValue(value, min, max, skew)
 
   const isRelativeSize = typeof (size ?? width) == 'string' || typeof height == 'string'
@@ -226,20 +225,20 @@ export function Knob({
 
           // bg
           ctx.beginPath()
-          ctx.fillStyle = opts.bg
+          ctx.fillStyle = bg
           ctx.arc(cx, cy, r - 0.5, 0, 2 * Math.PI)
           ctx.fill()
 
           ctx.lineCap = 'round'
-          ctx.lineWidth = opts.lineWeight
+          ctx.lineWidth = lineWeight
 
           // inactive rotary
           ctx.beginPath()
-          ctx.strokeStyle = opts.inactive
+          ctx.strokeStyle = inactiveColor
           ctx.arc(
             cx,
             cy,
-            r - 0.5 - opts.lineWeight / 2,
+            r - 0.5 - lineWeight / 2,
             radian(135),
             radian(45),
           )
@@ -247,11 +246,11 @@ export function Knob({
 
           // active rotary
           ctx.beginPath()
-          ctx.strokeStyle = opts.active
+          ctx.strokeStyle = activeColor
           ctx.arc(
             cx,
             cy,
-            r - 0.5 - opts.lineWeight / 2,
+            r - 0.5 - lineWeight / 2,
             radian(135 + 270 * startP),
             radian(135 + 270 * p),
             p < startP,
@@ -264,13 +263,13 @@ export function Knob({
           ctx.lineTo(
             cx +
               Math.cos(radian(135 + 270 * p)) *
-                (r - 0.5 - opts.thumbWeight / 2),
+                (r - 0.5 - thumbWeight / 2),
             cy +
               Math.sin(radian(135 + 270 * p)) *
-                (r - 0.5 - opts.thumbWeight / 2),
+                (r - 0.5 - thumbWeight / 2),
           )
-          ctx.strokeStyle = opts.thumb
-          ctx.lineWidth = opts.thumbWeight
+          ctx.strokeStyle = thumb
+          ctx.lineWidth = thumbWeight
           ctx.stroke()
         }}
       />

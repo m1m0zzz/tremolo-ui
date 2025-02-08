@@ -71,7 +71,6 @@
       "export default {",
       "  title: 'React/Components/${1:Component}',",
       "  component: ${1:Component},",
-      "  tags: ['autodocs'],",
       "}",
       "",
       "export const Basic = () => {",

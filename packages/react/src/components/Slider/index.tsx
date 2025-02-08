@@ -30,7 +30,7 @@ export interface SliderProps {
   vertical?: boolean
   reverse?: boolean
   // TODO: scales component
-  scale?: ['step', ScaleType] | [number, ScaleType] | ScaleOrderList[]
+  scale?: ['step' | number, ScaleType] | ScaleOrderList[]
   scaleOption?: ScaleOption
   bodyNoSelect?: boolean
   /**
@@ -53,6 +53,7 @@ export interface SliderProps {
   className?: string
   style?: CSSObject
   onChange?: (value: number) => void
+  /** \<SliderThumb /> | \<SliderTrack /> */
   children?: ReactElement | ReactElement[]
   // ReactElement<typeof SliderThumb, typeof SliderTrack>[]
 }

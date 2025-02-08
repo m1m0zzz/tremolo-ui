@@ -1,46 +1,63 @@
-import { Meta } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 import { noteNumber, noteName } from '@tremolo-ui/functions'
 import { useState } from 'react'
 import * as Tone from 'tone'
 
 import { BlackKey, KeyLabel, Piano, Shortcuts, WhiteKey } from '../src/components/Piano'
 import { NumberInput } from '../src/components/NumberInput'
+import { sizesOptionType } from './lib/typeUtils'
 
 export default {
   title: 'React/Components/Piano',
   component: Piano,
-  tags: ['autodocs'],
+  argTypes: {
+    height: {
+      table: {
+        type: sizesOptionType
+      }
+    },
+    children: {
+      control: false
+    }
+  }
 } satisfies Meta<typeof Piano>
 
-export const Basic = () => {
-  const synth = new Tone.PolySynth().toDestination()
-  synth.volume.value = -6 // dB
-  // synth.set({
-  //   oscillator: {
-  //     type: 'sine'
-  //   }
-  // })
+type Story = StoryObj<typeof Piano>
 
-  return (
-    <div>
-      <p>Basic piano example with{' '}
-        <a href="https://tonejs.github.io/" target="_blank" rel="noopener noreferrer">Tone.js</a>
-        {' '}PolySynth.
-      </p>
-      <Piano
-        noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}
-        playNote={(noteNumber) => {
-          synth.triggerAttack(noteName(noteNumber))
-        }}
-        stopNote={(noteNumber) => {
-          synth.triggerRelease(noteName(noteNumber))
-        }}
-        keyboardShortcuts={Shortcuts.HOME_ROW}
-        // Notice: need optional chaining (?.)
-        label={(_, i) => Shortcuts.HOME_ROW.keys[i]?.toUpperCase()}
-      />
-    </div>
-  )
+export const Basic: Story = {
+  args: {
+    noteRange: { first: noteNumber('C3'), last: noteNumber('B4') },
+    keyboardShortcuts: Shortcuts.HOME_ROW
+  },
+  render: args => {
+    const synth = new Tone.PolySynth().toDestination()
+    synth.volume.value = -6 // dB
+    // synth.set({
+    //   oscillator: {
+    //     type: 'sine'
+    //   }
+    // })
+
+    return (
+      <div>
+        <p>Basic piano example with{' '}
+          <a href="https://tonejs.github.io/" target="_blank" rel="noopener noreferrer">Tone.js</a>
+          {' '}PolySynth.
+        </p>
+        <Piano
+          {...args}
+          playNote={(noteNumber) => {
+            synth.triggerAttack(noteName(noteNumber))
+          }}
+          stopNote={(noteNumber) => {
+            synth.triggerRelease(noteName(noteNumber))
+          }}
+          // Notice: need optional chaining (?.)
+          label={(_, i) => Shortcuts.HOME_ROW.keys[i]?.toUpperCase()}
+        />
+      </div>
+    )
+  }
 }
 
 export const Range = () => {
@@ -78,7 +95,11 @@ export const Range = () => {
         label={(note) => noteName(note)}
       >
         <WhiteKey>
-          <KeyLabel />
+          <KeyLabel
+            label={(note) => {
+              return ['ド',, 'レ',, 'ミ', 'ファ',, 'ソ',, 'ラ',, 'シ'].at(note % 12)
+            }}
+          />
         </WhiteKey>
         <BlackKey>
           {/* remove label */}
@@ -135,6 +156,7 @@ export const OneOctave = () => {
       />
       <Piano
         noteRange={{ first: noteNumber(`C${octave}`), last: noteNumber(`B${octave}`) }}
+        label={(note) => noteName(note)}
       />
     </div>
   )

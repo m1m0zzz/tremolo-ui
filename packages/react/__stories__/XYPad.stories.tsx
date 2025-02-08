@@ -7,38 +7,88 @@ import {
 } from '../src/components/XYPad'
 import { integerPart, skewWithCenterValue, toFixed } from '@tremolo-ui/functions'
 import { AnimationCanvas } from '../src/components/AnimationCanvas'
+import { Meta, StoryObj } from '@storybook/react'
+import { InputEventOptionString } from './lib/typeUtils'
+
+const valueOptionsDetail = `{
+  value: number
+  min: number
+  max: number
+  step?: number
+  skew?: number
+  reverse?: boolean
+  wheel?: ${InputEventOptionString} | null
+  keyboard?: ${InputEventOptionString} | null
+}`
 
 export default {
   title: 'React/Components/XYPad',
   component: XYPad,
-  tags: ['autodocs'],
-}
+  argTypes: {
+    x: {
+      description: 'NOTE: The `value` of controls is not valid because it is wrapped in useState.',
+      table: {
+        type: {
+          summary: 'ValueOptions',
+          detail: valueOptionsDetail
+        }
+      }
+    },
+    y: {
+      description: 'NOTE: The `value` of controls is not valid because it is wrapped in useState.',
+      table: {
+        type: {
+          summary: 'ValueOptions',
+          detail: valueOptionsDetail
+        }
+      }
+    },
+    children: {
+      control: false
+    }
+  }
+} satisfies Meta<typeof XYPad>
 
-export const Basic = () => {
-  const [valueX, setValueX] = useState(32)
-  const [valueY, setValueY] = useState(56)
+type Story = StoryObj<typeof XYPad>
 
-  return (
-    <>
-      <XYPad
-        x={{
-          value: valueX,
-          min: 0,
-          max: 100
-        }}
-        y={{
-          value: valueY,
-          min: 0,
-          max: 100
-        }}
-        onChange={(x, y) => {
-          setValueX(x)
-          setValueY(y)
-        }} />
-      <p>x: {valueX}</p>
-      <p>y: {valueY}</p>
-    </>
-  )
+export const Basic: Story = {
+  args: {
+    x: {
+      value: 0,
+      min: 0,
+      max: 100
+    },
+    y: {
+      value: 0,
+      min: 0,
+      max: 100
+    },
+  },
+  render: args => {
+    const [valueX, setValueX] = useState(32)
+    const [valueY, setValueY] = useState(56)
+
+    return (
+      <>
+        <XYPad
+          {...args}
+          x={{
+            ...args.x,
+            value: valueX,
+          }}
+          y={{
+            ...args.y,
+            value: valueY,
+          }}
+          onChange={(x, y) => {
+            setValueX(x)
+            setValueY(y)
+          }} />
+        <p>x: {valueX}</p>
+        <p>y: {valueY}</p>
+      </>
+    )
+  }
 }
 
 const rand = (max: number, min = 0) => {

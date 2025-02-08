@@ -6,7 +6,6 @@ import { toFixed } from '@tremolo-ui/functions'
 export default {
   title: 'React/Base Components/WheelObserver',
   component: WheelObserver,
-  tags: ['autodocs'],
 }
 
 export const Basic = () => {

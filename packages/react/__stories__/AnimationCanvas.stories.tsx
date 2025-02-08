@@ -1,41 +1,60 @@
-import { AnimationCanvas } from '../src/components/AnimationCanvas'
+import { Meta, StoryObj } from '@storybook/react'
+import { AnimationCanvas, AnimationCanvasProps } from '../src/components/AnimationCanvas'
 
 export default {
   title: 'React/Components/AnimationCanvas',
   component: AnimationCanvas,
-  tags: ['autodocs'],
-}
+  argTypes: {
+    width: {
+      if: { arg: 'relativeSize', truthy: false },
+    },
+    height: {
+      if: { arg: 'relativeSize', truthy: false },
+    },
+  }
+} satisfies Meta<AnimationCanvasProps>
 
-export const Basic = () => {
-  return (
-    <div>
-      <AnimationCanvas
-        width={300}
-        height={200}
-        init={(ctx) => {
-          ctx.font = '16px sans-serif'
-          ctx.strokeStyle = 'blue'
+type Story = StoryObj<AnimationCanvasProps>
+
+export const Basic: Story = {
+  args: {
+    width: 300,
+    height: 200
+  },
+  render: args => {
+    return (
+      <div
+        style={{
+          maxHeight: '100vh'
         }}
-        draw={(ctx, w, h, count) => {
-          ctx.clearRect(0, 0, w.current, h.current)
-          ctx.fillText(`frame: ${count}`, 0, 16)
-          // draw sine wave
-          const halfH = h.current / 2
-          ctx.beginPath()
-          for (let i = 0; i < w.current; i++) {
-            const y =
-              halfH +
-              halfH *
-                0.5 *
-                Math.sin((4 * Math.PI * (i + count * 2)) / w.current)
-            if (i == 0) ctx.moveTo(i, y)
-            else ctx.lineTo(i, y)
-          }
-          ctx.stroke()
-        }}
-      />
-    </div>
-  )
+      >
+        <AnimationCanvas
+          {...args}
+          init={(ctx) => {
+            ctx.font = '16px sans-serif'
+            ctx.strokeStyle = 'blue'
+          }}
+          draw={(ctx, w, h, count) => {
+            ctx.clearRect(0, 0, w.current, h.current)
+            ctx.fillText(`frame: ${count}`, 0, 16)
+            // draw sine wave
+            const halfH = h.current / 2
+            ctx.beginPath()
+            for (let i = 0; i < w.current; i++) {
+              const y =
+                halfH +
+                halfH *
+                  0.5 *
+                  Math.sin((4 * Math.PI * (i + count * 2)) / w.current)
+              if (i == 0) ctx.moveTo(i, y)
+              else ctx.lineTo(i, y)
+            }
+            ctx.stroke()
+          }}
+        />
+      </div>
+    )
+  }
 }
 
 const fillTextCenter = (
