@@ -1,7 +1,9 @@
 import { normalizeValue, skewWithCenterValue } from '@tremolo-ui/functions'
 import { useRef, useState } from 'react'
+import { Meta, StoryObj } from '@storybook/react'
 
 import { AnimationCanvas } from '../src/components/AnimationCanvas'
+import { NumberInput } from '../src/components/NumberInput'
 import {
   Slider,
   SliderThumb,
@@ -9,7 +11,6 @@ import {
 } from '../src/components/Slider'
 
 import { getRMS } from './lib/dsp'
-import Checkbox from './lib/Checkbox'
 
 import styles from './styles/Slider.module.css'
 
@@ -17,66 +18,79 @@ export default {
   title: 'React/Components/Slider',
   component: Slider,
   tags: ['autodocs'],
+  parameters: {
+    controls: {
+      exclude: ['value', 'onChange', 'children']
+    }
+  },
+  argTypes: {
+    value: {
+      description: 'ccc'
+    },
+    min: {
+      control: 'number'
+    },
+    max: {
+      control: 'number'
+    },
+    wheel: {
+      control: 'object',
+      options: [['raw', 1], ['normalized', 0.1]]
+    }
+  }
+} satisfies Meta<typeof Slider>
+
+type Story = StoryObj<typeof Slider>
+
+export const Basic: Story = {
+  args: {
+    min: 0,
+    max: 100,
+  },
+  render: args => {
+    const [value, setValue] = useState(0)
+
+    return (
+      <>
+        <Slider {...args} value={value} onChange={(v) => setValue(v)} />
+        <p>value: {value}</p>
+      </>
+    )
+  }
 }
+export const LogarithmicParameter: Story = {
+  args: {
+    min: -100,
+    max: 0,
+    step: 0.1,
+    skew: skewWithCenterValue(-10, -100, 0),
+    vertical: true,
+    wheel: ['normalized', 0.1],
+    keyboard: ['normalized', 0.1],
+  },
+  render: args => {
+    const [value, setValue] = useState(0)
+    const [centerValue, setCenterValue] = useState(-10)
 
-export const Basic = () => {
-  const [value, setValue] = useState(32)
-
-  return (
-    <>
-      <Slider value={value} min={0} max={100} onChange={(v) => setValue(v)} />
-      <p>value: {value}</p>
-    </>
-  )
-}
-
-export const Direction = () => {
-  const [value, setValue] = useState(32)
-  const [vertical, setVertical] = useState(false)
-  const [reverse, setReverse] = useState(false)
-
-  return (
-    <div>
-      <Checkbox checked={vertical} onChange={setVertical} label='vertical' />
-      <Checkbox checked={reverse} onChange={setReverse} label='reverse' />
-      <Slider
-        value={value}
-        min={0}
-        max={100}
-        vertical={vertical}
-        reverse={reverse}
-        onChange={(v) => setValue(v)}
-      />
-      <p>value: {value}</p>
-    </div>
-  )
-}
-
-export const LogarithmicParameter = () => {
-  const [value, setValue] = useState(0)
-
-  return (
-    <div style={{ padding: '1rem' }}>
-      <h1>Logarithmic parameter</h1>
-      <p>
-        props: skew={'{'}skewWithCenterValue(centerValue, min, max){'}'}
-      </p>
-      <p>centerValue = -10</p>
-      <p>min = -100, max = 0</p>
-      <Slider
-        value={value}
-        min={-100}
-        max={0}
-        skew={skewWithCenterValue(-10, -100, 0)}
-        step={0.1}
-        vertical
-        onChange={(v) => setValue(v)}
-        wheel={['normalized', 0.1]}
-        keyboard={['normalized', 0.1]}
-      />
-      <p>{value <= -100 ? '-inf' : value} dB</p>
-    </div>
-  )
+    return (
+      <>
+        <h1>Logarithmic parameter</h1>
+        <p>skew={'{'}skewWithCenterValue(centerValue, min, max){'}'}</p>
+        <p>min = {args.min}, max = {args.max}</p>
+        <p>
+          centerValue: {' '}
+          <NumberInput value={centerValue} onChange={(v) => setCenterValue(v)} typeNumber />
+        </p>
+        <Slider
+          {...args}
+          value={value}
+          skew={skewWithCenterValue(centerValue, args.min, args.max)}
+          onChange={(v) => setValue(v)}
+        />
+        <p>{value <= -100 ? '-inf' : value} dB</p>
+      </>
+    )
+  }
 }
 
 export const CustomImage = () => {
@@ -84,7 +98,6 @@ export const CustomImage = () => {
 
   return (
     <>
-      <h1>Custom Image</h1>
       <Slider
         value={value}
         min={0}
@@ -182,45 +195,6 @@ export const Scale = () => {
         />
         <p>value: {value3}</p>
       </section>
-    </>
-  )
-}
-
-export const Readonly = () => {
-  const [value, setValue] = useState(32)
-
-  return (
-    <>
-      <Slider
-        value={value}
-        min={0}
-        max={100}
-        onChange={(v) => setValue(v)}
-        readonly
-      />
-      <p>value: {value}</p>
-    </>
-  )
-}
-
-/**
- * set disabled color (Only looks)
- */
-export const Disable = () => {
-  const [value, setValue] = useState(32)
-  const [disabled, setDisabled] = useState(true)
-
-  return (
-    <>
-      <Checkbox checked={disabled} onChange={setDisabled} label='disabled' />
-      <Slider
-        value={value}
-        min={0}
-        max={100}
-        onChange={(v) => setValue(v)}
-        disabled={disabled}
-      />
-      <p>value: {value}</p>
     </>
   )
 }

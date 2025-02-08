@@ -41,7 +41,14 @@ export interface SliderProps {
    * keyboard control option
    */
   keyboard?: InputEventOption | null
+  /**
+   * Only the appearance will change.
+   * Please consider using with readonly.
+   */
   disabled?: boolean
+  /**
+   * Make the value unchangeable.
+   */
   readonly?: boolean
   className?: string
   style?: CSSObject
