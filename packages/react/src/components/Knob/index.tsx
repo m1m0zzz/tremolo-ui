@@ -1,6 +1,6 @@
 import { css, CSSObject } from '@emotion/react'
 import { clamp, normalizeValue, radian, rawValue, stepValue, InputEventOption } from '@tremolo-ui/functions'
-import React, { ComponentPropsWithRef, useRef } from 'react'
+import React, { ComponentPropsWithRef, useCallback, useRef } from 'react'
 import clsx from 'clsx'
 
 import { useEventListener } from '../../hooks/useEventListener'
@@ -52,9 +52,13 @@ export type KnobProps = {
 
   /** Whether to apply `{use-select: none}` when dragging */
   bodyNoSelect?: boolean
-
+  /**
+     * wheel control option
+     */
   wheel?: InputEventOption | null
-  // TODO
+  /**
+   * keyboard control option
+   */
   keyboard?: InputEventOption | null
   enableDoubleClickDefault?: boolean
   style?: CSSObject
@@ -124,6 +128,23 @@ export function Knob({
       if (onChange) onChange(v2)
     }
   }
+
+  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!keyboard || !onChange) return
+    const key = event.key
+    if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
+      event.preventDefault()
+      const x = (key == 'ArrowRight' || key == 'ArrowUp') ? keyboard[1] : -keyboard[1]
+      let v
+      if (keyboard[0] == 'normalized') {
+        const n = normalizeValue(value, min, max, skew)
+        v = rawValue(n + x, min, max, skew)
+      } else {
+        v = value + x
+      }
+      onChange(clamp(stepValue(v, step), min, max))
+    }
+  }, [value, min, max, step, skew, keyboard, onChange])
 
   // --- hooks ---
   const wheelRefCallback = useRefCallbackEvent(
@@ -197,6 +218,7 @@ export function Knob({
           onChange(defaultValue)
         }
       }}
+      onKeyDown={handleKeyDown}
       onContextMenu={(e) => e.preventDefault()}
       {...props}
     >
