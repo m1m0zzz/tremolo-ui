@@ -5,7 +5,7 @@ import { map } from 'unist-util-map'
 
 import type { ElementContent, Root, RootContent } from 'hast'
 
-const regex = emojiRegex()
+export const regex = emojiRegex()
 
 // https://github.com/cliid/rehype-twemojify/blob/master/src/index.ts
 
