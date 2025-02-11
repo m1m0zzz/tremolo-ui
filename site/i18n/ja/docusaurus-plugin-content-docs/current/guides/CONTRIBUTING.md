@@ -54,7 +54,7 @@ npm run build:package -w packages/functions
 
 ## セキュリティの問題
 
-[脆弱性を報告する](./SECURITY) を参照してください。
+[脆弱性を報告する](../SECURITY/) を参照してください。
 
 ## その他の問題、バグなど
 

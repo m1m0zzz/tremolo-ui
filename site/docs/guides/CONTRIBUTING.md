@@ -56,7 +56,7 @@ npm run build:package -w packages/functions
 
 ## Security Issues
 
-Please see [Reporting a Vulnerability](./SECURITY)
+Please see [Reporting a Vulnerability](../SECURITY)
 
 
 ## Other Issue and Bugs
