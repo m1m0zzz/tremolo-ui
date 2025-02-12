@@ -16,6 +16,8 @@ export type AnimationKnobProps = {
   max: number
 
   // optional
+  step?: number
+  skew?: number // | SkewFunction
   /**
    * value set when double-clicking
    * @see enableDoubleClickDefault
@@ -27,9 +29,6 @@ export type AnimationKnobProps = {
    * @default min
    */
   startValue?: number
-
-  step?: number
-  skew?: number // | SkewFunction
 
   /** Priority over width or height */
   size?: number | `${number}%`
@@ -182,7 +181,7 @@ export function AnimationKnob({
 
   return (
     <div
-      className={clsx('tremolo-knob', className)}
+      className={clsx('tremolo-animation-knob', className)}
       ref={(div) => {
         wheelRefCallback(div)
         touchMoveRefCallback(div)
