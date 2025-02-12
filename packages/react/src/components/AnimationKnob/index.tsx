@@ -251,7 +251,6 @@ export function AnimationKnob({
           ctx.arc(cx, cy, r - 0.5, 0, 2 * Math.PI)
           ctx.fill()
 
-          ctx.lineCap = 'round'
           ctx.lineWidth = lineWeight
 
           // inactive rotary
@@ -280,6 +279,7 @@ export function AnimationKnob({
           ctx.stroke()
 
           // thumb
+          ctx.lineCap = 'round'
           ctx.beginPath()
           ctx.moveTo(cx, cy)
           ctx.lineTo(
