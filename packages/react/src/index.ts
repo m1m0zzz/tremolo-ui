@@ -1,5 +1,6 @@
 export * from './components/AnimationCanvas'
 export * from './components/AnimationKnob'
+export * from './components/Knob'
 export * from './components/NumberInput'
 export * from './components/Piano'
 export * from './components/Slider'
