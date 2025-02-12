@@ -1,5 +1,5 @@
 // expand begin
-import { Knob } from '@tremolo-ui/react'
+import { AnimationKnob } from '@tremolo-ui/react'
 import { useState } from 'react'
 // expand end
 
@@ -25,19 +25,17 @@ function App() {
       }}
     >
       <p>Pan</p>
-      <Knob
+      <AnimationKnob
         value={value}
         startValue={0}
         defaultValue={0}
         min={-50}
         max={50}
-        options={{
-          active: '#6ED8E6',
-          inactive: '#161616',
-          thumb: '#161616',
-          bg: '#0000',
-          lineWeight: 4,
-        }}
+        activeColor='#6ED8E6'
+        inactiveColor='#161616'
+        thumb='#161616'
+        bg='#0000'
+        lineWeight={4}
         onChange={(v) => setValue(v)}
         wheel={['normalized', 0.1]}
       />
