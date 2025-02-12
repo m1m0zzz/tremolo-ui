@@ -1,14 +1,14 @@
 import { CSSProperties, useState } from 'react'
 
-import { Knob } from '../src/components/Knob'
+import { AnimationKnob } from '../src/components/AnimationKnob'
 import { normalizeValue } from '@tremolo-ui/functions'
 import { Meta, StoryObj } from '@storybook/react'
 
 import { inputEventOptionType, sizesOptionType } from './lib/typeUtils'
 
 export default {
-  title: 'React/Components/Knob',
-  component: Knob,
+  title: 'React/Components/AnimationKnob',
+  component: AnimationKnob,
   argTypes: {
     value: {
       control: false,
@@ -42,9 +42,9 @@ export default {
       control: 'color'
     },
   }
-} satisfies Meta<typeof Knob>
+} satisfies Meta<typeof AnimationKnob>
 
-type Story = StoryObj<typeof Knob>
+type Story = StoryObj<typeof AnimationKnob>
 
 export const Basic: Story = {
   args: {
@@ -58,7 +58,7 @@ export const Basic: Story = {
 
     return (
       <>
-        <Knob
+        <AnimationKnob
           {...args}
           value={value}
           onChange={(v) => setValue(v)}
@@ -82,7 +82,7 @@ export const Size = () => {
         overflow: 'hidden',
       }}
     >
-      <Knob
+      <AnimationKnob
         width={'100%'}
         height={'100%'}
         value={value}
@@ -117,7 +117,7 @@ export const Options = () => {
       }}
     >
       <p>Pan</p>
-      <Knob
+      <AnimationKnob
         value={value}
         startValue={0}
         defaultValue={0}
@@ -181,7 +181,7 @@ export const AdvancedImagiroKnob = () => {
           height: 'fit-content',
         }}
       >
-        <Knob
+        <AnimationKnob
           value={value}
           min={0}
           max={100}

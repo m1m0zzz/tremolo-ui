@@ -9,7 +9,7 @@ import { UserActionPseudoProps } from '../../system/pseudo'
 import { AnimationCanvas, DrawFunction } from '../AnimationCanvas'
 import { addNoSelect, removeNoSelect } from '../_util'
 
-export type KnobProps = {
+export type AnimationKnobProps = {
   // required
   value: number
   min: number
@@ -68,7 +68,7 @@ export type KnobProps = {
 /**
  * simple rotary Knob.
  */
-export function Knob({
+export function AnimationKnob({
   value,
   min,
   max,
@@ -97,9 +97,9 @@ export function Knob({
   _focus,
   _hover,
   ...props
-}: KnobProps &
+}: AnimationKnobProps &
   UserActionPseudoProps &
-  Omit<ComponentPropsWithRef<'div'>, keyof KnobProps>) {
+  Omit<ComponentPropsWithRef<'div'>, keyof AnimationKnobProps>) {
   // -- state and ref ---
   // const [privateValue, setPrivateValue] = useState(value);
   const dragOffsetY = useRef<number | undefined>(undefined)
