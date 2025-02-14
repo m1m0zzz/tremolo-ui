@@ -46,7 +46,7 @@ function getConfig(format) {
           ]
         }),
       ],
-      external: ['react', 'react-dom', '@emotion/react', '@emotion/react/jsx-runtime'],
+      external: ['react', 'react-dom'],
     }
   ]
 }
