@@ -1,5 +1,4 @@
-import { css, CSSObject } from '@emotion/react'
-import { ReactElement } from 'react'
+import { CSSProperties, ReactElement } from 'react'
 import clsx from 'clsx'
 import { styleHelper, xor } from '@tremolo-ui/functions'
 
@@ -21,7 +20,7 @@ export interface SliderTrackProps {
   disabledInactiveHoverBg?: string
 
   className?: string
-  style?: CSSObject
+  style?: CSSProperties
   children?: ReactElement
 
   /** inherit */
@@ -66,7 +65,7 @@ export function SliderTrack({
   return (
     <div
       className={clsx('tremolo-slider-track', className)}
-      css={css({
+      style={{
         position: 'relative',
         background:
           xor(__vertical, __reverse) ?
@@ -75,14 +74,14 @@ export function SliderTrack({
         borderRadius: styleHelper(thickness!, '/', 2),
         width: !__vertical ? length : thickness,
         height: __vertical ? length : thickness,
-        ':hover': {
-          background:
-            xor(__vertical, __reverse) ?
-            `linear-gradient(to ${direction}, ${inactiveHover} ${__percent}%, ${activeHover} ${__percent}%)` :
-            `linear-gradient(to ${direction}, ${activeHover} ${__percent}%, ${inactiveHover} ${__percent}%)`,
-        },
+        // ':hover': {
+        //   background:
+        //     xor(__vertical, __reverse) ?
+        //     `linear-gradient(to ${direction}, ${inactiveHover} ${__percent}%, ${activeHover} ${__percent}%)` :
+        //     `linear-gradient(to ${direction}, ${activeHover} ${__percent}%, ${inactiveHover} ${__percent}%)`,
+        // },
         ...style
-      })}
+      }}
     >
       {children}
       {__thumb}

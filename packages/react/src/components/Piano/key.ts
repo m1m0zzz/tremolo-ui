@@ -1,13 +1,10 @@
-import { CSSObject } from "@emotion/react"
-import { ReactElement, ReactNode } from "react"
+import { CSSProperties, ReactElement, ReactNode } from "react"
 
 export interface KeyProps {
   width?: number
   height?: number | `${number}%`
 
-  bg?: string
-  activeBg?: string
-  style?: CSSObject
+  style?: CSSProperties
 
   /**
    * \<KeyLabel />

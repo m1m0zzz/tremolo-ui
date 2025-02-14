@@ -37,7 +37,7 @@ const scaleOptionDetail = `{
   labelColor?: string
   gap?: number | string
   labelWidth?: number | string
-  style?: CSSObject
+  style?: CSSProperties
 }`
 
 export default {

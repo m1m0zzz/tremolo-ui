@@ -1,10 +1,7 @@
-import { css, CSSObject } from '@emotion/react'
 import { clamp } from '@tremolo-ui/functions'
 import { parseValue, Units } from '@tremolo-ui/functions/NumberInput'
 import { ChangeEvent, ComponentPropsWithoutRef, useState } from 'react'
 import clsx from 'clsx'
-
-import { InputPseudoProps, UserActionPseudoProps } from '../../system/pseudo'
 
 export interface NumberInputProps {
   value: number | string
@@ -46,7 +43,6 @@ export interface NumberInputProps {
   selectWithFocus?: 'all' | 'number' | 'none'
   blurWithEnter?: boolean
   className?: string
-  style?: CSSObject
   onChange?: (value: number, event: ChangeEvent<HTMLInputElement>) => void
   onFocus?: (
     value: number,
@@ -77,19 +73,17 @@ export function NumberInput({
   selectWithFocus = 'none',
   blurWithEnter = true,
   className,
-  style,
   onChange,
   onFocus,
   onBlur,
   ...props
-}: NumberInputProps & UserActionPseudoProps & InputPseudoProps &
+}: NumberInputProps &
   Omit<ComponentPropsWithoutRef<'input'>, keyof NumberInputProps | 'type'>
 ) {
   const [showValue, setShowValue] = useState(
     parseValue(String(value), units, digit, defaultValue).formatValue,
   )
   const calculatedTypeNumber = units ? false : typeNumber
-  const { _active, _focus, _hover, ...rest } = props
 
   return (
     <input
@@ -104,33 +98,6 @@ export function NumberInput({
       placeholder={placeholder}
       readOnly={readOnly}
       tabIndex={tabIndex}
-      css={css({
-        display: 'inline-block',
-        font: 'inherit',
-        margin: 0,
-        paddingTop: 6,
-        paddingBottom: 6,
-        paddingLeft: 10,
-        paddingRight: 10,
-        borderStyle: 'solid',
-        borderWidth: 1,
-        borderColor: '#bbb',
-        borderRadius: 4,
-        outline: 0,
-        transition: 'all 0.1s linear',
-        appearance: 'textfield',
-        '&:hover': {
-          borderColor: 'var(--tremolo-theme-color)',
-          ..._hover,
-        },
-        '&:focus': {
-          borderColor: 'var(--tremolo-theme-color)',
-          boxShadow: '0px 0px 0px 2px rgba(var(--tremolo-theme-color-rgb), 0.1)',
-          ..._focus,
-        },
-        ...(_active && { '&:active': { ..._active } }),
-        ...style,
-      })}
       onChange={(event) => {
         const v = event.currentTarget.value
         setShowValue(v)
@@ -166,7 +133,7 @@ export function NumberInput({
           event.currentTarget.blur()
         }
       }}
-      {...rest}
+      {...props}
     />
   )
 }

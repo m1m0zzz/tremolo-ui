@@ -1,11 +1,9 @@
-import { css, CSSObject } from '@emotion/react'
 import clsx from 'clsx'
 import { clamp, normalizeValue, rawValue, stepValue, toFixed, InputEventOption, styleHelper } from '@tremolo-ui/functions'
-import React, { forwardRef, ReactElement, useCallback, useImperativeHandle, useMemo, useRef } from 'react'
+import React, { CSSProperties, forwardRef, ReactElement, useCallback, useImperativeHandle, useMemo, useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
-import { UserActionPseudoProps } from '../../system/pseudo'
 import { addNoSelect, removeNoSelect } from '../_util'
 
 import { XYPadThumb, XYPadThumbMethods, ThumbProps } from './Thumb'
@@ -39,7 +37,7 @@ export interface XYPadProps {
   disabled?: boolean
   readonly?: boolean
   className?: string
-  style?: CSSObject
+  style?: CSSProperties
   onChange?: (valueX: number, valueY: number) => void
   /** \<XYPadThumb /> | \<XYPadArea /> */
   children?: ReactElement | ReactElement[]
@@ -71,8 +69,7 @@ const defaultValueOptions = {
   readonly = false,
   onChange,
   children,
-  ...pseudo
-}: XYPadProps & UserActionPseudoProps, ref) => {
+}: XYPadProps, ref) => {
   const x = { ...defaultValueOptions, ..._x }
   const y = { ...defaultValueOptions, ..._y }
 
@@ -224,14 +221,14 @@ const defaultValueOptions = {
       tabIndex={-1}
       aria-disabled={disabled}
       aria-readonly={readonly}
-      css={css({
+      style={{
         display: 'inline-block',
         margin: `calc(${styleHelper(thumbProps?.size ?? 22)} / 2)`, // half thumb size
         cursor: readonly ? 'not-allowed' : 'pointer',
         outline: 0,
         WebkitTapHighlightColor: 'transparent',
         ...style,
-      })}
+      }}
       onPointerDown={(event) => {
         thumbDragged.current = true
         handleValue(event)

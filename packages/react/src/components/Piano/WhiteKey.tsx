@@ -1,15 +1,12 @@
-import { css } from "@emotion/react"
 import React, { forwardRef, useImperativeHandle } from "react"
 import { useState } from "react"
-import { KeyLabel } from "./KeyLabel"
+import { KeyLabel, KeyLabelProps } from "./KeyLabel"
 import { KeyMethods, KeyProps } from "./key"
 
 
 export const WhiteKey = forwardRef<KeyMethods, KeyProps>(({
   width = 40,
   height = '100%',
-  bg = 'white',
-  activeBg = '#ccc',
   style,
   children,
   __glissando,
@@ -42,13 +39,12 @@ export const WhiteKey = forwardRef<KeyMethods, KeyProps>(({
       }
     }, [])
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let keyLabelProps: any
+  let keyLabelProps: KeyLabelProps = {}
   if (children != undefined) {
     React.Children.forEach(children, (child) => {
       if (React.isValidElement(child)) {
         if (child.type == KeyLabel) {
-          keyLabelProps = child.props
+          keyLabelProps = child.props as KeyLabelProps
         } else {
           throw new Error('only <KeyLabel>')
         }
@@ -62,19 +58,13 @@ export const WhiteKey = forwardRef<KeyMethods, KeyProps>(({
     <div
       className={`tremolo-piano-white-key`}
       aria-disabled={__disabled}
-      css={css({
-        position: 'absolute',
-        backgroundColor: played ? activeBg : bg,
-        color: 'black',
+      data-active={played}
+      style={{
         left: __position,
         width: __fill ? __width : (width ?? __width),
         height: height,
-        border: '1px solid #555',
-        borderRadius: '0 0 8px 8px',
-        cursor: __disabled ? 'not-allowed' : 'pointer',
-        zIndex: 1,
         ...style,
-      })}
+      }}
       onPointerDown={() => {
         if (__disabled) return
         setPlayed(true)

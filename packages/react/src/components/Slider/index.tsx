@@ -1,4 +1,3 @@
-import { css, CSSObject } from '@emotion/react'
 import clsx from 'clsx'
 import {
   parseScaleOrderList,
@@ -6,11 +5,10 @@ import {
   ScaleType,
 } from '@tremolo-ui/functions/Slider'
 import { clamp, normalizeValue, rawValue, stepValue, toFixed, InputEventOption, styleHelper, xor } from '@tremolo-ui/functions'
-import React, { forwardRef, ReactElement, useCallback, useImperativeHandle, useRef } from 'react'
+import React, { CSSProperties, forwardRef, ReactElement, useCallback, useImperativeHandle, useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
-import { UserActionPseudoProps } from '../../system/pseudo'
 import { addNoSelect, removeNoSelect } from '../_util'
 
 import { SliderThumb, SliderThumbMethods, SliderThumbProps } from './Thumb'
@@ -51,7 +49,7 @@ export interface SliderProps {
    */
   readonly?: boolean
   className?: string
-  style?: CSSObject
+  style?: CSSProperties
   onChange?: (value: number) => void
   /** \<SliderThumb /> | \<SliderTrack /> */
   children?: ReactElement | ReactElement[]
@@ -86,14 +84,13 @@ export interface SliderMethods {
   onChange,
   children,
   ...pseudo
-}: SliderProps & UserActionPseudoProps, ref) => {
+}: SliderProps, ref) => {
   // -- state and ref ---
   const trackElementRef = useRef<HTMLDivElement>(null)
   const thumbRef = useRef<SliderThumbMethods>(null)
   const thumbDragged = useRef(false)
 
   // --- interpret props ---
-  const { _active, _focus, _hover } = pseudo
   const p = toFixed(normalizeValue(value, min, max, skew) * 100)
   const rev = toFixed(100 - p)
   // NOTE
@@ -239,14 +236,14 @@ export interface SliderMethods {
       aria-orientation={vertical ? 'vertical' : 'horizontal'}
       aria-disabled={disabled}
       aria-readonly={readonly}
-      css={css({
+      style={{
         display: 'inline-block',
         margin: `calc(${styleHelper(thumbProps?.size ?? 22)} / 2)`, // half thumb size
         cursor: readonly ? 'not-allowed' : 'pointer',
         outline: 0,
         WebkitTapHighlightColor: 'transparent',
         ...style,
-      })}
+      }}
       onPointerDown={(event) => {
         thumbDragged.current = true
         handleValue(event)
@@ -256,10 +253,10 @@ export interface SliderMethods {
       onBlur={thumbRef.current?.blur}
     >
       <div
-        css={css({
+        style={{
           display: 'flex',
           flexDirection: vertical ? 'row' : 'column',
-        })}
+        }}
       >
         <div
           className="tremolo-slider-track-wrapper"
@@ -288,7 +285,7 @@ export interface SliderMethods {
         {scale && (
           <div
             className="tremolo-slider-scale-wrapper"
-            css={css({
+            style={{
               display: 'block',
               position: 'relative',
               marginLeft: vertical
@@ -301,12 +298,12 @@ export interface SliderMethods {
                 : undefined,
               ...scaleOption?.style,
               // zIndex: 10,
-            })}
+            }}
           >
             {scalesList.map((item, index) => (
               <div
                 key={index}
-                css={css({
+                style={{
                   display: 'flex',
                   flexDirection: !vertical ? 'column' : 'row',
                   justifyContent: 'center',
@@ -316,13 +313,13 @@ export interface SliderMethods {
                   top: vertical ? `${calcPercent(item.at)}%` : undefined,
                   translate: !vertical ? '-50% 0' : '0 -50%',
                   zIndex: 10,
-                })}
+                }}
               >
                 {(item.type ?? scaleOption?.defaultType ?? 'mark-number') !=
                   'number' && (
                   <div
                     className="tremolo-slider-scale-mark"
-                    css={css({
+                    style={{
                       width: !vertical
                         ? (item.style?.thickness ?? 1)
                         : (item.style?.length ?? '0.5rem'),
@@ -335,18 +332,18 @@ export interface SliderMethods {
                         '#222',
                       marginBottom: !vertical ? 2 : undefined,
                       marginRight: vertical ? 2 : undefined,
-                    })}
+                    }}
                   ></div>
                 )}
                 {(item.type ?? scaleOption?.defaultType ?? 'mark-number') !=
                   'mark' && (
                   <div
                     className="tremolo-slider-scale-number"
-                    css={css({
+                    style={{
                       color: item.style?.labelColor ?? scaleOption?.labelColor,
                       width: scaleOption?.labelWidth,
                       textAlign: 'right',
-                    })}
+                    }}
                   >
                     {item.text ?? item.at}
                   </div>

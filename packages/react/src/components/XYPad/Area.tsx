@@ -1,5 +1,4 @@
-import { css, CSSObject } from '@emotion/react'
-import { ReactElement } from 'react'
+import { CSSProperties, ReactElement } from 'react'
 import clsx from 'clsx'
 
 export interface AreaProps {
@@ -7,7 +6,7 @@ export interface AreaProps {
   height?: number | string
   bg?: string
   className?: string
-  style?: CSSObject
+  style?: CSSProperties
   children?: ReactElement
 
   /** inherit */
@@ -26,13 +25,13 @@ export function XYPadArea({
   return (
     <div
       className={clsx('tremolo-xy-pad-area', className)}
-      css={css({
+      style={{
         position: 'relative',
         width: width,
         height: height,
         background: bg,
         ...style
-      })}
+      }}
     >
       {children}
       {__thumb}

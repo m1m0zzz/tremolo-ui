@@ -1,10 +1,10 @@
-import React, { createRef, ReactElement, ReactNode, RefObject, useEffect, useMemo, useRef, useState } from 'react'
-import { css, CSSObject } from '@emotion/react'
+import clsx from 'clsx'
+import React, { ComponentPropsWithoutRef, createRef, CSSProperties, ReactElement, ReactNode, RefObject, useEffect, useRef, useState } from 'react'
 import { isWhiteKey, NoteName, noteName, noteNames, parseNoteName } from '@tremolo-ui/functions'
 
 import { useEventListener } from '../../hooks/useEventListener'
 
-import { KeyMethods } from './key'
+import { KeyMethods, KeyProps } from './key'
 import { WhiteKey } from './WhiteKey'
 import { BlackKey } from './BlackKey'
 import { KeyBoardShortcuts } from './keyboardShortcuts'
@@ -28,7 +28,7 @@ export interface PianoProps {
   keyboardShortcuts?: KeyBoardShortcuts
   fill?: boolean
 
-  style?: CSSObject
+  style?: CSSProperties
 
   playNote?: (noteNumber: number) => void
   stopNote?: (noteNumber: number) => void
@@ -49,11 +49,13 @@ export function Piano({
   fill = false,
   height = fill ? '100%' : 160,
   style,
+  className,
   playNote,
   stopNote,
   label,
   children,
-}: PianoProps) {
+  ...props
+}: PianoProps & Omit<ComponentPropsWithoutRef<'div'>, keyof PianoProps>) {
   // -- state and ref ---
   const [pressed, setPressed] = useState(false)
   const [whiteNoteWidth, setWhiteNoteWidth] = useState(-1)
@@ -70,15 +72,14 @@ export function Piano({
   )
   const whiteNoteCount = noteRangeArray.filter((v) => isWhiteKey(v)).length
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let whiteKeyProps: any, blackKeyProps: any
+  let whiteKeyProps: KeyProps, blackKeyProps: KeyProps
   if (children != undefined) {
     React.Children.forEach(children, (child) => {
       if (React.isValidElement(child)) {
         if (child.type == WhiteKey) {
-          whiteKeyProps = child.props
+          whiteKeyProps = child.props as KeyProps
         } else if (child.type == BlackKey) {
-          blackKeyProps = child.props
+          blackKeyProps = child.props as KeyProps
         } else {
           throw new Error('only <WhiteKey> or <BlackKey>')
         }
@@ -156,22 +157,21 @@ export function Piano({
   return (
     <div
       ref={pianoRef}
-      className="tremolo-piano"
-      css={css({
-        display: 'inline-block',
-        boxSizing: 'border-box',
-        userSelect: 'none',
+      className={clsx('tremolo-piano', className)}
+      style={{
         width: fill ? '100%' : undefined,
         height: height,
-        position: 'relative',
         ...style
-      })}
-      onPointerDown={() => {
+      }}
+      onPointerDown={(e) => {
+        if (props.onPointerDown) props.onPointerDown(e)
         setPressed(true)
       }}
-      onPointerUp={() => {
+      onPointerUp={(e) => {
+        if (props.onPointerUp) props.onPointerUp(e)
         setPressed(false)
       }}
+      {...props}
     >
       {noteRangeArray.map((note, index) => {
         return (

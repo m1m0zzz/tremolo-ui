@@ -1,4 +1,3 @@
-import { css, CSSObject } from '@emotion/react'
 import { ComponentPropsWithRef, MutableRefObject, ReactElement, useEffect, useRef } from 'react'
 import clsx from 'clsx'
 
@@ -30,7 +29,6 @@ interface CommonProps {
    * @see https://developer.mozilla.org/docs/Web/API/HTMLCanvasElement/getContext#contextattributes
    */
   options?: CanvasRenderingContext2DSettings
-  style?: CSSObject
   init?: DrawFunction
   draw: DrawFunction
 }
@@ -61,7 +59,6 @@ export function AnimationCanvas(
 export function AnimationCanvas({
   width = 100,
   height = 100,
-  style,
   relativeSize = false,
   reduceFlickering = true,
   options,
@@ -170,7 +167,6 @@ export function AnimationCanvas({
         className={clsx('tremolo-animation-canvas', className)}
         width={relativeSize ? 0 : width}
         height={relativeSize ? 0 : height}
-        css={css(style)}
         ref={canvasRef}
         {...props}
       ></canvas>

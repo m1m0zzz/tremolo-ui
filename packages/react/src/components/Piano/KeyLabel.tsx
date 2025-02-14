@@ -1,16 +1,15 @@
-import { css, CSSObject } from "@emotion/react"
 import clsx from "clsx"
-import { ReactNode } from "react"
+import { CSSProperties, ReactNode } from "react"
 
-interface Props {
+export interface KeyLabelProps {
   /**
    * override Piano.label
    */
   label?: (note: number, index: number) => ReactNode
 
   className?: string
-  style?: CSSObject
-  wrapperStyle?: CSSObject
+  style?: CSSProperties
+  wrapperStyle?: CSSProperties
 
   /** @internal */
   __note?: number
@@ -28,39 +27,18 @@ export function KeyLabel({
   __note,
   __index,
   __label,
-}: Props) {
+}: KeyLabelProps) {
   const content = label ? label(__note!, __index!) : __label && __label(__note!, __index!)
 
   return (
     (content != undefined || content != null) &&
     <div
       className='tremolo-piano-key-label-wrapper'
-      css={css({
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'end',
-        height: '100%',
-        ...wrapperStyle
-      })}
+      style={wrapperStyle}
     >
       <div
         className={clsx('tremolo-piano-key-label', className)}
-        css={css({
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          fontSize: '0.6rem',
-          height: 10,
-          marginBottom: 10,
-          padding: 4,
-          borderRadius: 4,
-          borderStyle: 'solid',
-          borderWidth: 1,
-          borderColor: '#888',
-          aspectRatio: 1,
-          maxWidth: 'calc(100% - 16px)',
-          ...style
-        })}
+        style={style}
       >
         {content}
       </div>

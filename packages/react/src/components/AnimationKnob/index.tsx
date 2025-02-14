@@ -1,11 +1,10 @@
-import { css, CSSObject } from '@emotion/react'
 import { clamp, normalizeValue, radian, rawValue, stepValue, InputEventOption } from '@tremolo-ui/functions'
-import React, { ComponentPropsWithRef, useCallback, useRef } from 'react'
+import React, { ComponentPropsWithRef, CSSProperties, useCallback, useRef } from 'react'
 import clsx from 'clsx'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
-import { UserActionPseudoProps } from '../../system/pseudo'
+
 import { AnimationCanvas, DrawFunction } from '../AnimationCanvas'
 import { addNoSelect, removeNoSelect } from '../_util'
 
@@ -60,7 +59,7 @@ export type AnimationKnobProps = {
    */
   keyboard?: InputEventOption | null
   enableDoubleClickDefault?: boolean
-  style?: CSSObject
+  style?: CSSProperties
   onChange?: (value: number) => void
 }
 
@@ -92,12 +91,8 @@ export function AnimationKnob({
   style,
   className,
   onChange,
-  _active,
-  _focus,
-  _hover,
   ...props
 }: AnimationKnobProps &
-  UserActionPseudoProps &
   Omit<ComponentPropsWithRef<'div'>, keyof AnimationKnobProps>) {
   // -- state and ref ---
   // const [privateValue, setPrivateValue] = useState(value);
@@ -191,23 +186,14 @@ export function AnimationKnob({
       aria-valuenow={value}
       aria-valuemax={max}
       aria-valuemin={min}
-      css={css({
+      style={{
         display: 'inline-block',
         width: size ?? width,
         height: size ?? height,
         cursor: 'pointer',
         WebkitTapHighlightColor: 'transparent',
         ...style,
-        ':active': {
-          ..._active,
-        },
-        ':focus': {
-          ..._focus,
-        },
-        ':hover': {
-          ..._hover,
-        },
-      })}
+      }}
       onPointerDown={(event) => {
         dragOffsetY.current = event.screenY
         handleEvent(event)

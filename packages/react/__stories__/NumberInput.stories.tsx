@@ -48,7 +48,7 @@ export const UnitsAndDigit: Story = {
       ['kHz', 1000],
     ],
     digit: 1,
-    _hover: { borderColor: 'red' }
+    // _hover: { borderColor: 'red' }
   },
   render: args => {
     const [value, setValue] = useState(4321)

@@ -1,9 +1,8 @@
-import { CSSObject } from '@emotion/react'
-
 import type { ScaleOption as Opt } from '@tremolo-ui/functions/Slider'
+import { CSSProperties } from 'react'
 
 export type ScaleOption = Opt & {
-  style?: CSSObject
+  style?: CSSProperties
 }
 
 export {

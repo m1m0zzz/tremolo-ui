@@ -1,5 +1,4 @@
-import { CSSObject, css } from '@emotion/react'
-import { forwardRef, ReactNode, useImperativeHandle, useRef } from 'react'
+import { CSSProperties, forwardRef, ReactNode, useImperativeHandle, useRef } from 'react'
 import clsx from 'clsx'
 
 export interface ThumbProps {
@@ -13,13 +12,13 @@ export interface ThumbProps {
   zIndex?: number
 
   className?: string
-  style?: CSSObject
+  style?: CSSProperties
   children?: ReactNode
 
   /** @internal */
   __disabled?: boolean
   /** @internal */
-  __css?: CSSObject
+  __css?: CSSProperties
 }
 
 export interface XYPadThumbMethods {
@@ -58,12 +57,12 @@ export interface XYPadThumbMethods {
   return (
     <div
       className="tremolo-xy-pad-thumb-wrapper"
-      css={css({
+      style={{
         position: 'absolute',
         translate: '-50% -50%',
         zIndex: zIndex,
         ...__css,
-      })}
+      }}
     >
       {children ? (
         children
@@ -74,20 +73,20 @@ export interface XYPadThumbMethods {
           className={clsx('tremolo-xy-pad-thumb', className)}
           // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
           tabIndex={0}
-          css={css({
+          style={{
             background: __disabled ? disabledColor : color,
             width: size ?? width,
             height: size ?? height,
             borderRadius: '50%',
             outline: 'none',
-            '&:hover': {
-              background: __disabled ? disabledHoverColor : hoverColor
-            },
-            '&:focus': !__disabled && {
-              boxShadow: '0px 0px 0px 3px rgba(var(--tremolo-theme-color-rgb), 0.2)',
-            },
+            // '&:hover': {
+            //   background: __disabled ? disabledHoverColor : hoverColor
+            // },
+            // '&:focus': !__disabled && {
+            //   boxShadow: '0px 0px 0px 3px rgba(var(--tremolo-theme-color-rgb), 0.2)',
+            // },
             ...style,
-          })}
+          }}
         ></div>
       )}
     </div>
