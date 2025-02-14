@@ -54,11 +54,9 @@
     "react-components",
     "ui",
     "components",
-    "web-audio",
-    "emotion"
+    "web-audio"
   ],
   "devDependencies": {
-    "@emotion/react": "^11.13.0",
     "@storybook/addon-essentials": "^8.3.3",
     "@storybook/addon-interactions": "^8.3.3",
     "@storybook/addon-links": "^8.3.3",
@@ -75,7 +73,6 @@
     "tone": "^15.0.4"
   },
   "peerDependencies": {
-    "@emotion/react": "11.x",
     "react": "18.x",
     "react-dom": "18.x"
   },
