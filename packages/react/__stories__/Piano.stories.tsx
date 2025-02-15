@@ -117,8 +117,8 @@ export const Styling = () => {
     >
       <WhiteKey
         width={60}
-        bg='#83888a'
-        activeBg='#5acee8'
+        // bg='#83888a'
+        // activeBg='#5acee8'
       >
         <KeyLabel
           label={(note) => {
@@ -133,8 +133,8 @@ export const Styling = () => {
       </WhiteKey>
       <BlackKey
         width={60 * 0.65}
-        bg='#333536'
-        activeBg='#5acee8'
+        // bg='#333536'
+        // activeBg='#5acee8'
       >
         <KeyLabel />
       </BlackKey>
