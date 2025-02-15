@@ -1,8 +1,6 @@
 import type { Preview } from '@storybook/react'
 
-import '../src/styles/index.css'
-import '../src/components/NumberInput/index.css'
-import '../src/components/Piano/index.css'
+import '../src/index' // import css
 
 const preview: Preview = {
   parameters: {
