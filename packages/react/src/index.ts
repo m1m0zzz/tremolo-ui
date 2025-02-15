@@ -1,3 +1,8 @@
+import './styles/index.css'
+import './components/NumberInput/index.css'
+import './components/Piano/index.css'
+import './components/Slider/index.css'
+
 export * from './components/AnimationCanvas'
 export * from './components/AnimationKnob'
 export * from './components/Knob'
