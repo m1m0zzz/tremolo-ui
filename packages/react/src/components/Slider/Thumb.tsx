@@ -30,11 +30,6 @@ export interface SliderThumbMethods {
   size,
   width = 22,
   height = 22,
-  color = '#4e76e6',
-  hoverColor = color,
-  disabledColor = '#5d6478',
-  disabledHoverColor = disabledColor,
-  zIndex = 100,
   children,
   className,
   style,
@@ -57,12 +52,7 @@ export interface SliderThumbMethods {
   return (
     <div
       className="tremolo-slider-thumb-wrapper"
-      style={{
-        position: 'absolute',
-        translate: '-50% -50%',
-        zIndex: zIndex,
-        ...__css,
-      }}
+      style={__css}
     >
       {children ? (
         children
@@ -73,18 +63,10 @@ export interface SliderThumbMethods {
           className={clsx('tremolo-slider-thumb', className)}
           // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
           tabIndex={0}
+          aria-disabled={__disabled}
           style={{
-            background: __disabled ? disabledColor : color,
             width: size ?? width,
             height: size ?? height,
-            borderRadius: '50%',
-            outline: 'none',
-            // '&:hover': {
-            //   background: __disabled ? disabledHoverColor : hoverColor
-            // },
-            // '&:focus': !__disabled && {
-            //   boxShadow: '0px 0px 0px 3px rgba(var(--tremolo-theme-color-rgb), 0.2)',
-            // },
             ...style,
           }}
         ></div>

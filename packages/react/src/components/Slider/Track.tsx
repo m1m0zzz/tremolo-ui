@@ -9,16 +9,6 @@ export interface SliderTrackProps {
   length?: number | string
   thickness?: number | string
 
-  activeBg?: string
-  inactiveBg?: string
-  activeHoverBg?: string
-  inactiveHoverBg?: string
-
-  disabledActiveBg?: string
-  disabledInactiveBg?: string
-  disabledActiveHoverBg?: string
-  disabledInactiveHoverBg?: string
-
   className?: string
   style?: CSSProperties
   children?: ReactElement
@@ -38,14 +28,6 @@ export interface SliderTrackProps {
 export function SliderTrack({
   length = defaultLength,
   thickness = defaultThickness,
-  activeBg = '#7998ec',
-  inactiveBg = '#eee',
-  activeHoverBg = '#6387e9',
-  inactiveHoverBg = '#e0e0e0',
-  disabledActiveBg = '#858890',
-  disabledInactiveBg = '#ddd',
-  disabledActiveHoverBg = disabledActiveBg,
-  disabledInactiveHoverBg = disabledInactiveBg,
   children,
   className,
   style,
@@ -55,31 +37,20 @@ export function SliderTrack({
   __disabled,
   __percent,
 }: SliderTrackProps) {
-  const active = __disabled ? disabledActiveBg : activeBg
-  const inactive = __disabled ? disabledInactiveBg : inactiveBg
-  const activeHover = __disabled ? disabledActiveHoverBg : activeHoverBg
-  const inactiveHover = __disabled ? disabledInactiveHoverBg : inactiveHoverBg
-
   const direction = __vertical ? 'bottom' : 'right'
 
   return (
     <div
       className={clsx('tremolo-slider-track', className)}
+      aria-disabled={__disabled}
       style={{
-        position: 'relative',
         background:
           xor(__vertical, __reverse) ?
-          `linear-gradient(to ${direction}, ${inactive} ${__percent}%, ${active} ${__percent}%)` :
-          `linear-gradient(to ${direction}, ${active} ${__percent}%, ${inactive} ${__percent}%)`,
+          `linear-gradient(to ${direction}, var(--inactive, #eee) ${__percent}%, var(--active, #7998ec) ${__percent}%)` :
+          `linear-gradient(to ${direction}, var(--active, #7998ec) ${__percent}%, var(--inactive, #eee) ${__percent}%)`,
         borderRadius: styleHelper(thickness!, '/', 2),
         width: !__vertical ? length : thickness,
         height: __vertical ? length : thickness,
-        // ':hover': {
-        //   background:
-        //     xor(__vertical, __reverse) ?
-        //     `linear-gradient(to ${direction}, ${inactiveHover} ${__percent}%, ${activeHover} ${__percent}%)` :
-        //     `linear-gradient(to ${direction}, ${activeHover} ${__percent}%, ${inactiveHover} ${__percent}%)`,
-        // },
         ...style
       }}
     >

@@ -1,0 +1,47 @@
+.tremolo-slider {
+  display: inline-block;
+  cursor: pointer;
+  outline: 0;
+  -webkit-tap-highlight-color: transparent;
+
+  &[aria-readonly="true"] {
+    cursor: not-allowed;
+  }
+}
+
+.tremolo-slider-thumb-wrapper {
+  position: absolute;
+  translate: -50% -50%;
+  z-index: 100;
+}
+
+.tremolo-slider-thumb {
+  background: #4e76e6;
+  border-radius: 50%;
+  outline: none;
+
+  &[aria-disabled="true"] {
+    background: #5d6478;
+  }
+
+  &[aria-disabled="false"]:focus {
+    box-shadow: 0px 0px 0px 3px rgba(var(--tremolo-theme-color-rgb), 0.2)
+  }
+}
+
+.tremolo-slider-track {
+  --active: #7998ec;
+  --inactive: #eee;
+
+  position: relative;
+
+  &:hover {
+    --active: #6387e9;
+    --inactive: #e0e0e0;
+  }
+
+  &[aria-disabled="true"] {
+    --active: #858890;
+    --inactive: #ddd;
+  }
+}

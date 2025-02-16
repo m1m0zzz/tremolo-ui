@@ -237,11 +237,7 @@ export interface SliderMethods {
       aria-disabled={disabled}
       aria-readonly={readonly}
       style={{
-        display: 'inline-block',
         margin: `calc(${styleHelper(thumbProps?.size ?? 22)} / 2)`, // half thumb size
-        cursor: readonly ? 'not-allowed' : 'pointer',
-        outline: 0,
-        WebkitTapHighlightColor: 'transparent',
         ...style,
       }}
       onPointerDown={(event) => {
