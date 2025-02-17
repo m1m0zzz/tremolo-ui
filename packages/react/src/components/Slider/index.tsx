@@ -182,10 +182,14 @@ export interface SliderMethods {
     (event) => {
       if (!wheel || !onChange || readonly) return
       event.preventDefault()
-      // TODO: deltaX
-      // console.log(event.deltaX, event.deltaY)
-      let x = event.deltaY > 0 ? wheel[1] : -wheel[1]
-      if (reverse || !vertical) x *= -1
+      let x
+      if (!vertical && event.deltaX != 0) {
+        x = event.deltaX > 0 ? wheel[1] : -wheel[1]
+      } else {
+        if (event.deltaY == 0) return
+        x = event.deltaY > 0 ? -wheel[1] : wheel[1]
+      }
+      if (vertical && reverse) x *= -1
       let v
       if (wheel[0] == 'normalized') {
         const n = normalizeValue(value, min, max, skew)
