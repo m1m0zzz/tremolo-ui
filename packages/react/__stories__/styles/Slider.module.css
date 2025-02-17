@@ -1,9 +1,7 @@
-/* TODO */
-
 .thumb {
-  background-color: red;
+  background-color: #eee;
 }
 
-.thumb:focus {
+.thumb[aria-readonly="false"]:focus {
   box-shadow: none;
 }

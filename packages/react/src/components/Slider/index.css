@@ -24,7 +24,7 @@
     background: #5d6478;
   }
 
-  &[aria-disabled="false"]:focus {
+  &[aria-readonly="false"]:focus {
     box-shadow: 0px 0px 0px 3px rgba(var(--tremolo-theme-color-rgb), 0.2)
   }
 }

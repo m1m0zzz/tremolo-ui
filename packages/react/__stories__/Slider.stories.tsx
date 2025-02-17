@@ -148,10 +148,11 @@ export const CustomImage = () => {
         }}
       >
         <SliderTrack
-          activeBg="rgb(149,234,231)"
-          activeHoverBg="rgb(149,234,231)"
           length={200}
-          style={{ borderRadius: 0 }}
+          style={{
+            '--active': 'rgb(149,234,231)',
+            borderRadius: 0,
+          }}
         ></SliderTrack>
         <SliderThumb>
           <img
@@ -329,7 +330,6 @@ export const VolumeFader = () => {
       >
         <SliderThumb
           className={styles.thumb}
-          color="#eee"
           style={{
             width: '2.4rem',
             height: '1.2rem',
@@ -338,11 +338,9 @@ export const VolumeFader = () => {
           }}
         />
         <SliderTrack
-          activeBg='#555'
-          inactiveBg='#555'
-          activeHoverBg='#555'
-          inactiveHoverBg='#555'
           style={{
+            '--active': '#555',
+            '--inactive': '#555',
             border: '1px solid #aaa',
           }}
         >

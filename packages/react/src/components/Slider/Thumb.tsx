@@ -5,11 +5,6 @@ export interface SliderThumbProps {
   size?: number | string
   width?: number | string
   height?: number | string
-  color?: string
-  hoverColor?: string
-  disabledColor?: string
-  disabledHoverColor?: string
-  zIndex?: number
 
   className?: string
   style?: CSSProperties

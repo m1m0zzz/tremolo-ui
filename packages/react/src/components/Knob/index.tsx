@@ -1,6 +1,6 @@
 import { clamp, InputEventOption, normalizeValue, radian, rawValue, stepValue } from '@tremolo-ui/functions'
 import clsx from 'clsx'
-import { ComponentPropsWithoutRef, CSSProperties, useCallback, useRef } from 'react'
+import { ComponentPropsWithoutRef, useCallback, useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
@@ -28,10 +28,8 @@ export interface KnobProps {
    */
   startValue?: number
 
-  /** Priority over width or height */
-  size?: number // | `${number}%`
-  width?: number // | `${number}%`
-  height?: number // | `${number}%`
+  // TODO: relative size (Lower priority)
+  size?: number
 
   /** Whether to apply `{use-select: none}` when dragging */
   bodyNoSelect?: boolean
@@ -44,7 +42,15 @@ export interface KnobProps {
    */
   keyboard?: InputEventOption | null
   enableDoubleClickDefault?: boolean
-  style?: CSSProperties
+
+  disabled?: boolean
+  readonly?: boolean
+
+  activeLine?: string
+  inactiveLine?: string
+  thumb?: string
+  thumbLine?: string
+
   onChange?: (value: number) => void
 }
 
@@ -56,35 +62,39 @@ export function Knob({
   skew = 1,
   defaultValue = min,
   startValue = min,
-  size,
-  width = 50,
-  height = 50,
+  size = 50,
   bodyNoSelect = true,
   wheel = ['raw', 1],
   keyboard = ['raw', 1],
   enableDoubleClickDefault = true,
-  style,
+  disabled = false,
+  readonly = false,
+  activeLine,
+  inactiveLine,
+  thumb,
+  thumbLine,
   onChange,
   className,
   ...props
-}: KnobProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KnobProps>) {
+}: KnobProps & Omit<ComponentPropsWithoutRef<'svg'>, keyof KnobProps>) {
   // -- state and ref ---
   const dragOffsetY = useRef<number | undefined>(undefined)
 
   // --- interpret props ---
-  const padding = 6 // %
-  const thumbWeight = 6 // %
+  const padding = 8 // %
+  const thumbLineWeight = 6 // %
   const thumbLength = 35 // %
-  const lineWeight = 2 // px
+  const lineWeight = 3 // px
   const p = normalizeValue(value, min, max, skew)
 
   // --- internal functions ---
-const handleEvent = (
+  const handleEvent = (
     event:
       | MouseEvent
-      | React.MouseEvent<HTMLDivElement, MouseEvent>
+      | React.MouseEvent<HTMLOrSVGElement, MouseEvent>
       | TouchEvent,
   ) => {
+    if (!onChange || readonly) return
     const isTouch = event instanceof TouchEvent
     if (isTouch && event.cancelable) event.preventDefault()
     if (dragOffsetY.current) {
@@ -95,12 +105,12 @@ const handleEvent = (
       const n = normalizeValue(value, min, max, skew)
       const v = rawValue(n + delta / 100, min, max, skew)
       const v2 = clamp(stepValue(v, step), min, max)
-      if (onChange) onChange(v2)
+      onChange(v2)
     }
   }
 
-  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (!keyboard || !onChange) return
+  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLOrSVGElement>) => {
+    if (!keyboard || !onChange || readonly) return
     const key = event.key
     if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
       event.preventDefault()
@@ -150,28 +160,29 @@ const handleEvent = (
     if (bodyNoSelect) removeNoSelect()
   })
 
-  const cx = width / 2
-  const cy = height / 2
-  const x1 = cx + (cx) * Math.cos(radian(-135 - 90))
-  const y1 = cy + (cy) * Math.sin(radian(-135 - 90))
-  const x2 = cx + (cx) * Math.cos(radian(-135 + p * 270 - 90))
-  const y2 = cy + (cy) * Math.sin(radian(-135 + p * 270 - 90))
-  const x3 = cx + (cx) * Math.cos(radian(135 - 90))
-  const y3 = cy + (cy) * Math.sin(radian(135 - 90))
+  const center = size / 2
+  const x1 = center + (center) * Math.cos(radian(-135 - 90))
+  const y1 = center + (center) * Math.sin(radian(-135 - 90))
+  const x2 = center + (center) * Math.cos(radian(-135 + p * 270 - 90))
+  const y2 = center + (center) * Math.sin(radian(-135 + p * 270 - 90))
+  const x3 = center + (center) * Math.cos(radian(135 - 90))
+  const y3 = center + (center) * Math.sin(radian(135 - 90))
 
   return (
-    <div
+    <svg
       className={clsx('tremolo-knob', className)}
       ref={(div) => {
         wheelRefCallback(div)
         touchMoveRefCallback(div)
       }}
-      style={{
-        display: 'inline-block',
-        width: size ?? width,
-        height: size ?? height,
-        ...style
-      }}
+      width={size}
+      height={size}
+      tabIndex={0}
+      aria-valuenow={value}
+      aria-valuemin={min}
+      aria-valuemax={max}
+      aria-disabled={disabled}
+      aria-readonly={readonly}
       onPointerDown={(event) => {
         dragOffsetY.current = event.screenY
         handleEvent(event)
@@ -185,52 +196,41 @@ const handleEvent = (
       onContextMenu={(e) => e.preventDefault()}
       {...props}
     >
-      <svg
-        width={size ?? width}
-        height={size ?? height}
-        style={{
-          overflow: 'visible'
-        }}
-      >
-        {/* rotary meter */}
-        <path
-          d={`M ${x1} ${y1} A ${cx} ${cy} -135 ${45 < -135 + p * 270 ? 1 : 0} 1 ${x2}, ${y2}`}
-          fill='none'
-          stroke='#4e76e6'
-          strokeWidth={lineWeight}
+      {/* rotary meter */}
+      <path
+        className='tremolo-knob-active-line'
+        d={`M ${x1} ${y1} A ${center} ${center} -135 ${45 < -135 + p * 270 ? 1 : 0} 1 ${x2}, ${y2}`}
+        fill='none'
+        stroke={activeLine || 'currentColor'}
+        strokeWidth={lineWeight}
+      />
+      <path
+        className='tremolo-knob-inactive-line'
+        d={`M ${x2} ${y2} A ${center} ${center} -135 ${-45 < -135 + p * 270 ? 0 : 1} 1 ${x3}, ${y3}`}
+        fill='none'
+        stroke={inactiveLine || 'currentColor'}
+        strokeWidth={lineWeight}
+      />
+      {/* thumb */}
+      <svg className='tremolo-knob-thumb'>
+        <circle
+          cx='50%'
+          cy='50%'
+          r={`${50 - padding}%`}
+          fill={thumb || 'currentColor'}
         />
-        <path
-          d={`M ${x2} ${y2} A ${cx} ${cy} -135 ${-45 < -135 + p * 270 ? 0 : 1} 1 ${x3}, ${y3}`}
-          fill='none'
-          stroke='#ccc'
-          strokeWidth={lineWeight}
+        <line
+          className='tremolo-knob-thumb-line'
+          x1='50%'
+          y1={`${padding}%`}
+          x2='50%'
+          y2={`${thumbLength}%`}
+          stroke={thumbLine || 'currentColor'}
+          strokeWidth={`${thumbLineWeight}%`}
+          transform={`rotate(${-135 + p * 270})`}
+          transform-origin='50% 50%'
         />
-        {/* thumb */}
-        <svg
-          className='tremolo-knob-thumb'
-          style={{
-            color: '#ccc',
-            // filter: 'drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.3)',
-          }}
-        >
-          <circle
-            cx='50%'
-            cy='50%'
-            r={`${50 - padding}%`}
-            fill='currentColor'
-          />
-          <line
-            x1='50%'
-            y1={`${padding}%`}
-            x2='50%'
-            y2={`${thumbLength}%`}
-            stroke='#eee'
-            strokeWidth={`${thumbWeight}%`}
-            transform={`rotate(${-135 + p * 270})`}
-            transform-origin='50% 50%'
-          />
-        </svg>
       </svg>
-    </div>
+    </svg>
   )
 }

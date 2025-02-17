@@ -12,21 +12,6 @@ export default {
     value: {
       control: false,
     },
-    size: {
-      table: {
-        type: sizesOptionType
-      }
-    },
-    width: {
-      table: {
-        type: sizesOptionType
-      }
-    },
-    height: {
-      table: {
-        type: sizesOptionType
-      }
-    },
     wheel: {
       table: {
         type: inputEventOptionType

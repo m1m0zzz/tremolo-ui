@@ -1,0 +1,47 @@
+.tremolo-knob {
+  display: inline-block;
+  cursor: pointer;
+  overflow: visible;
+  outline: 0;
+
+  &:focus, &:hover {
+    > .tremolo-knob-active-line {
+      color: #4e76e6;
+    }
+
+    > .tremolo-knob-inactive-line {
+      color: #ddd;
+    }
+
+    > .tremolo-knob-thumb {
+      color: #ccc;
+    }
+  }
+
+  &[aria-readonly="true"] {
+    cursor: not-allowed;
+  }
+
+  &[aria-disabled="true"] {
+    > .tremolo-knob-active-line {
+      color: #5d6478;
+    }
+  }
+}
+
+.tremolo-knob-active-line {
+  overflow: visible;
+  color: #7998ec;
+}
+
+.tremolo-knob-inactive-line {
+  color: #eee;
+}
+
+.tremolo-knob-thumb {
+  color: #d0d0d0;
+}
+
+.tremolo-knob-thumb-line {
+  color: #eee;
+}

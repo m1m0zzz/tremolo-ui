@@ -5,12 +5,17 @@ import { styleHelper, xor } from '@tremolo-ui/functions'
 export const defaultLength = 140
 export const defaultThickness = 10
 
+interface CustomCSS {
+  '--active': string
+  '--inactive': string
+}
+
 export interface SliderTrackProps {
   length?: number | string
   thickness?: number | string
 
   className?: string
-  style?: CSSProperties
+  style?: CSSProperties & Partial<CustomCSS>
   children?: ReactElement
 
   /** inherit */
