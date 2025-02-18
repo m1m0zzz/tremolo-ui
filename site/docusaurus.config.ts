@@ -172,10 +172,10 @@ const config: Config = {
           position: 'left',
           label: 'API',
         },
-        {
-          label: 'Templates',
-          to: '/templates/',
-        },
+        // {
+        //   label: 'Templates',
+        //   to: '/templates/',
+        // },
         {
           type: 'localeDropdown',
           position: 'right',
