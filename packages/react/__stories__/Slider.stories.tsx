@@ -4,11 +4,7 @@ import { Meta, StoryObj } from '@storybook/react'
 
 import { AnimationCanvas } from '../src/components/AnimationCanvas'
 import { NumberInput } from '../src/components/NumberInput'
-import {
-  Slider,
-  SliderThumb,
-  SliderTrack,
-} from '../src/components/Slider'
+import { Slider, SliderThumb, SliderTrack } from '../src/components/Slider'
 
 import { getRMS } from './lib/dsp'
 
@@ -52,31 +48,31 @@ export default {
     },
     wheel: {
       table: {
-        type: inputEventOptionType
-      }
+        type: inputEventOptionType,
+      },
     },
     keyboard: {
       table: {
-        type: inputEventOptionType
-      }
+        type: inputEventOptionType,
+      },
     },
     scale: {
       table: {
         type: {
           summary: `['step' | number, ScaleType] | ScaleOrderList[]`,
-          detail: scaleTypeDetail
-        }
-      }
+          detail: scaleTypeDetail,
+        },
+      },
     },
     scaleOption: {
       table: {
         type: {
           summary: 'ScaleOption',
-          detail: scaleOptionDetail
-        }
-      }
-    }
-  }
+          detail: scaleOptionDetail,
+        },
+      },
+    },
+  },
 } satisfies Meta<typeof Slider>
 
 type Story = StoryObj<typeof Slider>
@@ -86,7 +82,7 @@ export const Basic: Story = {
     min: 0,
     max: 100,
   },
-  render: args => {
+  render: (args) => {
     const [value, setValue] = useState(0)
 
     return (
@@ -95,7 +91,7 @@ export const Basic: Story = {
         <p>value: {value}</p>
       </>
     )
-  }
+  },
 }
 
 export const LogarithmicParameter: Story = {
@@ -108,18 +104,26 @@ export const LogarithmicParameter: Story = {
     wheel: ['normalized', 0.1],
     keyboard: ['normalized', 0.1],
   },
-  render: args => {
+  render: (args) => {
     const [value, setValue] = useState(0)
     const [centerValue, setCenterValue] = useState(-10)
 
     return (
       <>
         <h1>Logarithmic parameter</h1>
-        <p>skew={'{'}skewWithCenterValue(centerValue, min, max){'}'}</p>
-        <p>min = {args.min}, max = {args.max}</p>
         <p>
-          centerValue: {' '}
-          <NumberInput value={centerValue} onChange={(v) => setCenterValue(v)} typeNumber />
+          skew={'{'}skewWithCenterValue(centerValue, min, max){'}'}
+        </p>
+        <p>
+          min = {args.min}, max = {args.max}
+        </p>
+        <p>
+          centerValue:{' '}
+          <NumberInput
+            value={centerValue}
+            onChange={(v) => setCenterValue(v)}
+            typeNumber
+          />
         </p>
         <Slider
           {...args}
@@ -130,7 +134,7 @@ export const LogarithmicParameter: Story = {
         <p>{value <= -100 ? '-inf' : value} dB</p>
       </>
     )
-  }
+  },
 }
 
 export const CustomImage = () => {

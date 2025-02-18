@@ -1,28 +1,33 @@
-import React, {useCallback, useState, type ReactNode} from 'react';
-import clsx from 'clsx';
-import useIsBrowser from '@docusaurus/useIsBrowser';
-import {LiveProvider, LiveEditor, LiveError, LivePreview} from 'react-live';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import React, { useCallback, useState, type ReactNode } from 'react'
+import clsx from 'clsx'
+import useIsBrowser from '@docusaurus/useIsBrowser'
+import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live'
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
+import BrowserOnly from '@docusaurus/BrowserOnly'
 import {
   ErrorBoundaryErrorMessageFallback,
   usePrismTheme,
-} from '@docusaurus/theme-common';
-import ErrorBoundary from '@docusaurus/ErrorBoundary';
+} from '@docusaurus/theme-common'
+import ErrorBoundary from '@docusaurus/ErrorBoundary'
 
-import type {Props} from '@theme/Playground';
-import type {ThemeConfig} from '@docusaurus/theme-live-codeblock';
+import type { Props } from '@theme/Playground'
+import type { ThemeConfig } from '@docusaurus/theme-live-codeblock'
 
-import { RiCodeSSlashLine, RiCodeSLine, RiFileCopyLine, RiCheckLine, RiCodepenLine } from 'react-icons/ri';
-import { FiCodesandbox, FiGithub } from 'react-icons/fi';
-import { SiStackblitz } from 'react-icons/si';
-import { parse } from './parser';
-import { generateCodeSandboxUrl } from './external/codesandbox';
-import { CodePenForm } from './external/codepen';
-import { openStackblitz } from './external/stackblitz';
+import {
+  RiCodeSSlashLine,
+  RiCodeSLine,
+  RiFileCopyLine,
+  RiCheckLine,
+  RiCodepenLine,
+} from 'react-icons/ri'
+import { FiCodesandbox, FiGithub } from 'react-icons/fi'
+import { SiStackblitz } from 'react-icons/si'
+import { parse } from './parser'
+import { generateCodeSandboxUrl } from './external/codesandbox'
+import { CodePenForm } from './external/codepen'
+import { openStackblitz } from './external/stackblitz'
 
-import styles from './styles.module.css';
-
+import styles from './styles.module.css'
 
 function CopyButton({ copyCode }: { copyCode?: () => void }) {
   const [clicked, setClicked] = useState(false)
@@ -67,28 +72,25 @@ function Controls({
 }: ControlsProps) {
   return (
     <div className={clsx(styles.playgroundHeader)}>
-      <div
-        className={styles.iconButtons}
-      >
-        {
-          showCode &&
+      <div className={styles.iconButtons}>
+        {showCode && (
           <button
             className={clsx(styles.iconButton, styles.expandButton)}
             onClick={() => setExpanded?.(() => !expanded)}
           >
             {expanded ? `Collapse code` : `Expand code`}
           </button>
-        }
+        )}
         <button
           className={styles.iconButton}
-          title='Open in Stackblitz'
+          title="Open in Stackblitz"
           onClick={() => openStackblitz(code)}
         >
           <SiStackblitz />
         </button>
         <a
           className={styles.iconButton}
-          title='Open in CodeSandbox'
+          title="Open in CodeSandbox"
           href={generateCodeSandboxUrl(code)}
           target="_blank"
           rel="noopener noreferrer"
@@ -106,7 +108,7 @@ function Controls({
         </CodePenForm> */}
         <a
           className={styles.iconButton}
-          title='Open in GitHub'
+          title="Open in GitHub"
           href={githubPath}
           target="_blank"
           rel="noopener noreferrer"
@@ -129,7 +131,7 @@ function Controls({
 function LivePreviewLoader() {
   // Is it worth improving/translating?
   // eslint-disable-next-line @docusaurus/no-untranslated-text
-  return <div>Loading...</div>;
+  return <div>Loading...</div>
 }
 
 function Preview() {
@@ -142,14 +144,15 @@ function Preview() {
           <ErrorBoundary
             fallback={(params) => (
               <ErrorBoundaryErrorMessageFallback {...params} />
-            )}>
+            )}
+          >
             <LivePreview />
           </ErrorBoundary>
           <LiveError />
         </>
       )}
     </BrowserOnly>
-  );
+  )
 }
 
 function Result() {
@@ -157,12 +160,11 @@ function Result() {
     <div className={styles.playgroundPreview}>
       <Preview />
     </div>
-  );
+  )
 }
 
-
 function ThemedLiveEditor({ code }: { code?: string }) {
-  const isBrowser = useIsBrowser();
+  const isBrowser = useIsBrowser()
   return (
     <LiveEditor
       // We force remount the editor on hydration,
@@ -171,12 +173,12 @@ function ThemedLiveEditor({ code }: { code?: string }) {
       className={styles.playgroundEditor}
       code={code}
     />
-  );
+  )
 }
 
 // this should rather be a stable function
 // see https://github.com/facebook/docusaurus/issues/9630#issuecomment-1855682643
-const DEFAULT_TRANSFORM_CODE = (code: string) => `${code};`;
+const DEFAULT_TRANSFORM_CODE = (code: string) => `${code};`
 
 type customLiveCodeBlock = {
   liveCodeBlock?: {
@@ -199,7 +201,7 @@ export default function Playground({
   sourcePath = '',
   ...props
 }: Props & ExtendProps): ReactNode {
-  const { siteConfig } = useDocusaurusContext();
+  const { siteConfig } = useDocusaurusContext()
   const customFields = siteConfig?.customFields as customLiveCodeBlock
   const defaultShowCode = customFields?.liveCodeBlock?.defaultShowCode
   const defaultExpanded = customFields?.liveCodeBlock?.defaultExpanded
@@ -241,5 +243,5 @@ export default function Playground({
         {showCode && <ThemedLiveEditor code={expanded ? expand : collapse} />}
       </LiveProvider>
     </div>
-  );
+  )
 }

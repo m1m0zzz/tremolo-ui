@@ -14,11 +14,11 @@
   cursor: pointer;
   z-index: 1;
 
-  &[data-active="true"] {
+  &[data-active='true'] {
     background-color: #ccc;
   }
 
-  &[aria-disabled="true"] {
+  &[aria-disabled='true'] {
     cursor: not-allowed;
   }
 }
@@ -32,11 +32,11 @@
   cursor: pointer;
   z-index: 2;
 
-  &[data-active="true"] {
+  &[data-active='true'] {
     background-color: #666;
   }
 
-  &[aria-disabled="true"] {
+  &[aria-disabled='true'] {
     cursor: not-allowed;
   }
 }

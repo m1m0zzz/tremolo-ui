@@ -4,7 +4,8 @@
   overflow: visible;
   outline: 0;
 
-  &:focus, &:hover {
+  &:focus,
+  &:hover {
     > .tremolo-knob-active-line {
       color: #4e76e6;
     }
@@ -18,11 +19,11 @@
     }
   }
 
-  &[aria-readonly="true"] {
+  &[aria-readonly='true'] {
     cursor: not-allowed;
   }
 
-  &[aria-disabled="true"] {
+  &[aria-disabled='true'] {
     > .tremolo-knob-active-line {
       color: #5d6478;
     }

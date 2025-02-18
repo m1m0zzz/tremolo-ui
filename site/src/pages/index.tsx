@@ -19,9 +19,7 @@ function HomepageHeader() {
           {siteConfig.title}
         </Heading>
         <p className="hero__subtitle">
-          <Translate id="homepage.tagline">
-            {siteConfig.tagline}
-          </Translate>
+          <Translate id="homepage.tagline">{siteConfig.tagline}</Translate>
         </p>
         <div className={styles.buttons}>
           <Link
@@ -33,9 +31,7 @@ function HomepageHeader() {
             }}
           >
             <Emoji emoji="💡" />
-            <Translate id="homepage.getting-started">
-              Getting Started
-            </Translate>
+            <Translate id="homepage.getting-started">Getting Started</Translate>
           </Link>
           <Link
             className="button button--secondary button--lg"

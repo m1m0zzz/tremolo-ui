@@ -1,6 +1,6 @@
 // https://blog.codepen.io/documentation/prefill/
 
-import { ReactNode } from "react";
+import { ReactNode } from 'react'
 
 const html = `<body>
   <noscript>
@@ -20,10 +20,12 @@ const jsFooter = `ReactDOM.render(
 `
 
 export function covert(data: object) {
-  return JSON.stringify(data)
-    // Quotes will screw up the JSON
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
+  return (
+    JSON.stringify(data)
+      // Quotes will screw up the JSON
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;')
+  )
 }
 
 interface Props {
@@ -41,16 +43,16 @@ export function CodePenForm({ code, children }: Props) {
     js_external: [
       // 'https://unpkg.com/react@18/umd/react.development.js',
       // 'https://unpkg.com/react-dom@18/umd/react-dom.development.js',
-    ]
+    ],
   }
   return (
     <form action="https://codepen.io/pen/define" method="POST" target="_blank">
       <input type="hidden" name="data" value={covert(data)} />
-      {
-        children ?
-          children :
-          <input type="submit" value="Create New Pen with Prefilled Data" />
-      }
+      {children ? (
+        children
+      ) : (
+        <input type="submit" value="Create New Pen with Prefilled Data" />
+      )}
     </form>
   )
 }

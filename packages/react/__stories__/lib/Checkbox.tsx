@@ -16,7 +16,7 @@ export default function Checkbox({
       style={{
         display: 'block',
         marginBottom: '1rem',
-        ...style
+        ...style,
       }}
       {...props}
     >
@@ -29,4 +29,3 @@ export default function Checkbox({
     </label>
   )
 }
-

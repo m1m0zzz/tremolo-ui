@@ -30,7 +30,7 @@ export function XYPadArea({
         width: width,
         height: height,
         background: bg,
-        ...style
+        ...style,
       }}
     >
       {children}

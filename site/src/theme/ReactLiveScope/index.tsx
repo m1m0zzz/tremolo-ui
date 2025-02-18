@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import * as tremoloUI from '@tremolo-ui/react'
 import * as functions from '@tremolo-ui/functions'
 
@@ -7,7 +7,7 @@ const ReactLiveScope: unknown = {
   React,
   ...React,
   ...tremoloUI,
-  ...functions
-};
+  ...functions,
+}
 
-export default ReactLiveScope;
+export default ReactLiveScope

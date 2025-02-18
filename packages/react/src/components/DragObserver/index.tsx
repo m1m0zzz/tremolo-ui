@@ -1,6 +1,6 @@
-import { ComponentPropsWithoutRef, ElementType, ReactNode, useRef } from "react"
-import { useEventListener } from "../../hooks/useEventListener"
-import { useRefCallbackEvent } from "../../hooks/useRefCallbackEvent"
+import { ComponentPropsWithoutRef, ElementType, ReactNode, useRef } from 'react'
+import { useEventListener } from '../../hooks/useEventListener'
+import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 
 export interface DragObserverProps<T extends ElementType> {
   /**
@@ -16,7 +16,8 @@ export interface DragObserverProps<T extends ElementType> {
 }
 
 export function DragObserver<T extends ElementType = 'div'>(
-  props: DragObserverProps<T> & Omit<ComponentPropsWithoutRef<T>, keyof DragObserverProps<T>>
+  props: DragObserverProps<T> &
+    Omit<ComponentPropsWithoutRef<T>, keyof DragObserverProps<T>>,
 ) {
   const {
     children,
@@ -40,7 +41,8 @@ export function DragObserver<T extends ElementType = 'div'>(
     if (isTouch && event.cancelable) event.preventDefault()
     const screenX = isTouch ? event.touches[0].screenX : event.screenX
     const screenY = isTouch ? event.touches[0].screenY : event.screenY
-    let deltaX = 0, deltaY = 0
+    let deltaX = 0,
+      deltaY = 0
     if (dragOffsetX.current) {
       deltaX = screenX - dragOffsetX.current
       dragOffsetX.current = screenX

@@ -11,34 +11,32 @@ export default {
       control: false,
       table: {
         type: {
-          summary: 'number | string'
-        }
-      }
+          summary: 'number | string',
+        },
+      },
     },
     units: {
       table: {
         type: {
           summary: 'string | Units',
-          detail: 'string | [string, number][]'
-        }
-      }
-    }
-  }
+          detail: 'string | [string, number][]',
+        },
+      },
+    },
+  },
 } satisfies Meta<typeof NumberInput>
 
 type Story = StoryObj<typeof NumberInput>
 
 export const Basic: Story = {
   args: {
-    typeNumber: true
+    typeNumber: true,
   },
-  render: args => {
+  render: (args) => {
     const [value, setValue] = useState(32)
 
-    return (
-      <NumberInput {...args} value={value} onChange={(v) => setValue(v)} />
-    )
-  }
+    return <NumberInput {...args} value={value} onChange={(v) => setValue(v)} />
+  },
 }
 
 export const UnitsAndDigit: Story = {
@@ -50,17 +48,11 @@ export const UnitsAndDigit: Story = {
     digit: 1,
     // _hover: { borderColor: 'red' }
   },
-  render: args => {
+  render: (args) => {
     const [value, setValue] = useState(4321)
 
-    return (
-      <NumberInput
-        {...args}
-        value={value}
-        onChange={(v) => setValue(v)}
-      />
-    )
-  }
+    return <NumberInput {...args} value={value} onChange={(v) => setValue(v)} />
+  },
 }
 
 export const SelectWithFocus = () => {

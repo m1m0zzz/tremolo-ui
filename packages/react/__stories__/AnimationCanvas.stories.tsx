@@ -1,5 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { AnimationCanvas, AnimationCanvasProps } from '../src/components/AnimationCanvas'
+import {
+  AnimationCanvas,
+  AnimationCanvasProps,
+} from '../src/components/AnimationCanvas'
 
 export default {
   title: 'React/Components/AnimationCanvas',
@@ -11,7 +14,7 @@ export default {
     height: {
       if: { arg: 'relativeSize', truthy: false },
     },
-  }
+  },
 } satisfies Meta<AnimationCanvasProps>
 
 type Story = StoryObj<AnimationCanvasProps>
@@ -19,13 +22,13 @@ type Story = StoryObj<AnimationCanvasProps>
 export const Basic: Story = {
   args: {
     width: 300,
-    height: 200
+    height: 200,
   },
-  render: args => {
+  render: (args) => {
     return (
       <div
         style={{
-          maxHeight: '100vh'
+          maxHeight: '100vh',
         }}
       >
         <AnimationCanvas
@@ -54,7 +57,7 @@ export const Basic: Story = {
         />
       </div>
     )
-  }
+  },
 }
 
 const fillTextCenter = (

@@ -15,33 +15,33 @@ export default {
     },
     size: {
       table: {
-        type: sizesOptionType
-      }
+        type: sizesOptionType,
+      },
     },
     width: {
       table: {
-        type: sizesOptionType
-      }
+        type: sizesOptionType,
+      },
     },
     height: {
       table: {
-        type: sizesOptionType
-      }
+        type: sizesOptionType,
+      },
     },
     wheel: {
       table: {
-        type: inputEventOptionType
-      }
+        type: inputEventOptionType,
+      },
     },
     keyboard: {
       table: {
-        type: inputEventOptionType
-      }
+        type: inputEventOptionType,
+      },
     },
     thumb: {
-      control: 'color'
+      control: 'color',
     },
-  }
+  },
 } satisfies Meta<typeof AnimationKnob>
 
 type Story = StoryObj<typeof AnimationKnob>
@@ -51,22 +51,18 @@ export const Basic: Story = {
     min: 0,
     max: 100,
     wheel: ['normalized', 0.05],
-    keyboard: ['normalized', 0.05]
+    keyboard: ['normalized', 0.05],
   },
-  render: args => {
+  render: (args) => {
     const [value, setValue] = useState(10)
 
     return (
       <>
-        <AnimationKnob
-          {...args}
-          value={value}
-          onChange={(v) => setValue(v)}
-        />
+        <AnimationKnob {...args} value={value} onChange={(v) => setValue(v)} />
         <p>value: {value}</p>
       </>
     )
-  }
+  },
 }
 
 export const Size = () => {
@@ -123,10 +119,10 @@ export const Options = () => {
         defaultValue={0}
         min={-50}
         max={50}
-        activeColor='#6ED8E6'
-        inactiveColor='#161616'
-        thumb='#161616'
-        bg='#0000'
+        activeColor="#6ED8E6"
+        inactiveColor="#161616"
+        thumb="#161616"
+        bg="#0000"
         lineWeight={4}
         onChange={(v) => setValue(v)}
         wheel={null}
@@ -170,7 +166,7 @@ export const AdvancedImagiroKnob = () => {
     <div
       style={{
         background: '#DFDBCD',
-        padding: '1rem'
+        padding: '1rem',
       }}
     >
       <p>Knob like Imagiro Autochroma</p>
@@ -216,10 +212,9 @@ export const AdvancedImagiroKnob = () => {
                 borderColor: '#507C5E',
                 borderStyle: 'solid',
                 pointerEvents: 'none',
-                ...style
+                ...style,
               }}
-            >
-            </div>
+            ></div>
           )
         })}
         <div
@@ -228,11 +223,12 @@ export const AdvancedImagiroKnob = () => {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            pointerEvents: 'none'
+            pointerEvents: 'none',
           }}
-        >{value}%</div>
+        >
+          {value}%
+        </div>
       </div>
     </div>
   )
 }
-

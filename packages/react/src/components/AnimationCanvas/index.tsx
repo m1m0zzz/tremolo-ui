@@ -1,4 +1,10 @@
-import { ComponentPropsWithoutRef, MutableRefObject, ReactElement, useEffect, useRef } from 'react'
+import {
+  ComponentPropsWithoutRef,
+  MutableRefObject,
+  ReactElement,
+  useEffect,
+  useRef,
+} from 'react'
 import clsx from 'clsx'
 
 import { DrawingContext, drawingState, DrawingStateValue } from './canvas'
@@ -43,18 +49,22 @@ interface RelativeSizingProps {
   reduceFlickering?: boolean
 }
 
-export type AnimationCanvasProps = AbsoluteSizingProps & RelativeSizingProps & CommonProps
+export type AnimationCanvasProps = AbsoluteSizingProps &
+  RelativeSizingProps &
+  CommonProps
 
 /**
  * A simple animatable canvas with requestAnimationFrame()
  */
 export function AnimationCanvas(
-  props: AbsoluteSizingProps & CommonProps &
-  Omit<ComponentPropsWithoutRef<'canvas'>, keyof AnimationCanvasProps>
+  props: AbsoluteSizingProps &
+    CommonProps &
+    Omit<ComponentPropsWithoutRef<'canvas'>, keyof AnimationCanvasProps>,
 ): ReactElement
 export function AnimationCanvas(
-  props: RelativeSizingProps & CommonProps &
-  Omit<ComponentPropsWithoutRef<'canvas'>, keyof AnimationCanvasProps>
+  props: RelativeSizingProps &
+    CommonProps &
+    Omit<ComponentPropsWithoutRef<'canvas'>, keyof AnimationCanvasProps>,
 ): ReactElement
 export function AnimationCanvas({
   width = 100,
@@ -67,7 +77,10 @@ export function AnimationCanvas({
   className,
   ...props
 }: AnimationCanvasProps &
-  Omit<ComponentPropsWithoutRef<'canvas'>, keyof AnimationCanvasProps>): ReactElement {
+  Omit<
+    ComponentPropsWithoutRef<'canvas'>,
+    keyof AnimationCanvasProps
+  >): ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const memoCanvasRef = useRef<HTMLCanvasElement>(null)
   const reqIdRef = useRef<number>()
@@ -107,7 +120,7 @@ export function AnimationCanvas({
           // Prevents loss of some context when the canvas is resized
           const contextMemo = {} as DrawingContext
           for (const prop of drawingState) {
-            (contextMemo[prop] as DrawingStateValue) = context[prop]
+            ;(contextMemo[prop] as DrawingStateValue) = context[prop]
           }
 
           const w = Math.floor(entry.contentRect.width)
@@ -125,7 +138,7 @@ export function AnimationCanvas({
           heightRef.current = h
 
           for (const prop of drawingState) {
-            (context[prop] as DrawingStateValue) = contextMemo[prop]
+            ;(context[prop] as DrawingStateValue) = contextMemo[prop]
           }
 
           if (reduceFlickering && memoContext) {
@@ -171,10 +184,7 @@ export function AnimationCanvas({
         {...props}
       ></canvas>
       {relativeSize && reduceFlickering && (
-        <canvas
-          style={{ display: 'none' }}
-          ref={memoCanvasRef}
-        ></canvas>
+        <canvas style={{ display: 'none' }} ref={memoCanvasRef}></canvas>
       )}
     </>
   )

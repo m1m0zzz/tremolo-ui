@@ -8,18 +8,30 @@ export const whiteKeys = ['A', 'B', 'C', 'D', 'E', 'F', 'G'] as const
 /**
  * @category MIDI
  */
-export type WhiteKey = typeof whiteKeys[number]
+export type WhiteKey = (typeof whiteKeys)[number]
 
 /**
  * @category MIDI
  */
-export const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'] as const
+export const noteNames = [
+  'C',
+  'C#',
+  'D',
+  'D#',
+  'E',
+  'F',
+  'F#',
+  'G',
+  'G#',
+  'A',
+  'A#',
+  'B',
+] as const
 
 /**
  * @category MIDI
  */
-export type NoteName = typeof noteNames[number]
-
+export type NoteName = (typeof noteNames)[number]
 
 /**
  * @category MIDI
@@ -40,11 +52,7 @@ export function parseNoteName(noteName: string) {
  * @category MIDI
  */
 export function noteNumber(noteName: string) {
-  const {
-    letter,
-    accidental,
-    octave,
-  } = parseNoteName(noteName)
+  const { letter, accidental, octave } = parseNoteName(noteName)
   const noteIndex = noteNames.indexOf(letter.toLocaleUpperCase() as NoteName)
   const accidentalValue = (accidental[0] == 'b' ? -1 : 1) * accidental.length
   return noteIndex + 12 * (Number(octave) + 1) + accidentalValue
@@ -83,9 +91,4 @@ export function isBlackKey(noteNumber: number | string) {
   return !isWhiteKey(noteNumber)
 }
 
-export const scaleNames = [
-  'major',
-  'minor',
-  'natural minor',
-  'pentatonic',
-]
+export const scaleNames = ['major', 'minor', 'natural minor', 'pentatonic']

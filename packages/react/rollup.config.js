@@ -39,24 +39,20 @@ function getConfig(format) {
           rootDir: './src',
           exclude: ['**/__tests__/**', '**/__stories__/**'],
         }),
-        format === 'cjs' ?
-        copy({
-          targets: [
-            { src: 'dist/cjs/styles/*.css', dest: 'dist/styles' },
-          ],
-          copySync: true,
-          hook: 'closeBundle'
-        }) : undefined,
+        format === 'cjs'
+          ? copy({
+              targets: [{ src: 'dist/cjs/styles/*.css', dest: 'dist/styles' }],
+              copySync: true,
+              hook: 'closeBundle',
+            })
+          : undefined,
         del({
-          targets: [
-            'dist/tsconfig.tsbuildinfo',
-            `dist/${format}/styles`,
-          ],
-          hook: 'closeBundle'
+          targets: ['dist/tsconfig.tsbuildinfo', `dist/${format}/styles`],
+          hook: 'closeBundle',
         }),
       ],
       external: ['react', 'react-dom', 'react/jsx-runtime'],
-    }
+    },
   ]
 }
 

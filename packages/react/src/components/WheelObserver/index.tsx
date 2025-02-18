@@ -1,5 +1,5 @@
-import { ComponentPropsWithoutRef, ElementType, ReactNode } from "react"
-import { useRefCallbackEvent } from "../../hooks/useRefCallbackEvent"
+import { ComponentPropsWithoutRef, ElementType, ReactNode } from 'react'
+import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 
 /**
  * @example
@@ -25,14 +25,9 @@ interface Props<T extends ElementType> {
 }
 
 export function WheelObserver<T extends ElementType = 'div'>(
-  props: Props<T> & Omit<ComponentPropsWithoutRef<T>, keyof Props<T>>
+  props: Props<T> & Omit<ComponentPropsWithoutRef<T>, keyof Props<T>>,
 ) {
-  const {
-    children,
-    onWheel,
-    as: Component = 'div',
-    ...attributes
-  } = props
+  const { children, onWheel, as: Component = 'div', ...attributes } = props
 
   const wheelRefCallback = useRefCallbackEvent(
     'wheel',
@@ -40,13 +35,12 @@ export function WheelObserver<T extends ElementType = 'div'>(
       if (onWheel) onWheel(event)
     },
     { passive: false },
-    [onWheel]
+    [onWheel],
   )
 
   return (
-    <Component
-      ref={wheelRefCallback}
-      {...attributes}
-    >{children}</Component>
+    <Component ref={wheelRefCallback} {...attributes}>
+      {children}
+    </Component>
   )
 }

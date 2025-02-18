@@ -1,7 +1,11 @@
 /** @param {import('github-script').AsyncFunctionArguments} AsyncFunctionArguments */
 export default async function outdatedTable({ exec, context, pkg }) {
   const options = { ignoreReturnCode: true }
-  const { stdout } = await exec.getExecOutput('npm', ['outdated', '--json'], options)
+  const { stdout } = await exec.getExecOutput(
+    'npm',
+    ['outdated', '--json'],
+    options,
+  )
   const json = JSON.parse(stdout)
 
   /** @type {string[]} */
@@ -37,7 +41,6 @@ export default async function outdatedTable({ exec, context, pkg }) {
    * @param {string} dependent
    */
   function workspaceLink(dependent) {
-
     let workspace = ''
     if (dependent != 'tremolo-ui') {
       workspace = workspaces.find((w) => lastItem(w.split('/')) == dependent)
@@ -48,23 +51,40 @@ export default async function outdatedTable({ exec, context, pkg }) {
   }
 
   const table = []
-  const header = ['Package', 'Status', 'Current', 'Wanted', 'Latest', 'Depended by']
+  const header = [
+    'Package',
+    'Status',
+    'Current',
+    'Wanted',
+    'Latest',
+    'Depended by',
+  ]
   const divider = ['---', ':---:', '---', '---', '---', '---']
 
   for (const [key, value] of Object.entries(json)) {
     if (Array.isArray(value)) {
       for (let i = 0; i < value.length; i++) {
         const v = value[i]
-        table.push([key, status(v.current, v.wanted), v.current, v.wanted, v.latest, workspaceLink(v.dependent)])
+        table.push([
+          key,
+          status(v.current, v.wanted),
+          v.current,
+          v.wanted,
+          v.latest,
+          workspaceLink(v.dependent),
+        ])
       }
     } else {
-      table.push([key, status(value.current, value.wanted), value.current, value.wanted, value.latest, workspaceLink(value.dependent)])
+      table.push([
+        key,
+        status(value.current, value.wanted),
+        value.current,
+        value.wanted,
+        value.latest,
+        workspaceLink(value.dependent),
+      ])
     }
   }
 
-  return (
-    row(header) +
-    row(divider) +
-    table.map(r => row(r)).join('')
-  )
+  return row(header) + row(divider) + table.map((r) => row(r)).join('')
 }

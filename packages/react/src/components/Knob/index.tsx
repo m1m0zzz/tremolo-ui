@@ -1,4 +1,11 @@
-import { clamp, InputEventOption, normalizeValue, radian, rawValue, stepValue } from '@tremolo-ui/functions'
+import {
+  clamp,
+  InputEventOption,
+  normalizeValue,
+  radian,
+  rawValue,
+  stepValue,
+} from '@tremolo-ui/functions'
 import clsx from 'clsx'
 import { ComponentPropsWithoutRef, useCallback, useRef } from 'react'
 
@@ -34,8 +41,8 @@ export interface KnobProps {
   /** Whether to apply `{use-select: none}` when dragging */
   bodyNoSelect?: boolean
   /**
-     * wheel control option
-     */
+   * wheel control option
+   */
   wheel?: InputEventOption | null
   /**
    * keyboard control option
@@ -109,22 +116,26 @@ export function Knob({
     }
   }
 
-  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLOrSVGElement>) => {
-    if (!keyboard || !onChange || readonly) return
-    const key = event.key
-    if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
-      event.preventDefault()
-      const x = (key == 'ArrowRight' || key == 'ArrowUp') ? keyboard[1] : -keyboard[1]
-      let v
-      if (keyboard[0] == 'normalized') {
-        const n = normalizeValue(value, min, max, skew)
-        v = rawValue(n + x, min, max, skew)
-      } else {
-        v = value + x
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLOrSVGElement>) => {
+      if (!keyboard || !onChange || readonly) return
+      const key = event.key
+      if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
+        event.preventDefault()
+        const x =
+          key == 'ArrowRight' || key == 'ArrowUp' ? keyboard[1] : -keyboard[1]
+        let v
+        if (keyboard[0] == 'normalized') {
+          const n = normalizeValue(value, min, max, skew)
+          v = rawValue(n + x, min, max, skew)
+        } else {
+          v = value + x
+        }
+        onChange(clamp(stepValue(v, step), min, max))
       }
-      onChange(clamp(stepValue(v, step), min, max))
-    }
-  }, [value, min, max, step, skew, keyboard, onChange])
+    },
+    [value, min, max, step, skew, keyboard, onChange],
+  )
 
   // --- hooks ---
   const wheelRefCallback = useRefCallbackEvent(
@@ -161,12 +172,12 @@ export function Knob({
   })
 
   const center = size / 2
-  const x1 = center + (center) * Math.cos(radian(-135 - 90))
-  const y1 = center + (center) * Math.sin(radian(-135 - 90))
-  const x2 = center + (center) * Math.cos(radian(-135 + p * 270 - 90))
-  const y2 = center + (center) * Math.sin(radian(-135 + p * 270 - 90))
-  const x3 = center + (center) * Math.cos(radian(135 - 90))
-  const y3 = center + (center) * Math.sin(radian(135 - 90))
+  const x1 = center + center * Math.cos(radian(-135 - 90))
+  const y1 = center + center * Math.sin(radian(-135 - 90))
+  const x2 = center + center * Math.cos(radian(-135 + p * 270 - 90))
+  const y2 = center + center * Math.sin(radian(-135 + p * 270 - 90))
+  const x3 = center + center * Math.cos(radian(135 - 90))
+  const y3 = center + center * Math.sin(radian(135 - 90))
 
   return (
     <svg
@@ -198,37 +209,37 @@ export function Knob({
     >
       {/* rotary meter */}
       <path
-        className='tremolo-knob-active-line'
+        className="tremolo-knob-active-line"
         d={`M ${x1} ${y1} A ${center} ${center} -135 ${45 < -135 + p * 270 ? 1 : 0} 1 ${x2}, ${y2}`}
-        fill='none'
+        fill="none"
         stroke={activeLine || 'currentColor'}
         strokeWidth={lineWeight}
       />
       <path
-        className='tremolo-knob-inactive-line'
+        className="tremolo-knob-inactive-line"
         d={`M ${x2} ${y2} A ${center} ${center} -135 ${-45 < -135 + p * 270 ? 0 : 1} 1 ${x3}, ${y3}`}
-        fill='none'
+        fill="none"
         stroke={inactiveLine || 'currentColor'}
         strokeWidth={lineWeight}
       />
       {/* thumb */}
-      <svg className='tremolo-knob-thumb'>
+      <svg className="tremolo-knob-thumb">
         <circle
-          cx='50%'
-          cy='50%'
+          cx="50%"
+          cy="50%"
           r={`${50 - padding}%`}
           fill={thumb || 'currentColor'}
         />
         <line
-          className='tremolo-knob-thumb-line'
-          x1='50%'
+          className="tremolo-knob-thumb-line"
+          x1="50%"
           y1={`${padding}%`}
-          x2='50%'
+          x2="50%"
           y2={`${thumbLength}%`}
           stroke={thumbLine || 'currentColor'}
           strokeWidth={`${thumbLineWeight}%`}
           transform={`rotate(${-135 + p * 270})`}
-          transform-origin='50% 50%'
+          transform-origin="50% 50%"
         />
       </svg>
     </svg>

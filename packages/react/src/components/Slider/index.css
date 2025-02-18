@@ -4,7 +4,7 @@
   outline: 0;
   -webkit-tap-highlight-color: transparent;
 
-  &[aria-readonly="true"] {
+  &[aria-readonly='true'] {
     cursor: not-allowed;
   }
 }
@@ -20,12 +20,12 @@
   border-radius: 50%;
   outline: none;
 
-  &[aria-disabled="true"] {
+  &[aria-disabled='true'] {
     background: #5d6478;
   }
 
-  &[aria-readonly="false"]:focus {
-    box-shadow: 0px 0px 0px 3px rgba(var(--tremolo-theme-color-rgb), 0.2)
+  &[aria-readonly='false']:focus {
+    box-shadow: 0px 0px 0px 3px rgba(var(--tremolo-theme-color-rgb), 0.2);
   }
 }
 
@@ -40,7 +40,7 @@
     --inactive: #e0e0e0;
   }
 
-  &[aria-disabled="true"] {
+  &[aria-disabled='true'] {
     --active: #858890;
     --inactive: #ddd;
   }

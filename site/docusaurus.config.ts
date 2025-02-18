@@ -7,7 +7,7 @@ import remarkNpm2Yarn from '@docusaurus/remark-plugin-npm2yarn'
 
 import twemoji from '@twemoji/api'
 
-import rehypeTwemoj from './src/rehype/twemoji';
+import rehypeTwemoj from './src/rehype/twemoji'
 
 const emojiBaseUrl = 'https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets'
 
@@ -102,13 +102,11 @@ const config: Config = {
 
   customFields: {
     liveCodeBlock: {
-      githubLink: 'https://github.com/m1m0zzz/tremolo-ui/blob/main/site'
-    }
+      githubLink: 'https://github.com/m1m0zzz/tremolo-ui/blob/main/site',
+    },
   },
 
-  plugins: [
-    ...typedocPlugins()
-  ],
+  plugins: [...typedocPlugins()],
 
   presets: [
     [
@@ -119,14 +117,15 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl: 'https://github.com/m1m0zzz/tremolo-ui/tree/main/site/',
-          remarkPlugins: [
-            [remarkNpm2Yarn, { sync: true }],
-          ],
-          rehypePlugins: [rehypeTwemoj]
+          remarkPlugins: [[remarkNpm2Yarn, { sync: true }]],
+          rehypePlugins: [rehypeTwemoj],
         },
         blog: false,
         theme: {
-          customCss: ['./src/css/custom.css', '../packages/react/dist/styles/index.css'],
+          customCss: [
+            './src/css/custom.css',
+            '../packages/react/dist/styles/index.css',
+          ],
         },
         sitemap: {
           lastmod: 'date',
@@ -192,7 +191,7 @@ const config: Config = {
               href: 'https://tremolo-ui-sb-web-components.vercel.app/',
               label: 'Web Components',
             },
-          ]
+          ],
         },
         {
           href: 'https://github.com/m1m0zzz/tremolo-ui',

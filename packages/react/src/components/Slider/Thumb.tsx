@@ -1,4 +1,10 @@
-import { CSSProperties, forwardRef, ReactNode, useImperativeHandle, useRef } from 'react'
+import {
+  CSSProperties,
+  forwardRef,
+  ReactNode,
+  useImperativeHandle,
+  useRef,
+} from 'react'
 import clsx from 'clsx'
 
 export interface SliderThumbProps {
@@ -21,51 +27,53 @@ export interface SliderThumbMethods {
   blur: () => void
 }
 
- export const SliderThumb = forwardRef<SliderThumbMethods, SliderThumbProps>(({
-  size,
-  width = 22,
-  height = 22,
-  children,
-  className,
-  style,
-  __disabled,
-  __css,
-}: SliderThumbProps, ref) => {
-  const wrapperRef = useRef<HTMLDivElement>(null)
+export const SliderThumb = forwardRef<SliderThumbMethods, SliderThumbProps>(
+  (
+    {
+      size,
+      width = 22,
+      height = 22,
+      children,
+      className,
+      style,
+      __disabled,
+      __css,
+    }: SliderThumbProps,
+    ref,
+  ) => {
+    const wrapperRef = useRef<HTMLDivElement>(null)
 
-  useImperativeHandle(ref, () => {
-    return {
-      focus() {
-        wrapperRef.current?.focus()
-      },
-      blur() {
-        wrapperRef.current?.blur()
-      },
-    }
-  }, [])
+    useImperativeHandle(ref, () => {
+      return {
+        focus() {
+          wrapperRef.current?.focus()
+        },
+        blur() {
+          wrapperRef.current?.blur()
+        },
+      }
+    }, [])
 
-  return (
-    <div
-      className="tremolo-slider-thumb-wrapper"
-      style={__css}
-    >
-      {children ? (
-        children
-      ) : (
-        // default slider thumb
-        <div
-          ref={wrapperRef}
-          className={clsx('tremolo-slider-thumb', className)}
-          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-          tabIndex={0}
-          aria-disabled={__disabled}
-          style={{
-            width: size ?? width,
-            height: size ?? height,
-            ...style,
-          }}
-        ></div>
-      )}
-    </div>
-  )
-})
+    return (
+      <div className="tremolo-slider-thumb-wrapper" style={__css}>
+        {children ? (
+          children
+        ) : (
+          // default slider thumb
+          <div
+            ref={wrapperRef}
+            className={clsx('tremolo-slider-thumb', className)}
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+            tabIndex={0}
+            aria-disabled={__disabled}
+            style={{
+              width: size ?? width,
+              height: size ?? height,
+              ...style,
+            }}
+          ></div>
+        )}
+      </div>
+    )
+  },
+)

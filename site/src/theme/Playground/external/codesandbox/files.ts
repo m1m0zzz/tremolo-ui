@@ -69,16 +69,16 @@ const tsconfigJson = `{
 `
 
 export const files = {
-  "public/index.html": {
-    content: indexHtml
+  'public/index.html': {
+    content: indexHtml,
   },
-  "src/index.tsx": {
-    content: indexTs
+  'src/index.tsx': {
+    content: indexTs,
   },
-  "package.json": {
-    content: packageJSON
+  'package.json': {
+    content: packageJSON,
   },
-  "tsconfig.json": {
-    content: tsconfigJson
-  }
+  'tsconfig.json': {
+    content: tsconfigJson,
+  },
 }

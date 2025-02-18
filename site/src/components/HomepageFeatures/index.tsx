@@ -29,7 +29,8 @@ const FeatureList: FeatureItem[] = [
     id: 'headless-ui-like',
     title: 'Headless UI like',
     Svg: require('@site/static/img/undraw_web_development.svg').default,
-    description: 'It provides a rich default UI and a DOM-like component system that is easy to customize.',
+    description:
+      'It provides a rich default UI and a DOM-like component system that is easy to customize.',
   },
 ]
 
@@ -41,9 +42,7 @@ function Feature({ id, title, Svg, description }: FeatureItem) {
       </div>
       <div className="text--center padding-horiz--md">
         <Heading as="h3">
-          <Translate id={`homepage.features.${id}.title`}>
-            {title}
-          </Translate>
+          <Translate id={`homepage.features.${id}.title`}>{title}</Translate>
         </Heading>
         <p>
           <Translate id={`homepage.features.${id}.description`}>

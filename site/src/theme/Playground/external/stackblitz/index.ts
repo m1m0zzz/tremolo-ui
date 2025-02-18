@@ -22,5 +22,5 @@ export function openStackblitz(code: string) {
       newWindow: true,
       openFile: ['src/App.tsx'],
     },
-  );
+  )
 }

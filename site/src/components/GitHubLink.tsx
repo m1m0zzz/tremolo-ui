@@ -24,11 +24,12 @@ export default function GitHubLink({
   children,
   ...props
 }: Props & Omit<ComponentPropsWithoutRef<'a'>, keyof Props>) {
-  const more = [branch, commit, path].filter(v => v).join('/')
+  const more = [branch, commit, path].filter((v) => v).join('/')
 
-  const href = more == '' ?
-    `https://github.com/${user}/${repo}` :
-    `https://github.com/${user}/${repo}/${isFile ? 'blob' : 'tree'}/${more}`
+  const href =
+    more == ''
+      ? `https://github.com/${user}/${repo}`
+      : `https://github.com/${user}/${repo}/${isFile ? 'blob' : 'tree'}/${more}`
 
   return (
     <a
@@ -36,6 +37,8 @@ export default function GitHubLink({
       target={external ? '_blank' : undefined}
       rel={external ? 'noopener noreferrer' : undefined}
       {...props}
-    >{children}</a>
+    >
+      {children}
+    </a>
   )
 }

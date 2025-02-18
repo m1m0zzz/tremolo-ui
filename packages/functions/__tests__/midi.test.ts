@@ -1,7 +1,4 @@
-import {
-  noteNumber,
-  noteName,
-} from '../src/midi'
+import { noteNumber, noteName } from '../src/midi'
 
 describe('unit test', () => {
   test('noteNumber()', () => {

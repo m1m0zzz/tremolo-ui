@@ -23,8 +23,11 @@ function App() {
         onChange={(x, y) => {
           setValueX(x)
           setValueY(y)
-        }} />
-      <p>x: {valueX}, y: {valueY}</p>
+        }}
+      />
+      <p>
+        x: {valueX}, y: {valueY}
+      </p>
     </div>
   )
 }

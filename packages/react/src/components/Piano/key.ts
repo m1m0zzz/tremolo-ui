@@ -1,4 +1,4 @@
-import { CSSProperties, ReactElement, ReactNode } from "react"
+import { CSSProperties, ReactElement, ReactNode } from 'react'
 
 export interface KeyProps {
   width?: number

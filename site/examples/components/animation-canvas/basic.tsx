@@ -20,8 +20,11 @@ function App() {
           ctx.strokeStyle = color
           ctx.beginPath()
           for (let i = 0; i < w.current; i++) {
-            const y = halfH + halfH * 0.5 *
-                      Math.sin((4 * Math.PI * (i + count * 2)) / w.current)
+            const y =
+              halfH +
+              halfH *
+                0.5 *
+                Math.sin((4 * Math.PI * (i + count * 2)) / w.current)
             if (i == 0) ctx.moveTo(i, y)
             else ctx.lineTo(i, y)
           }
@@ -30,12 +33,16 @@ function App() {
       />
       <div>
         color:{' '}
-        <input type="color" value={color} onChange={(v) => setColor(v.currentTarget.value)} />
+        <input
+          type="color"
+          value={color}
+          onChange={(v) => setColor(v.currentTarget.value)}
+        />
       </div>
     </div>
   )
 }
-  
+
 // expand begin
 export default App
 // expand end

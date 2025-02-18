@@ -187,7 +187,7 @@ export default defineConfig({
 })
 `
 
-export const files: {[path: string]: string} = {
+export const files: { [path: string]: string } = {
   'src/main.tsx': main,
   'src/vite-env.d.ts': viteEnv,
   '.gitignore': gitIgnore,
@@ -197,5 +197,5 @@ export const files: {[path: string]: string} = {
   'tsconfig.json': tsconfigJson,
   'tsconfig.app.json': tsconfigAppJson,
   'tsconfig.node.json': tsconfigNodeJson,
-  'vite.config.ts': viteConfig
+  'vite.config.ts': viteConfig,
 }

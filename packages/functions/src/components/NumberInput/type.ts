@@ -1,6 +1,6 @@
 /**
  * @module NumberInput
-*/
+ */
 
 import { toFixed } from '../../math'
 

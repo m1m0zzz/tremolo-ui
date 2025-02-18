@@ -1,6 +1,6 @@
 /**
  * @module Slider
-*/
+ */
 
 import { decimalPart, toFixed } from '../../math'
 

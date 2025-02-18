@@ -31,10 +31,10 @@ function App() {
         defaultValue={0}
         min={-50}
         max={50}
-        activeColor='#6ED8E6'
-        inactiveColor='#161616'
-        thumb='#161616'
-        bg='#0000'
+        activeColor="#6ED8E6"
+        inactiveColor="#161616"
+        thumb="#161616"
+        bg="#0000"
         lineWeight={4}
         onChange={(v) => setValue(v)}
         wheel={['normalized', 0.1]}

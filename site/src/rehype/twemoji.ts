@@ -21,11 +21,11 @@ export function resolveOptions(options?: Partial<Options>) {
     exclude: [],
     className: 'emoji',
     baseUrl: 'https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets',
-    size: 'svg'
+    size: 'svg',
   } as Options
   return {
     ...defaultOptions,
-    ...options
+    ...options,
   }
 }
 
@@ -41,7 +41,11 @@ function sizeToExtension(size: string | number): string {
 }
 
 export function toCodePoint(emoji: string): string {
-  return twemoji.convert.toCodePoint(emoji.indexOf(String.fromCharCode(0x200d)) < 0 ? emoji.replace(/\uFE0F/g, '') : emoji)
+  return twemoji.convert.toCodePoint(
+    emoji.indexOf(String.fromCharCode(0x200d)) < 0
+      ? emoji.replace(/\uFE0F/g, '')
+      : emoji,
+  )
 }
 
 export function toBaseUrl(codePoint: string, options: Options): string {
@@ -66,45 +70,45 @@ const rehypeTwemoji = (opts: Partial<Options> = {}) => {
           }
 
           const children = replaceToArray(node.value, regex, (text) => ({
-            emoji: text
+            emoji: text,
           })).map<ElementContent>((segment) =>
             typeof segment === 'string'
               ? {
                   type: 'text',
-                  value: segment
+                  value: segment,
                 }
               : options.exclude.includes(segment.emoji)
-              ? {
-                  type: 'text',
-                  value: segment.emoji
-                }
-              : {
-                  type: 'element',
-                  tagName: 'img',
-                  properties: {
-                    className: [options.className],
-                    draggable: 'false',
-                    alt: segment.emoji,
-                    decoding: 'async',
-                    src: toUrl(segment.emoji, options)
+                ? {
+                    type: 'text',
+                    value: segment.emoji,
+                  }
+                : {
+                    type: 'element',
+                    tagName: 'img',
+                    properties: {
+                      className: [options.className],
+                      draggable: 'false',
+                      alt: segment.emoji,
+                      decoding: 'async',
+                      src: toUrl(segment.emoji, options),
+                    },
+                    children: [],
                   },
-                  children: []
-                }
           )
 
           const result = {
             type: 'element',
             tagName: 'span',
-            children
+            children,
           }
 
           return result
-        }) as RootContent
+        }) as RootContent,
     )
 
     return {
       ...tree,
-      children: mappedChildren
+      children: mappedChildren,
     }
   }
   return transformer

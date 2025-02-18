@@ -12,7 +12,7 @@ const preview: Preview = {
       },
     },
     actions: {
-      argTypesRegex: '^on[A-Z].*' // TODO: is not working?
+      argTypesRegex: '^on[A-Z].*', // TODO: is not working?
     },
   },
   tags: ['autodocs'],

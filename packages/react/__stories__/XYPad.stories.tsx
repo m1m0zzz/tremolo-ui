@@ -1,11 +1,11 @@
 import { memo, useState } from 'react'
 
+import { XYPad, XYPadThumb, XYPadArea } from '../src/components/XYPad'
 import {
-  XYPad,
-  XYPadThumb,
-  XYPadArea,
-} from '../src/components/XYPad'
-import { integerPart, skewWithCenterValue, toFixed } from '@tremolo-ui/functions'
+  integerPart,
+  skewWithCenterValue,
+  toFixed,
+} from '@tremolo-ui/functions'
 import { AnimationCanvas } from '../src/components/AnimationCanvas'
 import { Meta, StoryObj } from '@storybook/react'
 import { InputEventOptionString } from './lib/typeUtils'
@@ -26,27 +26,29 @@ export default {
   component: XYPad,
   argTypes: {
     x: {
-      description: 'NOTE: The `value` of controls is not valid because it is wrapped in useState.',
+      description:
+        'NOTE: The `value` of controls is not valid because it is wrapped in useState.',
       table: {
         type: {
           summary: 'ValueOptions',
-          detail: valueOptionsDetail
-        }
-      }
+          detail: valueOptionsDetail,
+        },
+      },
     },
     y: {
-      description: 'NOTE: The `value` of controls is not valid because it is wrapped in useState.',
+      description:
+        'NOTE: The `value` of controls is not valid because it is wrapped in useState.',
       table: {
         type: {
           summary: 'ValueOptions',
-          detail: valueOptionsDetail
-        }
-      }
+          detail: valueOptionsDetail,
+        },
+      },
     },
     children: {
-      control: false
-    }
-  }
+      control: false,
+    },
+  },
 } satisfies Meta<typeof XYPad>
 
 type Story = StoryObj<typeof XYPad>
@@ -56,15 +58,15 @@ export const Basic: Story = {
     x: {
       value: 0,
       min: 0,
-      max: 100
+      max: 100,
     },
     y: {
       value: 0,
       min: 0,
-      max: 100
+      max: 100,
     },
   },
-  render: args => {
+  render: (args) => {
     const [valueX, setValueX] = useState(32)
     const [valueY, setValueY] = useState(56)
 
@@ -83,12 +85,13 @@ export const Basic: Story = {
           onChange={(x, y) => {
             setValueX(x)
             setValueY(y)
-          }} />
+          }}
+        />
         <p>x: {valueX}</p>
         <p>y: {valueY}</p>
       </>
     )
-  }
+  },
 }
 
 const rand = (max: number, min = 0) => {
@@ -111,7 +114,7 @@ const createDot = (x: number, y: number, size: number) => {
     dx: rand(0.1, -0.1),
     dy: rand(0.1, -0.1),
     size: size,
-    opacity: 0.4
+    opacity: 0.4,
   })
 }
 
@@ -139,11 +142,15 @@ const ThumbAnimation = memo(() => {
         if (count % 20 == 0) {
           const size = rand(15, 8)
           const padding = 25
-          createDot(rand(w - padding, padding), rand(w - padding, padding), size)
+          createDot(
+            rand(w - padding, padding),
+            rand(w - padding, padding),
+            size,
+          )
         }
 
         for (let i = 0; i < dots.length; i++) {
-          const dot = dots[i];
+          const dot = dots[i]
           ctx.fillStyle = `rgba(255, 255, 255, ${dot.opacity})`
           ctx.beginPath()
           ctx.arc(dot.x, dot.y, dot.size, 0, 2 * Math.PI)
@@ -152,7 +159,7 @@ const ThumbAnimation = memo(() => {
         processDots()
       }}
       style={{
-        display: 'block'
+        display: 'block',
       }}
       onContextMenu={(e) => e.preventDefault()}
     />
@@ -189,7 +196,7 @@ export const AdvancedFilterPad = () => {
           display: 'inline-block',
           borderRadius: 8,
           background: 'rgb(207, 182, 240)',
-          border: 'solid rgb(178, 150, 215) 2px'
+          border: 'solid rgb(178, 150, 215) 2px',
         }}
       >
         <XYPad
@@ -216,10 +223,7 @@ export const AdvancedFilterPad = () => {
             setQ(y)
           }}
         >
-          <XYPadArea
-            width={200}
-            bg='transparent'
-          />
+          <XYPadArea width={200} bg="transparent" />
           <XYPadThumb size={40}>
             <ThumbAnimation />
           </XYPadThumb>

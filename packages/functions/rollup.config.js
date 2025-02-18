@@ -36,24 +36,22 @@ function getConfig(format, entry) {
           exclude: ['**/__tests__/**'],
         }),
         del({
-          targets: ['dist/**/tsconfig.tsbuildinfo', 'dist/**/components/tsconfig.tsbuildinfo'],
-          hook: 'buildEnd'
-        })
+          targets: [
+            'dist/**/tsconfig.tsbuildinfo',
+            'dist/**/components/tsconfig.tsbuildinfo',
+          ],
+          hook: 'buildEnd',
+        }),
       ],
     },
   ]
 }
 
 export default [
-  ...[
-    'index.ts',
-    'components/NumberInput/type.ts',
-    'components/Slider/type.ts'
-  ].map((entry) => {
-    // const outDir = entry.match(/^components\/(.+)\//)?.[1]
-    return [
-      getConfig('cjs', entry),
-      getConfig('esm', entry),
-    ]
-  }).flat(2)
+  ...['index.ts', 'components/NumberInput/type.ts', 'components/Slider/type.ts']
+    .map((entry) => {
+      // const outDir = entry.match(/^components\/(.+)\//)?.[1]
+      return [getConfig('cjs', entry), getConfig('esm', entry)]
+    })
+    .flat(2),
 ]

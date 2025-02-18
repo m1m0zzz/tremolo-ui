@@ -78,8 +78,7 @@ export function NumberInput({
   onBlur,
   ...props
 }: NumberInputProps &
-  Omit<ComponentPropsWithoutRef<'input'>, keyof NumberInputProps | 'type'>
-) {
+  Omit<ComponentPropsWithoutRef<'input'>, keyof NumberInputProps | 'type'>) {
   const [showValue, setShowValue] = useState(
     parseValue(String(value), units, digit, defaultValue).formatValue,
   )
@@ -104,7 +103,7 @@ export function NumberInput({
         const newValue = clamp(
           parseValue(v, units, digit, defaultValue).rawValue,
           min ?? -Infinity,
-          max ?? Infinity
+          max ?? Infinity,
         )
         if (onChange) onChange(newValue, event)
       }}

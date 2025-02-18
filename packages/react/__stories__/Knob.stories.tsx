@@ -14,15 +14,15 @@ export default {
     },
     wheel: {
       table: {
-        type: inputEventOptionType
-      }
+        type: inputEventOptionType,
+      },
     },
     keyboard: {
       table: {
-        type: inputEventOptionType
-      }
+        type: inputEventOptionType,
+      },
     },
-  }
+  },
 } satisfies Meta<typeof Knob>
 
 type Story = StoryObj<typeof Knob>
@@ -32,20 +32,16 @@ export const Basic: Story = {
     min: 0,
     max: 100,
     wheel: ['normalized', 0.05],
-    keyboard: ['normalized', 0.05]
+    keyboard: ['normalized', 0.05],
   },
-  render: args => {
+  render: (args) => {
     const [value, setValue] = useState(10)
 
     return (
       <>
-        <Knob
-          {...args}
-          value={value}
-          onChange={(v) => setValue(v)}
-        />
+        <Knob {...args} value={value} onChange={(v) => setValue(v)} />
         <p>value: {value}</p>
       </>
     )
-  }
+  },
 }

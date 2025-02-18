@@ -1,5 +1,17 @@
-import { clamp, normalizeValue, radian, rawValue, stepValue, InputEventOption } from '@tremolo-ui/functions'
-import React, { ComponentPropsWithoutRef, CSSProperties, useCallback, useRef } from 'react'
+import {
+  clamp,
+  normalizeValue,
+  radian,
+  rawValue,
+  stepValue,
+  InputEventOption,
+} from '@tremolo-ui/functions'
+import React, {
+  ComponentPropsWithoutRef,
+  CSSProperties,
+  useCallback,
+  useRef,
+} from 'react'
 import clsx from 'clsx'
 
 import { useEventListener } from '../../hooks/useEventListener'
@@ -51,8 +63,8 @@ export type AnimationKnobProps = {
   /** Whether to apply `{use-select: none}` when dragging */
   bodyNoSelect?: boolean
   /**
-     * wheel control option
-     */
+   * wheel control option
+   */
   wheel?: InputEventOption | null
   /**
    * keyboard control option
@@ -101,7 +113,8 @@ export function AnimationKnob({
   // --- interpret props ---
   // const percent = normalizeValue(value, min, max, skew)
 
-  const isRelativeSize = typeof (size ?? width) == 'string' || typeof height == 'string'
+  const isRelativeSize =
+    typeof (size ?? width) == 'string' || typeof height == 'string'
 
   const handleEvent = (
     event:
@@ -123,22 +136,26 @@ export function AnimationKnob({
     }
   }
 
-  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (!keyboard || !onChange) return
-    const key = event.key
-    if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
-      event.preventDefault()
-      const x = (key == 'ArrowRight' || key == 'ArrowUp') ? keyboard[1] : -keyboard[1]
-      let v
-      if (keyboard[0] == 'normalized') {
-        const n = normalizeValue(value, min, max, skew)
-        v = rawValue(n + x, min, max, skew)
-      } else {
-        v = value + x
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (!keyboard || !onChange) return
+      const key = event.key
+      if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
+        event.preventDefault()
+        const x =
+          key == 'ArrowRight' || key == 'ArrowUp' ? keyboard[1] : -keyboard[1]
+        let v
+        if (keyboard[0] == 'normalized') {
+          const n = normalizeValue(value, min, max, skew)
+          v = rawValue(n + x, min, max, skew)
+        } else {
+          v = value + x
+        }
+        onChange(clamp(stepValue(v, step), min, max))
       }
-      onChange(clamp(stepValue(v, step), min, max))
-    }
-  }, [value, min, max, step, skew, keyboard, onChange])
+    },
+    [value, min, max, step, skew, keyboard, onChange],
+  )
 
   // --- hooks ---
   const wheelRefCallback = useRefCallbackEvent(
@@ -208,77 +225,79 @@ export function AnimationKnob({
       {...props}
     >
       <AnimationCanvas
-        {
-          ...isRelativeSize ?
-          { relativeSize: true } :
-          {
-            width: size ?? width,
-            height: size ?? height
-          }
+        {...(isRelativeSize
+          ? { relativeSize: true }
+          : {
+              width: size ?? width,
+              height: size ?? height,
+            })}
+        draw={
+          draw
+            ? draw
+            : (ctx, width, height) => {
+                const p = normalizeValue(value, min, max, skew)
+                const startP = normalizeValue(startValue, min, max, skew)
+                const w = width.current,
+                  cx = w / 2
+                const h = height.current,
+                  cy = h / 2
+                const r = Math.min(cx, cy)
+                if (r <= 0) return
+
+                // reset
+                ctx.clearRect(0, 0, w, h)
+                ctx.lineCap = 'butt'
+
+                // bg
+                ctx.beginPath()
+                ctx.fillStyle = bg
+                ctx.arc(cx, cy, r - 0.5, 0, 2 * Math.PI)
+                ctx.fill()
+
+                ctx.lineWidth = lineWeight
+
+                // inactive rotary
+                ctx.beginPath()
+                ctx.strokeStyle = inactiveColor
+                ctx.arc(
+                  cx,
+                  cy,
+                  r - 0.5 - lineWeight / 2,
+                  radian(135),
+                  radian(45),
+                )
+                ctx.stroke()
+
+                // active rotary
+                ctx.beginPath()
+                ctx.strokeStyle = activeColor
+                ctx.arc(
+                  cx,
+                  cy,
+                  r - 0.5 - lineWeight / 2,
+                  radian(135 + 270 * startP),
+                  radian(135 + 270 * p),
+                  p < startP,
+                )
+                ctx.stroke()
+
+                // thumb
+                ctx.lineCap = 'round'
+                ctx.beginPath()
+                ctx.moveTo(cx, cy)
+                ctx.lineTo(
+                  cx +
+                    Math.cos(radian(135 + 270 * p)) *
+                      (r - 0.5 - thumbWeight / 2),
+                  cy +
+                    Math.sin(radian(135 + 270 * p)) *
+                      (r - 0.5 - thumbWeight / 2),
+                )
+                ctx.strokeStyle = thumb
+                ctx.lineWidth = thumbWeight
+                ctx.stroke()
+              }
         }
-        draw={draw ? draw : (ctx, width, height) => {
-          const p = normalizeValue(value, min, max, skew)
-          const startP = normalizeValue(startValue, min, max, skew)
-          const w = width.current,
-            cx = w / 2
-          const h = height.current,
-            cy = h / 2
-          const r = Math.min(cx, cy)
-          if (r <= 0) return
-
-          // reset
-          ctx.clearRect(0, 0, w, h)
-          ctx.lineCap = 'butt'
-
-          // bg
-          ctx.beginPath()
-          ctx.fillStyle = bg
-          ctx.arc(cx, cy, r - 0.5, 0, 2 * Math.PI)
-          ctx.fill()
-
-          ctx.lineWidth = lineWeight
-
-          // inactive rotary
-          ctx.beginPath()
-          ctx.strokeStyle = inactiveColor
-          ctx.arc(
-            cx,
-            cy,
-            r - 0.5 - lineWeight / 2,
-            radian(135),
-            radian(45),
-          )
-          ctx.stroke()
-
-          // active rotary
-          ctx.beginPath()
-          ctx.strokeStyle = activeColor
-          ctx.arc(
-            cx,
-            cy,
-            r - 0.5 - lineWeight / 2,
-            radian(135 + 270 * startP),
-            radian(135 + 270 * p),
-            p < startP,
-          )
-          ctx.stroke()
-
-          // thumb
-          ctx.lineCap = 'round'
-          ctx.beginPath()
-          ctx.moveTo(cx, cy)
-          ctx.lineTo(
-            cx +
-              Math.cos(radian(135 + 270 * p)) *
-                (r - 0.5 - thumbWeight / 2),
-            cy +
-              Math.sin(radian(135 + 270 * p)) *
-                (r - 0.5 - thumbWeight / 2),
-          )
-          ctx.strokeStyle = thumb
-          ctx.lineWidth = thumbWeight
-          ctx.stroke()
-        }}
       />
     </div>
   )

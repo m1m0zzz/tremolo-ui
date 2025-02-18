@@ -1,6 +1,22 @@
 import clsx from 'clsx'
-import React, { ComponentPropsWithoutRef, createRef, CSSProperties, ReactElement, ReactNode, RefObject, useEffect, useRef, useState } from 'react'
-import { isWhiteKey, NoteName, noteName, noteNames, parseNoteName } from '@tremolo-ui/functions'
+import React, {
+  ComponentPropsWithoutRef,
+  createRef,
+  CSSProperties,
+  ReactElement,
+  ReactNode,
+  RefObject,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
+import {
+  isWhiteKey,
+  NoteName,
+  noteName,
+  noteNames,
+  parseNoteName,
+} from '@tremolo-ui/functions'
 
 import { useEventListener } from '../../hooks/useEventListener'
 
@@ -18,7 +34,7 @@ import { KeyBoardShortcuts } from './keyboardShortcuts'
 
 export interface PianoProps {
   // required
-  noteRange: { first: number, last: number }
+  noteRange: { first: number; last: number }
 
   // optional
   height?: number | string
@@ -68,7 +84,7 @@ export function Piano({
   // --- interpret props ---
   const noteRangeArray = Array.from(
     { length: noteRange.last - noteRange.first + 1 },
-    (_, i) => i + noteRange.first
+    (_, i) => i + noteRange.first,
   )
   const whiteNoteCount = noteRangeArray.filter((v) => isWhiteKey(v)).length
 
@@ -114,7 +130,8 @@ export function Piano({
     const firstNoteName = toNoteName(noteRange.first)
     const pos = pitchPositions[_noteName] - pitchPositions[firstNoteName]
     const octave = Math.floor((note - noteRange.first) / 12)
-    const octaveOffset = noteNames.indexOf(firstNoteName) > noteNames.indexOf(_noteName) ? 1 : 0
+    const octaveOffset =
+      noteNames.indexOf(firstNoteName) > noteNames.indexOf(_noteName) ? 1 : 0
     const length = whiteNoteWidth + 3
     return pos * length + (octave + octaveOffset) * 7 * length
   }
@@ -161,7 +178,7 @@ export function Piano({
       style={{
         width: fill ? '100%' : undefined,
         height: height,
-        ...style
+        ...style,
       }}
       onPointerDown={(e) => {
         if (props.onPointerDown) props.onPointerDown(e)
@@ -174,40 +191,38 @@ export function Piano({
       {...props}
     >
       {noteRangeArray.map((note, index) => {
-        return (
-          isWhiteKey(note) ? (
-            <WhiteKey
-              key={note}
-              ref={keyRefs.current[index]}
-              __glissando={glissando && pressed}
-              __position={notePosition(note)}
-              __note={note}
-              __disabled={note > midiMax}
-              __index={index}
-              __fill={fill}
-              __width={whiteNoteWidth}
-              __playNote={playNote}
-              __stopNote={stopNote}
-              __label={label}
-              {...whiteKeyProps}
-            />
-          ) : (
-            <BlackKey
-              key={note}
-              ref={keyRefs.current[index]}
-              __glissando={glissando && pressed}
-              __position={notePosition(note)}
-              __note={note}
-              __disabled={note > midiMax}
-              __index={index}
-              __fill={fill}
-              __width={whiteNoteWidth * 0.65}
-              __playNote={playNote}
-              __stopNote={stopNote}
-              __label={label}
-              {...blackKeyProps}
-            />
-          )
+        return isWhiteKey(note) ? (
+          <WhiteKey
+            key={note}
+            ref={keyRefs.current[index]}
+            __glissando={glissando && pressed}
+            __position={notePosition(note)}
+            __note={note}
+            __disabled={note > midiMax}
+            __index={index}
+            __fill={fill}
+            __width={whiteNoteWidth}
+            __playNote={playNote}
+            __stopNote={stopNote}
+            __label={label}
+            {...whiteKeyProps}
+          />
+        ) : (
+          <BlackKey
+            key={note}
+            ref={keyRefs.current[index]}
+            __glissando={glissando && pressed}
+            __position={notePosition(note)}
+            __note={note}
+            __disabled={note > midiMax}
+            __index={index}
+            __fill={fill}
+            __width={whiteNoteWidth * 0.65}
+            __playNote={playNote}
+            __stopNote={stopNote}
+            __label={label}
+            {...blackKeyProps}
+          />
         )
       })}
     </div>

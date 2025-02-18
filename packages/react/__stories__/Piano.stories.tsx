@@ -3,7 +3,13 @@ import { noteNumber, noteName } from '@tremolo-ui/functions'
 import { useState } from 'react'
 import * as Tone from 'tone'
 
-import { BlackKey, KeyLabel, Piano, Shortcuts, WhiteKey } from '../src/components/Piano'
+import {
+  BlackKey,
+  KeyLabel,
+  Piano,
+  Shortcuts,
+  WhiteKey,
+} from '../src/components/Piano'
 import { NumberInput } from '../src/components/NumberInput'
 import { sizesOptionType } from './lib/typeUtils'
 
@@ -13,13 +19,13 @@ export default {
   argTypes: {
     height: {
       table: {
-        type: sizesOptionType
-      }
+        type: sizesOptionType,
+      },
     },
     children: {
-      control: false
-    }
-  }
+      control: false,
+    },
+  },
 } satisfies Meta<typeof Piano>
 
 type Story = StoryObj<typeof Piano>
@@ -27,9 +33,9 @@ type Story = StoryObj<typeof Piano>
 export const Basic: Story = {
   args: {
     noteRange: { first: noteNumber('C3'), last: noteNumber('B4') },
-    keyboardShortcuts: Shortcuts.HOME_ROW
+    keyboardShortcuts: Shortcuts.HOME_ROW,
   },
-  render: args => {
+  render: (args) => {
     const synth = new Tone.PolySynth().toDestination()
     synth.volume.value = -6 // dB
     // synth.set({
@@ -40,9 +46,16 @@ export const Basic: Story = {
 
     return (
       <div>
-        <p>Basic piano example with{' '}
-          <a href="https://tonejs.github.io/" target="_blank" rel="noopener noreferrer">Tone.js</a>
-          {' '}PolySynth.
+        <p>
+          Basic piano example with{' '}
+          <a
+            href="https://tonejs.github.io/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Tone.js
+          </a>{' '}
+          PolySynth.
         </p>
         <Piano
           {...args}
@@ -57,7 +70,7 @@ export const Basic: Story = {
         />
       </div>
     )
-  }
+  },
 }
 
 export const Range = () => {
@@ -70,8 +83,12 @@ export const Range = () => {
           marginBottom: '1rem',
         }}
       >
-        <label>first note:{' '}
-          <select value={first} onChange={(e) => setFirst(parseInt(e.target.value))}>
+        <label>
+          first note:{' '}
+          <select
+            value={first}
+            onChange={(e) => setFirst(parseInt(e.target.value))}
+          >
             {[...Array(127)].map((_, i) => (
               <option key={i} value={i} disabled={i > last}>
                 {noteName(i)}
@@ -80,13 +97,17 @@ export const Range = () => {
           </select>
         </label>
         <br />
-        <label>last note:{' '}
-          <select value={last} onChange={(e) => setLast(parseInt(e.target.value))}>
-          {[...Array(127)].map((_, i) => (
-            <option key={i} value={i} disabled={i < first}>
-              {noteName(i)}
-            </option>
-          ))}
+        <label>
+          last note:{' '}
+          <select
+            value={last}
+            onChange={(e) => setLast(parseInt(e.target.value))}
+          >
+            {[...Array(127)].map((_, i) => (
+              <option key={i} value={i} disabled={i < first}>
+                {noteName(i)}
+              </option>
+            ))}
           </select>
         </label>
       </div>
@@ -97,7 +118,9 @@ export const Range = () => {
         <WhiteKey>
           <KeyLabel
             label={(note) => {
-              return ['ド',, 'レ',, 'ミ', 'ファ',, 'ソ',, 'ラ',, 'シ'].at(note % 12)
+              return ['ド', , 'レ', , 'ミ', 'ファ', , 'ソ', , 'ラ', , 'シ'].at(
+                note % 12,
+              )
             }}
           />
         </WhiteKey>
@@ -112,9 +135,7 @@ export const Range = () => {
 
 export const Styling = () => {
   return (
-    <Piano
-      noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}
-    >
+    <Piano noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}>
       <WhiteKey
         width={60}
         // bg='#83888a'
@@ -127,7 +148,7 @@ export const Styling = () => {
           }}
           style={{
             border: 'none',
-            color: 'white'
+            color: 'white',
           }}
         />
       </WhiteKey>
@@ -139,7 +160,7 @@ export const Styling = () => {
         <KeyLabel />
       </BlackKey>
     </Piano>
- )
+  )
 }
 
 export const OneOctave = () => {
@@ -155,7 +176,10 @@ export const OneOctave = () => {
         style={{ display: 'block', marginBottom: '1rem' }}
       />
       <Piano
-        noteRange={{ first: noteNumber(`C${octave}`), last: noteNumber(`B${octave}`) }}
+        noteRange={{
+          first: noteNumber(`C${octave}`),
+          last: noteNumber(`B${octave}`),
+        }}
         label={(note) => noteName(note)}
       />
     </div>

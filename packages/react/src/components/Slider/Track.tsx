@@ -49,14 +49,13 @@ export function SliderTrack({
       className={clsx('tremolo-slider-track', className)}
       aria-disabled={__disabled}
       style={{
-        background:
-          xor(__vertical, __reverse) ?
-          `linear-gradient(to ${direction}, var(--inactive, #eee) ${__percent}%, var(--active, #7998ec) ${__percent}%)` :
-          `linear-gradient(to ${direction}, var(--active, #7998ec) ${__percent}%, var(--inactive, #eee) ${__percent}%)`,
+        background: xor(__vertical, __reverse)
+          ? `linear-gradient(to ${direction}, var(--inactive, #eee) ${__percent}%, var(--active, #7998ec) ${__percent}%)`
+          : `linear-gradient(to ${direction}, var(--active, #7998ec) ${__percent}%, var(--inactive, #eee) ${__percent}%)`,
         borderRadius: styleHelper(thickness!, '/', 2),
         width: !__vertical ? length : thickness,
         height: __vertical ? length : thickness,
-        ...style
+        ...style,
       }}
     >
       {children}

@@ -43,12 +43,12 @@ export function isEmpty(obj: object) {
  * @category Utility
  */
 export function mod(n: number, m: number) {
-  return (((n % m) + m) % m)
+  return ((n % m) + m) % m
 }
 
 /**
  * @category Utility
  */
 export function xor(a = false, b = false) {
-  return ((a || b) && (a != b))
+  return (a || b) && a != b
 }

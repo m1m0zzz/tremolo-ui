@@ -6,7 +6,7 @@ export function parse(code: string) {
   const expanded = []
   const collapsed = []
   for (let i = 0; i < codeArray.length; i++) {
-    const line = codeArray[i];
+    const line = codeArray[i]
     // console.log(line)
     const m = line.match(/^(\s*)\/\/\s*(.*)|^(\s*)\{\/\*\s*(.*)\s*\*\/\}/)
     // console.log(m)
@@ -17,7 +17,7 @@ export function parse(code: string) {
 
     if (magicComment == 'expand begin') {
       expandZone = true
-    // } else if (magicComment == 'expand alt') {
+      // } else if (magicComment == 'expand alt') {
       // expandAltZone = true
     } else if (magicComment == 'expand end') {
       expandZone = false
@@ -48,6 +48,6 @@ export function parse(code: string) {
   }
   return {
     expand: expanded.join('\n').trim(),
-    collapse: collapsed.join('\n').trim()
+    collapse: collapsed.join('\n').trim(),
   }
 }

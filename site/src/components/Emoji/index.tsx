@@ -11,7 +11,7 @@ export function Emoji({ emoji, format = 'svg' }: Props) {
   return (
     <img
       className={styles.emoji}
-      src={toUrl(emoji, resolveOptions({size: format}))}
+      src={toUrl(emoji, resolveOptions({ size: format }))}
       alt={emoji}
       draggable={false}
     />

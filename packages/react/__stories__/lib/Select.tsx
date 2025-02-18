@@ -8,13 +8,14 @@ export default function Select<T extends number | string>({
   onChange,
   style,
   ...props
-}: Props<T> & Omit<React.SelectHTMLAttributes<HTMLSelectElement>, keyof Props<T>>) {
+}: Props<T> &
+  Omit<React.SelectHTMLAttributes<HTMLSelectElement>, keyof Props<T>>) {
   return (
     <select
       style={{
         display: 'block',
         marginBottom: '1rem',
-        ...style
+        ...style,
       }}
       onChange={(e) => {
         if (!onChange) return
@@ -26,9 +27,11 @@ export default function Select<T extends number | string>({
       }}
       {...props}
     >
-      {options.map((d, i) =>
-        <option key={i} value={String(d)}>{d}</option>
-      )}
+      {options.map((d, i) => (
+        <option key={i} value={String(d)}>
+          {d}
+        </option>
+      ))}
     </select>
   )
 }

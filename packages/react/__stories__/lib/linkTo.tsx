@@ -3,11 +3,11 @@ import { default as SbLinkTo } from '@storybook/addon-links/react'
 import { useTheme } from '@storybook/core/theming'
 
 interface Props {
-  kind?: string;
-  title?: string;
-  story?: string;
-  name?: string;
-  children?: ReactNode;
+  kind?: string
+  title?: string
+  story?: string
+  name?: string
+  children?: ReactNode
 }
 
 export default function LinkTo({
@@ -17,10 +17,8 @@ export default function LinkTo({
 }: Props & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof Props>) {
   const theme = useTheme()
   return (
-    <SbLinkTo
-      story={story}
-      style={{ color: theme.brand.url }}
-      {...props}
-    >{children}</SbLinkTo>
+    <SbLinkTo story={story} style={{ color: theme.brand.url }} {...props}>
+      {children}
+    </SbLinkTo>
   )
 }

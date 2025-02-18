@@ -6,3 +6,6 @@
 *.yml
 *.md
 *.mdx
+
+**/build/
+docs/api
