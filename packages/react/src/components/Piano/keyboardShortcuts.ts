@@ -1,5 +1,6 @@
 export type KeyBoardShortcuts = {
   keys: string[],
+  // TODO
   flags?: {
     naturalOnly?: boolean
   },

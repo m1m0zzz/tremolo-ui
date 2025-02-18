@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef, MutableRefObject, ReactElement, useEffect, useRef } from 'react'
+import { ComponentPropsWithoutRef, MutableRefObject, ReactElement, useEffect, useRef } from 'react'
 import clsx from 'clsx'
 
 import { DrawingContext, drawingState, DrawingStateValue } from './canvas'
@@ -50,11 +50,11 @@ export type AnimationCanvasProps = AbsoluteSizingProps & RelativeSizingProps & C
  */
 export function AnimationCanvas(
   props: AbsoluteSizingProps & CommonProps &
-  Omit<ComponentPropsWithRef<'canvas'>, keyof AnimationCanvasProps>
+  Omit<ComponentPropsWithoutRef<'canvas'>, keyof AnimationCanvasProps>
 ): ReactElement
 export function AnimationCanvas(
   props: RelativeSizingProps & CommonProps &
-  Omit<ComponentPropsWithRef<'canvas'>, keyof AnimationCanvasProps>
+  Omit<ComponentPropsWithoutRef<'canvas'>, keyof AnimationCanvasProps>
 ): ReactElement
 export function AnimationCanvas({
   width = 100,
@@ -67,7 +67,7 @@ export function AnimationCanvas({
   className,
   ...props
 }: AnimationCanvasProps &
-  Omit<ComponentPropsWithRef<'canvas'>, keyof AnimationCanvasProps>): ReactElement {
+  Omit<ComponentPropsWithoutRef<'canvas'>, keyof AnimationCanvasProps>): ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const memoCanvasRef = useRef<HTMLCanvasElement>(null)
   const reqIdRef = useRef<number>()

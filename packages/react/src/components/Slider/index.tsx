@@ -5,7 +5,7 @@ import {
   ScaleType,
 } from '@tremolo-ui/functions/Slider'
 import { clamp, normalizeValue, rawValue, stepValue, toFixed, InputEventOption, styleHelper, xor } from '@tremolo-ui/functions'
-import React, { CSSProperties, forwardRef, ReactElement, useCallback, useImperativeHandle, useRef } from 'react'
+import React, { ComponentPropsWithoutRef, CSSProperties, forwardRef, ReactElement, useCallback, useImperativeHandle, useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
@@ -61,10 +61,12 @@ export interface SliderMethods {
   blur: () => void
 }
 
+type Props = SliderProps & Omit<ComponentPropsWithoutRef<'div'>, keyof SliderProps>
+
 /**
  * Customizable slider
  */
- export const Slider = forwardRef<SliderMethods, SliderProps>(({
+ export const Slider = forwardRef<SliderMethods, Props>(({
   value,
   min,
   max,
@@ -83,8 +85,8 @@ export interface SliderMethods {
   readonly = false,
   onChange,
   children,
-  ...pseudo
-}: SliderProps, ref) => {
+  ...props
+}: Props, ref) => {
   // -- state and ref ---
   const trackElementRef = useRef<HTMLDivElement>(null)
   const thumbRef = useRef<SliderThumbMethods>(null)
@@ -251,6 +253,7 @@ export interface SliderMethods {
       onKeyDown={handleKeyDown}
       onFocus={thumbRef.current?.focus}
       onBlur={thumbRef.current?.blur}
+      {...props}
     >
       <div
         style={{

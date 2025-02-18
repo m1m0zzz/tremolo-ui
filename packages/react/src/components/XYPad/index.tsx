@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { clamp, normalizeValue, rawValue, stepValue, toFixed, InputEventOption, styleHelper } from '@tremolo-ui/functions'
-import React, { CSSProperties, forwardRef, ReactElement, useCallback, useImperativeHandle, useMemo, useRef } from 'react'
+import React, { ComponentPropsWithoutRef, forwardRef, ReactElement, useCallback, useImperativeHandle, useMemo, useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
@@ -36,8 +36,6 @@ export interface XYPadProps {
   bodyNoSelect?: boolean
   disabled?: boolean
   readonly?: boolean
-  className?: string
-  style?: CSSProperties
   onChange?: (valueX: number, valueY: number) => void
   /** \<XYPadThumb /> | \<XYPadArea /> */
   children?: ReactElement | ReactElement[]
@@ -56,10 +54,12 @@ const defaultValueOptions = {
   keyboard: ['raw', 1] as InputEventOption,
 }
 
+type Props = XYPadProps & Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadProps>
+
 /**
  * Simple XYPad
  */
- export const XYPad = forwardRef<XYPadMethods, XYPadProps>(({
+ export const XYPad = forwardRef<XYPadMethods, Props>(({
   x: _x,
   y: _y,
   className,
@@ -69,7 +69,8 @@ const defaultValueOptions = {
   readonly = false,
   onChange,
   children,
-}: XYPadProps, ref) => {
+  ...props
+}: Props, ref) => {
   const x = { ...defaultValueOptions, ..._x }
   const y = { ...defaultValueOptions, ..._y }
 
@@ -236,6 +237,7 @@ const defaultValueOptions = {
       onKeyDown={handleKeyDown}
       onFocus={thumbRef.current?.focus}
       onBlur={thumbRef.current?.blur}
+      {...props}
     >
       <div
         className="tremolo-xy-pad-area-wrapper"

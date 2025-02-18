@@ -1,11 +1,15 @@
+import clsx from "clsx"
 import React, { ComponentPropsWithoutRef, forwardRef, useImperativeHandle, useState } from "react"
 
 import { KeyLabel, KeyLabelProps } from "./KeyLabel"
 import { KeyMethods, KeyProps } from "./key"
 
-export const BlackKey = forwardRef<KeyMethods, KeyProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KeyProps>>(({
+type Props = KeyProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KeyProps>
+
+export const BlackKey = forwardRef<KeyMethods, Props>(({
   width = 40 * 0.65,
   height = '60%',
+  className,
   style,
   children,
   __glissando,
@@ -19,7 +23,7 @@ export const BlackKey = forwardRef<KeyMethods, KeyProps & Omit<ComponentPropsWit
   __stopNote,
   __label,
   ...props
-}: KeyProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KeyProps>, ref) => {
+}: Props, ref) => {
   const [played, setPlayed] = useState(false)
 
   useImperativeHandle(ref, () => {
@@ -56,7 +60,7 @@ export const BlackKey = forwardRef<KeyMethods, KeyProps & Omit<ComponentPropsWit
 
   return (
     <div
-      className={`tremolo-piano-black-key`}
+      className={clsx(`tremolo-piano-black-key`, className)}
       aria-disabled={__disabled}
       data-active={played}
       style={{
@@ -87,6 +91,7 @@ export const BlackKey = forwardRef<KeyMethods, KeyProps & Omit<ComponentPropsWit
         setPlayed(false)
         if (__stopNote) __stopNote(__note!)
       }}
+      {...props}
     >
       <KeyLabel
         __note={__note}

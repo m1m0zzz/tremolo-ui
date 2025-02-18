@@ -1,12 +1,15 @@
-import React, { forwardRef, useImperativeHandle } from "react"
-import { useState } from "react"
+import clsx from "clsx"
+import React, { ComponentPropsWithoutRef, forwardRef, useImperativeHandle, useState } from "react"
+
 import { KeyLabel, KeyLabelProps } from "./KeyLabel"
 import { KeyMethods, KeyProps } from "./key"
 
+type Props = KeyProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KeyProps>
 
-export const WhiteKey = forwardRef<KeyMethods, KeyProps>(({
+export const WhiteKey = forwardRef<KeyMethods, Props>(({
   width = 40,
   height = '100%',
+  className,
   style,
   children,
   __glissando,
@@ -19,7 +22,8 @@ export const WhiteKey = forwardRef<KeyMethods, KeyProps>(({
   __playNote,
   __stopNote,
   __label,
-}: KeyProps, ref) => {
+  ...props
+}: Props, ref) => {
   const [played, setPlayed] = useState(false)
 
   useImperativeHandle(ref, () => {
@@ -56,7 +60,7 @@ export const WhiteKey = forwardRef<KeyMethods, KeyProps>(({
 
   return (
     <div
-      className={`tremolo-piano-white-key`}
+      className={clsx(`tremolo-piano-white-key`, className)}
       aria-disabled={__disabled}
       data-active={played}
       style={{
@@ -87,6 +91,7 @@ export const WhiteKey = forwardRef<KeyMethods, KeyProps>(({
         setPlayed(false)
         if (__stopNote) __stopNote(__note!)
       }}
+      {...props}
     >
       <KeyLabel
         __note={__note}

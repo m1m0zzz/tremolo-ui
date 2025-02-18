@@ -1,5 +1,5 @@
 import clsx from "clsx"
-import { CSSProperties, ReactNode } from "react"
+import { ComponentPropsWithoutRef, CSSProperties, ReactNode } from "react"
 
 export interface KeyLabelProps {
   /**
@@ -7,8 +7,7 @@ export interface KeyLabelProps {
    */
   label?: (note: number, index: number) => ReactNode
 
-  className?: string
-  style?: CSSProperties
+  wrapperClassName?: string
   wrapperStyle?: CSSProperties
 
   /** @internal */
@@ -21,24 +20,26 @@ export interface KeyLabelProps {
 
 export function KeyLabel({
   label,
-  className,
   style,
+  className,
+  wrapperClassName,
   wrapperStyle,
   __note,
   __index,
   __label,
-}: KeyLabelProps) {
+  ...props
+}: KeyLabelProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KeyLabelProps>) {
   const content = label ? label(__note!, __index!) : __label && __label(__note!, __index!)
 
   return (
     (content != undefined || content != null) &&
     <div
-      className='tremolo-piano-key-label-wrapper'
+      className={clsx('tremolo-piano-key-label-wrapper', wrapperClassName)}
       style={wrapperStyle}
     >
       <div
         className={clsx('tremolo-piano-key-label', className)}
-        style={style}
+        {...props}
       >
         {content}
       </div>

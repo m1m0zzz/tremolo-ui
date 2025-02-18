@@ -1,5 +1,5 @@
 import { clamp, normalizeValue, radian, rawValue, stepValue, InputEventOption } from '@tremolo-ui/functions'
-import React, { ComponentPropsWithRef, CSSProperties, useCallback, useRef } from 'react'
+import React, { ComponentPropsWithoutRef, CSSProperties, useCallback, useRef } from 'react'
 import clsx from 'clsx'
 
 import { useEventListener } from '../../hooks/useEventListener'
@@ -93,7 +93,7 @@ export function AnimationKnob({
   onChange,
   ...props
 }: AnimationKnobProps &
-  Omit<ComponentPropsWithRef<'div'>, keyof AnimationKnobProps>) {
+  Omit<ComponentPropsWithoutRef<'div'>, keyof AnimationKnobProps>) {
   // -- state and ref ---
   // const [privateValue, setPrivateValue] = useState(value);
   const dragOffsetY = useRef<number | undefined>(undefined)
