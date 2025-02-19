@@ -1,5 +1,6 @@
 import clsx from 'clsx'
 import {
+  ComponentPropsWithoutRef,
   CSSProperties,
   forwardRef,
   ReactNode,
@@ -11,14 +12,10 @@ export interface ThumbProps {
   size?: number | string
   width?: number | string
   height?: number | string
-  color?: string
-  hoverColor?: string
-  disabledColor?: string
-  disabledHoverColor?: string
-  zIndex?: number
 
-  className?: string
-  style?: CSSProperties
+  wrapperClassName?: string
+  wrapperStyle?: CSSProperties
+
   children?: ReactNode
 
   /** @internal */
@@ -32,23 +29,23 @@ export interface XYPadThumbMethods {
   blur: () => void
 }
 
-export const XYPadThumb = forwardRef<XYPadThumbMethods, ThumbProps>(
+type Props = ThumbProps &
+  Omit<ComponentPropsWithoutRef<'div'>, keyof ThumbProps>
+
+export const XYPadThumb = forwardRef<XYPadThumbMethods, Props>(
   (
     {
       size,
       width = 22,
       height = 22,
-      color = '#4e76e6',
-      hoverColor = color,
-      disabledColor = '#5d6478',
-      disabledHoverColor = disabledColor,
-      zIndex = 100,
       children,
+      wrapperClassName,
+      wrapperStyle,
       className,
       style,
       __disabled,
       __css,
-    }: ThumbProps,
+    }: Props,
     ref,
   ) => {
     const wrapperRef = useRef<HTMLDivElement>(null)
@@ -66,12 +63,10 @@ export const XYPadThumb = forwardRef<XYPadThumbMethods, ThumbProps>(
 
     return (
       <div
-        className="tremolo-xy-pad-thumb-wrapper"
+        className={clsx('tremolo-xy-pad-thumb-wrapper', wrapperClassName)}
         style={{
-          position: 'absolute',
-          translate: '-50% -50%',
-          zIndex: zIndex,
           ...__css,
+          ...wrapperStyle,
         }}
       >
         {children ? (
@@ -83,18 +78,10 @@ export const XYPadThumb = forwardRef<XYPadThumbMethods, ThumbProps>(
             className={clsx('tremolo-xy-pad-thumb', className)}
             // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
             tabIndex={0}
+            aria-disabled={__disabled}
             style={{
-              background: __disabled ? disabledColor : color,
               width: size ?? width,
               height: size ?? height,
-              borderRadius: '50%',
-              outline: 'none',
-              // '&:hover': {
-              //   background: __disabled ? disabledHoverColor : hoverColor
-              // },
-              // '&:focus': !__disabled && {
-              //   boxShadow: '0px 0px 0px 3px rgba(var(--tremolo-theme-color-rgb), 0.2)',
-              // },
               ...style,
             }}
           ></div>
