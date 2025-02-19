@@ -3,6 +3,7 @@ import tseslint from 'typescript-eslint'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
 import storybook from 'eslint-plugin-storybook'
 import importPlugin from 'eslint-plugin-import'
+import hooksPlugin from 'eslint-plugin-react-hooks'
 
 export default [
   eslint.configs.recommended,
@@ -20,6 +21,17 @@ export default [
       'site/docs/api',
       'site/src/theme',
     ],
+  },
+  {
+    ignores: ['**/*.stories.tsx'],
+    plugins: {
+      'react-hooks': hooksPlugin,
+    },
+    rules: {
+      ...hooksPlugin.configs.recommended.rules,
+      // https://github.com/facebook/react/issues/31687
+      'react-hooks/rules-of-hooks': 'off',
+    },
   },
   {
     languageOptions: {

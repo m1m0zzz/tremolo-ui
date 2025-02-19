@@ -5,6 +5,7 @@ import React, {
   ReactElement,
   useCallback,
   useImperativeHandle,
+  useMemo,
   useRef,
 } from 'react'
 
@@ -92,8 +93,12 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
     }: Props,
     ref,
   ) => {
-    const x = { ...defaultValueOptions, ..._x }
-    const y = { ...defaultValueOptions, ..._y }
+    const x = useMemo(() => {
+      return { ...defaultValueOptions, ..._x }
+    }, [_x])
+    const y = useMemo(() => {
+      return { ...defaultValueOptions, ..._y }
+    }, [_y])
 
     // -- state and ref ---
     const areaElementRef = useRef<HTMLDivElement>(null)

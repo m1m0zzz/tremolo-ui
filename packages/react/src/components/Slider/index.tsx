@@ -202,18 +202,7 @@ export const Slider = forwardRef<SliderMethods, Props>(
           onChange(clamp(stepValue(v, step), min, max))
         }
       },
-      [
-        value,
-        min,
-        max,
-        step,
-        skew,
-        vertical,
-        reverse,
-        keyboard,
-        onChange,
-        readonly,
-      ],
+      [value, min, max, step, skew, reverse, keyboard, onChange, readonly],
     )
 
     // --- hooks ---

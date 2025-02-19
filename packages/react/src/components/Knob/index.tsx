@@ -134,7 +134,7 @@ export function Knob({
         onChange(clamp(stepValue(v, step), min, max))
       }
     },
-    [value, min, max, step, skew, keyboard, onChange],
+    [value, min, max, step, skew, keyboard, readonly, onChange],
   )
 
   // --- hooks ---

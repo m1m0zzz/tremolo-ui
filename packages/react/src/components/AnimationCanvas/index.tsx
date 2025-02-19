@@ -3,6 +3,7 @@ import {
   ComponentPropsWithoutRef,
   MutableRefObject,
   ReactElement,
+  useCallback,
   useEffect,
   useRef,
 } from 'react'
@@ -87,17 +88,20 @@ export function AnimationCanvas({
   const widthRef = useRef(0)
   const heightRef = useRef(0)
 
-  const loop = (
-    context: CanvasRenderingContext2D,
-    width: MutableRefObject<number>,
-    height: MutableRefObject<number>,
-    count: number,
-  ) => {
-    reqIdRef.current = requestAnimationFrame(() =>
-      loop(context, width, height, count + 1),
-    )
-    draw(context, width, height, count + 1)
-  }
+  const loop = useCallback(
+    (
+      context: CanvasRenderingContext2D,
+      width: MutableRefObject<number>,
+      height: MutableRefObject<number>,
+      count: number,
+    ) => {
+      reqIdRef.current = requestAnimationFrame(() =>
+        loop(context, width, height, count + 1),
+      )
+      draw(context, width, height, count + 1)
+    },
+    [draw],
+  )
 
   useEffect(() => {
     if (!canvasRef.current) return
@@ -172,7 +176,7 @@ export function AnimationCanvas({
         if (reqIdRef.current) cancelAnimationFrame(reqIdRef.current)
       }
     }
-  }, [loop])
+  }, [loop, init, options, reduceFlickering, relativeSize])
 
   return (
     <>

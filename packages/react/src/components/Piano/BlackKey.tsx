@@ -50,7 +50,7 @@ export const BlackKey = forwardRef<KeyMethods, Props>(
           return played
         },
       }
-    }, [])
+    }, [__disabled, __note, __playNote, __stopNote, played])
 
     let keyLabelProps: KeyLabelProps = {}
     if (children != undefined) {

@@ -28,5 +28,6 @@ export function useRefCallbackEvent(
         node.removeEventListener(event, handler, options)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 }

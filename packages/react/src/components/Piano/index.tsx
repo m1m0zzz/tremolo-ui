@@ -89,7 +89,8 @@ export function Piano({
   )
   const whiteNoteCount = noteRangeArray.filter((v) => isWhiteKey(v)).length
 
-  let whiteKeyProps: KeyProps, blackKeyProps: KeyProps
+  let whiteKeyProps: KeyProps = {},
+    blackKeyProps: KeyProps = {}
   if (children != undefined) {
     React.Children.forEach(children, (child) => {
       if (React.isValidElement(child)) {
@@ -150,7 +151,7 @@ export function Piano({
     } else {
       setWhiteNoteWidth(whiteKeyProps?.width || 40)
     }
-  }, [])
+  }, [fill, whiteKeyProps?.width, whiteNoteCount])
 
   useEventListener(window, 'keydown', (e) => {
     if (e.repeat) return
