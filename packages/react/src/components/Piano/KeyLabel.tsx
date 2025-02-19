@@ -20,7 +20,6 @@ export interface KeyLabelProps {
 
 export function KeyLabel({
   label,
-  style,
   className,
   wrapperClassName,
   wrapperStyle,

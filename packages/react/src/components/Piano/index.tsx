@@ -10,6 +10,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
+
 import {
   isWhiteKey,
   NoteName,
@@ -20,10 +21,10 @@ import {
 
 import { useEventListener } from '../../hooks/useEventListener'
 
-import { KeyMethods, KeyProps } from './key'
-import { WhiteKey } from './WhiteKey'
 import { BlackKey } from './BlackKey'
+import { KeyMethods, KeyProps } from './key'
 import { KeyBoardShortcuts } from './keyboardShortcuts'
+import { WhiteKey } from './WhiteKey'
 
 /**
  * Piano component

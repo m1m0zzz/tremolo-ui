@@ -1,6 +1,8 @@
 // expand begin
-import { AnimationCanvas } from '@tremolo-ui/react'
 import { useState } from 'react'
+
+import { AnimationCanvas } from '@tremolo-ui/react'
+
 // expand end
 
 function App() {

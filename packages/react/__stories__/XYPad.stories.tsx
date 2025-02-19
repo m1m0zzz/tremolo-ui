@@ -1,13 +1,15 @@
+import { Meta, StoryObj } from '@storybook/react'
 import { memo, useState } from 'react'
 
-import { XYPad, XYPadThumb, XYPadArea } from '../src/components/XYPad'
 import {
   integerPart,
   skewWithCenterValue,
   toFixed,
 } from '@tremolo-ui/functions'
+
 import { AnimationCanvas } from '../src/components/AnimationCanvas'
-import { Meta, StoryObj } from '@storybook/react'
+import { XYPad, XYPadThumb, XYPadArea } from '../src/components/XYPad'
+
 import { InputEventOptionString } from './lib/typeUtils'
 
 const valueOptionsDetail = `{

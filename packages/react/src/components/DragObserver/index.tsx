@@ -1,4 +1,5 @@
 import { ComponentPropsWithoutRef, ElementType, ReactNode, useRef } from 'react'
+
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 
@@ -66,7 +67,7 @@ export function DragObserver<T extends ElementType = 'div'>(
   useEventListener(window, 'pointerup', () => {
     dragOffsetX.current = undefined
     dragOffsetY.current = undefined
-    onDragEnd && onDragEnd()
+    onDragEnd?.()
   })
 
   return (
@@ -76,7 +77,7 @@ export function DragObserver<T extends ElementType = 'div'>(
         dragOffsetX.current = event.screenX
         dragOffsetY.current = event.screenY
         handleEvent(event)
-        onDragStart && onDragStart()
+        onDragStart?.()
       }}
       {...attributes}
     >

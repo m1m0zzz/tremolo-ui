@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import {
   ComponentPropsWithoutRef,
   MutableRefObject,
@@ -5,7 +6,6 @@ import {
   useEffect,
   useRef,
 } from 'react'
-import clsx from 'clsx'
 
 import { DrawingContext, drawingState, DrawingStateValue } from './canvas'
 

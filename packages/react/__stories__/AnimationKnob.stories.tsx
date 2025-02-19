@@ -1,8 +1,9 @@
+import { Meta, StoryObj } from '@storybook/react'
 import { CSSProperties, useState } from 'react'
 
-import { AnimationKnob } from '../src/components/AnimationKnob'
 import { normalizeValue } from '@tremolo-ui/functions'
-import { Meta, StoryObj } from '@storybook/react'
+
+import { AnimationKnob } from '../src/components/AnimationKnob'
 
 import { inputEventOptionType, sizesOptionType } from './lib/typeUtils'
 

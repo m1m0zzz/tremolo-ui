@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import type { SidebarsConfig } from '@docusaurus/plugin-content-docs'
 
 /**

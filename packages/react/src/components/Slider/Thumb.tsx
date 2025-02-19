@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import {
   CSSProperties,
   forwardRef,
@@ -5,7 +6,6 @@ import {
   useImperativeHandle,
   useRef,
 } from 'react'
-import clsx from 'clsx'
 
 export interface SliderThumbProps {
   size?: number | string

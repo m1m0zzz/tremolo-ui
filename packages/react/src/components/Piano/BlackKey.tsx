@@ -6,8 +6,8 @@ import React, {
   useState,
 } from 'react'
 
-import { KeyLabel, KeyLabelProps } from './KeyLabel'
 import { KeyMethods, KeyProps } from './key'
+import { KeyLabel, KeyLabelProps } from './KeyLabel'
 
 type Props = KeyProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KeyProps>
 

@@ -64,6 +64,7 @@ const rehypeTwemoji = (opts: Partial<Options> = {}) => {
   const transformer = (tree: Root) => {
     const mappedChildren = tree.children.map(
       (child) =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         map(child as any, (node: RootContent) => {
           if (node.type !== 'text' || !regex.test(node.value)) {
             return node

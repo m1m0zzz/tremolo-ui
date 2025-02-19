@@ -1,4 +1,13 @@
 import clsx from 'clsx'
+import React, {
+  ComponentPropsWithoutRef,
+  forwardRef,
+  ReactElement,
+  useCallback,
+  useImperativeHandle,
+  useRef,
+} from 'react'
+
 import {
   clamp,
   normalizeValue,
@@ -8,22 +17,13 @@ import {
   InputEventOption,
   styleHelper,
 } from '@tremolo-ui/functions'
-import React, {
-  ComponentPropsWithoutRef,
-  forwardRef,
-  ReactElement,
-  useCallback,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-} from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { addNoSelect, removeNoSelect } from '../_util'
 
-import { XYPadThumb, XYPadThumbMethods, ThumbProps } from './Thumb'
 import { XYPadArea, AreaProps } from './Area'
+import { XYPadThumb, XYPadThumbMethods, ThumbProps } from './Thumb'
 
 export interface ValueOptions {
   // required
@@ -262,6 +262,7 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
     }, [])
 
     return (
+      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <div
         className={clsx('tremolo-xy-pad', className)}
         ref={(div) => {

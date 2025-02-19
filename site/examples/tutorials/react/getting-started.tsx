@@ -1,6 +1,8 @@
 // expand begin
-import { Knob } from '@tremolo-ui/react'
 import { useState } from 'react'
+
+import { Knob } from '@tremolo-ui/react'
+
 // expand end
 
 function App() {

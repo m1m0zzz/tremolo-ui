@@ -1,6 +1,8 @@
 // expand begin
-import { Slider } from '@tremolo-ui/react'
 import { useState } from 'react'
+
+import { Slider } from '@tremolo-ui/react'
+
 // expand end
 
 function App() {

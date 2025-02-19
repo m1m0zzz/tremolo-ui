@@ -1,7 +1,7 @@
+import { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
 
 import { NumberInput } from '../src/components/NumberInput'
-import { Meta, StoryObj } from '@storybook/react'
 
 export default {
   title: 'React/Components/NumberInput',

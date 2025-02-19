@@ -1,5 +1,5 @@
-import { CSSProperties, ReactElement } from 'react'
 import clsx from 'clsx'
+import { CSSProperties, ReactElement } from 'react'
 
 export interface AreaProps {
   width?: number | string

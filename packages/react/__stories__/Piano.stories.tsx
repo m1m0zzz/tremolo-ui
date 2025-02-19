@@ -1,8 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { noteNumber, noteName } from '@tremolo-ui/functions'
 import { useState } from 'react'
 import * as Tone from 'tone'
 
+import { noteNumber, noteName } from '@tremolo-ui/functions'
+
+import { NumberInput } from '../src/components/NumberInput'
 import {
   BlackKey,
   KeyLabel,
@@ -10,7 +12,7 @@ import {
   Shortcuts,
   WhiteKey,
 } from '../src/components/Piano'
-import { NumberInput } from '../src/components/NumberInput'
+
 import { sizesOptionType } from './lib/typeUtils'
 
 export default {
@@ -118,9 +120,20 @@ export const Range = () => {
         <WhiteKey>
           <KeyLabel
             label={(note) => {
-              return ['ド', , 'レ', , 'ミ', 'ファ', , 'ソ', , 'ラ', , 'シ'].at(
-                note % 12,
-              )
+              return [
+                'ド',
+                '',
+                'レ',
+                '',
+                'ミ',
+                'ファ',
+                '',
+                'ソ',
+                '',
+                'ラ',
+                '',
+                'シ',
+              ].at(note % 12)
             }}
           />
         </WhiteKey>

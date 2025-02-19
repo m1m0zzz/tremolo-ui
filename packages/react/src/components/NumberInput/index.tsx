@@ -1,7 +1,8 @@
+import clsx from 'clsx'
+import { ChangeEvent, ComponentPropsWithoutRef, useState } from 'react'
+
 import { clamp } from '@tremolo-ui/functions'
 import { parseValue, Units } from '@tremolo-ui/functions/NumberInput'
-import { ChangeEvent, ComponentPropsWithoutRef, useState } from 'react'
-import clsx from 'clsx'
 
 export interface NumberInputProps {
   value: number | string

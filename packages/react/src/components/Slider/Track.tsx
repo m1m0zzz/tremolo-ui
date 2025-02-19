@@ -1,5 +1,6 @@
-import { CSSProperties, ReactElement } from 'react'
 import clsx from 'clsx'
+import { CSSProperties, ReactElement } from 'react'
+
 import { styleHelper, xor } from '@tremolo-ui/functions'
 
 export const defaultLength = 140

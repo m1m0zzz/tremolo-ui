@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-import Heading from '@theme/Heading'
 import Translate from '@docusaurus/Translate'
+import Heading from '@theme/Heading'
 import clsx from 'clsx'
 
 import styles from './styles.module.css'

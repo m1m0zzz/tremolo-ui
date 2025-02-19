@@ -1,6 +1,8 @@
 // expand begin
-import { NumberInput } from '@tremolo-ui/react'
 import { useState } from 'react'
+
+import { NumberInput } from '@tremolo-ui/react'
+
 // expand end
 
 function App() {

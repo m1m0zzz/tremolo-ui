@@ -1,3 +1,11 @@
+import clsx from 'clsx'
+import React, {
+  ComponentPropsWithoutRef,
+  CSSProperties,
+  useCallback,
+  useRef,
+} from 'react'
+
 import {
   clamp,
   normalizeValue,
@@ -6,19 +14,11 @@ import {
   stepValue,
   InputEventOption,
 } from '@tremolo-ui/functions'
-import React, {
-  ComponentPropsWithoutRef,
-  CSSProperties,
-  useCallback,
-  useRef,
-} from 'react'
-import clsx from 'clsx'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
-
-import { AnimationCanvas, DrawFunction } from '../AnimationCanvas'
 import { addNoSelect, removeNoSelect } from '../_util'
+import { AnimationCanvas, DrawFunction } from '../AnimationCanvas'
 
 export type AnimationKnobProps = {
   // required

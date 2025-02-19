@@ -1,9 +1,14 @@
 import clsx from 'clsx'
-import {
-  parseScaleOrderList,
-  ScaleOrderList,
-  ScaleType,
-} from '@tremolo-ui/functions/Slider'
+import React, {
+  ComponentPropsWithoutRef,
+  CSSProperties,
+  forwardRef,
+  ReactElement,
+  useCallback,
+  useImperativeHandle,
+  useRef,
+} from 'react'
+
 import {
   clamp,
   normalizeValue,
@@ -14,15 +19,11 @@ import {
   styleHelper,
   xor,
 } from '@tremolo-ui/functions'
-import React, {
-  ComponentPropsWithoutRef,
-  CSSProperties,
-  forwardRef,
-  ReactElement,
-  useCallback,
-  useImperativeHandle,
-  useRef,
-} from 'react'
+import {
+  parseScaleOrderList,
+  ScaleOrderList,
+  ScaleType,
+} from '@tremolo-ui/functions/Slider'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'

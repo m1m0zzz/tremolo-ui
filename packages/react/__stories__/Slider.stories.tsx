@@ -1,15 +1,16 @@
-import { normalizeValue, skewWithCenterValue } from '@tremolo-ui/functions'
-import { useRef, useState } from 'react'
 import { Meta, StoryObj } from '@storybook/react'
+import { useRef, useState } from 'react'
+
+import { normalizeValue, skewWithCenterValue } from '@tremolo-ui/functions'
 
 import { AnimationCanvas } from '../src/components/AnimationCanvas'
 import { NumberInput } from '../src/components/NumberInput'
 import { Slider, SliderThumb, SliderTrack } from '../src/components/Slider'
 
 import { getRMS } from './lib/dsp'
+import { inputEventOptionType } from './lib/typeUtils'
 
 import styles from './styles/Slider.module.css'
-import { inputEventOptionType } from './lib/typeUtils'
 
 const scaleTypeDetail = `[
   'step' | number,

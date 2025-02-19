@@ -1,7 +1,9 @@
 import { useState } from 'react'
-import { WheelObserver } from '../src/components/WheelObserver'
-import { NumberInput } from '../src/components/NumberInput'
+
 import { toFixed } from '@tremolo-ui/functions'
+
+import { NumberInput } from '../src/components/NumberInput'
+import { WheelObserver } from '../src/components/WheelObserver'
 
 export default {
   title: 'React/Base Components/WheelObserver',

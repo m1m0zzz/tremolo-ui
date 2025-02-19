@@ -1,3 +1,6 @@
+import clsx from 'clsx'
+import { ComponentPropsWithoutRef, useCallback, useRef } from 'react'
+
 import {
   clamp,
   InputEventOption,
@@ -6,12 +9,9 @@ import {
   rawValue,
   stepValue,
 } from '@tremolo-ui/functions'
-import clsx from 'clsx'
-import { ComponentPropsWithoutRef, useCallback, useRef } from 'react'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
-
 import { addNoSelect, removeNoSelect } from '../_util'
 
 export interface KnobProps {

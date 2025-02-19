@@ -1,9 +1,9 @@
+import { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
 
 import { Knob } from '../src/components/Knob'
-import { Meta, StoryObj } from '@storybook/react'
 
-import { inputEventOptionType, sizesOptionType } from './lib/typeUtils'
+import { inputEventOptionType } from './lib/typeUtils'
 
 export default {
   title: 'React/Components/Knob',
