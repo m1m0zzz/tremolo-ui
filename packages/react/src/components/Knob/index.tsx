@@ -25,6 +25,7 @@ export interface KnobProps {
   skew?: number // | SkewFunction
   /**
    * value set when double-clicking
+   * @default min
    * @see enableDoubleClickDefault
    */
   defaultValue?: number
@@ -93,6 +94,7 @@ export function Knob({
   const thumbLength = 35 // %
   const lineWeight = 3 // px
   const p = normalizeValue(value, min, max, skew)
+  const s = normalizeValue(startValue, min, max, skew)
 
   // --- internal functions ---
   const handleEvent = (
@@ -172,12 +174,18 @@ export function Knob({
   })
 
   const center = size / 2
-  const x1 = center + center * Math.cos(radian(-135 - 90))
-  const y1 = center + center * Math.sin(radian(-135 - 90))
-  const x2 = center + center * Math.cos(radian(-135 + p * 270 - 90))
-  const y2 = center + center * Math.sin(radian(-135 + p * 270 - 90))
-  const x3 = center + center * Math.cos(radian(135 - 90))
-  const y3 = center + center * Math.sin(radian(135 - 90))
+  const r1 = -135
+  const r2 = -135 + Math.min(p, s) * 270
+  const r3 = -135 + Math.max(p, s) * 270
+  const r4 = 135
+  const x1 = center + center * Math.cos(radian(r1 - 90))
+  const y1 = center + center * Math.sin(radian(r1 - 90))
+  const x2 = center + center * Math.cos(radian(r2 - 90))
+  const y2 = center + center * Math.sin(radian(r2 - 90))
+  const x3 = center + center * Math.cos(radian(r3 - 90))
+  const y3 = center + center * Math.sin(radian(r3 - 90))
+  const x4 = center + center * Math.cos(radian(r4 - 90))
+  const y4 = center + center * Math.sin(radian(r4 - 90))
 
   return (
     <svg
@@ -208,20 +216,31 @@ export function Knob({
       {...props}
     >
       {/* rotary meter */}
+      {startValue > min && (
+        <path
+          className="tremolo-knob-inactive-line"
+          d={`M ${x1} ${y1} A ${center} ${center} -135 ${r2 - r1 > 180 ? 1 : 0} 1 ${x2}, ${y2}`}
+          fill="none"
+          stroke={inactiveLine || 'currentColor'}
+          strokeWidth={lineWeight}
+        />
+      )}
       <path
         className="tremolo-knob-active-line"
-        d={`M ${x1} ${y1} A ${center} ${center} -135 ${45 < -135 + p * 270 ? 1 : 0} 1 ${x2}, ${y2}`}
+        d={`M ${x2} ${y2} A ${center} ${center} -135 ${r3 - r2 > 180 ? 1 : 0} 1 ${x3}, ${y3}`}
         fill="none"
         stroke={activeLine || 'currentColor'}
         strokeWidth={lineWeight}
       />
-      <path
-        className="tremolo-knob-inactive-line"
-        d={`M ${x2} ${y2} A ${center} ${center} -135 ${-45 < -135 + p * 270 ? 0 : 1} 1 ${x3}, ${y3}`}
-        fill="none"
-        stroke={inactiveLine || 'currentColor'}
-        strokeWidth={lineWeight}
-      />
+      {startValue < max && (
+        <path
+          className="tremolo-knob-inactive-line"
+          d={`M ${x3} ${y3} A ${center} ${center} -135 ${r4 - r3 > 180 ? 1 : 0} 1 ${x4}, ${y4}`}
+          fill="none"
+          stroke={inactiveLine || 'currentColor'}
+          strokeWidth={lineWeight}
+        />
+      )}
       {/* thumb */}
       <svg className="tremolo-knob-thumb">
         <circle
