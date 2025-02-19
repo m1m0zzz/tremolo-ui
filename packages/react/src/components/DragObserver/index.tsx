@@ -10,6 +10,12 @@ export interface DragObserverProps<T extends ElementType> {
    */
   as?: T
 
+  /**
+   * Threshold at which the onDrag event fires.
+   * Prevents onDrag events from firing, for example, when double-clicking.
+   */
+  threshold?: number
+
   children?: ReactNode
   onDrag: (x: number, y: number) => void
   onDragStart?: () => void
@@ -52,6 +58,7 @@ export function DragObserver<T extends ElementType = 'div'>(
       deltaY = screenY - dragOffsetY.current
       dragOffsetY.current = screenY
     }
+    if (Math.abs(deltaX) < 1 && Math.abs(deltaY) < 1) return
     if (onDrag) onDrag(deltaX, deltaY)
   }
 

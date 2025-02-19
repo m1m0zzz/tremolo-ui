@@ -128,6 +128,7 @@ export function AnimationKnob({
       if (bodyNoSelect) addNoSelect()
       const screenY = isTouch ? event.touches[0].screenY : event.screenY
       const delta = dragOffsetY.current - screenY
+      if (Math.abs(delta) < 1) return
       dragOffsetY.current = screenY
       const n = normalizeValue(value, min, max, skew)
       const v = rawValue(n + delta / 100, min, max, skew)
