@@ -193,24 +193,26 @@ type customLiveCodeBlock = {
 
 interface ExtendProps {
   sourcePath?: string
+  showCode?: boolean
+  expand?: boolean
 }
 
 export default function Playground({
   children,
   transformCode,
   sourcePath = '',
+  showCode: _showCode = false,
+  expand: _expand = false,
   ...props
 }: Props & ExtendProps): ReactNode {
   const { siteConfig } = useDocusaurusContext()
   const customFields = siteConfig?.customFields as customLiveCodeBlock
-  const defaultShowCode = customFields?.liveCodeBlock?.defaultShowCode
-  const defaultExpanded = customFields?.liveCodeBlock?.defaultExpanded
   const githubLink = customFields?.liveCodeBlock?.githubLink
   const githubPath = (githubLink?.replace(/\/$/, '') || '') + '/' + sourcePath
 
   const prismTheme = usePrismTheme()
-  const [showCode, setShowCode] = useState(defaultShowCode || false)
-  const [expanded, setExpanded] = useState(defaultExpanded || false)
+  const [showCode, setShowCode] = useState(_showCode)
+  const [expanded, setExpanded] = useState(_expand)
 
   const noInline = props.metastring?.includes('noInline') ?? false
 
