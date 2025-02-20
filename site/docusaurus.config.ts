@@ -152,6 +152,12 @@ const config: Config = {
     colorMode: {
       respectPrefersColorScheme: true,
     },
+    algolia: {
+      appId: 'E2BGVJ3J9Z',
+      apiKey: '63807df77d88cc40327c178e01fbbb45',
+      indexName: 'tremolo-ui',
+      contextualSearch: true,
+    },
     navbar: {
       title: '@tremolo-ui',
       logo: {
