@@ -154,8 +154,8 @@ export const CustomImage = () => {
       >
         <SliderTrack
           length={200}
+          active="rgb(149,234,231)"
           style={{
-            '--active': 'rgb(149,234,231)',
             borderRadius: 0,
           }}
         ></SliderTrack>
@@ -343,9 +343,9 @@ export const VolumeFader = () => {
           }}
         />
         <SliderTrack
+          active="#555"
+          inactive="#555"
           style={{
-            '--active': '#555',
-            '--inactive': '#555',
             border: '1px solid #aaa',
           }}
         >
