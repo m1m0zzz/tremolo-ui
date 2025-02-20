@@ -1,0 +1,69 @@
+---
+sidebar_position: 2
+title: Styling
+---
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import CodeBlock from '@theme/CodeBlock'
+
+import cssModule from '!!raw-loader!@site/examples/tutorials/react/styling/css-module'
+import myKnobCss from '!!raw-loader!@site/examples/tutorials/react/styling/my-knob.module.css'
+
+Here are several ways to change the look of a component.
+There are two ways to change the style: by changing all common components or by individual components.
+
+## 🌎Global Styling
+
+Learn how to override the default CSS and load it as global CSS.
+
+First, copy `dist/styles/index.css` and create a new css file named `custom.css`.
+
+```tsx title="index.tsx"
+import 'custom.css'
+```
+
+```css
+.tremolo-ui-any-component {
+  /* customizing */
+
+  &:hover, &:focus {
+    /* hover and focus styles */
+  }
+}
+```
+
+Next, overwrite the css of the component you wish to change.
+
+All components provided by tremolo-ui are prefixed with `tremolo-ui-` followed by the component name.
+
+```tsx title="index.tsx"
+import '@tremolo-ui/styles/index.css' // Required for partial overwriting.
+import 'custom.css'
+```
+
+## 🧩Individual Styling
+
+To avoid polluting the global css namespace, use a mechanism called CSS Modules.
+
+<Tabs>
+  <TabItem value="index.tsx" default>
+    <CodeBlock
+      jsx
+      live
+      expand
+      showCode
+      sourcePath="examples/tutorials/react/styling/global.tsx"
+    >{cssModule}</CodeBlock>
+  </TabItem>
+  <TabItem value="my-knob.module.css" default>
+    <CodeBlock language='css'
+    >{myKnobCss}</CodeBlock>
+  </TabItem>
+</Tabs>
+
+
+## 🧭Next Step
+
+Let's show the components provided by tremolo-ui.  
+[Components - Knob](/docs/components/knob/)

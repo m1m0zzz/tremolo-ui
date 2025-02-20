@@ -1,0 +1,68 @@
+---
+sidebar_position: 2
+title: スタイリング
+---
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import CodeBlock from '@theme/CodeBlock'
+
+import cssModule from '!!raw-loader!@site/examples/tutorials/react/styling/css-module'
+import myKnobCss from '!!raw-loader!@site/examples/tutorials/react/styling/my-knob.module.css'
+
+
+ここでは、コンポーネントの見た目を変更するためのいくつかの方法をご紹介します。
+スタイルの変更は、共通するすべてのコンポーネントを変更する方法と、個々のコンポーネントごとに変更する方法があります。
+
+
+## 🌎グローバル・スタイリング
+
+デフォルトのCSSを上書きし、グローバルなCSSとして読み込む方法をご紹介します。
+
+まず、`dist/styles/index.css` をコピーし、`custom.css` という名前で、新たなcssファイルを作成します。
+
+```css
+.tremolo-ui-any-component {
+  /* customizing */
+
+  &:hover, &:focus {
+    /* hover and focus styles */
+  }
+}
+```
+
+次に、変更したいコンポーネントのcssを上書きします。
+
+tremolo-uiで提供されるすべてのコンポーネントは、`tremolo-ui-` の接頭辞の後に、コンポーネント名が付いたものになります。
+
+```tsx title="index.tsx"
+import '@tremolo-ui/styles/index.css' // 部分的な上書きの場合、必要
+import 'custom.css'
+```
+
+
+## 🧩個別のスタイリング
+
+グローバルなcss名前空間を汚染しないために、CSS Modulesという仕組みを使用しましょう。
+
+<Tabs>
+  <TabItem value="index.tsx" default>
+    <CodeBlock
+      jsx
+      live
+      expand
+      showCode
+      sourcePath="examples/tutorials/react/styling/global.tsx"
+    >{cssModule}</CodeBlock>
+  </TabItem>
+  <TabItem value="my-knob.module.css" default>
+    <CodeBlock language='css'
+    >{myKnobCss}</CodeBlock>
+  </TabItem>
+</Tabs>
+
+
+## 🧭次のステップ
+
+tremolo-uiが提供するコンポーネントを見てみましょう。
+[Components - Knob](/docs/components/knob/)

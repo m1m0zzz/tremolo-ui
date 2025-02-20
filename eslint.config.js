@@ -19,6 +19,7 @@ export default [
       '**/*.cache',
       '**/*.config.*',
       'site/docs/api',
+      'site/examples',
       'site/src/theme',
     ],
   },
