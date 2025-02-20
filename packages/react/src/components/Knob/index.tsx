@@ -59,6 +59,13 @@ export interface KnobProps {
   thumb?: string
   thumbLine?: string
 
+  classes?: {
+    activeLine?: string
+    inactiveLine?: string
+    thumb?: string
+    thumbLine?: string
+  }
+
   onChange?: (value: number) => void
 }
 
@@ -83,6 +90,7 @@ export function Knob({
   thumbLine,
   onChange,
   className,
+  classes,
   ...props
 }: KnobProps & Omit<ComponentPropsWithoutRef<'svg'>, keyof KnobProps>) {
   // -- state and ref ---
@@ -219,7 +227,7 @@ export function Knob({
       {/* rotary meter */}
       {startValue > min && (
         <path
-          className="tremolo-knob-inactive-line"
+          className={clsx('tremolo-knob-inactive-line', classes?.inactiveLine)}
           d={`M ${x1} ${y1} A ${center} ${center} -135 ${r2 - r1 > 180 ? 1 : 0} 1 ${x2}, ${y2}`}
           fill="none"
           stroke={inactiveLine || 'currentColor'}
@@ -227,7 +235,7 @@ export function Knob({
         />
       )}
       <path
-        className="tremolo-knob-active-line"
+        className={clsx('tremolo-knob-active-line', classes?.activeLine)}
         d={`M ${x2} ${y2} A ${center} ${center} -135 ${r3 - r2 > 180 ? 1 : 0} 1 ${x3}, ${y3}`}
         fill="none"
         stroke={activeLine || 'currentColor'}
@@ -235,7 +243,7 @@ export function Knob({
       />
       {startValue < max && (
         <path
-          className="tremolo-knob-inactive-line"
+          className={clsx('tremolo-knob-inactive-line', classes?.inactiveLine)}
           d={`M ${x3} ${y3} A ${center} ${center} -135 ${r4 - r3 > 180 ? 1 : 0} 1 ${x4}, ${y4}`}
           fill="none"
           stroke={inactiveLine || 'currentColor'}
@@ -243,7 +251,7 @@ export function Knob({
         />
       )}
       {/* thumb */}
-      <svg className="tremolo-knob-thumb">
+      <svg className={clsx('tremolo-knob-thumb', classes?.thumb)}>
         <circle
           cx="50%"
           cy="50%"
@@ -251,7 +259,7 @@ export function Knob({
           fill={thumb || 'currentColor'}
         />
         <line
-          className="tremolo-knob-thumb-line"
+          className={clsx('tremolo-knob-thumb-line', classes?.thumbLine)}
           x1="50%"
           y1={`${padding}%`}
           x2="50%"
