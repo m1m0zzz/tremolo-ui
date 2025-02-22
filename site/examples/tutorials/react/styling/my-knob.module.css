@@ -1,5 +1,6 @@
 .knob {
-  &:focus, &:hover {
+  &:focus,
+  &:hover {
     > .knobActiveLine {
       color: red;
     }

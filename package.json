@@ -7,7 +7,7 @@
     "prepare": "husky",
     "lint": "ESLINT_USE_FLAT_CONFIG=true eslint .",
     "lint:fix": "ESLINT_USE_FLAT_CONFIG=true eslint . --fix",
-    "format": "prettier --write",
+    "format": "prettier --write .",
     "test": "npm run test --workspaces --if-present",
     "build:package": "npm run build:package --workspaces --if-present",
     "docs": "npm run start -w site --",
@@ -74,6 +74,7 @@
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": [
+      "ESLINT_USE_FLAT_CONFIG=true eslint . --fix",
       "prettier --write"
     ]
   }
