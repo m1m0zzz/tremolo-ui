@@ -6,6 +6,7 @@ import React, {
   ReactElement,
   useCallback,
   useImperativeHandle,
+  useMemo,
   useRef,
 } from 'react'
 
@@ -19,19 +20,15 @@ import {
   styleHelper,
   xor,
 } from '@tremolo-ui/functions'
-import {
-  parseScaleOrderList,
-  ScaleOrderList,
-  ScaleType,
-} from '@tremolo-ui/functions/Slider'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { addNoSelect, removeNoSelect } from '../_util'
 
+import { SliderValuesProvider } from './context'
+import { Scale, ScaleProps } from './Scale'
 import { SliderThumb, SliderThumbMethods, SliderThumbProps } from './Thumb'
 import { SliderTrack, SliderTrackProps } from './Track'
-import { ScaleOption } from './type'
 
 export interface SliderProps {
   // TODO: property docs
@@ -45,9 +42,6 @@ export interface SliderProps {
   skew?: number // TODO | SkewFunction
   vertical?: boolean
   reverse?: boolean
-  // TODO: scales component
-  scale?: ['step' | number, ScaleType] | ScaleOrderList[]
-  scaleOption?: ScaleOption
   bodyNoSelect?: boolean
   /**
    * wheel control option
@@ -95,8 +89,6 @@ export const Slider = forwardRef<SliderMethods, Props>(
       skew = 1,
       vertical = false,
       reverse = false,
-      scale,
-      scaleOption,
       className,
       style,
       bodyNoSelect = true,
@@ -123,21 +115,15 @@ export const Slider = forwardRef<SliderMethods, Props>(
     // vertical -> rev (up)
     // reverse -> rev (left)
     // vertical & reverse -> normal (down)
-    const displayReversed = xor(vertical, reverse)
+    const displayReversed = useMemo(
+      () => xor(vertical, reverse),
+      [vertical, reverse],
+    )
     const percent = displayReversed ? rev : p
-    const calcPercent = (rawV: number) => {
-      return toFixed(
-        displayReversed
-          ? 100 - normalizeValue(rawV, min, max, skew) * 100
-          : normalizeValue(rawV, min, max, skew) * 100,
-      )
-    }
 
-    const scalesList = parseScaleOrderList(scale, min, max, step)
-    if (displayReversed) scalesList.reverse()
-
-    let trackProps: SliderTrackProps = {},
-      thumbProps: SliderThumbProps = {}
+    let trackProps: SliderTrackProps = {}
+    let thumbProps: SliderThumbProps = {}
+    let scaleProps: ScaleProps = {}
     if (children != undefined) {
       React.Children.forEach(children, (child) => {
         if (React.isValidElement(child)) {
@@ -145,6 +131,8 @@ export const Slider = forwardRef<SliderMethods, Props>(
             thumbProps = child.props as SliderThumbProps
           } else if (child.type == SliderTrack) {
             trackProps = child.props as SliderTrackProps
+          } else if (child.type == Scale) {
+            scaleProps = child.props as ScaleProps
           } else {
             throw new Error('only <SliderThumb> or <SliderTrack>')
           }
@@ -163,8 +151,9 @@ export const Slider = forwardRef<SliderMethods, Props>(
         !thumbDragged.current ||
         !onChange ||
         readonly
-      )
+      ) {
         return
+      }
       const isTouch = event instanceof TouchEvent
       if (isTouch && event.cancelable) event.preventDefault()
       if (bodyNoSelect) addNoSelect()
@@ -262,137 +251,77 @@ export const Slider = forwardRef<SliderMethods, Props>(
     }, [])
 
     return (
-      <div
-        className={clsx('tremolo-slider', className)}
-        ref={(div) => {
-          wheelRefCallback(div)
-          touchMoveRefCallback(div)
-        }}
-        tabIndex={-1}
-        role="slider"
-        aria-valuenow={value}
-        aria-valuemin={min}
-        aria-valuemax={max}
-        aria-orientation={vertical ? 'vertical' : 'horizontal'}
-        aria-disabled={disabled}
-        aria-readonly={readonly}
-        style={{
-          margin: `calc(${styleHelper(thumbProps?.size ?? 22)} / 2)`, // half thumb size
-          ...style,
-        }}
-        onPointerDown={(event) => {
-          thumbDragged.current = true
-          handleValue(event)
-        }}
-        onKeyDown={handleKeyDown}
-        onFocus={thumbRef.current?.focus}
-        onBlur={thumbRef.current?.blur}
-        {...props}
+      <SliderValuesProvider
+        min={min}
+        max={max}
+        step={step}
+        skew={skew}
+        vertical={vertical}
+        reverse={reverse}
       >
         <div
-          style={{
-            display: 'flex',
-            flexDirection: vertical ? 'row' : 'column',
+          className={clsx('tremolo-slider', className)}
+          ref={(div) => {
+            wheelRefCallback(div)
+            touchMoveRefCallback(div)
           }}
+          tabIndex={-1}
+          role="slider"
+          aria-valuenow={value}
+          aria-valuemin={min}
+          aria-valuemax={max}
+          aria-orientation={vertical ? 'vertical' : 'horizontal'}
+          aria-disabled={disabled}
+          aria-readonly={readonly}
+          style={{
+            margin: `calc(${styleHelper(thumbProps?.size ?? 22)} / 2)`, // half thumb size
+            ...style,
+          }}
+          onPointerDown={(event) => {
+            thumbDragged.current = true
+            handleValue(event)
+          }}
+          onKeyDown={handleKeyDown}
+          onFocus={thumbRef.current?.focus}
+          onBlur={thumbRef.current?.blur}
+          {...props}
         >
-          <div className="tremolo-slider-track-wrapper" ref={trackElementRef}>
-            <SliderTrack
-              __vertical={vertical}
-              __reverse={reverse}
-              __disabled={disabled}
-              __percent={percent}
-              __thumb={
-                <SliderThumb
-                  ref={thumbRef}
-                  __disabled={disabled}
-                  __css={{
-                    top: vertical ? `${percent}%` : '50%',
-                    left: !vertical ? `${percent}%` : '50%',
-                  }}
-                  {...thumbProps}
-                />
-              }
-              {...trackProps}
-            />
-          </div>
-          {/* TODO: scales component */}
-          {scale && (
-            <div
-              className="tremolo-slider-scale-wrapper"
-              style={{
-                display: 'block',
-                position: 'relative',
-                marginLeft: vertical
-                  ? (scaleOption?.gap ??
-                    `calc((22px - ${styleHelper(trackProps?.thickness ?? 10)}) / 2)`)
-                  : undefined,
-                marginTop: !vertical
-                  ? (scaleOption?.gap ??
-                    `calc((22px - ${styleHelper(trackProps?.thickness ?? 10)}) / 2)`)
-                  : undefined,
-                ...scaleOption?.style,
-                // zIndex: 10,
-              }}
-            >
-              {scalesList.map((item, index) => (
-                <div
-                  key={index}
-                  style={{
-                    display: 'flex',
-                    flexDirection: !vertical ? 'column' : 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    position: 'absolute',
-                    left: !vertical ? `${calcPercent(item.at)}%` : undefined,
-                    top: vertical ? `${calcPercent(item.at)}%` : undefined,
-                    translate: !vertical ? '-50% 0' : '0 -50%',
-                    zIndex: 10,
-                  }}
-                >
-                  {(item.type ?? scaleOption?.defaultType ?? 'mark-number') !=
-                    'number' && (
-                    <div
-                      className="tremolo-slider-scale-mark"
-                      style={{
-                        width: !vertical
-                          ? (item.style?.thickness ?? 1)
-                          : (item.style?.length ?? '0.5rem'),
-                        height: vertical
-                          ? (item.style?.thickness ?? 1)
-                          : (item.style?.length ?? '0.5rem'),
-                        backgroundColor:
-                          item.style?.markColor ??
-                          scaleOption?.markColor ??
-                          '#222',
-                        marginBottom: !vertical ? 2 : undefined,
-                        marginRight: vertical ? 2 : undefined,
-                      }}
-                    ></div>
-                  )}
-                  {(item.type ?? scaleOption?.defaultType ?? 'mark-number') !=
-                    'mark' && (
-                    <div
-                      className="tremolo-slider-scale-number"
-                      style={{
-                        color:
-                          item.style?.labelColor ?? scaleOption?.labelColor,
-                        width: scaleOption?.labelWidth,
-                        textAlign: 'right',
-                      }}
-                    >
-                      {item.text ?? item.at}
-                    </div>
-                  )}
-                </div>
-              ))}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: vertical ? 'row' : 'column',
+            }}
+          >
+            <div className="tremolo-slider-track-wrapper" ref={trackElementRef}>
+              <SliderTrack
+                __vertical={vertical}
+                __reverse={reverse}
+                __disabled={disabled}
+                __percent={percent}
+                __thumb={
+                  <SliderThumb
+                    ref={thumbRef}
+                    __disabled={disabled}
+                    __css={{
+                      top: vertical ? `${percent}%` : '50%',
+                      left: !vertical ? `${percent}%` : '50%',
+                    }}
+                    {...thumbProps}
+                  />
+                }
+                {...trackProps}
+              />
             </div>
-          )}
+            <Scale __trackProps={trackProps} {...scaleProps} />
+          </div>
         </div>
-      </div>
+      </SliderValuesProvider>
     )
   },
 )
 
+export * from './context'
 export * from './Thumb'
 export * from './Track'
-export * from './type'
+export * from './Scale'
+export * from './ScaleOption'

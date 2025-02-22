@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "prepare": "husky",
-    "lint": "ESLINT_USE_FLAT_CONFIG=true eslint .",
-    "lint:fix": "ESLINT_USE_FLAT_CONFIG=true eslint . --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "test": "npm run test --workspaces --if-present",
     "build:package": "npm run build:package --workspaces --if-present",
@@ -73,8 +73,8 @@
     }
   },
   "lint-staged": {
-    "*.{js,ts,jsx,tsx}": [
-      "ESLINT_USE_FLAT_CONFIG=true eslint . --fix",
+    "*": [
+      "eslint --fix",
       "prettier --write"
     ]
   }

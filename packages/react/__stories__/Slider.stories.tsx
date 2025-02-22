@@ -5,37 +5,18 @@ import { normalizeValue, skewWithCenterValue } from '@tremolo-ui/functions'
 
 import { AnimationCanvas } from '../src/components/AnimationCanvas'
 import { NumberInput } from '../src/components/NumberInput'
-import { Slider, SliderThumb, SliderTrack } from '../src/components/Slider'
+import {
+  Slider,
+  SliderThumb,
+  SliderTrack,
+  Scale,
+  ScaleOption,
+} from '../src/components/Slider'
 
 import { getRMS } from './lib/dsp'
 import { inputEventOptionType } from './lib/typeUtils'
 
 import styles from './styles/Slider.module.css'
-
-const scaleTypeDetail = `[
-  'step' | number,
-  'mark' | 'mark-number' | 'number'
-] |
-{
-  at: number
-  type?: 'mark' | 'mark-number' | 'number'
-  text?: string
-  style?: {
-    markColor?: string
-    labelColor?: string
-    length?: number | string
-    thickness?: number | string
-  }
-}[]`
-
-const scaleOptionDetail = `{
-  defaultType?: 'mark' | 'mark-number' | 'number'
-  markColor?: string
-  labelColor?: string
-  gap?: number | string
-  labelWidth?: number | string
-  style?: CSSProperties
-}`
 
 export default {
   title: 'React/Components/Slider',
@@ -55,22 +36,6 @@ export default {
     keyboard: {
       table: {
         type: inputEventOptionType,
-      },
-    },
-    scale: {
-      table: {
-        type: {
-          summary: `['step' | number, ScaleType] | ScaleOrderList[]`,
-          detail: scaleTypeDetail,
-        },
-      },
-    },
-    scaleOption: {
-      table: {
-        type: {
-          summary: 'ScaleOption',
-          detail: scaleOptionDetail,
-        },
       },
     },
   },
@@ -173,72 +138,64 @@ export const CustomImage = () => {
   )
 }
 
-export const Scale = () => {
+export const ConfigScale = () => {
   const [value, setValue] = useState(32)
   const [value2, setValue2] = useState(32)
-  const [value3, setValue3] = useState(-10)
+  const [value3, setValue3] = useState(10)
 
   return (
     <>
       <section style={{ marginBottom: '2rem' }}>
-        <p>calibrate (with number)</p>
-        <p>scale: mark, scaleTo: 10</p>
         <Slider
           value={value}
           min={0}
           max={100}
           onChange={(v) => setValue(v)}
           vertical
-          scale={[
-            { at: 0, type: 'mark-number' },
-            { at: 25, type: 'mark' },
-            { at: 50, type: 'mark-number' },
-            { at: 75, type: 'mark' },
-            { at: 100, type: 'mark-number' },
-          ]}
-        />
+        >
+          <Scale style={{ display: 'block' }}>
+            <ScaleOption value={0} type="mark-number" />
+            <ScaleOption value={25} type="mark" />
+            <ScaleOption value={50} type="mark-number" />
+            <ScaleOption value={75} type="mark" />
+            <ScaleOption value={100} type="mark-number" />
+          </Scale>
+        </Slider>
         <p>value: {value}</p>
       </section>
       <section style={{ marginBottom: '2rem' }}>
-        <Slider
-          value={value2}
-          min={0}
-          max={100}
-          onChange={(v) => setValue2(v)}
-          vertical
-          scale={[
-            {
-              at: 0,
-              type: 'mark-number',
-              style: { labelColor: 'red', length: '1rem' },
-            },
-            { at: 25, type: 'mark' },
-            { at: 50, type: 'mark-number', style: { length: '0.75rem' } },
-            { at: 75, type: 'mark' },
-            {
-              at: 100,
-              type: 'mark-number',
-              style: { labelColor: 'blue', length: '1rem' },
-            },
-          ]}
-          scaleOption={{
-            gap: 0,
-            markColor: 'grey',
-            labelColor: 'green',
-          }}
-        />
+        <Slider value={value2} min={0} max={100} onChange={(v) => setValue2(v)}>
+          <Scale gap={0} style={{ height: 42 }}>
+            <ScaleOption
+              value={0}
+              type="mark-number"
+              length="1rem"
+              styles={{ label: { color: 'red' } }}
+            />
+            <ScaleOption value={25} type="mark" />
+            <ScaleOption value={50} type="mark-number" length="0.75rem" />
+            <ScaleOption value={75} type="mark" />
+            <ScaleOption
+              value={100}
+              type="mark-number"
+              length="1rem"
+              styles={{ label: { color: 'blue' } }}
+            />
+          </Scale>
+        </Slider>
         <p>value: {value2}</p>
       </section>
       <section style={{ marginBottom: '2rem' }}>
         <Slider
           value={value3}
-          min={-39}
-          max={0}
+          min={0}
+          max={35}
           step={10}
           onChange={(v) => setValue3(v)}
           vertical
-          scale={['step', 'number']}
-        />
+        >
+          <Scale options={['step', 'number']} />
+        </Slider>
         <p>value: {value3}</p>
       </section>
     </>
@@ -321,17 +278,6 @@ export const VolumeFader = () => {
         }}
         vertical
         wheel={['normalized', 0.1]}
-        scale={[
-          { at: 6 },
-          { at: 0 },
-          { at: -6 },
-          { at: -12 },
-          { at: -24 },
-          { at: -100, text: '-inf' },
-        ]}
-        scaleOption={{
-          labelWidth: 30,
-        }}
       >
         <SliderThumb
           className={styles.thumb}
@@ -364,6 +310,14 @@ export const VolumeFader = () => {
             }}
           />
         </SliderTrack>
+        <Scale>
+          <ScaleOption value={6} labelWidth={30} />
+          <ScaleOption value={0} labelWidth={30} />
+          <ScaleOption value={-6} labelWidth={30} />
+          <ScaleOption value={-12} labelWidth={30} />
+          <ScaleOption value={-24} labelWidth={30} />
+          <ScaleOption value={-100} labelWidth={30} label="-inf" />
+        </Scale>
       </Slider>
       <p>{volume <= -100 ? '-inf' : volume} dB</p>
     </div>

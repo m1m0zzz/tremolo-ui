@@ -27,12 +27,14 @@ export interface SliderThumbMethods {
   blur: () => void
 }
 
+export const defaultThumbSize = 22
+
 export const SliderThumb = forwardRef<SliderThumbMethods, SliderThumbProps>(
   (
     {
       size,
-      width = 22,
-      height = 22,
+      width = defaultThumbSize,
+      height = defaultThumbSize,
       children,
       className,
       style,

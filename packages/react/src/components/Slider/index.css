@@ -45,3 +45,32 @@
     --inactive: #ddd;
   }
 }
+
+.tremolo-slider-scale {
+  display: block;
+  position: relative;
+}
+
+.tremolo-slider-scale-option {
+  display: flex;
+  color: #222;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  translate: -50% 0;
+  z-index: 10;
+
+  &[data-vertical='true'] {
+    flex-direction: row;
+    translate: 0 -50%;
+  }
+}
+
+.tremolo-slider-scale-option-mark {
+  background-color: currentColor;
+}
+
+.tremolo-slider-scale-option-label {
+  text-align: right;
+}
