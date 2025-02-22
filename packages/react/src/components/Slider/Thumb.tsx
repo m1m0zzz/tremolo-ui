@@ -7,6 +7,8 @@ import {
   useRef,
 } from 'react'
 
+import { useDisabled, useVertical } from './context'
+
 export interface SliderThumbProps {
   size?: number | string
   width?: number | string
@@ -17,9 +19,7 @@ export interface SliderThumbProps {
   children?: ReactNode
 
   /** @internal */
-  __disabled?: boolean
-  /** @internal */
-  __css?: CSSProperties
+  __percent?: number
 }
 
 export interface SliderThumbMethods {
@@ -38,12 +38,13 @@ export const SliderThumb = forwardRef<SliderThumbMethods, SliderThumbProps>(
       children,
       className,
       style,
-      __disabled,
-      __css,
+      __percent,
     }: SliderThumbProps,
     ref,
   ) => {
     const wrapperRef = useRef<HTMLDivElement>(null)
+    const vertical = useVertical()
+    const disabled = useDisabled()
 
     useImperativeHandle(ref, () => {
       return {
@@ -57,7 +58,13 @@ export const SliderThumb = forwardRef<SliderThumbMethods, SliderThumbProps>(
     }, [])
 
     return (
-      <div className="tremolo-slider-thumb-wrapper" style={__css}>
+      <div
+        className="tremolo-slider-thumb-wrapper"
+        style={{
+          top: vertical ? `${__percent}%` : '50%',
+          left: !vertical ? `${__percent}%` : '50%',
+        }}
+      >
         {children ? (
           children
         ) : (
@@ -67,7 +74,7 @@ export const SliderThumb = forwardRef<SliderThumbMethods, SliderThumbProps>(
             className={clsx('tremolo-slider-thumb', className)}
             // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
             tabIndex={0}
-            aria-disabled={__disabled}
+            aria-disabled={disabled}
             style={{
               width: size ?? width,
               height: size ?? height,

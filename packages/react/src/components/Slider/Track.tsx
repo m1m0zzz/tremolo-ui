@@ -3,6 +3,8 @@ import { CSSProperties, ReactElement } from 'react'
 
 import { styleHelper, xor } from '@tremolo-ui/functions'
 
+import { useDisabled, useReverse, useVertical } from './context'
+
 export const defaultLength = 140
 export const defaultThickness = 10
 
@@ -17,15 +19,9 @@ export interface SliderTrackProps {
   style?: CSSProperties
   children?: ReactElement
 
-  /** inherit */
+  /** @internal */
   __thumb?: ReactElement
-  /** inherit */
-  __vertical?: boolean
-  /** inherit */
-  __reverse?: boolean
-  /** inherit */
-  __disabled?: boolean
-  /** internal */
+  /** @internal */
   __percent?: number
 }
 
@@ -38,12 +34,13 @@ export function SliderTrack({
   className,
   style,
   __thumb,
-  __vertical,
-  __reverse,
-  __disabled,
   __percent,
 }: SliderTrackProps) {
-  const direction = __vertical ? 'bottom' : 'right'
+  const vertical = useVertical()
+  const reverse = useReverse()
+  const disabled = useDisabled()
+
+  const direction = vertical ? 'bottom' : 'right'
   const colors = {
     '--active': active,
     '--inactive': inactive,
@@ -52,15 +49,15 @@ export function SliderTrack({
   return (
     <div
       className={clsx('tremolo-slider-track', className)}
-      aria-disabled={__disabled}
+      aria-disabled={disabled}
       style={{
         ...colors,
-        background: xor(__vertical, __reverse)
+        background: xor(vertical, reverse)
           ? `linear-gradient(to ${direction}, var(--inactive, #eee) ${__percent}%, var(--active, #7998ec) ${__percent}%)`
           : `linear-gradient(to ${direction}, var(--active, #7998ec) ${__percent}%, var(--inactive, #eee) ${__percent}%)`,
         borderRadius: styleHelper(thickness!, '/', 2),
-        width: !__vertical ? length : thickness,
-        height: __vertical ? length : thickness,
+        width: !vertical ? length : thickness,
+        height: vertical ? length : thickness,
         ...style,
       }}
     >

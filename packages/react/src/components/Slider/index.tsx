@@ -26,12 +26,11 @@ import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { addNoSelect, removeNoSelect } from '../_util'
 
 import { SliderValuesProvider } from './context'
-import { Scale, ScaleProps } from './Scale'
+import { Scale } from './Scale'
 import { SliderThumb, SliderThumbMethods, SliderThumbProps } from './Thumb'
 import { SliderTrack, SliderTrackProps } from './Track'
 
 export interface SliderProps {
-  // TODO: property docs
   // required
   value: number
   min: number
@@ -123,7 +122,7 @@ export const Slider = forwardRef<SliderMethods, Props>(
 
     let trackProps: SliderTrackProps = {}
     let thumbProps: SliderThumbProps = {}
-    let scaleProps: ScaleProps = {}
+    let scaleComponent: ReactElement | undefined = undefined
     if (children != undefined) {
       React.Children.forEach(children, (child) => {
         if (React.isValidElement(child)) {
@@ -132,7 +131,7 @@ export const Slider = forwardRef<SliderMethods, Props>(
           } else if (child.type == SliderTrack) {
             trackProps = child.props as SliderTrackProps
           } else if (child.type == Scale) {
-            scaleProps = child.props as ScaleProps
+            scaleComponent = child
           } else {
             throw new Error('only <SliderThumb> or <SliderTrack>')
           }
@@ -258,6 +257,7 @@ export const Slider = forwardRef<SliderMethods, Props>(
         skew={skew}
         vertical={vertical}
         reverse={reverse}
+        disabled={disabled}
       >
         <div
           className={clsx('tremolo-slider', className)}
@@ -294,25 +294,18 @@ export const Slider = forwardRef<SliderMethods, Props>(
           >
             <div className="tremolo-slider-track-wrapper" ref={trackElementRef}>
               <SliderTrack
-                __vertical={vertical}
-                __reverse={reverse}
-                __disabled={disabled}
                 __percent={percent}
                 __thumb={
                   <SliderThumb
                     ref={thumbRef}
-                    __disabled={disabled}
-                    __css={{
-                      top: vertical ? `${percent}%` : '50%',
-                      left: !vertical ? `${percent}%` : '50%',
-                    }}
+                    __percent={percent}
                     {...thumbProps}
                   />
                 }
                 {...trackProps}
               />
             </div>
-            <Scale __trackProps={trackProps} {...scaleProps} />
+            {scaleComponent}
           </div>
         </div>
       </SliderValuesProvider>

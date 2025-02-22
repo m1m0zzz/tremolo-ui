@@ -6,15 +6,10 @@ import { generateOptionsList, ScaleOptions } from '@tremolo-ui/functions/Slider'
 
 import { useMax, useMin, useReverse, useStep, useVertical } from './context'
 import { ScaleOption } from './ScaleOption'
-import { SliderTrackProps } from './Track'
 
 export interface ScaleProps {
   gap?: number | string
   options?: ScaleOptions
-
-  /** @internal */
-  __trackProps?: SliderTrackProps
-
   children?: ReactNode
 }
 
@@ -25,7 +20,6 @@ export function Scale({
   gap = 6,
   options,
   children,
-  __trackProps,
   className,
   style,
   ...props

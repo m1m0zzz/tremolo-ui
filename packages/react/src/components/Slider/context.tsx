@@ -6,6 +6,7 @@ const stepContext = createContext(0)
 const skewContext = createContext(0)
 const verticalContext = createContext(false)
 const reverseContext = createContext(false)
+const disabledContext = createContext(false)
 
 interface Props {
   min: number
@@ -14,6 +15,7 @@ interface Props {
   skew: number
   vertical: boolean
   reverse: boolean
+  disabled: boolean
   children: ReactNode
 }
 
@@ -24,6 +26,7 @@ export function SliderValuesProvider({
   skew: _skew,
   vertical: _vertical,
   reverse: _reverse,
+  disabled: _disabled,
   children,
 }: Props) {
   const [min] = useState(_min)
@@ -32,6 +35,7 @@ export function SliderValuesProvider({
   const [skew] = useState(_skew)
   const [vertical] = useState(_vertical)
   const [reverse] = useState(_reverse)
+  const [disabled] = useState(_disabled)
 
   return (
     <minContext.Provider value={min}>
@@ -40,7 +44,9 @@ export function SliderValuesProvider({
           <skewContext.Provider value={skew}>
             <verticalContext.Provider value={vertical}>
               <reverseContext.Provider value={reverse}>
-                {children}
+                <disabledContext.Provider value={disabled}>
+                  {children}
+                </disabledContext.Provider>
               </reverseContext.Provider>
             </verticalContext.Provider>
           </skewContext.Provider>
@@ -55,4 +61,6 @@ export const useMax = () => useContext(maxContext)
 export const useStep = () => useContext(stepContext)
 export const useSkew = () => useContext(skewContext)
 export const useVertical = () => useContext(verticalContext)
+// export const useSetVertical = () => useContext(setVerticalContext)
 export const useReverse = () => useContext(reverseContext)
+export const useDisabled = () => useContext(disabledContext)

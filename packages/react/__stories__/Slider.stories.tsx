@@ -153,7 +153,7 @@ export const ConfigScale = () => {
           onChange={(v) => setValue(v)}
           vertical
         >
-          <Scale style={{ display: 'block' }}>
+          <Scale>
             <ScaleOption value={0} type="mark-number" />
             <ScaleOption value={25} type="mark" />
             <ScaleOption value={50} type="mark-number" />
