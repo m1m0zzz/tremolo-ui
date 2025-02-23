@@ -239,15 +239,19 @@ const config: Config = {
           ],
         },
         {
-          title: 'UI Catalog',
+          title: 'Other',
           items: [
             {
-              label: 'React',
-              href: 'https://tremolo-ui-sb-react.vercel.app/',
+              label: 'Contributing',
+              to: '/docs/guides/CONTRIBUTING/',
             },
             {
-              label: 'Web Components',
-              href: 'https://tremolo-ui-sb-web-components.vercel.app/',
+              label: 'Security',
+              to: '/docs/guides/SECURITY/',
+            },
+            {
+              label: 'Changelog',
+              to: '/docs/support/CHANGELOG/',
             },
           ],
         },
@@ -257,6 +261,14 @@ const config: Config = {
             {
               label: 'GitHub',
               href: 'https://github.com/m1m0zzz/tremolo-ui',
+            },
+            {
+              label: 'Storybook React',
+              href: 'https://tremolo-ui-sb-react.vercel.app/',
+            },
+            {
+              label: 'Storybook Web Components',
+              href: 'https://tremolo-ui-sb-web-components.vercel.app/',
             },
             {
               label: 'npm',

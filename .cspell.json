@@ -13,7 +13,9 @@
     "nodownload",
     "noninteractive",
     "slotchange",
-    "stackblitz"
+    "stackblitz",
+    "Vercel",
+    "vite"
   ],
   "ignorePaths": [
     "**/dist",
