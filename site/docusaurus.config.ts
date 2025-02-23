@@ -22,6 +22,7 @@ function typedocPlugins() {
     console.warn('skip typedoc generate')
     return []
   }
+  console.log('gitRevision: ', process.env.COMMIT_SHA)
   return [
     [
       'docusaurus-plugin-typedoc',
@@ -35,9 +36,11 @@ function typedocPlugins() {
         tsconfig: '../packages/functions/tsconfig.json',
         out: './docs/api/functions',
         readme: 'none',
-        // sourceLinkTemplate: 'https://github.com/m1m0zzz/tremolo-ui/blob/{gitRevision}/{path}#L{line}',
-        // gitRemote: 'https://github.com/m1m0zzz/tremolo-ui.git',
-        // gitRevision: 'xxxx',
+        ...(process.env.COMMIT_SHA && {
+          sourceLinkTemplate:
+            'https://github.com/m1m0zzz/tremolo-ui/blob/{gitRevision}/{path}#L{line}',
+          gitRevision: process.env.COMMIT_SHA,
+        }),
       },
     ],
     [
@@ -48,6 +51,11 @@ function typedocPlugins() {
         tsconfig: '../packages/react/tsconfig.json',
         out: './docs/api/react',
         readme: 'none',
+        ...(process.env.COMMIT_SHA && {
+          sourceLinkTemplate:
+            'https://github.com/m1m0zzz/tremolo-ui/blob/{gitRevision}/{path}#L{line}',
+          gitRevision: process.env.COMMIT_SHA,
+        }),
       },
     ],
     // [
@@ -74,9 +82,10 @@ const config: Config = {
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
 
-  // NOTE: To get gitRevision in typedoc.
-  organizationName: 'm1m0zzz', // Usually your GitHub org/user name.
-  projectName: 'tremolo-ui', // Usually your repo name.
+  // GitHub pages deployment config.
+  // If you aren't using GitHub pages, you don't need these.
+  // organizationName: 'm1m0zzz', // Usually your GitHub org/user name.
+  // projectName: 'tremolo-ui', // Usually your repo name.
 
   trailingSlash: true,
 
