@@ -24,7 +24,7 @@ import { useEventListener } from '../../hooks/useEventListener'
 import { BlackKey } from './BlackKey'
 import { KeyMethods, KeyProps } from './key'
 import { KeyBoardShortcuts } from './keyboardShortcuts'
-import { WhiteKey } from './WhiteKey'
+import { defaultWhiteKeyWidth, WhiteKey } from './WhiteKey'
 
 /**
  * Piano component
@@ -149,7 +149,7 @@ export function Piano({
       })
       resizeObserver.observe(parent)
     } else {
-      setWhiteNoteWidth(whiteKeyProps?.width || 40)
+      setWhiteNoteWidth(whiteKeyProps?.width || defaultWhiteKeyWidth)
     }
   }, [fill, whiteKeyProps?.width, whiteNoteCount])
 
@@ -178,7 +178,7 @@ export function Piano({
       ref={pianoRef}
       className={clsx('tremolo-piano', className)}
       style={{
-        width: fill ? '100%' : undefined,
+        width: fill ? '100%' : (whiteNoteWidth + 3) * whiteNoteCount,
         height: height,
         ...style,
       }}

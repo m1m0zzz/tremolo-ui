@@ -11,10 +11,12 @@ import { KeyLabel, KeyLabelProps } from './KeyLabel'
 
 type Props = KeyProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KeyProps>
 
+export const defaultWhiteKeyWidth = 40
+
 export const WhiteKey = forwardRef<KeyMethods, Props>(
   (
     {
-      width = 40,
+      width = defaultWhiteKeyWidth,
       height = '100%',
       className,
       style,

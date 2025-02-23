@@ -8,13 +8,14 @@ import React, {
 
 import { KeyMethods, KeyProps } from './key'
 import { KeyLabel, KeyLabelProps } from './KeyLabel'
+import { defaultWhiteKeyWidth } from './WhiteKey'
 
 type Props = KeyProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KeyProps>
 
 export const BlackKey = forwardRef<KeyMethods, Props>(
   (
     {
-      width = 40 * 0.65,
+      width = defaultWhiteKeyWidth * 0.65,
       height = '60%',
       className,
       style,
