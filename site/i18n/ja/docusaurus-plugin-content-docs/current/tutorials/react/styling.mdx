@@ -26,7 +26,7 @@ cp node_modules/@tremolo-ui/react/dist/styles/index.css custom.css
 ```
 
 ```css title="custom.css"
-.tremolo-ui-any-component {
+.tremolo-any-component {
   /* customizing */
 
   &:hover, &:focus {
@@ -37,7 +37,7 @@ cp node_modules/@tremolo-ui/react/dist/styles/index.css custom.css
 
 次に、変更したいコンポーネントのcssを上書きします。
 
-tremolo-uiで提供されるすべてのコンポーネントは、`tremolo-ui-` の接頭辞の後に、コンポーネント名が付いたものになります。
+tremolo-uiで提供されるすべてのコンポーネントは、`tremolo-` の接頭辞の後に、コンポーネント名が付いたものになります。
 
 ```tsx title="index.tsx"
 import '@tremolo-ui/react/styles/index.css' // 部分的な上書きの場合、必要
