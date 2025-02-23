@@ -26,6 +26,7 @@ import { addNoSelect, removeNoSelect } from '../_util'
 import { XYPadArea, AreaProps } from './Area'
 import { XYPadThumb, XYPadThumbMethods, ThumbProps } from './Thumb'
 
+/** @category XYPad */
 export interface ValueOptions {
   // required
   value: number
@@ -46,6 +47,7 @@ export interface ValueOptions {
   keyboard?: InputEventOption | null
 }
 
+/** @category XYPad */
 export interface XYPadProps {
   x: ValueOptions
   y: ValueOptions
@@ -58,6 +60,7 @@ export interface XYPadProps {
   children?: ReactElement | ReactElement[]
 }
 
+/** @category XYPad */
 export interface XYPadMethods {
   focus: () => void
   blur: () => void
@@ -76,6 +79,7 @@ type Props = XYPadProps &
 
 /**
  * Simple XYPad
+ * @category XYPad
  */
 export const XYPad = forwardRef<XYPadMethods, Props>(
   (

@@ -3,6 +3,7 @@ import { ComponentPropsWithoutRef, ElementType, ReactNode, useRef } from 'react'
 import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 
+/** @category DragObserver */
 export interface DragObserverProps<T extends ElementType> {
   /**
    * React.ElementType
@@ -22,6 +23,7 @@ export interface DragObserverProps<T extends ElementType> {
   onDragEnd?: () => void
 }
 
+/** @category DragObserver */
 export function DragObserver<T extends ElementType = 'div'>(
   props: DragObserverProps<T> &
     Omit<ComponentPropsWithoutRef<T>, keyof DragObserverProps<T>>,

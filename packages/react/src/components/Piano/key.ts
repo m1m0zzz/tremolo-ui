@@ -1,5 +1,8 @@
 import { CSSProperties, ReactElement, ReactNode } from 'react'
 
+/**
+ * @category Piano
+ */
 export interface KeyProps {
   width?: number
   height?: number | `${number}%`
@@ -33,6 +36,9 @@ export interface KeyProps {
   __label?: (note: number, index: number) => ReactNode
 }
 
+/**
+ * @category Piano
+ */
 export interface KeyMethods {
   play: () => void
   stop: () => void

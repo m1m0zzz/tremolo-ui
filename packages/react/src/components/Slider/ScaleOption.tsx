@@ -6,6 +6,7 @@ import { ScaleType } from '@tremolo-ui/functions/Slider'
 
 import { useMax, useMin, useReverse, useSkew, useVertical } from './context'
 
+/** @category Slider */
 export interface ScaleOptionProps {
   // required
   value: number
@@ -31,6 +32,7 @@ export interface ScaleOptionProps {
   }
 }
 
+/** @category Slider */
 export function ScaleOption({
   value,
   type = 'mark-number',

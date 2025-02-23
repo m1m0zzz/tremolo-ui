@@ -25,6 +25,7 @@ interface Props<T extends ElementType> {
   onWheel?: (event: WheelEvent) => void
 }
 
+/** @category WheelObserver */
 export function WheelObserver<T extends ElementType = 'div'>(
   props: Props<T> & Omit<ComponentPropsWithoutRef<T>, keyof Props<T>>,
 ) {

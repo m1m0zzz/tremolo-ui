@@ -5,9 +5,12 @@ import { styleHelper, xor } from '@tremolo-ui/functions'
 
 import { useDisabled, useReverse, useVertical } from './context'
 
+/** @category Slider */
 export const defaultLength = 140
+/** @category Slider */
 export const defaultThickness = 10
 
+/** @category Slider */
 export interface SliderTrackProps {
   length?: number | string
   thickness?: number | string
@@ -25,6 +28,7 @@ export interface SliderTrackProps {
   __percent?: number
 }
 
+/** @category Slider */
 export function SliderTrack({
   length = defaultLength,
   thickness = defaultThickness,

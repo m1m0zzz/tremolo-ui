@@ -20,6 +20,7 @@ import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { addNoSelect, removeNoSelect } from '../_util'
 import { AnimationCanvas, DrawFunction } from '../AnimationCanvas'
 
+/** @category AnimationKnob */
 export type AnimationKnobProps = {
   // required
   value: number
@@ -77,6 +78,7 @@ export type AnimationKnobProps = {
 
 /**
  * simple rotary Knob.
+ * @category AnimationKnob
  */
 export function AnimationKnob({
   value,

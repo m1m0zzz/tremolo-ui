@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react'
 
+/** @category Piano */
 export interface KeyLabelProps {
   /**
    * override Piano.label
@@ -18,6 +19,7 @@ export interface KeyLabelProps {
   __label?: (note: number, index: number) => ReactNode
 }
 
+/** @category Piano */
 export function KeyLabel({
   label,
   className,

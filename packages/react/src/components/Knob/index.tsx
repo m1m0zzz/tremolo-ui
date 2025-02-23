@@ -14,6 +14,7 @@ import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { addNoSelect, removeNoSelect } from '../_util'
 
+/** @category Knob */
 export interface KnobProps {
   // required
   value: number
@@ -69,6 +70,7 @@ export interface KnobProps {
   onChange?: (value: number) => void
 }
 
+/** @category Knob */
 export function Knob({
   value,
   min,

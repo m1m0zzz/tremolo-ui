@@ -4,6 +4,7 @@ import { ChangeEvent, ComponentPropsWithoutRef, useState } from 'react'
 import { clamp } from '@tremolo-ui/functions'
 import { parseValue, Units } from '@tremolo-ui/functions/NumberInput'
 
+/** @category NumberInput */
 export interface NumberInputProps {
   value: number | string
 
@@ -57,6 +58,7 @@ export interface NumberInputProps {
 
 /**
  * Input with some useful functions for entering numerical values.
+ * @category NumberInput
  */
 export function NumberInput({
   value,

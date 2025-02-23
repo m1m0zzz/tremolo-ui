@@ -12,6 +12,7 @@ import { defaultWhiteKeyWidth } from './WhiteKey'
 
 type Props = KeyProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KeyProps>
 
+/** @category Piano */
 export const BlackKey = forwardRef<KeyMethods, Props>(
   (
     {

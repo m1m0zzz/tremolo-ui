@@ -7,6 +7,7 @@ import { generateOptionsList, ScaleOptions } from '@tremolo-ui/functions/Slider'
 import { useMax, useMin, useReverse, useStep, useVertical } from './context'
 import { ScaleOption } from './ScaleOption'
 
+/** @category Slider */
 export interface ScaleProps {
   gap?: number | string
   options?: ScaleOptions
@@ -16,6 +17,7 @@ export interface ScaleProps {
 type Props = ScaleProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof ScaleProps>
 
+/** @category Slider */
 export function Scale({
   gap = 6,
   options,

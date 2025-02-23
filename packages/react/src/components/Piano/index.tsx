@@ -33,6 +33,7 @@ import { defaultWhiteKeyWidth, WhiteKey } from './WhiteKey'
  * - add scale highlight
  */
 
+/** @category Piano */
 export interface PianoProps {
   // required
   noteRange: { first: number; last: number }
@@ -58,6 +59,7 @@ export interface PianoProps {
   children?: ReactElement | ReactElement[]
 }
 
+/** @category Piano */
 export function Piano({
   noteRange,
   glissando = true,

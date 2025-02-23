@@ -1,3 +1,4 @@
+/** @category Piano */
 export type KeyBoardShortcuts = {
   keys: string[]
   // TODO
@@ -6,6 +7,7 @@ export type KeyBoardShortcuts = {
   }
 }
 
+/** @category Piano */
 export const Shortcuts = {
   HOME_ROW: {
     keys: [

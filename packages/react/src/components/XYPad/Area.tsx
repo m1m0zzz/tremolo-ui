@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import { CSSProperties, ReactElement } from 'react'
 
+/** @category XYPad */
 export interface AreaProps {
   width?: number | string
   height?: number | string
@@ -13,6 +14,7 @@ export interface AreaProps {
   __thumb?: ReactElement
 }
 
+/** @category XYPad */
 export function XYPadArea({
   width = 120,
   height = 120,

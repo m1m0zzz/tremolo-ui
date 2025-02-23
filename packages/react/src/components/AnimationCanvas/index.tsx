@@ -24,6 +24,7 @@ function setDprConfig(
   canvas.style.height = `${height}px`
 }
 
+/** @category AnimationCanvas */
 export type DrawFunction = (
   context: CanvasRenderingContext2D,
   width: MutableRefObject<number>,
@@ -31,7 +32,8 @@ export type DrawFunction = (
   count: number,
 ) => void
 
-interface CommonProps {
+/** @category AnimationCanvas */
+export interface CommonProps {
   /**
    * @see https://developer.mozilla.org/docs/Web/API/HTMLCanvasElement/getContext#contextattributes
    */
@@ -40,22 +42,26 @@ interface CommonProps {
   draw: DrawFunction
 }
 
-interface AbsoluteSizingProps {
+/** @category AnimationCanvas */
+export interface AbsoluteSizingProps {
   width?: number
   height?: number
 }
 
-interface RelativeSizingProps {
+/** @category AnimationCanvas */
+export interface RelativeSizingProps {
   relativeSize?: boolean
   reduceFlickering?: boolean
 }
 
+/** @category AnimationCanvas */
 export type AnimationCanvasProps = AbsoluteSizingProps &
   RelativeSizingProps &
   CommonProps
 
 /**
  * A simple animatable canvas with requestAnimationFrame()
+ * @category AnimationCanvas
  */
 export function AnimationCanvas(
   props: AbsoluteSizingProps &

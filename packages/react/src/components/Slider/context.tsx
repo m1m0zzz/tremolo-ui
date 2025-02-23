@@ -19,6 +19,7 @@ interface Props {
   children: ReactNode
 }
 
+/** @category Slider */
 export function SliderValuesProvider({
   min: _min,
   max: _max,
@@ -56,11 +57,17 @@ export function SliderValuesProvider({
   )
 }
 
+/** @category Slider */
 export const useMin = () => useContext(minContext)
+/** @category Slider */
 export const useMax = () => useContext(maxContext)
+/** @category Slider */
 export const useStep = () => useContext(stepContext)
+/** @category Slider */
 export const useSkew = () => useContext(skewContext)
+/** @category Slider */
 export const useVertical = () => useContext(verticalContext)
-// export const useSetVertical = () => useContext(setVerticalContext)
+/** @category Slider */
 export const useReverse = () => useContext(reverseContext)
+/** @category Slider */
 export const useDisabled = () => useContext(disabledContext)

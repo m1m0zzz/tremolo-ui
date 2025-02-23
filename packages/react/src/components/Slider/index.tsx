@@ -30,6 +30,7 @@ import { Scale } from './Scale'
 import { SliderThumb, SliderThumbMethods, SliderThumbProps } from './Thumb'
 import { SliderTrack, SliderTrackProps } from './Track'
 
+/** @category Slider */
 export interface SliderProps {
   // required
   value: number
@@ -67,6 +68,7 @@ export interface SliderProps {
   // ReactElement<typeof SliderThumb, typeof SliderTrack>[]
 }
 
+/** @category Slider */
 export interface SliderMethods {
   focus: () => void
   blur: () => void
@@ -77,6 +79,7 @@ type Props = SliderProps &
 
 /**
  * Customizable slider
+ * @category Slider
  */
 export const Slider = forwardRef<SliderMethods, Props>(
   (
