@@ -1,5 +1,6 @@
 .tremolo-number-input {
   display: inline-block;
+  background-color: inherit;
   font: inherit;
   margin: 0px;
   padding-top: 6px;
