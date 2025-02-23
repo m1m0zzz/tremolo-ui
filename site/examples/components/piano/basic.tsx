@@ -1,6 +1,8 @@
 // expand begin
 import { noteNumber } from '@tremolo-ui/functions'
 import { Piano, Shortcuts } from '@tremolo-ui/react'
+
+import '@tremolo-ui/react/styles/index.css'
 // expand end
 
 function App() {

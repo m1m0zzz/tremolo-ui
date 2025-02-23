@@ -19,11 +19,15 @@ Learn how to override the default CSS and load it as global CSS.
 
 First, copy `dist/styles/index.css` and create a new css file named `custom.css`.
 
+```bash
+cp node_modules/@tremolo-ui/react/dist/styles/index.css custom.css
+```
+
 ```tsx title="index.tsx"
 import 'custom.css'
 ```
 
-```css
+```css title="custom.css"
 .tremolo-ui-any-component {
   /* customizing */
 
@@ -38,7 +42,7 @@ Next, overwrite the css of the component you wish to change.
 All components provided by tremolo-ui are prefixed with `tremolo-ui-` followed by the component name.
 
 ```tsx title="index.tsx"
-import '@tremolo-ui/styles/index.css' // Required for partial overwriting.
+import '@tremolo-ui/react/styles/index.css' // Required for partial overwriting.
 import 'custom.css'
 ```
 
@@ -53,7 +57,7 @@ To avoid polluting the global css namespace, use a mechanism called CSS Modules.
       live
       expand
       showCode
-      sourcePath="examples/tutorials/react/styling/global.tsx"
+      sourcePath="examples/tutorials/react/styling/css-module.tsx"
     >{cssModule}</CodeBlock>
   </TabItem>
   <TabItem value="my-knob.module.css" default>

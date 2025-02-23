@@ -1,8 +1,8 @@
 // expand begin
 import { useState } from 'react'
-
 import { Slider } from '@tremolo-ui/react'
 
+import '@tremolo-ui/react/styles/index.css'
 // expand end
 
 function App() {
