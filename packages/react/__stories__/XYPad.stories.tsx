@@ -24,7 +24,7 @@ const valueOptionsDetail = `{
 }`
 
 export default {
-  title: 'React/Components/XYPad',
+  title: 'Components/XYPad',
   component: XYPad,
   argTypes: {
     x: {

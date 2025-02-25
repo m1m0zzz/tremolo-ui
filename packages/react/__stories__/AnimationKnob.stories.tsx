@@ -8,7 +8,7 @@ import { AnimationKnob } from '../src/components/AnimationKnob'
 import { inputEventOptionType, sizesOptionType } from './lib/typeUtils'
 
 export default {
-  title: 'React/Components/AnimationKnob',
+  title: 'Components/AnimationKnob',
   component: AnimationKnob,
   argTypes: {
     value: {

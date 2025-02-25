@@ -19,7 +19,7 @@ import { inputEventOptionType } from './lib/typeUtils'
 import styles from './styles/Slider.module.css'
 
 export default {
-  title: 'React/Components/Slider',
+  title: 'Components/Slider',
   component: Slider,
   argTypes: {
     value: {

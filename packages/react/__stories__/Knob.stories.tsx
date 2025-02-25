@@ -6,7 +6,7 @@ import { Knob } from '../src/components/Knob'
 import { inputEventOptionType } from './lib/typeUtils'
 
 export default {
-  title: 'React/Components/Knob',
+  title: 'Components/Knob',
   component: Knob,
   argTypes: {
     value: {

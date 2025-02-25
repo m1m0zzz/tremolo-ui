@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { DragObserver } from '../src/components/DragObserver'
 
 export default {
-  title: 'React/Base Components/DragObserver',
+  title: 'Base Components/DragObserver',
   component: DragObserver,
 }
 

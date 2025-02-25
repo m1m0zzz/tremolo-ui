@@ -69,7 +69,7 @@
       "import { ${1:Component} } from '../src/components/${1:Component}'",
       "",
       "export default {",
-      "  title: 'React/Components/${1:Component}',",
+      "  title: 'Components/${1:Component}',",
       "  component: ${1:Component},",
       "}",
       "",

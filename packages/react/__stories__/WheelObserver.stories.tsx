@@ -6,7 +6,7 @@ import { NumberInput } from '../src/components/NumberInput'
 import { WheelObserver } from '../src/components/WheelObserver'
 
 export default {
-  title: 'React/Base Components/WheelObserver',
+  title: 'Base Components/WheelObserver',
   component: WheelObserver,
 }
 

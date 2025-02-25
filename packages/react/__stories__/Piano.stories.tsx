@@ -16,7 +16,7 @@ import {
 import { sizesOptionType } from './lib/typeUtils'
 
 export default {
-  title: 'React/Components/Piano',
+  title: 'Components/Piano',
   component: Piano,
   argTypes: {
     height: {

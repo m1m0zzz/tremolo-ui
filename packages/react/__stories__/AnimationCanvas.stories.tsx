@@ -6,7 +6,7 @@ import {
 } from '../src/components/AnimationCanvas'
 
 export default {
-  title: 'React/Components/AnimationCanvas',
+  title: 'Components/AnimationCanvas',
   component: AnimationCanvas,
   argTypes: {
     width: {
