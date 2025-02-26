@@ -8,15 +8,17 @@ Components library for Audio Applications.
 [![Vercel Deploy](https://deploy-badge.vercel.app/vercel/tremolo-ui-sb-react?logo=storybook&name=React)](https://tremolo-ui-sb-react.vercel.app/)
 [![Vercel Deploy](https://deploy-badge.vercel.app/vercel/tremolo-ui-sb-web-components?logo=storybook&name=Web+Components)](https://tremolo-ui-sb-web-components.vercel.app/)
 
-*tremolo-ui is now WIP*
+*tremolo-ui is now* ***WIP***
+
+*An unstable version (0.0.x) has been released.*
 
 ## 🚩 Goals
 
-- Components with usability and flexibility
-- Mobile Support
-- Distribute package
-  - React
-  - Web Components
+- [x] Components with usability and flexibility
+- [ ] Mobile Support (80%)
+- [ ] Distribute package
+  - [x] React
+  - [ ] Web Components (not yet)
 
 ## 📚 Docs
 
