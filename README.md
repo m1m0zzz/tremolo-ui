@@ -1,7 +1,7 @@
 
 # [tremolo-ui](https://github.com/m1m0zzz/tremolo-ui)
 
-UI library for Web Audio App
+Components library for Audio Applications.
 
 [![Build Node.js](https://github.com/m1m0zzz/tremolo-ui/actions/workflows/build.yml/badge.svg)](https://github.com/m1m0zzz/tremolo-ui/actions/workflows/build.yml)
 [![Vercel Deploy](https://deploy-badge.vercel.app/vercel/tremolo-ui?logo=docusaurus&name=Docs)](https://tremolo-ui.vercel.app/)
