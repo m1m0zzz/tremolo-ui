@@ -39,7 +39,6 @@ export const Basic = () => {
         min={0.1}
         step={0.1}
         width={10}
-        typeNumber
         onChange={(value) => {
           setScale(value)
         }}

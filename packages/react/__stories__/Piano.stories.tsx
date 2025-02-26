@@ -185,7 +185,6 @@ export const OneOctave = () => {
         min={-1}
         max={9}
         onChange={(v) => setOctave(v)}
-        typeNumber
         style={{ display: 'block', marginBottom: '1rem' }}
       />
       <Piano

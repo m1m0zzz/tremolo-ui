@@ -88,7 +88,6 @@ export const LogarithmicParameter: Story = {
           <NumberInput
             value={centerValue}
             onChange={(v) => setCenterValue(v)}
-            typeNumber
           />
         </p>
         <Slider
