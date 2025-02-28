@@ -20,7 +20,7 @@ interface Props {
 }
 
 /** @category Slider */
-export function SliderValuesProvider({
+export function SliderProvider({
   min: _min,
   max: _max,
   step: _step,

@@ -25,7 +25,7 @@ import { useEventListener } from '../../hooks/useEventListener'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { addNoSelect, removeNoSelect } from '../_util'
 
-import { SliderValuesProvider } from './context'
+import { SliderProvider } from './context'
 import { Scale } from './Scale'
 import { SliderThumb, SliderThumbMethods, SliderThumbProps } from './Thumb'
 import { SliderTrack, SliderTrackProps } from './Track'
@@ -253,7 +253,7 @@ export const Slider = forwardRef<SliderMethods, Props>(
     }, [])
 
     return (
-      <SliderValuesProvider
+      <SliderProvider
         min={min}
         max={max}
         step={step}
@@ -293,6 +293,8 @@ export const Slider = forwardRef<SliderMethods, Props>(
             style={{
               display: 'flex',
               flexDirection: vertical ? 'row' : 'column',
+              width: !vertical ? '100%' : undefined,
+              height: vertical ? '100%' : undefined,
             }}
           >
             <div className="tremolo-slider-track-wrapper" ref={trackElementRef}>
@@ -311,7 +313,7 @@ export const Slider = forwardRef<SliderMethods, Props>(
             {scaleComponent}
           </div>
         </div>
-      </SliderValuesProvider>
+      </SliderProvider>
     )
   },
 )

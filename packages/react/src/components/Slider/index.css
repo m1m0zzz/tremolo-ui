@@ -35,6 +35,14 @@
 
   position: relative;
 
+  &[data-vertical='false'] {
+    min-width: 50px;
+  }
+
+  &[data-vertical='true'] {
+    min-height: 50px;
+  }
+
   &:hover {
     --active: #6387e9;
     --inactive: #e0e0e0;

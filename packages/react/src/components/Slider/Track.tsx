@@ -54,6 +54,7 @@ export function SliderTrack({
     <div
       className={clsx('tremolo-slider-track', className)}
       aria-disabled={disabled}
+      data-vertical={vertical}
       style={{
         ...colors,
         background: xor(vertical, reverse)

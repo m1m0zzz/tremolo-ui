@@ -137,6 +137,115 @@ export const CustomImage = () => {
   )
 }
 
+export const Flex = () => {
+  const [value, setValue] = useState(32)
+
+  return (
+    <div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          width: 400,
+          height: 200,
+          resize: 'both',
+          overflow: 'auto',
+          border: '1px solid black',
+          marginBottom: '1rem',
+        }}
+      >
+        <div
+          style={{
+            padding: 8,
+            margin: 8,
+            border: '1px solid red',
+            background: 'pink',
+            flex: '0 1 auto',
+          }}
+        >
+          item1
+        </div>
+        <Slider
+          value={value}
+          min={0}
+          max={100}
+          onChange={(v) => setValue(v)}
+          style={{ flex: '1 1 auto' }}
+        >
+          <SliderTrack
+            style={{
+              width: '100%',
+            }}
+          />
+        </Slider>
+        <div
+          style={{
+            padding: 8,
+            margin: 8,
+            border: '1px solid blue',
+            background: 'skyblue',
+            flex: '0 1 auto',
+          }}
+        >
+          item3
+        </div>
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          width: 200,
+          height: 400,
+          resize: 'both',
+          overflow: 'auto',
+          border: '1px solid black',
+        }}
+      >
+        <div
+          style={{
+            padding: 8,
+            margin: 8,
+            border: '1px solid red',
+            background: 'pink',
+            flex: '0 1 auto',
+          }}
+        >
+          item1
+        </div>
+        <Slider
+          value={value}
+          min={0}
+          max={100}
+          onChange={(v) => setValue(v)}
+          vertical
+          style={{ flex: '1 1 auto' }}
+        >
+          <SliderTrack
+            style={{
+              height: '100%',
+            }}
+          />
+        </Slider>
+        <div
+          style={{
+            padding: 8,
+            margin: 8,
+            border: '1px solid blue',
+            background: 'skyblue',
+            flex: '0 1 auto',
+          }}
+        >
+          item3
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export const ConfigScale = () => {
   const [value, setValue] = useState(32)
   const [value2, setValue2] = useState(32)
