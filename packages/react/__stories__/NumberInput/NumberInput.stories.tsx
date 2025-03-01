@@ -68,9 +68,19 @@ export const WithAnotherComponents: Story = {
         style={{
           display: 'flex',
           gap: '1rem',
+          alignItems: 'center',
         }}
       >
-        <Knob value={value} min={0} max={100} onChange={(v) => setValue(v)} />
+        <div
+          style={{
+            display: 'inline-flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Knob value={value} min={0} max={100} onChange={(v) => setValue(v)} />
+          {value}
+        </div>
         <NumberInput {...args} value={value} onChange={(v) => setValue(v)} />
       </div>
     )

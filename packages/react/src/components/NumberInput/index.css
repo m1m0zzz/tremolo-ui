@@ -12,9 +12,14 @@
   border-radius: var(--tremolo-number-input-border-radius);
 
   width: 140px;
+  height: min-content;
 
   &:hover {
     border-color: var(--tremolo-theme-color);
+  }
+
+  &:not(:focus-within):has(> .tremolo-number-input[data-error='true']) {
+    border-color: #f34343;
   }
 
   &:focus-within {
@@ -75,8 +80,12 @@
   cursor: pointer;
   border-top-right-radius: var(--tremolo-number-input-border-radius);
 
-  &:active {
+  &[aria-disabled='false']:active {
     background-color: #3443560e;
+  }
+
+  &[aria-disabled='true'] {
+    cursor: not-allowed;
   }
 }
 
@@ -95,7 +104,11 @@
   cursor: pointer;
   border-bottom-right-radius: var(--tremolo-number-input-border-radius);
 
-  &:active {
+  &[aria-disabled='false']:active {
     background-color: #3443560e;
+  }
+
+  &[aria-disabled='true'] {
+    cursor: not-allowed;
   }
 }
