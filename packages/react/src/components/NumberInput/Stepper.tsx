@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import { ComponentPropsWithoutRef, ReactNode } from 'react'
 
 export interface StepperProps {
+  /** Display only when hovering. */
   dynamic?: boolean
   children?: ReactNode
 }
