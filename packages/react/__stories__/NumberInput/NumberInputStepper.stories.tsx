@@ -28,7 +28,7 @@ export const Basic: Story = {
           min={0}
           max={10}
           units={'Hz'}
-          // keepWithinRange={false}
+          keepWithinRange={false}
           onChange={(v) => setValue(v)}
         >
           <Stepper {...args}>

@@ -107,7 +107,7 @@ function InternalInput({
 }: Omit<NumberInputProps, 'value'> &
   Omit<ComponentPropsWithoutRef<'input'>, keyof NumberInputProps | 'type'>) {
   const [editing, setEditing] = useState(false)
-  const { value } = useStore()
+  const { value, valueAsNumber } = useStore()
   const dispatch = useDispatch()
   const handleChange = useCallback(
     (text: string) => {
@@ -121,12 +121,12 @@ function InternalInput({
 
   const error = useMemo(() => {
     if (editing) return false
-    const v = parseValue(value, units, digit).rawValue
+    const v = valueAsNumber
     return (
       (min ?? Number.MIN_SAFE_INTEGER) > v ||
       v > (max ?? Number.MAX_SAFE_INTEGER)
     )
-  }, [editing, digit, max, min, units, value])
+  }, [editing, max, min, valueAsNumber])
 
   return (
     <input
@@ -141,9 +141,8 @@ function InternalInput({
       data-error={error}
       onChange={(event) => {
         const v = event.currentTarget.value
-        console.log(v)
         handleChange(v)
-        onChange?.(Number(v), event)
+        onChange?.(valueAsNumber, event)
       }}
       onFocus={(event) => {
         setEditing(true)
@@ -205,9 +204,13 @@ export function NumberInput({
   ...props
 }: NumberInputProps &
   Omit<ComponentPropsWithoutRef<'input'>, keyof NumberInputProps | 'type'>) {
+  const showValue = useMemo(() => {
+    return parseValue(String(value), units, digit).formatValue
+  }, [digit, units, value])
+
   return (
     <NumberInputProvider
-      value={value}
+      value={showValue}
       min={min}
       max={max}
       step={step}

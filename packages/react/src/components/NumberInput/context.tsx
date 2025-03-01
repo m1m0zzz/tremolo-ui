@@ -1,4 +1,11 @@
-import { createContext, useContext, ReactNode, useReducer } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+import {
+  createContext,
+  useContext,
+  ReactNode,
+  useReducer,
+  useEffect,
+} from 'react'
 
 import { clamp } from '@tremolo-ui/functions'
 import { parseValue, Units } from '@tremolo-ui/functions/NumberInput'
@@ -52,7 +59,7 @@ export function NumberInputProvider({
   children,
 }: Props) {
   const [store, dispatch] = useReducer(valueReducer, {
-    value: parseValue(String(_value), _units, _digit).formatValue,
+    value: String(_value),
     valueAsNumber: parseValue(String(_value), _units, _digit).rawValue,
     step: _step,
     min: _min,
@@ -62,14 +69,30 @@ export function NumberInputProvider({
     keepWithinRange: _keepWithinRange,
   })
 
-  store.value = parseValue(String(_value), _units, _digit).formatValue
-  store.valueAsNumber = parseValue(String(_value), _units, _digit).rawValue
-  store.step = _step
-  store.min = _min
-  store.max = _max
-  store.units = _units
-  store.digit = _digit
-  store.keepWithinRange = _keepWithinRange
+  useEffect(() => {
+    store.value = parseValue(String(_value), _units, _digit).formatValue
+  }, [_digit, _units, _value])
+  useEffect(() => {
+    store.valueAsNumber = parseValue(String(_value), _units, _digit).rawValue
+  }, [_digit, _units, _value])
+  useEffect(() => {
+    store.step = _step
+  }, [_step])
+  useEffect(() => {
+    store.min = _min
+  }, [_min])
+  useEffect(() => {
+    store.max = _max
+  }, [_max])
+  useEffect(() => {
+    store.units = _units
+  }, [_units])
+  useEffect(() => {
+    store.digit = _digit
+  }, [_digit])
+  useEffect(() => {
+    store.keepWithinRange = _keepWithinRange
+  }, [_keepWithinRange])
 
   return (
     <storeContext.Provider value={store}>
@@ -84,10 +107,8 @@ export function NumberInputProvider({
 function valueReducer(store: Store, action: ActionType) {
   switch (action.type) {
     case 'increment': {
-      console.log()
       let next =
         parseValue(store.value, store.units, store.digit).rawValue + store.step
-      console.log(next)
       if (store.keepWithinRange) {
         next = clamp(next, store.min, store.max)
       }
