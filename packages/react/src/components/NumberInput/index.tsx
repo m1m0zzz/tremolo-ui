@@ -70,13 +70,19 @@ export interface NumberInputProps {
 
   wrapperClassName?: string
 
-  onChange?: (value: number, event: ChangeEvent<HTMLInputElement>) => void
+  onChange?: (
+    value: number,
+    text: string,
+    event: ChangeEvent<HTMLInputElement>,
+  ) => void
   onFocus?: (
     value: number,
+    text: string,
     event: React.FocusEvent<HTMLInputElement, Element>,
   ) => void
   onBlur?: (
     value: number,
+    text: string,
     event: React.FocusEvent<HTMLInputElement, Element>,
   ) => void
 
@@ -142,7 +148,7 @@ function InternalInput({
       onChange={(event) => {
         const v = event.currentTarget.value
         handleChange(v)
-        onChange?.(valueAsNumber, event)
+        onChange?.(valueAsNumber, v, event)
       }}
       onFocus={(event) => {
         setEditing(true)
@@ -156,7 +162,7 @@ function InternalInput({
             parsed.formatValue.length - parsed.unit.length,
           )
         }
-        onFocus?.(parsed.rawValue, event)
+        onFocus?.(parsed.rawValue, parsed.formatValue, event)
       }}
       onBlur={(event) => {
         setEditing(false)
@@ -164,7 +170,7 @@ function InternalInput({
         const v = event.currentTarget.value
         const parsed = parseValue(v, units, digit)
         handleChange(parsed.formatValue)
-        onBlur?.(parsed.rawValue, event)
+        onBlur?.(parsed.rawValue, parsed.formatValue, event)
       }}
       onKeyDown={(event) => {
         if (blurOnEnter && event.key == 'Enter') {
@@ -205,6 +211,7 @@ export function NumberInput({
 }: NumberInputProps &
   Omit<ComponentPropsWithoutRef<'input'>, keyof NumberInputProps | 'type'>) {
   const showValue = useMemo(() => {
+    // console.log(parseValue(String(value), units, digit).formatValue)
     return parseValue(String(value), units, digit).formatValue
   }, [digit, units, value])
 

@@ -69,6 +69,9 @@ export function NumberInputProvider({
     keepWithinRange: _keepWithinRange,
   })
 
+  // TODO: store update
+  // console.log('step: ', _step)
+
   useEffect(() => {
     store.value = parseValue(String(_value), _units, _digit).formatValue
   }, [_digit, _units, _value])

@@ -39,7 +39,14 @@ export const Basic: Story = {
         <p>config</p>
         <div>
           <span>step: </span>
-          <NumberInput value={step} onChange={(v) => setStep(v)} />
+          <NumberInput
+            value={step}
+            step={0.01}
+            onChange={(v) => {
+              console.log(v)
+              setStep(v)
+            }}
+          />
         </div>
       </div>
     )

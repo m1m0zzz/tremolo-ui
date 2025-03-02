@@ -43,7 +43,7 @@ export const UnitsAndDigit: Story = {
       ['Hz', 1],
       ['kHz', 1000],
     ],
-    digit: 1,
+    digit: 4,
   },
   render: (args) => {
     const [value, setValue] = useState(4321)
@@ -58,7 +58,6 @@ export const WithAnotherComponents: Story = {
       ['Hz', 1],
       ['kHz', 1000],
     ],
-    // digit: 1,
   },
   render: (args) => {
     const [value, setValue] = useState(0)
