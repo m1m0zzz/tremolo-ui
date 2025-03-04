@@ -24,7 +24,6 @@ const sidebars: SidebarsConfig = {
           dirName: 'tutorials',
         },
       ],
-      collapsed: false,
     },
     {
       type: 'category',

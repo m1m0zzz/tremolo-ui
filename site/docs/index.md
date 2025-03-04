@@ -14,9 +14,8 @@ It is compatible with React and Web Components, and the package is distributed t
 
 See the tutorial for the package you are using.
 
-- [Tutorial > React](./tutorials/react/getting-started/)
-- [Tutorial > Web Components](./tutorials/web-components/getting-started/)
-
+- [Tutorials > React](./tutorials/react/getting-started/)
+- [Tutorials > Web Components](./tutorials/web-components/getting-started/)
 
 ## 🧩UI Catalog
 
