@@ -1,4 +1,4 @@
-import { noteNumber, noteName } from '../src/midi'
+import { noteNumber, noteName, noteToFrequency } from '../src/midi'
 
 describe('unit test', () => {
   test('noteNumber()', () => {
@@ -41,5 +41,12 @@ describe('unit test', () => {
     expect(noteName(12)).toBe('C0')
     expect(noteName(0)).toBe('C-1')
     expect(noteName(-12)).toBe('C-2')
+  })
+
+  test('noteToFrequency()', () => {
+    expect(noteToFrequency('A4')).toBe(440)
+    expect(noteToFrequency(noteNumber('A4'))).toBe(440)
+    expect(noteToFrequency('A4', 332)).toBe(332)
+    expect(noteToFrequency('C4').toFixed(2)).toBe('261.63')
   })
 })
