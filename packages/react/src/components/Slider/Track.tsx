@@ -18,6 +18,8 @@ export interface SliderTrackProps {
   active?: string
   inactive?: string
 
+  defaultStyle?: boolean
+
   className?: string
   style?: CSSProperties
   children?: ReactElement
@@ -37,6 +39,7 @@ export function SliderTrack({
   children,
   className,
   style,
+  defaultStyle = true,
   __thumb,
   __percent,
 }: SliderTrackProps) {
@@ -55,16 +58,20 @@ export function SliderTrack({
       className={clsx('tremolo-slider-track', className)}
       aria-disabled={disabled}
       data-vertical={vertical}
-      style={{
-        ...colors,
-        background: xor(vertical, reverse)
-          ? `linear-gradient(to ${direction}, var(--inactive, #eee) ${__percent}%, var(--active, #7998ec) ${__percent}%)`
-          : `linear-gradient(to ${direction}, var(--active, #7998ec) ${__percent}%, var(--inactive, #eee) ${__percent}%)`,
-        borderRadius: styleHelper(thickness!, '/', 2),
-        width: !vertical ? length : thickness,
-        height: vertical ? length : thickness,
-        ...style,
-      }}
+      style={
+        !defaultStyle
+          ? style
+          : {
+              ...colors,
+              background: xor(vertical, reverse)
+                ? `linear-gradient(to ${direction}, var(--inactive, #eee) ${__percent}%, var(--active, #7998ec) ${__percent}%)`
+                : `linear-gradient(to ${direction}, var(--active, #7998ec) ${__percent}%, var(--inactive, #eee) ${__percent}%)`,
+              borderRadius: styleHelper(thickness!, '/', 2),
+              width: !vertical ? length : thickness,
+              height: vertical ? length : thickness,
+              ...style,
+            }
+      }
     >
       {children}
       {__thumb}
