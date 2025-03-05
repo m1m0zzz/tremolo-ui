@@ -30,8 +30,8 @@ export const WhiteKey = forwardRef<KeyMethods, Props>(
       __index,
       __fill,
       __width,
-      __playNote,
-      __stopNote,
+      __onPlayNote,
+      __onStopNote,
       __label,
       ...props
     }: Props,
@@ -44,17 +44,17 @@ export const WhiteKey = forwardRef<KeyMethods, Props>(
         play() {
           if (__disabled) return
           setPlayed(true)
-          if (__playNote) __playNote(__note!)
+          if (__onPlayNote) __onPlayNote(__note!)
         },
         stop() {
           setPlayed(false)
-          if (__stopNote) __stopNote(__note!)
+          if (__onStopNote) __onStopNote(__note!)
         },
         played() {
           return played
         },
       }
-    }, [__disabled, __note, __playNote, __stopNote, played])
+    }, [__disabled, __note, __onPlayNote, __onStopNote, played])
 
     let keyLabelProps: KeyLabelProps = {}
     if (children != undefined) {
@@ -85,24 +85,24 @@ export const WhiteKey = forwardRef<KeyMethods, Props>(
         onPointerDown={() => {
           if (__disabled) return
           setPlayed(true)
-          if (__playNote) __playNote(__note!)
+          if (__onPlayNote) __onPlayNote(__note!)
         }}
         onPointerEnter={() => {
           if (__disabled) return
           if (__glissando) {
             setPlayed(true)
-            if (__playNote) __playNote(__note!)
+            if (__onPlayNote) __onPlayNote(__note!)
           }
         }}
         onPointerUp={() => {
           if (__disabled) return
           setPlayed(false)
-          if (__stopNote) __stopNote(__note!)
+          if (__onStopNote) __onStopNote(__note!)
         }}
         onPointerLeave={() => {
           if (__disabled) return
           setPlayed(false)
-          if (__stopNote) __stopNote(__note!)
+          if (__onStopNote) __onStopNote(__note!)
         }}
         {...props}
       >

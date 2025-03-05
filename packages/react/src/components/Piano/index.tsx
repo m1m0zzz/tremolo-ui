@@ -48,8 +48,8 @@ export interface PianoProps {
 
   style?: CSSProperties
 
-  playNote?: (noteNumber: number) => void
-  stopNote?: (noteNumber: number) => void
+  onPlayNote?: (noteNumber: number) => void
+  onStopNote?: (noteNumber: number) => void
 
   label?: (note: number, index: number) => ReactNode
 
@@ -69,8 +69,8 @@ export function Piano({
   height = fill ? '100%' : 160,
   style,
   className,
-  playNote,
-  stopNote,
+  onPlayNote,
+  onStopNote,
   label,
   children,
   ...props
@@ -206,8 +206,8 @@ export function Piano({
             __index={index}
             __fill={fill}
             __width={whiteNoteWidth}
-            __playNote={playNote}
-            __stopNote={stopNote}
+            __onPlayNote={onPlayNote}
+            __onStopNote={onStopNote}
             __label={label}
             {...whiteKeyProps}
           />
@@ -222,8 +222,8 @@ export function Piano({
             __index={index}
             __fill={fill}
             __width={whiteNoteWidth * 0.65}
-            __playNote={playNote}
-            __stopNote={stopNote}
+            __onPlayNote={onPlayNote}
+            __onStopNote={onStopNote}
             __label={label}
             {...blackKeyProps}
           />

@@ -29,9 +29,9 @@ export interface KeyProps {
   /** @internal */
   __width?: number
   /** @internal */
-  __playNote?: (noteNumber: number) => void
+  __onPlayNote?: (noteNumber: number) => void
   /** @internal */
-  __stopNote?: (noteNumber: number) => void
+  __onStopNote?: (noteNumber: number) => void
   /** @internal */
   __label?: (note: number, index: number) => ReactNode
 }
