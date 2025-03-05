@@ -1,6 +1,7 @@
 {
   "language": "en,en-gb",
   "words": [
+    "ADSR",
     "Autochroma",
     "autodocs",
     "clsx",
@@ -16,7 +17,8 @@
     "stackblitz",
     "typedoc",
     "Vercel",
-    "vite"
+    "vite",
+    "Wavetable"
   ],
   "ignorePaths": [
     "**/dist",

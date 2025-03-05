@@ -1,0 +1,17 @@
+.adsr {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  max-width: 200px;
+  gap: 1rem;
+}
+
+.knobContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.label {
+  font-size: 0.75rem;
+}

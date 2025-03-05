@@ -1,0 +1,19 @@
+.numberInputWrapper {
+  width: 50px;
+  border-radius: 0px;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+
+  &:focus-within {
+    border-color: var(--tremolo-theme-color);
+    box-shadow: none;
+  }
+}
+
+.numberInput {
+  font-size: 0.75rem;
+  text-align: center;
+  padding: 4px 6px 2px 6px;
+  width: calc(100% - var(--tremolo-number-input-stepper-width));
+}

@@ -61,10 +61,10 @@ export const Basic: Story = {
         </p>
         <Piano
           {...args}
-          playNote={(noteNumber) => {
+          onPlayNote={(noteNumber) => {
             synth.triggerAttack(noteName(noteNumber))
           }}
-          stopNote={(noteNumber) => {
+          onStopNote={(noteNumber) => {
             synth.triggerRelease(noteName(noteNumber))
           }}
           // Notice: need optional chaining (?.)
