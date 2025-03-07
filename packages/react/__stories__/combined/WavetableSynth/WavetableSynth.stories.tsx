@@ -45,7 +45,6 @@ function generateAndAssignSource(
         nowBuffering[i] = currentSample * 0.5
       }
     }
-    // console.log('generate source buffer')
     if (sources[nodeIndex]?.source?.state == 'started') {
       sources[nodeIndex].source.stop()
     }
@@ -58,7 +57,6 @@ function generateAndAssignSource(
     if (source.state == 'stopped') {
       source.start()
     }
-
     sources[nodeIndex] = {
       source: source,
       position: position,
@@ -83,34 +81,41 @@ export const WavetableSynth = () => {
         ctx = audioContext.current
       } else {
         ctx = new AudioContext({ sampleRate: sampleRate })
-        console.log('init audio context')
-        console.log(ctx)
         audioContext.current = ctx
       }
 
-      console.log('play: ', noteNumber)
       pressedCount.current += 1
       generateAndAssignSource(ctx, noteNumber, position)
 
       envelopes[noteNumber - firstNote].triggerAttack()
-      gain.set({ gain: 1 / Math.sqrt(Math.min(1, pressedCount.current)) })
+      gain.set({ gain: 1 / Math.sqrt(Math.max(1, pressedCount.current)) })
     },
     [position, audioContext],
   )
 
   useEffect(() => {
+    const a = attack / 1000
+    const d = decay / 1000
+    const s = sustain / 100
+    const r = release / 1000
     for (let i = 0; i < noteLength; i++) {
-      envelopes[i] = new AmplitudeEnvelope({
-        attack: attack / 1000,
-        decay: decay / 1000,
-        sustain: sustain / 100,
-        release: release / 1000,
-      }).connect(gain)
+      if (envelopes[i]) {
+        envelopes[i].attack = a
+        envelopes[i].decay = d
+        envelopes[i].sustain = s
+        envelopes[i].release = r
+      } else {
+        envelopes[i] = new AmplitudeEnvelope({
+          attack: a,
+          decay: d,
+          sustain: s,
+          release: r,
+        }).connect(gain)
+      }
     }
   }, [attack, decay, sustain, release])
 
   const handleStop = (noteNumber: number) => {
-    console.log('stop: ', noteNumber)
     envelopes[noteNumber - firstNote]?.triggerRelease()
     pressedCount.current -= 1
   }
