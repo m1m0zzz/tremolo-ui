@@ -99,8 +99,10 @@ export const BlackKey = forwardRef<KeyMethods, Props>(
         }}
         onPointerLeave={() => {
           if (__disabled) return
-          setPlayed(false)
-          if (__onStopNote) __onStopNote(__note!)
+          if (__glissando) {
+            setPlayed(false)
+            if (__onStopNote) __onStopNote(__note!)
+          }
         }}
         {...props}
       >
