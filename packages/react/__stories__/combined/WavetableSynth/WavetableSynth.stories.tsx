@@ -21,7 +21,50 @@ const firstNote = noteNumber('C3')
 const lastNote = noteNumber('B4')
 const noteLength = lastNote - firstNote + 1
 const envelopes: AmplitudeEnvelope[] = []
+const sources: {
+  source: ToneBufferSource
+  position?: number
+}[] = []
 const gain = new Gain().toDestination()
+
+function generateAndAssignSource(
+  ctx: AudioContext,
+  noteNumber: number,
+  position: number,
+) {
+  const nodeIndex = noteNumber - firstNote
+  if (sources[nodeIndex]?.position != position) {
+    const buffer = ctx.createBuffer(2, sampleRate, sampleRate)
+    let currentAngle = 0
+    const cyclesPerSample = noteToFrequency(noteNumber) / sampleRate
+    for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+      const nowBuffering = buffer.getChannelData(channel)
+      for (let i = 0; i < buffer.length; i++) {
+        const currentSample = basicShapesWave(currentAngle, position)
+        currentAngle += cyclesPerSample
+        nowBuffering[i] = currentSample * 0.5
+      }
+    }
+    // console.log('generate source buffer')
+    if (sources[nodeIndex]?.source?.state == 'started') {
+      sources[nodeIndex].source.stop()
+    }
+    const source = new ToneBufferSource({
+      url: buffer,
+      loop: true,
+      loopEnd: 1 / noteToFrequency(noteNumber),
+    })
+    source.connect(envelopes[nodeIndex])
+    if (source.state == 'stopped') {
+      source.start()
+    }
+
+    sources[nodeIndex] = {
+      source: source,
+      position: position,
+    }
+  }
+}
 
 export const WavetableSynth = () => {
   const [position, setPosition] = useState(0) // wavetable position
@@ -45,39 +88,12 @@ export const WavetableSynth = () => {
         audioContext.current = ctx
       }
 
-      const myArrayBuffer = ctx.createBuffer(2, sampleRate, sampleRate)
-
-      let currentAngle = 0
-      const cyclesPerSample = noteToFrequency(noteNumber) / sampleRate
-      for (
-        let channel = 0;
-        channel < myArrayBuffer.numberOfChannels;
-        channel++
-      ) {
-        const nowBuffering = myArrayBuffer.getChannelData(channel)
-        for (let i = 0; i < myArrayBuffer.length; i++) {
-          const currentSample = basicShapesWave(currentAngle, position)
-          currentAngle += cyclesPerSample
-          nowBuffering[i] = currentSample * 0.5
-        }
-      }
-
-      const source = new ToneBufferSource({
-        url: myArrayBuffer,
-        loop: true,
-        loopEnd: 1 / noteToFrequency(noteNumber),
-      })
-
+      console.log('play: ', noteNumber)
       pressedCount.current += 1
+      generateAndAssignSource(ctx, noteNumber, position)
 
-      for (let i = 0; i < noteLength; i++) {
-        if (firstNote + i == noteNumber) {
-          source.connect(envelopes[i])
-          source.start()
-          envelopes[i].triggerAttack()
-          gain.set({ gain: 1 / Math.sqrt(Math.min(1, pressedCount.current)) })
-        }
-      }
+      envelopes[noteNumber - firstNote].triggerAttack()
+      gain.set({ gain: 1 / Math.sqrt(Math.min(1, pressedCount.current)) })
     },
     [position, audioContext],
   )
@@ -94,12 +110,8 @@ export const WavetableSynth = () => {
   }, [attack, decay, sustain, release])
 
   const handleStop = (noteNumber: number) => {
-    // console.log('stop: ', noteNumber)
-    for (let i = 0; i < noteLength; i++) {
-      if (firstNote + i == noteNumber) {
-        envelopes[i]?.triggerRelease()
-      }
-    }
+    console.log('stop: ', noteNumber)
+    envelopes[noteNumber - firstNote]?.triggerRelease()
     pressedCount.current -= 1
   }
 
