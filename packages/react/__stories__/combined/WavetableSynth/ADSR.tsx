@@ -1,14 +1,18 @@
-import { useState } from 'react'
+import { useAtom } from 'jotai'
+
+import { gainToDb } from '@tremolo-ui/functions'
 
 import { Knob } from '../../../src/components/Knob'
+
+import { attackAtom, decayAtom, releaseAtom, sustainAtom } from './atoms'
 
 import styles from './ADSR.module.css'
 
 export function ADSR() {
-  const [attack, setAttack] = useState(100) // ms
-  const [decay, setDecay] = useState(200) // ms
-  const [sustain, setSustain] = useState(80) // %
-  const [release, setRelease] = useState(200) // ms
+  const [attack, setAttack] = useAtom(attackAtom) // ms
+  const [decay, setDecay] = useAtom(decayAtom) // ms
+  const [sustain, setSustain] = useAtom(sustainAtom) // %
+  const [release, setRelease] = useAtom(releaseAtom) // ms
 
   return (
     <div className={styles.adsr}>
@@ -46,7 +50,12 @@ export function ADSR() {
           size={40}
           activeLine="rgb(248, 151, 67)"
         />
-        <div className={styles.label}>{sustain}%</div>
+        <div className={styles.label}>
+          {gainToDb(sustain / 100) == -Infinity
+            ? '-Inf'
+            : gainToDb(sustain / 100).toFixed(1)}{' '}
+          dB
+        </div>
       </div>
       <div className={styles.knobContainer}>
         <div className={styles.label}>R</div>

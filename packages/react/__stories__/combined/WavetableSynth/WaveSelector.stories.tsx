@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { WaveSelector as Impl } from './components/WaveSelector'
+import { WaveSelector as Impl } from './WaveSelector'
 
 export default {
   title: 'combined/WaveSelector',

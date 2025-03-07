@@ -13,5 +13,7 @@
 }
 
 .label {
+  width: 52px;
+  text-align: center;
   font-size: 0.75rem;
 }

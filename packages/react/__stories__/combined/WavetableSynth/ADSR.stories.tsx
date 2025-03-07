@@ -1,4 +1,4 @@
-import { ADSR as Impl } from './components/ADSR'
+import { ADSR as Impl } from './ADSR'
 
 export default {
   title: 'combined/ADSR',
