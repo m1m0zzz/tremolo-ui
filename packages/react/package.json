@@ -66,6 +66,7 @@
     "@storybook/test": "^8.3.3",
     "@testing-library/react": "^16.0.1",
     "jest-environment-jsdom": "^29.7.0",
+    "jotai": "^2.12.1",
     "react": "^18.3.1",
     "react-component-benchmark": "^2.0.0",
     "react-dom": "^18.3.1",
