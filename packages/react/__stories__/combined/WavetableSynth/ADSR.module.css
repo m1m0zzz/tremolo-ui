@@ -1,14 +1,30 @@
 .adsr {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  max-width: 200px;
-  gap: 1rem;
+  --container-height: 200px;
+  --knobs-height: 78px;
+  --gap: 8px;
+
+  display: inline-flex;
+  flex-direction: column;
+  height: var(--container-height);
+  gap: var(--gap);
 }
 
-.knobContainer {
+.canvas {
+  /* width: max-content; */
+  height: calc(var(--container-height) - var(--knobs-height) - var(--gap));
+}
+
+.knobs {
+  display: flex;
+  width: min-content;
+  gap: 0.75rem;
+}
+
+.knobAndLabel {
   display: flex;
   flex-direction: column;
+  height: var(--knobs-height);
+  justify-content: space-between;
   align-items: center;
 }
 

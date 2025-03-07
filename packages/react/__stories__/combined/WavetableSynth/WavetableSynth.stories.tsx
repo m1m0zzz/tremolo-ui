@@ -1,14 +1,30 @@
 import { useAtomValue } from 'jotai'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { AmplitudeEnvelope, Gain, ToneBufferSource } from 'tone'
+import { useCallback, useEffect, useRef } from 'react'
+import {
+  AmplitudeEnvelope,
+  gainToDb,
+  Meter,
+  ToneBufferSource,
+  Volume,
+} from 'tone'
 
 import { noteNumber, noteToFrequency } from '@tremolo-ui/functions'
 
 import { Piano, Shortcuts } from '../../../src/components/Piano'
 
-import { ADSR } from './ADSR'
-import { attackAtom, decayAtom, releaseAtom, sustainAtom } from './atoms'
-import { basicShapesWave, WaveSelector } from './WaveSelector'
+import { ADSR } from './ADSR.stories'
+import {
+  attackAtom,
+  decayAtom,
+  positionAtom,
+  releaseAtom,
+  sustainAtom,
+} from './atoms'
+import { VolumeMeter } from './VolumeMeter'
+import { WaveSelector } from './WaveSelector.stories'
+import { basicShapesWave } from './wavetable'
+
+import styles from './WavetableSynth.module.css'
 
 export default {
   title: 'combined/WavetableSynth',
@@ -25,7 +41,9 @@ const sources: {
   source: ToneBufferSource
   position?: number
 }[] = []
-const gain = new Gain().toDestination()
+const volume = new Volume(0)
+const meter = new Meter()
+volume.connect(meter).toDestination()
 
 function generateAndAssignSource(
   ctx: AudioContext,
@@ -42,7 +60,7 @@ function generateAndAssignSource(
       for (let i = 0; i < buffer.length; i++) {
         const currentSample = basicShapesWave(currentAngle, position)
         currentAngle += cyclesPerSample
-        nowBuffering[i] = currentSample * 0.5
+        nowBuffering[i] = currentSample * 0.9 // -0.92dB
       }
     }
     if (sources[nodeIndex]?.source?.state == 'started') {
@@ -65,10 +83,10 @@ function generateAndAssignSource(
 }
 
 export const WavetableSynth = () => {
-  const [position, setPosition] = useState(0) // wavetable position
   const audioContext = useRef<AudioContext | null>(null)
   const pressedCount = useRef(0)
 
+  const position = useAtomValue(positionAtom)
   const attack = useAtomValue(attackAtom)
   const decay = useAtomValue(decayAtom)
   const sustain = useAtomValue(sustainAtom)
@@ -88,7 +106,9 @@ export const WavetableSynth = () => {
       generateAndAssignSource(ctx, noteNumber, position)
 
       envelopes[noteNumber - firstNote].triggerAttack()
-      gain.set({ gain: 1 / Math.sqrt(Math.max(1, pressedCount.current)) })
+      volume.volume.value = gainToDb(
+        1 / Math.sqrt(Math.max(1, pressedCount.current)),
+      )
     },
     [position, audioContext],
   )
@@ -110,7 +130,7 @@ export const WavetableSynth = () => {
           decay: d,
           sustain: s,
           release: r,
-        }).connect(gain)
+        }).connect(volume)
       }
     }
   }, [attack, decay, sustain, release])
@@ -121,27 +141,21 @@ export const WavetableSynth = () => {
   }
 
   return (
-    <div>
-      <div
-        style={{
-          display: 'flex',
-          gap: '2rem',
-          alignItems: 'center',
-        }}
-      >
-        <WaveSelector position={position} setPosition={setPosition} />
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <p className={styles.heading}>Wavetable</p>
+        <VolumeMeter meter={meter} />
+      </div>
+      <div className={styles.parameters}>
+        <WaveSelector />
         <ADSR />
       </div>
-      <div
-        style={{
-          height: 160,
-          marginTop: '2rem',
-        }}
-      >
+      <div className={styles.piano}>
         <Piano
           noteRange={{ first: firstNote, last: lastNote }}
           keyboardShortcuts={Shortcuts.HOME_ROW}
           label={(_, i) => Shortcuts.HOME_ROW.keys[i]?.toUpperCase()}
+          height={120}
           onPlayNote={handlePlay}
           onStopNote={handleStop}
         />
