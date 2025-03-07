@@ -26,7 +26,8 @@ function setDprConfig(
 
 /** @category AnimationCanvas */
 export type DrawFunction = (
-  context: CanvasRenderingContext2D,
+  // TODO: saving scale and translate
+  context: Omit<CanvasRenderingContext2D, 'save' | 'restore' | 'scale'>,
   width: MutableRefObject<number>,
   height: MutableRefObject<number>,
   count: number,
@@ -128,6 +129,7 @@ export function AnimationCanvas({
         // https://zenn.dev/megeton/articles/be1c677e174c84#%E6%A0%B9%E6%9C%AC%E7%9A%84%E3%81%AB-resizeobserver-loop-limit-exceeded-%E3%81%8C%E5%87%BA%E3%82%8B%E5%95%8F%E9%A1%8C%E3%81%AB%E5%90%91%E3%81%8D%E5%90%88%E3%81%86
         for (const entry of entries) {
           // Prevents loss of some context when the canvas is resized
+          // TODO: saving scale and translate
           const contextMemo = {} as DrawingContext
           for (const prop of drawingState) {
             ;(contextMemo[prop] as DrawingStateValue) = context[prop]
