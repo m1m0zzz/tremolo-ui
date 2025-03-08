@@ -60,7 +60,7 @@ function generateAndAssignSource(
       for (let i = 0; i < buffer.length; i++) {
         const currentSample = basicShapesWave(currentAngle, position)
         currentAngle += cyclesPerSample
-        nowBuffering[i] = currentSample * 0.9 // -0.92dB
+        nowBuffering[i] = currentSample
       }
     }
     if (sources[nodeIndex]?.source?.state == 'started') {

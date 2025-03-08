@@ -9,8 +9,6 @@ interface Props {
   themeColor?: string
 }
 
-const redZoneDb = -0.3
-
 export function VolumeMeter({
   meter,
   themeColor = 'rgb(67, 170, 248)',
@@ -50,7 +48,7 @@ export function VolumeMeter({
 
           const _v = meter.getValue()
           const v = typeof _v == 'number' ? _v : _v[0]
-          ctx.fillStyle = v >= redZoneDb ? 'rgb(254, 44, 44)' : themeColor
+          ctx.fillStyle = v >= 0 ? 'rgb(254, 44, 44)' : themeColor
           ctx.fillRect(0, 0, (w * Math.max(0, v + 100)) / 100, h)
         }}
       />
