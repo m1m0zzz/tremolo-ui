@@ -27,7 +27,8 @@ function setDprConfig(
 /** @category AnimationCanvas */
 export type DrawFunction = (
   // TODO: saving scale and translate
-  context: Omit<CanvasRenderingContext2D, 'save' | 'restore' | 'scale'>,
+  // context: Omit<CanvasRenderingContext2D, 'save' | 'restore' | 'scale'>,
+  context: CanvasRenderingContext2D,
   width: MutableRefObject<number>,
   height: MutableRefObject<number>,
   count: number,

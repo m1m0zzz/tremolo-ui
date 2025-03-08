@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai'
 
-import { gainToDb } from '@tremolo-ui/functions'
+import { clamp, gainToDb, mod } from '@tremolo-ui/functions'
 
 import { AnimationCanvas } from '../../../src/components/AnimationCanvas'
 import { Knob } from '../../../src/components/Knob'
@@ -8,6 +8,7 @@ import { Knob } from '../../../src/components/Knob'
 import {
   attackAtom,
   decayAtom,
+  KeyState,
   MAX_ATTACK,
   MAX_DECAY,
   MAX_RELEASE,
@@ -40,11 +41,12 @@ export default {
   tags: ['!autodocs'],
 }
 
-export function ADSR({
-  themeColor = 'rgb(67, 170, 248)',
-}: {
+interface Props {
   themeColor?: string
-}) {
+  keyState?: KeyState
+}
+
+export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
   const [attack, setAttack] = useAtom(attackAtom) // ms
   const [decay, setDecay] = useAtom(decayAtom) // ms
   const [sustain, setSustain] = useAtom(sustainAtom) // %
@@ -62,37 +64,79 @@ export function ADSR({
 
             const pad = 10
             const sectionW = (w - pad * 2) / 4
+            const x0 = pad
+            const y0 = h - pad
+            const x1 =
+              x0 + mappingValue(attack, MIN_ATTACK, MAX_ATTACK, 10, sectionW)
+            const y1 = pad
+            const x2 =
+              x1 + mappingValue(decay, MIN_DECAY, MAX_DECAY, 0, sectionW)
+            const y2 = mappingValue(
+              MAX_SUSTAIN - sustain,
+              MIN_SUSTAIN,
+              MAX_SUSTAIN,
+              pad,
+              h - pad,
+            )
+            const x3 = x2 + sectionW
+            const y3 = mappingValue(
+              MAX_SUSTAIN - sustain,
+              MIN_SUSTAIN,
+              MAX_SUSTAIN,
+              pad,
+              h - pad,
+            )
+            const x4 =
+              x3 + mappingValue(release, MIN_RELEASE, MAX_RELEASE, 10, sectionW)
+            const y4 = h - pad
+
+            // bg shadow
+            if (keyState && keyState.timestamp) {
+              const msec = performance.now() - keyState.timestamp
+              ctx.fillStyle = 'rgb(186, 219, 244)'
+              ctx.beginPath()
+              let x = 0
+              if (keyState.trigger == 'pressed') {
+                ctx.moveTo(x0, y0)
+                const per = clamp(msec / attack, 0, 1)
+                x = x0 + (x1 - x0) * per
+                ctx.lineTo(x, y0 + (y1 - y0) * per)
+                // ctx.lineTo(x0 + (x1 - x0) * per, h - pad)
+                if (msec - attack > 0) {
+                  const per = clamp((msec - attack) / decay, 0, 1)
+                  x = x1 + (x2 - x1) * per
+                  ctx.lineTo(x, y1 + (y2 - y1) * per)
+                }
+                if (msec - attack - decay > 0) {
+                  const per = mod((msec - attack - decay) / 1000, 1)
+                  x = x2 + (x3 - x2) * per
+                  ctx.lineTo(x, y3)
+                }
+                ctx.lineTo(x, h - pad)
+                ctx.closePath()
+                ctx.fill()
+              } else {
+                if (msec / release < 1) {
+                  ctx.moveTo(x3, y3)
+                  const per = clamp(msec / release, 0, 1)
+                  ctx.lineTo(x3 + (x4 - x3) * per, y3 + (y4 - y2) * per)
+                  ctx.lineTo(x3 + (x4 - x3) * per, h - pad)
+                  ctx.lineTo(x3, h - pad)
+                  ctx.closePath()
+                  ctx.fill()
+                }
+              }
+            }
+
+            // line
             ctx.strokeStyle = themeColor
             ctx.lineWidth = 2
-            let x = pad
             ctx.beginPath()
-            ctx.moveTo(pad, h - pad)
-            x += mappingValue(attack, MIN_ATTACK, MAX_ATTACK, 20, sectionW)
-            ctx.lineTo(x, pad)
-            x += mappingValue(decay, MIN_DECAY, MAX_DECAY, 0, sectionW)
-            ctx.lineTo(
-              x,
-              mappingValue(
-                MAX_SUSTAIN - sustain,
-                MIN_SUSTAIN,
-                MAX_SUSTAIN,
-                pad,
-                h - pad,
-              ),
-            )
-            x += sectionW
-            ctx.lineTo(
-              x,
-              mappingValue(
-                MAX_SUSTAIN - sustain,
-                MIN_SUSTAIN,
-                MAX_SUSTAIN,
-                pad,
-                h - pad,
-              ),
-            )
-            x += mappingValue(release, MIN_RELEASE, MAX_RELEASE, 20, sectionW)
-            ctx.lineTo(x, h - pad)
+            ctx.moveTo(x0, y0)
+            ctx.lineTo(x1, y1)
+            ctx.lineTo(x2, y2)
+            ctx.lineTo(x3, y3)
+            ctx.lineTo(x4, y4)
             ctx.stroke()
           }}
           style={{ background: '#eee' }}
@@ -105,6 +149,7 @@ export function ADSR({
             value={attack}
             min={MIN_ATTACK}
             max={MAX_ATTACK}
+            defaultValue={10}
             onChange={(v) => setAttack(v)}
             size={40}
             activeLine={themeColor}
@@ -117,6 +162,7 @@ export function ADSR({
             value={decay}
             min={MIN_DECAY}
             max={MAX_DECAY}
+            defaultValue={200}
             onChange={(v) => setDecay(v)}
             size={40}
             activeLine={themeColor}
@@ -129,6 +175,7 @@ export function ADSR({
             value={sustain}
             min={MIN_SUSTAIN}
             max={MAX_SUSTAIN}
+            defaultValue={50}
             onChange={(v) => setSustain(v)}
             size={40}
             activeLine={themeColor}
@@ -146,6 +193,7 @@ export function ADSR({
             value={release}
             min={MIN_RELEASE}
             max={MAX_RELEASE}
+            defaultValue={200}
             onChange={(v) => setRelease(v)}
             size={40}
             activeLine={themeColor}

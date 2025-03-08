@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   AmplitudeEnvelope,
   gainToDb,
@@ -16,6 +16,7 @@ import { ADSR } from './ADSR.stories'
 import {
   attackAtom,
   decayAtom,
+  KeyState,
   positionAtom,
   releaseAtom,
   sustainAtom,
@@ -60,7 +61,7 @@ function generateAndAssignSource(
       for (let i = 0; i < buffer.length; i++) {
         const currentSample = basicShapesWave(currentAngle, position)
         currentAngle += cyclesPerSample
-        nowBuffering[i] = currentSample * 0.9 // -0.92dB
+        nowBuffering[i] = currentSample
       }
     }
     if (sources[nodeIndex]?.source?.state == 'started') {
@@ -85,6 +86,9 @@ function generateAndAssignSource(
 export const WavetableSynth = () => {
   const audioContext = useRef<AudioContext | null>(null)
   const pressedCount = useRef(0)
+  const [keyState, setKeyState] = useState<KeyState>({
+    trigger: 'release',
+  })
 
   const position = useAtomValue(positionAtom)
   const attack = useAtomValue(attackAtom)
@@ -109,6 +113,11 @@ export const WavetableSynth = () => {
       volume.volume.value = gainToDb(
         1 / Math.sqrt(Math.max(1, pressedCount.current)),
       )
+
+      setKeyState({
+        trigger: 'pressed',
+        timestamp: performance.now(),
+      })
     },
     [position, audioContext],
   )
@@ -138,6 +147,12 @@ export const WavetableSynth = () => {
   const handleStop = (noteNumber: number) => {
     envelopes[noteNumber - firstNote]?.triggerRelease()
     pressedCount.current -= 1
+    if (pressedCount.current <= 0) {
+      setKeyState({
+        trigger: 'release',
+        timestamp: performance.now(),
+      })
+    }
   }
 
   return (
@@ -148,7 +163,7 @@ export const WavetableSynth = () => {
       </div>
       <div className={styles.parameters}>
         <WaveSelector />
-        <ADSR />
+        <ADSR keyState={keyState} />
       </div>
       <div className={styles.piano}>
         <Piano
