@@ -16,3 +16,8 @@ export const attackAtom = atom(10)
 export const decayAtom = atom(200)
 export const sustainAtom = atom(50)
 export const releaseAtom = atom(200)
+
+export interface KeyState {
+  trigger: 'pressed' | 'release'
+  timestamp?: number
+}
