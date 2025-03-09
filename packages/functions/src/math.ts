@@ -113,6 +113,20 @@ export function degree(radian: number) {
  *
  * @category Math
  */
+export function mapValue(
+  value: number,
+  inMin: number,
+  inMax: number,
+  outMin: number,
+  outMax: number,
+) {
+  return ((value - inMin) / (inMax - inMin)) * (outMax - outMin) + outMin
+}
+
+/**
+ *
+ * @category Math
+ */
 export function dbToGain(db: number) {
   return Math.pow(10, db / 20)
 }

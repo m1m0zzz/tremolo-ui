@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai'
 
-import { clamp, gainToDb, mod } from '@tremolo-ui/functions'
+import { clamp, gainToDb, mapValue, mod } from '@tremolo-ui/functions'
 
 import { AnimationCanvas } from '../../../src/components/AnimationCanvas'
 import { Knob } from '../../../src/components/Knob'
@@ -22,19 +22,6 @@ import {
 } from './atoms'
 
 import styles from './ADSR.module.css'
-
-function mappingValue(
-  value: number,
-  beforeMin: number,
-  beforeMax: number,
-  afterMin: number,
-  afterMax: number,
-) {
-  return (
-    afterMin +
-    ((value - beforeMin) / (beforeMax - beforeMin)) * (afterMax - afterMin)
-  )
-}
 
 export default {
   title: 'combined/ADSR',
@@ -67,11 +54,10 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             const x0 = pad
             const y0 = h - pad
             const x1 =
-              x0 + mappingValue(attack, MIN_ATTACK, MAX_ATTACK, 10, sectionW)
+              x0 + mapValue(attack, MIN_ATTACK, MAX_ATTACK, 10, sectionW)
             const y1 = pad
-            const x2 =
-              x1 + mappingValue(decay, MIN_DECAY, MAX_DECAY, 0, sectionW)
-            const y2 = mappingValue(
+            const x2 = x1 + mapValue(decay, MIN_DECAY, MAX_DECAY, 0, sectionW)
+            const y2 = mapValue(
               MAX_SUSTAIN - sustain,
               MIN_SUSTAIN,
               MAX_SUSTAIN,
@@ -79,7 +65,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
               h - pad,
             )
             const x3 = x2 + sectionW
-            const y3 = mappingValue(
+            const y3 = mapValue(
               MAX_SUSTAIN - sustain,
               MIN_SUSTAIN,
               MAX_SUSTAIN,
@@ -87,7 +73,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
               h - pad,
             )
             const x4 =
-              x3 + mappingValue(release, MIN_RELEASE, MAX_RELEASE, 10, sectionW)
+              x3 + mapValue(release, MIN_RELEASE, MAX_RELEASE, 10, sectionW)
             const y4 = h - pad
 
             // bg shadow
