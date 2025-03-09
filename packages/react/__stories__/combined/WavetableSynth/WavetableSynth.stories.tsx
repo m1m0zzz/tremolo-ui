@@ -2,6 +2,7 @@ import { useAtomValue } from 'jotai'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   AmplitudeEnvelope,
+  FFT,
   gainToDb,
   Meter,
   ToneBufferSource,
@@ -21,6 +22,7 @@ import {
   releaseAtom,
   sustainAtom,
 } from './atoms'
+import { SpectrumAnalyzer } from './SpectrumAnalyzer'
 import { VolumeMeter } from './VolumeMeter'
 import { WaveSelector } from './WaveSelector.stories'
 import { basicShapesWave } from './wavetable'
@@ -44,7 +46,8 @@ const sources: {
 }[] = []
 const volume = new Volume(0)
 const meter = new Meter()
-volume.connect(meter).toDestination()
+const fft = new FFT()
+volume.connect(meter).connect(fft).toDestination()
 
 function generateAndAssignSource(
   ctx: AudioContext,
@@ -159,7 +162,10 @@ export const WavetableSynth = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <p className={styles.heading}>Wavetable</p>
-        <VolumeMeter meter={meter} />
+        <div className={styles.header_right}>
+          <SpectrumAnalyzer fft={fft} />
+          <VolumeMeter meter={meter} />
+        </div>
       </div>
       <div className={styles.parameters}>
         <WaveSelector />

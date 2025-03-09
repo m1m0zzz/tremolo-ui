@@ -30,15 +30,17 @@ export function VolumeMeter({
     <div
       style={{
         display: 'flex',
+        flexDirection: 'column',
         gap: 4,
         alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
       <AnimationCanvas
-        width={80}
+        width={60}
         height={12}
         style={{
-          borderRadius: 8,
+          borderRadius: 9999,
           background: 'rgb(230, 230, 230)',
         }}
         draw={(ctx, _w, _h) => {
@@ -52,7 +54,14 @@ export function VolumeMeter({
           ctx.fillRect(0, 0, (w * Math.max(0, v + 100)) / 100, h)
         }}
       />
-      <div style={{ width: 60, textAlign: 'right', fontSize: '0.75rem' }}>
+      <div
+        style={{
+          width: 60,
+          textAlign: 'right',
+          fontSize: '0.75rem',
+          paddingRight: 8,
+        }}
+      >
         {db} dB
       </div>
     </div>
