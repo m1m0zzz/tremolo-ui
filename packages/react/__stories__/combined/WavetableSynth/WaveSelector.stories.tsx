@@ -155,7 +155,7 @@ export const WaveSelector = ({
           }}
         >
           <div>
-            <label className="label">Semi: </label>
+            <span className="label">Semi: </span>
             <NumberInput
               value={semitone}
               min={MIN_SEMITONE}
@@ -167,7 +167,7 @@ export const WaveSelector = ({
             />
           </div>
           <div>
-            <label className="label">Det: </label>
+            <span className="label">Det: </span>
             <NumberInput
               value={detune}
               min={MIN_DETUNE}
