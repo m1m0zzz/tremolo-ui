@@ -46,7 +46,11 @@ describe('unit test', () => {
   test('noteToFrequency()', () => {
     expect(noteToFrequency('A4')).toBe(440)
     expect(noteToFrequency(noteNumber('A4'))).toBe(440)
-    expect(noteToFrequency('A4', 332)).toBe(332)
+    expect(noteToFrequency('A4', 0, 332)).toBe(332)
     expect(noteToFrequency('C4').toFixed(2)).toBe('261.63')
+
+    expect(noteToFrequency('A4', 0)).toBe(440)
+    expect(noteToFrequency('A4', 1200)).toBe(880)
+    expect(noteToFrequency('C3', 100)).toBe(noteToFrequency('C#3'))
   })
 })

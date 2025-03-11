@@ -93,7 +93,13 @@ export function isBlackKey(noteNumber: number | string) {
 
 export const scaleNames = ['major', 'minor', 'natural minor', 'pentatonic']
 
-export function noteToFrequency(note: number | string, a4 = 440) {
+/**
+ * @param note noteNumber: 0 ~ 127 or noteName e.g. 'C3'
+ * @param detune cent
+ * @param a4 hz
+ * @returns
+ */
+export function noteToFrequency(note: number | string, detune = 0, a4 = 440) {
   const n = typeof note == 'string' ? noteNumber(note) : note
-  return (a4 / 32) * 2 ** ((n - 9) / 12)
+  return (a4 / 32) * 2 ** ((n - 9 + detune / 100) / 12)
 }
