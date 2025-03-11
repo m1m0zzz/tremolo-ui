@@ -4,6 +4,7 @@ import {
   AmplitudeEnvelope,
   FFT,
   gainToDb,
+  getDestination,
   Meter,
   ToneBufferSource,
   Volume,
@@ -17,16 +18,21 @@ import { ADSR } from './ADSR.stories'
 import {
   attackAtom,
   decayAtom,
+  detuneAtom,
   KeyState,
+  masterVolumeAtom,
   positionAtom,
   releaseAtom,
+  semitoneAtom,
   sustainAtom,
 } from './atoms'
+import { MasterSection } from './MasterSection'
 import { SpectrumAnalyzer } from './SpectrumAnalyzer'
 import { VolumeMeter } from './VolumeMeter'
 import { WaveSelector } from './WaveSelector.stories'
 import { basicShapesWave } from './wavetable'
 
+import './index.css'
 import styles from './WavetableSynth.module.css'
 
 export default {
@@ -43,22 +49,33 @@ const envelopes: AmplitudeEnvelope[] = []
 const sources: {
   source: ToneBufferSource
   position?: number
+  semitone?: number
+  detune?: number
 }[] = []
 const volume = new Volume(0)
+const masterVolume = new Volume()
 const meter = new Meter()
 const fft = new FFT()
-volume.connect(meter).connect(fft).toDestination()
+volume.chain(masterVolume, meter, fft, getDestination())
 
 function generateAndAssignSource(
   ctx: AudioContext,
   noteNumber: number,
   position: number,
+  semitone: number,
+  detune: number,
 ) {
   const nodeIndex = noteNumber - firstNote
-  if (sources[nodeIndex]?.position != position) {
-    const buffer = ctx.createBuffer(2, sampleRate, sampleRate)
+  if (
+    sources[nodeIndex]?.position != position ||
+    sources[nodeIndex]?.semitone != semitone ||
+    sources[nodeIndex]?.detune != detune
+  ) {
+    const freq = noteToFrequency(noteNumber + semitone, detune)
+    console.log(semitone, detune, freq)
+    const buffer = ctx.createBuffer(2, Math.ceil(sampleRate / freq), sampleRate)
     let currentAngle = 0
-    const cyclesPerSample = noteToFrequency(noteNumber) / sampleRate
+    const cyclesPerSample = freq / sampleRate
     for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
       const nowBuffering = buffer.getChannelData(channel)
       for (let i = 0; i < buffer.length; i++) {
@@ -73,7 +90,7 @@ function generateAndAssignSource(
     const source = new ToneBufferSource({
       url: buffer,
       loop: true,
-      loopEnd: 1 / noteToFrequency(noteNumber),
+      loopEnd: 1 / freq,
     })
     source.connect(envelopes[nodeIndex])
     if (source.state == 'stopped') {
@@ -82,6 +99,8 @@ function generateAndAssignSource(
     sources[nodeIndex] = {
       source: source,
       position: position,
+      semitone: semitone,
+      detune: detune,
     }
   }
 }
@@ -94,10 +113,13 @@ export const WavetableSynth = () => {
   })
 
   const position = useAtomValue(positionAtom)
+  const semitone = useAtomValue(semitoneAtom)
+  const detune = useAtomValue(detuneAtom)
   const attack = useAtomValue(attackAtom)
   const decay = useAtomValue(decayAtom)
   const sustain = useAtomValue(sustainAtom)
   const release = useAtomValue(releaseAtom)
+  const masterDb = useAtomValue(masterVolumeAtom)
 
   const handlePlay = useCallback(
     (noteNumber: number) => {
@@ -110,11 +132,12 @@ export const WavetableSynth = () => {
       }
 
       pressedCount.current += 1
-      generateAndAssignSource(ctx, noteNumber, position)
+      generateAndAssignSource(ctx, noteNumber, position, semitone, detune)
 
       envelopes[noteNumber - firstNote].triggerAttack()
-      volume.volume.value = gainToDb(
-        1 / Math.sqrt(Math.max(1, pressedCount.current)),
+      volume.volume.rampTo(
+        gainToDb(1 / Math.sqrt(Math.max(1, pressedCount.current))),
+        0.001,
       )
 
       setKeyState({
@@ -122,7 +145,7 @@ export const WavetableSynth = () => {
         timestamp: performance.now(),
       })
     },
-    [position, audioContext],
+    [position, semitone, detune, audioContext],
   )
 
   useEffect(() => {
@@ -147,6 +170,10 @@ export const WavetableSynth = () => {
     }
   }, [attack, decay, sustain, release])
 
+  useEffect(() => {
+    masterVolume.volume.value = masterDb
+  }, [masterDb])
+
   const handleStop = (noteNumber: number) => {
     envelopes[noteNumber - firstNote]?.triggerRelease()
     pressedCount.current -= 1
@@ -170,6 +197,7 @@ export const WavetableSynth = () => {
       <div className={styles.parameters}>
         <WaveSelector />
         <ADSR keyState={keyState} />
+        <MasterSection />
       </div>
       <div className={styles.piano}>
         <Piano

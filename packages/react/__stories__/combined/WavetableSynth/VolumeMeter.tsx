@@ -55,10 +55,10 @@ export function VolumeMeter({
         }}
       />
       <div
+        className="label"
         style={{
           width: 60,
           textAlign: 'right',
-          fontSize: '0.75rem',
           paddingRight: 8,
         }}
       >

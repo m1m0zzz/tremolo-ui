@@ -10,7 +10,15 @@ import {
   SliderTrack,
 } from '../../../src/components/Slider'
 
-import { positionAtom } from './atoms'
+import {
+  detuneAtom,
+  MAX_DETUNE,
+  MAX_SEMITONE,
+  MIN_DETUNE,
+  MIN_SEMITONE,
+  positionAtom,
+  semitoneAtom,
+} from './atoms'
 import {
   generateWaveWithFunction,
   sin,
@@ -61,6 +69,8 @@ export const WaveSelector = ({
   themeColor?: string
 }) => {
   const [position, setPosition] = useAtom(positionAtom)
+  const [semitone, setSemitone] = useAtom(semitoneAtom)
+  const [detune, setDetune] = useAtom(detuneAtom)
 
   return (
     <div
@@ -69,62 +79,107 @@ export const WaveSelector = ({
         flexDirection: 'row',
         width: 'min-content',
         height: 200,
+        gap: 4,
       }}
     >
-      <Slider
-        value={position}
-        min={0}
-        max={100}
-        onChange={(v) => setPosition(v)}
-        vertical
+      <div
         style={{
-          margin: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          height: '100%',
         }}
       >
-        <SliderTrack defaultStyle={false}>
-          <AnimationCanvas
-            width={200}
-            height={200}
-            draw={(ctx, _w, _h) => {
-              const padX = 10
-              const padY = 21
-              const w = _w.current
-              const h = _h.current
-              const v = clamp(position, 0, 100)
-              ctx.clearRect(0, 0, w, h)
-              ctx.lineWidth = 2
-              function drawWave(wave: number[], pos: number) {
-                ctx.beginPath()
-                for (let i = 0; i < wave.length; i++) {
-                  const sig = wave[i]
-                  const arg: [number, number] = [
-                    padX + ((w - padX * 2) * i) / wave.length,
-                    padY + (h - padY * 2) * (100 - pos) * 0.01 - sig * 18,
-                  ]
-                  if (i == 0) {
-                    ctx.moveTo(...arg)
-                  } else {
-                    ctx.lineTo(...arg)
+        <Slider
+          value={position}
+          min={0}
+          max={100}
+          onChange={(v) => setPosition(v)}
+          vertical
+          style={{
+            margin: 0,
+          }}
+        >
+          <SliderTrack defaultStyle={false} style={{ height: 170 }}>
+            <AnimationCanvas
+              width={180}
+              height={170}
+              draw={(ctx, _w, _h) => {
+                const padX = 10
+                const padY = 21
+                const w = _w.current
+                const h = _h.current
+                const v = clamp(position, 0, 100)
+                ctx.clearRect(0, 0, w, h)
+                ctx.lineWidth = 2
+                function drawWave(wave: number[], pos: number) {
+                  ctx.beginPath()
+                  for (let i = 0; i < wave.length; i++) {
+                    const sig = wave[i]
+                    const arg: [number, number] = [
+                      padX + ((w - padX * 2) * i) / wave.length,
+                      padY + (h - padY * 2) * (100 - pos) * 0.01 - sig * 18,
+                    ]
+                    if (i == 0) {
+                      ctx.moveTo(...arg)
+                    } else {
+                      ctx.lineTo(...arg)
+                    }
                   }
+                  ctx.stroke()
                 }
-                ctx.stroke()
-              }
-              // draw wave placeholder
-              ctx.strokeStyle = '#e0e0e0'
-              drawWave(sineWave, 0)
-              drawWave(triangleWave, 33)
-              drawWave(sawWave, 67)
-              drawWave(pulseWave, 100)
-              // draw wave
-              ctx.strokeStyle = themeColor
-              drawWave(wavetable[Math.floor((v / 100) * (frameLength - 1))], v)
-            }}
-          />
-        </SliderTrack>
-        <SliderThumb>
-          <></>
-        </SliderThumb>
-      </Slider>
+                // draw wave placeholder
+                ctx.strokeStyle = '#e0e0e0'
+                drawWave(sineWave, 0)
+                drawWave(triangleWave, 33)
+                drawWave(sawWave, 67)
+                drawWave(pulseWave, 100)
+                // draw wave
+                ctx.strokeStyle = themeColor
+                drawWave(
+                  wavetable[Math.floor((v / 100) * (frameLength - 1))],
+                  v,
+                )
+              }}
+            />
+          </SliderTrack>
+          <SliderThumb>
+            <></>
+          </SliderThumb>
+        </Slider>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+          }}
+        >
+          <div>
+            <label className="label">Semi: </label>
+            <NumberInput
+              value={semitone}
+              min={MIN_SEMITONE}
+              max={MAX_SEMITONE}
+              units={'st'}
+              className={style.numberInput}
+              wrapperClassName={style.numberInputWrapper}
+              onBlur={(v) => setSemitone(v)}
+            />
+          </div>
+          <div>
+            <label className="label">Det: </label>
+            <NumberInput
+              value={detune}
+              min={MIN_DETUNE}
+              max={MAX_DETUNE}
+              units={'ct'}
+              className={style.numberInput}
+              wrapperClassName={style.numberInputWrapper}
+              onBlur={(v) => setDetune(v)}
+            />
+          </div>
+        </div>
+      </div>
       <div
         style={{
           display: 'flex',

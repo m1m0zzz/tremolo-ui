@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { useAtom } from 'jotai'
 
 import { clamp, gainToDb, mapValue, mod } from '@tremolo-ui/functions'
@@ -130,7 +131,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
       </div>
       <div className={styles.knobs}>
         <div className={styles.knobAndLabel}>
-          <div className={styles.label}>A</div>
+          <div className={clsx('label', styles.label)}>A</div>
           <Knob
             value={attack}
             min={MIN_ATTACK}
@@ -140,10 +141,10 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             size={40}
             activeLine={themeColor}
           />
-          <div className={styles.label}>{attack}ms</div>
+          <div className={clsx('label', styles.label)}>{attack}ms</div>
         </div>
         <div className={styles.knobAndLabel}>
-          <div className={styles.label}>D</div>
+          <div className={clsx('label', styles.label)}>D</div>
           <Knob
             value={decay}
             min={MIN_DECAY}
@@ -153,10 +154,12 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             size={40}
             activeLine={themeColor}
           />
-          <div className={styles.label}>{decay}ms</div>
+          <div className={clsx('label', clsx('label', styles.label))}>
+            {decay}ms
+          </div>
         </div>
         <div className={styles.knobAndLabel}>
-          <div className={styles.label}>S</div>
+          <div className={clsx('label', styles.label)}>S</div>
           <Knob
             value={sustain}
             min={MIN_SUSTAIN}
@@ -166,7 +169,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             size={40}
             activeLine={themeColor}
           />
-          <div className={styles.label}>
+          <div className={clsx('label', styles.label)}>
             {gainToDb(sustain / MAX_SUSTAIN) == -Infinity
               ? '-Inf'
               : gainToDb(sustain / MAX_SUSTAIN).toFixed(1)}{' '}
@@ -174,7 +177,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
           </div>
         </div>
         <div className={styles.knobAndLabel}>
-          <div className={styles.label}>R</div>
+          <div className={clsx('label', styles.label)}>R</div>
           <Knob
             value={release}
             min={MIN_RELEASE}
@@ -184,7 +187,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             size={40}
             activeLine={themeColor}
           />
-          <div className={styles.label}>{release}ms</div>
+          <div className={clsx('label', styles.label)}>{release}ms</div>
         </div>
       </div>
     </div>
