@@ -44,10 +44,10 @@ export default {
 }
 
 const sampleRate = 48000
-
 const firstNote = noteNumber('C3')
 const lastNote = noteNumber('B4')
 const noteLength = lastNote - firstNote + 1
+
 const envelopes: AmplitudeEnvelope[] = []
 const sourcesMemo: {
   sources: ToneBufferSource[]
@@ -89,55 +89,50 @@ function generateAndAssignSource(
 ) {
   const noteIndex = noteNumber - firstNote
   if (
-    sourcesMemo[noteIndex]?.position != position ||
-    sourcesMemo[noteIndex]?.semitone != semitone ||
-    sourcesMemo[noteIndex]?.detune != detune ||
-    sourcesMemo[noteIndex]?.voice != voice ||
-    sourcesMemo[noteIndex]?.voiceDetune != voiceDetune
-  ) {
-    const sources = []
-    for (let v = MIN_VOICE; v <= voice; v++) {
-      const d = detunedVoices(voice, voiceDetune / 100)[v - MIN_VOICE]
-      const freq = noteToFrequency(noteNumber + semitone, detune + d)
-      const buffer = ctx.createBuffer(
-        2,
-        Math.ceil(sampleRate / freq),
-        sampleRate,
-      )
-      let currentAngle = v == 1 ? 0 : (1 / freq) * Math.random()
-      const cyclesPerSample = freq / sampleRate
-      for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
-        const nowBuffering = buffer.getChannelData(channel)
-        for (let i = 0; i < buffer.length; i++) {
-          const currentSample = basicShapesWave(currentAngle, position)
-          currentAngle += cyclesPerSample
-          nowBuffering[i] = currentSample / Math.sqrt(voice)
-        }
+    sourcesMemo[noteIndex]?.position == position &&
+    sourcesMemo[noteIndex]?.semitone == semitone &&
+    sourcesMemo[noteIndex]?.detune == detune &&
+    sourcesMemo[noteIndex]?.voice == voice &&
+    sourcesMemo[noteIndex]?.voiceDetune == voiceDetune
+  )
+    return
+
+  const sources = []
+  for (let v = MIN_VOICE; v <= voice; v++) {
+    const d = detunedVoices(voice, voiceDetune / 100)[v - MIN_VOICE]
+    const freq = noteToFrequency(noteNumber + semitone, detune + d)
+    const buffer = ctx.createBuffer(2, Math.ceil(sampleRate / freq), sampleRate)
+    let currentAngle = v == 1 ? 0 : Math.random()
+    const cyclesPerSample = freq / sampleRate
+    for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+      const nowBuffering = buffer.getChannelData(channel)
+      for (let i = 0; i < buffer.length; i++) {
+        const currentSample = basicShapesWave(currentAngle, position)
+        currentAngle += cyclesPerSample
+        nowBuffering[i] = currentSample / Math.sqrt(voice)
       }
-      // stop all source
-      for (let s = 0; s < sourcesMemo[noteIndex]?.sources.length; s++) {
-        const source = sourcesMemo[noteIndex]?.sources[s]
-        if (source.state == 'started') source.stop()
-      }
-      const source = new ToneBufferSource({
-        url: buffer,
-        loop: true,
-        loopEnd: 1 / freq,
-      })
-      source.connect(envelopes[noteIndex])
-      if (source.state == 'stopped') {
-        source.start() // TODO
-      }
-      sources.push(source)
     }
-    sourcesMemo[noteIndex] = {
-      sources: sources,
-      position: position,
-      semitone: semitone,
-      detune: detune,
-      voice: voice,
-      voiceDetune: voiceDetune,
+    // stop all source
+    for (let s = 0; s < sourcesMemo[noteIndex]?.sources.length; s++) {
+      const source = sourcesMemo[noteIndex]?.sources[s]
+      if (source.state == 'started') source.stop()
     }
+    const source = new ToneBufferSource({
+      url: buffer,
+      loop: true,
+      loopEnd: 1 / freq,
+    })
+    source.connect(envelopes[noteIndex])
+    source.start()
+    sources.push(source)
+  }
+  sourcesMemo[noteIndex] = {
+    sources: sources,
+    position: position,
+    semitone: semitone,
+    detune: detune,
+    voice: voice,
+    voiceDetune: voiceDetune,
   }
 }
 
