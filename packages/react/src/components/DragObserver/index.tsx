@@ -1,7 +1,6 @@
-import { ComponentPropsWithoutRef, ElementType, ReactNode, useRef } from 'react'
+import { ComponentPropsWithoutRef, ElementType, ReactNode } from 'react'
 
-import { useEventListener } from '../../hooks/useEventListener'
-import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
+import { useDrag } from '../../hooks/useDrag'
 
 /** @category DragObserver */
 export interface DragObserverProps<T extends ElementType> {
@@ -18,7 +17,7 @@ export interface DragObserverProps<T extends ElementType> {
   threshold?: number
 
   children?: ReactNode
-  onDrag: (x: number, y: number) => void
+  onDrag: (x: number, y: number, deltaX: number, deltaY: number) => void
   onDragStart?: () => void
   onDragEnd?: () => void
 }
@@ -29,65 +28,26 @@ export function DragObserver<T extends ElementType = 'div'>(
     Omit<ComponentPropsWithoutRef<T>, keyof DragObserverProps<T>>,
 ) {
   const {
+    as: Component = 'div',
+    threshold = 1,
     children,
     onDrag,
     onDragStart,
     onDragEnd,
-    as: Component = 'div',
     ...attributes
   } = props
 
-  const dragOffsetX = useRef<number | undefined>(undefined)
-  const dragOffsetY = useRef<number | undefined>(undefined)
-
-  const handleEvent = (
-    event:
-      | MouseEvent
-      | React.MouseEvent<HTMLDivElement, MouseEvent>
-      | TouchEvent,
-  ) => {
-    const isTouch = event instanceof TouchEvent
-    if (isTouch && event.cancelable) event.preventDefault()
-    const screenX = isTouch ? event.touches[0].screenX : event.screenX
-    const screenY = isTouch ? event.touches[0].screenY : event.screenY
-    let deltaX = 0,
-      deltaY = 0
-    if (dragOffsetX.current) {
-      deltaX = screenX - dragOffsetX.current
-      dragOffsetX.current = screenX
-    }
-    if (dragOffsetY.current) {
-      deltaY = screenY - dragOffsetY.current
-      dragOffsetY.current = screenY
-    }
-    if (Math.abs(deltaX) < 1 && Math.abs(deltaY) < 1) return
-    if (onDrag) onDrag(deltaX, deltaY)
-  }
-
-  const touchMoveRefCallback = useRefCallbackEvent(
-    'touchmove',
-    handleEvent,
-    { passive: false },
-    [onDrag],
-  )
-
-  useEventListener(window, 'mousemove', handleEvent)
-
-  useEventListener(window, 'pointerup', () => {
-    dragOffsetX.current = undefined
-    dragOffsetY.current = undefined
-    onDragEnd?.()
+  const [refCallback, pointerDownHandler] = useDrag({
+    threshold: threshold,
+    onDrag: onDrag,
+    onDragStart: onDragStart,
+    onDragEnd: onDragEnd,
   })
 
   return (
     <Component
-      ref={touchMoveRefCallback}
-      onPointerDown={(event) => {
-        dragOffsetX.current = event.screenX
-        dragOffsetY.current = event.screenY
-        handleEvent(event)
-        onDragStart?.()
-      }}
+      ref={refCallback}
+      onPointerDown={pointerDownHandler}
       {...attributes}
     >
       {children}

@@ -10,6 +10,8 @@ export default {
 export const Basic = () => {
   const [x, setX] = useState(0)
   const [y, setY] = useState(0)
+  const [dx, setDx] = useState(0)
+  const [dy, setDy] = useState(0)
   const [dragging, setDragging] = useState(false)
 
   return (
@@ -25,9 +27,11 @@ export const Basic = () => {
         onDragEnd={() => {
           setDragging(false)
         }}
-        onDrag={(dx, dy) => {
-          setX((x) => x + dx)
-          setY((y) => y + dy)
+        onDrag={(x, y, dx, dy) => {
+          setX(x)
+          setY(y)
+          setDx(dx)
+          setDy(dy)
         }}
         onDoubleClick={() => {}}
         style={{
@@ -41,6 +45,8 @@ export const Basic = () => {
       </DragObserver>
       <div>x: {x}</div>
       <div>y: {y}</div>
+      <div>dx: {dx}</div>
+      <div>dy: {dy}</div>
     </div>
   )
 }

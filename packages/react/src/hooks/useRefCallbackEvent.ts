@@ -1,20 +1,17 @@
 import { useMemo } from 'react'
 
-type Options = boolean | AddEventListenerOptions
-type CallbackFunc = (div: EventTarget | null) => void
-
 export function useRefCallbackEvent<K extends keyof DocumentEventMap>(
   event: K,
   handler: (event: DocumentEventMap[K]) => void,
-  options?: Options,
+  options?: boolean | AddEventListenerOptions,
   deps?: React.DependencyList,
-): CallbackFunc
+): (div: EventTarget | null) => void
 export function useRefCallbackEvent(
   event: string,
   handler: (event: Event) => void,
-  options?: Options,
+  options?: boolean | AddEventListenerOptions,
   deps: React.DependencyList = [],
-): CallbackFunc {
+): (div: EventTarget | null) => void {
   return useMemo(() => {
     let cleanup: (() => void) | undefined
     return (node: EventTarget | null) => {

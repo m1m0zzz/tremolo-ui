@@ -10,7 +10,7 @@ import {
   stepValue,
 } from '@tremolo-ui/functions'
 
-import { useEventListener } from '../../hooks/useEventListener'
+import { useDrag } from '../../hooks/useDrag'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { addNoSelect, removeNoSelect } from '../_util'
 
@@ -95,8 +95,7 @@ export function Knob({
   classes,
   ...props
 }: KnobProps & Omit<ComponentPropsWithoutRef<'svg'>, keyof KnobProps>) {
-  // -- state and ref ---
-  const dragOffsetY = useRef<number | undefined>(undefined)
+  const valueRef = useRef(0)
 
   // --- interpret props ---
   const padding = 8 // %
@@ -107,27 +106,15 @@ export function Knob({
   const s = normalizeValue(startValue, min, max, skew)
 
   // --- internal functions ---
-  const handleEvent = (
-    event:
-      | MouseEvent
-      | React.MouseEvent<HTMLOrSVGElement, MouseEvent>
-      | TouchEvent,
-  ) => {
-    if (!onChange || readonly) return
-    const isTouch = event instanceof TouchEvent
-    if (isTouch && event.cancelable) event.preventDefault()
-    if (dragOffsetY.current) {
-      if (bodyNoSelect) addNoSelect()
-      const screenY = isTouch ? event.touches[0].screenY : event.screenY
-      const delta = dragOffsetY.current - screenY
-      if (Math.abs(delta) < 1) return
-      dragOffsetY.current = screenY
-      const n = normalizeValue(value, min, max, skew)
-      const v = rawValue(n + delta / 100, min, max, skew)
+  const onDrag = useCallback(
+    (_x: number, y: number) => {
+      if (!onChange || readonly) return
+      const v = rawValue(valueRef.current - y / 100, min, max, skew)
       const v2 = clamp(stepValue(v, step), min, max)
       onChange(v2)
-    }
-  }
+    },
+    [max, min, onChange, readonly, skew, step],
+  )
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLOrSVGElement>) => {
@@ -151,6 +138,17 @@ export function Knob({
   )
 
   // --- hooks ---
+  const [touchMoveRefCallback, pointerDownHandler] = useDrag<SVGElement>({
+    onDrag: onDrag,
+    onDragStart: () => {
+      valueRef.current = normalizeValue(value, min, max, skew)
+      if (bodyNoSelect) addNoSelect()
+    },
+    onDragEnd: () => {
+      if (bodyNoSelect) removeNoSelect()
+    },
+  })
+
   const wheelRefCallback = useRefCallbackEvent(
     'wheel',
     (event) => {
@@ -169,20 +167,6 @@ export function Knob({
     { passive: false },
     [wheel, value, min, max, skew, step, onChange],
   )
-
-  const touchMoveRefCallback = useRefCallbackEvent(
-    'touchmove',
-    handleEvent,
-    { passive: false },
-    [value, min, max, skew, step, onChange, bodyNoSelect],
-  )
-
-  useEventListener(window, 'mousemove', handleEvent)
-
-  useEventListener(window, 'pointerup', () => {
-    dragOffsetY.current = undefined
-    if (bodyNoSelect) removeNoSelect()
-  })
 
   const center = size / 2
   const r1 = -135
@@ -213,10 +197,7 @@ export function Knob({
       aria-valuemax={max}
       aria-disabled={disabled}
       aria-readonly={readonly}
-      onPointerDown={(event) => {
-        dragOffsetY.current = event.screenY
-        handleEvent(event)
-      }}
+      onPointerDown={pointerDownHandler}
       onDoubleClick={() => {
         if (enableDoubleClickDefault && onChange) {
           onChange(defaultValue)
