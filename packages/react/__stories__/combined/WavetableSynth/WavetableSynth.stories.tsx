@@ -21,10 +21,13 @@ import {
   detuneAtom,
   KeyState,
   masterVolumeAtom,
+  MIN_VOICE,
   positionAtom,
   releaseAtom,
   semitoneAtom,
   sustainAtom,
+  voiceAtom,
+  voiceDetuneAtom,
 } from './atoms'
 import { MasterSection } from './MasterSection'
 import { SpectrumAnalyzer } from './SpectrumAnalyzer'
@@ -46,11 +49,13 @@ const firstNote = noteNumber('C3')
 const lastNote = noteNumber('B4')
 const noteLength = lastNote - firstNote + 1
 const envelopes: AmplitudeEnvelope[] = []
-const sources: {
-  source: ToneBufferSource
+const sourcesMemo: {
+  sources: ToneBufferSource[]
   position?: number
   semitone?: number
   detune?: number
+  voice?: number
+  voiceDetune?: number
 }[] = []
 const volume = new Volume(0)
 const masterVolume = new Volume()
@@ -58,49 +63,80 @@ const meter = new Meter()
 const fft = new FFT()
 volume.chain(masterVolume, meter, fft, getDestination())
 
+function detunedVoices(voice: number, detune: number) {
+  const DETUNE_WIDTH = 50
+  const voices = []
+  const top = Array(Math.floor(voice / 2))
+    .fill(0)
+    .map((_, i) => (DETUNE_WIDTH * detune) / (i + 1))
+  const bottom = top.map((v) => -v).toReversed()
+  if (voice % 2 == 0) {
+    voices.push(...top, ...bottom)
+  } else {
+    voices.push(...top, 0, ...bottom)
+  }
+  return voices
+}
+
 function generateAndAssignSource(
   ctx: AudioContext,
   noteNumber: number,
   position: number,
   semitone: number,
   detune: number,
+  voice: number,
+  voiceDetune: number,
 ) {
-  const nodeIndex = noteNumber - firstNote
+  const noteIndex = noteNumber - firstNote
   if (
-    sources[nodeIndex]?.position != position ||
-    sources[nodeIndex]?.semitone != semitone ||
-    sources[nodeIndex]?.detune != detune
+    sourcesMemo[noteIndex]?.position != position ||
+    sourcesMemo[noteIndex]?.semitone != semitone ||
+    sourcesMemo[noteIndex]?.detune != detune ||
+    sourcesMemo[noteIndex]?.voice != voice ||
+    sourcesMemo[noteIndex]?.voiceDetune != voiceDetune
   ) {
-    const freq = noteToFrequency(noteNumber + semitone, detune)
-    console.log(semitone, detune, freq)
-    const buffer = ctx.createBuffer(2, Math.ceil(sampleRate / freq), sampleRate)
-    let currentAngle = 0
-    const cyclesPerSample = freq / sampleRate
-    for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
-      const nowBuffering = buffer.getChannelData(channel)
-      for (let i = 0; i < buffer.length; i++) {
-        const currentSample = basicShapesWave(currentAngle, position)
-        currentAngle += cyclesPerSample
-        nowBuffering[i] = currentSample
+    const sources = []
+    for (let v = MIN_VOICE; v <= voice; v++) {
+      const d = detunedVoices(voice, voiceDetune / 100)[v - MIN_VOICE]
+      const freq = noteToFrequency(noteNumber + semitone, detune + d)
+      const buffer = ctx.createBuffer(
+        2,
+        Math.ceil(sampleRate / freq),
+        sampleRate,
+      )
+      let currentAngle = v == 1 ? 0 : (1 / freq) * Math.random()
+      const cyclesPerSample = freq / sampleRate
+      for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+        const nowBuffering = buffer.getChannelData(channel)
+        for (let i = 0; i < buffer.length; i++) {
+          const currentSample = basicShapesWave(currentAngle, position)
+          currentAngle += cyclesPerSample
+          nowBuffering[i] = currentSample / Math.sqrt(voice)
+        }
       }
+      // stop all source
+      for (let s = 0; s < sourcesMemo[noteIndex]?.sources.length; s++) {
+        const source = sourcesMemo[noteIndex]?.sources[s]
+        if (source.state == 'started') source.stop()
+      }
+      const source = new ToneBufferSource({
+        url: buffer,
+        loop: true,
+        loopEnd: 1 / freq,
+      })
+      source.connect(envelopes[noteIndex])
+      if (source.state == 'stopped') {
+        source.start() // TODO
+      }
+      sources.push(source)
     }
-    if (sources[nodeIndex]?.source?.state == 'started') {
-      sources[nodeIndex].source.stop()
-    }
-    const source = new ToneBufferSource({
-      url: buffer,
-      loop: true,
-      loopEnd: 1 / freq,
-    })
-    source.connect(envelopes[nodeIndex])
-    if (source.state == 'stopped') {
-      source.start()
-    }
-    sources[nodeIndex] = {
-      source: source,
+    sourcesMemo[noteIndex] = {
+      sources: sources,
       position: position,
       semitone: semitone,
       detune: detune,
+      voice: voice,
+      voiceDetune: voiceDetune,
     }
   }
 }
@@ -115,10 +151,14 @@ export const WavetableSynth = () => {
   const position = useAtomValue(positionAtom)
   const semitone = useAtomValue(semitoneAtom)
   const detune = useAtomValue(detuneAtom)
+  const voice = useAtomValue(voiceAtom)
+  const voiceDetune = useAtomValue(voiceDetuneAtom)
+
   const attack = useAtomValue(attackAtom)
   const decay = useAtomValue(decayAtom)
   const sustain = useAtomValue(sustainAtom)
   const release = useAtomValue(releaseAtom)
+
   const masterDb = useAtomValue(masterVolumeAtom)
 
   const handlePlay = useCallback(
@@ -132,7 +172,15 @@ export const WavetableSynth = () => {
       }
 
       pressedCount.current += 1
-      generateAndAssignSource(ctx, noteNumber, position, semitone, detune)
+      generateAndAssignSource(
+        ctx,
+        noteNumber,
+        position,
+        semitone,
+        detune,
+        voice,
+        voiceDetune,
+      )
 
       envelopes[noteNumber - firstNote].triggerAttack()
       volume.volume.rampTo(
@@ -145,7 +193,7 @@ export const WavetableSynth = () => {
         timestamp: performance.now(),
       })
     },
-    [position, semitone, detune, audioContext],
+    [position, semitone, detune, voice, voiceDetune, audioContext],
   )
 
   useEffect(() => {

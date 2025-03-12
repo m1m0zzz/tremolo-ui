@@ -11,6 +11,9 @@ import {
   voiceAtom,
   MAX_VOICE,
   MIN_VOICE,
+  voiceDetuneAtom,
+  MIN_VOICE_DETUNE,
+  MAX_VOICE_DETUNE,
 } from './atoms'
 
 import styles from './MasterSection.module.css'
@@ -22,6 +25,7 @@ interface Props {
 export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
   const [masterVolume, setMasterVolume] = useAtom(masterVolumeAtom)
   const [voice, setVoice] = useAtom(voiceAtom)
+  const [voiceDetune, setVoiceDetune] = useAtom(voiceDetuneAtom)
 
   return (
     <div className={styles.container}>
@@ -33,7 +37,7 @@ export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
           max={MAX_MASTER_VOLUME}
           defaultValue={0}
           onChange={(v) => setMasterVolume(v)}
-          size={40}
+          size={30}
           skew={skewWithCenterValue(-12, MIN_MASTER_VOLUME, MAX_MASTER_VOLUME)}
           step={0.1}
           activeLine={themeColor}
@@ -47,7 +51,6 @@ export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: 4,
         }}
       >
         <div className="label">Voice</div>
@@ -56,10 +59,28 @@ export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
           min={MIN_VOICE}
           max={MAX_VOICE}
           onChange={(v) => setVoice(v)}
-          size={40}
+          size={30}
           activeLine={themeColor}
         />
         <div className="label">{voice}</div>
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <div className="label">Detune</div>
+        <Knob
+          value={voiceDetune}
+          min={MIN_VOICE_DETUNE}
+          max={MAX_VOICE_DETUNE}
+          onChange={(v) => setVoiceDetune(v)}
+          size={30}
+          activeLine={voice > 1 ? themeColor : 'rgb(159, 166, 187)'}
+        />
+        <div className="label">{voiceDetune}</div>
       </div>
     </div>
   )

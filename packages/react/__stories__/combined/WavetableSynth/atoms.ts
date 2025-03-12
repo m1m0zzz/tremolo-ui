@@ -21,6 +21,8 @@ export const MIN_MASTER_VOLUME = -100
 export const MAX_MASTER_VOLUME = 6
 export const MIN_VOICE = 1
 export const MAX_VOICE = 8
+export const MIN_VOICE_DETUNE = 1
+export const MAX_VOICE_DETUNE = 100
 
 export const positionAtom = atom(MIN_POSITION)
 export const semitoneAtom = atom(0)
@@ -32,6 +34,7 @@ export const sustainAtom = atom(50)
 export const releaseAtom = atom(200)
 export const masterVolumeAtom = atom(-6)
 export const voiceAtom = atom(1)
+export const voiceDetuneAtom = atom(15)
 
 export interface KeyState {
   trigger: 'pressed' | 'release'
