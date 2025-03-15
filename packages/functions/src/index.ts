@@ -1,4 +1,9 @@
 /**
+ * This is how you import top-level functions.
+ *
+ * ```ts
+ * import { anyFunc } from '@tremolo-ui/functions'
+ * ```
  * @module top-level
  */
 

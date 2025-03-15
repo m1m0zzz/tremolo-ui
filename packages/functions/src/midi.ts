@@ -48,7 +48,7 @@ export function parseNoteName(noteName: string) {
 }
 
 /**
- *
+ * Convert noteName to noteNumber
  * @category MIDI
  */
 export function noteNumber(noteName: string) {
@@ -59,7 +59,7 @@ export function noteNumber(noteName: string) {
 }
 
 /**
- *
+ * Convert noteNumber to noteName
  * @category MIDI
  */
 export function noteName(noteNumber: number) {
@@ -69,6 +69,7 @@ export function noteName(noteNumber: number) {
 }
 
 /**
+ * @param note noteNumber: 0 ~ 127 or noteName e.g. 'C3'
  * @category MIDI
  */
 export function isWhiteKey(note: number | string) {
@@ -85,19 +86,24 @@ export function isWhiteKey(note: number | string) {
 }
 
 /**
+ * @param note noteNumber: 0 ~ 127 or noteName e.g. 'C3'
  * @category MIDI
  */
-export function isBlackKey(noteNumber: number | string) {
-  return !isWhiteKey(noteNumber)
+export function isBlackKey(note: number | string) {
+  return !isWhiteKey(note)
 }
 
+/**
+ * @category MIDI
+ */
 export const scaleNames = ['major', 'minor', 'natural minor', 'pentatonic']
 
 /**
  * @param note noteNumber: 0 ~ 127 or noteName e.g. 'C3'
- * @param detune cent
- * @param a4 hz
- * @returns
+ * @param detune [cent]
+ * @param a4 A4 frequency [Hz]
+ * @returns frequency [Hz]
+ * @category MIDI
  */
 export function noteToFrequency(note: number | string, detune = 0, a4 = 440) {
   const n = typeof note == 'string' ? noteNumber(note) : note
