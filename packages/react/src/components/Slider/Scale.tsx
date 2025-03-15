@@ -4,7 +4,7 @@ import { ComponentPropsWithoutRef, ReactNode } from 'react'
 import { xor } from '@tremolo-ui/functions'
 import { generateOptionsList, ScaleOptions } from '@tremolo-ui/functions/Slider'
 
-import { useMax, useMin, useReverse, useStep, useVertical } from './context'
+import { useSliderContext } from './context'
 import { ScaleOption } from './ScaleOption'
 
 /** @category Slider */
@@ -26,11 +26,11 @@ export function Scale({
   style,
   ...props
 }: Props) {
-  const min = useMin()
-  const max = useMax()
-  const step = useStep()
-  const vertical = useVertical()
-  const reverse = useReverse()
+  const min = useSliderContext((s) => s.min)
+  const max = useSliderContext((s) => s.max)
+  const step = useSliderContext((s) => s.step)
+  const vertical = useSliderContext((s) => s.vertical)
+  const reverse = useSliderContext((s) => s.reverse)
 
   const optionsList = options
     ? generateOptionsList(options, min, max, step)
