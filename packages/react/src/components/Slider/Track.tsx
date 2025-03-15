@@ -3,7 +3,7 @@ import { CSSProperties, ReactElement } from 'react'
 
 import { styleHelper, xor } from '@tremolo-ui/functions'
 
-import { useDisabled, useReverse, useVertical } from './context'
+import { useSliderContext } from './context'
 
 /** @category Slider */
 export const defaultLength = 140
@@ -41,11 +41,11 @@ export function SliderTrack({
   style,
   defaultStyle = true,
   __thumb,
-  __percent,
+  __percent = 0,
 }: SliderTrackProps) {
-  const vertical = useVertical()
-  const reverse = useReverse()
-  const disabled = useDisabled()
+  const vertical = useSliderContext((s) => s.vertical)
+  const reverse = useSliderContext((s) => s.reverse)
+  const disabled = useSliderContext((s) => s.disabled)
 
   const direction = vertical ? 'bottom' : 'right'
   const colors = {

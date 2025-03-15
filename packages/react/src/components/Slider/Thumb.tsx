@@ -7,7 +7,7 @@ import {
   useRef,
 } from 'react'
 
-import { useDisabled, useVertical } from './context'
+import { useSliderContext } from './context'
 
 /** @category Slider */
 export interface SliderThumbProps {
@@ -47,8 +47,8 @@ export const SliderThumb = forwardRef<SliderThumbMethods, SliderThumbProps>(
     ref,
   ) => {
     const wrapperRef = useRef<HTMLDivElement>(null)
-    const vertical = useVertical()
-    const disabled = useDisabled()
+    const vertical = useSliderContext((s) => s.vertical)
+    const disabled = useSliderContext((s) => s.disabled)
 
     useImperativeHandle(ref, () => {
       return {

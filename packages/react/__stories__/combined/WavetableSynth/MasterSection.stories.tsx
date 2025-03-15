@@ -18,6 +18,11 @@ import {
 
 import styles from './MasterSection.module.css'
 
+export default {
+  title: 'combined/MasterSection',
+  tags: ['!autodocs'],
+}
+
 interface Props {
   themeColor?: string
 }

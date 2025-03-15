@@ -4,7 +4,7 @@ import { ComponentPropsWithoutRef, CSSProperties, useCallback } from 'react'
 import { toFixed, xor, normalizeValue } from '@tremolo-ui/functions'
 import { ScaleType } from '@tremolo-ui/functions/Slider'
 
-import { useMax, useMin, useReverse, useSkew, useVertical } from './context'
+import { useSliderContext } from './context'
 
 /** @category Slider */
 export interface ScaleOptionProps {
@@ -48,11 +48,11 @@ export function ScaleOption({
   ...props
 }: ScaleOptionProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof ScaleOptionProps>) {
-  const min = useMin()
-  const max = useMax()
-  const skew = useSkew()
-  const vertical = useVertical()
-  const reverse = useReverse()
+  const min = useSliderContext((s) => s.min)
+  const max = useSliderContext((s) => s.max)
+  const skew = useSliderContext((s) => s.skew)
+  const vertical = useSliderContext((s) => s.vertical)
+  const reverse = useSliderContext((s) => s.reverse)
 
   const calcPercent = useCallback(
     (rawValue: number) => {

@@ -1,14 +1,7 @@
-import { createContext, useState, useContext, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useRef } from 'react'
+import { createStore, useStore } from 'zustand'
 
-const minContext = createContext(0)
-const maxContext = createContext(0)
-const stepContext = createContext(0)
-const skewContext = createContext(0)
-const verticalContext = createContext(false)
-const reverseContext = createContext(false)
-const disabledContext = createContext(false)
-
-interface Props {
+type State = {
   min: number
   max: number
   step: number
@@ -16,58 +9,71 @@ interface Props {
   vertical: boolean
   reverse: boolean
   disabled: boolean
-  children: ReactNode
 }
 
-/** @category Slider */
-export function SliderProvider({
-  min: _min,
-  max: _max,
-  step: _step,
-  skew: _skew,
-  vertical: _vertical,
-  reverse: _reverse,
-  disabled: _disabled,
-  children,
-}: Props) {
-  const [min] = useState(_min)
-  const [max] = useState(_max)
-  const [step] = useState(_step)
-  const [skew] = useState(_skew)
-  const [vertical] = useState(_vertical)
-  const [reverse] = useState(_reverse)
-  const [disabled] = useState(_disabled)
+type Action = {
+  updateMin: (min: State['min']) => void
+  updateMax: (max: State['max']) => void
+  updateStep: (step: State['step']) => void
+  updateSkew: (skew: State['skew']) => void
+  updateVertical: (vertical: State['vertical']) => void
+  updateReverse: (reverse: State['reverse']) => void
+  updateDisabled: (disabled: State['disabled']) => void
+}
+
+type SliderStore = ReturnType<typeof createSliderStore>
+
+const createSliderStore = (initProps?: Partial<State>) => {
+  const DEFAULT_PROPS: State = {
+    min: 0,
+    max: 0,
+    step: 0,
+    skew: 0,
+    vertical: false,
+    reverse: false,
+    disabled: false,
+  }
+
+  return createStore<State & Action>()((set) => ({
+    ...DEFAULT_PROPS,
+    ...initProps,
+    updateMin: (min) => set(() => ({ min: min })),
+    updateMax: (max) => set(() => ({ max: max })),
+    updateStep: (step) => set(() => ({ step: step })),
+    updateSkew: (skew) => set(() => ({ skew: skew })),
+    updateVertical: (vertical) => set(() => ({ vertical: vertical })),
+    updateReverse: (reverse) => set(() => ({ reverse: reverse })),
+    updateDisabled: (disabled) => set(() => ({ disabled: disabled })),
+  }))
+}
+
+export const SliderContext = createContext<SliderStore | null>(null)
+
+type SliderProviderProps = React.PropsWithChildren<Partial<State>>
+
+export function SliderProvider({ children, ...props }: SliderProviderProps) {
+  const storeRef = useRef<SliderStore>()
+  if (!storeRef.current) {
+    storeRef.current = createSliderStore(props)
+  }
+
+  useEffect(() => {
+    if (storeRef.current) {
+      storeRef.current.setState(props)
+    } else {
+      storeRef.current = createSliderStore(props)
+    }
+  }, [props])
 
   return (
-    <minContext.Provider value={min}>
-      <maxContext.Provider value={max}>
-        <stepContext.Provider value={step}>
-          <skewContext.Provider value={skew}>
-            <verticalContext.Provider value={vertical}>
-              <reverseContext.Provider value={reverse}>
-                <disabledContext.Provider value={disabled}>
-                  {children}
-                </disabledContext.Provider>
-              </reverseContext.Provider>
-            </verticalContext.Provider>
-          </skewContext.Provider>
-        </stepContext.Provider>
-      </maxContext.Provider>
-    </minContext.Provider>
+    <SliderContext.Provider value={storeRef.current}>
+      {children}
+    </SliderContext.Provider>
   )
 }
 
-/** @category Slider */
-export const useMin = () => useContext(minContext)
-/** @category Slider */
-export const useMax = () => useContext(maxContext)
-/** @category Slider */
-export const useStep = () => useContext(stepContext)
-/** @category Slider */
-export const useSkew = () => useContext(skewContext)
-/** @category Slider */
-export const useVertical = () => useContext(verticalContext)
-/** @category Slider */
-export const useReverse = () => useContext(reverseContext)
-/** @category Slider */
-export const useDisabled = () => useContext(disabledContext)
+export function useSliderContext<T>(selector: (state: State & Action) => T): T {
+  const store = useContext(SliderContext)
+  if (!store) throw new Error('Missing SliderContext.Provider in the tree')
+  return useStore(store, selector)
+}
