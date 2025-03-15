@@ -2,7 +2,12 @@ import { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
 
 import { Knob } from '../../src/components/Knob'
-import { NumberInput } from '../../src/components/NumberInput'
+import {
+  DecrementStepper,
+  IncrementStepper,
+  NumberInput,
+  Stepper,
+} from '../../src/components/NumberInput'
 
 export default {
   title: 'Components/NumberInput/NumberInput',
@@ -61,6 +66,7 @@ export const WithAnotherComponents: Story = {
   },
   render: (args) => {
     const [value, setValue] = useState(0)
+    // console.log('render: ', value)
 
     return (
       <div
@@ -80,7 +86,12 @@ export const WithAnotherComponents: Story = {
           <Knob value={value} min={0} max={100} onChange={(v) => setValue(v)} />
           {value}
         </div>
-        <NumberInput {...args} value={value} onChange={(v) => setValue(v)} />
+        <NumberInput {...args} value={value} onChange={(v) => setValue(v)}>
+          <Stepper>
+            <IncrementStepper />
+            <DecrementStepper />
+          </Stepper>
+        </NumberInput>
       </div>
     )
   },

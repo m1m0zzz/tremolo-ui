@@ -3,7 +3,6 @@ import {
   ChangeEvent,
   ComponentPropsWithoutRef,
   ReactNode,
-  useCallback,
   useMemo,
   useState,
 } from 'react'
@@ -11,7 +10,7 @@ import {
 import { InputEventOption } from '@tremolo-ui/functions'
 import { parseValue, Units } from '@tremolo-ui/functions/NumberInput'
 
-import { NumberInputProvider, useDispatch, useStore } from './context'
+import { NumberInputProvider, useNumberInputContext } from './context'
 
 /*
 TODO
@@ -113,17 +112,9 @@ function InternalInput({
 }: Omit<NumberInputProps, 'value'> &
   Omit<ComponentPropsWithoutRef<'input'>, keyof NumberInputProps | 'type'>) {
   const [editing, setEditing] = useState(false)
-  const { value, valueAsNumber } = useStore()
-  const dispatch = useDispatch()
-  const handleChange = useCallback(
-    (text: string) => {
-      dispatch({
-        type: 'change',
-        value: text,
-      })
-    },
-    [dispatch],
-  )
+  const value = useNumberInputContext((s) => s.value)
+  const valueAsNumber = useNumberInputContext((s) => s.valueAsNumber)
+  const change = useNumberInputContext((s) => s.change)
 
   const error = useMemo(() => {
     if (editing) return false
@@ -147,7 +138,7 @@ function InternalInput({
       data-error={error}
       onChange={(event) => {
         const v = event.currentTarget.value
-        handleChange(v)
+        change(v)
         onChange?.(valueAsNumber, v, event)
       }}
       onFocus={(event) => {
@@ -169,7 +160,7 @@ function InternalInput({
         // update value
         const v = event.currentTarget.value
         const parsed = parseValue(v, units, digit)
-        handleChange(parsed.formatValue)
+        change(parsed.formatValue)
         onBlur?.(parsed.rawValue, parsed.formatValue, event)
       }}
       onKeyDown={(event) => {
@@ -210,14 +201,9 @@ export function NumberInput({
   ...props
 }: NumberInputProps &
   Omit<ComponentPropsWithoutRef<'input'>, keyof NumberInputProps | 'type'>) {
-  const showValue = useMemo(() => {
-    // console.log(parseValue(String(value), units, digit).formatValue)
-    return parseValue(String(value), units, digit).formatValue
-  }, [digit, units, value])
-
   return (
     <NumberInputProvider
-      value={showValue}
+      value={String(value)}
       min={min}
       max={max}
       step={step}

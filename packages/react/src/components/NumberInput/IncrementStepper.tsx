@@ -1,7 +1,7 @@
 import clsx from 'clsx'
-import { ComponentPropsWithoutRef, ReactNode, useCallback } from 'react'
+import { ComponentPropsWithoutRef, ReactNode } from 'react'
 
-import { useDispatch, useStore } from './context'
+import { useNumberInputContext } from './context'
 
 export interface IncrementStepperProps {
   size?: number
@@ -15,11 +15,10 @@ export function IncrementStepper({
   ...props
 }: IncrementStepperProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof IncrementStepperProps>) {
-  const { valueAsNumber, max, keepWithinRange } = useStore()
-  const dispatch = useDispatch()
-  const handleIncrement = useCallback(() => {
-    dispatch({ type: 'increment' })
-  }, [dispatch])
+  const max = useNumberInputContext((s) => s.max)
+  const valueAsNumber = useNumberInputContext((s) => s.valueAsNumber)
+  const keepWithinRange = useNumberInputContext((s) => s.keepWithinRange)
+  const increment = useNumberInputContext((s) => s.increment)
 
   // TODO: add long press event
 
@@ -28,8 +27,10 @@ export function IncrementStepper({
       className={clsx('tremolo-number-input-increment-stepper', className)}
       role="button"
       tabIndex={-1}
-      aria-disabled={keepWithinRange && valueAsNumber >= max}
-      onPointerDown={handleIncrement}
+      aria-disabled={
+        keepWithinRange && valueAsNumber >= (max ?? Number.MAX_SAFE_INTEGER)
+      }
+      onPointerDown={increment}
       {...props}
     >
       {children || (

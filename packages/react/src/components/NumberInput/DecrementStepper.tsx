@@ -1,7 +1,7 @@
 import clsx from 'clsx'
-import { ComponentPropsWithoutRef, ReactNode, useCallback } from 'react'
+import { ComponentPropsWithoutRef, ReactNode } from 'react'
 
-import { useDispatch, useStore } from './context'
+import { useNumberInputContext } from './context'
 
 export interface DecrementStepperProps {
   size?: number
@@ -15,11 +15,10 @@ export function DecrementStepper({
   ...props
 }: DecrementStepperProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof DecrementStepperProps>) {
-  const { valueAsNumber, min, keepWithinRange } = useStore()
-  const dispatch = useDispatch()
-  const handleDecrement = useCallback(() => {
-    dispatch({ type: 'decrement' })
-  }, [dispatch])
+  const min = useNumberInputContext((s) => s.min)
+  const valueAsNumber = useNumberInputContext((s) => s.valueAsNumber)
+  const keepWithinRange = useNumberInputContext((s) => s.keepWithinRange)
+  const decrement = useNumberInputContext((s) => s.decrement)
 
   // TODO: add long press event
 
@@ -28,8 +27,10 @@ export function DecrementStepper({
       className={clsx('tremolo-number-input-decrement-stepper', className)}
       role="button"
       tabIndex={-1}
-      aria-disabled={keepWithinRange && valueAsNumber <= min}
-      onPointerDown={handleDecrement}
+      aria-disabled={
+        keepWithinRange && valueAsNumber <= (min ?? Number.MIN_SAFE_INTEGER)
+      }
+      onPointerDown={decrement}
       {...props}
     >
       {children || (

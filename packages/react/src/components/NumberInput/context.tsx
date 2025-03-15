@@ -1,153 +1,166 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import {
+  ChangeEvent,
   createContext,
   useContext,
-  ReactNode,
-  useReducer,
   useEffect,
+  useRef,
 } from 'react'
+import { createStore, useStore } from 'zustand'
 
 import { clamp } from '@tremolo-ui/functions'
 import { parseValue, Units } from '@tremolo-ui/functions/NumberInput'
 
-const storeContext = createContext<Store>({
-  value: '',
-  valueAsNumber: 0,
-  min: 0,
-  max: 0,
-  step: 0,
-  keepWithinRange: true,
-})
-const dispatchContext = createContext<(action: ActionType) => void>(() => {})
-
-interface Store {
+type State = {
   value: string
   valueAsNumber: number
-  min: number
-  max: number
-  step: number
-  keepWithinRange: boolean
-  units?: string | Units
-  digit?: number
-}
-
-interface ActionType {
-  type: 'increment' | 'decrement' | 'change'
-  value?: string
-}
-
-interface Props {
-  value: string | number
-  step: number
-  keepWithinRange: boolean
   min?: number
   max?: number
+  step?: number
+  keepWithinRange?: boolean
   units?: string | Units
   digit?: number
-  children: ReactNode
+
+  // TODO
+  onChange?: (
+    value: number,
+    text: string,
+    event: ChangeEvent<HTMLInputElement>,
+  ) => void
 }
 
-/** @category NumberInput */
+type Action = {
+  increment: () => void
+  decrement: () => void
+  change: (value: string) => void
+}
+
+type NumberInputStore = ReturnType<typeof createNumberInputStore>
+
+type ProviderProps = Partial<Omit<State, 'value'> & { value: number | string }>
+
+const createNumberInputStore = (initProps?: ProviderProps) => {
+  const DEFAULT_PROPS: State = {
+    value: '',
+    valueAsNumber: 0,
+    min: 0,
+    max: 0,
+    step: 1,
+    keepWithinRange: true,
+  }
+
+  console.log('init: ', initProps?.value)
+  console.log(
+    parseValue(
+      String(initProps?.value || ''),
+      initProps?.units,
+      initProps?.digit,
+    ),
+  )
+
+  return createStore<State & Action>()((set) => ({
+    ...DEFAULT_PROPS,
+    ...initProps,
+    ...{
+      value: parseValue(
+        String(initProps?.value || ''),
+        initProps?.units,
+        initProps?.digit,
+      ).formatValue,
+      valueAsNumber: parseValue(
+        String(initProps?.value || ''),
+        initProps?.units,
+        initProps?.digit,
+      ).rawValue,
+    },
+    increment: () =>
+      set((state) => {
+        let next =
+          parseValue(state.value, state.units, state.digit).rawValue +
+          (state.step ?? 1)
+        if (state.keepWithinRange) {
+          next = clamp(
+            next,
+            state.min ?? Number.MIN_SAFE_INTEGER,
+            state.max ?? Number.MAX_SAFE_INTEGER,
+          )
+        }
+        return {
+          value: parseValue(String(next), state.units, state.digit).formatValue,
+          valueAsNumber: next,
+        }
+      }),
+    decrement: () =>
+      set((state) => {
+        let next =
+          parseValue(state.value, state.units, state.digit).rawValue -
+          (state.step ?? 1)
+        if (state.keepWithinRange) {
+          next = clamp(
+            next,
+            state.min ?? Number.MIN_SAFE_INTEGER,
+            state.max ?? Number.MAX_SAFE_INTEGER,
+          )
+        }
+        return {
+          value: parseValue(String(next), state.units, state.digit).formatValue,
+          valueAsNumber: next,
+        }
+      }),
+    change: (value) =>
+      set((state) => {
+        const v = value ?? ''
+        return {
+          value: v,
+          valueAsNumber: parseValue(v, state.units, state.digit).rawValue,
+        }
+      }),
+  }))
+}
+
+const NumberInputContext = createContext<NumberInputStore | null>(null)
+
+type NumberInputProviderProps = React.PropsWithChildren<ProviderProps>
+
 export function NumberInputProvider({
-  value: _value,
-  step: _step,
-  min: _min = Number.MIN_SAFE_INTEGER,
-  max: _max = Number.MAX_SAFE_INTEGER,
-  units: _units,
-  digit: _digit,
-  keepWithinRange: _keepWithinRange,
   children,
-}: Props) {
-  const [store, dispatch] = useReducer(valueReducer, {
-    value: String(_value),
-    valueAsNumber: parseValue(String(_value), _units, _digit).rawValue,
-    step: _step,
-    min: _min,
-    max: _max,
-    units: _units,
-    digit: _digit,
-    keepWithinRange: _keepWithinRange,
-  })
-
-  // TODO: store update
-  // console.log('step: ', _step)
+  ...props
+}: NumberInputProviderProps) {
+  const storeRef = useRef<NumberInputStore>()
+  if (!storeRef.current) {
+    storeRef.current = createNumberInputStore(props)
+  }
 
   useEffect(() => {
-    store.value = parseValue(String(_value), _units, _digit).formatValue
-  }, [_digit, _units, _value])
-  useEffect(() => {
-    store.valueAsNumber = parseValue(String(_value), _units, _digit).rawValue
-  }, [_digit, _units, _value])
-  useEffect(() => {
-    store.step = _step
-  }, [_step])
-  useEffect(() => {
-    store.min = _min
-  }, [_min])
-  useEffect(() => {
-    store.max = _max
-  }, [_max])
-  useEffect(() => {
-    store.units = _units
-  }, [_units])
-  useEffect(() => {
-    store.digit = _digit
-  }, [_digit])
-  useEffect(() => {
-    store.keepWithinRange = _keepWithinRange
-  }, [_keepWithinRange])
+    if (storeRef.current) {
+      const parsed = parseValue(
+        String(props?.value || ''),
+        props?.units,
+        props?.digit,
+      )
+      storeRef.current.setState({
+        ...props,
+        ...{
+          value: parsed.formatValue,
+          valueAsNumber: parsed.rawValue,
+        },
+      })
+    } else {
+      storeRef.current = createNumberInputStore(props)
+    }
+  }, [props])
 
   return (
-    <storeContext.Provider value={store}>
-      <dispatchContext.Provider value={dispatch}>
-        {children}
-      </dispatchContext.Provider>
-    </storeContext.Provider>
+    <NumberInputContext.Provider value={storeRef.current}>
+      {children}
+    </NumberInputContext.Provider>
   )
 }
 
-// : Reducer<Store, ActionType>
-function valueReducer(store: Store, action: ActionType) {
-  switch (action.type) {
-    case 'increment': {
-      let next =
-        parseValue(store.value, store.units, store.digit).rawValue + store.step
-      if (store.keepWithinRange) {
-        next = clamp(next, store.min, store.max)
-      }
-      return {
-        ...store,
-        value: parseValue(String(next), store.units, store.digit).formatValue,
-        valueAsNumber: next,
-      }
-    }
-    case 'decrement': {
-      let next =
-        parseValue(store.value, store.units, store.digit).rawValue - store.step
-      if (store.keepWithinRange) {
-        next = clamp(next, store.min, store.max)
-      }
-      return {
-        ...store,
-        value: parseValue(String(next), store.units, store.digit).formatValue,
-        valueAsNumber: next,
-      }
-    }
-    case 'change': {
-      const v = action.value ?? ''
-      return {
-        ...store,
-        value: v,
-        valueAsNumber: parseValue(v, store.units, store.digit).rawValue,
-      }
-    }
-    default: {
-      throw Error('Unknown action: ' + action.type)
-    }
-  }
+/** @category NumberInput */
+export function useNumberInputContext<T>(
+  selector: (state: State & Action) => T,
+): T {
+  const store = useContext(NumberInputContext)
+  if (!store) throw new Error('Missing NumberInputContext.Provider in the tree')
+  return useStore(store, selector)
 }
-
-/** @category NumberInput */
-export const useStore = () => useContext(storeContext)
-/** @category NumberInput */
-export const useDispatch = () => useContext(dispatchContext)
