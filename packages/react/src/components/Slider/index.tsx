@@ -318,8 +318,12 @@ export const Slider = forwardRef<SliderMethods, Props>(
   },
 )
 
-export * from './context'
-export * from './Thumb'
-export * from './Track'
-export * from './Scale'
-export * from './ScaleOption'
+export { useSliderContext } from './context'
+export {
+  SliderThumb,
+  type SliderThumbMethods,
+  type SliderThumbProps,
+} from './Thumb'
+export { SliderTrack, type SliderTrackProps } from './Track'
+export { Scale, type ScaleProps } from './Scale'
+export { ScaleOption, type ScaleOptionProps } from './ScaleOption'
