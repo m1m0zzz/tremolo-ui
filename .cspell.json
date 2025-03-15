@@ -18,7 +18,8 @@
     "typedoc",
     "Vercel",
     "vite",
-    "Wavetable"
+    "Wavetable",
+    "zustand"
   ],
   "ignorePaths": [
     "**/dist",
