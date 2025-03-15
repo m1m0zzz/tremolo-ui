@@ -29,7 +29,7 @@ import {
   voiceAtom,
   voiceDetuneAtom,
 } from './atoms'
-import { MasterSection } from './MasterSection'
+import { MasterSection } from './MasterSection.stories'
 import { SpectrumAnalyzer } from './SpectrumAnalyzer'
 import { VolumeMeter } from './VolumeMeter'
 import { WaveSelector } from './WaveSelector.stories'
