@@ -47,7 +47,7 @@ const createSliderStore = (initProps?: Partial<State>) => {
   }))
 }
 
-export const SliderContext = createContext<SliderStore | null>(null)
+const SliderContext = createContext<SliderStore | null>(null)
 
 type SliderProviderProps = React.PropsWithChildren<Partial<State>>
 
@@ -72,6 +72,7 @@ export function SliderProvider({ children, ...props }: SliderProviderProps) {
   )
 }
 
+/** @category Slider */
 export function useSliderContext<T>(selector: (state: State & Action) => T): T {
   const store = useContext(SliderContext)
   if (!store) throw new Error('Missing SliderContext.Provider in the tree')
