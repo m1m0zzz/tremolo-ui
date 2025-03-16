@@ -161,6 +161,7 @@ export const WaveSelector = ({
               min={MIN_SEMITONE}
               max={MAX_SEMITONE}
               units={'st'}
+              selectWithFocus="number"
               className={style.numberInput}
               wrapperClassName={style.numberInputWrapper}
               onBlur={(v) => setSemitone(v)}
@@ -173,6 +174,7 @@ export const WaveSelector = ({
               min={MIN_DETUNE}
               max={MAX_DETUNE}
               units={'ct'}
+              selectWithFocus="number"
               className={style.numberInput}
               wrapperClassName={style.numberInputWrapper}
               onBlur={(v) => setDetune(v)}
@@ -219,12 +221,13 @@ export const WaveSelector = ({
         </Slider>
         <NumberInput
           value={position}
-          onBlur={(v) => setPosition(v)}
-          units="%"
           min={0}
           max={100}
+          units="%"
+          selectWithFocus="number"
           className={style.numberInput}
           wrapperClassName={style.numberInputWrapper}
+          onBlur={(v) => setPosition(v)}
         />
       </div>
     </div>
