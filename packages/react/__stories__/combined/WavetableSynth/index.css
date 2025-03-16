@@ -2,8 +2,3 @@
   font-size: 0.75rem;
   text-align: center;
 }
-
-.tremolo-number-input::selection {
-  background-color: rgb(63, 166, 245);
-  color: white;
-}
