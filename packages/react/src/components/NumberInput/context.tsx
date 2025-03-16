@@ -48,15 +48,6 @@ const createNumberInputStore = (initProps?: ProviderProps) => {
     keepWithinRange: true,
   }
 
-  console.log('init: ', initProps?.value)
-  console.log(
-    parseValue(
-      String(initProps?.value || ''),
-      initProps?.units,
-      initProps?.digit,
-    ),
-  )
-
   return createStore<State & Action>()((set) => ({
     ...DEFAULT_PROPS,
     ...initProps,
