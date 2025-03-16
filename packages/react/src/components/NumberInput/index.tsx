@@ -1,16 +1,14 @@
 import clsx from 'clsx'
-import {
-  ChangeEvent,
-  ComponentPropsWithoutRef,
-  ReactNode,
-  useMemo,
-  useState,
-} from 'react'
+import { ComponentPropsWithoutRef, ReactNode, useMemo, useState } from 'react'
 
 import { InputEventOption } from '@tremolo-ui/functions'
 import { parseValue, Units } from '@tremolo-ui/functions/NumberInput'
 
-import { NumberInputProvider, useNumberInputContext } from './context'
+import {
+  NumberInputProvider,
+  safeClamp,
+  useNumberInputContext,
+} from './context'
 
 /*
 TODO
@@ -69,11 +67,7 @@ export interface NumberInputProps {
 
   wrapperClassName?: string
 
-  onChange?: (
-    value: number,
-    text: string,
-    event: ChangeEvent<HTMLInputElement>,
-  ) => void
+  onChange?: (value: number, text: string) => void
   onFocus?: (
     value: number,
     text: string,
@@ -107,7 +101,7 @@ function InternalInput({
   onChange,
   onFocus,
   onBlur,
-  children,
+  children: _children,
   ...props
 }: Omit<NumberInputProps, 'value'> &
   Omit<ComponentPropsWithoutRef<'input'>, keyof NumberInputProps | 'type'>) {
@@ -119,10 +113,7 @@ function InternalInput({
   const error = useMemo(() => {
     if (editing) return false
     const v = valueAsNumber
-    return (
-      (min ?? Number.MIN_SAFE_INTEGER) > v ||
-      v > (max ?? Number.MAX_SAFE_INTEGER)
-    )
+    return (min ?? -Infinity) > v || v > (max ?? Infinity)
   }, [editing, max, min, valueAsNumber])
 
   return (
@@ -139,7 +130,8 @@ function InternalInput({
       onChange={(event) => {
         const v = event.currentTarget.value
         change(v)
-        onChange?.(valueAsNumber, v, event)
+        const valueAsNumber = parseValue(v, units, digit).rawValue
+        onChange?.(valueAsNumber, v)
       }}
       onFocus={(event) => {
         setEditing(true)
@@ -158,9 +150,15 @@ function InternalInput({
       onBlur={(event) => {
         setEditing(false)
         // update value
-        const v = event.currentTarget.value
-        const parsed = parseValue(v, units, digit)
+        let v = parseValue(event.currentTarget.value, units, digit).rawValue
+        if (clampValueOnBlur) {
+          v = safeClamp(v, min, max)
+        }
+        const parsed = parseValue(String(v), units, digit)
         change(parsed.formatValue)
+        if (clampValueOnBlur) {
+          onChange?.(parsed.rawValue, parsed.formatValue)
+        }
         onBlur?.(parsed.rawValue, parsed.formatValue, event)
       }}
       onKeyDown={(event) => {
@@ -210,6 +208,7 @@ export function NumberInput({
       units={units}
       digit={digit}
       keepWithinRange={keepWithinRange}
+      onChange={onChange}
     >
       <div
         className={clsx('tremolo-number-input-wrapper', wrapperClassName)}

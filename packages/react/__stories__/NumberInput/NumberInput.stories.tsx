@@ -59,6 +59,8 @@ export const UnitsAndDigit: Story = {
 
 export const WithAnotherComponents: Story = {
   args: {
+    min: 0,
+    max: 100,
     units: [
       ['Hz', 1],
       ['kHz', 1000],
@@ -66,7 +68,6 @@ export const WithAnotherComponents: Story = {
   },
   render: (args) => {
     const [value, setValue] = useState(0)
-    // console.log('render: ', value)
 
     return (
       <div
@@ -83,10 +84,15 @@ export const WithAnotherComponents: Story = {
             alignItems: 'center',
           }}
         >
-          <Knob value={value} min={0} max={100} onChange={(v) => setValue(v)} />
+          <Knob
+            value={value}
+            min={args.min ?? Number.MIN_SAFE_INTEGER}
+            max={args.max ?? Number.MAX_SAFE_INTEGER}
+            onChange={(v) => setValue(v)}
+          />
           {value}
         </div>
-        <NumberInput {...args} value={value} onChange={(v) => setValue(v)}>
+        <NumberInput {...args} value={value} onBlur={(v) => setValue(v)}>
           <Stepper>
             <IncrementStepper />
             <DecrementStepper />

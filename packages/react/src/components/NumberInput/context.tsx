@@ -1,10 +1,4 @@
-import {
-  ChangeEvent,
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-} from 'react'
+import { createContext, useContext, useEffect, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
 
 import { clamp } from '@tremolo-ui/functions'
@@ -19,13 +13,7 @@ type State = {
   keepWithinRange?: boolean
   units?: string | Units
   digit?: number
-
-  // TODO
-  onChange?: (
-    value: number,
-    text: string,
-    event: ChangeEvent<HTMLInputElement>,
-  ) => void
+  onChange?: (value: number, text: string) => void
 }
 
 type Action = {
@@ -38,6 +26,14 @@ type NumberInputStore = ReturnType<typeof createNumberInputStore>
 
 type ProviderProps = Partial<Omit<State, 'value'> & { value: number | string }>
 
+export function safeClamp(
+  value: number,
+  min = Number.MIN_SAFE_INTEGER,
+  max = Number.MAX_SAFE_INTEGER,
+) {
+  return clamp(value, min, max)
+}
+
 const createNumberInputStore = (initProps?: ProviderProps) => {
   const DEFAULT_PROPS: State = {
     value: '',
@@ -46,6 +42,7 @@ const createNumberInputStore = (initProps?: ProviderProps) => {
     max: 0,
     step: 1,
     keepWithinRange: true,
+    onChange: (_v: number, _t: string) => {},
   }
 
   return createStore<State & Action>()((set) => ({
@@ -69,14 +66,12 @@ const createNumberInputStore = (initProps?: ProviderProps) => {
           parseValue(state.value, state.units, state.digit).rawValue +
           (state.step ?? 1)
         if (state.keepWithinRange) {
-          next = clamp(
-            next,
-            state.min ?? Number.MIN_SAFE_INTEGER,
-            state.max ?? Number.MAX_SAFE_INTEGER,
-          )
+          next = safeClamp(next, state.min, state.max)
         }
+        const v = parseValue(String(next), state.units, state.digit).formatValue
+        state?.onChange?.(next, v)
         return {
-          value: parseValue(String(next), state.units, state.digit).formatValue,
+          value: v,
           valueAsNumber: next,
         }
       }),
@@ -86,14 +81,12 @@ const createNumberInputStore = (initProps?: ProviderProps) => {
           parseValue(state.value, state.units, state.digit).rawValue -
           (state.step ?? 1)
         if (state.keepWithinRange) {
-          next = clamp(
-            next,
-            state.min ?? Number.MIN_SAFE_INTEGER,
-            state.max ?? Number.MAX_SAFE_INTEGER,
-          )
+          next = safeClamp(next, state.min, state.max)
         }
+        const v = parseValue(String(next), state.units, state.digit).formatValue
+        state?.onChange?.(next, v)
         return {
-          value: parseValue(String(next), state.units, state.digit).formatValue,
+          value: v,
           valueAsNumber: next,
         }
       }),
