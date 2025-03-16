@@ -78,6 +78,24 @@ function detunedVoices(voice: number, detune: number) {
   return voices
 }
 
+/**
+ * l = 0 ~ 2, r = 2 - l
+ * @returns [l, r][voices]
+ */
+function panningVoices(voice: number, width: number) {
+  const voices = []
+  const top = Array(Math.floor(voice / 2))
+    .fill(0)
+    .map((_, i) => (0.5 * width) / (i + 1))
+  const bottom = top.map((v) => -v).toReversed()
+  if (voice % 2 == 0) {
+    voices.push(...top, ...bottom)
+  } else {
+    voices.push(...top, 0, ...bottom)
+  }
+  return voices.map((v) => v + 0.5).map((w) => [w * 2, (1 - w) * 2])
+}
+
 function generateAndAssignSource(
   ctx: AudioContext,
   noteNumber: number,
@@ -98,18 +116,21 @@ function generateAndAssignSource(
     return
 
   const sources = []
+  const detunes = detunedVoices(voice, voiceDetune / 100)
+  const pans = panningVoices(voice, 1)
   for (let v = MIN_VOICE; v <= voice; v++) {
-    const d = detunedVoices(voice, voiceDetune / 100)[v - MIN_VOICE]
+    const d = detunes[v - MIN_VOICE]
     const freq = noteToFrequency(noteNumber + semitone, detune + d)
     const buffer = ctx.createBuffer(2, Math.ceil(sampleRate / freq), sampleRate)
     let currentAngle = v == 1 ? 0 : Math.random()
     const cyclesPerSample = freq / sampleRate
     for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
       const nowBuffering = buffer.getChannelData(channel)
+      const panning = pans[v - MIN_VOICE][channel]
       for (let i = 0; i < buffer.length; i++) {
         const currentSample = basicShapesWave(currentAngle, position)
         currentAngle += cyclesPerSample
-        nowBuffering[i] = currentSample / Math.sqrt(voice)
+        nowBuffering[i] = (currentSample * panning) / Math.sqrt(voice)
       }
     }
     // stop all source
