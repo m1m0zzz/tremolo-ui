@@ -1,6 +1,6 @@
 {
   "name": "@tremolo-ui/react",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "React component library for audio app",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -74,7 +74,7 @@
     "tone": "^15.0.4"
   },
   "peerDependencies": {
-    "@tremolo-ui/functions": "0.0.9",
+    "@tremolo-ui/functions": "0.0.10",
     "react": "18.x || 19.x",
     "react-dom": "18.x || 19.x"
   },
