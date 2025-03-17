@@ -232,11 +232,11 @@ export const Slider = forwardRef<SliderMethods, Props>(
       [wheel, value, min, max, skew, step],
     )
 
-    useEventListener(window, 'mousemove', (event) => {
+    useEventListener(globalThis.window, 'mousemove', (event) => {
       handleValue(event)
     })
 
-    useEventListener(window, 'mouseup', () => {
+    useEventListener(globalThis.window, 'mouseup', () => {
       thumbDragged.current = false
       if (bodyNoSelect) removeNoSelect()
     })

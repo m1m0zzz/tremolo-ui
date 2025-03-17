@@ -155,7 +155,7 @@ export function Piano({
     }
   }, [fill, whiteKeyProps?.width, whiteNoteCount])
 
-  useEventListener(window, 'keydown', (e) => {
+  useEventListener(globalThis.window, 'keydown', (e) => {
     if (e.repeat) return
     if (!keyboardShortcuts) return
     const index = keyboardShortcuts.keys.indexOf(e.key)
@@ -166,7 +166,7 @@ export function Piano({
     }
   })
 
-  useEventListener(window, 'keyup', (e) => {
+  useEventListener(globalThis.window, 'keyup', (e) => {
     if (e.repeat) return
     if (!keyboardShortcuts) return
     const index = keyboardShortcuts.keys.indexOf(e.key)

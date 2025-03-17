@@ -250,11 +250,11 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
       [x, y],
     )
 
-    useEventListener(window, 'mousemove', (event) => {
+    useEventListener(globalThis.window, 'mousemove', (event) => {
       handleValue(event)
     })
 
-    useEventListener(window, 'mouseup', () => {
+    useEventListener(globalThis.window, 'mouseup', () => {
       thumbDragged.current = false
       if (bodyNoSelect) removeNoSelect()
     })

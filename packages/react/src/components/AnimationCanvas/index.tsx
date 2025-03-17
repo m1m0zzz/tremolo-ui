@@ -116,7 +116,7 @@ export function AnimationCanvas({
     const canvas = canvasRef.current
     const context = canvas.getContext('2d', options)
     if (!context) throw new Error('Cannot get canvas context.')
-    const dpr = window.devicePixelRatio
+    const dpr = globalThis.window.devicePixelRatio
 
     if (relativeSize) {
       const parent = canvas.parentElement

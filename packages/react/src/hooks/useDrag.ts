@@ -80,9 +80,9 @@ export function useDrag<T extends Element>({
     [handleDrag, onDragStart],
   )
 
-  useEventListener(window, 'mousemove', handleDrag)
+  useEventListener(globalThis.window, 'mousemove', handleDrag)
 
-  useEventListener(window, 'pointerup', () => {
+  useEventListener(globalThis.window, 'pointerup', () => {
     dragOffsetX.current = undefined
     dragOffsetY.current = undefined
     onDragEnd?.()
