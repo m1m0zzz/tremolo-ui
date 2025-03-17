@@ -9,16 +9,7 @@ type State = {
   vertical: boolean
   reverse: boolean
   disabled: boolean
-}
-
-type Action = {
-  updateMin: (min: State['min']) => void
-  updateMax: (max: State['max']) => void
-  updateStep: (step: State['step']) => void
-  updateSkew: (skew: State['skew']) => void
-  updateVertical: (vertical: State['vertical']) => void
-  updateReverse: (reverse: State['reverse']) => void
-  updateDisabled: (disabled: State['disabled']) => void
+  readonly: boolean
 }
 
 type SliderStore = ReturnType<typeof createSliderStore>
@@ -32,18 +23,12 @@ const createSliderStore = (initProps?: Partial<State>) => {
     vertical: false,
     reverse: false,
     disabled: false,
+    readonly: false,
   }
 
-  return createStore<State & Action>()((set) => ({
+  return createStore<State>()(() => ({
     ...DEFAULT_PROPS,
     ...initProps,
-    updateMin: (min) => set(() => ({ min: min })),
-    updateMax: (max) => set(() => ({ max: max })),
-    updateStep: (step) => set(() => ({ step: step })),
-    updateSkew: (skew) => set(() => ({ skew: skew })),
-    updateVertical: (vertical) => set(() => ({ vertical: vertical })),
-    updateReverse: (reverse) => set(() => ({ reverse: reverse })),
-    updateDisabled: (disabled) => set(() => ({ disabled: disabled })),
   }))
 }
 
@@ -73,7 +58,7 @@ export function SliderProvider({ children, ...props }: SliderProviderProps) {
 }
 
 /** @category Slider */
-export function useSliderContext<T>(selector: (state: State & Action) => T): T {
+export function useSliderContext<T>(selector: (state: State) => T): T {
   const store = useContext(SliderContext)
   if (!store) throw new Error('Missing SliderContext.Provider in the tree')
   return useStore(store, selector)

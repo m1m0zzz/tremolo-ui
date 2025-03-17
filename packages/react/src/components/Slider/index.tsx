@@ -261,6 +261,7 @@ export const Slider = forwardRef<SliderMethods, Props>(
         vertical={vertical}
         reverse={reverse}
         disabled={disabled}
+        readonly={readonly}
       >
         <div
           className={clsx('tremolo-slider', className)}

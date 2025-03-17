@@ -5,9 +5,7 @@ import { styleHelper, xor } from '@tremolo-ui/functions'
 
 import { useSliderContext } from './context'
 
-/** @category Slider */
 export const defaultLength = 140
-/** @category Slider */
 export const defaultThickness = 10
 
 /** @category Slider */

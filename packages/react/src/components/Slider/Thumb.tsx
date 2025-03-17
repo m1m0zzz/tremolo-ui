@@ -49,6 +49,7 @@ export const SliderThumb = forwardRef<SliderThumbMethods, SliderThumbProps>(
     const wrapperRef = useRef<HTMLDivElement>(null)
     const vertical = useSliderContext((s) => s.vertical)
     const disabled = useSliderContext((s) => s.disabled)
+    const readonly = useSliderContext((s) => s.readonly)
 
     useImperativeHandle(ref, () => {
       return {
@@ -79,6 +80,7 @@ export const SliderThumb = forwardRef<SliderThumbMethods, SliderThumbProps>(
             // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
             tabIndex={0}
             aria-disabled={disabled}
+            aria-readonly={readonly}
             style={{
               width: size ?? width,
               height: size ?? height,
