@@ -78,7 +78,7 @@ export function Piano({
   // -- state and ref ---
   const [pressed, setPressed] = useState(false)
   const [whiteNoteWidth, setWhiteNoteWidth] = useState(-1)
-  const keyRefs = useRef<RefObject<KeyMethods>[]>([])
+  const keyRefs = useRef<RefObject<KeyMethods | null>[]>([])
   for (let i = 0; i < noteRange.last - noteRange.first + 1; i++) {
     keyRefs.current[i] = createRef<KeyMethods>()
   }

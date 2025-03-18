@@ -37,7 +37,7 @@ const SliderContext = createContext<SliderStore | null>(null)
 type SliderProviderProps = React.PropsWithChildren<Partial<State>>
 
 export function SliderProvider({ children, ...props }: SliderProviderProps) {
-  const storeRef = useRef<SliderStore>()
+  const storeRef = useRef<SliderStore>(null)
   if (!storeRef.current) {
     storeRef.current = createSliderStore(props)
   }

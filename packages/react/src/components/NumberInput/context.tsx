@@ -109,7 +109,7 @@ export function NumberInputProvider({
   children,
   ...props
 }: NumberInputProviderProps) {
-  const storeRef = useRef<NumberInputStore>()
+  const storeRef = useRef<NumberInputStore>(null)
   if (!storeRef.current) {
     storeRef.current = createNumberInputStore(props)
   }
