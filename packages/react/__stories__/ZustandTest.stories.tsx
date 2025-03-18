@@ -38,7 +38,7 @@ function NameProvider({ children, ...props }: NameProviderProps) {
   const { name } = props
   console.log('render on Provider', name)
 
-  const storeRef = useRef<NameStore>()
+  const storeRef = useRef<NameStore>(null)
   if (!storeRef.current) {
     storeRef.current = createNameStore(props)
   }

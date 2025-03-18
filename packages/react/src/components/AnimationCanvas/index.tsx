@@ -92,7 +92,7 @@ export function AnimationCanvas({
   >): ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const memoCanvasRef = useRef<HTMLCanvasElement>(null)
-  const reqIdRef = useRef<number>()
+  const reqIdRef = useRef(-1)
   const widthRef = useRef(0)
   const heightRef = useRef(0)
 
