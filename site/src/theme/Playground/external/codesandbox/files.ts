@@ -35,8 +35,8 @@ const packageJSON = `{
   "main": "src/index.tsx",
   "dependencies": {
     "@tremolo-ui/react": "latest",
-    "react": "^18.2.6",
-    "react-dom": "^18.2.6"
+    "react": "^19",
+    "react-dom": "^19"
   },
   "scripts": {
     "start": "react-scripts-ts start",
@@ -45,8 +45,8 @@ const packageJSON = `{
     "eject": "react-scripts-ts eject"
   },
   "devDependencies": {
-    "@types/react": "^18.2.6",
-    "@types/react-dom": "^18.2.6",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "react-scripts-ts": "latest"
   }
 }

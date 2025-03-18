@@ -96,13 +96,13 @@ const packageJson = `{
   },
   "dependencies": {
     "@tremolo-ui/react": "latest",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^19",
+    "react-dom": "^19"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.5",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^9.17.0",
     "eslint-plugin-react-hooks": "^5.0.0",
