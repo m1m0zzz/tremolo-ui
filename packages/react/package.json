@@ -8,12 +8,13 @@
   "types": "dist/cjs/types/index.d.ts",
   "scripts": {
     "sb": "storybook dev -p 6006",
+    "typecheck": "tsc",
     "build:sb": "storybook build",
     "serve": "http-server ./storybook-static",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "format": "prettier --write .",
     "test": "echo 'No test yet.'",
-    "build:package": "rollup -c",
+    "build:package": "tsc && rollup -c",
     "clean": "npm run clean:build && npm run clean:sb",
     "clean:build": "rimraf ./dist .rollup.cache",
     "clean:sb": "rimraf ./storybook-static"
