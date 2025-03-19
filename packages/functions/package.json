@@ -13,6 +13,30 @@
     "lint": "eslint --fix --ext .ts,.tsx .",
     "format": "prettier --write ."
   },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "mimoz",
+    "email": "contact.m1m0zzz@gmail.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/m1m0zzz/tremolo-ui",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m1m0zzz/tremolo-ui.git",
+    "directory": "packages/functions"
+  },
+  "keywords": [
+    "web-audio",
+    "math",
+    "midi",
+    "dsp"
+  ],
   "exports": {
     ".": {
       "require": {
@@ -44,29 +68,5 @@
         "types": "./dist/esm/types/components/Slider/type.d.ts"
       }
     }
-  },
-  "files": [
-    "dist",
-    "src"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "author": {
-    "name": "mimoz",
-    "email": "contact.m1m0zzz@gmail.com"
-  },
-  "license": "MIT",
-  "homepage": "https://github.com/m1m0zzz/tremolo-ui",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/m1m0zzz/tremolo-ui.git",
-    "directory": "packages/functions"
-  },
-  "keywords": [
-    "web-audio",
-    "math",
-    "midi",
-    "dsp"
-  ]
+  }
 }

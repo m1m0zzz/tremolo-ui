@@ -19,44 +19,6 @@
     "clean:build": "rimraf ./dist .rollup.cache",
     "clean:sb": "rimraf ./storybook-static"
   },
-  "exports": {
-    ".": {
-      "require": {
-        "types": "./dist/cjs/types/index.d.ts",
-        "default": "./dist/cjs/index.js"
-      },
-      "import": {
-        "types": "./dist/esm/types/index.d.ts",
-        "default": "./dist/esm/index.js"
-      }
-    },
-    "./styles/index.css": "./dist/styles/index.css"
-  },
-  "files": [
-    "dist",
-    "src"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "author": {
-    "name": "mimoz",
-    "email": "contact.m1m0zzz@gmail.com"
-  },
-  "license": "MIT",
-  "homepage": "https://github.com/m1m0zzz/tremolo-ui",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/m1m0zzz/tremolo-ui.git",
-    "directory": "packages/react"
-  },
-  "keywords": [
-    "react",
-    "react-components",
-    "ui",
-    "components",
-    "web-audio"
-  ],
   "devDependencies": {
     "@storybook/addon-essentials": "^8.6.7",
     "@storybook/addon-interactions": "^8.6.7",
@@ -84,5 +46,43 @@
     "@tremolo-ui/functions": "0.0.10",
     "clsx": "^2.1.1",
     "zustand": "^5.0.3"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "mimoz",
+    "email": "contact.m1m0zzz@gmail.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/m1m0zzz/tremolo-ui",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m1m0zzz/tremolo-ui.git",
+    "directory": "packages/react"
+  },
+  "keywords": [
+    "react",
+    "react-components",
+    "ui",
+    "components",
+    "web-audio"
+  ],
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/cjs/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./styles/index.css": "./dist/styles/index.css"
   }
 }
