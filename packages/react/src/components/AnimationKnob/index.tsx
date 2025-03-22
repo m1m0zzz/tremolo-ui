@@ -77,7 +77,7 @@ export type AnimationKnobProps = {
 }
 
 /**
- * simple rotary Knob.
+ * Animatable rotary knob.
  * @category AnimationKnob
  */
 export function AnimationKnob({

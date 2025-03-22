@@ -1,6 +1,11 @@
 // expand begin
 import { useState } from 'react'
-import { NumberInput } from '@tremolo-ui/react'
+import {
+  NumberInput,
+  Stepper,
+  IncrementStepper,
+  DecrementStepper,
+} from '@tremolo-ui/react'
 
 import '@tremolo-ui/react/styles/index.css'
 // expand end
@@ -21,7 +26,12 @@ function App() {
         min={0}
         max={100}
         onChange={(v) => setValue(v)}
-      />
+      >
+        <Stepper>
+          <IncrementStepper />
+          <DecrementStepper />
+        </Stepper>
+      </NumberInput>
     </div>
     // expand end
   )

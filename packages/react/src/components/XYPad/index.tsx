@@ -26,7 +26,10 @@ import { addNoSelect, removeNoSelect } from '../_util'
 import { XYPadArea, AreaProps } from './Area'
 import { XYPadThumb, XYPadThumbMethods, ThumbProps } from './Thumb'
 
-/** @category XYPad */
+/**
+ * Two-dimensional slider component.
+ * @category XYPad
+ */
 export interface ValueOptions {
   // required
   value: number

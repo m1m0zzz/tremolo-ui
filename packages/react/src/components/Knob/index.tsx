@@ -70,7 +70,11 @@ export interface KnobProps {
   onChange?: (value: number) => void
 }
 
-/** @category Knob */
+/**
+ * Interactive rotary knob component implemented in SVG.
+ *
+ * @category Knob
+ */
 export function Knob({
   value,
   min,

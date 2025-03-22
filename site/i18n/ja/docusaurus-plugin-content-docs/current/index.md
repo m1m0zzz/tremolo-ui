@@ -14,8 +14,8 @@ ReactとWeb Componentsに対応しており、npmでパッケージを配布し�
 
 使用するパッケージのチュートリアルを参照してください。
 
-- [Tutorial - React](./tutorials/react/getting-started/)
-- [Tutorial - Web Components](./tutorials/web-components/getting-started/)
+- [Reactではじめる](./tutorials/react/getting-started/)
+- [Web Componentsではじめる](./tutorials/web-components/getting-started/)
 
 ## UI Catalog
 

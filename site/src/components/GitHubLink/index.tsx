@@ -1,4 +1,8 @@
+import clsx from 'clsx'
 import { ComponentPropsWithoutRef, ReactNode } from 'react'
+import { FiGithub } from 'react-icons/fi'
+
+import styles from './styles.module.css'
 
 interface Props {
   user?: string
@@ -8,8 +12,7 @@ interface Props {
   path?: string
   isFile?: boolean
   external?: boolean
-  target?: string
-  rel?: string
+  plain?: boolean
   children?: ReactNode
 }
 
@@ -19,12 +22,19 @@ export default function GitHubLink({
   branch = 'main',
   commit,
   path,
-  isFile = false,
+  isFile,
   external = true,
-  children,
+  plain = false,
+  className,
+  children = 'Source',
   ...props
-}: Props & Omit<ComponentPropsWithoutRef<'a'>, keyof Props>) {
+}: Props &
+  Omit<ComponentPropsWithoutRef<'a'>, keyof Props | 'target' | 'rel'>) {
   const more = [branch, commit, path].filter((v) => v).join('/')
+  if (isFile == undefined) {
+    const p = path.split('/')
+    isFile = p[p.length - 1].includes('.')
+  }
 
   const href =
     more == ''
@@ -36,8 +46,10 @@ export default function GitHubLink({
       href={href}
       target={external ? '_blank' : undefined}
       rel={external ? 'noopener noreferrer' : undefined}
+      className={clsx(plain || styles.a, className)}
       {...props}
     >
+      {plain || <FiGithub />}
       {children}
     </a>
   )

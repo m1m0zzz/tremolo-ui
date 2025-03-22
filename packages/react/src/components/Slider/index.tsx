@@ -68,7 +68,10 @@ export interface SliderProps {
   // ReactElement<typeof SliderThumb, typeof SliderTrack>[]
 }
 
-/** @category Slider */
+/**
+ * Customizable slider component.
+ * @category Slider
+ */
 export interface SliderMethods {
   focus: () => void
   blur: () => void

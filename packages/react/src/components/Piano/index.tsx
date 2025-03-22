@@ -59,7 +59,10 @@ export interface PianoProps {
   children?: ReactElement | ReactElement[]
 }
 
-/** @category Piano */
+/**
+ * Customizable piano component.
+ * @category Piano
+ */
 export function Piano({
   noteRange,
   glissando = true,

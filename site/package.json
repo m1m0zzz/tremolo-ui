@@ -13,8 +13,7 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "i18n:ja": "docusaurus write-translations --locale ja",
-    "tsc": "tsc",
-    "before-production-build": "npm run build:package -w "
+    "tsc": "tsc"
   },
   "dependencies": {
     "@docusaurus/core": "^3.6.3",

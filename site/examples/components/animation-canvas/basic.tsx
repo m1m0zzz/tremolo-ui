@@ -11,6 +11,8 @@ function App() {
   return (
     <div>
       <AnimationCanvas
+        width={200}
+        height={200}
         init={(ctx) => {
           ctx.font = '16px sans-serif'
         }}
