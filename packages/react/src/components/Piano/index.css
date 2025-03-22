@@ -49,6 +49,7 @@
 }
 
 .tremolo-piano-key-label {
+  box-sizing: content-box;
   display: flex;
   justify-content: center;
   align-items: center;
