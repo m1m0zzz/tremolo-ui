@@ -14,7 +14,8 @@ import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
  * </WheelObserver>
  */
 
-interface Props<T extends ElementType> {
+/** @category WheelObserver */
+export interface WheelObserverProps<T extends ElementType> {
   /**
    * React.ElementType
    * @default div
@@ -27,7 +28,8 @@ interface Props<T extends ElementType> {
 
 /** @category WheelObserver */
 export function WheelObserver<T extends ElementType = 'div'>(
-  props: Props<T> & Omit<ComponentPropsWithoutRef<T>, keyof Props<T>>,
+  props: WheelObserverProps<T> &
+    Omit<ComponentPropsWithoutRef<T>, keyof WheelObserverProps<T>>,
 ) {
   const { children, onWheel, as: Component = 'div', ...attributes } = props
 

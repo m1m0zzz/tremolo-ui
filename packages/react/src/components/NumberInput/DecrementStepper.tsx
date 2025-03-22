@@ -3,11 +3,13 @@ import { ComponentPropsWithoutRef, ReactNode } from 'react'
 
 import { useNumberInputContext } from './context'
 
+/** @category NumberInput */
 export interface DecrementStepperProps {
   size?: number
   children?: ReactNode
 }
 
+/** @category NumberInput */
 export function DecrementStepper({
   size = 12,
   children,
