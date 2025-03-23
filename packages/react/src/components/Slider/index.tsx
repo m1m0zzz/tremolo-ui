@@ -107,6 +107,10 @@ export const Slider = forwardRef<SliderMethods, Props>(
       className,
       style,
       children,
+      onFocus,
+      onBlur,
+      onPointerDown,
+      onKeyDown,
       ...props
     }: Props,
     ref,
@@ -296,10 +300,20 @@ export const Slider = forwardRef<SliderMethods, Props>(
             thumbDragged.current = true
             const v = handleValue(event)
             if (!readonly) onDragStart?.(v ?? value)
+            onPointerDown?.(event)
           }}
-          onKeyDown={handleKeyDown}
-          onFocus={thumbRef.current?.focus}
-          onBlur={thumbRef.current?.blur}
+          onKeyDown={(event) => {
+            handleKeyDown(event)
+            onKeyDown?.(event)
+          }}
+          onFocus={(event) => {
+            thumbRef.current?.focus()
+            onFocus?.(event)
+          }}
+          onBlur={(event) => {
+            thumbRef.current?.blur()
+            onBlur?.(event)
+          }}
           {...props}
         >
           <div

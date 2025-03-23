@@ -125,7 +125,7 @@ export const Variant = () => {
     <div>
       {data.map(({ variant, v, setter }) => {
         return (
-          <section style={{ marginBottom: '2rem' }}>
+          <section key={variant} style={{ marginBottom: '2rem' }}>
             <p>{variant}</p>
             <div>
               <NumberInput

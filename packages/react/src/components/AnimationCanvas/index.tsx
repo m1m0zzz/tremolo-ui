@@ -84,6 +84,7 @@ export function AnimationCanvas({
   init,
   draw,
   className,
+  onContextMenu = (event) => event.preventDefault(),
   ...props
 }: AnimationCanvasProps &
   Omit<
@@ -194,6 +195,7 @@ export function AnimationCanvas({
         width={relativeSize ? 0 : width}
         height={relativeSize ? 0 : height}
         ref={canvasRef}
+        onContextMenu={onContextMenu}
         {...props}
       ></canvas>
       {relativeSize && reduceFlickering && (

@@ -95,6 +95,9 @@ export function Knob({
   thumb,
   thumbLine,
   onChange,
+  onKeyDown,
+  onPointerDown,
+  onDoubleClick,
   className,
   classes,
   ...props
@@ -201,14 +204,20 @@ export function Knob({
       aria-valuemax={max}
       aria-disabled={disabled}
       aria-readonly={readonly}
-      onPointerDown={pointerDownHandler}
-      onDoubleClick={() => {
+      onPointerDown={(event) => {
+        pointerDownHandler(event)
+        onPointerDown?.(event)
+      }}
+      onDoubleClick={(event) => {
         if (enableDoubleClickDefault && onChange) {
           onChange(defaultValue)
         }
+        onDoubleClick?.(event)
       }}
-      onKeyDown={handleKeyDown}
-      onContextMenu={(e) => e.preventDefault()}
+      onKeyDown={(event) => {
+        handleKeyDown(event)
+        onKeyDown?.(event)
+      }}
       {...props}
     >
       {/* rotary meter */}

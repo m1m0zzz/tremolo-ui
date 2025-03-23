@@ -103,6 +103,7 @@ function InternalInput({
   onChange,
   onFocus,
   onBlur,
+  onKeyDown,
   children: _children,
   ...props
 }: Omit<NumberInputProps, 'value'> &
@@ -167,6 +168,7 @@ function InternalInput({
         if (blurOnEnter && event.key == 'Enter') {
           event.currentTarget.blur()
         }
+        onKeyDown?.(event)
       }}
       {...props}
     />

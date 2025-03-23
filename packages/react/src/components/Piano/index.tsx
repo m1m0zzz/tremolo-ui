@@ -76,6 +76,8 @@ export function Piano({
   onStopNote,
   label,
   children,
+  onPointerUp,
+  onPointerDown,
   ...props
 }: PianoProps & Omit<ComponentPropsWithoutRef<'div'>, keyof PianoProps>) {
   // -- state and ref ---
@@ -188,12 +190,12 @@ export function Piano({
         ...style,
       }}
       onPointerDown={(e) => {
-        if (props.onPointerDown) props.onPointerDown(e)
         setPressed(true)
+        onPointerDown?.(e)
       }}
       onPointerUp={(e) => {
-        if (props.onPointerUp) props.onPointerUp(e)
         setPressed(false)
+        onPointerUp?.(e)
       }}
       {...props}
     >

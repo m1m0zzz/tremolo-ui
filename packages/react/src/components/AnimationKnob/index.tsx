@@ -105,6 +105,7 @@ export function AnimationKnob({
   style,
   className,
   onChange,
+  onContextMenu = (event) => event.preventDefault(),
   ...props
 }: AnimationKnobProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof AnimationKnobProps>) {
@@ -204,7 +205,7 @@ export function AnimationKnob({
         }
       }}
       onKeyDown={handleKeyDown}
-      onContextMenu={(e) => e.preventDefault()}
+      onContextMenu={onContextMenu}
       {...props}
     >
       <AnimationCanvas
