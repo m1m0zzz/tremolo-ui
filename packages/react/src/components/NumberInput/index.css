@@ -1,6 +1,8 @@
 .tremolo-number-input-wrapper {
-  --tremolo-number-input-border-radius: 4px;
-  --tremolo-number-input-stepper-width: 20px;
+  --border-radius: 4px;
+  --stepper-width: 20px;
+  --active-color: var(--tremolo-theme-color);
+  --active-color-rgb: var(--tremolo-theme-color-rgb);
 
   display: inline-flex;
   flex-direction: row;
@@ -19,21 +21,21 @@
 
   &[data-variant='outline'] {
     border-width: 1px;
-    border-radius: var(--tremolo-number-input-border-radius);
+    border-radius: var(--border-radius);
 
     &:hover {
       border-color: #909090;
     }
 
     &:focus-within {
-      border-color: var(--tremolo-theme-color);
-      box-shadow: 0px 0px 0px 2px rgba(var(--tremolo-theme-color-rgb), 0.1);
+      border-color: var(--active-color);
+      box-shadow: 0px 0px 0px 2px rgba(var(--active-color-rgb), 0.1);
     }
   }
 
   &[data-variant='filled'] {
     border-width: 1px;
-    border-radius: var(--tremolo-number-input-border-radius);
+    border-radius: var(--border-radius);
     border-color: transparent;
     background-color: #edf2f7;
 
@@ -43,8 +45,8 @@
 
     &:focus-within {
       background-color: inherit;
-      border-color: var(--tremolo-theme-color);
-      box-shadow: 0px 0px 0px 2px rgba(var(--tremolo-theme-color-rgb), 0.1);
+      border-color: var(--active-color);
+      box-shadow: 0px 0px 0px 2px rgba(var(--active-color-rgb), 0.1);
     }
   }
 
@@ -56,19 +58,19 @@
     }
 
     &:focus-within {
-      border-color: var(--tremolo-theme-color);
-      box-shadow: 0px 2px 0px 0px rgba(var(--tremolo-theme-color-rgb), 0.1);
+      border-color: var(--active-color);
+      box-shadow: 0px 2px 0px 0px rgba(var(--active-color-rgb), 0.1);
     }
   }
 
   &[data-stepper='false'] {
-    --tremolo-number-input-stepper-width: 0px;
+    --stepper-width: 0px;
   }
 }
 
 .tremolo-number-input {
   display: block;
-  width: calc(100% - 20px - var(--tremolo-number-input-stepper-width));
+  width: calc(100% - 20px - var(--stepper-width));
   background-color: inherit;
   font: inherit;
   padding: 6px 10px;
@@ -86,7 +88,7 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: var(--tremolo-number-input-stepper-width);
+  width: var(--stepper-width);
   transition: all 0.1s linear;
 
   &[data-dynamic='true'] {
@@ -112,7 +114,7 @@
   max-height: 50%;
   user-select: none;
   cursor: pointer;
-  border-top-right-radius: var(--tremolo-number-input-border-radius);
+  border-top-right-radius: var(--border-radius);
 
   &[aria-disabled='false']:active {
     background-color: #3443560e;
@@ -136,7 +138,7 @@
   max-height: 50%;
   user-select: none;
   cursor: pointer;
-  border-bottom-right-radius: var(--tremolo-number-input-border-radius);
+  border-bottom-right-radius: var(--border-radius);
 
   &[aria-disabled='false']:active {
     background-color: #3443560e;
