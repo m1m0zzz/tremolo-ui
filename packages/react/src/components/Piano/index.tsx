@@ -155,6 +155,9 @@ export function Piano({
         setWhiteNoteWidth(w / whiteNoteCount - 3)
       })
       resizeObserver.observe(parent)
+      return () => {
+        resizeObserver.unobserve(parent)
+      }
     } else {
       setWhiteNoteWidth(whiteKeyProps?.width || defaultWhiteKeyWidth)
     }
