@@ -63,6 +63,8 @@ export interface SliderProps {
   className?: string
   style?: CSSProperties
   onChange?: (value: number) => void
+  onDragStart?: (value: number) => void
+  onDragEnd?: (value: number) => void
   /** \<SliderThumb /> | \<SliderTrack /> */
   children?: ReactElement | ReactElement[]
   // ReactElement<typeof SliderThumb, typeof SliderTrack>[]
@@ -100,6 +102,8 @@ export const Slider = forwardRef<SliderMethods, Props>(
       disabled = false,
       readonly = false,
       onChange,
+      onDragStart,
+      onDragEnd,
       className,
       style,
       children,
@@ -174,7 +178,9 @@ export const Slider = forwardRef<SliderMethods, Props>(
         ? normalizeValue(mouseY, y1, y2)
         : normalizeValue(mouseX, x1, x2)
       const v = rawValue(displayReversed ? 1 - n : n, min, max, skew)
-      onChange(clamp(stepValue(v, step), min, max))
+      const v2 = clamp(stepValue(v, step), min, max)
+      onChange(v2)
+      return v2
     }
 
     const handleKeyDown = useCallback(
@@ -240,7 +246,9 @@ export const Slider = forwardRef<SliderMethods, Props>(
     })
 
     useEventListener(globalThis.window, 'mouseup', () => {
+      if (!thumbDragged.current || readonly) return
       thumbDragged.current = false
+      onDragEnd?.(value)
       if (bodyNoSelect) removeNoSelect()
     })
 
@@ -286,7 +294,8 @@ export const Slider = forwardRef<SliderMethods, Props>(
           }}
           onPointerDown={(event) => {
             thumbDragged.current = true
-            handleValue(event)
+            const v = handleValue(event)
+            if (!readonly) onDragStart?.(v ?? value)
           }}
           onKeyDown={handleKeyDown}
           onFocus={thumbRef.current?.focus}

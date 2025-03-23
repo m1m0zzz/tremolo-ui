@@ -50,7 +50,13 @@ export const Basic: Story = {
 
     return (
       <>
-        <Slider {...args} value={value} onChange={(v) => setValue(v)} />
+        <Slider
+          {...args}
+          value={value}
+          onChange={(v) => setValue(v)}
+          onDragStart={(v) => console.log('drag start: ', v)}
+          onDragEnd={(v) => console.log('drag end: ', v)}
+        />
         <p>value: {value}</p>
       </>
     )
