@@ -9,7 +9,7 @@ import {
   BlackKey,
   KeyLabel,
   Piano,
-  Shortcuts,
+  SHORTCUTS,
   WhiteKey,
 } from '../src/components/Piano'
 
@@ -35,7 +35,7 @@ type Story = StoryObj<typeof Piano>
 export const Basic: Story = {
   args: {
     noteRange: { first: noteNumber('C3'), last: noteNumber('B4') },
-    keyboardShortcuts: Shortcuts.HOME_ROW,
+    keyboardShortcuts: SHORTCUTS.HOME_ROW,
   },
   render: (args) => {
     const synth = new Tone.PolySynth().toDestination()
@@ -68,7 +68,7 @@ export const Basic: Story = {
             synth.triggerRelease(noteName(noteNumber))
           }}
           // Notice: need optional chaining (?.)
-          label={(_, i) => Shortcuts.HOME_ROW.keys[i]?.toUpperCase()}
+          label={(_, i) => SHORTCUTS.HOME_ROW.keys[i]?.toUpperCase()}
         />
       </div>
     )

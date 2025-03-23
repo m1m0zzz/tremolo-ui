@@ -1,6 +1,6 @@
 // expand begin
 import { noteNumber } from '@tremolo-ui/functions'
-import { Piano, Shortcuts } from '@tremolo-ui/react'
+import { Piano, SHORTCUTS } from '@tremolo-ui/react'
 
 import '@tremolo-ui/react/styles/index.css'
 // expand end
@@ -17,10 +17,10 @@ function App() {
     >
       <Piano
         noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}
-        keyboardShortcuts={Shortcuts.HOME_ROW}
+        keyboardShortcuts={SHORTCUTS.HOME_ROW}
         fill
         // Notice: need optional chaining (?.)
-        label={(_, i) => Shortcuts.HOME_ROW.keys[i]?.toUpperCase()}
+        label={(_, i) => SHORTCUTS.HOME_ROW.keys[i]?.toUpperCase()}
       />
     </div>
     // expand end

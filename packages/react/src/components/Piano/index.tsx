@@ -23,7 +23,7 @@ import { useEventListener } from '../../hooks/useEventListener'
 
 import { BlackKey } from './BlackKey'
 import { KeyMethods, KeyProps } from './key'
-import { KeyBoardShortcuts } from './keyboardShortcuts'
+import { KeyboardShortcuts } from './keyboardShortcuts'
 import { defaultWhiteKeyWidth, WhiteKey } from './WhiteKey'
 
 /**
@@ -43,7 +43,7 @@ export interface PianoProps {
 
   glissando?: boolean
   midiMax?: number
-  keyboardShortcuts?: KeyBoardShortcuts
+  keyboardShortcuts?: KeyboardShortcuts
   fill?: boolean
 
   style?: CSSProperties

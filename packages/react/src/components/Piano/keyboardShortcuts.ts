@@ -1,5 +1,5 @@
 /** @category Piano */
-export type KeyBoardShortcuts = {
+export type KeyboardShortcuts = {
   keys: string[]
   // TODO
   flags?: {
@@ -8,7 +8,7 @@ export type KeyBoardShortcuts = {
 }
 
 /** @category Piano */
-export const Shortcuts = {
+export const SHORTCUTS = {
   HOME_ROW: {
     keys: [
       'a',

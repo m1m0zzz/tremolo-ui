@@ -12,7 +12,7 @@ import {
 
 import { noteNumber, noteToFrequency } from '@tremolo-ui/functions'
 
-import { Piano, Shortcuts } from '../../../src/components/Piano'
+import { Piano, SHORTCUTS } from '../../../src/components/Piano'
 
 import { ADSR } from './ADSR.stories'
 import {
@@ -266,8 +266,8 @@ export const WavetableSynth = () => {
       <div className={styles.piano}>
         <Piano
           noteRange={{ first: firstNote, last: lastNote }}
-          keyboardShortcuts={Shortcuts.HOME_ROW}
-          label={(_, i) => Shortcuts.HOME_ROW.keys[i]?.toUpperCase()}
+          keyboardShortcuts={SHORTCUTS.HOME_ROW}
+          label={(_, i) => SHORTCUTS.HOME_ROW.keys[i]?.toUpperCase()}
           height={120}
           onPlayNote={handlePlay}
           onStopNote={handleStop}
