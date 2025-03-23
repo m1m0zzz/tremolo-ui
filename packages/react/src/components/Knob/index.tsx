@@ -253,8 +253,13 @@ export function Knob({
           y2={`${thumbLength}%`}
           stroke={thumbLine || 'currentColor'}
           strokeWidth={`${thumbLineWeight}%`}
-          transform={`rotate(${-135 + p * 270})`}
-          transform-origin="50% 50%"
+          // NOTE
+          // https://bugs.webkit.org/show_bug.cgi?id=201854
+          // https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/transform-origin#browser_compatibility
+          style={{
+            transform: `rotate(${-135 + p * 270}deg)`,
+            transformOrigin: '50% 50%',
+          }}
         />
       </svg>
     </svg>
