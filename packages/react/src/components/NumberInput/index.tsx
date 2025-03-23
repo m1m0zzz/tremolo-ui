@@ -50,6 +50,8 @@ export interface NumberInputProps {
    */
   digit?: number
 
+  variant?: 'outline' | 'filled' | 'flushed' | 'unstyled'
+
   selectWithFocus?: 'all' | 'number' | 'none'
   blurOnEnter?: boolean
   keepWithinRange?: boolean
@@ -184,6 +186,7 @@ export function NumberInput({
   units,
   disabled = false,
   digit,
+  variant = 'outline',
   selectWithFocus = 'none',
   blurOnEnter = true,
   keepWithinRange = true,
@@ -215,6 +218,7 @@ export function NumberInput({
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
         tabIndex={0}
         data-stepper={!!children}
+        data-variant={variant}
       >
         <InternalInput
           min={min}

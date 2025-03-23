@@ -6,6 +6,7 @@ import {
   DecrementStepper,
   IncrementStepper,
   NumberInput,
+  NumberInputProps,
   Stepper,
 } from '../../src/components/NumberInput'
 
@@ -101,6 +102,47 @@ export const WithAnotherComponents: Story = {
       </div>
     )
   },
+}
+
+export const Variant = () => {
+  const [value1, setValue1] = useState(0)
+  const [value2, setValue2] = useState(0)
+  const [value3, setValue3] = useState(0)
+  const [value4, setValue4] = useState(0)
+
+  const data: {
+    variant: NumberInputProps['variant']
+    v: number
+    setter: React.Dispatch<React.SetStateAction<number>>
+  }[] = [
+    { variant: 'outline', v: value1, setter: setValue1 },
+    { variant: 'filled', v: value2, setter: setValue2 },
+    { variant: 'flushed', v: value3, setter: setValue3 },
+    { variant: 'unstyled', v: value4, setter: setValue4 },
+  ]
+
+  return (
+    <div>
+      {data.map(({ variant, v, setter }) => {
+        return (
+          <section style={{ marginBottom: '2rem' }}>
+            <p>{variant}</p>
+            <div>
+              <NumberInput
+                value={v}
+                units={[
+                  ['Hz', 1],
+                  ['kHz', 1000],
+                ]}
+                variant={variant}
+                onChange={(v) => setter(v)}
+              />
+            </div>
+          </section>
+        )
+      })}
+    </div>
+  )
 }
 
 export const SelectWithFocus = () => {
