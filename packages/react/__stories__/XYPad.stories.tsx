@@ -88,6 +88,8 @@ export const Basic: Story = {
             setValueX(x)
             setValueY(y)
           }}
+          onDragStart={(x, y) => console.log(`drag start: x=${x}, y=${y}`)}
+          onDragEnd={(x, y) => console.log(`drag end: x=${x}, y=${y}`)}
         />
         <p>x: {valueX}</p>
         <p>y: {valueY}</p>

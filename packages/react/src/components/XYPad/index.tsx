@@ -59,6 +59,8 @@ export interface XYPadProps {
   disabled?: boolean
   readonly?: boolean
   onChange?: (valueX: number, valueY: number) => void
+  onDragStart?: (valueX: number, valueY: number) => void
+  onDragEnd?: (valueX: number, valueY: number) => void
   /** \<XYPadThumb /> | \<XYPadArea /> */
   children?: ReactElement | ReactElement[]
 }
@@ -95,6 +97,12 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
       disabled = false,
       readonly = false,
       onChange,
+      onDragStart,
+      onDragEnd,
+      onPointerDown,
+      onKeyDown,
+      onFocus,
+      onBlur,
       children,
       ...props
     }: Props,
@@ -165,6 +173,7 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
       const newX = clamp(stepValue(vx, x.step), x.min, x.max)
       const newY = clamp(stepValue(vy, y.step), y.min, y.max)
       onChange(newX, newY)
+      return [newX, newY]
     }
 
     const handleKeyDown = useCallback(
@@ -258,7 +267,9 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
     })
 
     useEventListener(globalThis.window, 'mouseup', () => {
+      if (!thumbDragged.current || readonly) return
       thumbDragged.current = false
+      onDragEnd?.(x.value, y.value)
       if (bodyNoSelect) removeNoSelect()
     })
 
@@ -292,11 +303,22 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
         }}
         onPointerDown={(event) => {
           thumbDragged.current = true
-          handleValue(event)
+          const v = handleValue(event)
+          if (!readonly) onDragStart?.(v?.[0] ?? x.value, v?.[1] ?? y.value)
+          onPointerDown?.(event)
         }}
-        onKeyDown={handleKeyDown}
-        onFocus={thumbRef.current?.focus}
-        onBlur={thumbRef.current?.blur}
+        onKeyDown={(event) => {
+          handleKeyDown(event)
+          onKeyDown?.(event)
+        }}
+        onFocus={(event) => {
+          thumbRef.current?.focus()
+          onFocus?.(event)
+        }}
+        onBlur={(event) => {
+          thumbRef.current?.blur()
+          onBlur?.(event)
+        }}
         {...props}
       >
         <div className="tremolo-xy-pad-area-wrapper" ref={areaElementRef}>
