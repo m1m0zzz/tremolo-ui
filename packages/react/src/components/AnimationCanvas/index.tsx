@@ -1,8 +1,8 @@
 import clsx from 'clsx'
 import {
   ComponentPropsWithoutRef,
-  MutableRefObject,
   ReactElement,
+  RefObject,
   useCallback,
   useEffect,
   useRef,
@@ -29,8 +29,8 @@ export type DrawFunction = (
   // TODO: saving scale and translate
   // context: Omit<CanvasRenderingContext2D, 'save' | 'restore' | 'scale'>,
   context: CanvasRenderingContext2D,
-  width: MutableRefObject<number>,
-  height: MutableRefObject<number>,
+  width: RefObject<number>,
+  height: RefObject<number>,
   count: number,
 ) => void
 
@@ -100,8 +100,8 @@ export function AnimationCanvas({
   const loop = useCallback(
     (
       context: CanvasRenderingContext2D,
-      width: MutableRefObject<number>,
-      height: MutableRefObject<number>,
+      width: RefObject<number>,
+      height: RefObject<number>,
       count: number,
     ) => {
       reqIdRef.current = requestAnimationFrame(() =>
