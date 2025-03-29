@@ -71,7 +71,6 @@ export interface SliderProps {
 }
 
 /**
- * Customizable slider component.
  * @category Slider
  */
 export interface SliderMethods {

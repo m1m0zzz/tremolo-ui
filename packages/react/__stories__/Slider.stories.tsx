@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 
 import { skewWithCenterValue } from '@tremolo-ui/functions'
 
@@ -10,7 +10,6 @@ import {
   SliderTrack,
   Scale,
   ScaleOption,
-  SliderMethods,
 } from '../src/components/Slider'
 
 import { inputEventOptionType } from './lib/typeUtils'
@@ -311,33 +310,4 @@ export const ConfigScale = () => {
       </section>
     </>
   )
-}
-
-export const Ref: Story = {
-  args: {
-    min: 0,
-    max: 100,
-  },
-  render: (args) => {
-    const [value, setValue] = useState(0)
-    const sliderRef = useRef<SliderMethods>(null)
-
-    return (
-      <>
-        <Slider
-          {...args}
-          ref={sliderRef}
-          value={value}
-          onChange={(v) => setValue(v)}
-        />
-        <p>value: {value}</p>
-        <button type="button" onClick={() => sliderRef.current?.focus()}>
-          focus slider
-        </button>{' '}
-        <button type="button" onClick={() => sliderRef.current?.blur()}>
-          blur slider
-        </button>
-      </>
-    )
-  },
 }
