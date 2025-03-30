@@ -120,7 +120,6 @@ export const AnimationKnob = forwardRef<AnimationKnobMethods, Props>(
       style,
       className,
       onChange,
-      onContextMenu = (event) => event.preventDefault(),
       ...props
     }: Props,
     ref,
@@ -234,7 +233,6 @@ export const AnimationKnob = forwardRef<AnimationKnobMethods, Props>(
           }
         }}
         onKeyDown={handleKeyDown}
-        onContextMenu={onContextMenu}
         {...props}
       >
         <AnimationCanvas

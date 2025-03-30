@@ -128,8 +128,8 @@ export const Knob = forwardRef<KnobMethods, Props>(
     // --- interpret props ---
     const padding = 8 // %
     const thumbLineWeight = 6 // %
-    const thumbLength = 35 // %
-    const lineWeight = 3 // px
+    const thumbLineLength = 35 // %
+    const lineWeight = size * 0.06 // px
     const p = normalizeValue(value, min, max, skew)
     const s = normalizeValue(startValue, min, max, skew)
 
@@ -298,7 +298,7 @@ export const Knob = forwardRef<KnobMethods, Props>(
             x1="50%"
             y1={`${padding}%`}
             x2="50%"
-            y2={`${thumbLength}%`}
+            y2={`${thumbLineLength}%`}
             stroke={thumbLine || 'currentColor'}
             strokeWidth={`${thumbLineWeight}%`}
             // NOTE

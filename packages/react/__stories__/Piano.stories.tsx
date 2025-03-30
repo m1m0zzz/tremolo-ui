@@ -4,7 +4,12 @@ import * as Tone from 'tone'
 
 import { noteNumber, noteName } from '@tremolo-ui/functions'
 
-import { NumberInput } from '../src/components/NumberInput'
+import {
+  DecrementStepper,
+  IncrementStepper,
+  NumberInput,
+  Stepper,
+} from '../src/components/NumberInput'
 import {
   BlackKey,
   KeyLabel,
@@ -179,14 +184,24 @@ export const Styling = () => {
 export const OneOctave = () => {
   const [octave, setOctave] = useState(3)
   return (
-    <div>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 8,
+      }}
+    >
       <NumberInput
         value={octave}
         min={-1}
         max={9}
         onChange={(v) => setOctave(v)}
-        style={{ display: 'block', marginBottom: '1rem' }}
-      />
+      >
+        <Stepper>
+          <IncrementStepper />
+          <DecrementStepper />
+        </Stepper>
+      </NumberInput>
       <Piano
         noteRange={{
           first: noteNumber(`C${octave}`),
