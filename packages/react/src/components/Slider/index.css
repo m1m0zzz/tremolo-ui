@@ -25,7 +25,8 @@
   }
 
   &[aria-readonly='false']:focus {
-    box-shadow: 0px 0px 0px 3px rgba(var(--tremolo-theme-color-rgb), 0.2);
+    box-shadow: 0px 0px 0px 3px
+      color-mix(in srgb, var(--tremolo-theme-color) 20%, transparent);
   }
 }
 
