@@ -14,6 +14,8 @@ export interface ThumbProps {
   width?: number | string
   height?: number | string
 
+  color?: string
+
   wrapperClassName?: string
   wrapperStyle?: CSSProperties
 
@@ -41,6 +43,7 @@ export const XYPadThumb = forwardRef<XYPadThumbMethods, Props>(
       size,
       width = 22,
       height = 22,
+      color,
       children,
       wrapperClassName,
       wrapperStyle,
@@ -85,6 +88,7 @@ export const XYPadThumb = forwardRef<XYPadThumbMethods, Props>(
             tabIndex={0}
             aria-disabled={__disabled}
             style={{
+              ...{ '--color': color },
               width: size ?? width,
               height: size ?? height,
               ...style,

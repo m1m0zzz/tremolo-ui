@@ -15,6 +15,8 @@ export interface SliderThumbProps {
   width?: number | string
   height?: number | string
 
+  color?: string
+
   className?: string
   style?: CSSProperties
   children?: ReactNode
@@ -39,6 +41,7 @@ export const SliderThumb = forwardRef<SliderThumbMethods, SliderThumbProps>(
       size,
       width = defaultThumbSize,
       height = defaultThumbSize,
+      color,
       children,
       className,
       style,
@@ -82,6 +85,7 @@ export const SliderThumb = forwardRef<SliderThumbMethods, SliderThumbProps>(
             aria-disabled={disabled}
             aria-readonly={readonly}
             style={{
+              ...{ '--color': color },
               width: size ?? width,
               height: size ?? height,
               ...style,

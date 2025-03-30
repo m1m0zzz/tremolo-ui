@@ -75,6 +75,8 @@ export interface NumberInputProps {
    */
   keyboard?: InputEventOption | null
 
+  activeColor?: string
+
   wrapperClassName?: string
 
   onChange?: (value: number, text: string) => void
@@ -236,6 +238,7 @@ export const NumberInput = forwardRef<NumberInputMethods, Props>(
       clampValueOnBlur = true,
       wheel = ['raw', 1],
       keyboard = ['raw', 1],
+      activeColor,
       wrapperClassName,
       className,
       onChange,
@@ -246,6 +249,9 @@ export const NumberInput = forwardRef<NumberInputMethods, Props>(
     }: Props,
     ref,
   ) => {
+    const colors: { [key: string]: string | undefined } = {
+      '--active-color': activeColor,
+    }
     return (
       <NumberInputProvider
         value={String(value)}
@@ -263,6 +269,9 @@ export const NumberInput = forwardRef<NumberInputMethods, Props>(
           tabIndex={0}
           data-stepper={!!children}
           data-variant={variant}
+          style={{
+            ...colors,
+          }}
         >
           <InternalInput
             ref={ref}

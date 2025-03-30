@@ -7,6 +7,11 @@ export interface KeyProps {
   width?: number
   height?: number | `${number}%`
 
+  bg?: string
+  color?: string
+  activeBg?: string
+  activeColor?: string
+
   style?: CSSProperties
 
   /**

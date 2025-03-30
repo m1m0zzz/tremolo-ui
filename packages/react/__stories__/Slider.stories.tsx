@@ -181,6 +181,7 @@ export const Flex = () => {
               width: '100%',
             }}
           />
+          <SliderThumb color="rgb(87, 71, 233)" />
         </Slider>
         <div
           style={{

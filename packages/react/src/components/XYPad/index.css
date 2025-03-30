@@ -3,6 +3,13 @@
   cursor: pointer;
 }
 
+.tremolo-xy-pad-area {
+  --color: #eee;
+
+  position: relative;
+  background-color: var(--color);
+}
+
 .tremolo-xy-pad-thumb-wrapper {
   position: absolute;
   translate: -50% -50%;
@@ -10,9 +17,11 @@
 }
 
 .tremolo-xy-pad-thumb {
+  --color: var(--tremolo-theme-color);
+
   border-radius: 50%;
   outline: none;
-  background-color: #4e76e6;
+  background-color: var(--color);
 
   &[aria-disabled='true'] {
     background-color: #5d6478;
@@ -20,6 +29,6 @@
 
   &:focus {
     box-shadow: 0px 0px 0px 3px
-      color-mix(in srgb, var(--tremolo-theme-color) 20%, transparent);
+      color-mix(in srgb, var(--color) 20%, transparent);
   }
 }

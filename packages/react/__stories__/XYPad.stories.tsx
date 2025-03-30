@@ -227,7 +227,7 @@ export const AdvancedFilterPad = () => {
             setQ(y)
           }}
         >
-          <XYPadArea width={200} bg="transparent" />
+          <XYPadArea width={200} color="transparent" />
           <XYPadThumb size={40}>
             <ThumbAnimation />
           </XYPadThumb>

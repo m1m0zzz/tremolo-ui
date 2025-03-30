@@ -12,7 +12,12 @@ import {
 
 import { noteNumber, noteToFrequency } from '@tremolo-ui/functions'
 
-import { Piano, SHORTCUTS } from '../../../src/components/Piano'
+import {
+  BlackKey,
+  Piano,
+  SHORTCUTS,
+  WhiteKey,
+} from '../../../src/components/Piano'
 
 import { ADSR } from './ADSR.stories'
 import {
@@ -271,7 +276,10 @@ export const WavetableSynth = () => {
           height={120}
           onPlayNote={handlePlay}
           onStopNote={handleStop}
-        />
+        >
+          <WhiteKey activeBg="rgb(216, 235, 250)" />
+          <BlackKey activeBg="rgb(22, 59, 86)" />
+        </Piano>
       </div>
     </div>
   )

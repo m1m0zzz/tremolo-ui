@@ -163,6 +163,7 @@ export const WaveSelector = ({
               units={'st'}
               selectWithFocus="number"
               variant="flushed"
+              activeColor={themeColor}
               className={style.numberInput}
               wrapperClassName={style.numberInputWrapper}
               onBlur={(v) => setSemitone(v)}
@@ -177,6 +178,7 @@ export const WaveSelector = ({
               units={'ct'}
               selectWithFocus="number"
               variant="flushed"
+              activeColor={themeColor}
               className={style.numberInput}
               wrapperClassName={style.numberInputWrapper}
               onBlur={(v) => setDetune(v)}
@@ -228,6 +230,7 @@ export const WaveSelector = ({
           units="%"
           selectWithFocus="number"
           variant="flushed"
+          activeColor={themeColor}
           className={style.numberInput}
           wrapperClassName={style.numberInputWrapper}
           onBlur={(v) => setPosition(v)}

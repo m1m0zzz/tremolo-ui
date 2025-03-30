@@ -18,6 +18,10 @@ export const BlackKey = forwardRef<KeyMethods, Props>(
     {
       width = defaultWhiteKeyWidth * 0.65,
       height = '60%',
+      bg,
+      color,
+      activeBg,
+      activeColor,
       className,
       style,
       children,
@@ -36,6 +40,13 @@ export const BlackKey = forwardRef<KeyMethods, Props>(
     ref,
   ) => {
     const [played, setPlayed] = useState(false)
+
+    const colors = {
+      '--bg': bg,
+      '--color': color,
+      '--active-bg': activeBg,
+      '--active-color': activeColor,
+    }
 
     useImperativeHandle(ref, () => {
       return {
@@ -75,6 +86,7 @@ export const BlackKey = forwardRef<KeyMethods, Props>(
         aria-disabled={__disabled}
         data-active={played}
         style={{
+          ...colors,
           left: __position,
           width: __fill ? __width : (width ?? __width),
           height: height,

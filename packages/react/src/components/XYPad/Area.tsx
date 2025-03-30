@@ -5,7 +5,7 @@ import { ComponentPropsWithoutRef, CSSProperties, ReactElement } from 'react'
 export interface AreaProps {
   width?: number | string
   height?: number | string
-  bg?: string
+  color?: string
   className?: string
   style?: CSSProperties
   children?: ReactElement
@@ -18,7 +18,7 @@ export interface AreaProps {
 export function XYPadArea({
   width = 120,
   height = 120,
-  bg = '#eee',
+  color,
   children,
   className,
   style,
@@ -29,10 +29,9 @@ export function XYPadArea({
     <div
       className={clsx('tremolo-xy-pad-area', className)}
       style={{
-        position: 'relative',
+        ...{ '--color': color },
         width: width,
         height: height,
-        background: bg,
         ...style,
       }}
       {...props}

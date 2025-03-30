@@ -6,16 +6,22 @@
 }
 
 .tremolo-piano-white-key {
+  --bg: white;
+  --color: black;
+  --active-bg: #ccc;
+  --active-color: black;
+
   position: absolute;
-  background-color: white;
-  color: black;
+  background-color: var(--bg);
+  color: var(--color);
   border: 1px solid #555;
   border-radius: 0px 0px 8px 8px;
   cursor: pointer;
   z-index: 1;
 
   &[data-active='true'] {
-    background-color: #ccc;
+    background-color: var(--active-bg);
+    color: var(--active-color);
   }
 
   &[aria-disabled='true'] {
@@ -24,16 +30,22 @@
 }
 
 .tremolo-piano-black-key {
+  --color: white;
+  --bg: #333;
+  --active-color: white;
+  --active-bg: #666;
+
   position: absolute;
-  background-color: #333;
-  color: white;
+  background-color: var(--bg);
+  color: var(--color);
   border: 1px solid #555;
   border-radius: 0px 0px 8px 8px;
   cursor: pointer;
   z-index: 2;
 
   &[data-active='true'] {
-    background-color: #666;
+    background-color: var(--active-bg);
+    color: var(--active-color);
   }
 
   &[aria-disabled='true'] {

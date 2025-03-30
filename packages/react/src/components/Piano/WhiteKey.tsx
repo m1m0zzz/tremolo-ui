@@ -20,6 +20,10 @@ export const WhiteKey = forwardRef<KeyMethods, Props>(
     {
       width = defaultWhiteKeyWidth,
       height = '100%',
+      bg,
+      color,
+      activeBg,
+      activeColor,
       className,
       style,
       children,
@@ -38,6 +42,13 @@ export const WhiteKey = forwardRef<KeyMethods, Props>(
     ref,
   ) => {
     const [played, setPlayed] = useState(false)
+
+    const colors = {
+      '--bg': bg,
+      '--color': color,
+      '--active-bg': activeBg,
+      '--active-color': activeColor,
+    }
 
     useImperativeHandle(ref, () => {
       return {
@@ -77,6 +88,7 @@ export const WhiteKey = forwardRef<KeyMethods, Props>(
         aria-disabled={__disabled}
         data-active={played}
         style={{
+          ...colors,
           left: __position,
           width: __fill ? __width : (width ?? __width),
           height: height,
