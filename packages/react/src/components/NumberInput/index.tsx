@@ -20,7 +20,6 @@ import {
 
 /*
 TODO
-- onBlurでは、parse + (clamp) + formatして返す
 - numberMode: focusが当たった時だけ、parse + type="number"にする
 */
 

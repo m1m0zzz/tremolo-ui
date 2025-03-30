@@ -1,6 +1,8 @@
 import clsx from 'clsx'
 import { ComponentPropsWithoutRef, ReactNode } from 'react'
 
+import { useLongPress } from '../../hooks/useLongPress'
+
 import { useNumberInputContext } from './context'
 
 /** @category NumberInput */
@@ -22,7 +24,7 @@ export function IncrementStepper({
   const keepWithinRange = useNumberInputContext((s) => s.keepWithinRange)
   const increment = useNumberInputContext((s) => s.increment)
 
-  // TODO: add long press event
+  const press = useLongPress(increment)
 
   return (
     <div
@@ -32,7 +34,7 @@ export function IncrementStepper({
       aria-disabled={
         keepWithinRange && valueAsNumber >= (max ?? Number.MAX_SAFE_INTEGER)
       }
-      onPointerDown={increment}
+      onPointerDown={press}
       {...props}
     >
       {children || (

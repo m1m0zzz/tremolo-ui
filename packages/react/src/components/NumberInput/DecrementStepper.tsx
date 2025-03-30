@@ -1,6 +1,8 @@
 import clsx from 'clsx'
 import { ComponentPropsWithoutRef, ReactNode } from 'react'
 
+import { useLongPress } from '../../hooks/useLongPress'
+
 import { useNumberInputContext } from './context'
 
 /** @category NumberInput */
@@ -22,7 +24,7 @@ export function DecrementStepper({
   const keepWithinRange = useNumberInputContext((s) => s.keepWithinRange)
   const decrement = useNumberInputContext((s) => s.decrement)
 
-  // TODO: add long press event
+  const press = useLongPress(decrement)
 
   return (
     <div
@@ -32,7 +34,7 @@ export function DecrementStepper({
       aria-disabled={
         keepWithinRange && valueAsNumber <= (min ?? Number.MIN_SAFE_INTEGER)
       }
-      onPointerDown={decrement}
+      onPointerDown={press}
       {...props}
     >
       {children || (
