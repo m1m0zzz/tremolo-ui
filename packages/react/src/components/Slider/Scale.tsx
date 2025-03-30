@@ -14,9 +14,6 @@ export interface ScaleProps {
   children?: ReactNode
 }
 
-type Props = ScaleProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof ScaleProps>
-
 /** @category Slider */
 export function Scale({
   gap = 6,
@@ -25,7 +22,7 @@ export function Scale({
   className,
   style,
   ...props
-}: Props) {
+}: ScaleProps & Omit<ComponentPropsWithoutRef<'div'>, keyof ScaleProps>) {
   const min = useSliderContext((s) => s.min)
   const max = useSliderContext((s) => s.max)
   const step = useSliderContext((s) => s.step)

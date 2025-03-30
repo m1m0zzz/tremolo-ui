@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { CSSProperties, ReactElement } from 'react'
+import { ComponentPropsWithoutRef, CSSProperties, ReactElement } from 'react'
 
 import { styleHelper, xor } from '@tremolo-ui/functions'
 
@@ -40,7 +40,9 @@ export function SliderTrack({
   defaultStyle = true,
   __thumb,
   __percent = 0,
-}: SliderTrackProps) {
+  ...props
+}: SliderTrackProps &
+  Omit<ComponentPropsWithoutRef<'div'>, keyof SliderTrackProps>) {
   const vertical = useSliderContext((s) => s.vertical)
   const reverse = useSliderContext((s) => s.reverse)
   const disabled = useSliderContext((s) => s.disabled)
@@ -70,6 +72,7 @@ export function SliderTrack({
               ...style,
             }
       }
+      {...props}
     >
       {children}
       {__thumb}

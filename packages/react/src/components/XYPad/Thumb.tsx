@@ -48,6 +48,7 @@ export const XYPadThumb = forwardRef<XYPadThumbMethods, Props>(
       style,
       __disabled,
       __css,
+      ...props
     }: Props,
     ref,
   ) => {
@@ -71,6 +72,7 @@ export const XYPadThumb = forwardRef<XYPadThumbMethods, Props>(
           ...__css,
           ...wrapperStyle,
         }}
+        {...props}
       >
         {children ? (
           children

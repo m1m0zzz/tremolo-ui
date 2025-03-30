@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { CSSProperties, ReactElement } from 'react'
+import { ComponentPropsWithoutRef, CSSProperties, ReactElement } from 'react'
 
 /** @category XYPad */
 export interface AreaProps {
@@ -23,7 +23,8 @@ export function XYPadArea({
   className,
   style,
   __thumb,
-}: AreaProps) {
+  ...props
+}: AreaProps & Omit<ComponentPropsWithoutRef<'div'>, keyof AreaProps>) {
   return (
     <div
       className={clsx('tremolo-xy-pad-area', className)}
@@ -34,6 +35,7 @@ export function XYPadArea({
         background: bg,
         ...style,
       }}
+      {...props}
     >
       {children}
       {__thumb}
