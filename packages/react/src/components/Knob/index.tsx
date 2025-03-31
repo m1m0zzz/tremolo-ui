@@ -144,6 +144,20 @@ export const Knob = forwardRef<KnobMethods, Props>(
       [max, min, onChange, readonly, skew, step],
     )
 
+    const updateValueByEvent = useCallback(
+      (eventType: InputEventOption[0], x: number) => {
+        let newValue
+        if (eventType == 'normalized') {
+          const n = normalizeValue(value, min, max, skew)
+          newValue = rawValue(n + x, min, max, skew)
+        } else {
+          newValue = value + x
+        }
+        return clamp(stepValue(newValue, step), min, max)
+      },
+      [max, min, skew, step, value],
+    )
+
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLOrSVGElement>) => {
         if (!keyboard || !onChange || readonly) return
@@ -152,17 +166,10 @@ export const Knob = forwardRef<KnobMethods, Props>(
           event.preventDefault()
           const x =
             key == 'ArrowRight' || key == 'ArrowUp' ? keyboard[1] : -keyboard[1]
-          let v
-          if (keyboard[0] == 'normalized') {
-            const n = normalizeValue(value, min, max, skew)
-            v = rawValue(n + x, min, max, skew)
-          } else {
-            v = value + x
-          }
-          onChange(clamp(stepValue(v, step), min, max))
+          onChange(updateValueByEvent(keyboard[0], x))
         }
       },
-      [value, min, max, step, skew, keyboard, readonly, onChange],
+      [keyboard, onChange, readonly, updateValueByEvent],
     )
 
     // --- hooks ---
@@ -180,20 +187,14 @@ export const Knob = forwardRef<KnobMethods, Props>(
     const wheelRefCallback = useRefCallbackEvent(
       'wheel',
       (event) => {
-        if (!wheel) return
+        if (!wheel || readonly) return
         event.preventDefault()
-        const x = event.deltaY > 0 ? -wheel[1] : wheel[1]
-        let v
-        if (wheel[0] == 'normalized') {
-          const n = normalizeValue(value, min, max, skew)
-          v = rawValue(n + x, min, max, skew)
-        } else {
-          v = value + x
-        }
-        if (onChange) onChange(clamp(stepValue(v, step), min, max))
+        if (!onChange || event.deltaY == 0) return
+        const x = Math.sign(event.deltaY) * -wheel[1]
+        onChange(updateValueByEvent(wheel[0], x))
       },
       { passive: false },
-      [wheel, value, min, max, skew, step, onChange],
+      [wheel, onChange, readonly, updateValueByEvent],
     )
 
     useImperativeHandle(ref, () => {

@@ -186,6 +186,20 @@ export const Slider = forwardRef<SliderMethods, Props>(
       return v2
     }
 
+    const updateValueByEvent = useCallback(
+      (eventType: InputEventOption[0], x: number) => {
+        let newValue
+        if (eventType == 'normalized') {
+          const n = normalizeValue(value, min, max, skew)
+          newValue = rawValue(n + x, min, max, skew)
+        } else {
+          newValue = value + x
+        }
+        return clamp(stepValue(newValue, step), min, max)
+      },
+      [max, min, skew, step, value],
+    )
+
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (!keyboard || !onChange || readonly) return
@@ -195,17 +209,10 @@ export const Slider = forwardRef<SliderMethods, Props>(
           let x =
             key == 'ArrowRight' || key == 'ArrowUp' ? keyboard[1] : -keyboard[1]
           if (reverse) x *= -1
-          let v
-          if (keyboard[0] == 'normalized') {
-            const n = normalizeValue(value, min, max, skew)
-            v = rawValue(n + x, min, max, skew)
-          } else {
-            v = value + x
-          }
-          onChange(clamp(stepValue(v, step), min, max))
+          onChange(updateValueByEvent(keyboard[0], x))
         }
       },
-      [value, min, max, step, skew, reverse, keyboard, onChange, readonly],
+      [keyboard, onChange, readonly, reverse, updateValueByEvent],
     )
 
     // --- hooks ---
@@ -229,19 +236,12 @@ export const Slider = forwardRef<SliderMethods, Props>(
           x = event.deltaY > 0 ? -wheel[1] : wheel[1]
         }
         if (vertical && reverse) x *= -1
-        let v
-        if (wheel[0] == 'normalized') {
-          const n = normalizeValue(value, min, max, skew)
-          v = rawValue(n + x, min, max, skew)
-        } else {
-          v = value + x
-        }
-        onChange(clamp(stepValue(v, step), min, max))
+        onChange(updateValueByEvent(wheel[0], x))
       },
       {
         passive: false,
       },
-      [wheel, value, min, max, skew, step],
+      [wheel, vertical, readonly, onChange, updateValueByEvent],
     )
 
     useEventListener(globalThis.window, 'mousemove', (event) => {
