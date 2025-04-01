@@ -22,6 +22,18 @@ export default {
         type: inputEventOptionType,
       },
     },
+    activeLine: {
+      control: 'color',
+    },
+    inactiveLine: {
+      control: 'color',
+    },
+    thumb: {
+      control: 'color',
+    },
+    thumbLine: {
+      control: 'color',
+    },
   },
 } satisfies Meta<typeof Knob>
 
