@@ -176,6 +176,29 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
       return [newX, newY]
     }
 
+    const updateValueByEvent = useCallback(
+      (
+        eventType: InputEventOption[0],
+        target: Required<ValueOptions>,
+        x: number,
+      ) => {
+        let v
+        if (eventType == 'normalized') {
+          const n = normalizeValue(
+            target.value,
+            target.min,
+            target.max,
+            target.skew,
+          )
+          v = rawValue(n + x, target.min, target.max, target.skew)
+        } else {
+          v = target.value + x
+        }
+        return clamp(stepValue(v, target.step), target.min, target.max)
+      },
+      [],
+    )
+
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (!onChange || readonly) return
@@ -188,23 +211,7 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
           let delta = target.keyboard[1]
           if (key == 'ArrowLeft' || key == 'ArrowUp') delta *= -1
           if (target.reverse) delta *= -1
-          let v
-          if (target.keyboard[0] == 'normalized') {
-            const n = normalizeValue(
-              target.value,
-              target.min,
-              target.max,
-              target.skew,
-            )
-            v = rawValue(n + delta, target.min, target.max, target.skew)
-          } else {
-            v = target.value + delta
-          }
-          const newValue = clamp(
-            stepValue(v, target.step),
-            target.min,
-            target.max,
-          )
+          const newValue = updateValueByEvent(target.keyboard[0], target, delta)
           if (isHorizontal) {
             onChange(newValue, y.value)
           } else {
@@ -212,7 +219,7 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
           }
         }
       },
-      [x, y, onChange, readonly],
+      [onChange, readonly, x, y, updateValueByEvent],
     )
 
     // --- hooks ---
@@ -233,23 +240,7 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
         let delta = target.wheel[1]
         if (event.deltaY < 0) delta *= -1
         if (target.reverse) delta *= -1
-        let v
-        if (target.wheel[0] == 'normalized') {
-          const n = normalizeValue(
-            target.value,
-            target.min,
-            target.max,
-            target.skew,
-          )
-          v = rawValue(n + delta, target.min, target.max, target.skew)
-        } else {
-          v = target.value + delta
-        }
-        const newValue = clamp(
-          stepValue(v, target.step),
-          target.min,
-          target.max,
-        )
+        const newValue = updateValueByEvent(target.wheel[0], target, delta)
         if (event.shiftKey) {
           onChange(newValue, y.value)
         } else {
@@ -259,7 +250,7 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
       {
         passive: false,
       },
-      [x, y],
+      [x, y, onChange, readonly, updateValueByEvent],
     )
 
     useEventListener(globalThis.window, 'mousemove', (event) => {
