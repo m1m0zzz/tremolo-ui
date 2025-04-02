@@ -11,7 +11,6 @@ import { InternalInput } from './InternalInput'
 TODO
 - numberMode: focusが当たった時だけ、parse + type="number"にする
 - skew
-- defaultValue
 */
 
 /** @category NumberInput */
@@ -46,6 +45,8 @@ export interface NumberInputProps {
    * value=100 -> 100Hz, value=1600 -> 1.60Hz
    */
   digit?: number
+
+  readonly?: boolean
 
   variant?: 'outline' | 'filled' | 'flushed' | 'unstyled'
 
@@ -106,6 +107,7 @@ export const NumberInput = forwardRef<NumberInputMethods, Props>(
       max,
       step = 1,
       units,
+      readonly = false,
       disabled = false,
       digit,
       variant = 'outline',
@@ -137,6 +139,7 @@ export const NumberInput = forwardRef<NumberInputMethods, Props>(
         step={step}
         units={units}
         digit={digit}
+        readonly={readonly}
         keepWithinRange={keepWithinRange}
         onChange={onChange}
       >
@@ -144,14 +147,15 @@ export const NumberInput = forwardRef<NumberInputMethods, Props>(
           className={clsx('tremolo-number-input-wrapper', wrapperClassName)}
           // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
           tabIndex={0}
-          data-stepper={!!children}
-          data-variant={variant}
           style={{
             ...colors,
           }}
+          data-stepper={!!children}
+          data-variant={variant}
         >
           <InternalInput
             ref={ref}
+            readonly={readonly}
             disabled={disabled}
             selectWithFocus={selectWithFocus}
             blurOnEnter={blurOnEnter}

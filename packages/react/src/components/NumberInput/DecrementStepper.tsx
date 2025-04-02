@@ -21,12 +21,14 @@ export function DecrementStepper({
   Omit<ComponentPropsWithoutRef<'div'>, keyof DecrementStepperProps>) {
   const min = useNumberInputContext((s) => s.min)
   const valueAsNumber = useNumberInputContext((s) => s.valueAsNumber)
+  const readonly = useNumberInputContext((s) => s.readonly)
   const keepWithinRange = useNumberInputContext((s) => s.keepWithinRange)
   const decrement = useNumberInputContext((s) => s.decrement)
 
   const press = useLongPress(decrement)
 
   return (
+    // eslint-disable-next-line jsx-a11y/role-supports-aria-props
     <div
       className={clsx('tremolo-number-input-decrement-stepper', className)}
       role="button"
@@ -34,6 +36,7 @@ export function DecrementStepper({
       aria-disabled={
         keepWithinRange && valueAsNumber <= (min ?? Number.MIN_SAFE_INTEGER)
       }
+      aria-readonly={readonly}
       onPointerDown={press}
       {...props}
     >

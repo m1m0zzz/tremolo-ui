@@ -25,13 +25,15 @@ import { safeClamp, useNumberInputContext } from './context'
 import { NumberInputMethods } from '.'
 
 interface InternalProps {
+  disabled: boolean
+  readonly: boolean
+  wheel: InputEventOption | null
+  keyboard: InputEventOption | null
+
   selectWithFocus?: 'all' | 'number' | 'none'
   blurOnEnter?: boolean
   keepWithinRange?: boolean
   clampValueOnBlur?: boolean
-
-  wheel: InputEventOption | null
-  keyboard: InputEventOption | null
 
   onChange?: (value: number, text: string) => void
   onFocus?: (
@@ -56,6 +58,7 @@ export const InternalInput = forwardRef<
   (
     {
       disabled,
+      readonly,
       selectWithFocus,
       blurOnEnter,
       clampValueOnBlur,
@@ -108,7 +111,7 @@ export const InternalInput = forwardRef<
 
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
-        if (!keyboard || !onChange) return // ||  readonly
+        if (!keyboard || !onChange || readonly) return
         const key = event.key
         if (!['ArrowUp', 'ArrowDown'].includes(key)) return
         event.preventDefault()
@@ -117,14 +120,13 @@ export const InternalInput = forwardRef<
         console.log('key control')
         onChange?.(parsed.rawValue, parsed.formatValue)
       },
-      [keyboard, onChange, updateValueByEvent],
-      // readonly
+      [keyboard, readonly, onChange, updateValueByEvent],
     )
 
     const wheelRefCallback = useRefCallbackEvent(
       'wheel',
       (event) => {
-        if (!wheel) return // || readonly
+        if (!wheel || readonly) return
         event.preventDefault()
         if (!onChange || event.deltaY == 0) return
         const x = Math.sign(event.deltaY) * -wheel[1]
@@ -133,7 +135,7 @@ export const InternalInput = forwardRef<
         onChange?.(parsed.rawValue, parsed.formatValue)
       },
       { passive: false },
-      [wheel, onChange, updateValueByEvent],
+      [wheel, readonly, onChange, updateValueByEvent],
     )
 
     useImperativeHandle(ref, () => {
@@ -159,10 +161,12 @@ export const InternalInput = forwardRef<
         max={max}
         step={step}
         type="text"
-        disabled={disabled}
+        aria-disabled={disabled}
+        aria-readonly={readonly}
         tabIndex={-1}
         data-error={error}
         onChange={(event) => {
+          if (readonly) return
           const v = event.currentTarget.value
           const cursorPos = event.target.selectionStart
           change(v)

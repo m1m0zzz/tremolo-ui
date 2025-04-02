@@ -206,3 +206,28 @@ export const SelectWithFocus = () => {
     </div>
   )
 }
+
+export const WithStepper: Story = {
+  args: {
+    min: 0,
+    max: 100,
+    units: [
+      ['Hz', 1],
+      ['kHz', 1000],
+    ],
+  },
+  render: (args) => {
+    const [value, setValue] = useState(32)
+
+    return (
+      <div>
+        <NumberInput {...args} value={value} onChange={(v) => setValue(v)}>
+          <Stepper>
+            <IncrementStepper />
+            <DecrementStepper />
+          </Stepper>
+        </NumberInput>
+      </div>
+    )
+  },
+}

@@ -81,6 +81,10 @@
   border: none;
   outline: none;
   appearance: none;
+
+  &[aria-readonly='true'] {
+    cursor: not-allowed;
+  }
 }
 
 .tremolo-number-input-stepper {
@@ -125,6 +129,10 @@
   &[aria-disabled='true'] {
     cursor: not-allowed;
   }
+
+  &[aria-readonly='true'] {
+    cursor: not-allowed;
+  }
 }
 
 .tremolo-number-input-decrement-stepper {
@@ -147,6 +155,10 @@
   }
 
   &[aria-disabled='true'] {
+    cursor: not-allowed;
+  }
+
+  &[aria-readonly='true'] {
     cursor: not-allowed;
   }
 }

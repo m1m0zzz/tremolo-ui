@@ -21,12 +21,14 @@ export function IncrementStepper({
   Omit<ComponentPropsWithoutRef<'div'>, keyof IncrementStepperProps>) {
   const max = useNumberInputContext((s) => s.max)
   const valueAsNumber = useNumberInputContext((s) => s.valueAsNumber)
+  const readonly = useNumberInputContext((s) => s.readonly)
   const keepWithinRange = useNumberInputContext((s) => s.keepWithinRange)
   const increment = useNumberInputContext((s) => s.increment)
 
   const press = useLongPress(increment)
 
   return (
+    // eslint-disable-next-line jsx-a11y/role-supports-aria-props
     <div
       className={clsx('tremolo-number-input-increment-stepper', className)}
       role="button"
@@ -34,6 +36,7 @@ export function IncrementStepper({
       aria-disabled={
         keepWithinRange && valueAsNumber >= (max ?? Number.MAX_SAFE_INTEGER)
       }
+      aria-readonly={readonly}
       onPointerDown={press}
       {...props}
     >
