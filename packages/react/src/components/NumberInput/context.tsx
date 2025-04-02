@@ -4,12 +4,15 @@ import { createStore, useStore } from 'zustand'
 import { clamp } from '@tremolo-ui/functions'
 import { parseValue, Units } from '@tremolo-ui/functions/NumberInput'
 
+// TODO: add readonly
+
 type State = {
   value: string
   valueAsNumber: number
+  step: number
+
   min?: number
   max?: number
-  step?: number
   keepWithinRange?: boolean
   units?: string | Units
   digit?: number
@@ -62,9 +65,12 @@ const createNumberInputStore = (initProps?: ProviderProps) => {
     },
     increment: () =>
       set((state) => {
-        let next =
-          parseValue(state.value, state.units, state.digit).rawValue +
-          (state.step ?? 1)
+        const current = parseValue(
+          state.value,
+          state.units,
+          state.digit,
+        ).rawValue
+        let next = current + (state.step ?? 1)
         if (state.keepWithinRange) {
           next = safeClamp(next, state.min, state.max)
         }
@@ -77,9 +83,12 @@ const createNumberInputStore = (initProps?: ProviderProps) => {
       }),
     decrement: () =>
       set((state) => {
-        let next =
-          parseValue(state.value, state.units, state.digit).rawValue -
-          (state.step ?? 1)
+        const current = parseValue(
+          state.value,
+          state.units,
+          state.digit,
+        ).rawValue
+        let next = current - (state.step ?? 1)
         if (state.keepWithinRange) {
           next = safeClamp(next, state.min, state.max)
         }

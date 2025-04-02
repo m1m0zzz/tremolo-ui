@@ -9,6 +9,7 @@ import {
   NumberInputProps,
   Stepper,
 } from '../../src/components/NumberInput'
+import { inputEventOptionType } from '../lib/typeUtils'
 
 export default {
   title: 'Components/NumberInput/NumberInput',
@@ -29,6 +30,19 @@ export default {
           detail: 'string | [string, number][]',
         },
       },
+    },
+    wheel: {
+      table: {
+        type: inputEventOptionType,
+      },
+    },
+    keyboard: {
+      table: {
+        type: inputEventOptionType,
+      },
+    },
+    children: {
+      control: false,
     },
   },
 } satisfies Meta<typeof NumberInput>
