@@ -37,6 +37,7 @@ export const WhiteKey = forwardRef<KeyMethods, Props>(
       __onPlayNote,
       __onStopNote,
       __label,
+      onContextMenu = (e) => e.preventDefault(),
       ...props
     }: Props,
     ref,
@@ -118,6 +119,7 @@ export const WhiteKey = forwardRef<KeyMethods, Props>(
             if (__onStopNote) __onStopNote(__note!)
           }
         }}
+        onContextMenu={onContextMenu}
         {...props}
       >
         <KeyLabel

@@ -2,6 +2,7 @@
   display: inline-block;
   box-sizing: border-box;
   user-select: none;
+  touch-action: none;
   position: relative;
 }
 
@@ -13,6 +14,7 @@
 
   position: absolute;
   background-color: var(--bg);
+  -webkit-tap-highlight-color: transparent;
   color: var(--color);
   border: 1px solid #555;
   border-radius: 0px 0px 8px 8px;
@@ -37,6 +39,7 @@
 
   position: absolute;
   background-color: var(--bg);
+  -webkit-tap-highlight-color: transparent;
   color: var(--color);
   border: 1px solid #555;
   border-radius: 0px 0px 8px 8px;
