@@ -11,13 +11,7 @@ import React, {
   useState,
 } from 'react'
 
-import {
-  isWhiteKey,
-  NoteName,
-  noteName,
-  noteNames,
-  parseNoteName,
-} from '@tremolo-ui/functions'
+import { isWhiteKey, NoteKey, noteKeys, noteKey } from '@tremolo-ui/functions'
 
 import { useEventListener } from '../../hooks/useEventListener'
 
@@ -116,7 +110,7 @@ export function Piano({
 
   // --- internal functions ---
   function notePosition(note: number) {
-    const pitchPositions: Record<NoteName, number> = {
+    const pitchPositions: Record<NoteKey, number> = {
       C: 0,
       'C#': 0.55,
       D: 1,
@@ -131,16 +125,12 @@ export function Piano({
       B: 6,
     }
 
-    const toNoteName = (n: number) => {
-      const { letter, accidental } = parseNoteName(noteName(n))
-      return (letter + accidental) as NoteName
-    }
-    const _noteName = toNoteName(note)
-    const firstNoteName = toNoteName(noteRange.first)
-    const pos = pitchPositions[_noteName] - pitchPositions[firstNoteName]
+    const targetNoteKey = noteKey(note)
+    const firstNoteKey = noteKey(noteRange.first)
+    const pos = pitchPositions[targetNoteKey] - pitchPositions[firstNoteKey]
     const octave = Math.floor((note - noteRange.first) / 12)
     const octaveOffset =
-      noteNames.indexOf(firstNoteName) > noteNames.indexOf(_noteName) ? 1 : 0
+      noteKeys.indexOf(firstNoteKey) > noteKeys.indexOf(targetNoteKey) ? 1 : 0
     const length = whiteNoteWidth + 3
     return pos * length + (octave + octaveOffset) * 7 * length
   }
