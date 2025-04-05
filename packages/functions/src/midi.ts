@@ -13,7 +13,7 @@ export type WhiteKey = (typeof whiteKeys)[number]
 /**
  * @category MIDI
  */
-export const noteNames = [
+export const noteKeys = [
   'C',
   'C#',
   'D',
@@ -31,7 +31,7 @@ export const noteNames = [
 /**
  * @category MIDI
  */
-export type NoteName = (typeof noteNames)[number]
+export type NoteKey = (typeof noteKeys)[number]
 
 /**
  * @category MIDI
@@ -53,7 +53,7 @@ export function parseNoteName(noteName: string) {
  */
 export function noteNumber(noteName: string) {
   const { letter, accidental, octave } = parseNoteName(noteName)
-  const noteIndex = noteNames.indexOf(letter.toLocaleUpperCase() as NoteName)
+  const noteIndex = noteKeys.indexOf(letter.toLocaleUpperCase() as NoteKey)
   const accidentalValue = (accidental[0] == 'b' ? -1 : 1) * accidental.length
   return noteIndex + 12 * (Number(octave) + 1) + accidentalValue
 }
@@ -62,10 +62,18 @@ export function noteNumber(noteName: string) {
  * Convert noteNumber to noteName
  * @category MIDI
  */
-export function noteName(noteNumber: number) {
+export function noteName(noteNumber: number): `${NoteKey}${number}` {
   const noteIndex = mod(noteNumber, 12)
   const octave = Math.floor(noteNumber / 12) - 1
-  return noteNames[noteIndex] + octave
+  return `${noteKeys[noteIndex]}${octave}`
+}
+
+/**
+ * Convert noteNumber to noteKey
+ * @category MIDI
+ */
+export function noteKey(noteNumber: number): NoteKey {
+  return noteKeys[mod(noteNumber, 12)]
 }
 
 /**
