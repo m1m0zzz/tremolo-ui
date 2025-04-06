@@ -155,7 +155,13 @@ export function AnimationCanvas({
             ;(context[prop] as DrawingStateValue) = contextMemo[prop]
           }
 
-          if (reduceFlickering && memoContext) {
+          if (
+            reduceFlickering &&
+            memoContext &&
+            memoCanvas &&
+            memoCanvas.width > 0 &&
+            memoCanvas.height > 0
+          ) {
             context.drawImage(memoContext.canvas, 0, 0)
           }
         }

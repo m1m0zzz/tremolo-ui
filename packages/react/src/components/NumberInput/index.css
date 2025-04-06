@@ -103,7 +103,11 @@
   }
 }
 
-.tremolo-number-input-wrapper:hover .tremolo-number-input-stepper {
+:is(
+    .tremolo-number-input-wrapper:hover,
+    .tremolo-number-input-wrapper:focus-within
+  )
+  .tremolo-number-input-stepper {
   opacity: 1;
   transform: translateX(0);
 }
