@@ -1,6 +1,6 @@
 {
   "name": "@tremolo-ui/react",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "React component library for audio app",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -42,7 +42,7 @@
     "react-dom": "^18 || ^19"
   },
   "dependencies": {
-    "@tremolo-ui/functions": "0.0.11",
+    "@tremolo-ui/functions": "0.0.12",
     "clsx": "^2.1.1",
     "zustand": "^5.0.3"
   },
