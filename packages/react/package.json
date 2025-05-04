@@ -20,6 +20,7 @@
     "clean:sb": "rimraf ./storybook-static"
   },
   "devDependencies": {
+    "@storybook/addon-a11y": "^8.6.7",
     "@storybook/addon-essentials": "^8.6.7",
     "@storybook/addon-interactions": "^8.6.7",
     "@storybook/addon-links": "^8.6.7",
