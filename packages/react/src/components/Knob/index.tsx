@@ -61,10 +61,23 @@ export interface KnobProps {
   disabled?: boolean
   readonly?: boolean
 
+  /** color */
   activeLine?: string
+  /** color */
   inactiveLine?: string
+  /** color */
   thumb?: string
+  /** color */
   thumbLine?: string
+
+  /** percent (0-100) */
+  thumbSize?: number
+  /** percent (0-100) */
+  thumbLineWeight?: number
+  /** percent (0-100) */
+  thumbLineLength?: number
+  /** percent (0-100) */
+  lineWeight?: number
 
   classes?: {
     activeLine?: string
@@ -233,6 +246,7 @@ export const Knob = forwardRef<KnobMethods, Props>(
         width={size}
         height={size}
         tabIndex={0}
+        role="slider"
         aria-valuenow={value}
         aria-valuemin={min}
         aria-valuemax={max}

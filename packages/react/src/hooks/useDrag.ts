@@ -52,13 +52,12 @@ export function useDrag<T extends Element>({
         dragOffsetY.current = screenY
       }
       if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return
-      if (onDrag)
-        onDrag(
-          screenX - dragStartX.current,
-          screenY - dragStartY.current,
-          deltaX,
-          deltaY,
-        )
+      onDrag(
+        screenX - dragStartX.current,
+        screenY - dragStartY.current,
+        deltaX,
+        deltaY,
+      )
     },
     [threshold, onDrag],
   )
