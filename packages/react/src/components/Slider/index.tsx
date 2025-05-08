@@ -21,7 +21,7 @@ import {
   xor,
 } from '@tremolo-ui/functions'
 
-import { useEventListener } from '../../hooks/useEventListener'
+import { useDragWithElement } from '../../hooks/useDragWithElement'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { addNoSelect, removeNoSelect } from '../_util'
 
@@ -117,7 +117,6 @@ export const Slider = forwardRef<SliderMethods, Props>(
     // -- state and ref ---
     const trackElementRef = useRef<HTMLDivElement>(null)
     const thumbRef = useRef<SliderThumbMethods>(null)
-    const thumbDragged = useRef(false)
 
     // --- interpret props ---
     const p = toFixed(normalizeValue(value, min, max, skew) * 100)
@@ -155,36 +154,16 @@ export const Slider = forwardRef<SliderMethods, Props>(
     }
 
     // --- internal functions ---
-    const handleValue = (
-      event: MouseEvent | React.PointerEvent<HTMLDivElement> | TouchEvent,
-    ) => {
-      if (
-        !trackElementRef.current ||
-        !thumbDragged.current ||
-        !onChange ||
-        readonly
-      ) {
-        return
-      }
-      const isTouch = event instanceof TouchEvent
-      if (isTouch && event.cancelable) event.preventDefault()
-      if (bodyNoSelect) addNoSelect()
-      const {
-        left: x1,
-        top: y1,
-        right: x2,
-        bottom: y2,
-      } = trackElementRef.current.getBoundingClientRect()
-      const mouseX = isTouch ? event.touches[0].clientX : event.clientX
-      const mouseY = isTouch ? event.touches[0].clientY : event.clientY
-      const n = vertical
-        ? normalizeValue(mouseY, y1, y2)
-        : normalizeValue(mouseX, x1, x2)
-      const v = rawValue(displayReversed ? 1 - n : n, min, max, skew)
-      const v2 = clamp(stepValue(v, step), min, max)
-      onChange(v2)
-      return v2
-    }
+    const onDrag = useCallback(
+      (nx: number, ny: number) => {
+        if (!onChange || readonly) return
+        const n = vertical ? ny : nx
+        const v = rawValue(displayReversed ? 1 - n : n, min, max, skew)
+        const v2 = clamp(stepValue(v, step), min, max)
+        onChange(v2)
+      },
+      [displayReversed, max, min, onChange, readonly, skew, step, vertical],
+    )
 
     const updateValueByEvent = useCallback(
       (eventType: InputEventOption[0], x: number) => {
@@ -216,12 +195,34 @@ export const Slider = forwardRef<SliderMethods, Props>(
     )
 
     // --- hooks ---
-    const touchMoveRefCallback = useRefCallbackEvent(
-      'touchmove',
-      handleValue,
-      { passive: false },
-      [min, max, skew, step, vertical, reverse, onChange, readonly],
-    )
+    const [touchMoveRefCallback, pointerDownHandler] =
+      useDragWithElement<HTMLDivElement>({
+        baseElementRef: trackElementRef,
+        onDrag: onDrag,
+        onDragStart: (nx, ny) => {
+          if (readonly) return
+          if (bodyNoSelect) addNoSelect()
+          thumbRef.current?.focus()
+          onDragStart?.(
+            clamp(
+              stepValue(rawValue(vertical ? ny : nx, min, max, skew), step),
+              min,
+              max,
+            ),
+          )
+        },
+        onDragEnd: (nx, ny) => {
+          if (readonly) return
+          if (bodyNoSelect) removeNoSelect()
+          onDragEnd?.(
+            clamp(
+              stepValue(rawValue(vertical ? ny : nx, min, max, skew), step),
+              min,
+              max,
+            ),
+          )
+        },
+      })
 
     const wheelRefCallback = useRefCallbackEvent(
       'wheel',
@@ -243,17 +244,6 @@ export const Slider = forwardRef<SliderMethods, Props>(
       },
       [wheel, vertical, readonly, onChange, updateValueByEvent],
     )
-
-    useEventListener(globalThis.window, 'mousemove', (event) => {
-      handleValue(event)
-    })
-
-    useEventListener(globalThis.window, 'mouseup', () => {
-      if (!thumbDragged.current || readonly) return
-      thumbDragged.current = false
-      onDragEnd?.(value)
-      if (bodyNoSelect) removeNoSelect()
-    })
 
     useImperativeHandle(ref, () => {
       return {
@@ -296,9 +286,7 @@ export const Slider = forwardRef<SliderMethods, Props>(
             ...style,
           }}
           onPointerDown={(event) => {
-            thumbDragged.current = true
-            const v = handleValue(event)
-            if (!readonly) onDragStart?.(v ?? value)
+            pointerDownHandler(event)
             onPointerDown?.(event)
           }}
           onKeyDown={(event) => {

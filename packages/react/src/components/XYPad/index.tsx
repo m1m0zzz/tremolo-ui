@@ -19,7 +19,7 @@ import {
   styleHelper,
 } from '@tremolo-ui/functions'
 
-import { useEventListener } from '../../hooks/useEventListener'
+import { useDragWithElement } from '../../hooks/useDragWithElement'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { addNoSelect, removeNoSelect } from '../_util'
 
@@ -118,7 +118,6 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
     // -- state and ref ---
     const areaElementRef = useRef<HTMLDivElement>(null)
     const thumbRef = useRef<XYPadThumbMethods>(null)
-    const thumbDragged = useRef(false)
 
     // --- interpret props ---
     const nx = normalizeValue(x.value, x.min, x.max, x.skew)
@@ -126,8 +125,8 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
     const percentX = toFixed((x.reverse ? 1 - nx : nx) * 100)
     const percentY = toFixed((y.reverse ? 1 - ny : ny) * 100)
 
-    let areaProps: AreaProps = {},
-      thumbProps: ThumbProps = {}
+    let areaProps: AreaProps = {}
+    let thumbProps: ThumbProps = {}
     if (children != undefined) {
       React.Children.forEach(children, (child) => {
         if (React.isValidElement(child)) {
@@ -145,36 +144,30 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
     }
 
     // --- internal functions ---
-    const handleValue = (
-      event: MouseEvent | React.PointerEvent<HTMLDivElement> | TouchEvent,
-    ) => {
-      if (
-        !areaElementRef.current ||
-        !thumbDragged.current ||
-        !onChange ||
-        readonly
-      )
-        return
-      const isTouch = event instanceof TouchEvent
-      if (isTouch && event.cancelable) event.preventDefault()
-      if (bodyNoSelect) addNoSelect()
-      const {
-        left: x1,
-        top: y1,
-        right: x2,
-        bottom: y2,
-      } = areaElementRef.current.getBoundingClientRect()
-      const mouseX = isTouch ? event.touches[0].clientX : event.clientX
-      const mouseY = isTouch ? event.touches[0].clientY : event.clientY
-      const nx = normalizeValue(mouseX, x1, x2)
-      const ny = normalizeValue(mouseY, y1, y2)
-      const vx = rawValue(x.reverse ? 1 - nx : nx, x.min, x.max, x.skew)
-      const vy = rawValue(y.reverse ? 1 - ny : ny, y.min, y.max, y.skew)
-      const newX = clamp(stepValue(vx, x.step), x.min, x.max)
-      const newY = clamp(stepValue(vy, y.step), y.min, y.max)
-      onChange(newX, newY)
-      return [newX, newY]
-    }
+    const onDrag = useCallback(
+      (nx: number, ny: number) => {
+        if (!onChange || readonly) return
+        const vx = rawValue(x.reverse ? 1 - nx : nx, x.min, x.max, x.skew)
+        const vy = rawValue(y.reverse ? 1 - ny : ny, y.min, y.max, y.skew)
+        const newX = clamp(stepValue(vx, x.step), x.min, x.max)
+        const newY = clamp(stepValue(vy, y.step), y.min, y.max)
+        onChange(newX, newY)
+      },
+      [
+        onChange,
+        readonly,
+        x.max,
+        x.min,
+        x.reverse,
+        x.skew,
+        x.step,
+        y.max,
+        y.min,
+        y.reverse,
+        y.skew,
+        y.step,
+      ],
+    )
 
     const updateValueByEvent = useCallback(
       (
@@ -223,12 +216,42 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
     )
 
     // --- hooks ---
-    const touchMoveRefCallback = useRefCallbackEvent(
-      'touchmove',
-      handleValue,
-      { passive: false },
-      [x, onChange, readonly],
-    )
+    const [touchMoveRefCallback, pointerDownHandler] =
+      useDragWithElement<HTMLDivElement>({
+        baseElementRef: areaElementRef,
+        onDrag: onDrag,
+        onDragStart: (nx, ny) => {
+          if (readonly) return
+          if (bodyNoSelect) addNoSelect()
+          thumbRef.current?.focus()
+          const valueX = clamp(
+            stepValue(rawValue(nx, x.min, x.max, x.skew), x.step),
+            x.min,
+            x.max,
+          )
+          const valueY = clamp(
+            stepValue(rawValue(ny, y.min, y.max, y.skew), y.step),
+            y.min,
+            y.max,
+          )
+          onDragStart?.(valueX, valueY)
+        },
+        onDragEnd: (nx, ny) => {
+          if (readonly) return
+          if (bodyNoSelect) removeNoSelect()
+          const valueX = clamp(
+            stepValue(rawValue(nx, x.min, x.max, x.skew), x.step),
+            x.min,
+            x.max,
+          )
+          const valueY = clamp(
+            stepValue(rawValue(ny, y.min, y.max, y.skew), y.step),
+            y.min,
+            y.max,
+          )
+          onDragEnd?.(valueX, valueY)
+        },
+      })
 
     const wheelRefCallback = useRefCallbackEvent(
       'wheel',
@@ -252,17 +275,6 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
       },
       [x, y, onChange, readonly, updateValueByEvent],
     )
-
-    useEventListener(globalThis.window, 'mousemove', (event) => {
-      handleValue(event)
-    })
-
-    useEventListener(globalThis.window, 'mouseup', () => {
-      if (!thumbDragged.current || readonly) return
-      thumbDragged.current = false
-      onDragEnd?.(x.value, y.value)
-      if (bodyNoSelect) removeNoSelect()
-    })
 
     useImperativeHandle(ref, () => {
       return {
@@ -293,9 +305,7 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
           ...style,
         }}
         onPointerDown={(event) => {
-          thumbDragged.current = true
-          const v = handleValue(event)
-          if (!readonly) onDragStart?.(v?.[0] ?? x.value, v?.[1] ?? y.value)
+          pointerDownHandler(event)
           onPointerDown?.(event)
         }}
         onKeyDown={(event) => {
