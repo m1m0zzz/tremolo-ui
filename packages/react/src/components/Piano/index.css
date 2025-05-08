@@ -12,6 +12,7 @@
   --active-bg: #ccc;
   --active-color: black;
 
+  box-sizing: border-box;
   position: absolute;
   background-color: var(--bg);
   -webkit-tap-highlight-color: transparent;
@@ -37,6 +38,7 @@
   --active-color: white;
   --active-bg: #666;
 
+  box-sizing: border-box;
   position: absolute;
   background-color: var(--bg);
   -webkit-tap-highlight-color: transparent;
