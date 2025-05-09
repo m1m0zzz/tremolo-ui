@@ -6,19 +6,33 @@ import React, {
   ReactElement,
   ReactNode,
   RefObject,
+  useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
 
-import { isWhiteKey, NoteKey, noteKeys, noteKey } from '@tremolo-ui/functions'
+import {
+  isBlackKey,
+  isWhiteKey,
+  noteKey,
+  NoteKey,
+  noteKeys,
+} from '@tremolo-ui/functions'
 
+import { useDragWithElement } from '../../hooks/useDragWithElement'
 import { useEventListener } from '../../hooks/useEventListener'
 
-import { BlackKey } from './BlackKey'
-import { KeyMethods, KeyProps } from './key'
+import { NoteRange, PianoProvider } from './context'
+import {
+  BlackKey,
+  defaultBlackKeyWidth,
+  defaultWhiteKeyWidth,
+  KeyMethods,
+  WhiteKey,
+} from './key'
 import { KeyboardShortcuts } from './keyboardShortcuts'
-import { defaultWhiteKeyWidth, WhiteKey } from './WhiteKey'
 
 /**
  * Piano component
@@ -28,17 +42,26 @@ import { defaultWhiteKeyWidth, WhiteKey } from './WhiteKey'
  */
 
 /** @category Piano */
+export function getNoteRangeArray(noteRange: NoteRange) {
+  return Array.from(
+    { length: noteRange.last - noteRange.first + 1 },
+    (_, i) => i + noteRange.first,
+  )
+}
+
+/** @category Piano */
 export interface PianoProps {
   // required
-  noteRange: { first: number; last: number }
+  noteRange: NoteRange
 
   // optional
-  height?: number | string
-
   glissando?: boolean
   midiMax?: number
   keyboardShortcuts?: KeyboardShortcuts
   fill?: boolean
+  whiteNoteWidth?: number
+  blackNoteWidth?: number
+  height?: number | string
 
   style?: CSSProperties
 
@@ -64,76 +87,130 @@ export function Piano({
   keyboardShortcuts,
   fill = false,
   height = fill ? '100%' : 160,
+  whiteNoteWidth: _whiteNoteWidth = defaultWhiteKeyWidth,
   style,
   className,
   onPlayNote,
   onStopNote,
   label,
   children,
-  onPointerUp,
   onPointerDown,
   ...props
 }: PianoProps & Omit<ComponentPropsWithoutRef<'div'>, keyof PianoProps>) {
   // -- state and ref ---
-  const [pressed, setPressed] = useState(false)
-  const [whiteNoteWidth, setWhiteNoteWidth] = useState(-1)
+  const [whiteNoteWidth, setWhiteNoteWidth] = useState(_whiteNoteWidth)
   const keyRefs = useRef<RefObject<KeyMethods | null>[]>([])
   for (let i = 0; i < noteRange.last - noteRange.first + 1; i++) {
     keyRefs.current[i] = createRef<KeyMethods>()
   }
   const pianoRef = useRef<HTMLDivElement>(null)
+  const hitKeyIndex = useRef(-1)
 
   // --- interpret props ---
-  const noteRangeArray = Array.from(
-    { length: noteRange.last - noteRange.first + 1 },
-    (_, i) => i + noteRange.first,
-  )
-  const whiteNoteCount = noteRangeArray.filter((v) => isWhiteKey(v)).length
+  const noteRangeArray = getNoteRangeArray(noteRange)
+  const whiteNotes = noteRangeArray.filter((v) => isWhiteKey(v))
+  const blackNotes = noteRangeArray.filter((v) => isBlackKey(v))
+  const whiteNoteCount = whiteNotes.length
+  const padding = 1
+  const staticWidth = (whiteNoteWidth + padding) * whiteNoteCount
+  // const blackNoteShiftPercent = 0.3
 
-  let whiteKeyProps: KeyProps = {},
-    blackKeyProps: KeyProps = {}
-  if (children != undefined) {
-    React.Children.forEach(children, (child) => {
-      if (React.isValidElement(child)) {
-        if (child.type == WhiteKey) {
-          whiteKeyProps = child.props as KeyProps
-        } else if (child.type == BlackKey) {
-          blackKeyProps = child.props as KeyProps
-        } else {
-          throw new Error('only <WhiteKey> or <BlackKey>')
+  // TODO: if fill setWhiteNoteWidth
+  // useMemo
+  // __width
+  const childrenWithProps = useMemo(() => {
+    return (
+      children &&
+      React.Children.map(children, (child, index) => {
+        if (React.isValidElement(child)) {
+          const props = { ref: keyRefs.current[index] }
+          return React.cloneElement(child, props)
         }
-      } else {
-        throw new Error('children is an invalid element.')
-      }
-    })
-  }
+        return child
+      })
+    )
+  }, [children])
 
   // --- internal functions ---
-  function notePosition(note: number) {
-    const pitchPositions: Record<NoteKey, number> = {
-      C: 0,
-      'C#': 0.55,
-      D: 1,
-      'D#': 1.8,
-      E: 2,
-      F: 3,
-      'F#': 3.5,
-      G: 4,
-      'G#': 4.7,
-      A: 5,
-      'A#': 5.85,
-      B: 6,
-    }
+  const notePosition = useCallback(
+    (note: number) => {
+      const pitchPositions: Record<NoteKey, number> = {
+        C: 0,
+        'C#': 1,
+        D: 1,
+        'D#': 2,
+        E: 2,
+        F: 3,
+        'F#': 4,
+        G: 4,
+        'G#': 5,
+        A: 5,
+        'A#': 6,
+        B: 6,
+      }
 
-    const targetNoteKey = noteKey(note)
-    const firstNoteKey = noteKey(noteRange.first)
-    const pos = pitchPositions[targetNoteKey] - pitchPositions[firstNoteKey]
-    const octave = Math.floor((note - noteRange.first) / 12)
-    const octaveOffset =
-      noteKeys.indexOf(firstNoteKey) > noteKeys.indexOf(targetNoteKey) ? 1 : 0
-    const length = whiteNoteWidth + 3
-    return pos * length + (octave + octaveOffset) * 7 * length
-  }
+      const whiteNoteWidth = defaultWhiteKeyWidth
+      const blackNoteWidth = defaultBlackKeyWidth
+      const padding = 1
+
+      const targetNoteKey = noteKey(note)
+      const firstNoteKey = noteKey(noteRange.first)
+      const octave = Math.floor((note - noteRange.first) / 12)
+      const octaveOffset =
+        noteKeys.indexOf(firstNoteKey) > noteKeys.indexOf(targetNoteKey) ? 1 : 0
+      const w = whiteNoteWidth + padding
+      const pos = pitchPositions[targetNoteKey] - pitchPositions[firstNoteKey]
+      const blackKeyOffset = isBlackKey(note) ? blackNoteWidth / 2 : 0
+      return pos * w + (octave + octaveOffset) * 7 * w - blackKeyOffset
+    },
+    [noteRange.first],
+  )
+
+  const getHitKeyIndex = useCallback(
+    (x: number, y: number) => {
+      if (!pianoRef.current) return -1
+      const containerHeight = pianoRef.current.clientHeight
+      const notes = [...blackNotes, ...whiteNotes]
+      for (let i = 0; i < notes.length; i++) {
+        const note = notes[i]
+        const pos = notePosition(note)
+        const w = isWhiteKey(note) ? defaultWhiteKeyWidth : defaultBlackKeyWidth
+        const h = isWhiteKey(note) ? containerHeight : containerHeight * 0.6
+        if (pos <= x && x < pos + w && 0 <= y && y < h) {
+          return note
+        }
+      }
+      return -1
+    },
+    [blackNotes, notePosition, whiteNotes],
+  )
+
+  // TODO: 単一のポインターに対しては、useDragで対応可能だが、
+  // マルチタッチに対しては、TouchEventを使う必要がありそう
+  // 取り敢えず、シングルタッチだけ対応
+  const onDrag = useCallback(
+    (perX: number, perY: number) => {
+      if (!pianoRef.current) return
+      const x = perX * staticWidth
+      const y = perY * pianoRef.current.clientHeight
+      const note = getHitKeyIndex(x, y)
+      const index = noteRangeArray.indexOf(note)
+      if (index == -1) return
+      if (hitKeyIndex.current != index) {
+        keyRefs.current[hitKeyIndex.current]?.current?.stop()
+        keyRefs.current[index]?.current?.play()
+        hitKeyIndex.current = index
+      }
+    },
+    [getHitKeyIndex, noteRangeArray, staticWidth],
+  )
+
+  const onDragEnd = useCallback(() => {
+    if (keyRefs.current[hitKeyIndex.current]?.current?.played()) {
+      keyRefs.current[hitKeyIndex.current]?.current?.stop()
+    }
+    hitKeyIndex.current = -1
+  }, [keyRefs])
 
   // --- hooks ---
   useEffect(() => {
@@ -142,16 +219,23 @@ export function Piano({
       if (!parent) throw new Error("doesn't have a parent element.")
       const resizeObserver = new ResizeObserver(() => {
         const w = pianoRef.current!.clientWidth
-        setWhiteNoteWidth(w / whiteNoteCount - 3)
+        setWhiteNoteWidth(w / whiteNoteCount - padding)
       })
       resizeObserver.observe(parent)
       return () => {
         resizeObserver.unobserve(parent)
       }
     } else {
-      setWhiteNoteWidth(whiteKeyProps?.width || defaultWhiteKeyWidth)
+      setWhiteNoteWidth(_whiteNoteWidth)
     }
-  }, [fill, whiteKeyProps?.width, whiteNoteCount])
+  }, [fill, _whiteNoteWidth, whiteNoteCount])
+
+  const [touchMoveRefCallback, pointerDownHandler] =
+    useDragWithElement<HTMLDivElement>({
+      baseElementRef: pianoRef,
+      onDrag: onDrag,
+      onDragEnd: onDragEnd,
+    })
 
   useEventListener(globalThis.window, 'keydown', (e) => {
     if (e.repeat) return
@@ -174,66 +258,54 @@ export function Piano({
   })
 
   return (
-    <div
-      ref={pianoRef}
-      className={clsx('tremolo-piano', className)}
-      style={{
-        width: fill ? '100%' : (whiteNoteWidth + 3) * whiteNoteCount,
-        height: height,
-        ...style,
-      }}
-      onPointerDown={(e) => {
-        setPressed(true)
-        onPointerDown?.(e)
-      }}
-      onPointerUp={(e) => {
-        setPressed(false)
-        onPointerUp?.(e)
-      }}
-      {...props}
+    <PianoProvider
+      noteRange={noteRange}
+      glissando={glissando}
+      midiMax={midiMax}
+      fill={fill}
+      onPlayNote={onPlayNote}
+      onStopNote={onStopNote}
+      label={label}
     >
-      {noteRangeArray.map((note, index) => {
-        return isWhiteKey(note) ? (
-          <WhiteKey
-            key={note}
-            ref={keyRefs.current[index]}
-            __glissando={glissando && pressed}
-            __position={notePosition(note)}
-            __note={note}
-            __disabled={note > midiMax}
-            __index={index}
-            __fill={fill}
-            __width={whiteNoteWidth}
-            __onPlayNote={onPlayNote}
-            __onStopNote={onStopNote}
-            __label={label}
-            {...whiteKeyProps}
-          />
-        ) : (
-          <BlackKey
-            key={note}
-            ref={keyRefs.current[index]}
-            __glissando={glissando && pressed}
-            __position={notePosition(note)}
-            __note={note}
-            __disabled={note > midiMax}
-            __index={index}
-            __fill={fill}
-            __width={whiteNoteWidth * 0.65}
-            __onPlayNote={onPlayNote}
-            __onStopNote={onStopNote}
-            __label={label}
-            {...blackKeyProps}
-          />
-        )
-      })}
-    </div>
+      <div
+        ref={(div) => {
+          pianoRef.current = div
+          touchMoveRefCallback(div)
+        }}
+        className={clsx('tremolo-piano', className)}
+        style={{
+          width: fill ? '100%' : staticWidth,
+          height: height,
+          ...style,
+        }}
+        onPointerDown={(event) => {
+          pointerDownHandler(event)
+          onPointerDown?.(event)
+        }}
+        {...props}
+      >
+        {childrenWithProps ||
+          getNoteRangeArray(noteRange).map((note, index) =>
+            isWhiteKey(note) ? (
+              <WhiteKey
+                ref={keyRefs.current[index]}
+                key={note}
+                noteNumber={note}
+              />
+            ) : (
+              <BlackKey
+                ref={keyRefs.current[index]}
+                key={note}
+                noteNumber={note}
+              />
+            ),
+          )}
+      </div>
+    </PianoProvider>
   )
 }
 
-export * from './key'
 export * from './keyboardShortcuts'
 
-export { WhiteKey } from './WhiteKey'
-export { BlackKey } from './BlackKey'
+export { WhiteKey, BlackKey, type KeyProps, type KeyMethods } from './key'
 export { KeyLabel, type KeyLabelProps } from './KeyLabel'

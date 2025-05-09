@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   AmplitudeEnvelope,
   FFT,
@@ -12,12 +12,7 @@ import {
 
 import { noteNumber, noteToFrequency } from '@tremolo-ui/functions'
 
-import {
-  BlackKey,
-  Piano,
-  SHORTCUTS,
-  WhiteKey,
-} from '../../../src/components/Piano'
+import { Piano, SHORTCUTS } from '../../../src/components/Piano'
 
 import { ADSR } from './ADSR.stories'
 import {
@@ -217,6 +212,17 @@ export const WavetableSynth = () => {
     [position, semitone, detune, voice, voiceDetune, audioContext],
   )
 
+  const handleStop = useCallback((noteNumber: number) => {
+    envelopes[noteNumber - firstNote]?.triggerRelease()
+    pressedCount.current -= 1
+    if (pressedCount.current <= 0) {
+      setKeyState({
+        trigger: 'release',
+        timestamp: performance.now(),
+      })
+    }
+  }, [])
+
   useEffect(() => {
     const a = attack / 1000
     const d = decay / 1000
@@ -243,16 +249,19 @@ export const WavetableSynth = () => {
     masterVolume.volume.value = masterDb
   }, [masterDb])
 
-  const handleStop = (noteNumber: number) => {
-    envelopes[noteNumber - firstNote]?.triggerRelease()
-    pressedCount.current -= 1
-    if (pressedCount.current <= 0) {
-      setKeyState({
-        trigger: 'release',
-        timestamp: performance.now(),
-      })
-    }
-  }
+  const pianoMemo = useMemo(
+    () => (
+      <Piano
+        noteRange={{ first: firstNote, last: lastNote }}
+        keyboardShortcuts={SHORTCUTS.HOME_ROW}
+        label={(_, i) => SHORTCUTS.HOME_ROW.keys[i]?.toUpperCase()}
+        height={120}
+        onPlayNote={handlePlay}
+        onStopNote={handleStop}
+      />
+    ),
+    [handlePlay, handleStop],
+  )
 
   return (
     <div className={styles.container}>
@@ -268,19 +277,7 @@ export const WavetableSynth = () => {
         <ADSR keyState={keyState} />
         <MasterSection />
       </div>
-      <div className={styles.piano}>
-        <Piano
-          noteRange={{ first: firstNote, last: lastNote }}
-          keyboardShortcuts={SHORTCUTS.HOME_ROW}
-          label={(_, i) => SHORTCUTS.HOME_ROW.keys[i]?.toUpperCase()}
-          height={120}
-          onPlayNote={handlePlay}
-          onStopNote={handleStop}
-        >
-          <WhiteKey activeBg="rgb(216, 235, 250)" />
-          <BlackKey activeBg="rgb(22, 59, 86)" />
-        </Piano>
-      </div>
+      <div className={styles.piano}>{pianoMemo}</div>
     </div>
   )
 }

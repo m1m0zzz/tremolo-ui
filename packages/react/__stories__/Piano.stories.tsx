@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
 import * as Tone from 'tone'
 
-import { noteNumber, noteName } from '@tremolo-ui/functions'
+import { noteNumber, noteName, isWhiteKey } from '@tremolo-ui/functions'
 
 import {
   DecrementStepper,
@@ -12,6 +12,7 @@ import {
 } from '../src/components/NumberInput'
 import {
   BlackKey,
+  getNoteRangeArray,
   KeyLabel,
   Piano,
   SHORTCUTS,
@@ -120,63 +121,59 @@ export const Range = () => {
       </div>
       <Piano
         noteRange={{ first: first, last: last }}
-        label={(note) => noteName(note)}
-      >
-        <WhiteKey>
-          <KeyLabel
-            label={(note) => {
-              return [
-                'ド',
-                '',
-                'レ',
-                '',
-                'ミ',
-                'ファ',
-                '',
-                'ソ',
-                '',
-                'ラ',
-                '',
-                'シ',
-              ].at(note % 12)
-            }}
-          />
-        </WhiteKey>
-        <BlackKey>
-          {/* remove label */}
-          <KeyLabel label={() => undefined} />
-        </BlackKey>
-      </Piano>
+        label={(note) => {
+          return [
+            'ド',
+            undefined,
+            'レ',
+            undefined,
+            'ミ',
+            'ファ',
+            undefined,
+            'ソ',
+            undefined,
+            'ラ',
+            undefined,
+            'シ',
+          ].at(note % 12)
+        }}
+      />
     </div>
   )
 }
 
 export const Styling = () => {
+  const range = { first: noteNumber('C3'), last: noteNumber('B4') }
   return (
-    <Piano noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}>
-      <WhiteKey
-        width={60}
-        // bg='#83888a'
-        // activeBg='#5acee8'
-      >
-        <KeyLabel
-          label={(note) => {
-            const name = noteName(note)
-            return name.startsWith('C') ? name : undefined
-          }}
-          style={{
-            border: 'none',
-            color: 'white',
-          }}
-        />
-      </WhiteKey>
-      <BlackKey
-        width={60 * 0.65}
-        // bg='#333536'
-        // activeBg='#5acee8'
-      >
-        <KeyLabel />
-      </BlackKey>
+    <Piano noteRange={range} keyboardShortcuts={SHORTCUTS.HOME_ROW}>
+      {getNoteRangeArray(range).map((note) => {
+        return isWhiteKey(note) ? (
+          <WhiteKey
+            key={note}
+            noteNumber={note}
+            bg="#83888a"
+            activeBg="#5acee8"
+          >
+            <KeyLabel
+              label={(note) => {
+                const name = noteName(note)
+                return name.startsWith('C') ? name : undefined
+              }}
+              style={{
+                border: 'none',
+                color: 'white',
+              }}
+            />
+          </WhiteKey>
+        ) : (
+          <BlackKey
+            key={note}
+            noteNumber={note}
+            bg="#333536"
+            activeBg="#5acee8"
+          />
+        )
+      })}
     </Piano>
   )
 }
