@@ -44,8 +44,7 @@ export const Basic: Story = {
     keyboardShortcuts: SHORTCUTS.HOME_ROW,
   },
   render: (args) => {
-    const synth = new Tone.PolySynth().toDestination()
-    synth.volume.value = -6 // dB
+    const synth = new Tone.PolySynth({ volume: -6 }).toDestination()
     // synth.set({
     //   oscillator: {
     //     type: 'sine'
@@ -144,15 +143,18 @@ export const Range = () => {
 
 export const Styling = () => {
   const range = { first: noteNumber('C3'), last: noteNumber('B4') }
+  const [activeIndex, setActiveIndex] = useState(-1)
+
   return (
     <Piano noteRange={range} keyboardShortcuts={SHORTCUTS.HOME_ROW}>
-      {getNoteRangeArray(range).map((note) => {
+      {getNoteRangeArray(range).map((note, index) => {
         return isWhiteKey(note) ? (
           <WhiteKey
             key={note}
             noteNumber={note}
-            bg="#83888a"
+            bg={activeIndex == index ? 'red' : '#83888a'}
             activeBg="#5acee8"
+            onClick={() => setActiveIndex(index)}
           >
             <KeyLabel
               label={(note) => {
@@ -169,8 +171,9 @@ export const Styling = () => {
           <BlackKey
             key={note}
             noteNumber={note}
-            bg="#333536"
+            bg={activeIndex == index ? 'red' : '#333536'}
             activeBg="#5acee8"
+            onClick={() => setActiveIndex(index)}
           />
         )
       })}
