@@ -144,7 +144,9 @@ export function AnimationCanvas({
             memoCanvas.width = w * dpr
             memoCanvas.height = h * dpr
             memoContext.scale(1 / dpr, 1 / dpr)
-            memoContext.drawImage(context.canvas, 0, 0)
+            if (canvas.width > 0 && canvas.height > 0) {
+              memoContext.drawImage(canvas, 0, 0)
+            }
           }
 
           setDprConfig(canvas, context, w, h, dpr)
