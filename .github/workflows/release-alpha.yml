@@ -1,9 +1,9 @@
-name: Release package
+name: Release alpha version package
 
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-alpha.[0-9]+'
 
 jobs:
   build:
@@ -34,10 +34,10 @@ jobs:
     - name: Build (packages/react)
       run: npm run build:package -w packages/react
     - name: Publish (packages/functions)
-      run: npm publish --provenance -w packages/functions
+      run: npm publish --tag alpha --provenance -w packages/functions
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     - name: Publish (packages/react)
-      run: npm publish --provenance -w packages/react
+      run: npm publish --tag alpha --provenance -w packages/react
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
