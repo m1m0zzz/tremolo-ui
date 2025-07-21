@@ -25,7 +25,7 @@ export const VolumeFader = () => {
   const [gainNode, setGainNode] = useState<GainNode | null>(null)
   const [analyzerNode, setAnalyzerNode] = useState<AnalyserNode | null>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
-  const dataArray = useRef<Float32Array>(null)
+  const dataArray = useRef<Float32Array<ArrayBuffer>>(null)
 
   const min = -100
   const max = 6
