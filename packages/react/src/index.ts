@@ -17,6 +17,7 @@ export * from './components/XYPad'
 
 export * from './hooks/useAnimationFrame'
 export * from './hooks/useDrag'
+export * from './hooks/useDragWithElement'
 export * from './hooks/useEventListener'
 export * from './hooks/useInterval'
 export * from './hooks/useLongPress'
