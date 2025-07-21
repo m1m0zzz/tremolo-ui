@@ -102,11 +102,6 @@ export function isBlackKey(note: number | string) {
 }
 
 /**
- * @category MIDI
- */
-export const scaleNames = ['major', 'minor', 'natural minor', 'pentatonic']
-
-/**
  * @param note noteNumber: 0 ~ 127 or noteName e.g. 'C3'
  * @param detune [cent]
  * @param a4 A4 frequency [Hz]

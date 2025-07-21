@@ -21,6 +21,7 @@ describe('unit test', () => {
     expect(noteNumber('C5')).toBe(72)
     expect(noteNumber('C0')).toBe(12)
     expect(noteNumber('C-1')).toBe(0)
+    expect(noteNumber('G9')).toBe(127)
     expect(noteNumber('C-2')).toBe(-12)
   })
 
