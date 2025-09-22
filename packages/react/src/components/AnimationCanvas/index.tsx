@@ -10,6 +10,13 @@ import {
 
 import { DrawingContext, drawingState, DrawingStateValue } from './canvas'
 
+/*
+TODO
+AbsoluteSizingProps, RelativeSizingPropsの型付けを強くする
+AbsoluteSizingPropsの場合、width, heightは必須
+RelativeSizingPropsのの場合、relativeSizeは必須、reduceFlickeringはオプショナル
+*/
+
 function setDprConfig(
   canvas: HTMLCanvasElement,
   context: CanvasRenderingContext2D,

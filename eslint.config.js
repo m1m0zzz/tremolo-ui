@@ -56,6 +56,7 @@ export default [
         },
       ],
       'import/named': 'off',
+      'import/no-named-as-default': 'off',
       'import/no-unresolved': 'off',
       'import/order': [
         'error',

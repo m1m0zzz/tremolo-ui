@@ -117,7 +117,7 @@ export const InternalInput = forwardRef<
         event.preventDefault()
         const x = key == 'ArrowUp' ? keyboard[1] : -keyboard[1]
         const parsed = parseValue(String(updateValueByEvent(keyboard[0], x)))
-        console.log('key control')
+        // console.log('key control')
         onChange?.(parsed.rawValue, parsed.formatValue)
       },
       [keyboard, readonly, onChange, updateValueByEvent],
@@ -131,7 +131,7 @@ export const InternalInput = forwardRef<
         if (!onChange || event.deltaY == 0) return
         const x = Math.sign(event.deltaY) * -wheel[1]
         const parsed = parseValue(String(updateValueByEvent(wheel[0], x)))
-        console.log('wheel control')
+        // console.log('wheel control')
         onChange?.(parsed.rawValue, parsed.formatValue)
       },
       { passive: false },
