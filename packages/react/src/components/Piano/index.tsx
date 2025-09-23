@@ -76,6 +76,8 @@ export interface PianoProps {
   children?: ReactElement | ReactElement[]
 }
 
+const blackPerWhiteWidth = defaultBlackKeyWidth / defaultWhiteKeyWidth // 0.65
+
 /**
  * Customizable piano component.
  * @category Piano
@@ -115,21 +117,20 @@ export function Piano({
   const staticWidth = (whiteNoteWidth + padding) * whiteNoteCount
   // const blackNoteShiftPercent = 0.3
 
-  // TODO: if fill setWhiteNoteWidth
-  // useMemo
-  // __width
   const childrenWithProps = useMemo(() => {
     return (
       children &&
       React.Children.map(children, (child, index) => {
         if (React.isValidElement(child)) {
-          const props = { ref: keyRefs.current[index] }
+          const __width =
+            child.type == WhiteKey ? whiteNoteWidth : whiteNoteWidth * 0.65
+          const props = { ref: keyRefs.current[index], __width }
           return React.cloneElement(child, props)
         }
         return child
       })
     )
-  }, [children])
+  }, [children, whiteNoteWidth])
 
   // --- internal functions ---
   const notePosition = useCallback(
@@ -149,10 +150,8 @@ export function Piano({
         B: 6,
       }
 
-      const whiteNoteWidth = defaultWhiteKeyWidth
-      const blackNoteWidth = defaultBlackKeyWidth
+      const blackNoteWidth = whiteNoteWidth * blackPerWhiteWidth
       const padding = 1
-
       const targetNoteKey = noteKey(note)
       const firstNoteKey = noteKey(noteRange.first)
       const octave = Math.floor((note - noteRange.first) / 12)
@@ -163,7 +162,7 @@ export function Piano({
       const blackKeyOffset = isBlackKey(note) ? blackNoteWidth / 2 : 0
       return pos * w + (octave + octaveOffset) * 7 * w - blackKeyOffset
     },
-    [noteRange.first],
+    [noteRange.first, whiteNoteWidth],
   )
 
   const getHitKeyIndex = useCallback(
@@ -174,7 +173,9 @@ export function Piano({
       for (let i = 0; i < notes.length; i++) {
         const note = notes[i]
         const pos = notePosition(note)
-        const w = isWhiteKey(note) ? defaultWhiteKeyWidth : defaultBlackKeyWidth
+        const w = isWhiteKey(note)
+          ? whiteNoteWidth
+          : whiteNoteWidth * blackPerWhiteWidth
         const h = isWhiteKey(note) ? containerHeight : containerHeight * 0.6
         if (pos <= x && x < pos + w && 0 <= y && y < h) {
           return note
@@ -182,7 +183,7 @@ export function Piano({
       }
       return -1
     },
-    [blackNotes, notePosition, whiteNotes],
+    [blackNotes, notePosition, whiteNoteWidth, whiteNotes],
   )
 
   // TODO: 単一のポインターに対しては、useDragで対応可能だが、
@@ -259,6 +260,7 @@ export function Piano({
 
   return (
     <PianoProvider
+      notePosition={notePosition}
       noteRange={noteRange}
       glissando={glissando}
       midiMax={midiMax}
@@ -285,18 +287,20 @@ export function Piano({
         {...props}
       >
         {childrenWithProps ||
-          getNoteRangeArray(noteRange).map((note, index) =>
+          noteRangeArray.map((note, index) =>
             isWhiteKey(note) ? (
               <WhiteKey
                 ref={keyRefs.current[index]}
                 key={note}
                 noteNumber={note}
+                __width={whiteNoteWidth}
               />
             ) : (
               <BlackKey
                 ref={keyRefs.current[index]}
                 key={note}
                 noteNumber={note}
+                __width={whiteNoteWidth * blackPerWhiteWidth}
               />
             ),
           )}

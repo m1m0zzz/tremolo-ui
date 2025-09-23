@@ -143,18 +143,16 @@ export const Range = () => {
 
 export const Styling = () => {
   const range = { first: noteNumber('C3'), last: noteNumber('B4') }
-  const [activeIndex, setActiveIndex] = useState(-1)
 
   return (
     <Piano noteRange={range} keyboardShortcuts={SHORTCUTS.HOME_ROW}>
-      {getNoteRangeArray(range).map((note, index) => {
+      {getNoteRangeArray(range).map((note) => {
         return isWhiteKey(note) ? (
           <WhiteKey
             key={note}
             noteNumber={note}
-            bg={activeIndex == index ? 'red' : '#83888a'}
+            bg="#83888a"
             activeBg="#5acee8"
-            onClick={() => setActiveIndex(index)}
           >
             <KeyLabel
               label={(note) => {
@@ -171,9 +169,8 @@ export const Styling = () => {
           <BlackKey
             key={note}
             noteNumber={note}
-            bg={activeIndex == index ? 'red' : '#333536'}
+            bg="#333536"
             activeBg="#5acee8"
-            onClick={() => setActiveIndex(index)}
           />
         )
       })}
