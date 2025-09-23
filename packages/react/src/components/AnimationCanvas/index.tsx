@@ -167,7 +167,7 @@ export function AnimationCanvas({
       const memoCanvas = memoCanvasRef.current
       const memoContext = memoCanvas?.getContext('2d', options)
 
-      const resizeObserver = new ResizeObserver((entries) => {
+      const ro = new ResizeObserver((entries) => {
         for (const entry of entries) {
           // Prevents loss of some context when the canvas is resized
           // TODO: saving scale and translate
@@ -207,7 +207,7 @@ export function AnimationCanvas({
           }
         }
       })
-      resizeObserver.observe(parent)
+      ro.observe(parent)
 
       const w = Math.floor(parent.clientWidth)
       const h = Math.floor(parent.clientHeight)
@@ -222,7 +222,7 @@ export function AnimationCanvas({
 
       return () => {
         if (reqIdRef.current) cancelAnimationFrame(reqIdRef.current)
-        resizeObserver.unobserve(parent)
+        ro.disconnect()
       }
     } else {
       const rect = canvas.getBoundingClientRect()
