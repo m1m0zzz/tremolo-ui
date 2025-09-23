@@ -60,6 +60,9 @@ export function noteNumber(noteName: string) {
 
 /**
  * Convert noteNumber to noteName
+ * C-1 = 0
+ * G9 = 127
+ * @param noteNumber noteNumber
  * @category MIDI
  */
 export function noteName(noteNumber: number): `${NoteKey}${number}` {
