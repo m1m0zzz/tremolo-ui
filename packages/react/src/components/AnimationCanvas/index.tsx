@@ -32,13 +32,35 @@ function setDprConfig(
 }
 
 /** @category AnimationCanvas */
+export type InitFunction = (
+  context: CanvasRenderingContext2D,
+  option: {
+    /** current canvas width */
+    width: number
+    /** current canvas height */
+    height: number
+  },
+) => void
+
+/** @category AnimationCanvas */
 export type DrawFunction = (
   // TODO: saving scale and translate
   // context: Omit<CanvasRenderingContext2D, 'save' | 'restore' | 'scale'>,
   context: CanvasRenderingContext2D,
-  width: RefObject<number>,
-  height: RefObject<number>,
-  count: number,
+  option: {
+    /** current canvas width */
+    width: number
+    /** current canvas height */
+    height: number
+    /** frame count */
+    count: number
+    /** delta time (ms) */
+    deltaTime: number
+    /** elapsed time (ms) */
+    elapsedTime: number
+    /** frame per second */
+    fps: number
+  },
 ) => void
 
 /** @category AnimationCanvas */
@@ -47,7 +69,7 @@ export interface CommonProps {
    * @see https://developer.mozilla.org/docs/Web/API/HTMLCanvasElement/getContext#contextattributes
    */
   options?: CanvasRenderingContext2DSettings
-  init?: DrawFunction
+  init?: InitFunction
   draw: DrawFunction
 }
 
@@ -103,6 +125,8 @@ export function AnimationCanvas({
   const reqIdRef = useRef(-1)
   const widthRef = useRef(0)
   const heightRef = useRef(0)
+  const deltaMemoRef = useRef(-1)
+  const startTimeRef = useRef(-1)
 
   const loop = useCallback(
     (
@@ -111,10 +135,21 @@ export function AnimationCanvas({
       height: RefObject<number>,
       count: number,
     ) => {
+      const now = performance.now()
+      const deltaTime = now - deltaMemoRef.current
+      const elapsedTime = now - startTimeRef.current
+      deltaMemoRef.current = now
       reqIdRef.current = requestAnimationFrame(() =>
         loop(context, width, height, count + 1),
       )
-      draw(context, width, height, count + 1)
+      draw(context, {
+        width: width.current,
+        height: height.current,
+        count: count + 1,
+        deltaTime,
+        elapsedTime,
+        fps: 1000 / deltaTime,
+      })
     },
     [draw],
   )
@@ -133,9 +168,6 @@ export function AnimationCanvas({
       const memoContext = memoCanvas?.getContext('2d', options)
 
       const resizeObserver = new ResizeObserver((entries) => {
-        // TODO: If the parent element has no absolute height, the height increases infinitely.
-        //     : 親要素に絶対的な高さを持たない場合、高さは無限に増加します。
-        // https://zenn.dev/megeton/articles/be1c677e174c84#%E6%A0%B9%E6%9C%AC%E7%9A%84%E3%81%AB-resizeobserver-loop-limit-exceeded-%E3%81%8C%E5%87%BA%E3%82%8B%E5%95%8F%E9%A1%8C%E3%81%AB%E5%90%91%E3%81%8D%E5%90%88%E3%81%86
         for (const entry of entries) {
           // Prevents loss of some context when the canvas is resized
           // TODO: saving scale and translate
@@ -181,8 +213,12 @@ export function AnimationCanvas({
       const h = Math.floor(parent.clientHeight)
       setDprConfig(canvas, context, w, h, dpr)
 
-      if (init) init(context, widthRef, heightRef, 0)
-      loop(context, widthRef, heightRef, 0)
+      if (init)
+        init(context, { width: widthRef.current, height: heightRef.current })
+      const now = performance.now()
+      deltaMemoRef.current = now
+      startTimeRef.current = now
+      loop(context, widthRef, heightRef, -1)
 
       return () => {
         if (reqIdRef.current) cancelAnimationFrame(reqIdRef.current)
@@ -194,8 +230,12 @@ export function AnimationCanvas({
       widthRef.current = rect.width
       heightRef.current = rect.height
 
-      if (init) init(context, widthRef, heightRef, 0)
-      loop(context, widthRef, heightRef, 0)
+      if (init)
+        init(context, { width: widthRef.current, height: heightRef.current })
+      const now = performance.now()
+      deltaMemoRef.current = now
+      startTimeRef.current = now
+      loop(context, widthRef, heightRef, -1)
 
       return () => {
         if (reqIdRef.current) cancelAnimationFrame(reqIdRef.current)

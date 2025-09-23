@@ -245,18 +245,16 @@ export const AnimationKnob = forwardRef<AnimationKnobMethods, Props>(
           draw={
             draw
               ? draw
-              : (ctx, width, height) => {
+              : (ctx, { width, height }) => {
                   const p = normalizeValue(value, min, max, skew)
                   const startP = normalizeValue(startValue, min, max, skew)
-                  const w = width.current,
-                    cx = w / 2
-                  const h = height.current,
-                    cy = h / 2
+                  const cx = width / 2
+                  const cy = height / 2
                   const r = Math.min(cx, cy)
                   if (r <= 0) return
 
                   // reset
-                  ctx.clearRect(0, 0, w, h)
+                  ctx.clearRect(0, 0, width, height)
                   ctx.lineCap = 'butt'
 
                   // bg

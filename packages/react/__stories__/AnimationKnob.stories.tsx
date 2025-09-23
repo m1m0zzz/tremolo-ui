@@ -186,14 +186,12 @@ export const AdvancedImagiroKnob = () => {
           onChange={(v) => setValue(v)}
           wheel={['normalized', 0.1]}
           style={{ display: 'block' }}
-          draw={(ctx, width, height) => {
-            const w = width.current
-            const h = height.current
-            ctx.clearRect(0, 0, w, h)
+          draw={(ctx, { width, height }) => {
+            ctx.clearRect(0, 0, width, height)
             const p = normalizeValue(value, 0, 100)
             const inv = normalizeValue(100 - value, 0, 100)
             ctx.beginPath()
-            ctx.rect(0, h * inv, w, h * p)
+            ctx.rect(0, height * inv, width, height * p)
             ctx.fillStyle = `rgba(106, 155, 121, ${p})`
             ctx.fill()
 

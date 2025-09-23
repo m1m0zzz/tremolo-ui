@@ -38,18 +38,16 @@ export const Basic: Story = {
             ctx.font = '16px sans-serif'
             ctx.strokeStyle = 'blue'
           }}
-          draw={(ctx, w, h, count) => {
-            ctx.clearRect(0, 0, w.current, h.current)
+          draw={(ctx, { width, height, count }) => {
+            ctx.clearRect(0, 0, width, height)
             ctx.fillText(`frame: ${count}`, 0, 16)
             // draw sine wave
-            const halfH = h.current / 2
+            const halfH = height / 2
             ctx.beginPath()
-            for (let i = 0; i < w.current; i++) {
+            for (let i = 0; i < width; i++) {
               const y =
                 halfH +
-                halfH *
-                  0.5 *
-                  Math.sin((4 * Math.PI * (i + count * 2)) / w.current)
+                halfH * 0.5 * Math.sin((4 * Math.PI * (i + count * 2)) / width)
               if (i == 0) ctx.moveTo(i, y)
               else ctx.lineTo(i, y)
             }
@@ -87,38 +85,49 @@ export const RelativeSize = () => {
       <AnimationCanvas
         relativeSize={true}
         onContextMenu={(e) => e.preventDefault()}
-        draw={(ctx, w, h, count) => {
-          ctx.clearRect(0, 0, w.current, h.current)
+        draw={(ctx, { width, height, count, deltaTime, fps, elapsedTime }) => {
+          ctx.clearRect(0, 0, width, height)
 
           // frame
           const pad = 30
           const interval = 30
           ctx.strokeStyle = 'black'
-          for (let x = 0; x < w.current + h.current; x += interval) {
+          for (let x = 0; x < width + height; x += interval) {
             ctx.beginPath()
             ctx.moveTo(x, 0)
             ctx.lineTo(0, x)
             ctx.stroke()
           }
-          ctx.rect(pad, pad, w.current - pad * 2, h.current - pad * 2)
+          ctx.rect(pad, pad, width - pad * 2, height - pad * 2)
           ctx.fillStyle = 'white'
           ctx.fill()
 
           // text
           ctx.fillStyle = 'black'
           ctx.font = '16px sans-serif'
-          fillTextCenter(ctx, `w: ${w.current}`, w.current / 2, h.current / 2)
           fillTextCenter(
             ctx,
-            `h: ${h.current}`,
-            w.current / 2,
-            h.current / 2 + 20,
+            `{ w: ${width}, h: ${height} }`,
+            width / 2,
+            height / 2 - 20,
           )
           fillTextCenter(
             ctx,
-            `count: ${count}`,
-            w.current / 2,
-            h.current / 2 + 40,
+            `count: ${count}, time: ${(elapsedTime / 1000).toFixed(2)} s`,
+            width / 2,
+            height / 2,
+          )
+          fillTextCenter(
+            ctx,
+            `fps: ${fps.toFixed()}`,
+            width / 2,
+            height / 2 + 20,
+          )
+          fillTextCenter(
+            ctx,
+            `delta: ${deltaTime.toFixed(2)} ms`,
+            width / 2,
+            height / 2 + 40,
           )
         }}
       />

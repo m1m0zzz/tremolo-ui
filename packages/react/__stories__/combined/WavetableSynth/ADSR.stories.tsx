@@ -45,15 +45,13 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
       <div className={styles.canvas}>
         <AnimationCanvas
           relativeSize
-          draw={(ctx, _w, _h) => {
-            const w = _w.current
-            const h = _h.current
-            ctx.clearRect(0, 0, w, h)
+          draw={(ctx, { width, height }) => {
+            ctx.clearRect(0, 0, width, height)
 
             const pad = 10
-            const sectionW = (w - pad * 2) / 4
+            const sectionW = (width - pad * 2) / 4
             const x0 = pad
-            const y0 = h - pad
+            const y0 = height - pad
             const x1 =
               x0 + mapValue(attack, MIN_ATTACK, MAX_ATTACK, 10, sectionW)
             const y1 = pad
@@ -63,7 +61,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
               MIN_SUSTAIN,
               MAX_SUSTAIN,
               pad,
-              h - pad,
+              height - pad,
             )
             const x3 = x2 + sectionW
             const y3 = mapValue(
@@ -71,11 +69,11 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
               MIN_SUSTAIN,
               MAX_SUSTAIN,
               pad,
-              h - pad,
+              height - pad,
             )
             const x4 =
               x3 + mapValue(release, MIN_RELEASE, MAX_RELEASE, 10, sectionW)
-            const y4 = h - pad
+            const y4 = height - pad
 
             // bg shadow
             if (keyState && keyState.timestamp) {
@@ -88,7 +86,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
                 const per = clamp(msec / attack, 0, 1)
                 x = x0 + (x1 - x0) * per
                 ctx.lineTo(x, y0 + (y1 - y0) * per)
-                // ctx.lineTo(x0 + (x1 - x0) * per, h - pad)
+                // ctx.lineTo(x0 + (x1 - x0) * per, height - pad)
                 if (msec - attack > 0) {
                   const per = clamp((msec - attack) / decay, 0, 1)
                   x = x1 + (x2 - x1) * per
@@ -99,7 +97,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
                   x = x2 + (x3 - x2) * per
                   ctx.lineTo(x, y3)
                 }
-                ctx.lineTo(x, h - pad)
+                ctx.lineTo(x, height - pad)
                 ctx.closePath()
                 ctx.fill()
               } else {
@@ -107,8 +105,8 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
                   ctx.moveTo(x3, y3)
                   const per = clamp(msec / release, 0, 1)
                   ctx.lineTo(x3 + (x4 - x3) * per, y3 + (y4 - y2) * per)
-                  ctx.lineTo(x3 + (x4 - x3) * per, h - pad)
-                  ctx.lineTo(x3, h - pad)
+                  ctx.lineTo(x3 + (x4 - x3) * per, height - pad)
+                  ctx.lineTo(x3, height - pad)
                   ctx.closePath()
                   ctx.fill()
                 }

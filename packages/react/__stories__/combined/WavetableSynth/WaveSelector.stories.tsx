@@ -104,21 +104,21 @@ export const WaveSelector = ({
             <AnimationCanvas
               width={180}
               height={170}
-              draw={(ctx, _w, _h) => {
+              draw={(ctx, { width, height }) => {
                 const padX = 10
                 const padY = 21
-                const w = _w.current
-                const h = _h.current
                 const v = clamp(position, 0, 100)
-                ctx.clearRect(0, 0, w, h)
+                ctx.clearRect(0, 0, width, height)
                 ctx.lineWidth = 2
                 function drawWave(wave: number[], pos: number) {
                   ctx.beginPath()
                   for (let i = 0; i < wave.length; i++) {
                     const sig = wave[i]
                     const arg: [number, number] = [
-                      padX + ((w - padX * 2) * i) / wave.length,
-                      padY + (h - padY * 2) * (100 - pos) * 0.01 - sig * 18,
+                      padX + ((width - padX * 2) * i) / wave.length,
+                      padY +
+                        (height - padY * 2) * (100 - pos) * 0.01 -
+                        sig * 18,
                     ]
                     if (i == 0) {
                       ctx.moveTo(...arg)

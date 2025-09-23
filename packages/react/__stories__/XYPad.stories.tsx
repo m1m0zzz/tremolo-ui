@@ -136,19 +136,17 @@ const ThumbAnimation = memo(() => {
     <AnimationCanvas
       width={40}
       height={40}
-      draw={(ctx, _w, _h, count) => {
-        const w = _w.current
-        const h = _h.current
+      draw={(ctx, { width, height, count }) => {
         // bg
-        ctx.clearRect(0, 0, w, h)
+        ctx.clearRect(0, 0, width, height)
         ctx.fill()
 
         if (count % 20 == 0) {
           const size = rand(15, 8)
           const padding = 25
           createDot(
-            rand(w - padding, padding),
-            rand(w - padding, padding),
+            rand(width - padding, padding),
+            rand(width - padding, padding),
             size,
           )
         }
