@@ -16,19 +16,17 @@ function App() {
         init={(ctx) => {
           ctx.font = '16px sans-serif'
         }}
-        draw={(ctx, w, h, count) => {
-          ctx.clearRect(0, 0, w.current, h.current)
+        draw={(ctx, { width, height, count }) => {
+          ctx.clearRect(0, 0, width, height)
           ctx.fillText(`frame: ${count}`, 0, 16)
           // draw sine wave
-          const halfH = h.current / 2
+          const halfH = height / 2
           ctx.strokeStyle = color
           ctx.beginPath()
-          for (let i = 0; i < w.current; i++) {
+          for (let i = 0; i < width; i++) {
             const y =
               halfH +
-              halfH *
-                0.5 *
-                Math.sin((4 * Math.PI * (i + count * 2)) / w.current)
+              halfH * 0.5 * Math.sin((4 * Math.PI * (i + count * 2)) / width)
             if (i == 0) ctx.moveTo(i, y)
             else ctx.lineTo(i, y)
           }

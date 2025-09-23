@@ -1,6 +1,7 @@
 import CodeBlock from '@theme/CodeBlock'
 import GitHubLink from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/components/animation-canvas/basic'
+import saveRestore from '!!raw-loader!@site/examples/components/animation-canvas/save-restore'
 
 # AnimationCanvas
 
@@ -16,6 +17,12 @@ A simple animatable canvas with `requestAnimationFrame()`
 import { AnimationCanvas } from '@tremolo-ui/react'
 ```
 
+
+## Features
+
+- Adapt devicePixelRatio.
+- Reduce flicking when resized.
+
 ## Examples
 
 ### Basic
@@ -26,3 +33,12 @@ import { AnimationCanvas } from '@tremolo-ui/react'
   showCode
   sourcePath='examples/components/animation-canvas/basic.tsx'
 >{basic}</CodeBlock>
+
+### Save / Restore
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/animation-canvas/save-restore.tsx'
+>{saveRestore}</CodeBlock>
