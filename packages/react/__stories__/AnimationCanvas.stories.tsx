@@ -83,7 +83,7 @@ export const RelativeSize = () => {
       }}
     >
       <AnimationCanvas
-        relativeSize={true}
+        relativeSize
         onContextMenu={(e) => e.preventDefault()}
         draw={(ctx, { width, height, count, deltaTime, fps, elapsedTime }) => {
           ctx.clearRect(0, 0, width, height)
@@ -128,6 +128,48 @@ export const RelativeSize = () => {
             `delta: ${deltaTime.toFixed(2)} ms`,
             width / 2,
             height / 2 + 40,
+          )
+        }}
+      />
+    </div>
+  )
+}
+
+export const SavingContext = () => {
+  return (
+    <div
+      style={{
+        width: 300,
+        height: 200,
+        minWidth: 150,
+        minHeight: 150,
+        resize: 'both',
+        overflow: 'hidden',
+        border: '1px solid black',
+      }}
+    >
+      <AnimationCanvas
+        relativeSize
+        draw={(ctx, { width, height, elapsedTime, count }) => {
+          ctx.save()
+          ctx.clearRect(0, 0, width, height)
+
+          ctx.fillStyle = 'gray'
+          ctx.fillRect(40, 40, 30, 30)
+
+          ctx.scale(2, 2)
+          ctx.fillStyle = 'red'
+          ctx.fillRect(40, 40, 30, 30)
+
+          ctx.restore()
+
+          // text
+          ctx.fillStyle = 'black'
+          ctx.font = '16px sans-serif'
+          ctx.fillText(
+            `frame: ${count}, ${(elapsedTime / 1000).toFixed(2)} s`,
+            0,
+            16,
           )
         }}
       />

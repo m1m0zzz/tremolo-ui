@@ -26,6 +26,8 @@ function setDprConfig(
 ) {
   canvas.width = width * dpr
   canvas.height = height * dpr
+  // Reset current transformation matrix to the identity matrix
+  context.setTransform(1, 0, 0, 1, 0, 0)
   context.scale(dpr, dpr)
   canvas.style.width = `${width}px`
   canvas.style.height = `${height}px`
@@ -163,7 +165,7 @@ export function AnimationCanvas({
     const canvas = canvasRef.current
     const context = canvas.getContext('2d', options)
     if (!context) throw new Error('Cannot get canvas context.')
-    const dpr = globalThis.window.devicePixelRatio
+    const dpr = globalThis.devicePixelRatio
 
     if (relativeSize) {
       const parent = canvas.parentElement
@@ -174,14 +176,13 @@ export function AnimationCanvas({
       const ro = new ResizeObserver((entries) => {
         for (const entry of entries) {
           // Prevents loss of some context when the canvas is resized
-          // TODO: saving scale and translate
           const contextMemo = {} as DrawingContext
           for (const prop of drawingState) {
             ;(contextMemo[prop] as DrawingStateValue) = context[prop]
           }
 
-          const w = Math.floor(entry.contentRect.width)
-          const h = Math.floor(entry.contentRect.height)
+          const w = entry.contentRect.width
+          const h = entry.contentRect.height
 
           if (reduceFlickering && memoCanvas && memoContext) {
             memoCanvas.width = w * dpr
@@ -213,8 +214,8 @@ export function AnimationCanvas({
       })
       ro.observe(parent)
 
-      const w = Math.floor(parent.clientWidth)
-      const h = Math.floor(parent.clientHeight)
+      const w = parent.clientWidth
+      const h = parent.clientHeight
       setDprConfig(canvas, context, w, h, dpr)
 
       if (init)
