@@ -86,32 +86,36 @@ export interface RelativeSizingProps {
 }
 
 /** @category AnimationCanvas */
-export type AnimationCanvasProps = AbsoluteSizingProps &
-  RelativeSizingProps &
-  CommonProps
+export type AnimationCanvasProps = CommonProps &
+  AbsoluteSizingProps &
+  RelativeSizingProps
 
 /**
  * A simple animatable canvas with requestAnimationFrame()
  * @category AnimationCanvas
  */
 export function AnimationCanvas(
-  props: AbsoluteSizingProps &
-    CommonProps &
+  props: CommonProps &
+    AbsoluteSizingProps &
     Omit<ComponentPropsWithoutRef<'canvas'>, keyof AnimationCanvasProps>,
 ): ReactElement
 export function AnimationCanvas(
-  props: RelativeSizingProps &
-    CommonProps &
+  pros: CommonProps &
+    RelativeSizingProps &
     Omit<ComponentPropsWithoutRef<'canvas'>, keyof AnimationCanvasProps>,
 ): ReactElement
 export function AnimationCanvas({
-  width = 100,
-  height = 100,
-  relativeSize = false,
-  reduceFlickering = true,
+  // common
   options,
   init,
   draw,
+  // absolute
+  width = 100,
+  height = 100,
+  // relative
+  relativeSize,
+  reduceFlickering = true,
+  // canvas props
   className,
   onContextMenu = (event) => event.preventDefault(),
   ...props
