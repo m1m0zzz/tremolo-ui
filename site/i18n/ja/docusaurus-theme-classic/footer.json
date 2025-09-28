@@ -3,37 +3,17 @@
     "message": "Docs",
     "description": "The title of the footer links column with title=Docs in the footer"
   },
-  "link.title.More": {
-    "message": "More",
-    "description": "The title of the footer links column with title=More in the footer"
-  },
-  "link.item.label.GitHub": {
-    "message": "GitHub",
-    "description": "The label of footer link with label=GitHub linking to https://github.com/m1m0zzz/tremolo-ui"
-  },
-  "link.item.label.npm": {
-    "message": "npm",
-    "description": "The label of footer link with label=npm linking to https://www.npmjs.com/org/tremolo-ui"
-  },
-  "copyright": {
-    "message": "Copyright © 2024 mimoz.",
-    "description": "The footer copyright"
-  },
-  "link.title.UI Catalog": {
-    "message": "UI Catalog",
-    "description": "The title of the footer links column with title=UI Catalog in the footer"
-  },
-  "link.item.label.React": {
-    "message": "React",
-    "description": "The label of footer link with label=React linking to https://tremolo-ui-sb-react.vercel.app/"
-  },
-  "link.item.label.Web Components": {
-    "message": "Web Components",
-    "description": "The label of footer link with label=Web Components linking to https://tremolo-ui-sb-web-components.vercel.app/"
-  },
   "link.title.API": {
     "message": "API",
     "description": "The title of the footer links column with title=API in the footer"
+  },
+  "link.title.Other": {
+    "message": "Other",
+    "description": "The title of the footer links column with title=Other in the footer"
+  },
+  "link.title.More": {
+    "message": "More",
+    "description": "The title of the footer links column with title=More in the footer"
   },
   "link.item.label.introduction": {
     "message": "introduction",
@@ -42,5 +22,41 @@
   "link.item.label.functions": {
     "message": "functions",
     "description": "The label of footer link with label=functions linking to /docs/api/functions"
+  },
+  "link.item.label.React": {
+    "message": "React",
+    "description": "The label of footer link with label=React linking to /docs/api/react"
+  },
+  "link.item.label.Contributing": {
+    "message": "Contributing",
+    "description": "The label of footer link with label=Contributing linking to /docs/guides/CONTRIBUTING/"
+  },
+  "link.item.label.Security": {
+    "message": "Security",
+    "description": "The label of footer link with label=Security linking to /docs/guides/SECURITY/"
+  },
+  "link.item.label.Changelog": {
+    "message": "Changelog",
+    "description": "The label of footer link with label=Changelog linking to /docs/support/CHANGELOG/"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHub",
+    "description": "The label of footer link with label=GitHub linking to https://github.com/m1m0zzz/tremolo-ui"
+  },
+  "link.item.label.Storybook React": {
+    "message": "Storybook React",
+    "description": "The label of footer link with label=Storybook React linking to https://tremolo-ui-sb-react.vercel.app/"
+  },
+  "link.item.label.Storybook Web Components": {
+    "message": "Storybook Web Components",
+    "description": "The label of footer link with label=Storybook Web Components linking to https://tremolo-ui-sb-web-components.vercel.app/"
+  },
+  "link.item.label.npm": {
+    "message": "npm",
+    "description": "The label of footer link with label=npm linking to https://www.npmjs.com/org/tremolo-ui"
+  },
+  "copyright": {
+    "message": "Copyright © 2025 mimoz.",
+    "description": "The footer copyright"
   }
 }

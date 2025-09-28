@@ -7,14 +7,6 @@
     "message": "My Site Logo",
     "description": "The alt text of navbar logo"
   },
-  "item.label.React": {
-    "message": "React",
-    "description": "Navbar item with label React"
-  },
-  "item.label.Web Components": {
-    "message": "Web Components",
-    "description": "Navbar item with label Web Components"
-  },
   "item.label.Docs": {
     "message": "Docs",
     "description": "Navbar item with label Docs"
@@ -27,12 +19,12 @@
     "message": "Storybook",
     "description": "Navbar item with label Storybook"
   },
-  "item.label.Template": {
-    "message": "Template",
-    "description": "Navbar item with label Template"
+  "item.label.React": {
+    "message": "React",
+    "description": "Navbar item with label React"
   },
-  "item.label.Templates": {
-    "message": "Templates",
-    "description": "Navbar item with label Templates"
+  "item.label.Web Components": {
+    "message": "Web Components",
+    "description": "Navbar item with label Web Components"
   }
 }
