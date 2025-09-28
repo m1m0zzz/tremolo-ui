@@ -3,7 +3,7 @@ import Layout from '@theme/Layout'
 
 import styles from './index.module.css'
 
-export default function Templates(): JSX.Element {
+export default function Templates() {
   return (
     <Layout>
       <main className={styles.main}>

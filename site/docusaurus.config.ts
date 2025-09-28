@@ -25,6 +25,7 @@ function typedocPlugins() {
   console.log('gitRevision: ', process.env.COMMIT_SHA)
   return [
     [
+      // for Vercel Deploy
       'docusaurus-plugin-typedoc',
       {
         id: 'functions',
@@ -90,7 +91,6 @@ const config: Config = {
   trailingSlash: true,
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'throw',
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
