@@ -1,9 +1,11 @@
 {
   "name": "@tremolo-ui/react",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "React component library for audio app",
   "type": "module",
-  "sideEffects": ["*.css"],
+  "sideEffects": [
+    "*.css"
+  ],
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/cjs/types/index.d.ts",
