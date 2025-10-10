@@ -5,19 +5,83 @@ import './components/Piano/index.css'
 import './components/Slider/index.css'
 import './components/XYPad/index.css'
 
-export * from './components/AnimationCanvas'
-export * from './components/AnimationKnob'
-export * from './components/DragObserver'
-export * from './components/Knob'
-export * from './components/NumberInput'
-export * from './components/Piano'
-export * from './components/Slider'
-export * from './components/WheelObserver'
-export * from './components/XYPad'
+export {
+  type AbsoluteSizingProps,
+  AnimationCanvas,
+  type AnimationCanvasProps,
+  type CommonProps,
+  type DrawFunction,
+  type InitFunction,
+  type RelativeSizingProps,
+} from './components/AnimationCanvas'
+export {
+  AnimationKnob,
+  type AnimationKnobMethods,
+  type AnimationKnobProps,
+} from './components/AnimationKnob'
+export { DragObserver, type DragObserverProps } from './components/DragObserver'
+export { Knob, type KnobMethods, type KnobProps } from './components/Knob'
+export {
+  DecrementStepper,
+  type DecrementStepperProps,
+  IncrementStepper,
+  type IncrementStepperProps,
+  NumberInput,
+  type NumberInputMethods,
+  type NumberInputProps,
+  Stepper,
+  type StepperProps,
+} from './components/NumberInput'
+export {
+  BlackKey,
+  KeyLabel,
+  type KeyLabelProps,
+  type KeyMethods,
+  type KeyProps,
+  type KeyboardShortcuts,
+  Piano,
+  type PianoProps,
+  SHORTCUTS,
+  WhiteKey,
+  getNoteRangeArray,
+} from './components/Piano'
+export {
+  Scale,
+  ScaleOption,
+  type ScaleOptionProps,
+  type ScaleProps,
+  Slider,
+  type SliderMethods,
+  type SliderProps,
+  SliderThumb,
+  type SliderThumbMethods,
+  type SliderThumbProps,
+  SliderTrack,
+  type SliderTrackProps,
+  useSliderContext,
+} from './components/Slider'
+export {
+  WheelObserver,
+  type WheelObserverProps,
+} from './components/WheelObserver'
+export {
+  type AreaProps,
+  type ThumbProps,
+  type ValueOptions,
+  XYPad,
+  XYPadArea,
+  type XYPadMethods,
+  type XYPadProps,
+  XYPadThumb,
+  type XYPadThumbMethods,
+} from './components/XYPad'
 
-export * from './hooks/useAnimationFrame'
-export * from './hooks/useDrag'
-export * from './hooks/useDragWithElement'
-export * from './hooks/useEventListener'
-export * from './hooks/useInterval'
-export * from './hooks/useLongPress'
+export { useAnimationFrame } from './hooks/useAnimationFrame'
+export { useDrag, type UseDragProps } from './hooks/useDrag'
+export {
+  useDragWithElement,
+  type UseDragWithElementProps,
+} from './hooks/useDragWithElement'
+export { useEventListener } from './hooks/useEventListener'
+export { useInterval } from './hooks/useInterval'
+export { useLongPress } from './hooks/useLongPress'

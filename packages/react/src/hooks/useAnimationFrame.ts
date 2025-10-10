@@ -1,9 +1,9 @@
 import { DependencyList, useCallback, useEffect, useRef } from 'react'
 
-export const useAnimationFrame = (
+export function useAnimationFrame(
   callback = () => {},
   deps: DependencyList = [],
-) => {
+) {
   const reqIdRef = useRef(-1)
   const loop = useCallback(() => {
     reqIdRef.current = requestAnimationFrame(loop)
