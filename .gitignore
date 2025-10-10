@@ -1,5 +1,5 @@
 .rollup.cache/
-.vscode/setting.json
+.vscode/settings.json
 storybook-static/
 
 # Logs
