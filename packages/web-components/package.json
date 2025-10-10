@@ -2,6 +2,7 @@
   "name": "@tremolo-ui/web-components",
   "version": "0.0.1",
   "type": "module",
+  "sideEffects": ["*.css"],
   "scripts": {
     "sb": "storybook dev -p 6007",
     "build:sb": "storybook build",

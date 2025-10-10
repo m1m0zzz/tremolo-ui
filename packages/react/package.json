@@ -2,9 +2,10 @@
   "name": "@tremolo-ui/react",
   "version": "0.1.0",
   "description": "React component library for audio app",
+  "type": "module",
+  "sideEffects": ["*.css"],
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
-  "type": "module",
   "types": "dist/cjs/types/index.d.ts",
   "scripts": {
     "sb": "storybook dev -p 6006",
