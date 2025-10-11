@@ -132,7 +132,7 @@ const config: Config = {
         theme: {
           customCss: [
             './src/css/custom.css',
-            '../packages/react/dist/styles/index.css',
+            '../packages/react/dist/index.css',
           ],
         },
         sitemap: {

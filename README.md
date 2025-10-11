@@ -10,7 +10,7 @@ Components library for Audio Applications.
 
 *tremolo-ui is now* ***WIP***
 
-*An unstable version (0.0.x) has been released.*
+*An unstable version (0.x) has been released.*
 
 ## 🚩 Goals
 
@@ -22,23 +22,23 @@ Components library for Audio Applications.
 
 ## 📚 Docs
 
-**Tutorial & API**
+### Tutorial & API
 
-https://tremolo-ui.vercel.app/
+[https://tremolo-ui.vercel.app/](https://tremolo-ui.vercel.app/)
 
-**Storybook UI Catalog**
+### Storybook UI Catalog
 
 - [React](https://tremolo-ui-sb-react.vercel.app/)
 - [Web Components](https://tremolo-ui-sb-web-components.vercel.app/)
 
-
 ## 🦝 Contributing
+
 Please see [Contribution Guide](https://tremolo-ui.vercel.app/docs/guides/CONTRIBUTING)
 
 ## 🦺 Changelog
 
 Please see [CHANGELOG](https://tremolo-ui.vercel.app/docs/support/CHANGELOG)
 
-
 ## 📜 LICENSE
+
 tremolo-ui is [MIT License](./LICENSE)
