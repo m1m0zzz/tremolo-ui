@@ -46,8 +46,18 @@ npm version "$VERSION_TYPE" -w packages/react
 
 # --- Git コミット & タグ ---
 echo "📝 Committing changes..."
-git add $(find . -type f \( -name "package.json" -o -name "package-lock.json" \))
-git commit -m "publish: v$NEW_VERSION"
+
+FILES=$(find . \
+  \( -path "./node_modules" -o -path "./packages/*/node_modules" \) -prune -o \
+  \( -path "./package.json" -o -path "./package-lock.json" -o -path "./packages/*/package.json" -o -path "./packages/*/package-lock.json" \) \
+  -type f -print)
+
+if [[ -z "$FILES" ]]; then
+  echo "⚠️ コミット対象のファイルが見つかりません。"
+  exit 1
+fi
+
+git commit -m "publish: $NEW_VERSION"
 
 echo "🏷️ Creating git tag v$NEW_VERSION..."
 git tag "v$NEW_VERSION"
