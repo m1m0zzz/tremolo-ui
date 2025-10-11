@@ -6,11 +6,11 @@
   "sideEffects": false,
   "scripts": {
     "test": "jest",
-    "typecheck": "tsc",
-    "build:package": "tsc && rollup -c",
-    "watch:package": "rollup -c -w",
+    "typecheck": "tsc --noEmit",
+    "build:package": "tsc && tsdown",
+    "watch:package": "tsdown --watch",
     "clean": "npm run clean:build",
-    "clean:build": "rimraf ./dist .rollup.cache",
+    "clean:build": "rimraf ./dist",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "format": "prettier --write ."
   },
@@ -41,32 +41,32 @@
   "exports": {
     ".": {
       "require": {
-        "default": "./dist/cjs/index.js",
-        "types": "./dist/cjs/types/index.d.ts"
+        "default": "./dist/index.cjs",
+        "types": "./dist/index.d.cts"
       },
       "import": {
-        "default": "./dist/esm/index.js",
-        "types": "./dist/esm/types/index.d.ts"
+        "default": "./dist/index.js",
+        "types": "./dist/index.d.ts"
       }
     },
     "./NumberInput": {
       "require": {
-        "default": "./dist/cjs/components/NumberInput/type.js",
-        "types": "./dist/cjs/types/components/NumberInput/type.d.ts"
+        "default": "./dist/NumberInput/type.cjs",
+        "types": "./dist/types/NumberInput/type.d.cts"
       },
       "import": {
-        "default": "./dist/esm/components/NumberInput/type.js",
-        "types": "./dist/esm/types/components/NumberInput/type.d.ts"
+        "default": "./dist/NumberInput/type.js",
+        "types": "./dist/types/NumberInput/type.d.ts"
       }
     },
     "./Slider": {
       "require": {
-        "default": "./dist/cjs/components/Slider/type.js",
-        "types": "./dist/cjs/types/components/Slider/type.d.ts"
+        "default": "./dist/Slider/type.cjs",
+        "types": "./dist/types/Slider/type.d.cts"
       },
       "import": {
-        "default": "./dist/esm/components/Slider/type.js",
-        "types": "./dist/esm/types/components/Slider/type.d.ts"
+        "default": "./dist/Slider/type.js",
+        "types": "./dist/types/Slider/type.d.ts"
       }
     }
   }

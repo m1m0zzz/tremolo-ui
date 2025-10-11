@@ -15,6 +15,7 @@
     "noninteractive",
     "slotchange",
     "stackblitz",
+    "tsdown",
     "typedoc",
     "Vercel",
     "vite",
@@ -28,6 +29,7 @@
     "**/package-lock.json",
     "**/*.",
     "**/*.config.*",
-    "**/*.log"
+    "**/*.log",
+    "**/.gitignore"
   ]
 }

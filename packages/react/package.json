@@ -6,9 +6,9 @@
   "sideEffects": [
     "*.css"
   ],
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/cjs/types/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.cts",
   "scripts": {
     "sb": "storybook dev -p 6006",
     "typecheck": "tsc",
@@ -17,9 +17,9 @@
     "lint": "eslint --fix --ext .ts,.tsx .",
     "format": "prettier --write .",
     "test": "echo 'No test yet.'",
-    "build:package": "tsc && rollup -c",
+    "build:package": "tsc && tsdown",
     "clean": "npm run clean:build && npm run clean:sb",
-    "clean:build": "rimraf ./dist .rollup.cache",
+    "clean:build": "rimraf ./dist",
     "clean:sb": "rimraf ./storybook-static"
   },
   "devDependencies": {
@@ -36,8 +36,8 @@
     "@types/react-dom": "^19.0.4",
     "jest-environment-jsdom": "^29.7.0",
     "jotai": "^2.12.1",
-    "react": "19.x",
-    "react-dom": "19.x",
+    "react": "^19",
+    "react-dom": "^19",
     "storybook": "^8.6.7",
     "tone": "^15.0.4"
   },
@@ -46,7 +46,7 @@
     "react-dom": "^18 || ^19"
   },
   "dependencies": {
-    "@tremolo-ui/functions": "0.0.12",
+    "@tremolo-ui/functions": "^0.1.2",
     "clsx": "^2.1.1",
     "zustand": "^5.0.3"
   },
@@ -78,14 +78,14 @@
   "exports": {
     ".": {
       "require": {
-        "types": "./dist/cjs/types/index.d.ts",
-        "default": "./dist/cjs/index.js"
+        "default": "./dist/index.cjs",
+        "types": "./dist/index.d.cts"
       },
       "import": {
-        "types": "./dist/esm/types/index.d.ts",
-        "default": "./dist/esm/index.js"
+        "default": "./dist/index.js",
+        "types": "./dist/index.d.ts"
       }
     },
-    "./styles/index.css": "./dist/styles/index.css"
+    "./styles/index.css": "./dist/index.css"
   }
 }
