@@ -41,32 +41,32 @@
   "exports": {
     ".": {
       "require": {
-        "default": "./dist/index.cjs",
-        "types": "./dist/index.d.cts"
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
       },
       "import": {
-        "default": "./dist/index.js",
-        "types": "./dist/index.d.ts"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
       }
     },
     "./NumberInput": {
       "require": {
-        "default": "./dist/NumberInput/type.cjs",
-        "types": "./dist/types/NumberInput/type.d.cts"
+        "types": "./dist/types/NumberInput/type.d.cts",
+        "default": "./dist/NumberInput/type.cjs"
       },
       "import": {
-        "default": "./dist/NumberInput/type.js",
-        "types": "./dist/types/NumberInput/type.d.ts"
+        "types": "./dist/types/NumberInput/type.d.ts",
+        "default": "./dist/NumberInput/type.js"
       }
     },
     "./Slider": {
       "require": {
-        "default": "./dist/Slider/type.cjs",
-        "types": "./dist/types/Slider/type.d.cts"
+        "types": "./dist/types/Slider/type.d.cts",
+        "default": "./dist/Slider/type.cjs"
       },
       "import": {
-        "default": "./dist/Slider/type.js",
-        "types": "./dist/types/Slider/type.d.ts"
+        "types": "./dist/types/Slider/type.d.ts",
+        "default": "./dist/Slider/type.js"
       }
     }
   }

@@ -1,6 +1,11 @@
 import type { Preview } from '@storybook/react'
 
-import '../src/index' // import css without build
+import '../src/styles/index.css'
+import '../src/components/Knob/index.css'
+import '../src/components/NumberInput/index.css'
+import '../src/components/Piano/index.css'
+import '../src/components/Slider/index.css'
+import '../src/components/XYPad/index.css'
 
 const preview: Preview = {
   parameters: {
