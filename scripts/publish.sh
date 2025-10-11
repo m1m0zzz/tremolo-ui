@@ -57,6 +57,7 @@ if [[ -z "$FILES" ]]; then
   exit 1
 fi
 
+git add $FILES
 git commit -m "publish: $NEW_VERSION"
 
 echo "🏷️ Creating git tag v$NEW_VERSION..."
