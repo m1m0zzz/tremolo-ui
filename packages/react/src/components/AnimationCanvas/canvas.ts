@@ -28,3 +28,19 @@ export function isDrawingState(obj: unknown): obj is DrawingState {
   const d: string[] = [...drawingState]
   return typeof obj == 'string' && d.includes(obj)
 }
+
+export function setDprConfig(
+  canvas: HTMLCanvasElement,
+  context: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  dpr: number,
+) {
+  canvas.width = width * dpr
+  canvas.height = height * dpr
+  // Reset current transformation matrix to the identity matrix
+  context.setTransform(1, 0, 0, 1, 0, 0)
+  context.scale(dpr, dpr)
+  canvas.style.width = `${width}px`
+  canvas.style.height = `${height}px`
+}

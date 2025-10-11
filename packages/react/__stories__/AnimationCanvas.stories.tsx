@@ -1,9 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react'
+import { useState } from 'react'
 
 import {
   AnimationCanvas,
   AnimationCanvasProps,
 } from '../src/components/AnimationCanvas'
+import { Slider } from '../src/components/Slider'
 
 export default {
   title: 'Components/AnimationCanvas',
@@ -84,7 +86,6 @@ export const RelativeSize = () => {
     >
       <AnimationCanvas
         relativeSize
-        onContextMenu={(e) => e.preventDefault()}
         draw={(ctx, { width, height, count, deltaTime, fps, elapsedTime }) => {
           ctx.clearRect(0, 0, width, height)
 
@@ -174,5 +175,95 @@ export const SavingContext = () => {
         }}
       />
     </div>
+  )
+}
+
+export const NoAnimate = () => {
+  const [value, setValue] = useState(0)
+
+  return (
+    <section>
+      <p>
+        Sample that dynamically changes the drawing without animation, using
+        re-rendering
+      </p>
+      <p>You can see that it redraws when you move the slider.</p>
+      <div
+        style={{
+          width: 300,
+          height: 200,
+          minWidth: 150,
+          minHeight: 150,
+          resize: 'both',
+          overflow: 'hidden',
+          border: '1px solid black',
+        }}
+      >
+        <AnimationCanvas
+          animate={false}
+          relativeSize
+          reduceFlickering={false}
+          draw={(
+            ctx,
+            { width, height, count, deltaTime, fps, elapsedTime },
+          ) => {
+            const color = `hsl(${value} 100% 50%)`
+            ctx.clearRect(0, 0, width, height)
+            // frame
+            const pad = 30
+            const interval = 30
+            ctx.strokeStyle = color
+            for (let x = 0; x < width + height; x += interval) {
+              ctx.beginPath()
+              ctx.moveTo(x, 0)
+              ctx.lineTo(0, x)
+              ctx.stroke()
+            }
+            ctx.rect(pad, pad, width - pad * 2, height - pad * 2)
+            ctx.fillStyle = 'white'
+            ctx.fill()
+            // text
+            ctx.fillStyle = color
+            ctx.font = '16px sans-serif'
+            fillTextCenter(
+              ctx,
+              `{ w: ${width}, h: ${height} }`,
+              width / 2,
+              height / 2 - 20,
+            )
+            fillTextCenter(
+              ctx,
+              `count: ${count}, time: ${(elapsedTime / 1000).toFixed(2)} s`,
+              width / 2,
+              height / 2,
+            )
+            fillTextCenter(
+              ctx,
+              `fps: ${fps.toFixed()}`,
+              width / 2,
+              height / 2 + 20,
+            )
+            fillTextCenter(
+              ctx,
+              `delta: ${deltaTime.toFixed(2)} ms`,
+              width / 2,
+              height / 2 + 40,
+            )
+          }}
+        />
+      </div>
+      <div
+        style={{
+          marginTop: '1rem',
+          display: 'flex',
+          gap: '0.5rem',
+          alignItems: 'center',
+        }}
+      >
+        <span>hue</span>
+        <Slider value={value} min={0} max={360} onChange={setValue} />
+        <span>{value} deg</span>
+      </div>
+    </section>
   )
 }

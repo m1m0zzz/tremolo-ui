@@ -20,7 +20,7 @@ import { AnimationCanvas } from '@tremolo-ui/react'
 
 ## Features
 
-- Adapt devicePixelRatio.
+- Adapt [devicePixelRatio](https://developer.mozilla.org/docs/Web/API/Window/devicePixelRatio).
 - Reduce flicking when resized.
 
 ## Examples
@@ -42,3 +42,10 @@ import { AnimationCanvas } from '@tremolo-ui/react'
   showCode
   sourcePath='examples/components/animation-canvas/save-restore.tsx'
 >{saveRestore}</CodeBlock>
+
+
+### Reactive Canvas
+
+`React.useState` + `animate={false}`
+
+[API CommonProps.animate](/docs/api/react/interfaces/CommonProps/#animate)

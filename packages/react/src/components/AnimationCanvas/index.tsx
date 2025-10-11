@@ -8,30 +8,12 @@ import {
   useRef,
 } from 'react'
 
-import { DrawingContext, drawingState, DrawingStateValue } from './canvas'
-
-/*
-TODO
-AbsoluteSizingProps, RelativeSizingPropsの型付けを強くする
-AbsoluteSizingPropsの場合、width, heightは必須
-RelativeSizingPropsのの場合、relativeSizeは必須、reduceFlickeringはオプショナル
-*/
-
-function setDprConfig(
-  canvas: HTMLCanvasElement,
-  context: CanvasRenderingContext2D,
-  width: number,
-  height: number,
-  dpr: number,
-) {
-  canvas.width = width * dpr
-  canvas.height = height * dpr
-  // Reset current transformation matrix to the identity matrix
-  context.setTransform(1, 0, 0, 1, 0, 0)
-  context.scale(dpr, dpr)
-  canvas.style.width = `${width}px`
-  canvas.style.height = `${height}px`
-}
+import {
+  DrawingContext,
+  drawingState,
+  DrawingStateValue,
+  setDprConfig,
+} from './canvas'
 
 /** @category AnimationCanvas */
 export type InitFunction = (
@@ -46,8 +28,6 @@ export type InitFunction = (
 
 /** @category AnimationCanvas */
 export type DrawFunction = (
-  // TODO: saving scale and translate
-  // context: Omit<CanvasRenderingContext2D, 'save' | 'restore' | 'scale'>,
   context: CanvasRenderingContext2D,
   option: {
     /** current canvas width */
@@ -67,12 +47,13 @@ export type DrawFunction = (
 
 /** @category AnimationCanvas */
 export interface CommonProps {
+  draw: DrawFunction
+  init?: InitFunction
+  animate?: boolean
   /**
    * @see https://developer.mozilla.org/docs/Web/API/HTMLCanvasElement/getContext#contextattributes
    */
   options?: CanvasRenderingContext2DSettings
-  init?: InitFunction
-  draw: DrawFunction
 }
 
 /** @category AnimationCanvas */
@@ -108,12 +89,13 @@ export function AnimationCanvas(
 ): ReactElement
 export function AnimationCanvas({
   // common
-  options,
-  init,
   draw,
+  init,
+  animate = true,
+  options,
   // absolute
-  width = 100,
-  height = 100,
+  width: _width = 100,
+  height: _height = 100,
   // relative
   relativeSize,
   reduceFlickering = true,
@@ -145,9 +127,11 @@ export function AnimationCanvas({
       const deltaTime = now - deltaMemoRef.current
       const elapsedTime = now - startTimeRef.current
       deltaMemoRef.current = now
-      reqIdRef.current = requestAnimationFrame(() =>
-        loop(context, width, height, count + 1),
-      )
+      if (animate) {
+        reqIdRef.current = requestAnimationFrame(() =>
+          loop(context, width, height, count + 1),
+        )
+      }
       draw(context, {
         width: width.current,
         height: height.current,
@@ -157,7 +141,7 @@ export function AnimationCanvas({
         fps: 1000 / deltaTime,
       })
     },
-    [draw],
+    [draw, animate],
   )
 
   useEffect(() => {
@@ -167,6 +151,18 @@ export function AnimationCanvas({
     if (!context) throw new Error('Cannot get canvas context.')
     const dpr = globalThis.devicePixelRatio
 
+    const firstRendering = (width: number, height: number) => {
+      setDprConfig(canvas, context, width, height, dpr)
+      widthRef.current = width
+      heightRef.current = height
+
+      if (init) init(context, { width, height })
+      const now = performance.now()
+      deltaMemoRef.current = now
+      startTimeRef.current = now
+      loop(context, widthRef, heightRef, -1)
+    }
+
     if (relativeSize) {
       const parent = canvas.parentElement
       if (!parent) throw new Error("Canvas doesn't have a parent element.")
@@ -175,16 +171,14 @@ export function AnimationCanvas({
 
       const ro = new ResizeObserver((entries) => {
         for (const entry of entries) {
-          // Prevents loss of some context when the canvas is resized
-          const contextMemo = {} as DrawingContext
-          for (const prop of drawingState) {
-            ;(contextMemo[prop] as DrawingStateValue) = context[prop]
-          }
-
           const w = entry.contentRect.width
           const h = entry.contentRect.height
-
+          const contextMemo = {} as DrawingContext
           if (reduceFlickering && memoCanvas && memoContext) {
+            // Prevents loss of some context when the canvas is resized
+            for (const prop of drawingState) {
+              ;(contextMemo[prop] as DrawingStateValue) = context[prop]
+            }
             memoCanvas.width = w * dpr
             memoCanvas.height = h * dpr
             memoContext.scale(1 / dpr, 1 / dpr)
@@ -197,10 +191,6 @@ export function AnimationCanvas({
           widthRef.current = w
           heightRef.current = h
 
-          for (const prop of drawingState) {
-            ;(context[prop] as DrawingStateValue) = contextMemo[prop]
-          }
-
           if (
             reduceFlickering &&
             memoContext &&
@@ -208,52 +198,45 @@ export function AnimationCanvas({
             memoCanvas.width > 0 &&
             memoCanvas.height > 0
           ) {
+            for (const prop of drawingState) {
+              ;(context[prop] as DrawingStateValue) = contextMemo[prop]
+            }
+
             context.drawImage(memoContext.canvas, 0, 0)
+          }
+
+          if (!animate) {
+            // re rendering
+            loop(context, widthRef, heightRef, -1)
           }
         }
       })
       ro.observe(parent)
 
-      const w = parent.clientWidth
-      const h = parent.clientHeight
-      setDprConfig(canvas, context, w, h, dpr)
-
-      if (init)
-        init(context, { width: widthRef.current, height: heightRef.current })
-      const now = performance.now()
-      deltaMemoRef.current = now
-      startTimeRef.current = now
-      loop(context, widthRef, heightRef, -1)
+      const width = parent.clientWidth
+      const height = parent.clientHeight
+      firstRendering(width, height)
 
       return () => {
         if (reqIdRef.current) cancelAnimationFrame(reqIdRef.current)
         ro.disconnect()
       }
     } else {
-      const rect = canvas.getBoundingClientRect()
-      setDprConfig(canvas, context, rect.width, rect.height, dpr)
-      widthRef.current = rect.width
-      heightRef.current = rect.height
-
-      if (init)
-        init(context, { width: widthRef.current, height: heightRef.current })
-      const now = performance.now()
-      deltaMemoRef.current = now
-      startTimeRef.current = now
-      loop(context, widthRef, heightRef, -1)
+      const { width, height } = canvas.getBoundingClientRect()
+      firstRendering(width, height)
 
       return () => {
         if (reqIdRef.current) cancelAnimationFrame(reqIdRef.current)
       }
     }
-  }, [loop, init, options, reduceFlickering, relativeSize])
+  }, [loop, init, options, reduceFlickering, relativeSize, animate])
 
   return (
     <>
       <canvas
         className={clsx('tremolo-animation-canvas', className)}
-        width={relativeSize ? 0 : width}
-        height={relativeSize ? 0 : height}
+        width={relativeSize ? 0 : _width}
+        height={relativeSize ? 0 : _height}
         ref={canvasRef}
         onContextMenu={onContextMenu}
         {...props}
