@@ -7,7 +7,7 @@ import {
   DecrementStepper,
 } from '@tremolo-ui/react'
 
-import '@tremolo-ui/react/styles/index.css'
+import '@tremolo-ui/react/index.css'
 // expand end
 
 function App() {

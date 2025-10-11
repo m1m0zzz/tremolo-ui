@@ -19,10 +19,10 @@ import myKnobCss from '!!raw-loader!@site/examples/tutorials/react/styling/my-kn
 
 デフォルトのCSSを上書きし、グローバルなCSSとして読み込む方法をご紹介します。
 
-まず、`dist/styles/index.css` をコピーし、`custom.css` という名前で、新たなcssファイルを作成します。
+まず、`dist/index.css` をコピーし、`custom.css` という名前で、新たなcssファイルを作成します。
 
 ```bash
-cp node_modules/@tremolo-ui/react/dist/styles/index.css custom.css
+cp node_modules/@tremolo-ui/react/dist/index.css custom.css
 ```
 
 ```css title="custom.css"
@@ -40,7 +40,7 @@ cp node_modules/@tremolo-ui/react/dist/styles/index.css custom.css
 tremolo-uiで提供されるすべてのコンポーネントは、`tremolo-` の接頭辞の後に、コンポーネント名が付いたものになります。
 
 ```tsx title="index.tsx"
-import '@tremolo-ui/react/styles/index.css' // 部分的な上書きの場合、必要
+import '@tremolo-ui/react/index.css' // 部分的な上書きの場合、必要
 import 'custom.css'
 ```
 

@@ -86,6 +86,6 @@
         "types": "./dist/index.d.ts"
       }
     },
-    "./styles/index.css": "./dist/index.css"
+    "./index.css": "./dist/index.css"
   }
 }
