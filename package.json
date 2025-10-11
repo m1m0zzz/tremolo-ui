@@ -14,6 +14,7 @@
     "test": "npm run test --workspaces --if-present",
     "build:package": "npm run build:package --workspaces --if-present",
     "docs": "npm run start -w site",
+    "docs:fast": "npm run start:fast -w site",
     "docs:ja": "npm run start -w site -- --locale ja",
     "docs:wtr": "npm run write-translations -w site",
     "docs:wtr:ja": "npm run write-translations -w site -- --locale ja",
