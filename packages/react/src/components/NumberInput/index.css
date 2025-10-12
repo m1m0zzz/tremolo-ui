@@ -72,6 +72,7 @@
 
 .tremolo-number-input {
   display: block;
+  color: inherit;
   width: calc(100% - 20px - var(--stepper-width));
   background-color: inherit;
   font: inherit;
