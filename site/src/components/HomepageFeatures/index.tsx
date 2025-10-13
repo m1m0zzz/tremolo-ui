@@ -26,8 +26,8 @@ const FeatureList: FeatureItem[] = [
     description: 'tremolo-ui also supports mobile-specific actions.',
   },
   {
-    id: 'headless-ui-like',
-    title: 'Headless UI like',
+    id: 'headless-ui',
+    title: 'Headless UI',
     Svg: require('@site/static/img/undraw_web_development.svg').default,
     description:
       'It provides a rich default UI and a DOM-like component system that is easy to customize.',

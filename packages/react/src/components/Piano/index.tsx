@@ -309,7 +309,6 @@ export function Piano({
   )
 }
 
-export * from './keyboardShortcuts'
-
+export { type KeyboardShortcuts, SHORTCUTS } from './keyboardShortcuts'
 export { WhiteKey, BlackKey, type KeyProps, type KeyMethods } from './key'
 export { KeyLabel, type KeyLabelProps } from './KeyLabel'

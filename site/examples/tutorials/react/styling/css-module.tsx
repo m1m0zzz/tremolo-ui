@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { Knob } from '@tremolo-ui/react'
 
-import '@tremolo-ui/react/styles/index.css'
+import '@tremolo-ui/react/styles/Knob.css'
 import myKnob from './my-knob.module.css'
 // expand end
 
@@ -10,14 +10,7 @@ function App() {
   const [value, setValue] = useState(64)
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-      }}
-    >
+    <div className={myKnob.container}>
       <Knob
         className={myKnob.knob}
         value={value}

@@ -97,7 +97,8 @@ const packageJson = `{
   "dependencies": {
     "@tremolo-ui/react": "latest",
     "react": "^19",
-    "react-dom": "^19"
+    "react-dom": "^19",
+    "tone": "^15"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

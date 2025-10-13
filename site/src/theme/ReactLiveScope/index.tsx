@@ -1,6 +1,7 @@
 import React from 'react'
 import * as tremoloUI from '@tremolo-ui/react'
 import * as functions from '@tremolo-ui/functions'
+import * as Tone from 'tone'
 
 import myKnob from '@site/examples/tutorials/react/styling/my-knob.module.css'
 
@@ -10,6 +11,7 @@ const ReactLiveScope: unknown = {
   ...React,
   ...tremoloUI,
   ...functions,
+  Tone,
   myKnob,
 }
 

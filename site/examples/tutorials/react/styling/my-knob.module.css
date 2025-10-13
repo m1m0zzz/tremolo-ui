@@ -10,3 +10,10 @@
 .activeLine {
   color: rgb(235, 76, 76);
 }
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}

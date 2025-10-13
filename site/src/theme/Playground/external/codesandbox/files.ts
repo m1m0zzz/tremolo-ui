@@ -36,7 +36,8 @@ const packageJSON = `{
   "dependencies": {
     "@tremolo-ui/react": "latest",
     "react": "^19",
-    "react-dom": "^19"
+    "react-dom": "^19",
+    "tone": "^15"
   },
   "scripts": {
     "start": "react-scripts-ts start",

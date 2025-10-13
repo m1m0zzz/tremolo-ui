@@ -12,6 +12,13 @@ Components library for Audio Applications.
 
 *An unstable version (0.x) has been released.*
 
+## ✨ Features
+
+- headless UI
+- mobile support
+- tree shakable
+- minimal dependences (clsx, zustand)
+
 ## 🚩 Goals
 
 - [x] Components with usability and flexibility
