@@ -2,10 +2,10 @@ import clsx from 'clsx'
 import { ComponentPropsWithoutRef, forwardRef, ReactNode } from 'react'
 
 import { InputEventOption } from '@tremolo-ui/functions'
-import { Units } from '@tremolo-ui/functions/NumberInput'
 
 import { NumberInputProvider } from './context'
 import { InternalInput } from './InternalInput'
+import { Units } from './type'
 
 /*
 TODO
@@ -178,3 +178,4 @@ export const NumberInput = forwardRef<NumberInputMethods, Props>(
 export * from './Stepper'
 export * from './IncrementStepper'
 export * from './DecrementStepper'
+export { type Units } from './type'

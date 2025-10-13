@@ -16,11 +16,11 @@ import {
   rawValue,
   stepValue,
 } from '@tremolo-ui/functions'
-import { parseValue } from '@tremolo-ui/functions/NumberInput'
 
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 
 import { safeClamp, useNumberInputContext } from './context'
+import { parseValue } from './type'
 
 import { NumberInputMethods } from '.'
 

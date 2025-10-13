@@ -2,10 +2,10 @@ import clsx from 'clsx'
 import { ComponentPropsWithoutRef, ReactNode } from 'react'
 
 import { xor } from '@tremolo-ui/functions'
-import { generateOptionsList, ScaleOptions } from '@tremolo-ui/functions/Slider'
 
 import { useSliderContext } from './context'
 import { ScaleOption } from './ScaleOption'
+import { generateOptionsList, ScaleOptions } from './type'
 
 /** @category Slider */
 export interface ScaleProps {

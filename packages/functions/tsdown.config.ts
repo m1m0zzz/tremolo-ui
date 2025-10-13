@@ -1,29 +1,9 @@
-import { defineConfig, UserConfig } from 'tsdown'
+import { defineConfig } from 'tsdown'
 
-const commonConfig: UserConfig = {
+export default defineConfig({
+  entry: './src/index.ts',
   format: ['esm', 'cjs'],
   platform: 'neutral',
   dts: true,
   sourcemap: true,
-}
-
-export default defineConfig([
-  {
-    entry: {
-      type: './src/components/NumberInput/type.ts',
-    },
-    outDir: 'dist/NumberInput',
-    ...commonConfig,
-  },
-  {
-    entry: {
-      type: './src/components/Slider/type.ts',
-    },
-    outDir: 'dist/Slider',
-    ...commonConfig,
-  },
-  {
-    entry: './src/index.ts',
-    ...commonConfig,
-  },
-])
+})

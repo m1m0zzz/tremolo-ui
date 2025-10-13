@@ -48,26 +48,6 @@
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
       }
-    },
-    "./NumberInput": {
-      "require": {
-        "types": "./dist/types/NumberInput/type.d.cts",
-        "default": "./dist/NumberInput/type.cjs"
-      },
-      "import": {
-        "types": "./dist/types/NumberInput/type.d.ts",
-        "default": "./dist/NumberInput/type.js"
-      }
-    },
-    "./Slider": {
-      "require": {
-        "types": "./dist/types/Slider/type.d.cts",
-        "default": "./dist/Slider/type.cjs"
-      },
-      "import": {
-        "types": "./dist/types/Slider/type.d.ts",
-        "default": "./dist/Slider/type.js"
-      }
     }
   }
 }

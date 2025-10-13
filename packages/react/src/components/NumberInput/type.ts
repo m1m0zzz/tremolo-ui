@@ -1,8 +1,4 @@
 /**
- * @module NumberInput
- */
-
-/**
  * [unit, scale][]
  * @example
  * [['Hz', 1], ['kHz', 1000]]

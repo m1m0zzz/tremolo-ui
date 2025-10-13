@@ -1,8 +1,4 @@
-/**
- * @module Slider
- */
-
-import { decimalPart, toFixed } from '../../math'
+import { decimalPart, toFixed } from '@tremolo-ui/functions'
 
 export type ScaleType = 'mark' | 'mark-number' | 'number'
 export type ScaleOptions = ['step', ScaleType] | [number, ScaleType]

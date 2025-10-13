@@ -2,7 +2,8 @@ import { createContext, useContext, useEffect, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
 
 import { clamp } from '@tremolo-ui/functions'
-import { parseValue, Units } from '@tremolo-ui/functions/NumberInput'
+
+import { parseValue, Units } from './type'
 
 type State = {
   value: string

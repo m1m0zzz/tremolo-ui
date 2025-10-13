@@ -2,9 +2,9 @@ import clsx from 'clsx'
 import { ComponentPropsWithoutRef, CSSProperties, useCallback } from 'react'
 
 import { toFixed, xor, normalizeValue } from '@tremolo-ui/functions'
-import { ScaleType } from '@tremolo-ui/functions/Slider'
 
 import { useSliderContext } from './context'
+import { ScaleType } from './type'
 
 /** @category Slider */
 export interface ScaleOptionProps {

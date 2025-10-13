@@ -341,3 +341,4 @@ export {
 export { SliderTrack, type SliderTrackProps } from './Track'
 export { Scale, type ScaleProps } from './Scale'
 export { ScaleOption, type ScaleOptionProps } from './ScaleOption'
+export { type ScaleOptions, type ScaleType } from './type'

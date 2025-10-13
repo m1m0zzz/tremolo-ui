@@ -16,7 +16,7 @@
     "serve": "http-server ./storybook-static",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "format": "prettier --write .",
-    "test": "echo 'No test yet.'",
+    "test": "jest",
     "build:package": "tsc && tsdown",
     "clean": "npm run clean:build && npm run clean:sb",
     "clean:build": "rimraf ./dist",
@@ -39,7 +39,7 @@
     "react": "^19",
     "react-dom": "^19",
     "storybook": "^8.6.7",
-    "tone": "^15.0.4"
+    "tone": "^15"
   },
   "peerDependencies": {
     "react": "^18 ||^19",
