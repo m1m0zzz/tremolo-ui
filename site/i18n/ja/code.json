@@ -336,10 +336,10 @@
   "homepage.features.mobile-support.description": {
     "message": "tremolo-uiはモバイル特有のアクションにも対応しています。"
   },
-  "homepage.features.headless-ui-like.title": {
-    "message": "ヘッドレスUIライク"
+  "homepage.features.headless-ui.title": {
+    "message": "ヘッドレスUI"
   },
-  "homepage.features.headless-ui-like.description": {
+  "homepage.features.headless-ui.description": {
     "message": "リッチなデフォルトUIと、カスタマイズが容易なDOMライクなコンポーネント・システムを提供します。"
   },
   "theme.colorToggle.ariaLabel.mode.system": {
