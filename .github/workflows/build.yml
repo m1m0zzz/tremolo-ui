@@ -19,12 +19,20 @@ jobs:
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'
+
+    - name: Setup safe-chain
+      run: |
+        npm i -g @aikidosec/safe-chain
+        safe-chain setup-ci
+
     - name: Install dependencies
       run: npm ci
+
     - name: Test (packages/function)
       run: npm run test -w packages/functions
     - name: Build (packages/function)
       run: npm run build:package -w packages/functions
+
     - name: Test (packages/react)
       run: npm run test -w packages/react
     - name: Build (packages/react)
