@@ -64,8 +64,8 @@ export function SliderTrack({
           : {
               ...colors,
               background: xor(vertical, reverse)
-                ? `linear-gradient(to ${direction}, var(--inactive, #eee) ${__percent}%, var(--active, #7998ec) ${__percent}%)`
-                : `linear-gradient(to ${direction}, var(--active, #7998ec) ${__percent}%, var(--inactive, #eee) ${__percent}%)`,
+                ? `linear-gradient(to ${direction}, var(--inactive) ${__percent}%, var(--active) ${__percent}%)`
+                : `linear-gradient(to ${direction}, var(--active) ${__percent}%, var(--inactive) ${__percent}%)`,
               borderRadius: styleHelper(thickness!, '/', 2),
               width: !vertical ? length : thickness,
               height: vertical ? length : thickness,

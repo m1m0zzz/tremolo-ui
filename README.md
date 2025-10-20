@@ -4,6 +4,7 @@
 Components library for Audio Applications.
 
 [![Build Node.js](https://github.com/m1m0zzz/tremolo-ui/actions/workflows/build.yml/badge.svg)](https://github.com/m1m0zzz/tremolo-ui/actions/workflows/build.yml)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/%40tremolo-ui%2Freact)](https://bundlephobia.com/package/@tremolo-ui/react)
 [![Vercel Deploy](https://deploy-badge.vercel.app/vercel/tremolo-ui?logo=docusaurus&name=Docs)](https://tremolo-ui.vercel.app/)
 [![Vercel Deploy](https://deploy-badge.vercel.app/vercel/tremolo-ui-sb-react?logo=storybook&name=React)](https://tremolo-ui-sb-react.vercel.app/)
 [![Vercel Deploy](https://deploy-badge.vercel.app/vercel/tremolo-ui-sb-web-components?logo=storybook&name=Web+Components)](https://tremolo-ui-sb-web-components.vercel.app/)

@@ -151,8 +151,8 @@ export const Knob = forwardRef<KnobMethods, Props>(
       (_x: number, y: number) => {
         if (!onChange || readonly) return
         const v = rawValue(valueRef.current - y / 100, min, max, skew)
-        const v2 = clamp(stepValue(v, step), min, max)
-        onChange(v2)
+        const clamped = clamp(stepValue(v, step), min, max)
+        onChange(clamped)
       },
       [max, min, onChange, readonly, skew, step],
     )
