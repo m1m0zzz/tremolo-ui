@@ -10,44 +10,45 @@ import CodeBlock from '@theme/CodeBlock'
 import cssModule from '!!raw-loader!@site/examples/tutorials/react/styling/css-module'
 import myKnobCss from '!!raw-loader!@site/examples/tutorials/react/styling/my-knob.module.css'
 
+tremolo-ui はヘッドレスなライブラリであるため Vanilla CSS, CSS in JS, Tailwind CSS など好きな方法でスタイルを当てることができます。  
+ここでは、コンポーネントの見た目を変更する方法を幾つかご紹介します。
 
-ここでは、コンポーネントの見た目を変更するためのいくつかの方法をご紹介します。
-スタイルの変更は、共通するすべてのコンポーネントを変更する方法と、個々のコンポーネントごとに変更する方法があります。
+## ✨デフォルトのスタイルを適用する
 
+バンドルされたCSSをインポートする：
 
-## 🌎グローバル・スタイリング
+Vite なら、`src/main.tsx`、Next.js なら、`app/layout.tsx` に以下を適用します。
 
-デフォルトのCSSを上書きし、グローバルなCSSとして読み込む方法をご紹介します。
-
-まず、`dist/index.css` をコピーし、`custom.css` という名前で、新たなcssファイルを作成します。
-
-```bash
-cp node_modules/@tremolo-ui/react/dist/index.css custom.css
+```tsx title="main.tsx"
+import '@tremolo-ui/react/styles/index.css'
 ```
 
-```css title="custom.css"
-.tremolo-any-component {
-  /* customizing */
+コンポーネント単位でインポートする：
 
-  &:hover, &:focus {
-    /* hover and focus styles */
-  }
-}
+Vite なら、`src/main.tsx`、Next.js なら、`app/layout.tsx` に以下を適用します。  
+`global.css` には、デフォルトのテーマと、小さなユーティリティが含まれています。
+
+```tsx title="main.tsx"
+import '@tremolo-ui/react/styles/global.css'
 ```
 
-次に、変更したいコンポーネントのcssを上書きします。
+コンポーネントのファイルに対応するCSSをインポートします。
 
-tremolo-uiで提供されるすべてのコンポーネントは、`tremolo-` の接頭辞の後に、コンポーネント名が付いたものになります。
+```tsx title="MyKnob.tsx"
+import '@tremolo-ui/react/styles/Knob.css'
+import { Knob } from '@tremolo-ui/react'
 
-```tsx title="index.tsx"
-import '@tremolo-ui/react/styles/index.css' // 部分的な上書きの場合、必要
-import 'custom.css'
+export function MyKnob() {
+  // ...
 ```
 
+この方法を使うことで、未使用のCSSがバンドルされるのを防ぐことができます。
 
-## 🧩個別のスタイリング
+## 👾見た目をカスタマイズする
 
-グローバルなcss名前空間を汚染しないために、CSS Modulesという仕組みを使用しましょう。
+### 🧩コンポーネント単位のスタイリング
+
+ここでは一例として、CSS Modulesを使用する方法を紹介します。
 
 <Tabs>
   <TabItem value="index.tsx" default>
@@ -65,8 +66,30 @@ import 'custom.css'
   </TabItem>
 </Tabs>
 
+### 🌎グローバル・スタイリング
+
+デフォルトのCSSを上書きし、グローバルなCSSとして読み込む方法をご紹介します。  
+まず、`dist/index.css` をコピーし、`custom.css` という名前で、新たなcssファイルを作成します。
+
+```bash
+cp node_modules/@tremolo-ui/react/dist/index.css custom.css
+```
+
+```css title="custom.css"
+.tremolo-any-component {
+  /* customize style here */
+}
+```
+
+次に、変更したいコンポーネントのcssを上書きします。  
+tremolo-uiで提供されるすべてのコンポーネントは、`tremolo-` の接頭辞の後に、コンポーネント名が付いたものになります。
+
+```tsx title="main.tsx"
+import './custom.css'
+```
+
 
 ## 🧭次のステップ
 
-tremolo-uiが提供するコンポーネントを見てみましょう。
+tremolo-uiが提供するコンポーネントを見てみましょう。  
 [Components - Knob](/docs/components/knob/)
