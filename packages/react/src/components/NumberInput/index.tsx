@@ -55,7 +55,6 @@ export interface NumberInputProps {
   keepWithinRange?: boolean
   clampValueOnBlur?: boolean
 
-  // TODO
   /**
    * wheel control option
    */
@@ -128,7 +127,7 @@ export const NumberInput = forwardRef<NumberInputMethods, Props>(
     }: Props,
     ref,
   ) => {
-    const colors: { [key: string]: string | undefined } = {
+    const colors: Record<string, string | undefined> = {
       '--active-color': activeColor,
     }
     return (

@@ -1,5 +1,7 @@
 import { join, dirname } from 'path'
 
+import { type InlineConfig, type UserConfig } from 'vite'
+
 import type { StorybookConfig } from '@storybook/react-vite'
 
 /**
@@ -25,6 +27,16 @@ const config: StorybookConfig = {
   framework: {
     name: getAbsolutePath('@storybook/react-vite'),
     options: {},
+  },
+  async viteFinal(config) {
+    // Merge custom configuration into the default config
+    const { mergeConfig } = await import('vite')
+
+    return mergeConfig<InlineConfig, UserConfig>(config, {
+      server: {
+        allowedHosts: ['.ngrok-free.dev'],
+      },
+    })
   },
 }
 

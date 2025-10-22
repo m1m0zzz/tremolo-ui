@@ -185,10 +185,6 @@ export const AdvancedFilterPad = () => {
   return (
     <div
       style={{
-        fontFamily: `"Mohave", serif`,
-        fontOpticalSizing: 'auto',
-        fontSize: '1.2rem',
-        fontWeight: 400,
         width: 'fit-content',
         color: '#222',
       }}
