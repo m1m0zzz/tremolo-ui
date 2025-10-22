@@ -43,8 +43,8 @@ export interface KnobProps {
    */
   startValue?: number
 
-  // TODO: relative size (Lower priority)
-  size?: number
+  /** width and height */
+  size?: number | string
 
   /** Whether to apply `{use-select: none}` when dragging */
   bodyNoSelect?: boolean
@@ -69,15 +69,16 @@ export interface KnobProps {
   thumb?: string
   /** color */
   thumbLine?: string
-
   /** percent (0-100) */
   thumbSize?: number
   /** percent (0-100) */
   thumbLineWeight?: number
   /** percent (0-100) */
   thumbLineLength?: number
-  /** percent (0-100) */
+  /** line weight [px] */
   lineWeight?: number
+  /** angle range [degree] */
+  angleRange?: number
 
   classes?: {
     activeLine?: string
@@ -125,6 +126,11 @@ export const Knob = forwardRef<KnobMethods, Props>(
       inactiveLine,
       thumb,
       thumbLine,
+      thumbSize = 84,
+      thumbLineWeight = 6,
+      thumbLineLength = 35,
+      lineWeight = 6,
+      angleRange = 270,
       onChange,
       onKeyDown,
       onPointerDown,
@@ -137,14 +143,6 @@ export const Knob = forwardRef<KnobMethods, Props>(
   ) => {
     const valueRef = useRef(0)
     const elmRef = useRef<HTMLOrSVGElement>(null)
-
-    // --- interpret props ---
-    const padding = 8 // %
-    const thumbLineWeight = 6 // %
-    const thumbLineLength = 35 // %
-    const lineWeight = size * 0.06 // px
-    const p = normalizeValue(value, min, max, skew)
-    const s = normalizeValue(startValue, min, max, skew)
 
     // --- internal functions ---
     const onDrag = useCallback(
@@ -221,11 +219,17 @@ export const Knob = forwardRef<KnobMethods, Props>(
       }
     }, [])
 
-    const center = size / 2
-    const r1 = -135
-    const r2 = -135 + Math.min(p, s) * 270
-    const r3 = -135 + Math.max(p, s) * 270
-    const r4 = 135
+    const viewBoxSize = 100
+    const center = viewBoxSize / 2
+    const padding = (viewBoxSize - clamp(thumbSize, 0, 100)) / 2 // %
+    const p = normalizeValue(value, min, max, skew)
+    const s = normalizeValue(startValue, min, max, skew)
+
+    // 時計回りで描画していく
+    const r1 = -angleRange / 2 // ロータリー開始位置
+    const r2 = r1 + Math.min(p, s) * angleRange // activeLineの開始位置
+    const r3 = r1 + Math.max(p, s) * angleRange // activeLineの終了位置
+    const r4 = angleRange / 2 // ロータリー終了位置
     const x1 = center + center * Math.cos(radian(r1 - 90))
     const y1 = center + center * Math.sin(radian(r1 - 90))
     const x2 = center + center * Math.cos(radian(r2 - 90))
@@ -237,12 +241,13 @@ export const Knob = forwardRef<KnobMethods, Props>(
 
     return (
       <svg
-        className={clsx('tremolo-knob', className)}
         ref={(div) => {
           elmRef.current = div
           wheelRefCallback(div)
           touchMoveRefCallback(div)
         }}
+        className={clsx('tremolo-knob', className)}
+        viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
         width={size}
         height={size}
         tabIndex={0}
@@ -268,7 +273,7 @@ export const Knob = forwardRef<KnobMethods, Props>(
         }}
         {...props}
       >
-        {/* rotary meter */}
+        {/* lines */}
         {startValue > min && (
           <path
             className={clsx(
@@ -305,7 +310,7 @@ export const Knob = forwardRef<KnobMethods, Props>(
           <circle
             cx="50%"
             cy="50%"
-            r={`${50 - padding}%`}
+            r={`${thumbSize / 2}%`}
             fill={thumb || 'currentColor'}
           />
           <line
@@ -320,7 +325,7 @@ export const Knob = forwardRef<KnobMethods, Props>(
             // https://bugs.webkit.org/show_bug.cgi?id=201854
             // https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/transform-origin#browser_compatibility
             style={{
-              transform: `rotate(${-135 + p * 270}deg)`,
+              transform: `rotate(${r1 + p * angleRange}deg)`,
               transformOrigin: '50% 50%',
             }}
           />
