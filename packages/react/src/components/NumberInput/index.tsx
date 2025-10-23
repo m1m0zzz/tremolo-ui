@@ -125,7 +125,7 @@ export const NumberInput = forwardRef<NumberInputMethods, Props>(
       children,
       ...props
     }: Props,
-    ref,
+    forwardedRef,
   ) => {
     const colors: Record<string, string | undefined> = {
       '--active-color': activeColor,
@@ -153,7 +153,7 @@ export const NumberInput = forwardRef<NumberInputMethods, Props>(
           data-variant={variant}
         >
           <InternalInput
-            ref={ref}
+            ref={forwardedRef}
             readonly={readonly}
             disabled={disabled}
             selectWithFocus={selectWithFocus}

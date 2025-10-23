@@ -112,7 +112,7 @@ export const Slider = forwardRef<SliderMethods, Props>(
       onKeyDown,
       ...props
     }: Props,
-    ref,
+    forwardedRef,
   ) => {
     // -- state and ref ---
     const trackElementRef = useRef<HTMLDivElement>(null)
@@ -245,7 +245,7 @@ export const Slider = forwardRef<SliderMethods, Props>(
       [wheel, vertical, readonly, onChange, updateValueByEvent],
     )
 
-    useImperativeHandle(ref, () => {
+    useImperativeHandle(forwardedRef, () => {
       return {
         focus() {
           thumbRef.current?.focus()

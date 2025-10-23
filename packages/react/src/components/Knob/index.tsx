@@ -139,7 +139,7 @@ export const Knob = forwardRef<KnobMethods, Props>(
       classes,
       ...props
     }: Props,
-    ref,
+    forwardedRef,
   ) => {
     const valueRef = useRef(0)
     const elmRef = useRef<HTMLOrSVGElement>(null)
@@ -208,7 +208,7 @@ export const Knob = forwardRef<KnobMethods, Props>(
       [wheel, onChange, readonly, updateValueByEvent],
     )
 
-    useImperativeHandle(ref, () => {
+    useImperativeHandle(forwardedRef, () => {
       return {
         focus() {
           elmRef.current?.focus()

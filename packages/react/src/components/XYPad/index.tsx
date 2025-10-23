@@ -106,7 +106,7 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
       children,
       ...props
     }: Props,
-    ref,
+    forwardedRef,
   ) => {
     const x = useMemo(() => {
       return { ...defaultValueOptions, ..._x }
@@ -276,7 +276,7 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
       [x, y, onChange, readonly, updateValueByEvent],
     )
 
-    useImperativeHandle(ref, () => {
+    useImperativeHandle(forwardedRef, () => {
       return {
         focus() {
           thumbRef.current?.focus()
