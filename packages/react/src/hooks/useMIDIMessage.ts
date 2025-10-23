@@ -1,5 +1,8 @@
 import { useEffect } from 'react'
 
+/**
+ * Hooks for when you want to process MIDI events in more detail than useMIDIInput.
+ */
 export function useMIDIMessage(
   midiAccess: MIDIAccess | null,
   onMIDIMessage: (event: MIDIMessageEvent) => void,

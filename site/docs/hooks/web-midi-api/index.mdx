@@ -1,0 +1,29 @@
+import CodeBlock from '@theme/CodeBlock'
+import GitHubLink from '@site/src/components/GitHubLink'
+
+# Hooks for Web MIDI API
+
+
+## useMIDIAccess
+
+<GitHubLink
+  path='packages/react/src/hooks/useMIDIAccess.ts'
+/>
+
+Hooks for requesting MIDI access in the browser. The first argument allows you to choose whether to request access on mount.
+
+## useMIDIInput
+
+<GitHubLink
+  path='packages/react/src/hooks/useMIDIInput.ts'
+/>
+
+Hooks for handling note on/off events. To be used with useMIDIAccess. Internally uses useMIDIMessage.
+
+## useMIDIMessage
+
+<GitHubLink
+  path='packages/react/src/hooks/useMIDIMessage.ts'
+/>
+
+Hooks for when you want to process MIDI events in more detail than useMIDIInput.

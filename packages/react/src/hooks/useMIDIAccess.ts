@@ -5,6 +5,9 @@ export const NOT_SUPPORTED = 'NOT_SUPPORTED'
 
 export type MIDIAccessError = typeof PERMISSION_DENIED | typeof NOT_SUPPORTED
 
+/**
+ * Hooks for requesting MIDI access in the browser. The first argument allows you to choose whether to request access on mount.
+ */
 export function useMIDIAccess(requestOnMount = true) {
   const [midiAccess, setMidiAccess] = useState<MIDIAccess | null>(null)
   const [error, setError] = useState<MIDIAccessError | null>(null)
