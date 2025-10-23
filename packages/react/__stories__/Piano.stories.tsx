@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import * as Tone from 'tone'
 
 import { noteNumber, noteName, isWhiteKey } from '@tremolo-ui/functions'
@@ -15,9 +15,12 @@ import {
   getNoteRangeArray,
   KeyLabel,
   Piano,
+  PianoMethods,
   SHORTCUTS,
   WhiteKey,
 } from '../src/components/Piano'
+import { useMIDIAccess } from '../src/hooks/useMIDIAccess'
+import { useMIDIInput } from '../src/hooks/useMIDIInput'
 
 import { sizesOptionType } from './lib/typeUtils'
 
@@ -226,6 +229,60 @@ export const Fill = () => {
       <Piano
         noteRange={{ first: noteNumber('C3'), last: noteNumber('B3') }}
         fill
+      />
+    </div>
+  )
+}
+
+export const WithWebMidiAPI = () => {
+  const pianoRef = useRef<PianoMethods>(null)
+
+  const { midiAccess, error, handler: reRequestMidi } = useMIDIAccess(false)
+  useMIDIInput(
+    midiAccess,
+    (note: number, velocity: number) => {
+      // console.log(['note on', note, velocity])
+      pianoRef.current?.playNote(note, velocity / 127)
+    },
+    (note: number) => {
+      pianoRef.current?.stopNote(note)
+    },
+  )
+
+  const synth = new Tone.PolySynth({ volume: -6 }).toDestination()
+
+  return (
+    <div>
+      <p>
+        with{' '}
+        <a
+          href="https://developer.mozilla.org/ja/docs/Web/API/Web_MIDI_API"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Web MIDI API
+        </a>
+      </p>
+      {midiAccess ? null : (
+        <p>
+          <button type="button" onClick={reRequestMidi}>
+            request MIDI Keyboard
+          </button>
+        </p>
+      )}
+      {error && <p>error: {error}</p>}
+
+      <Piano
+        ref={pianoRef} // emit midi event
+        noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}
+        onPlayNote={(noteNumber, velocity) => {
+          synth.triggerAttack(noteName(noteNumber), 0, velocity)
+        }}
+        onStopNote={(noteNumber) => {
+          synth.triggerRelease(noteName(noteNumber))
+        }}
+        // Notice: need optional chaining (?.)
+        label={(_, i) => SHORTCUTS.HOME_ROW.keys[i]?.toUpperCase()}
       />
     </div>
   )

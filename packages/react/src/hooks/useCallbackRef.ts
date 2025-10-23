@@ -1,8 +1,7 @@
 import { useCallback, useInsertionEffect, useRef } from 'react'
 
 /**
- * This hook is user-land implementation of the experimental `useEffectEvent` hook.
- * React docs: https://react.dev/learn/separating-events-from-effects#declaring-an-effect-event
+ * Internal
  */
 export function useCallbackRef<Args extends unknown[], Return>(
   callback: ((...args: Args) => Return) | undefined,

@@ -40,7 +40,7 @@ export interface KeyProps {
  * @category Piano
  */
 export interface KeyMethods {
-  play: () => void
+  play: (velocity?: number) => void
   stop: () => void
   played: () => boolean
 }
@@ -92,10 +92,10 @@ const KeyImpl = forwardRef<KeyMethods, ImplProps>(
 
     useImperativeHandle(ref, () => {
       return {
-        play() {
+        play(velocity) {
           if (disabled) return
           setPlayed(true)
-          if (onPlayNote) onPlayNote(noteNumber)
+          if (onPlayNote) onPlayNote(noteNumber, velocity)
         },
         stop() {
           setPlayed(false)

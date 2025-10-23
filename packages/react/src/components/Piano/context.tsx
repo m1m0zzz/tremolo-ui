@@ -12,7 +12,7 @@ type State = {
   glissando: boolean
   midiMax: number
   fill: boolean
-  onPlayNote: (noteNumber: number) => void
+  onPlayNote: (noteNumber: number, velocity?: number) => void
   onStopNote: (noteNumber: number) => void
   label: (note: number, index: number) => ReactNode
 }

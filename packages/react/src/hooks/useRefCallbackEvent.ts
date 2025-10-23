@@ -1,5 +1,8 @@
 import { useMemo } from 'react'
 
+/**
+ * Internal
+ */
 export function useRefCallbackEvent<K extends keyof DocumentEventMap>(
   event: K,
   handler: (event: DocumentEventMap[K]) => void,

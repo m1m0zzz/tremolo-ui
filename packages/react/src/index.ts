@@ -34,17 +34,18 @@ export {
   type StepperProps,
 } from './components/NumberInput'
 export {
-  BlackKey,
-  KeyLabel,
-  type KeyLabelProps,
-  type KeyMethods,
-  type KeyProps,
-  type KeyboardShortcuts,
   Piano,
   type PianoProps,
-  SHORTCUTS,
-  WhiteKey,
+  type PianoMethods,
   getNoteRangeArray,
+  WhiteKey,
+  BlackKey,
+  type KeyProps,
+  type KeyMethods,
+  KeyLabel,
+  type KeyLabelProps,
+  SHORTCUTS,
+  type KeyboardShortcuts,
 } from './components/Piano'
 export {
   Scale,
@@ -77,6 +78,7 @@ export {
   type XYPadThumbMethods,
 } from './components/XYPad'
 
+// hooks
 export { useAnimationFrame } from './hooks/useAnimationFrame'
 export { useDrag, type UseDragProps } from './hooks/useDrag'
 export {
@@ -86,3 +88,6 @@ export {
 export { useEventListener } from './hooks/useEventListener'
 export { useInterval } from './hooks/useInterval'
 export { useLongPress } from './hooks/useLongPress'
+export { useMIDIAccess } from './hooks/useMIDIAccess'
+export { useMIDIInput } from './hooks/useMIDIInput'
+export { useMIDIMessage } from './hooks/useMIDIMessage'
