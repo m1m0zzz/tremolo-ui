@@ -88,6 +88,11 @@ export {
 export { useEventListener } from './hooks/useEventListener'
 export { useInterval } from './hooks/useInterval'
 export { useLongPress } from './hooks/useLongPress'
-export { useMIDIAccess } from './hooks/useMIDIAccess'
+export {
+  useMIDIAccess,
+  NOT_SUPPORTED,
+  PERMISSION_DENIED,
+  type MIDIAccessError,
+} from './hooks/useMIDIAccess'
 export { useMIDIInput } from './hooks/useMIDIInput'
 export { useMIDIMessage } from './hooks/useMIDIMessage'

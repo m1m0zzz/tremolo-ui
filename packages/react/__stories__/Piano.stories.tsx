@@ -237,7 +237,7 @@ export const Fill = () => {
 export const WithWebMidiAPI = () => {
   const pianoRef = useRef<PianoMethods>(null)
 
-  const { midiAccess, error, handler: reRequestMidi } = useMIDIAccess(false)
+  const { midiAccess, error, request } = useMIDIAccess(false)
   useMIDIInput(
     midiAccess,
     (note: number, velocity: number) => {
@@ -265,7 +265,7 @@ export const WithWebMidiAPI = () => {
       </p>
       {midiAccess ? null : (
         <p>
-          <button type="button" onClick={reRequestMidi}>
+          <button type="button" onClick={request}>
             request MIDI Keyboard
           </button>
         </p>
