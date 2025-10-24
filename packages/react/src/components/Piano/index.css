@@ -7,10 +7,10 @@
 }
 
 .tremolo-piano-white-key {
-  --bg: white;
-  --color: black;
-  --active-bg: #ccc;
-  --active-color: black;
+  --bg: oklch(100% 0 0);
+  --color: oklch(0% 0 0);
+  --active-bg: oklch(90% 0 0);
+  --active-color: oklch(0% 0 0);
 
   box-sizing: border-box;
   position: absolute;
@@ -33,10 +33,10 @@
 }
 
 .tremolo-piano-black-key {
-  --color: white;
-  --bg: #333;
-  --active-color: white;
-  --active-bg: #666;
+  --color: oklch(100% 0 0);
+  --bg: oklch(32.109% 0.00004 271.152);
+  --active-color: oklch(100% 0 0);
+  --active-bg: oklch(47.836% 0.00005 271.152);
 
   box-sizing: border-box;
   position: absolute;
@@ -78,4 +78,20 @@
   border: 1px solid #888;
   aspect-ratio: 1;
   max-width: calc(100% - 16px);
+}
+
+:where(.dark, [data-theme='dark']) {
+  .tremolo-piano-white-key {
+    --bg: oklch(48.193% 0.00005 271.152);
+    --color: oklch(100% 0 0);
+    --active-bg: oklch(52.78% 0.00006 271.152);
+    --active-color: oklch(100% 0 0);
+  }
+
+  .tremolo-piano-black-key {
+    --color: oklch(100% 0 0);
+    --bg: oklch(32.109% 0 0);
+    --active-color: oklch(100% 0 0);
+    --active-bg: oklch(38.666% 0.00004 271.152);
+  }
 }

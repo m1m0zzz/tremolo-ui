@@ -11,10 +11,10 @@
 
 .tremolo-knob-active-line {
   overflow: visible;
-  color: oklch(69.2% 0.12903 266.373);
+  color: oklch(69.2% 0.17548 266.373);
 
   :where(.tremolo-knob:focus, .tremolo-knob:hover) & {
-    color: oklch(59.5% 0.17548 266.373);
+    color: var(--tremolo-theme-color);
   }
 
   :where(.tremolo-knob[aria-disabled='true']) & {
@@ -24,19 +24,19 @@
 
 :where(.dark, [data-theme='dark']) {
   .tremolo-knob-active-line {
-    color: oklch(59.5% 0.17548 266.373);
+    color: var(--tremolo-theme-color);
 
     :where(.tremolo-knob:focus, .tremolo-knob:hover) & {
-      color: oklch(65.2% 0.1472 266.373);
+      color: oklch(65.2% 0.17548 266.373);
     }
   }
 }
 
 .tremolo-knob-inactive-line {
-  color: oklch(94.9% 0 0);
+  color: oklch(95% 0 0);
 
   :where(.tremolo-knob:focus, .tremolo-knob:hover) & {
-    color: oklch(89.8% 0 0);
+    color: oklch(90% 0 0);
   }
 }
 

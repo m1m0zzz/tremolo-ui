@@ -1,5 +1,5 @@
 :root {
-  --tremolo-theme-color: #4e76e6;
+  --tremolo-theme-color: oklch(59.5% 0.17548 266.373);
 }
 
 .tremolo-no-select {
