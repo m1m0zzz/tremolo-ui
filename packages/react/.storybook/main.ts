@@ -35,6 +35,9 @@ const config: StorybookConfig = {
     return mergeConfig<InlineConfig, UserConfig>(config, {
       server: {
         allowedHosts: ['.ngrok-free.dev'],
+        hmr: {
+          clientPort: process.env.CODESPACES ? 443 : undefined,
+        },
       },
     })
   },
