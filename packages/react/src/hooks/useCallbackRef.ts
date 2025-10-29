@@ -2,6 +2,7 @@ import { useCallback, useInsertionEffect, useRef } from 'react'
 
 /**
  * Internal
+ * @private
  */
 export function useCallbackRef<Args extends unknown[], Return>(
   callback: ((...args: Args) => Return) | undefined,

@@ -80,11 +80,8 @@ export {
 
 // hooks
 export { useAnimationFrame } from './hooks/useAnimationFrame'
-export { useDrag, type UseDragProps } from './hooks/useDrag'
-export {
-  useDragWithElement,
-  type UseDragWithElementProps,
-} from './hooks/useDragWithElement'
+export { useDrag } from './hooks/useDrag'
+export { useDragWithElement } from './hooks/useDragWithElement'
 export { useEventListener } from './hooks/useEventListener'
 export { useInterval } from './hooks/useInterval'
 export { useLongPress } from './hooks/useLongPress'

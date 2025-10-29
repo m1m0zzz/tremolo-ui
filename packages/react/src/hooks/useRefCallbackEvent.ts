@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 
 /**
  * Internal
+ * @private
  */
 export function useRefCallbackEvent<K extends keyof DocumentEventMap>(
   event: K,

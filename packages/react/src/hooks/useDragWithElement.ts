@@ -5,7 +5,7 @@ import { normalizeValue } from '@tremolo-ui/functions'
 import { useEventListener } from './useEventListener'
 import { useRefCallbackEvent } from './useRefCallbackEvent'
 
-export interface UseDragWithElementProps<T extends Element> {
+interface UseDragWithElementProps<T extends Element> {
   baseElementRef: RefObject<T | null>
   onDrag: (normalizedX: number, normalizedY: number) => void
   onDragStart?: (normalizedX: number, normalizedY: number) => void
@@ -13,6 +13,7 @@ export interface UseDragWithElementProps<T extends Element> {
 }
 
 /**
+ * @category hooks
  * @returns [refCallback, pointerDownHandler]
  */
 export function useDragWithElement<T extends Element>({

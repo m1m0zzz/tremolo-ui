@@ -3,7 +3,7 @@ import { useRef, useCallback } from 'react'
 import { useEventListener } from './useEventListener'
 import { useRefCallbackEvent } from './useRefCallbackEvent'
 
-export interface UseDragProps {
+interface UseDragProps {
   threshold?: number
 
   onDrag: (x: number, y: number, deltaX: number, deltaY: number) => void
@@ -12,6 +12,7 @@ export interface UseDragProps {
 }
 
 /**
+ * @category hooks
  * @returns [refCallback, pointerDownHandler]
  */
 export function useDrag<T extends Element>({

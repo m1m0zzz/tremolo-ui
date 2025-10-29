@@ -37,15 +37,8 @@ import {
 import { KeyboardShortcuts } from './keyboardShortcuts'
 
 /**
- * Piano component
- *
- * TODO:
- * - add scale highlight
- */
-
-/**
- * @category Piano
  * [noteRange.first, noteRange.first + 1 ..., noteRange.last]
+ * @category Piano
  */
 export function getNoteRangeArray(noteRange: NoteRange) {
   return Array.from(
@@ -56,10 +49,8 @@ export function getNoteRangeArray(noteRange: NoteRange) {
 
 /** @category Piano */
 export interface PianoProps {
-  // required
   noteRange: NoteRange
 
-  // optional
   glissando?: boolean
   midiMax?: number
   keyboardShortcuts?: KeyboardShortcuts
@@ -67,7 +58,6 @@ export interface PianoProps {
   whiteNoteWidth?: number
   blackNoteWidth?: number
   height?: number | string
-
   style?: CSSProperties
 
   onPlayNote?: (note: number, velocity?: number) => void

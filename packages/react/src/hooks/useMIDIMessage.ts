@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 
 /**
  * Hooks for when you want to process MIDI events in more detail than useMIDIInput.
+ * @category hooks
  */
 export function useMIDIMessage(
   midiAccess: MIDIAccess | null,

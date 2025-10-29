@@ -5,6 +5,9 @@ import { useCallbackRef } from './useCallbackRef'
 type Target = EventTarget | null | (() => EventTarget | null)
 type Options = boolean | AddEventListenerOptions
 
+/**
+ * @category hooks
+ */
 export function useEventListener<K extends keyof DocumentEventMap>(
   target: Target,
   event: K,

@@ -1,5 +1,8 @@
 import { DependencyList, useCallback, useEffect, useRef } from 'react'
 
+/**
+ * @category hooks
+ */
 export function useAnimationFrame(
   callback = () => {},
   deps: DependencyList = [],

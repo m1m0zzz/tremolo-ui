@@ -16,6 +16,7 @@ const MIDI_EVENT_TO_NUMBER = {
 
 /**
  * Hooks for handling note on/off events. To be used with useMIDIAccess. Internally uses useMIDIMessage.
+ * @category hooks
  */
 export function useMIDIInput(
   midiAccess: MIDIAccess | null,
