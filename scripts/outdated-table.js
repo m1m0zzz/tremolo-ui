@@ -3,7 +3,7 @@ export default async function outdatedTable({ exec, context, pkg }) {
   const options = { ignoreReturnCode: true }
   const { stdout } = await exec.getExecOutput(
     'npm',
-    ['outdated', '--json'],
+    ['outdated', '--json', '--safe-chain-logging=silent'],
     options,
   )
   const json = JSON.parse(stdout)
