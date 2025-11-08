@@ -40,9 +40,6 @@ jobs:
 
     - name: Publish (packages/functions)
       run: npm publish --provenance -w packages/functions
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
     - name: Publish (packages/react)
       run: npm publish --provenance -w packages/react
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

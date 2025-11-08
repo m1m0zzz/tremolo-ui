@@ -1,5 +1,7 @@
 name: Release alpha version package
 
+# OIDC認証を使用するため一時的に退避
+
 on:
   push:
     tags:
@@ -40,9 +42,6 @@ jobs:
 
     - name: Publish (packages/functions)
       run: npm publish --tag alpha --provenance -w packages/functions
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
     - name: Publish (packages/react)
       run: npm publish --tag alpha --provenance -w packages/react
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
