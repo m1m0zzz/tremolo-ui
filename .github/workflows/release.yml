@@ -20,6 +20,9 @@ jobs:
         cache: 'npm'
         registry-url: 'https://registry.npmjs.org'
 
+    # Ensure npm 11.5.1 or later for trusted publishing
+    - run: npm install -g npm@latest
+
     - name: Setup safe-chain
       run: |
         npm i -g @aikidosec/safe-chain
@@ -39,7 +42,7 @@ jobs:
       run: npm run build:package -w packages/react
 
     - name: Publish (packages/functions)
-      run: npm publish --provenance -w packages/functions
+      run: npm publish -w packages/functions
 
     - name: Publish (packages/react)
-      run: npm publish --provenance -w packages/react
+      run: npm publish -w packages/react
