@@ -1,5 +1,4 @@
 .rollup.cache/
-.vscode/settings.json
 storybook-static/
 
 # Logs
@@ -133,4 +132,3 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-*storybook.log
