@@ -4,6 +4,9 @@
   "description": "functions used in @tremolo-ui/react",
   "type": "module",
   "sideEffects": false,
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.cts",
   "scripts": {
     "test": "jest",
     "typecheck": "tsc --noEmit",
