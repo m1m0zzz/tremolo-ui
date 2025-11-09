@@ -9,7 +9,7 @@
 .tremolo-piano-white-key {
   --bg: oklch(100% 0 0);
   --color: oklch(0% 0 0);
-  --active-bg: oklch(90% 0 0);
+  --active-bg: oklch(92% 0 0);
   --active-color: oklch(0% 0 0);
 
   box-sizing: border-box;
@@ -34,9 +34,9 @@
 
 .tremolo-piano-black-key {
   --color: oklch(100% 0 0);
-  --bg: oklch(32.109% 0.00004 271.152);
+  --bg: oklch(32% 0 0);
   --active-color: oklch(100% 0 0);
-  --active-bg: oklch(47.836% 0.00005 271.152);
+  --active-bg: oklch(44% 0 0);
 
   box-sizing: border-box;
   position: absolute;
@@ -82,16 +82,9 @@
 
 :where(.dark, [data-theme='dark']) {
   .tremolo-piano-white-key {
-    --bg: oklch(48.193% 0.00005 271.152);
-    --color: oklch(100% 0 0);
-    --active-bg: oklch(52.78% 0.00006 271.152);
-    --active-color: oklch(100% 0 0);
-  }
-
-  .tremolo-piano-black-key {
-    --color: oklch(100% 0 0);
-    --bg: oklch(32.109% 0 0);
-    --active-color: oklch(100% 0 0);
-    --active-bg: oklch(38.666% 0.00004 271.152);
+    --bg: oklch(80% 0 0);
+    --color: oklch(0% 0 0);
+    --active-bg: oklch(72% 0 0);
+    --active-color: oklch(0% 0 0);
   }
 }

@@ -1,7 +1,3 @@
-:root {
-  --tremolo-theme-color: oklch(59.5% 0.17548 266.373);
-}
-
 .tremolo-no-select {
   user-select: none;
 }

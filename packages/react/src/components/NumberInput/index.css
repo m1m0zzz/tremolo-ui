@@ -1,7 +1,8 @@
 .tremolo-number-input-wrapper {
   --border-radius: 4px;
   --stepper-width: 20px;
-  --active-color: var(--tremolo-theme-color);
+  --active-color: oklch(59.5% 0.17548 266.373);
+  --border-color: oklch(81% 0 0);
 
   display: inline-flex;
   flex-direction: row;
@@ -9,13 +10,13 @@
   width: 140px;
   height: min-content;
   border-style: solid;
-  border-color: #c1c1c1;
+  border-color: var(--border-color);
   border-width: 0px;
   outline: none;
   transition: all 0.1s;
 
   &:not(:focus-within):has(> .tremolo-number-input[data-error='true']) {
-    border-color: #f34343;
+    border-color: oklch(64.245% 0.21266 25.499);
   }
 
   &[data-variant='outline'] {
@@ -23,29 +24,30 @@
     border-radius: var(--border-radius);
 
     &:hover {
-      border-color: #909090;
+      --border-color: oklch(65.335% 0 0);
     }
 
     &:focus-within {
-      border-color: var(--active-color);
+      --border-color: var(--active-color);
       box-shadow: 0px 0px 0px 2px
         color-mix(in srgb, var(--active-color) 10%, transparent);
     }
   }
 
   &[data-variant='filled'] {
+    --bg: oklch(95.88% 0 0);
     border-width: 1px;
     border-radius: var(--border-radius);
     border-color: transparent;
-    background-color: #edf2f7;
+    background-color: var(--bg);
 
     &:hover {
-      background-color: #e4e9ee;
+      --bg: oklch(93.166% 0 0);
     }
 
     &:focus-within {
       background-color: inherit;
-      border-color: var(--active-color);
+      --border-color: var(--active-color);
       box-shadow: 0px 0px 0px 2px
         color-mix(in srgb, var(--active-color) 10%, transparent);
     }
@@ -55,11 +57,11 @@
     border-bottom-width: 1px;
 
     &:hover {
-      border-color: #909090;
+      --border-color: oklch(65.335% 0 0);
     }
 
     &:focus-within {
-      border-color: var(--active-color);
+      --border-color: var(--active-color);
       box-shadow: 0px 2px 0px 0px
         color-mix(in srgb, var(--active-color) 10%, transparent);
     }
@@ -116,7 +118,7 @@
 .tremolo-number-input-increment-stepper {
   border-inline-start-width: 1px;
   border-inline-start-style: solid;
-  border-inline-start-color: #ccc;
+  border-inline-start-color: oklch(84.522% 0 0);
   font-size: calc(0.75rem);
   display: flex;
   justify-content: center;
@@ -128,7 +130,7 @@
   border-top-right-radius: var(--border-radius);
 
   &[aria-disabled='false']:active {
-    background-color: #3443560e;
+    background-color: oklch(37.798% 0.03812 254.612 / 0.055);
   }
 
   &[aria-disabled='true'] {
@@ -143,8 +145,8 @@
 .tremolo-number-input-decrement-stepper {
   border-inline-start-width: 1px;
   border-inline-start-style: solid;
-  border-inline-start-color: #ccc;
-  border-top: 1px solid #ccc;
+  border-inline-start-color: oklch(84.522% 0 0);
+  border-top: 1px solid oklch(84.522% 0 0);
   font-size: calc(0.75rem);
   display: flex;
   justify-content: center;
@@ -156,7 +158,7 @@
   border-bottom-right-radius: var(--border-radius);
 
   &[aria-disabled='false']:active {
-    background-color: #3443560e;
+    background-color: oklch(37.798% 0.03812 254.612 / 0.055);
   }
 
   &[aria-disabled='true'] {
@@ -165,5 +167,19 @@
 
   &[aria-readonly='true'] {
     cursor: not-allowed;
+  }
+}
+
+:where(.dark, [data-theme='dark']) {
+  .tremolo-number-input-wrapper {
+    --border-color: oklch(52% 0 0);
+
+    &[data-variant='filled'] {
+      --bg: oklch(43.5% 0 0);
+
+      &:hover {
+        --bg: oklch(46.6% 0 0);
+      }
+    }
   }
 }

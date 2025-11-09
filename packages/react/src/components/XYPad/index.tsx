@@ -328,6 +328,7 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
               <XYPadThumb
                 ref={thumbRef}
                 __disabled={disabled}
+                __readonly={readonly}
                 __css={{
                   top: `${percentY}%`,
                   left: `${percentX}%`,

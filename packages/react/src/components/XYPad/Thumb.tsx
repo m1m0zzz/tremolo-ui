@@ -24,6 +24,8 @@ export interface ThumbProps {
   /** @internal */
   __disabled?: boolean
   /** @internal */
+  __readonly?: boolean
+  /** @internal */
   __css?: CSSProperties
 }
 
@@ -50,6 +52,7 @@ export const XYPadThumb = forwardRef<XYPadThumbMethods, Props>(
       className,
       style,
       __disabled,
+      __readonly,
       __css,
       ...props
     }: Props,
@@ -87,6 +90,7 @@ export const XYPadThumb = forwardRef<XYPadThumbMethods, Props>(
             // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
             tabIndex={0}
             aria-disabled={__disabled}
+            aria-readonly={__readonly}
             style={{
               ...{ '--color': color },
               width: size ?? width,

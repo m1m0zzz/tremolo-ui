@@ -286,13 +286,6 @@ export const Knob = forwardRef<KnobMethods, Props>(
             strokeWidth={lineWeight}
           />
         )}
-        <path
-          className={clsx('tremolo-knob-active-line', classes?.activeLine)}
-          d={`M ${x2} ${y2} A ${center} ${center} -135 ${r3 - r2 > 180 ? 1 : 0} 1 ${x3}, ${y3}`}
-          fill="none"
-          stroke={activeLine || 'currentColor'}
-          strokeWidth={lineWeight}
-        />
         {startValue < max && (
           <path
             className={clsx(
@@ -305,6 +298,13 @@ export const Knob = forwardRef<KnobMethods, Props>(
             strokeWidth={lineWeight}
           />
         )}
+        <path
+          className={clsx('tremolo-knob-active-line', classes?.activeLine)}
+          d={`M ${x2} ${y2} A ${center} ${center} -135 ${r3 - r2 > 180 ? 1 : 0} 1 ${x3}, ${y3}`}
+          fill="none"
+          stroke={activeLine || 'currentColor'}
+          strokeWidth={lineWeight}
+        />
         {/* thumb */}
         <svg className={clsx('tremolo-knob-thumb', classes?.thumb)}>
           <circle

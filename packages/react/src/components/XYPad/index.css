@@ -4,7 +4,7 @@
 }
 
 .tremolo-xy-pad-area {
-  --color: #eee;
+  --color: oklch(95% 0 0);
 
   position: relative;
   background-color: var(--color);
@@ -17,18 +17,32 @@
 }
 
 .tremolo-xy-pad-thumb {
-  --color: var(--tremolo-theme-color);
+  --color: oklch(59.5% 0.17548 266.373);
 
   border-radius: 50%;
   outline: none;
   background-color: var(--color);
 
   &[aria-disabled='true'] {
-    background-color: #5d6478;
+    background-color: oklch(50.462% 0.03307 270.021);
   }
 
-  &:focus {
+  &[aria-readonly='false']:focus {
     box-shadow: 0px 0px 0px 3px
       color-mix(in srgb, var(--color) 20%, transparent);
+  }
+}
+
+:where(.dark, [data-theme='dark']) {
+  .tremolo-xy-pad-area {
+    --color: oklch(41.7% 0 0);
+  }
+
+  .tremolo-xy-pad-thumb {
+    --color: oklch(64.5% 0.17548 266.373);
+
+    &:hover {
+      --color: oklch(67.5% 0.17548 266.373);
+    }
   }
 }
