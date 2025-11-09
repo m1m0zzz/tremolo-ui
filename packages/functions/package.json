@@ -1,6 +1,6 @@
 {
   "name": "@tremolo-ui/functions",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "description": "functions used in @tremolo-ui/react",
   "type": "module",
   "sideEffects": false,
