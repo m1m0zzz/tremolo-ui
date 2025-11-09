@@ -4,11 +4,7 @@ import { clamp } from '@tremolo-ui/functions'
 
 import { AnimationCanvas } from '../../../src/components/AnimationCanvas'
 import { NumberInput } from '../../../src/components/NumberInput'
-import {
-  Slider,
-  SliderThumb,
-  SliderTrack,
-} from '../../../src/components/Slider'
+import { Slider } from '../../../src/components/Slider'
 
 import {
   detuneAtom,
@@ -100,7 +96,7 @@ export const WaveSelector = ({
             margin: 0,
           }}
         >
-          <SliderTrack defaultStyle={false} style={{ height: 170 }}>
+          <Slider.Track defaultStyle={false} style={{ height: 170 }}>
             <AnimationCanvas
               width={180}
               height={170}
@@ -142,10 +138,10 @@ export const WaveSelector = ({
                 )
               }}
             />
-          </SliderTrack>
-          <SliderThumb>
+          </Slider.Track>
+          <Slider.Thumb>
             <></>
-          </SliderThumb>
+          </Slider.Thumb>
         </Slider>
         <div
           style={{
@@ -206,12 +202,12 @@ export const WaveSelector = ({
             margin: 10,
           }}
         >
-          <SliderTrack
+          <Slider.Track
             thickness={6}
             length="100%"
             active={themeColor}
-          ></SliderTrack>
-          <SliderThumb>
+          ></Slider.Track>
+          <Slider.Thumb>
             <div
               style={{
                 border: `solid 4px ${themeColor}`,
@@ -221,7 +217,7 @@ export const WaveSelector = ({
                 height: 12,
               }}
             ></div>
-          </SliderThumb>
+          </Slider.Thumb>
         </Slider>
         <NumberInput
           value={position}

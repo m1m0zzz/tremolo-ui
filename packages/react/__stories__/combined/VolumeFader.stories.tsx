@@ -3,13 +3,7 @@ import { useRef, useState } from 'react'
 import { normalizeValue, skewWithCenterValue } from '@tremolo-ui/functions'
 
 import { AnimationCanvas } from '../../src/components/AnimationCanvas'
-import {
-  Slider,
-  SliderThumb,
-  SliderTrack,
-  Scale,
-  ScaleOption,
-} from '../../src/components/Slider'
+import { Slider } from '../../src/components/Slider'
 import { getRMS } from '../lib/dsp'
 
 import styles from '../styles/Slider.module.css'
@@ -96,7 +90,7 @@ export const VolumeFader = () => {
         vertical
         wheel={['normalized', 0.1]}
       >
-        <SliderThumb
+        <Slider.Thumb
           className={styles.thumb}
           style={{
             width: '2.4rem',
@@ -105,7 +99,7 @@ export const VolumeFader = () => {
             border: '1px solid #aaa',
           }}
         />
-        <SliderTrack
+        <Slider.Track
           active="#555"
           inactive="#555"
           style={{
@@ -126,15 +120,15 @@ export const VolumeFader = () => {
               ctx.fillRect(0, height - barH, width, height)
             }}
           />
-        </SliderTrack>
-        <Scale>
-          <ScaleOption value={6} labelWidth={30} />
-          <ScaleOption value={0} labelWidth={30} />
-          <ScaleOption value={-6} labelWidth={30} />
-          <ScaleOption value={-12} labelWidth={30} />
-          <ScaleOption value={-24} labelWidth={30} />
-          <ScaleOption value={-100} labelWidth={30} label="-inf" />
-        </Scale>
+        </Slider.Track>
+        <Slider.Scale>
+          <Slider.ScaleOption value={6} labelWidth={30} />
+          <Slider.ScaleOption value={0} labelWidth={30} />
+          <Slider.ScaleOption value={-6} labelWidth={30} />
+          <Slider.ScaleOption value={-12} labelWidth={30} />
+          <Slider.ScaleOption value={-24} labelWidth={30} />
+          <Slider.ScaleOption value={-100} labelWidth={30} label="-inf" />
+        </Slider.Scale>
       </Slider>
       <p>{volume <= -100 ? '-inf' : volume} dB</p>
     </div>

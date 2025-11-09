@@ -23,8 +23,8 @@ import { useDragWithElement } from '../../hooks/useDragWithElement'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { addNoSelect, removeNoSelect } from '../_util'
 
-import { XYPadArea, AreaProps } from './Area'
-import { XYPadThumb, XYPadThumbMethods, ThumbProps } from './Thumb'
+import { Area, XYPadAreaProps } from './Area'
+import { Thumb, XYPadThumbMethods, XYPadThumbProps } from './Thumb'
 
 /**
  * Two-dimensional slider component.
@@ -82,11 +82,7 @@ const defaultValueOptions = {
 type Props = XYPadProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadProps>
 
-/**
- * Simple XYPad
- * @category XYPad
- */
-export const XYPad = forwardRef<XYPadMethods, Props>(
+export const XYPadImpl = forwardRef<XYPadMethods, Props>(
   (
     {
       x: _x,
@@ -125,15 +121,15 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
     const percentX = toFixed((x.reverse ? 1 - nx : nx) * 100)
     const percentY = toFixed((y.reverse ? 1 - ny : ny) * 100)
 
-    let areaProps: AreaProps = {}
-    let thumbProps: ThumbProps = {}
+    let areaProps: XYPadAreaProps = {}
+    let thumbProps: XYPadThumbProps = {}
     if (children != undefined) {
       React.Children.forEach(children, (child) => {
         if (React.isValidElement(child)) {
-          if (child.type == XYPadThumb) {
-            thumbProps = child.props as ThumbProps
-          } else if (child.type == XYPadArea) {
-            areaProps = child.props as AreaProps
+          if (child.type == Thumb) {
+            thumbProps = child.props as XYPadThumbProps
+          } else if (child.type == Area) {
+            areaProps = child.props as XYPadAreaProps
           } else {
             throw new Error('only <XYPadThumb> or <XYPadArea>')
           }
@@ -323,9 +319,9 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
         {...props}
       >
         <div className="tremolo-xy-pad-area-wrapper" ref={areaElementRef}>
-          <XYPadArea
+          <Area
             __thumb={
-              <XYPadThumb
+              <Thumb
                 ref={thumbRef}
                 __disabled={disabled}
                 __readonly={readonly}
@@ -344,5 +340,14 @@ export const XYPad = forwardRef<XYPadMethods, Props>(
   },
 )
 
-export * from './Thumb'
-export * from './Area'
+/**
+ * Simple XYPad
+ * @category XYPad
+ */
+export const XYPad = Object.assign(XYPadImpl, {
+  Thumb,
+  Area,
+})
+
+export { type XYPadThumbProps, type XYPadThumbMethods } from './Thumb'
+export { type XYPadAreaProps } from './Area'

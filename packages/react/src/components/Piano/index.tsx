@@ -35,6 +35,7 @@ import {
   WhiteKey,
 } from './key'
 import { KeyboardShortcuts } from './keyboardShortcuts'
+import { KeyLabel } from './KeyLabel'
 
 /**
  * [noteRange.first, noteRange.first + 1 ..., noteRange.last]
@@ -84,11 +85,7 @@ export interface PianoMethods {
 type Props = PianoProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof PianoProps>
 
-/**
- * Customizable piano component.
- * @category Piano
- */
-export const Piano = forwardRef<PianoMethods, Props>(
+const PianoImpl = forwardRef<PianoMethods, Props>(
   (
     {
       noteRange,
@@ -345,6 +342,12 @@ export const Piano = forwardRef<PianoMethods, Props>(
   },
 )
 
+/**
+ * Customizable piano component.
+ * @category Piano
+ */
+export const Piano = Object.assign(PianoImpl, { WhiteKey, BlackKey, KeyLabel })
+
 export { type KeyboardShortcuts, SHORTCUTS } from './keyboardShortcuts'
-export { WhiteKey, BlackKey, type KeyProps, type KeyMethods } from './key'
-export { KeyLabel, type KeyLabelProps } from './KeyLabel'
+export { type KeyProps, type KeyMethods } from './key'
+export { type KeyLabelProps } from './KeyLabel'

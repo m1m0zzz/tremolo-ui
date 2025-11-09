@@ -4,7 +4,10 @@ import { ComponentPropsWithoutRef, forwardRef, ReactNode } from 'react'
 import { InputEventOption } from '@tremolo-ui/functions'
 
 import { NumberInputProvider } from './context'
+import { DecrementStepper } from './DecrementStepper'
+import { IncrementStepper } from './IncrementStepper'
 import { InternalInput } from './InternalInput'
+import { Stepper } from './Stepper'
 import { Units } from './type'
 
 /*
@@ -18,11 +21,11 @@ export interface NumberInputProps {
   value: number | string
 
   /**
-   * @default Number.MIN_SAFE_INTEGER
+   * Number.MIN_SAFE_INTEGER
    */
   min?: number
   /**
-   * @default Number.MAX_SAFE_INTEGER
+   * Number.MAX_SAFE_INTEGER
    */
   max?: number
   step?: number
@@ -94,11 +97,7 @@ export interface NumberInputMethods {
 type Props = NumberInputProps &
   Omit<ComponentPropsWithoutRef<'input'>, keyof NumberInputProps | 'type'>
 
-/**
- * Input with some useful functions for entering numerical values.
- * @category NumberInput
- */
-export const NumberInput = forwardRef<NumberInputMethods, Props>(
+const NumberInputImpl = forwardRef<NumberInputMethods, Props>(
   (
     {
       value,
@@ -174,7 +173,17 @@ export const NumberInput = forwardRef<NumberInputMethods, Props>(
   },
 )
 
-export * from './Stepper'
-export * from './IncrementStepper'
-export * from './DecrementStepper'
+/**
+ * Input with some useful functions for entering numerical values.
+ * @category NumberInput
+ */
+export const NumberInput = Object.assign(NumberInputImpl, {
+  Stepper,
+  IncrementStepper,
+  DecrementStepper,
+})
+
+export { type StepperProps } from './Stepper'
+export { type IncrementStepperProps } from './IncrementStepper'
+export { type DecrementStepperProps } from './DecrementStepper'
 export { type Units } from './type'

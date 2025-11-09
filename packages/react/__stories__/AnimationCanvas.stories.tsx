@@ -99,9 +99,7 @@ export const RelativeSize = () => {
             ctx.lineTo(0, x)
             ctx.stroke()
           }
-          ctx.rect(pad, pad, width - pad * 2, height - pad * 2)
-          ctx.fillStyle = 'white'
-          ctx.fill()
+          ctx.clearRect(pad, pad, width - pad * 2, height - pad * 2)
 
           // text
           ctx.fillStyle = 'black'
@@ -219,9 +217,8 @@ export const NoAnimate = () => {
               ctx.lineTo(0, x)
               ctx.stroke()
             }
-            ctx.rect(pad, pad, width - pad * 2, height - pad * 2)
-            ctx.fillStyle = 'white'
-            ctx.fill()
+            ctx.clearRect(pad, pad, width - pad * 2, height - pad * 2)
+
             // text
             ctx.fillStyle = color
             ctx.font = '16px sans-serif'

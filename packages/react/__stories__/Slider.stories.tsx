@@ -4,13 +4,7 @@ import { useState } from 'react'
 import { skewWithCenterValue } from '@tremolo-ui/functions'
 
 import { NumberInput } from '../src/components/NumberInput'
-import {
-  Slider,
-  SliderThumb,
-  SliderTrack,
-  Scale,
-  ScaleOption,
-} from '../src/components/Slider'
+import { Slider } from '../src/components/Slider'
 
 import { inputEventOptionType } from './lib/typeUtils'
 
@@ -118,21 +112,21 @@ export const CustomImage = () => {
           borderRadius: 0,
         }}
       >
-        <SliderTrack
+        <Slider.Track
           length={200}
           active="rgb(149,234,231)"
           style={{
             borderRadius: 0,
           }}
-        ></SliderTrack>
-        <SliderThumb>
+        ></Slider.Track>
+        <Slider.Thumb>
           <img
             src={'/tremolo-slider-thumb.png'}
             alt="slider thumb"
             draggable={false}
             style={{ display: 'block' }} // remove bottom gap
           />
-        </SliderThumb>
+        </Slider.Thumb>
       </Slider>
       <p>value: {value}</p>
     </>
@@ -176,12 +170,12 @@ export const Flex = () => {
           onChange={(v) => setValue(v)}
           style={{ flex: '1 1 auto' }}
         >
-          <SliderTrack
+          <Slider.Track
             style={{
               width: '100%',
             }}
           />
-          <SliderThumb color="rgb(87, 71, 233)" />
+          <Slider.Thumb color="rgb(87, 71, 233)" />
         </Slider>
         <div
           style={{
@@ -227,7 +221,7 @@ export const Flex = () => {
           vertical
           style={{ flex: '1 1 auto' }}
         >
-          <SliderTrack
+          <Slider.Track
             style={{
               height: '100%',
             }}
@@ -264,35 +258,39 @@ export const ConfigScale = () => {
           onChange={(v) => setValue(v)}
           vertical
         >
-          <Scale>
-            <ScaleOption value={0} type="mark-number" />
-            <ScaleOption value={25} type="mark" />
-            <ScaleOption value={50} type="mark-number" />
-            <ScaleOption value={75} type="mark" />
-            <ScaleOption value={100} type="mark-number" />
-          </Scale>
+          <Slider.Scale>
+            <Slider.ScaleOption value={0} type="mark-number" />
+            <Slider.ScaleOption value={25} type="mark" />
+            <Slider.ScaleOption value={50} type="mark-number" />
+            <Slider.ScaleOption value={75} type="mark" />
+            <Slider.ScaleOption value={100} type="mark-number" />
+          </Slider.Scale>
         </Slider>
         <p>value: {value}</p>
       </section>
       <section style={{ marginBottom: '2rem' }}>
         <Slider value={value2} min={0} max={100} onChange={(v) => setValue2(v)}>
-          <Scale gap={0} style={{ height: 42 }}>
-            <ScaleOption
+          <Slider.Scale gap={0} style={{ height: 42 }}>
+            <Slider.ScaleOption
               value={0}
               type="mark-number"
               length="1rem"
               styles={{ label: { color: 'red' } }}
             />
-            <ScaleOption value={25} type="mark" />
-            <ScaleOption value={50} type="mark-number" length="0.75rem" />
-            <ScaleOption value={75} type="mark" />
-            <ScaleOption
+            <Slider.ScaleOption value={25} type="mark" />
+            <Slider.ScaleOption
+              value={50}
+              type="mark-number"
+              length="0.75rem"
+            />
+            <Slider.ScaleOption value={75} type="mark" />
+            <Slider.ScaleOption
               value={100}
               type="mark-number"
               length="1rem"
               styles={{ label: { color: 'blue' } }}
             />
-          </Scale>
+          </Slider.Scale>
         </Slider>
         <p>value: {value2}</p>
       </section>
@@ -305,7 +303,7 @@ export const ConfigScale = () => {
           onChange={(v) => setValue3(v)}
           vertical
         >
-          <Scale options={['step', 'number']} />
+          <Slider.Scale options={['step', 'number']} />
         </Slider>
         <p>value: {value3}</p>
       </section>

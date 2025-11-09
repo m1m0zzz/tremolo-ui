@@ -8,7 +8,7 @@ import {
 } from '@tremolo-ui/functions'
 
 import { AnimationCanvas } from '../src/components/AnimationCanvas'
-import { XYPad, XYPadThumb, XYPadArea } from '../src/components/XYPad'
+import { XYPad } from '../src/components/XYPad'
 
 import { InputEventOptionString } from './lib/typeUtils'
 
@@ -221,10 +221,10 @@ export const AdvancedFilterPad = () => {
             setQ(y)
           }}
         >
-          <XYPadArea width={200} color="transparent" />
-          <XYPadThumb size={40}>
+          <XYPad.Area width={200} color="transparent" />
+          <XYPad.Thumb size={40}>
             <ThumbAnimation />
-          </XYPadThumb>
+          </XYPad.Thumb>
         </XYPad>
       </div>
       <div

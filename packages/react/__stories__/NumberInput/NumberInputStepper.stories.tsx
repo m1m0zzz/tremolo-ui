@@ -1,19 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
 
-import {
-  DecrementStepper,
-  IncrementStepper,
-  NumberInput,
-  Stepper,
-} from '../../src/components/NumberInput'
+import { NumberInput } from '../../src/components/NumberInput'
 
 export default {
   title: 'Components/NumberInput/Stepper',
-  component: Stepper,
-} satisfies Meta<typeof Stepper>
+  component: NumberInput.Stepper,
+} satisfies Meta<typeof NumberInput.Stepper>
 
-type Story = StoryObj<typeof Stepper>
+type Story = StoryObj<typeof NumberInput.Stepper>
 
 export const Basic: Story = {
   render: (args) => {
@@ -31,10 +26,10 @@ export const Basic: Story = {
           keepWithinRange={false}
           onChange={(v) => setValue(v)}
         >
-          <Stepper {...args}>
-            <IncrementStepper />
-            <DecrementStepper />
-          </Stepper>
+          <NumberInput.Stepper {...args}>
+            <NumberInput.IncrementStepper />
+            <NumberInput.DecrementStepper />
+          </NumberInput.Stepper>
         </NumberInput>
         <p>config</p>
         <div>

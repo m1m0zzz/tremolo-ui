@@ -9,7 +9,7 @@ import {
 } from 'react'
 
 /** @category XYPad */
-export interface ThumbProps {
+export interface XYPadThumbProps {
   size?: number | string
   width?: number | string
   height?: number | string
@@ -35,11 +35,11 @@ export interface XYPadThumbMethods {
   blur: () => void
 }
 
-type Props = ThumbProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof ThumbProps>
+type Props = XYPadThumbProps &
+  Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadThumbProps>
 
 /** @category XYPad */
-export const XYPadThumb = forwardRef<XYPadThumbMethods, Props>(
+export const Thumb = forwardRef<XYPadThumbMethods, Props>(
   (
     {
       size,

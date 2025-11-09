@@ -35,7 +35,7 @@ export interface SliderThumbMethods {
 export const defaultThumbSize = 22
 
 /** @category Slider */
-export const SliderThumb = forwardRef<SliderThumbMethods, SliderThumbProps>(
+export const Thumb = forwardRef<SliderThumbMethods, SliderThumbProps>(
   (
     {
       size,

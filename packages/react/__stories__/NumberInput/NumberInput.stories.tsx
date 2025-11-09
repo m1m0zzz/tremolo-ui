@@ -2,13 +2,7 @@ import { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
 
 import { Knob } from '../../src/components/Knob'
-import {
-  DecrementStepper,
-  IncrementStepper,
-  NumberInput,
-  NumberInputProps,
-  Stepper,
-} from '../../src/components/NumberInput'
+import { NumberInput, NumberInputProps } from '../../src/components/NumberInput'
 import { inputEventOptionType } from '../lib/typeUtils'
 
 export default {
@@ -108,10 +102,10 @@ export const WithAnotherComponents: Story = {
           {value}
         </div>
         <NumberInput {...args} value={value} onBlur={(v) => setValue(v)}>
-          <Stepper>
-            <IncrementStepper />
-            <DecrementStepper />
-          </Stepper>
+          <NumberInput.Stepper>
+            <NumberInput.IncrementStepper />
+            <NumberInput.DecrementStepper />
+          </NumberInput.Stepper>
         </NumberInput>
       </div>
     )
@@ -222,10 +216,10 @@ export const WithStepper: Story = {
     return (
       <div>
         <NumberInput {...args} value={value} onChange={(v) => setValue(v)}>
-          <Stepper>
-            <IncrementStepper />
-            <DecrementStepper />
-          </Stepper>
+          <NumberInput.Stepper>
+            <NumberInput.IncrementStepper />
+            <NumberInput.DecrementStepper />
+          </NumberInput.Stepper>
         </NumberInput>
       </div>
     )

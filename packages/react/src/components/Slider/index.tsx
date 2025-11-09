@@ -27,8 +27,9 @@ import { addNoSelect, removeNoSelect } from '../_util'
 
 import { SliderProvider } from './context'
 import { Scale } from './Scale'
-import { SliderThumb, SliderThumbMethods, SliderThumbProps } from './Thumb'
-import { SliderTrack, SliderTrackProps } from './Track'
+import { ScaleOption } from './ScaleOption'
+import { Thumb, SliderThumbMethods, SliderThumbProps } from './Thumb'
+import { Track, SliderTrackProps } from './Track'
 
 /** @category Slider */
 export interface SliderProps {
@@ -81,11 +82,7 @@ export interface SliderMethods {
 type Props = SliderProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof SliderProps>
 
-/**
- * Customizable slider
- * @category Slider
- */
-export const Slider = forwardRef<SliderMethods, Props>(
+const SliderImpl = forwardRef<SliderMethods, Props>(
   (
     {
       value,
@@ -138,9 +135,9 @@ export const Slider = forwardRef<SliderMethods, Props>(
     if (children != undefined) {
       React.Children.forEach(children, (child) => {
         if (React.isValidElement(child)) {
-          if (child.type == SliderThumb) {
+          if (child.type == Thumb) {
             thumbProps = child.props as SliderThumbProps
-          } else if (child.type == SliderTrack) {
+          } else if (child.type == Track) {
             trackProps = child.props as SliderTrackProps
           } else if (child.type == Scale) {
             scaleComponent = child
@@ -312,14 +309,10 @@ export const Slider = forwardRef<SliderMethods, Props>(
             }}
           >
             <div className="tremolo-slider-track-wrapper" ref={trackElementRef}>
-              <SliderTrack
+              <Track
                 __percent={percent}
                 __thumb={
-                  <SliderThumb
-                    ref={thumbRef}
-                    __percent={percent}
-                    {...thumbProps}
-                  />
+                  <Thumb ref={thumbRef} __percent={percent} {...thumbProps} />
                 }
                 {...trackProps}
               />
@@ -332,13 +325,20 @@ export const Slider = forwardRef<SliderMethods, Props>(
   },
 )
 
+/**
+ * Customizable slider
+ * @category Slider
+ */
+export const Slider = Object.assign(SliderImpl, {
+  Thumb,
+  Track,
+  Scale,
+  ScaleOption,
+})
+
 export { useSliderContext } from './context'
-export {
-  SliderThumb,
-  type SliderThumbMethods,
-  type SliderThumbProps,
-} from './Thumb'
-export { SliderTrack, type SliderTrackProps } from './Track'
-export { Scale, type ScaleProps } from './Scale'
-export { ScaleOption, type ScaleOptionProps } from './ScaleOption'
+export { type SliderThumbMethods, type SliderThumbProps } from './Thumb'
+export { type SliderTrackProps } from './Track'
+export { type ScaleProps } from './Scale'
+export { type ScaleOptionProps } from './ScaleOption'
 export { type ScaleOptions, type ScaleType } from './type'

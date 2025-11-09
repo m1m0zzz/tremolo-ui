@@ -4,20 +4,12 @@ import * as Tone from 'tone'
 
 import { noteNumber, noteName, isWhiteKey } from '@tremolo-ui/functions'
 
+import { NumberInput } from '../src/components/NumberInput'
 import {
-  DecrementStepper,
-  IncrementStepper,
-  NumberInput,
-  Stepper,
-} from '../src/components/NumberInput'
-import {
-  BlackKey,
   getNoteRangeArray,
-  KeyLabel,
   Piano,
   PianoMethods,
   SHORTCUTS,
-  WhiteKey,
 } from '../src/components/Piano'
 import { useMIDIAccess } from '../src/hooks/useMIDIAccess'
 import { useMIDIInput } from '../src/hooks/useMIDIInput'
@@ -151,13 +143,13 @@ export const Styling = () => {
     <Piano noteRange={range} keyboardShortcuts={SHORTCUTS.HOME_ROW}>
       {getNoteRangeArray(range).map((note) => {
         return isWhiteKey(note) ? (
-          <WhiteKey
+          <Piano.WhiteKey
             key={note}
             noteNumber={note}
             bg="#83888a"
             activeBg="#5acee8"
           >
-            <KeyLabel
+            <Piano.KeyLabel
               label={(note) => {
                 const name = noteName(note)
                 return name.startsWith('C') ? name : undefined
@@ -167,9 +159,9 @@ export const Styling = () => {
                 color: 'white',
               }}
             />
-          </WhiteKey>
+          </Piano.WhiteKey>
         ) : (
-          <BlackKey
+          <Piano.BlackKey
             key={note}
             noteNumber={note}
             bg="#333536"
@@ -197,10 +189,10 @@ export const OneOctave = () => {
         max={9}
         onChange={(v) => setOctave(v)}
       >
-        <Stepper>
-          <IncrementStepper />
-          <DecrementStepper />
-        </Stepper>
+        <NumberInput.Stepper>
+          <NumberInput.IncrementStepper />
+          <NumberInput.DecrementStepper />
+        </NumberInput.Stepper>
       </NumberInput>
       <Piano
         noteRange={{

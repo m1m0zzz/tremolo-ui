@@ -29,7 +29,7 @@ export interface SliderTrackProps {
 }
 
 /** @category Slider */
-export function SliderTrack({
+export function Track({
   length = defaultLength,
   thickness = defaultThickness,
   active,

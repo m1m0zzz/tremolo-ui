@@ -7,8 +7,8 @@ import './components/Slider/index.css'
 import './components/XYPad/index.css'
 
 export {
-  type AbsoluteSizingProps,
   AnimationCanvas,
+  type AbsoluteSizingProps,
   type AnimationCanvasProps,
   type CommonProps,
   type DrawFunction,
@@ -17,65 +17,53 @@ export {
 } from './components/AnimationCanvas'
 export {
   AnimationKnob,
-  type AnimationKnobMethods,
   type AnimationKnobProps,
+  type AnimationKnobMethods,
 } from './components/AnimationKnob'
 export { DragObserver, type DragObserverProps } from './components/DragObserver'
-export { Knob, type KnobMethods, type KnobProps } from './components/Knob'
+export { Knob, type KnobProps, type KnobMethods } from './components/Knob'
 export {
-  DecrementStepper,
-  type DecrementStepperProps,
-  IncrementStepper,
-  type IncrementStepperProps,
   NumberInput,
-  type NumberInputMethods,
   type NumberInputProps,
-  Stepper,
+  type NumberInputMethods,
   type StepperProps,
+  type IncrementStepperProps,
+  type DecrementStepperProps,
 } from './components/NumberInput'
 export {
   Piano,
+  getNoteRangeArray,
+  SHORTCUTS,
   type PianoProps,
   type PianoMethods,
-  getNoteRangeArray,
-  WhiteKey,
-  BlackKey,
   type KeyProps,
   type KeyMethods,
-  KeyLabel,
   type KeyLabelProps,
-  SHORTCUTS,
   type KeyboardShortcuts,
 } from './components/Piano'
 export {
-  Scale,
-  ScaleOption,
+  Slider,
+  useSliderContext,
   type ScaleOptionProps,
   type ScaleProps,
-  Slider,
   type SliderMethods,
   type SliderProps,
-  SliderThumb,
   type SliderThumbMethods,
   type SliderThumbProps,
-  SliderTrack,
   type SliderTrackProps,
-  useSliderContext,
 } from './components/Slider'
 export {
   WheelObserver,
   type WheelObserverProps,
 } from './components/WheelObserver'
 export {
-  type AreaProps,
-  type ThumbProps,
-  type ValueOptions,
   XYPad,
-  XYPadArea,
-  type XYPadMethods,
   type XYPadProps,
-  XYPadThumb,
+  type XYPadMethods,
+  type XYPadAreaProps,
+  type XYPadThumbProps,
   type XYPadThumbMethods,
+  type ValueOptions,
 } from './components/XYPad'
 
 // hooks
