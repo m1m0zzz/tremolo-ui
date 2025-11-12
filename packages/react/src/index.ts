@@ -3,6 +3,7 @@ import './styles/global.css'
 import './components/Knob/index.css'
 import './components/NumberInput/index.css'
 import './components/Piano/index.css'
+import './components/PointsEditor/index.css'
 import './components/Slider/index.css'
 import './components/XYPad/index.css'
 
@@ -41,6 +42,11 @@ export {
   type KeyLabelProps,
   type KeyboardShortcuts,
 } from './components/Piano'
+export {
+  PointsEditor,
+  type PointsEditorProps,
+  type PointBaseType,
+} from './components/PointsEditor'
 export {
   Slider,
   useSliderContext,

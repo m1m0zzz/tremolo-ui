@@ -17,7 +17,7 @@ export interface DragObserverProps<T extends ElementType> {
   threshold?: number
 
   children?: ReactNode
-  onDrag: (x: number, y: number, deltaX: number, deltaY: number) => void
+  onDrag?: (x: number, y: number, deltaX: number, deltaY: number) => void
   onDragStart?: () => void
   onDragEnd?: () => void
 }
@@ -30,10 +30,11 @@ export function DragObserver<T extends ElementType = 'div'>(
   const {
     as: Component = 'div',
     threshold = 1,
-    children,
     onDrag,
     onDragStart,
     onDragEnd,
+    children,
+    onPointerDown,
     ...attributes
   } = props
 
@@ -47,7 +48,10 @@ export function DragObserver<T extends ElementType = 'div'>(
   return (
     <Component
       ref={refCallback}
-      onPointerDown={pointerDownHandler}
+      onPointerDown={(e) => {
+        pointerDownHandler(e)
+        onPointerDown?.(e)
+      }}
       {...attributes}
     >
       {children}

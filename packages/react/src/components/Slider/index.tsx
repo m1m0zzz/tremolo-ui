@@ -192,7 +192,7 @@ const SliderImpl = forwardRef<SliderMethods, Props>(
     )
 
     // --- hooks ---
-    const [touchMoveRefCallback, pointerDownHandler] =
+    const { refHandler: touchMoveRefCallback, pointerDownHandler } =
       useDragWithElement<HTMLDivElement>({
         baseElementRef: trackElementRef,
         onDrag: onDrag,

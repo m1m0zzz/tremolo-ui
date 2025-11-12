@@ -8,6 +8,7 @@ import '../src/styles/global.css'
 import '../src/components/Knob/index.css'
 import '../src/components/NumberInput/index.css'
 import '../src/components/Piano/index.css'
+import '../src/components/PointsEditor/index.css'
 import '../src/components/Slider/index.css'
 import '../src/components/XYPad/index.css'
 

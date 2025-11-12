@@ -1,0 +1,25 @@
+.tremolo-points-editor {
+  position: relative;
+}
+
+.tremolo-points-editor-background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.tremolo-points-editor-container {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+}
+
+.tremolo-points-editor-point {
+  --color: oklch(59.5% 0.17548 266.373);
+
+  position: absolute;
+  border-radius: 50%;
+  outline: none;
+  background-color: var(--color);
+  translate: -50% -50%;
+}

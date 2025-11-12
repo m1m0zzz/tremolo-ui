@@ -212,7 +212,7 @@ export const XYPadImpl = forwardRef<XYPadMethods, Props>(
     )
 
     // --- hooks ---
-    const [touchMoveRefCallback, pointerDownHandler] =
+    const { refHandler: touchMoveRefCallback, pointerDownHandler } =
       useDragWithElement<HTMLDivElement>({
         baseElementRef: areaElementRef,
         onDrag: onDrag,

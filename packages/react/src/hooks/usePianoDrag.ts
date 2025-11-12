@@ -1,11 +1,11 @@
-import { useRef, useCallback, RefObject, useState } from 'react'
+import { useRef, useCallback, RefObject } from 'react'
 
 import { normalizeValue } from '@tremolo-ui/functions'
 
 import { useEventListener } from './useEventListener'
 import { useRefCallbackEvent } from './useRefCallbackEvent'
 
-interface UseDragWithElement<T extends Element> {
+interface UsePianoDrag<T extends Element> {
   baseElementRef: RefObject<T | null>
   onDrag: (normalizedX: number, normalizedY: number) => void
   onDragStart?: (normalizedX: number, normalizedY: number) => void
@@ -13,21 +13,24 @@ interface UseDragWithElement<T extends Element> {
 }
 
 /**
+ * Internal
  * @category hooks
+ * @returns [refCallback, pointerDownHandler]
+ * @private
  */
-export function useDragWithElement<T extends Element>({
+export function usePianoDrag<T extends Element>({
   baseElementRef,
   onDrag,
   onDragStart,
   onDragEnd,
-}: UseDragWithElement<T>) {
-  const [dragging, setDragging] = useState(false)
+}: UsePianoDrag<T>) {
+  const dragged = useRef(false)
   const normalizedX = useRef(0)
   const normalizedY = useRef(0)
 
   const handleDrag = useCallback(
     (event: MouseEvent | React.PointerEvent<T> | TouchEvent) => {
-      if (!baseElementRef.current || !dragging) {
+      if (!baseElementRef.current || !dragged.current) {
         return
       }
       const isTouch = event instanceof TouchEvent
@@ -42,7 +45,7 @@ export function useDragWithElement<T extends Element>({
       normalizedY.current = ny
       onDrag(nx, ny)
     },
-    [onDrag, baseElementRef, dragging],
+    [onDrag, baseElementRef],
   )
 
   const refHandler = useRefCallbackEvent(
@@ -54,8 +57,7 @@ export function useDragWithElement<T extends Element>({
 
   const pointerDownHandler = useCallback(
     (event: React.PointerEvent<T>) => {
-      // dragging.current = true
-      setDragging(true)
+      dragged.current = true
       handleDrag(event)
       onDragStart?.(normalizedX.current, normalizedY.current)
     },
@@ -65,11 +67,10 @@ export function useDragWithElement<T extends Element>({
   useEventListener(globalThis.window, 'pointermove', handleDrag)
 
   useEventListener(globalThis.window, 'pointerup', () => {
-    if (!dragging) return
-    // dragging.current = false
-    setDragging(false)
+    if (!dragged.current) return
+    dragged.current = false
     onDragEnd?.(normalizedX.current, normalizedY.current)
   })
 
-  return { refHandler, pointerDownHandler, dragging }
+  return { refHandler, pointerDownHandler }
 }

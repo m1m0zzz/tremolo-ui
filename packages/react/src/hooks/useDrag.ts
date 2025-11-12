@@ -6,7 +6,7 @@ import { useRefCallbackEvent } from './useRefCallbackEvent'
 interface UseDragProps {
   threshold?: number
 
-  onDrag: (x: number, y: number, deltaX: number, deltaY: number) => void
+  onDrag?: (x: number, y: number, deltaX: number, deltaY: number) => void
   onDragStart?: () => void
   onDragEnd?: () => void
 }
@@ -53,7 +53,7 @@ export function useDrag<T extends Element>({
         dragOffsetY.current = screenY
       }
       if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return
-      onDrag(
+      onDrag?.(
         screenX - dragStartX.current,
         screenY - dragStartY.current,
         deltaX,

@@ -23,8 +23,8 @@ import {
   noteKeys,
 } from '@tremolo-ui/functions'
 
-import { useDragWithElement } from '../../hooks/useDragWithElement'
 import { useEventListener } from '../../hooks/useEventListener'
+import { usePianoDrag } from '../../hooks/usePianoDrag'
 
 import { NoteRange, PianoProvider } from './context'
 import {
@@ -240,10 +240,12 @@ const PianoImpl = forwardRef<PianoMethods, Props>(
       }
     }, [fill, _whiteNoteWidth, whiteNoteCount])
 
-    const [touchMoveRefCallback, pointerDownHandler] =
-      useDragWithElement<HTMLDivElement>({
+    // FIXME
+    const { refHandler: touchMoveRefCallback, pointerDownHandler } =
+      usePianoDrag<HTMLDivElement>({
         baseElementRef: pianoRef,
         onDrag: onDrag,
+        // onDragStart: onDrag,
         onDragEnd: onDragEnd,
       })
 

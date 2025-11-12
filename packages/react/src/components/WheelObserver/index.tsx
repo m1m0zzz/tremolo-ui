@@ -43,6 +43,7 @@ export function WheelObserver<T extends ElementType = 'div'>(
   )
 
   return (
+    // TODO: merge ref
     <Component ref={wheelRefCallback} {...attributes}>
       {children}
     </Component>

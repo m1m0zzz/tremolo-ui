@@ -1,4 +1,4 @@
-import { useCallback, useInsertionEffect, useRef } from 'react'
+import { DependencyList, useCallback, useInsertionEffect, useRef } from 'react'
 
 /**
  * Internal
@@ -6,7 +6,7 @@ import { useCallback, useInsertionEffect, useRef } from 'react'
  */
 export function useCallbackRef<Args extends unknown[], Return>(
   callback: ((...args: Args) => Return) | undefined,
-  deps: React.DependencyList = [],
+  deps: DependencyList = [],
 ) {
   const callbackRef = useRef<typeof callback>(() => {
     throw new Error('Cannot call an event handler while rendering.')
