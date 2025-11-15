@@ -4,7 +4,7 @@ import { ComponentPropsWithoutRef, forwardRef } from 'react'
 import { Background } from './Background'
 import { Container } from './Container'
 import { PointsEditorProvider } from './context'
-import { Point } from './Point'
+import { Point, PointBaseType } from './Point'
 
 /*
 TODO:
@@ -37,6 +37,10 @@ export default function App() {
 export interface PointsEditorProps {
   width?: number | string
   height?: number | string
+
+  // TODO
+  grid?: number | PointBaseType
+  // modifier?:
 
   disabled?: boolean
   readonly?: boolean
@@ -84,10 +88,15 @@ const PointsEditorImpl = forwardRef<HTMLDivElement, Props>(
   },
 )
 
+/**
+ * Multiple Point Controller
+ * @category PointsEditor
+ */
 export const PointsEditor = Object.assign(PointsEditorImpl, {
   Background,
   Container,
   Point,
 })
 
-export { type PointBaseType } from './Point'
+export { usePointsEditorContext } from './context'
+export { clampPoint, type PointBaseType, type PointProps } from './Point'

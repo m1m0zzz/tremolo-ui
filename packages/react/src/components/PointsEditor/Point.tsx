@@ -8,8 +8,10 @@ import { addNoSelect, removeNoSelect } from '../_util'
 
 import { usePointsEditorContext } from './context'
 
+/** @category PointsEditor */
 export type PointBaseType = { x: number; y: number }
 
+/** @category PointsEditor */
 export function clampPoint(
   point: PointBaseType,
   min?: Partial<PointBaseType>,
@@ -21,6 +23,7 @@ export function clampPoint(
   return { x: newX, y: newY }
 }
 
+/** @category PointsEditor */
 export interface PointProps<T extends PointBaseType> {
   value: T
   min?: Partial<PointBaseType>
