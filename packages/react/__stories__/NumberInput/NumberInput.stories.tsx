@@ -62,7 +62,14 @@ export const UnitsAndDigit: Story = {
   render: (args) => {
     const [value, setValue] = useState(4321)
 
-    return <NumberInput {...args} value={value} onChange={(v) => setValue(v)} />
+    return (
+      <NumberInput {...args} value={value} onChange={(v) => setValue(v)}>
+        <NumberInput.Stepper>
+          <NumberInput.IncrementStepper />
+          <NumberInput.DecrementStepper />
+        </NumberInput.Stepper>
+      </NumberInput>
+    )
   },
 }
 
