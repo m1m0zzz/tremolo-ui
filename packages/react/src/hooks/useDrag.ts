@@ -16,7 +16,7 @@ interface UseDragProps {
  * @returns [refCallback, pointerDownHandler]
  */
 export function useDrag<T extends Element>({
-  threshold = 1,
+  threshold: _threshold = 1,
   onDrag,
   onDragStart,
   onDragEnd,
@@ -28,6 +28,8 @@ export function useDrag<T extends Element>({
   const dragOffsetY = useRef<number | undefined>(undefined)
   const dragStartX = useRef(0)
   const dragStartY = useRef(0)
+
+  const threshold = Math.max(_threshold, 1)
 
   const handleDrag = useCallback(
     (
@@ -63,13 +65,6 @@ export function useDrag<T extends Element>({
     [threshold, onDrag],
   )
 
-  const refHandler = useRefCallbackEvent(
-    'touchmove',
-    handleDrag,
-    { passive: false },
-    [onDrag],
-  )
-
   const pointerDownHandler = useCallback(
     (event: React.PointerEvent<T>) => {
       dragOffsetX.current = event.screenX
@@ -78,6 +73,13 @@ export function useDrag<T extends Element>({
       onDragStart?.()
     },
     [handleDrag, onDragStart],
+  )
+
+  const refHandler = useRefCallbackEvent(
+    'touchmove',
+    handleDrag,
+    { passive: false },
+    [onDrag],
   )
 
   useEventListener(globalThis.window, 'mousemove', handleDrag)
