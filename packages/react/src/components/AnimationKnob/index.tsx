@@ -19,7 +19,7 @@ import {
 
 import { useDrag } from '../../hooks/useDrag'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
-import { addNoSelect, removeNoSelect } from '../_util'
+import { addUserSelectNone, removeUserSelectNone } from '../_util'
 import { AnimationCanvas, DrawFunction } from '../AnimationCanvas'
 
 /** @category AnimationKnob */
@@ -168,10 +168,10 @@ export const AnimationKnob = forwardRef<AnimationKnobMethods, Props>(
       onDrag: onDrag,
       onDragStart: () => {
         valueRef.current = normalizeValue(value, min, max, skew)
-        if (bodyNoSelect) addNoSelect()
+        if (bodyNoSelect) addUserSelectNone()
       },
       onDragEnd: () => {
-        if (bodyNoSelect) removeNoSelect()
+        if (bodyNoSelect) removeUserSelectNone()
       },
     })
 

@@ -5,6 +5,7 @@ import {
   useCallback,
   useImperativeHandle,
   useRef,
+  useState,
 } from 'react'
 
 import {
@@ -18,7 +19,18 @@ import {
 
 import { useDrag } from '../../hooks/useDrag'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
-import { addNoSelect, removeNoSelect } from '../_util'
+import {
+  addUserSelectNone,
+  Cursor,
+  removeUserSelectNone,
+  resetCursorStyle,
+  setCursorStyle,
+} from '../_util'
+
+const defaultExternalStyles: KnobProps['externalStyles'] = {
+  userSelectNone: true,
+  cursor: 'grabbing',
+}
 
 /** @category Knob */
 export interface KnobProps {
@@ -29,9 +41,10 @@ export interface KnobProps {
 
   // optional
   step?: number
-  skew?: number // | SkewFunction
+  skew?: number // | SkewFunction // TODO
   /**
    * value set when double-clicking
+   * restriction: enableDoubleClickDefault = true
    * @default min
    * @see enableDoubleClickDefault
    */
@@ -46,14 +59,19 @@ export interface KnobProps {
   /** width and height */
   size?: number | string
 
-  /** Whether to apply `{use-select: none}` when dragging */
-  bodyNoSelect?: boolean
+  /** Global style to apply when dragged */
+  externalStyles?: {
+    userSelectNone?: boolean
+    cursor?: Cursor
+  }
   /**
    * wheel control option
+   * If null, no event will be triggered
    */
   wheel?: InputEventOption | null
   /**
    * keyboard control option
+   * If null, no event will be triggered
    */
   keyboard?: InputEventOption | null
   enableDoubleClickDefault?: boolean
@@ -116,7 +134,7 @@ export const Knob = forwardRef<KnobMethods, Props>(
       defaultValue = min,
       startValue = min,
       size = 50,
-      bodyNoSelect = true,
+      externalStyles: _externalStyles,
       wheel = ['raw', 1],
       keyboard = ['raw', 1],
       enableDoubleClickDefault = true,
@@ -141,8 +159,11 @@ export const Knob = forwardRef<KnobMethods, Props>(
     }: Props,
     forwardedRef,
   ) => {
+    const [dragging, setDragging] = useState(false)
     const valueRef = useRef(0)
     const elmRef = useRef<HTMLOrSVGElement>(null)
+
+    const externalStyles = { ...defaultExternalStyles, ..._externalStyles }
 
     // --- internal functions ---
     const onDrag = useCallback(
@@ -187,11 +208,15 @@ export const Knob = forwardRef<KnobMethods, Props>(
     const [touchMoveRefCallback, pointerDownHandler] = useDrag<SVGElement>({
       onDrag: onDrag,
       onDragStart: () => {
+        setDragging(true)
         valueRef.current = normalizeValue(value, min, max, skew)
-        if (bodyNoSelect) addNoSelect()
+        if (externalStyles.userSelectNone) addUserSelectNone()
+        if (externalStyles.cursor) setCursorStyle(externalStyles.cursor)
       },
       onDragEnd: () => {
-        if (bodyNoSelect) removeNoSelect()
+        setDragging(false)
+        if (externalStyles.userSelectNone) removeUserSelectNone()
+        if (externalStyles.cursor) resetCursorStyle()
       },
     })
 
@@ -257,6 +282,7 @@ export const Knob = forwardRef<KnobMethods, Props>(
         aria-valuemax={max}
         aria-disabled={disabled}
         aria-readonly={readonly}
+        data-dragging={dragging}
         onPointerDown={(event) => {
           pointerDownHandler(event)
           onPointerDown?.(event)

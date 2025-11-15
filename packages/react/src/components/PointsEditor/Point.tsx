@@ -4,7 +4,12 @@ import { ComponentPropsWithoutRef } from 'react'
 import { clamp } from '@tremolo-ui/functions'
 
 import { useDragWithElement } from '../../hooks/useDragWithElement'
-import { addNoSelect, removeNoSelect } from '../_util'
+import {
+  addUserSelectNone,
+  removeUserSelectNone,
+  resetCursorStyle,
+  setCursorStyle,
+} from '../_util'
 
 import { usePointsEditorContext } from './context'
 
@@ -67,7 +72,7 @@ export function Point<T extends PointBaseType>({
   const containerElementRef = usePointsEditorContext(
     (s) => s.containerElementRef,
   )
-  const bodyNoSelect = usePointsEditorContext((s) => s.bodyNoSelect)
+  const externalStyles = usePointsEditorContext((s) => s.externalStyles)
   const __disabled = usePointsEditorContext((s) => s.disabled)
   const __readonly = usePointsEditorContext((s) => s.readonly)
 
@@ -88,13 +93,15 @@ export function Point<T extends PointBaseType>({
     },
     onDragStart: (x, y) => {
       if (readonly) return
-      if (bodyNoSelect) addNoSelect()
+      if (externalStyles.userSelectNone) addUserSelectNone()
+      if (externalStyles.cursor) setCursorStyle(externalStyles.cursor)
 
       onDragStart?.(clampPoint({ x, y }, min, max))
     },
     onDragEnd: (x, y) => {
       if (readonly) return
-      if (bodyNoSelect) removeNoSelect()
+      if (externalStyles.userSelectNone) removeUserSelectNone()
+      if (externalStyles.cursor) resetCursorStyle()
 
       onDragEnd?.(clampPoint({ x, y }, min, max))
     },

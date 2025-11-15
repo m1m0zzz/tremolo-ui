@@ -23,13 +23,24 @@ import {
 
 import { useDragWithElement } from '../../hooks/useDragWithElement'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
-import { addNoSelect, removeNoSelect } from '../_util'
+import {
+  addUserSelectNone,
+  Cursor,
+  removeUserSelectNone,
+  resetCursorStyle,
+  setCursorStyle,
+} from '../_util'
 
 import { SliderProvider } from './context'
 import { Scale } from './Scale'
 import { ScaleOption } from './ScaleOption'
 import { Thumb, SliderThumbMethods, SliderThumbProps } from './Thumb'
 import { Track, SliderTrackProps } from './Track'
+
+const defaultExternalStyles: SliderProps['externalStyles'] = {
+  userSelectNone: true,
+  cursor: 'pointer',
+}
 
 /** @category Slider */
 export interface SliderProps {
@@ -41,24 +52,38 @@ export interface SliderProps {
   // optional
   step?: number
   skew?: number // TODO | SkewFunction
+  /**
+   * slider orientation
+   * aria-orientation property is also applied.
+   */
   vertical?: boolean
   reverse?: boolean
-  bodyNoSelect?: boolean
+
+  /** Global style to apply when dragged */
+  externalStyles?: {
+    userSelectNone?: boolean
+    cursor?: Cursor
+  }
   /**
    * wheel control option
+   * If null, no event will be triggered
    */
   wheel?: InputEventOption | null
   /**
    * keyboard control option
+   * If null, no event will be triggered
    */
   keyboard?: InputEventOption | null
+
   /**
    * Only the appearance will change.
    * Please consider using with readonly.
+   * aria-disabled property is also applied.
    */
   disabled?: boolean
   /**
    * Make the value unchangeable.
+   * aria-readonly property is also applied.
    */
   readonly?: boolean
   className?: string
@@ -92,7 +117,7 @@ const SliderImpl = forwardRef<SliderMethods, Props>(
       skew = 1,
       vertical = false,
       reverse = false,
-      bodyNoSelect = true,
+      externalStyles: _externalStyles,
       wheel = ['raw', 1],
       keyboard = ['raw', 1],
       disabled = false,
@@ -116,6 +141,8 @@ const SliderImpl = forwardRef<SliderMethods, Props>(
     const thumbRef = useRef<SliderThumbMethods>(null)
 
     // --- interpret props ---
+    const externalStyles = { ...defaultExternalStyles, ..._externalStyles }
+
     const p = toFixed(normalizeValue(value, min, max, skew) * 100)
     const rev = toFixed(100 - p)
     // NOTE
@@ -198,7 +225,9 @@ const SliderImpl = forwardRef<SliderMethods, Props>(
         onDrag: onDrag,
         onDragStart: (nx, ny) => {
           if (readonly) return
-          if (bodyNoSelect) addNoSelect()
+          if (externalStyles.userSelectNone) addUserSelectNone()
+          if (externalStyles.cursor) setCursorStyle(externalStyles.cursor)
+
           thumbRef.current?.focus()
           onDragStart?.(
             clamp(
@@ -210,7 +239,10 @@ const SliderImpl = forwardRef<SliderMethods, Props>(
         },
         onDragEnd: (nx, ny) => {
           if (readonly) return
-          if (bodyNoSelect) removeNoSelect()
+
+          if (externalStyles.userSelectNone) removeUserSelectNone()
+          if (externalStyles.cursor) resetCursorStyle()
+
           onDragEnd?.(
             clamp(
               stepValue(rawValue(vertical ? ny : nx, min, max, skew), step),

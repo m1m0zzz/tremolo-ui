@@ -21,10 +21,29 @@ import {
 
 import { useDragWithElement } from '../../hooks/useDragWithElement'
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
-import { addNoSelect, removeNoSelect } from '../_util'
+import {
+  addUserSelectNone,
+  Cursor,
+  removeUserSelectNone,
+  resetCursorStyle,
+  setCursorStyle,
+} from '../_util'
 
 import { Area, XYPadAreaProps } from './Area'
 import { Thumb, XYPadThumbMethods, XYPadThumbProps } from './Thumb'
+
+const defaultValueOptions = {
+  skew: 1,
+  step: 1,
+  reverse: false,
+  wheel: ['raw', 1] as InputEventOption,
+  keyboard: ['raw', 1] as InputEventOption,
+}
+
+const defaultExternalStyles: XYPadProps['externalStyles'] = {
+  userSelectNone: true,
+  cursor: 'pointer',
+}
 
 /**
  * Two-dimensional slider component.
@@ -55,9 +74,14 @@ export interface XYPadProps {
   x: ValueOptions
   y: ValueOptions
 
-  bodyNoSelect?: boolean
+  externalStyles?: {
+    userSelectNone?: boolean
+    cursor?: Cursor
+  }
+
   disabled?: boolean
   readonly?: boolean
+
   onChange?: (valueX: number, valueY: number) => void
   onDragStart?: (valueX: number, valueY: number) => void
   onDragEnd?: (valueX: number, valueY: number) => void
@@ -71,14 +95,6 @@ export interface XYPadMethods {
   blur: () => void
 }
 
-const defaultValueOptions = {
-  skew: 1,
-  step: 1,
-  reverse: false,
-  wheel: ['raw', 1] as InputEventOption,
-  keyboard: ['raw', 1] as InputEventOption,
-}
-
 type Props = XYPadProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadProps>
 
@@ -89,7 +105,7 @@ export const XYPadImpl = forwardRef<XYPadMethods, Props>(
       y: _y,
       className,
       style,
-      bodyNoSelect = true,
+      externalStyles: _externalStyles,
       disabled = false,
       readonly = false,
       onChange,
@@ -116,6 +132,8 @@ export const XYPadImpl = forwardRef<XYPadMethods, Props>(
     const thumbRef = useRef<XYPadThumbMethods>(null)
 
     // --- interpret props ---
+    const externalStyles = { ...defaultExternalStyles, ..._externalStyles }
+
     const nx = normalizeValue(x.value, x.min, x.max, x.skew)
     const ny = normalizeValue(y.value, y.min, y.max, y.skew)
     const percentX = toFixed((x.reverse ? 1 - nx : nx) * 100)
@@ -218,8 +236,12 @@ export const XYPadImpl = forwardRef<XYPadMethods, Props>(
         onDrag: onDrag,
         onDragStart: (nx, ny) => {
           if (readonly) return
-          if (bodyNoSelect) addNoSelect()
+
+          if (externalStyles.userSelectNone) addUserSelectNone()
+          if (externalStyles.cursor) setCursorStyle(externalStyles.cursor)
+
           thumbRef.current?.focus()
+
           const valueX = clamp(
             stepValue(rawValue(nx, x.min, x.max, x.skew), x.step),
             x.min,
@@ -230,11 +252,17 @@ export const XYPadImpl = forwardRef<XYPadMethods, Props>(
             y.min,
             y.max,
           )
+
+          // TODO: ドラッグせず、pointer downだけの場合でも、onChange を発火させるべき
+          // onChange()
           onDragStart?.(valueX, valueY)
         },
         onDragEnd: (nx, ny) => {
           if (readonly) return
-          if (bodyNoSelect) removeNoSelect()
+
+          if (externalStyles.userSelectNone) removeUserSelectNone()
+          if (externalStyles.cursor) resetCursorStyle()
+
           const valueX = clamp(
             stepValue(rawValue(nx, x.min, x.max, x.skew), x.step),
             x.min,

@@ -1,6 +1,10 @@
 import clsx from 'clsx'
 import { ComponentPropsWithoutRef, forwardRef } from 'react'
 
+import { InputEventOption } from '@tremolo-ui/functions'
+
+import { Cursor } from '../_util'
+
 import { Background } from './Background'
 import { Container } from './Container'
 import { PointsEditorProvider } from './context'
@@ -34,6 +38,12 @@ export default function App() {
 }
 */
 
+const defaultExternalStyles: PointsEditorProps['externalStyles'] = {
+  userSelectNone: true,
+  cursor: 'grabbing',
+}
+
+/** @category PointsEditor */
 export interface PointsEditorProps {
   width?: number | string
   height?: number | string
@@ -44,7 +54,23 @@ export interface PointsEditorProps {
 
   disabled?: boolean
   readonly?: boolean
-  bodyNoSelect?: boolean
+
+  externalStyles?: {
+    userSelectNone?: boolean
+    cursor?: Cursor
+  }
+
+  // TODO
+  /**
+   * wheel control option
+   * If null, no event will be triggered
+   */
+  wheel?: InputEventOption | null
+  /**
+   * keyboard control option
+   * If null, no event will be triggered
+   */
+  keyboard?: InputEventOption | null
 }
 
 type Props = PointsEditorProps &
@@ -57,7 +83,7 @@ const PointsEditorImpl = forwardRef<HTMLDivElement, Props>(
       height = 100,
       disabled = false,
       readonly = false,
-      bodyNoSelect = true,
+      externalStyles: _externalStyles,
       style,
       className,
       children,
@@ -65,11 +91,13 @@ const PointsEditorImpl = forwardRef<HTMLDivElement, Props>(
     },
     forwardedRef,
   ) => {
+    const externalStyles = { ...defaultExternalStyles, ..._externalStyles }
+
     return (
       <PointsEditorProvider
         disabled={disabled}
         readonly={readonly}
-        bodyNoSelect={bodyNoSelect}
+        externalStyles={externalStyles}
       >
         <div
           ref={forwardedRef}

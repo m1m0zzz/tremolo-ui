@@ -1,3 +1,19 @@
-.tremolo-no-select {
+.tremolo-user-select-none {
   user-select: none;
+}
+
+.tremolo-cursor-pointer {
+  cursor: pointer;
+}
+
+.tremolo-cursor-move {
+  cursor: move;
+}
+
+.tremolo-cursor-grabbing {
+  cursor: grabbing;
+}
+
+.tremolo-cursor-none {
+  cursor: none;
 }

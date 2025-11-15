@@ -60,10 +60,12 @@ export interface NumberInputProps {
 
   /**
    * wheel control option
+   * If null, no event will be triggered
    */
   wheel?: InputEventOption | null
   /**
    * keyboard control option
+   * If null, no event will be triggered
    */
   keyboard?: InputEventOption | null
 

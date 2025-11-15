@@ -1,11 +1,15 @@
 .tremolo-knob {
   display: inline-block;
-  cursor: pointer;
+  cursor: grab;
   overflow: visible;
   outline: 0;
 
   &[aria-readonly='true'] {
     cursor: not-allowed;
+  }
+
+  &[data-dragging='true'] {
+    cursor: inherit;
   }
 }
 

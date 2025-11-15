@@ -1,11 +1,28 @@
-export function addNoSelect() {
-  document.body.classList.add('tremolo-no-select')
+export function addUserSelectNone() {
+  window.document.body.classList.add('tremolo-user-select-none')
 }
 
-export function removeNoSelect() {
-  document.body.classList.remove('tremolo-no-select')
+export function removeUserSelectNone() {
+  window.document.body.classList.remove('tremolo-user-select-none')
 }
 
-export function toggleNoSelect() {
-  document.body.classList.toggle('tremolo-no-select')
+const cursorStyles = {
+  grabbing: 'tremolo-cursor-grabbing',
+  grab: 'tremolo-cursor-grab',
+  pointer: 'tremolo-cursor-pointer',
+  move: 'tremolo-cursor-move',
+  none: 'tremolo-cursor-none',
+}
+
+export type Cursor = keyof typeof cursorStyles
+
+export function setCursorStyle(type: Cursor) {
+  resetCursorStyle()
+  window.document.body.classList.add(cursorStyles[type])
+}
+
+export function resetCursorStyle() {
+  Object.values(cursorStyles).forEach((s) => {
+    window.document.body.classList.remove(s)
+  })
 }

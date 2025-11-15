@@ -20,6 +20,11 @@
   position: absolute;
   border-radius: 50%;
   outline: none;
+  cursor: grab;
   background-color: var(--color);
   translate: -50% -50%;
+
+  &[data-dragging='true'] {
+    cursor: inherit;
+  }
 }

@@ -8,11 +8,16 @@ import {
 } from 'react'
 import { createStore, useStore } from 'zustand'
 
+import { Cursor } from '../_util'
+
 type State = {
   containerElementRef: RefObject<HTMLDivElement | null>
   disabled: boolean
   readonly: boolean
-  bodyNoSelect: boolean
+  externalStyles: {
+    userSelectNone?: boolean
+    cursor?: Cursor
+  }
 }
 
 type Action = {
@@ -29,7 +34,10 @@ const createPointsEditorStore = (initProps: Partial<State & Action>) => {
     containerElementRef: createRef(),
     disabled: false,
     readonly: false,
-    bodyNoSelect: true,
+    externalStyles: {
+      userSelectNone: true,
+      cursor: 'grabbing',
+    },
   }
 
   return createStore<State & Action>()((set) => ({

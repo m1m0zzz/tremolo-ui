@@ -96,7 +96,9 @@ export const InternalInput = forwardRef<
         let newValue
         if (eventType == 'normalized') {
           if (!min || !max) {
-            throw new Error('required parameter: min, max') // TODO
+            throw new Error(
+              '[NumberInput] "min" and "max" are required when InputEventOption[0] is set to "normalized".',
+            )
           }
           const n = normalizeValue(valueAsNumber, min, max)
           newValue = rawValue(n + x, min, max)
