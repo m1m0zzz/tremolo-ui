@@ -7,14 +7,6 @@
     "message": "Tutorials",
     "description": "The label for category Tutorials in sidebar tutorialSidebar"
   },
-  "sidebar.tutorialSidebar.category.React": {
-    "message": "React",
-    "description": "The label for category React in sidebar tutorialSidebar"
-  },
-  "sidebar.tutorialSidebar.category.Web Components": {
-    "message": "Web Components",
-    "description": "The label for category Web Components in sidebar tutorialSidebar"
-  },
   "sidebar.tutorialSidebar.category.Components": {
     "message": "Components",
     "description": "The label for category Components in sidebar tutorialSidebar"
@@ -70,10 +62,6 @@
   "sidebar.typedocSidebar.category.NumberInput": {
     "message": "NumberInput",
     "description": "The label for category NumberInput in sidebar typedocSidebar"
-  },
-  "sidebar.typedocSidebar.category.Other": {
-    "message": "Other",
-    "description": "The label for category Other in sidebar typedocSidebar"
   },
   "sidebar.typedocSidebar.category.Piano": {
     "message": "Piano",
@@ -259,6 +247,10 @@
     "message": "KnobProps",
     "description": "The label for the doc item KnobProps in sidebar typedocSidebar, linking to the doc api/react/interfaces/KnobProps"
   },
+  "sidebar.typedocSidebar.doc.Knob": {
+    "message": "Knob",
+    "description": "The label for the doc item Knob in sidebar typedocSidebar, linking to the doc api/react/variables/Knob"
+  },
   "sidebar.typedocSidebar.doc.DecrementStepperProps": {
     "message": "DecrementStepperProps",
     "description": "The label for the doc item DecrementStepperProps in sidebar typedocSidebar, linking to the doc api/react/interfaces/DecrementStepperProps"
@@ -282,10 +274,6 @@
   "sidebar.typedocSidebar.doc.NumberInput": {
     "message": "NumberInput",
     "description": "The label for the doc item NumberInput in sidebar typedocSidebar, linking to the doc api/react/variables/NumberInput"
-  },
-  "sidebar.typedocSidebar.doc.Knob": {
-    "message": "Knob",
-    "description": "The label for the doc item Knob in sidebar typedocSidebar, linking to the doc api/react/variables/Knob"
   },
   "sidebar.typedocSidebar.doc.KeyLabelProps": {
     "message": "KeyLabelProps",

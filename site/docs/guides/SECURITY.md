@@ -1,8 +1,6 @@
 ---
-title: Security
+title: 🔒Security
 ---
-
-# 🔒Reporting a Vulnerability
 
 Thank you for your interest in this project.
 

@@ -24,7 +24,7 @@ function HomepageHeader() {
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
-            to="/docs/"
+            to="/docs/tutorials/getting-started/"
             style={{
               maxWidth: 240,
               flex: '1 1 0px',
@@ -52,26 +52,6 @@ function HomepageHeader() {
               height={25}
             />
             React
-          </Link>
-          <Link
-            className="button button--secondary button--lg"
-            to="https://tremolo-ui-sb-web-components.vercel.app/"
-            style={{
-              maxWidth: 240,
-              flex: '1 1 0px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 6,
-            }}
-          >
-            <StorybookIcon
-              role="img"
-              className={styles.icon}
-              width={18}
-              height={25}
-            />
-            Web Components
           </Link>
         </div>
       </div>

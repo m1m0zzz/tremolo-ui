@@ -59,15 +59,6 @@ function typedocPlugins() {
         }),
       },
     ],
-    // [
-    //   'docusaurus-plugin-typedoc',
-    //   {
-    //     id: 'web-components',
-    //     entryPoints: ['../packages/web-components/src/index.ts'],
-    //     tsconfig: '../packages/web-components/tsconfig.json',
-    //     out: './docs/api/web-components',
-    //   },
-    // ],
   ]
 }
 
@@ -194,18 +185,9 @@ const config: Config = {
           position: 'right',
         },
         {
+          href: 'https://tremolo-ui-sb-react.vercel.app/',
           label: 'Storybook',
           position: 'right',
-          items: [
-            {
-              href: 'https://tremolo-ui-sb-react.vercel.app/',
-              label: 'React',
-            },
-            {
-              href: 'https://tremolo-ui-sb-web-components.vercel.app/',
-              label: 'Web Components',
-            },
-          ],
         },
         {
           href: 'https://github.com/m1m0zzz/tremolo-ui',
@@ -271,12 +253,8 @@ const config: Config = {
               href: 'https://github.com/m1m0zzz/tremolo-ui',
             },
             {
-              label: 'Storybook React',
+              label: 'Storybook',
               href: 'https://tremolo-ui-sb-react.vercel.app/',
-            },
-            {
-              label: 'Storybook Web Components',
-              href: 'https://tremolo-ui-sb-web-components.vercel.app/',
             },
             {
               label: 'npm',

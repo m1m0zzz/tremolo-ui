@@ -22,9 +22,5 @@
   "item.label.React": {
     "message": "React",
     "description": "Navbar item with label React"
-  },
-  "item.label.Web Components": {
-    "message": "Web Components",
-    "description": "Navbar item with label Web Components"
   }
 }

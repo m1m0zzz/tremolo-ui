@@ -10,25 +10,15 @@ npm run test
 npm run build:package
 ```
 
-
 ## コンポーネントに貢献する
 
 Storybook を起動します。
-
-- React
 
 ```bash npm2yarn
 npm run sb -w packages/react
 ```
 
-- Web Component
-
-```bash npm2yarn
-npm run sb -w packages/web-components
-```
-
 そして、ブラウザでコンポーネントを確認します。
-
 
 ## 機能(functions)に貢献する
 
@@ -45,7 +35,7 @@ cd packages/functions
 npm run test  __tests__/any.test.ts
 ```
 
-追加した機能を `react`, `web-components` で使用するためには、パッケージをビルドする必要があります。
+追加した機能を `react` で使用するためには、パッケージをビルドする必要があります。
 
 ```bash npm2yarn
 npm run build:package -w packages/functions

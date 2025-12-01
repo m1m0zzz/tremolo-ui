@@ -47,10 +47,6 @@
     "message": "Storybook React",
     "description": "The label of footer link with label=Storybook React linking to https://tremolo-ui-sb-react.vercel.app/"
   },
-  "link.item.label.Storybook Web Components": {
-    "message": "Storybook Web Components",
-    "description": "The label of footer link with label=Storybook Web Components linking to https://tremolo-ui-sb-web-components.vercel.app/"
-  },
   "link.item.label.npm": {
     "message": "npm",
     "description": "The label of footer link with label=npm linking to https://www.npmjs.com/org/tremolo-ui"
@@ -58,5 +54,9 @@
   "copyright": {
     "message": "Copyright © 2025 mimoz.",
     "description": "The footer copyright"
+  },
+  "link.item.label.Storybook": {
+    "message": "Storybook",
+    "description": "The label of footer link with label=Storybook linking to https://tremolo-ui-sb-react.vercel.app/"
   }
 }

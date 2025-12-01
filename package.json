@@ -34,7 +34,6 @@
   "workspaces": [
     "packages/functions",
     "packages/react",
-    "packages/web-components",
     "site"
   ],
   "devDependencies": {
