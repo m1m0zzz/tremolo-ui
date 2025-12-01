@@ -103,12 +103,7 @@ export interface KnobMethods {
 
 type Props = KnobProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KnobProps>
 
-/**
- * Interactive rotary knob component implemented in SVG.
- *
- * @category Knob
- */
-const Knob = forwardRef<KnobMethods, Props>(
+const KnobImpl = forwardRef<KnobMethods, Props>(
   (
     {
       value,
@@ -277,12 +272,16 @@ const Knob = forwardRef<KnobMethods, Props>(
   },
 )
 
-const NS = Object.assign(Knob, {
+/**
+ * Interactive rotary knob component implemented in SVG.
+ *
+ * @category Knob
+ */
+export const Knob = Object.assign(KnobImpl, {
   SVGRoot,
   InactiveLine,
   ActiveLine,
   Thumb,
 })
 
-export { NS as Knob }
 export { useKnobContext } from './context'
