@@ -3,6 +3,7 @@ import React, {
   ComponentPropsWithoutRef,
   forwardRef,
   ReactElement,
+  Ref,
   useCallback,
   useImperativeHandle,
   useMemo,
@@ -28,6 +29,7 @@ import {
   resetCursorStyle,
   setCursorStyle,
 } from '../_util'
+import { composeRefs } from '../_util/composeRefs'
 
 import { Area, XYPadAreaProps } from './Area'
 import { Thumb, XYPadThumbMethods, XYPadThumbProps } from './Thumb'
@@ -93,6 +95,7 @@ export interface XYPadProps {
 export interface XYPadMethods {
   focus: () => void
   blur: () => void
+  original: Ref<HTMLDivElement>
 }
 
 type Props = XYPadProps &
@@ -128,6 +131,7 @@ export const XYPadImpl = forwardRef<XYPadMethods, Props>(
     }, [_y])
 
     // -- state and ref ---
+    const rootRef = useRef<HTMLDivElement>(null)
     const areaElementRef = useRef<HTMLDivElement>(null)
     const thumbRef = useRef<XYPadThumbMethods>(null)
 
@@ -308,6 +312,7 @@ export const XYPadImpl = forwardRef<XYPadMethods, Props>(
         blur() {
           thumbRef.current?.blur()
         },
+        original: rootRef,
       }
     }, [])
 
@@ -315,10 +320,7 @@ export const XYPadImpl = forwardRef<XYPadMethods, Props>(
       // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <div
         className={clsx('tremolo-xy-pad', className)}
-        ref={(div) => {
-          wheelRefCallback(div)
-          touchMoveRefCallback(div)
-        }}
+        ref={composeRefs(rootRef, wheelRefCallback, touchMoveRefCallback)}
         tabIndex={-1}
         aria-disabled={disabled}
         aria-readonly={readonly}

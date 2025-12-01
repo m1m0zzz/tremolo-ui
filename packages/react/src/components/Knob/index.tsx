@@ -12,7 +12,6 @@ import {
   clamp,
   InputEventOption,
   normalizeValue,
-  radian,
   rawValue,
   stepValue,
 } from '@tremolo-ui/functions'
@@ -26,6 +25,12 @@ import {
   resetCursorStyle,
   setCursorStyle,
 } from '../_util'
+
+import { ActiveLine } from './ActiveLine'
+import { KnobProvider } from './context'
+import { InactiveLine } from './InactiveLine'
+import { SVGRoot } from './SVGRoot'
+import { Thumb } from './Thumb'
 
 const defaultExternalStyles: KnobProps['externalStyles'] = {
   userSelectNone: true,
@@ -59,7 +64,10 @@ export interface KnobProps {
   /** width and height */
   size?: number | string
 
-  /** Global style to apply when dragged */
+  /**
+   * Global style to apply when dragged
+   * @default defaultExternalStyles
+   */
   externalStyles?: {
     userSelectNone?: boolean
     cursor?: Cursor
@@ -79,31 +87,8 @@ export interface KnobProps {
   disabled?: boolean
   readonly?: boolean
 
-  /** color */
-  activeLine?: string
-  /** color */
-  inactiveLine?: string
-  /** color */
-  thumb?: string
-  /** color */
-  thumbLine?: string
-  /** percent (0-100) */
-  thumbSize?: number
-  /** percent (0-100) */
-  thumbLineWeight?: number
-  /** percent (0-100) */
-  thumbLineLength?: number
-  /** line weight [px] */
-  lineWeight?: number
   /** angle range [degree] */
   angleRange?: number
-
-  classes?: {
-    activeLine?: string
-    inactiveLine?: string
-    thumb?: string
-    thumbLine?: string
-  }
 
   onChange?: (value: number) => void
 }
@@ -116,14 +101,14 @@ export interface KnobMethods {
   blur: () => void
 }
 
-type Props = KnobProps & Omit<ComponentPropsWithoutRef<'svg'>, keyof KnobProps>
+type Props = KnobProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KnobProps>
 
 /**
  * Interactive rotary knob component implemented in SVG.
  *
  * @category Knob
  */
-export const Knob = forwardRef<KnobMethods, Props>(
+const Knob = forwardRef<KnobMethods, Props>(
   (
     {
       value,
@@ -133,35 +118,28 @@ export const Knob = forwardRef<KnobMethods, Props>(
       skew = 1,
       defaultValue = min,
       startValue = min,
-      size = 50,
+      size,
       externalStyles: _externalStyles,
       wheel = ['raw', 1],
       keyboard = ['raw', 1],
       enableDoubleClickDefault = true,
       disabled = false,
       readonly = false,
-      activeLine,
-      inactiveLine,
-      thumb,
-      thumbLine,
-      thumbSize = 84,
-      thumbLineWeight = 6,
-      thumbLineLength = 35,
-      lineWeight = 6,
       angleRange = 270,
       onChange,
       onKeyDown,
       onPointerDown,
       onDoubleClick,
       className,
-      classes,
+      style,
+      children,
       ...props
     }: Props,
     forwardedRef,
   ) => {
     const [dragging, setDragging] = useState(false)
     const valueRef = useRef(0)
-    const elmRef = useRef<HTMLOrSVGElement>(null)
+    const elmRef = useRef<HTMLElement | SVGElement>(null)
 
     const externalStyles = { ...defaultExternalStyles, ..._externalStyles }
 
@@ -205,7 +183,9 @@ export const Knob = forwardRef<KnobMethods, Props>(
     )
 
     // --- hooks ---
-    const [touchMoveRefCallback, pointerDownHandler] = useDrag<SVGElement>({
+    const [touchMoveRefCallback, pointerDownHandler] = useDrag<
+      HTMLElement | SVGElement
+    >({
       onDrag: onDrag,
       onDragStart: () => {
         setDragging(true)
@@ -244,119 +224,65 @@ export const Knob = forwardRef<KnobMethods, Props>(
       }
     }, [])
 
-    const viewBoxSize = 100
-    const center = viewBoxSize / 2
-    const padding = (viewBoxSize - clamp(thumbSize, 0, 100)) / 2 // %
-    const p = normalizeValue(value, min, max, skew)
-    const s = normalizeValue(startValue, min, max, skew)
-
-    // 時計回りで描画していく
-    const r1 = -angleRange / 2 // ロータリー開始位置
-    const r2 = r1 + Math.min(p, s) * angleRange // activeLineの開始位置
-    const r3 = r1 + Math.max(p, s) * angleRange // activeLineの終了位置
-    const r4 = angleRange / 2 // ロータリー終了位置
-    const x1 = center + center * Math.cos(radian(r1 - 90))
-    const y1 = center + center * Math.sin(radian(r1 - 90))
-    const x2 = center + center * Math.cos(radian(r2 - 90))
-    const y2 = center + center * Math.sin(radian(r2 - 90))
-    const x3 = center + center * Math.cos(radian(r3 - 90))
-    const y3 = center + center * Math.sin(radian(r3 - 90))
-    const x4 = center + center * Math.cos(radian(r4 - 90))
-    const y4 = center + center * Math.sin(radian(r4 - 90))
-
     return (
-      <svg
-        ref={(div) => {
-          elmRef.current = div
-          wheelRefCallback(div)
-          touchMoveRefCallback(div)
-        }}
-        className={clsx('tremolo-knob', className)}
-        viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
-        width={size}
-        height={size}
-        tabIndex={0}
-        role="slider"
-        aria-valuenow={value}
-        aria-valuemin={min}
-        aria-valuemax={max}
-        aria-disabled={disabled}
-        aria-readonly={readonly}
-        data-dragging={dragging}
-        onPointerDown={(event) => {
-          pointerDownHandler(event)
-          onPointerDown?.(event)
-        }}
-        onDoubleClick={(event) => {
-          if (enableDoubleClickDefault && onChange) {
-            onChange(defaultValue)
-          }
-          onDoubleClick?.(event)
-        }}
-        onKeyDown={(event) => {
-          handleKeyDown(event)
-          onKeyDown?.(event)
-        }}
-        {...props}
+      <KnobProvider
+        value={value}
+        min={min}
+        max={max}
+        step={step}
+        skew={skew}
+        startValue={startValue}
+        angleRange={angleRange}
       >
-        {/* lines */}
-        {startValue > min && (
-          <path
-            className={clsx(
-              'tremolo-knob-inactive-line',
-              classes?.inactiveLine,
-            )}
-            d={`M ${x1} ${y1} A ${center} ${center} -135 ${r2 - r1 > 180 ? 1 : 0} 1 ${x2}, ${y2}`}
-            fill="none"
-            stroke={inactiveLine || 'currentColor'}
-            strokeWidth={lineWeight}
-          />
-        )}
-        {startValue < max && (
-          <path
-            className={clsx(
-              'tremolo-knob-inactive-line',
-              classes?.inactiveLine,
-            )}
-            d={`M ${x3} ${y3} A ${center} ${center} -135 ${r4 - r3 > 180 ? 1 : 0} 1 ${x4}, ${y4}`}
-            fill="none"
-            stroke={inactiveLine || 'currentColor'}
-            strokeWidth={lineWeight}
-          />
-        )}
-        <path
-          className={clsx('tremolo-knob-active-line', classes?.activeLine)}
-          d={`M ${x2} ${y2} A ${center} ${center} -135 ${r3 - r2 > 180 ? 1 : 0} 1 ${x3}, ${y3}`}
-          fill="none"
-          stroke={activeLine || 'currentColor'}
-          strokeWidth={lineWeight}
-        />
-        {/* thumb */}
-        <svg className={clsx('tremolo-knob-thumb', classes?.thumb)}>
-          <circle
-            cx="50%"
-            cy="50%"
-            r={`${thumbSize / 2}%`}
-            fill={thumb || 'currentColor'}
-          />
-          <line
-            className={clsx('tremolo-knob-thumb-line', classes?.thumbLine)}
-            x1="50%"
-            y1={`${padding}%`}
-            x2="50%"
-            y2={`${thumbLineLength}%`}
-            stroke={thumbLine || 'currentColor'}
-            strokeWidth={`${thumbLineWeight}%`}
-            // NOTE
-            // https://bugs.webkit.org/show_bug.cgi?id=201854
-            // https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/transform-origin#browser_compatibility
-            style={{
-              transform: `rotate(${r1 + p * angleRange}deg)`,
-              transformOrigin: '50% 50%',
-            }}
-          />
-        </svg>
-      </svg>
+        <div
+          ref={(elm) => {
+            elmRef.current = elm
+            wheelRefCallback(elm)
+            touchMoveRefCallback(elm)
+          }}
+          className={clsx('tremolo-knob', className)}
+          tabIndex={0}
+          role="slider"
+          aria-valuenow={value}
+          aria-valuemin={min}
+          aria-valuemax={max}
+          aria-disabled={disabled}
+          aria-readonly={readonly}
+          data-dragging={dragging}
+          style={{
+            width: size,
+            height: size,
+            ...style,
+          }}
+          onPointerDown={(event) => {
+            pointerDownHandler(event)
+            onPointerDown?.(event)
+          }}
+          onDoubleClick={(event) => {
+            if (enableDoubleClickDefault && onChange) {
+              onChange(defaultValue)
+            }
+            onDoubleClick?.(event)
+          }}
+          onKeyDown={(event) => {
+            handleKeyDown(event)
+            onKeyDown?.(event)
+          }}
+          {...props}
+        >
+          {children || <SVGRoot />}
+        </div>
+      </KnobProvider>
     )
   },
 )
+
+const NS = Object.assign(Knob, {
+  SVGRoot,
+  InactiveLine,
+  ActiveLine,
+  Thumb,
+})
+
+export { NS as Knob }
+export { useKnobContext } from './context'

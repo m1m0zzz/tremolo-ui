@@ -1,6 +1,7 @@
 import { ComponentPropsWithoutRef, ElementType, ReactNode } from 'react'
 
 import { useDrag } from '../../hooks/useDrag'
+import { Override } from '../_util/type'
 
 /** @category DragObserver */
 export interface DragObserverProps<T extends ElementType> {
@@ -24,8 +25,7 @@ export interface DragObserverProps<T extends ElementType> {
 
 /** @category DragObserver */
 export function DragObserver<T extends ElementType = 'div'>(
-  props: DragObserverProps<T> &
-    Omit<ComponentPropsWithoutRef<T>, keyof DragObserverProps<T>>,
+  props: Override<DragObserverProps<T>, ComponentPropsWithoutRef<T>>,
 ) {
   const {
     as: Component = 'div',

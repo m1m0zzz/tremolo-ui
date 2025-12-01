@@ -1,12 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
 
-import { Knob } from '../src/components/Knob'
-
-import { inputEventOptionType } from './lib/typeUtils'
+import { Knob } from '../../src/components/Knob'
+import { inputEventOptionType } from '../lib/typeUtils'
 
 export default {
-  title: 'Components/Knob',
+  title: 'Components/Knob/Knob',
   component: Knob,
   argTypes: {
     value: {
@@ -22,17 +21,8 @@ export default {
         type: inputEventOptionType,
       },
     },
-    activeLine: {
-      control: 'color',
-    },
-    inactiveLine: {
-      control: 'color',
-    },
-    thumb: {
-      control: 'color',
-    },
-    thumbLine: {
-      control: 'color',
+    children: {
+      control: false,
     },
   },
 } satisfies Meta<typeof Knob>
@@ -43,6 +33,7 @@ export const Basic: Story = {
   args: {
     min: 0,
     max: 100,
+    size: 50,
     wheel: ['normalized', 0.05],
     keyboard: ['normalized', 0.05],
   },

@@ -1,18 +1,8 @@
-import { ComponentPropsWithoutRef, ElementType, ReactNode } from 'react'
+import { ComponentProps, ElementType, ReactNode } from 'react'
 
 import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
-
-/**
- * @example
- * <WheelObserver
- *   onWheel={(event) => {
- *     event.preventDefault()
- *     console.log(event.deltaY)
- *   }
- * >
- *   <div>Wheel here</div>
- * </WheelObserver>
- */
+import { composeRefs } from '../_util/composeRefs'
+import { Override } from '../_util/type'
 
 /** @category WheelObserver */
 export interface WheelObserverProps<T extends ElementType> {
@@ -26,12 +16,22 @@ export interface WheelObserverProps<T extends ElementType> {
   onWheel?: (event: WheelEvent) => void
 }
 
-/** @category WheelObserver */
+/**
+ * @category WheelObserver
+ * @example
+ * <WheelObserver
+ *   onWheel={(event) => {
+ *     event.preventDefault()
+ *     console.log(event.deltaY)
+ *   }
+ * >
+ *   <div>Wheel here</div>
+ * </WheelObserver>
+ */
 export function WheelObserver<T extends ElementType = 'div'>(
-  props: WheelObserverProps<T> &
-    Omit<ComponentPropsWithoutRef<T>, keyof WheelObserverProps<T>>,
+  props: Override<WheelObserverProps<T>, ComponentProps<T>>,
 ) {
-  const { children, onWheel, as: Component = 'div', ...attributes } = props
+  const { as: Component = 'div', children, onWheel, ref, ...attributes } = props
 
   const wheelRefCallback = useRefCallbackEvent(
     'wheel',
@@ -43,8 +43,7 @@ export function WheelObserver<T extends ElementType = 'div'>(
   )
 
   return (
-    // TODO: merge ref
-    <Component ref={wheelRefCallback} {...attributes}>
+    <Component ref={composeRefs(ref, wheelRefCallback)} {...attributes}>
       {children}
     </Component>
   )

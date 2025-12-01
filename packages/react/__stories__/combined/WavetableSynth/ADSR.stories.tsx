@@ -137,8 +137,14 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             defaultValue={10}
             onChange={(v) => setAttack(v)}
             size={40}
-            activeLine={themeColor}
-          />
+          >
+            <Knob.SVGRoot>
+              <Knob.ActiveLine stroke={themeColor} />
+              <Knob.InactiveLine />
+              <Knob.Thumb />
+            </Knob.SVGRoot>
+          </Knob>
+
           <div className={clsx('label', styles.label)}>{attack}ms</div>
         </div>
         <div className={styles.knobAndLabel}>
@@ -150,8 +156,13 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             defaultValue={200}
             onChange={(v) => setDecay(v)}
             size={40}
-            activeLine={themeColor}
-          />
+          >
+            <Knob.SVGRoot>
+              <Knob.ActiveLine stroke={themeColor} />
+              <Knob.InactiveLine />
+              <Knob.Thumb />
+            </Knob.SVGRoot>
+          </Knob>
           <div className={clsx('label', clsx('label', styles.label))}>
             {decay}ms
           </div>
@@ -165,8 +176,13 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             defaultValue={50}
             onChange={(v) => setSustain(v)}
             size={40}
-            activeLine={themeColor}
-          />
+          >
+            <Knob.SVGRoot>
+              <Knob.ActiveLine stroke={themeColor} />
+              <Knob.InactiveLine />
+              <Knob.Thumb />
+            </Knob.SVGRoot>
+          </Knob>
           <div className={clsx('label', styles.label)}>
             {gainToDb(sustain / MAX_SUSTAIN) == -Infinity
               ? '-Inf'
@@ -183,8 +199,13 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             defaultValue={200}
             onChange={(v) => setRelease(v)}
             size={40}
-            activeLine={themeColor}
-          />
+          >
+            <Knob.SVGRoot>
+              <Knob.ActiveLine stroke={themeColor} />
+              <Knob.InactiveLine />
+              <Knob.Thumb />
+            </Knob.SVGRoot>
+          </Knob>
           <div className={clsx('label', styles.label)}>{release}ms</div>
         </div>
       </div>

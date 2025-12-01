@@ -7,7 +7,7 @@
     "*.css"
   ],
   "scripts": {
-    "prepare": "husky && npm run build:package",
+    "prepare": "husky",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
