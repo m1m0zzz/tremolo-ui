@@ -18,7 +18,7 @@ tremolo-uiは、オーディオアプリ向けのUIライブラリです。
 
 使用するパッケージのチュートリアルを参照してください。
 
-- [Reactではじめる](./tutorials/react/getting-started/)
+- [Reactではじめる](./tutorials/getting-started/)
 
 ## UI Catalog
 
