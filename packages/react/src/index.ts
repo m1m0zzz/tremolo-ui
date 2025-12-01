@@ -16,11 +16,6 @@ export {
   type InitFunction,
   type RelativeSizingProps,
 } from './components/AnimationCanvas'
-export {
-  AnimationKnob,
-  type AnimationKnobProps,
-  type AnimationKnobMethods,
-} from './components/AnimationKnob'
 export { DragObserver, type DragObserverProps } from './components/DragObserver'
 export { Knob, type KnobProps, type KnobMethods } from './components/Knob'
 export {
