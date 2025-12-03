@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
 
-import { skewWithCenterValue } from '@tremolo-ui/functions'
+import { normalizeValue, skewWithCenterValue } from '@tremolo-ui/functions'
 
 import { Knob } from '../../src/components/Knob'
 import { inputEventOptionType } from '../lib/typeUtils'
@@ -106,6 +106,96 @@ export const Logarithmic: Story = {
             <p>freq. {fmt(value2)}</p>
           </div>
         </div>
+      </div>
+    )
+  },
+}
+
+const borderStyles: React.CSSProperties[] = [
+  {
+    top: 0,
+    left: 0,
+    borderTopWidth: 4,
+    borderLeftWidth: 4,
+  },
+  {
+    top: 0,
+    right: 0,
+    borderTopWidth: 4,
+    borderRightWidth: 4,
+  },
+  {
+    bottom: 0,
+    right: 0,
+    borderBottomWidth: 4,
+    borderRightWidth: 4,
+  },
+  {
+    bottom: 0,
+    left: 0,
+    borderBottomWidth: 4,
+    borderLeftWidth: 4,
+  },
+]
+
+export const Customizing: Story = {
+  args: {
+    min: 0,
+    max: 100,
+    size: 80,
+  },
+  render: (args) => {
+    const [value, setValue] = useState(10)
+
+    const p = normalizeValue(value, args.min, args.max, args.skew)
+    const color = `rgba(106, 155, 121, ${p})`
+
+    return (
+      <div
+        style={{
+          background: '#DFDBCD',
+          padding: '1rem',
+        }}
+      >
+        <Knob.Root {...args} value={value} onChange={(v) => setValue(v)}>
+          <div
+            style={{
+              position: 'relative',
+              width: args.size,
+              height: args.size,
+              background: `linear-gradient(to top, ${color} ${p * 100}%, transparent ${p * 100}%)`,
+            }}
+          >
+            {borderStyles.map((style, i) => {
+              return (
+                <div
+                  key={i}
+                  style={{
+                    position: 'absolute',
+                    width: '30%',
+                    height: '30%',
+                    borderWidth: 0,
+                    borderColor: '#507C5E',
+                    borderStyle: 'solid',
+                    pointerEvents: 'none',
+                    ...style,
+                  }}
+                ></div>
+              )
+            })}
+            <div
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                pointerEvents: 'none',
+              }}
+            >
+              {value}%
+            </div>
+          </div>
+        </Knob.Root>
       </div>
     )
   },
