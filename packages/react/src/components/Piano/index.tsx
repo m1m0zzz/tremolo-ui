@@ -85,7 +85,7 @@ export interface PianoMethods {
 type Props = PianoProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof PianoProps>
 
-const PianoImpl = forwardRef<PianoMethods, Props>(
+const Root = forwardRef<PianoMethods, Props>(
   (
     {
       noteRange,
@@ -348,7 +348,7 @@ const PianoImpl = forwardRef<PianoMethods, Props>(
  * Customizable piano component.
  * @category Piano
  */
-export const Piano = Object.assign(PianoImpl, { WhiteKey, BlackKey, KeyLabel })
+export const Piano = { Root, WhiteKey, BlackKey, KeyLabel }
 
 export { type KeyboardShortcuts, SHORTCUTS } from './keyboardShortcuts'
 export { type KeyProps, type KeyMethods } from './key'

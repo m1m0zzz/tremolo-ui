@@ -17,7 +17,7 @@ export const Basic: Story = {
 
     return (
       <div>
-        <NumberInput
+        <NumberInput.Root
           value={value}
           step={step}
           min={0}
@@ -30,11 +30,11 @@ export const Basic: Story = {
             <NumberInput.IncrementStepper />
             <NumberInput.DecrementStepper />
           </NumberInput.Stepper>
-        </NumberInput>
+        </NumberInput.Root>
         <p>config</p>
         <div>
           <span>step: </span>
-          <NumberInput value={step} step={0.01} onChange={setStep} />
+          <NumberInput.Root value={step} step={0.01} onChange={setStep} />
         </div>
       </div>
     )

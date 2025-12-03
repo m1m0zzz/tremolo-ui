@@ -251,7 +251,7 @@ export const WavetableSynth = () => {
 
   const pianoMemo = useMemo(
     () => (
-      <Piano
+      <Piano.Root
         noteRange={{ first: firstNote, last: lastNote }}
         keyboardShortcuts={SHORTCUTS.HOME_ROW}
         label={(_, i) => SHORTCUTS.HOME_ROW.keys[i]?.toUpperCase()}

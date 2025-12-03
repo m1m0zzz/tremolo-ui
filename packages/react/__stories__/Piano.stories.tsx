@@ -17,8 +17,8 @@ import { useMIDIInput } from '../src/hooks/useMIDIInput'
 import { sizesOptionType } from './lib/typeUtils'
 
 export default {
-  title: 'Components/Piano',
-  component: Piano,
+  title: 'Components/Piano/Root',
+  component: Piano.Root,
   argTypes: {
     height: {
       table: {
@@ -29,9 +29,9 @@ export default {
       control: false,
     },
   },
-} satisfies Meta<typeof Piano>
+} satisfies Meta<typeof Piano.Root>
 
-type Story = StoryObj<typeof Piano>
+type Story = StoryObj<typeof Piano.Root>
 
 export const Basic: Story = {
   args: {
@@ -59,7 +59,7 @@ export const Basic: Story = {
           </a>{' '}
           PolySynth.
         </p>
-        <Piano
+        <Piano.Root
           {...args}
           onPlayNote={(noteNumber) => {
             synth.triggerAttack(noteName(noteNumber))
@@ -113,7 +113,7 @@ export const Range = () => {
           </select>
         </label>
       </div>
-      <Piano
+      <Piano.Root
         noteRange={{ first: first, last: last }}
         label={(note) => {
           return [
@@ -140,7 +140,7 @@ export const Styling = () => {
   const range = { first: noteNumber('C3'), last: noteNumber('B4') }
 
   return (
-    <Piano noteRange={range} keyboardShortcuts={SHORTCUTS.HOME_ROW}>
+    <Piano.Root noteRange={range} keyboardShortcuts={SHORTCUTS.HOME_ROW}>
       {getNoteRangeArray(range).map((note) => {
         return isWhiteKey(note) ? (
           <Piano.WhiteKey
@@ -169,7 +169,7 @@ export const Styling = () => {
           />
         )
       })}
-    </Piano>
+    </Piano.Root>
   )
 }
 
@@ -183,7 +183,7 @@ export const OneOctave = () => {
         gap: 8,
       }}
     >
-      <NumberInput
+      <NumberInput.Root
         value={octave}
         min={-1}
         max={9}
@@ -193,8 +193,8 @@ export const OneOctave = () => {
           <NumberInput.IncrementStepper />
           <NumberInput.DecrementStepper />
         </NumberInput.Stepper>
-      </NumberInput>
-      <Piano
+      </NumberInput.Root>
+      <Piano.Root
         noteRange={{
           first: noteNumber(`C${octave}`),
           last: noteNumber(`B${octave}`),
@@ -218,7 +218,7 @@ export const Fill = () => {
         minHeight: 120,
       }}
     >
-      <Piano
+      <Piano.Root
         noteRange={{ first: noteNumber('C3'), last: noteNumber('B3') }}
         fill
       />
@@ -264,7 +264,7 @@ export const WithWebMidiAPI = () => {
       )}
       {error && <p>error: {error}</p>}
 
-      <Piano
+      <Piano.Root
         ref={pianoRef} // emit midi event
         noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}
         onPlayNote={(noteNumber, velocity) => {

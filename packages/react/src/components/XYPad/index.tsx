@@ -101,7 +101,7 @@ export interface XYPadMethods {
 type Props = XYPadProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadProps>
 
-export const XYPadImpl = forwardRef<XYPadMethods, Props>(
+export const Root = forwardRef<XYPadMethods, Props>(
   (
     {
       x: _x,
@@ -374,10 +374,11 @@ export const XYPadImpl = forwardRef<XYPadMethods, Props>(
  * Simple XYPad
  * @category XYPad
  */
-export const XYPad = Object.assign(XYPadImpl, {
+export const XYPad = {
+  Root,
   Thumb,
   Area,
-})
+}
 
 export { type XYPadThumbProps, type XYPadThumbMethods } from './Thumb'
 export { type XYPadAreaProps } from './Area'

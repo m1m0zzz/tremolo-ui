@@ -99,7 +99,7 @@ export interface NumberInputMethods {
 type Props = NumberInputProps &
   Omit<ComponentPropsWithoutRef<'input'>, keyof NumberInputProps | 'type'>
 
-const NumberInputImpl = forwardRef<NumberInputMethods, Props>(
+const Root = forwardRef<NumberInputMethods, Props>(
   (
     {
       value,
@@ -179,11 +179,12 @@ const NumberInputImpl = forwardRef<NumberInputMethods, Props>(
  * Input with some useful functions for entering numerical values.
  * @category NumberInput
  */
-export const NumberInput = Object.assign(NumberInputImpl, {
+export const NumberInput = {
+  Root,
   Stepper,
   IncrementStepper,
   DecrementStepper,
-})
+}
 
 export { type StepperProps } from './Stepper'
 export { type IncrementStepperProps } from './IncrementStepper'

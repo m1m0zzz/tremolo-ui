@@ -10,16 +10,16 @@ import { PointBaseType, PointsEditor } from '../src/components/PointsEditor'
 import styles from './styles/PointsEditor.module.css'
 
 export default {
-  title: 'Components/PointsEditor',
-  component: PointsEditor,
+  title: 'Components/PointsEditor/Root',
+  component: PointsEditor.Root,
   argTypes: {
     children: {
       control: false,
     },
   },
-} satisfies Meta<typeof PointsEditor>
+} satisfies Meta<typeof PointsEditor.Root>
 
-type Story = StoryObj<typeof PointsEditor>
+type Story = StoryObj<typeof PointsEditor.Root>
 
 const themeColor = '#34c2ed'
 
@@ -52,7 +52,7 @@ export const Basic: Story = {
           width: 'min-content',
         }}
       >
-        <PointsEditor {...args}>
+        <PointsEditor.Root {...args}>
           <PointsEditor.Background>
             <svg
               viewBox={`0 0 ${w} ${h}`}
@@ -76,7 +76,7 @@ export const Basic: Story = {
               />
             ))}
           </PointsEditor.Container>
-        </PointsEditor>
+        </PointsEditor.Root>
       </div>
     )
   },
@@ -180,7 +180,7 @@ export const ADSRWithSlope = () => {
     <div className={styles.root}>
       <div className={styles.flex}>
         <div className={styles.adsr}>
-          <PointsEditor width={w} height={h}>
+          <PointsEditor.Root width={w} height={h}>
             <PointsEditor.Background>
               <AnimationCanvas
                 relativeSize
@@ -271,7 +271,7 @@ export const ADSRWithSlope = () => {
                 onChange={({ x }) => setR(x)}
               />
             </PointsEditor.Container>
-          </PointsEditor>
+          </PointsEditor.Root>
         </div>
         <div className={styles.slopeMeters}>
           <div className={styles.title}>A</div>
@@ -314,7 +314,7 @@ export const ADSRWithSlope = () => {
             },
           ].map((props) => {
             return (
-              <NumberInput
+              <NumberInput.Root
                 key={props.id}
                 digit={0}
                 wrapperClassName={styles.inputWrapper}
@@ -346,7 +346,7 @@ export const ADSRWithSlope = () => {
             if (props == null) return <div key={'empty'}></div>
             const { id, value, onChange } = props
             return (
-              <NumberInput
+              <NumberInput.Root
                 key={id}
                 id={id}
                 value={value}

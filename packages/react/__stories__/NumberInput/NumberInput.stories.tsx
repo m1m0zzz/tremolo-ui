@@ -6,8 +6,8 @@ import { NumberInput, NumberInputProps } from '../../src/components/NumberInput'
 import { inputEventOptionType } from '../lib/typeUtils'
 
 export default {
-  title: 'Components/NumberInput/NumberInput',
-  component: NumberInput,
+  title: 'Components/NumberInput/Root',
+  component: NumberInput.Root,
   argTypes: {
     value: {
       control: false,
@@ -39,15 +39,17 @@ export default {
       control: false,
     },
   },
-} satisfies Meta<typeof NumberInput>
+} satisfies Meta<typeof NumberInput.Root>
 
-type Story = StoryObj<typeof NumberInput>
+type Story = StoryObj<typeof NumberInput.Root>
 
 export const Basic: Story = {
   render: (args) => {
     const [value, setValue] = useState(32)
 
-    return <NumberInput {...args} value={value} onChange={(v) => setValue(v)} />
+    return (
+      <NumberInput.Root {...args} value={value} onChange={(v) => setValue(v)} />
+    )
   },
 }
 
@@ -63,12 +65,12 @@ export const UnitsAndDigit: Story = {
     const [value, setValue] = useState(4321)
 
     return (
-      <NumberInput {...args} value={value} onChange={(v) => setValue(v)}>
+      <NumberInput.Root {...args} value={value} onChange={(v) => setValue(v)}>
         <NumberInput.Stepper>
           <NumberInput.IncrementStepper />
           <NumberInput.DecrementStepper />
         </NumberInput.Stepper>
-      </NumberInput>
+      </NumberInput.Root>
     )
   },
 }
@@ -108,12 +110,12 @@ export const WithAnotherComponents: Story = {
           />
           {value}
         </div>
-        <NumberInput {...args} value={value} onBlur={(v) => setValue(v)}>
+        <NumberInput.Root {...args} value={value} onBlur={(v) => setValue(v)}>
           <NumberInput.Stepper>
             <NumberInput.IncrementStepper />
             <NumberInput.DecrementStepper />
           </NumberInput.Stepper>
-        </NumberInput>
+        </NumberInput.Root>
       </div>
     )
   },
@@ -143,7 +145,7 @@ export const Variant = () => {
           <section key={variant} style={{ marginBottom: '2rem' }}>
             <p>{variant}</p>
             <div>
-              <NumberInput
+              <NumberInput.Root
                 value={v}
                 units={[
                   ['Hz', 1],
@@ -171,7 +173,7 @@ export const SelectWithFocus = () => {
         <p>
           selectWithFocus={'{'}undefined{'}'} (default)
         </p>
-        <NumberInput
+        <NumberInput.Root
           value={value1}
           units={[
             ['Hz', 1],
@@ -182,7 +184,7 @@ export const SelectWithFocus = () => {
       </section>
       <section style={{ marginBottom: '2rem' }}>
         <p>selectWithFocus='all'</p>
-        <NumberInput
+        <NumberInput.Root
           value={value2}
           units={[
             ['Hz', 1],
@@ -194,7 +196,7 @@ export const SelectWithFocus = () => {
       </section>
       <section style={{ marginBottom: '2rem' }}>
         <p>selectWithFocus='number'</p>
-        <NumberInput
+        <NumberInput.Root
           value={value3}
           units={[
             ['Hz', 1],
@@ -222,12 +224,12 @@ export const WithStepper: Story = {
 
     return (
       <div>
-        <NumberInput {...args} value={value} onChange={(v) => setValue(v)}>
+        <NumberInput.Root {...args} value={value} onChange={(v) => setValue(v)}>
           <NumberInput.Stepper>
             <NumberInput.IncrementStepper />
             <NumberInput.DecrementStepper />
           </NumberInput.Stepper>
-        </NumberInput>
+        </NumberInput.Root>
       </div>
     )
   },

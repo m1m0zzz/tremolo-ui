@@ -16,7 +16,7 @@ function App() {
         alignItems: 'center',
       }}
     >
-      <NumberInput
+      <NumberInput.Root
         value={value}
         min={0}
         max={100}
@@ -26,7 +26,7 @@ function App() {
           <NumberInput.IncrementStepper />
           <NumberInput.DecrementStepper />
         </NumberInput.Stepper>
-      </NumberInput>
+      </NumberInput.Root>
     </div>
     // expand end
   )

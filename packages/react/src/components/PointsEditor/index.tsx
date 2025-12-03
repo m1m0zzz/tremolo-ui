@@ -76,7 +76,7 @@ export interface PointsEditorProps {
 type Props = PointsEditorProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorProps>
 
-const PointsEditorImpl = forwardRef<HTMLDivElement, Props>(
+const Root = forwardRef<HTMLDivElement, Props>(
   (
     {
       width = 200,
@@ -120,11 +120,12 @@ const PointsEditorImpl = forwardRef<HTMLDivElement, Props>(
  * Multiple Point Controller
  * @category PointsEditor
  */
-export const PointsEditor = Object.assign(PointsEditorImpl, {
+export const PointsEditor = {
+  Root,
   Background,
   Container,
   Point,
-})
+}
 
 export { usePointsEditorContext } from './context'
 export { clampPoint, type PointBaseType, type PointProps } from './Point'

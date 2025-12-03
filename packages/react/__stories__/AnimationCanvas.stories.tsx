@@ -258,7 +258,7 @@ export const NoAnimate = () => {
         }}
       >
         <span>hue</span>
-        <Slider value={value} min={0} max={360} onChange={setValue} />
+        <Slider.Root value={value} min={0} max={360} onChange={setValue} />
         <span>{value} deg</span>
       </div>
     </section>

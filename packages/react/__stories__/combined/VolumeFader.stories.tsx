@@ -76,7 +76,7 @@ export const VolumeFader = () => {
         <audio ref={audioRef} controls={true} controlsList="nodownload" />
       </div>
 
-      <Slider
+      <Slider.Root
         value={volume}
         min={min}
         max={max}
@@ -129,7 +129,7 @@ export const VolumeFader = () => {
           <Slider.ScaleOption value={-24} labelWidth={30} />
           <Slider.ScaleOption value={-100} labelWidth={30} label="-inf" />
         </Slider.Scale>
-      </Slider>
+      </Slider.Root>
       <p>{volume <= -100 ? '-inf' : volume} dB</p>
     </div>
   )

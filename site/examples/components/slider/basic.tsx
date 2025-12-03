@@ -17,7 +17,12 @@ function App() {
         gap: 8,
       }}
     >
-      <Slider value={value} min={0} max={100} onChange={(v) => setValue(v)} />
+      <Slider.Root
+        value={value}
+        min={0}
+        max={100}
+        onChange={(v) => setValue(v)}
+      />
       <span
         style={{
           width: '2rem',

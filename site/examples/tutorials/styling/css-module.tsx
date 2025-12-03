@@ -11,17 +11,20 @@ function App() {
 
   return (
     <div className={myKnob.container}>
-      <Knob
+      <Knob.Root
         className={myKnob.knob}
         value={value}
         min={0}
         max={100}
         size={50}
         onChange={(v) => setValue(v)}
-        classes={{
-          activeLine: myKnob.activeLine,
-        }}
-      />
+      >
+        <Knob.SVGRoot>
+          <Knob.ActiveLine className={myKnob.activeLine} />
+          <Knob.InactiveLine />
+          <Knob.Thumb />
+        </Knob.SVGRoot>
+      </Knob.Root>
       {value}
     </div>
   )

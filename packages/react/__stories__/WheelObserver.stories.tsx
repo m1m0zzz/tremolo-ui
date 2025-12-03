@@ -34,7 +34,7 @@ export const Basic = () => {
         Wheel here
       </WheelObserver>
       scale:{' '}
-      <NumberInput
+      <NumberInput.Root
         value={scale}
         min={0.1}
         step={0.1}

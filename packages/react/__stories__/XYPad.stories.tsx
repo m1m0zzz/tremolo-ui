@@ -24,8 +24,8 @@ const valueOptionsDetail = `{
 }`
 
 export default {
-  title: 'Components/XYPad',
-  component: XYPad,
+  title: 'Components/XYPad/Root',
+  component: XYPad.Root,
   argTypes: {
     x: {
       description:
@@ -51,9 +51,9 @@ export default {
       control: false,
     },
   },
-} satisfies Meta<typeof XYPad>
+} satisfies Meta<typeof XYPad.Root>
 
-type Story = StoryObj<typeof XYPad>
+type Story = StoryObj<typeof XYPad.Root>
 
 export const Basic: Story = {
   args: {
@@ -74,7 +74,7 @@ export const Basic: Story = {
 
     return (
       <>
-        <XYPad
+        <XYPad.Root
           {...args}
           x={{
             ...args.x,
@@ -197,7 +197,7 @@ export const AdvancedFilterPad = () => {
           border: 'solid rgb(178, 150, 215) 2px',
         }}
       >
-        <XYPad
+        <XYPad.Root
           x={{
             value: frequency,
             min: 20,
@@ -225,7 +225,7 @@ export const AdvancedFilterPad = () => {
           <XYPad.Thumb size={40}>
             <ThumbAnimation />
           </XYPad.Thumb>
-        </XYPad>
+        </XYPad.Root>
       </div>
       <div
         style={{

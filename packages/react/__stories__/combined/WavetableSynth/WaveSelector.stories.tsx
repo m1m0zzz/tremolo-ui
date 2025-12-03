@@ -86,7 +86,7 @@ export const WaveSelector = ({
           height: '100%',
         }}
       >
-        <Slider
+        <Slider.Root
           value={position}
           min={0}
           max={100}
@@ -142,7 +142,7 @@ export const WaveSelector = ({
           <Slider.Thumb>
             <></>
           </Slider.Thumb>
-        </Slider>
+        </Slider.Root>
         <div
           style={{
             display: 'flex',
@@ -152,7 +152,7 @@ export const WaveSelector = ({
         >
           <div>
             <span className="label">Semi: </span>
-            <NumberInput
+            <NumberInput.Root
               value={semitone}
               min={MIN_SEMITONE}
               max={MAX_SEMITONE}
@@ -167,7 +167,7 @@ export const WaveSelector = ({
           </div>
           <div>
             <span className="label">Det: </span>
-            <NumberInput
+            <NumberInput.Root
               value={detune}
               min={MIN_DETUNE}
               max={MAX_DETUNE}
@@ -190,7 +190,7 @@ export const WaveSelector = ({
           gap: 4,
         }}
       >
-        <Slider
+        <Slider.Root
           value={position}
           min={0}
           max={100}
@@ -218,8 +218,8 @@ export const WaveSelector = ({
               }}
             ></div>
           </Slider.Thumb>
-        </Slider>
-        <NumberInput
+        </Slider.Root>
+        <NumberInput.Root
           value={position}
           min={0}
           max={100}

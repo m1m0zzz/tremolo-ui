@@ -107,7 +107,7 @@ export interface SliderMethods {
 type Props = SliderProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof SliderProps>
 
-const SliderImpl = forwardRef<SliderMethods, Props>(
+const Root = forwardRef<SliderMethods, Props>(
   (
     {
       value,
@@ -361,12 +361,13 @@ const SliderImpl = forwardRef<SliderMethods, Props>(
  * Customizable slider
  * @category Slider
  */
-export const Slider = Object.assign(SliderImpl, {
+export const Slider = {
+  Root,
   Thumb,
   Track,
   Scale,
   ScaleOption,
-})
+}
 
 export { useSliderContext } from './context'
 export { type SliderThumbMethods, type SliderThumbProps } from './Thumb'

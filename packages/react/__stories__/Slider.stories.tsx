@@ -9,8 +9,8 @@ import { Slider } from '../src/components/Slider'
 import { inputEventOptionType } from './lib/typeUtils'
 
 export default {
-  title: 'Components/Slider',
-  component: Slider,
+  title: 'Components/Slider/Root',
+  component: Slider.Root,
   argTypes: {
     value: {
       control: false,
@@ -29,9 +29,9 @@ export default {
       },
     },
   },
-} satisfies Meta<typeof Slider>
+} satisfies Meta<typeof Slider.Root>
 
-type Story = StoryObj<typeof Slider>
+type Story = StoryObj<typeof Slider.Root>
 
 export const Basic: Story = {
   args: {
@@ -43,7 +43,7 @@ export const Basic: Story = {
 
     return (
       <>
-        <Slider
+        <Slider.Root
           {...args}
           value={value}
           onChange={(v) => setValue(v)}
@@ -81,12 +81,12 @@ export const LogarithmicParameter: Story = {
         </p>
         <div>
           centerValue:{' '}
-          <NumberInput
+          <NumberInput.Root
             value={centerValue}
             onChange={(v) => setCenterValue(v)}
           />
         </div>
-        <Slider
+        <Slider.Root
           {...args}
           value={value}
           skew={skewWithCenterValue(centerValue, args.min, args.max)}
@@ -103,7 +103,7 @@ export const CustomImage = () => {
 
   return (
     <>
-      <Slider
+      <Slider.Root
         value={value}
         min={0}
         max={100}
@@ -127,7 +127,7 @@ export const CustomImage = () => {
             style={{ display: 'block' }} // remove bottom gap
           />
         </Slider.Thumb>
-      </Slider>
+      </Slider.Root>
       <p>value: {value}</p>
     </>
   )
@@ -163,7 +163,7 @@ export const Flex = () => {
         >
           item1
         </div>
-        <Slider
+        <Slider.Root
           value={value}
           min={0}
           max={100}
@@ -176,7 +176,7 @@ export const Flex = () => {
             }}
           />
           <Slider.Thumb color="rgb(87, 71, 233)" />
-        </Slider>
+        </Slider.Root>
         <div
           style={{
             padding: 8,
@@ -213,7 +213,7 @@ export const Flex = () => {
         >
           item1
         </div>
-        <Slider
+        <Slider.Root
           value={value}
           min={0}
           max={100}
@@ -226,7 +226,7 @@ export const Flex = () => {
               height: '100%',
             }}
           />
-        </Slider>
+        </Slider.Root>
         <div
           style={{
             padding: 8,
@@ -251,7 +251,7 @@ export const ConfigScale = () => {
   return (
     <>
       <section style={{ marginBottom: '2rem' }}>
-        <Slider
+        <Slider.Root
           value={value}
           min={0}
           max={100}
@@ -265,11 +265,16 @@ export const ConfigScale = () => {
             <Slider.ScaleOption value={75} type="mark" />
             <Slider.ScaleOption value={100} type="mark-number" />
           </Slider.Scale>
-        </Slider>
+        </Slider.Root>
         <p>value: {value}</p>
       </section>
       <section style={{ marginBottom: '2rem' }}>
-        <Slider value={value2} min={0} max={100} onChange={(v) => setValue2(v)}>
+        <Slider.Root
+          value={value2}
+          min={0}
+          max={100}
+          onChange={(v) => setValue2(v)}
+        >
           <Slider.Scale gap={0} style={{ height: 42 }}>
             <Slider.ScaleOption
               value={0}
@@ -291,11 +296,11 @@ export const ConfigScale = () => {
               styles={{ label: { color: 'blue' } }}
             />
           </Slider.Scale>
-        </Slider>
+        </Slider.Root>
         <p>value: {value2}</p>
       </section>
       <section style={{ marginBottom: '2rem' }}>
-        <Slider
+        <Slider.Root
           value={value3}
           min={0}
           max={35}
@@ -304,7 +309,7 @@ export const ConfigScale = () => {
           vertical
         >
           <Slider.Scale options={['step', 'number']} />
-        </Slider>
+        </Slider.Root>
         <p>value: {value3}</p>
       </section>
     </>

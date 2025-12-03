@@ -17,7 +17,7 @@ function App() {
         alignItems: 'center',
       }}
     >
-      <Piano
+      <Piano.Root
         noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}
         keyboardShortcuts={SHORTCUTS.HOME_ROW}
         onPlayNote={(noteNumber) => {

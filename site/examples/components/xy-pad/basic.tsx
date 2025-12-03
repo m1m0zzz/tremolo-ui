@@ -11,7 +11,7 @@ function App() {
 
   return (
     <div>
-      <XYPad
+      <XYPad.Root
         x={{
           value: valueX,
           min: 0,
