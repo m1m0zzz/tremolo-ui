@@ -1,5 +1,6 @@
 import CodeBlock from '@theme/CodeBlock'
 import GitHubLink from '@site/src/components/GitHubLink'
+
 import basic from '!!raw-loader!@site/examples/components/animation-canvas/basic'
 import saveRestore from '!!raw-loader!@site/examples/components/animation-canvas/save-restore'
 
@@ -22,6 +23,22 @@ import { AnimationCanvas } from '@tremolo-ui/react'
 
 - Adapt [devicePixelRatio](https://developer.mozilla.org/docs/Web/API/Window/devicePixelRatio).
 - Reduce flicking when resized.
+- Observe the parent element's dimensions.
+- Simple ticker and timer
+
+## API
+
+ref: [AnimationCanvasProps](/docs/api/react/type-aliases/AnimationCanvasProps/)
+
+### [Absolute Sizing](/docs/api/react/interfaces/AbsoluteSizingProps/) vs [Relative Sizing](/docs/api/react/interfaces/RelativeSizingProps/)
+
+
+### Reactive Canvas
+
+`React.useState` + `animate={false}`
+
+[CommonProps.animate](/docs/api/react/interfaces/CommonProps/#animate)
+
 
 ## Examples
 
@@ -39,13 +56,5 @@ import { AnimationCanvas } from '@tremolo-ui/react'
 <CodeBlock
   jsx
   live
-  showCode
   sourcePath='examples/components/animation-canvas/save-restore.tsx'
 >{saveRestore}</CodeBlock>
-
-
-### Reactive Canvas
-
-`React.useState` + `animate={false}`
-
-[API CommonProps.animate](/docs/api/react/interfaces/CommonProps/#animate)
