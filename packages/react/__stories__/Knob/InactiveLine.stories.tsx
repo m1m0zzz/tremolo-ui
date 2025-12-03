@@ -25,7 +25,7 @@ export const Basic: Story = {
 
     return (
       <>
-        <Knob
+        <Knob.Root
           value={value}
           min={0}
           max={100}
@@ -37,7 +37,7 @@ export const Basic: Story = {
             <Knob.InactiveLine {...args} />
             <Knob.Thumb />
           </Knob.SVGRoot>
-        </Knob>
+        </Knob.Root>
         <p>value: {value}</p>
       </>
     )

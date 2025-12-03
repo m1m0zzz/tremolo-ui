@@ -5,8 +5,8 @@ import { Knob } from '../../src/components/Knob'
 import { inputEventOptionType } from '../lib/typeUtils'
 
 export default {
-  title: 'Components/Knob/Knob',
-  component: Knob,
+  title: 'Components/Knob/Root',
+  component: Knob.Root,
   argTypes: {
     value: {
       control: false,
@@ -25,9 +25,9 @@ export default {
       control: false,
     },
   },
-} satisfies Meta<typeof Knob>
+} satisfies Meta<typeof Knob.Root>
 
-type Story = StoryObj<typeof Knob>
+type Story = StoryObj<typeof Knob.Root>
 
 export const Basic: Story = {
   args: {
@@ -42,7 +42,7 @@ export const Basic: Story = {
 
     return (
       <>
-        <Knob {...args} value={value} onChange={(v) => setValue(v)} />
+        <Knob.Root {...args} value={value} onChange={(v) => setValue(v)} />
         <p>value: {value}</p>
       </>
     )

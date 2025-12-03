@@ -130,7 +130,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
       <div className={styles.knobs}>
         <div className={styles.knobAndLabel}>
           <div className={clsx('label', styles.label)}>A</div>
-          <Knob
+          <Knob.Root
             value={attack}
             min={MIN_ATTACK}
             max={MAX_ATTACK}
@@ -143,13 +143,13 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
               <Knob.InactiveLine />
               <Knob.Thumb />
             </Knob.SVGRoot>
-          </Knob>
+          </Knob.Root>
 
           <div className={clsx('label', styles.label)}>{attack}ms</div>
         </div>
         <div className={styles.knobAndLabel}>
           <div className={clsx('label', styles.label)}>D</div>
-          <Knob
+          <Knob.Root
             value={decay}
             min={MIN_DECAY}
             max={MAX_DECAY}
@@ -162,14 +162,14 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
               <Knob.InactiveLine />
               <Knob.Thumb />
             </Knob.SVGRoot>
-          </Knob>
+          </Knob.Root>
           <div className={clsx('label', clsx('label', styles.label))}>
             {decay}ms
           </div>
         </div>
         <div className={styles.knobAndLabel}>
           <div className={clsx('label', styles.label)}>S</div>
-          <Knob
+          <Knob.Root
             value={sustain}
             min={MIN_SUSTAIN}
             max={MAX_SUSTAIN}
@@ -182,7 +182,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
               <Knob.InactiveLine />
               <Knob.Thumb />
             </Knob.SVGRoot>
-          </Knob>
+          </Knob.Root>
           <div className={clsx('label', styles.label)}>
             {gainToDb(sustain / MAX_SUSTAIN) == -Infinity
               ? '-Inf'
@@ -192,7 +192,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
         </div>
         <div className={styles.knobAndLabel}>
           <div className={clsx('label', styles.label)}>R</div>
-          <Knob
+          <Knob.Root
             value={release}
             min={MIN_RELEASE}
             max={MAX_RELEASE}
@@ -205,7 +205,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
               <Knob.InactiveLine />
               <Knob.Thumb />
             </Knob.SVGRoot>
-          </Knob>
+          </Knob.Root>
           <div className={clsx('label', styles.label)}>{release}ms</div>
         </div>
       </div>

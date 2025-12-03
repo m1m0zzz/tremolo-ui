@@ -103,7 +103,7 @@ export interface KnobMethods {
 
 type Props = KnobProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KnobProps>
 
-const KnobImpl = forwardRef<KnobMethods, Props>(
+const Root = forwardRef<KnobMethods, Props>(
   (
     {
       value,
@@ -277,11 +277,12 @@ const KnobImpl = forwardRef<KnobMethods, Props>(
  *
  * @category Knob
  */
-export const Knob = Object.assign(KnobImpl, {
+export const Knob = {
+  Root,
   SVGRoot,
   InactiveLine,
   ActiveLine,
   Thumb,
-})
+}
 
 export { useKnobContext } from './context'

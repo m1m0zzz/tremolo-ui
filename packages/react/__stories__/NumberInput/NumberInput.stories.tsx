@@ -100,7 +100,7 @@ export const WithAnotherComponents: Story = {
             alignItems: 'center',
           }}
         >
-          <Knob
+          <Knob.Root
             value={value}
             min={args.min ?? Number.MIN_SAFE_INTEGER}
             max={args.max ?? Number.MAX_SAFE_INTEGER}

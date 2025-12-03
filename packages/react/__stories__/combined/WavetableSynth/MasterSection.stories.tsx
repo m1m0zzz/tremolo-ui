@@ -36,7 +36,7 @@ export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
     <div className={styles.container}>
       <div className={styles.knob}>
         <div className="label">Master</div>
-        <Knob
+        <Knob.Root
           value={masterVolume}
           min={MIN_MASTER_VOLUME}
           max={MAX_MASTER_VOLUME}
@@ -51,7 +51,7 @@ export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
             <Knob.InactiveLine />
             <Knob.Thumb />
           </Knob.SVGRoot>
-        </Knob>
+        </Knob.Root>
         <div className="label" style={{ width: 55 }}>
           {masterVolume <= MIN_MASTER_VOLUME ? '-Inf' : masterVolume} dB
         </div>
@@ -64,7 +64,7 @@ export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
         }}
       >
         <div className="label">Voice</div>
-        <Knob
+        <Knob.Root
           value={voice}
           min={MIN_VOICE}
           max={MAX_VOICE}
@@ -76,7 +76,7 @@ export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
             <Knob.InactiveLine />
             <Knob.Thumb />
           </Knob.SVGRoot>
-        </Knob>
+        </Knob.Root>
         <div className="label">{voice}</div>
       </div>
       <div
@@ -87,7 +87,7 @@ export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
         }}
       >
         <div className="label">Detune</div>
-        <Knob
+        <Knob.Root
           value={voiceDetune}
           min={MIN_VOICE_DETUNE}
           max={MAX_VOICE_DETUNE}
@@ -101,7 +101,7 @@ export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
             <Knob.InactiveLine />
             <Knob.Thumb />
           </Knob.SVGRoot>
-        </Knob>
+        </Knob.Root>
         <div className="label">{voiceDetune}</div>
       </div>
     </div>

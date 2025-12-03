@@ -34,7 +34,7 @@ export const ControlFocus = () => {
           gap: 16,
         }}
       >
-        <Knob
+        <Knob.Root
           ref={refs.current.knob}
           value={value}
           min={0}

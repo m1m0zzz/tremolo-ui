@@ -17,13 +17,19 @@ function App() {
         flexDirection: 'column',
       }}
     >
-      <Knob
+      <Knob.Root
         value={value}
         min={0}
         max={100}
         size={50}
         onChange={(v) => setValue(v)}
-      />
+      >
+        <Knob.SVGRoot>
+          <Knob.ActiveLine />
+          <Knob.InactiveLine />
+          <Knob.Thumb />
+        </Knob.SVGRoot>
+      </Knob.Root>
       {value}
     </div>
   )
