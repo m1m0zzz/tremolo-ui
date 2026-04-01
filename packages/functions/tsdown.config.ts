@@ -6,4 +6,10 @@ export default defineConfig({
   platform: 'neutral',
   dts: true,
   sourcemap: true,
+  publint: {
+    level: 'error',
+  },
+  attw: {
+    level: 'error',
+  },
 })
