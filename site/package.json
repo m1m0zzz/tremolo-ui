@@ -23,7 +23,7 @@
     "@docusaurus/theme-live-codeblock": "~3.8.1",
     "@mdx-js/react": "^3.0.0",
     "@stackblitz/sdk": "^1.11.0",
-    "@twemoji/api": "^15.1.0",
+    "@twemoji/api": "^17.0.0",
     "clsx": "^2.0.0",
     "codesandbox-import-utils": "^2.2.3",
     "prism-react-renderer": "^2.3.0",
