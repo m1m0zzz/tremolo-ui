@@ -1,6 +1,6 @@
 import { default as SbLinkTo } from '@storybook/addon-links/react'
-import { useTheme } from '@storybook/core/theming'
 import { AnchorHTMLAttributes, ReactNode } from 'react'
+import { useTheme } from 'storybook/theming'
 
 interface Props {
   kind?: string
