@@ -23,9 +23,9 @@
     "clean:sb": "rimraf ./storybook-static"
   },
   "devDependencies": {
-    "@storybook/addon-a11y": "9.1.20",
-    "@storybook/addon-links": "9.1.20",
-    "@storybook/react-vite": "9.1.20",
+    "@storybook/addon-a11y": "10.3.3",
+    "@storybook/addon-links": "10.3.3",
+    "@storybook/react-vite": "10.3.3",
     "@testing-library/react": "16.3.2",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
@@ -33,9 +33,9 @@
     "jotai": "2.19.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "storybook": "9.1.20",
+    "storybook": "10.3.3",
     "tone": "15.1.22",
-    "@storybook/addon-docs": "9.1.20"
+    "@storybook/addon-docs": "10.3.3"
   },
   "peerDependencies": {
     "react": "^18 ||^19",
