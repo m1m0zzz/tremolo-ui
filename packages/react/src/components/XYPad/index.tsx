@@ -49,7 +49,6 @@ const defaultExternalStyles: XYPadProps['externalStyles'] = {
 
 /**
  * Two-dimensional slider component.
- * @category XYPad
  */
 export interface ValueOptions {
   // required
@@ -71,7 +70,6 @@ export interface ValueOptions {
   keyboard?: InputEventOption | null
 }
 
-/** @category XYPad */
 export interface XYPadProps {
   x: ValueOptions
   y: ValueOptions
@@ -91,7 +89,6 @@ export interface XYPadProps {
   children?: ReactElement | ReactElement[]
 }
 
-/** @category XYPad */
 export interface XYPadMethods {
   focus: () => void
   blur: () => void
@@ -372,7 +369,6 @@ export const Root = forwardRef<XYPadMethods, Props>(
 
 /**
  * Simple XYPad
- * @category XYPad
  */
 export const XYPad = {
   Root,

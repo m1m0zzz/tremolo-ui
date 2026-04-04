@@ -1,4 +1,6 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
+import typedocSidebarFunctions from './docs/api/functions/typedoc-sidebar.cjs'
+import typedocSidebarReact from './docs/api/react/typedoc-sidebar.cjs'
+
 import type { SidebarsConfig } from '@docusaurus/plugin-content-docs'
 
 /**
@@ -80,7 +82,7 @@ const sidebars: SidebarsConfig = {
         type: 'doc',
         id: 'api/functions/index',
       },
-      items: require('./docs/api/functions/typedoc-sidebar.cjs'),
+      items: typedocSidebarFunctions,
     },
     {
       type: 'category',
@@ -89,7 +91,7 @@ const sidebars: SidebarsConfig = {
         type: 'doc',
         id: 'api/react/index',
       },
-      items: require('./docs/api/react/typedoc-sidebar.cjs'),
+      items: typedocSidebarReact,
     },
   ],
 }

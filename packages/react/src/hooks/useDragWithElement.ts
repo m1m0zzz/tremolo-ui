@@ -12,9 +12,6 @@ interface UseDragWithElement<T extends Element> {
   onDragEnd?: (normalizedX: number, normalizedY: number) => void
 }
 
-/**
- * @category hooks
- */
 export function useDragWithElement<T extends Element>({
   baseElementRef,
   onDrag,

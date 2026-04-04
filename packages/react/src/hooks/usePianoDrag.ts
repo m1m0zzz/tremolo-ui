@@ -14,7 +14,6 @@ interface UsePianoDrag<T extends Element> {
 
 /**
  * Internal
- * @category hooks
  * @returns [refCallback, pointerDownHandler]
  * @private
  */

@@ -12,7 +12,6 @@ interface UseDragProps {
 }
 
 /**
- * @category hooks
  * @returns [refCallback, pointerDownHandler]
  */
 export function useDrag<T extends Element>({

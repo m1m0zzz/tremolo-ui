@@ -15,7 +15,6 @@ import {
   setDprConfig,
 } from './canvas'
 
-/** @category AnimationCanvas */
 export type InitFunction = (
   context: CanvasRenderingContext2D,
   option: {
@@ -26,7 +25,6 @@ export type InitFunction = (
   },
 ) => void
 
-/** @category AnimationCanvas */
 export type DrawFunction = (
   context: CanvasRenderingContext2D,
   option: {
@@ -45,7 +43,6 @@ export type DrawFunction = (
   },
 ) => void
 
-/** @category AnimationCanvas */
 export interface CommonProps {
   draw: DrawFunction
   init?: InitFunction
@@ -56,26 +53,22 @@ export interface CommonProps {
   options?: CanvasRenderingContext2DSettings
 }
 
-/** @category AnimationCanvas */
 export interface AbsoluteSizingProps {
   width?: number
   height?: number
 }
 
-/** @category AnimationCanvas */
 export interface RelativeSizingProps {
   relativeSize?: boolean
   reduceFlickering?: boolean
 }
 
-/** @category AnimationCanvas */
 export type AnimationCanvasProps = CommonProps &
   AbsoluteSizingProps &
   RelativeSizingProps
 
 /**
  * A simple animatable canvas with requestAnimationFrame()
- * @category AnimationCanvas
  */
 export function AnimationCanvas(
   props: CommonProps &

@@ -3,9 +3,6 @@ import { useCallback, useState } from 'react'
 import { useEventListener } from './useEventListener'
 import { useInterval } from './useInterval'
 
-/**
- * @category hooks
- */
 export function useLongPress(
   callback: () => void,
   initialDelay = 500,

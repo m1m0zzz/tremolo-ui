@@ -4,7 +4,6 @@ import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
 import { composeRefs } from '../_util/composeRefs'
 import { Override } from '../_util/type'
 
-/** @category WheelObserver */
 export interface WheelObserverProps<T extends ElementType> {
   /**
    * React.ElementType
@@ -17,7 +16,6 @@ export interface WheelObserverProps<T extends ElementType> {
 }
 
 /**
- * @category WheelObserver
  * @example
  * <WheelObserver
  *   onWheel={(event) => {

@@ -1,8 +1,5 @@
 import { useEffect, useRef } from 'react'
 
-/**
- * @category hooks
- */
 export function useInterval(callback: () => void, delay: number | null) {
   const savedCallback = useRef(callback)
 

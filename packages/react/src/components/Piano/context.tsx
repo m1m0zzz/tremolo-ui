@@ -1,7 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
 
-/** @category Piano */
 export type NoteRange = {
   first: number
   last: number
@@ -67,7 +66,6 @@ export function PianoProvider({ children, ...props }: PianoProviderProps) {
   )
 }
 
-/** @category Piano */
 export function usePianoContext<T>(selector: (state: State & Action) => T): T {
   const store = useContext(PianoContext)
   if (!store) throw new Error('Missing PianoContext.Provider in the tree')

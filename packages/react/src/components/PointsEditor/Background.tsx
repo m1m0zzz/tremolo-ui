@@ -1,7 +1,6 @@
 import clsx from 'clsx'
 import { ComponentPropsWithoutRef } from 'react'
 
-/** @category PointsEditor */
 export function Background({
   className,
   children,

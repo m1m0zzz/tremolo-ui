@@ -8,7 +8,6 @@ import {
   useRef,
 } from 'react'
 
-/** @category XYPad */
 export interface XYPadThumbProps {
   size?: number | string
   width?: number | string
@@ -29,7 +28,6 @@ export interface XYPadThumbProps {
   __css?: CSSProperties
 }
 
-/** @category XYPad */
 export interface XYPadThumbMethods {
   focus: () => void
   blur: () => void
@@ -38,7 +36,6 @@ export interface XYPadThumbMethods {
 type Props = XYPadThumbProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadThumbProps>
 
-/** @category XYPad */
 export const Thumb = forwardRef<XYPadThumbMethods, Props>(
   (
     {

@@ -3,7 +3,6 @@ import { SVGProps } from 'react'
 
 import { center, useKnobContext } from './context'
 
-/** @category Knob */
 export function InactiveLine({
   stroke = 'currentColor',
   strokeWidth = 6,

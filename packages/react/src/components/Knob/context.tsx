@@ -111,7 +111,6 @@ export function KnobProvider({ children, ...props }: PropsWithChildren<State>) {
   )
 }
 
-/** @category Knob */
 export function useKnobContext<T>(
   selector: (state: State & DrawingState) => T,
 ): T {

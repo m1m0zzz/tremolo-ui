@@ -81,7 +81,6 @@ export function PointsEditorProvider({
   )
 }
 
-/** @category PointsEditor */
 export function usePointsEditorContext<T>(
   selector: (state: State & Action) => T,
 ): T {

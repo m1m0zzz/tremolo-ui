@@ -23,7 +23,6 @@ interface Props {
   }
 }
 
-/** @category Knob */
 export function Thumb({
   className,
 

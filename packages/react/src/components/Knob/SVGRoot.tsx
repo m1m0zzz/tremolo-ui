@@ -12,7 +12,6 @@ interface SVGRoot {
   overflowVisible?: boolean
 }
 
-/** @category Knob */
 export function SVGRoot({
   children,
   style,

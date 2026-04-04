@@ -5,13 +5,11 @@ import { useLongPress } from '../../hooks/useLongPress'
 
 import { useNumberInputContext } from './context'
 
-/** @category NumberInput */
 export interface IncrementStepperProps {
   size?: number
   children?: ReactNode
 }
 
-/** @category NumberInput */
 export function IncrementStepper({
   size = 12,
   children,

@@ -39,7 +39,6 @@ import { KeyLabel } from './KeyLabel'
 
 /**
  * [noteRange.first, noteRange.first + 1 ..., noteRange.last]
- * @category Piano
  */
 export function getNoteRangeArray(noteRange: NoteRange) {
   return Array.from(
@@ -48,7 +47,6 @@ export function getNoteRangeArray(noteRange: NoteRange) {
   )
 }
 
-/** @category Piano */
 export interface PianoProps {
   noteRange: NoteRange
 
@@ -74,9 +72,6 @@ export interface PianoProps {
 
 const blackPerWhiteWidth = defaultBlackKeyWidth / defaultWhiteKeyWidth // 0.65
 
-/**
- * @category Piano
- */
 export interface PianoMethods {
   playNote: (note: number, velocity?: number) => void
   stopNote: (note: number) => void
@@ -346,7 +341,6 @@ const Root = forwardRef<PianoMethods, Props>(
 
 /**
  * Customizable piano component.
- * @category Piano
  */
 export const Piano = { Root, WhiteKey, BlackKey, KeyLabel }
 

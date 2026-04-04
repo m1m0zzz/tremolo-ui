@@ -8,7 +8,6 @@ import { useSliderContext } from './context'
 export const defaultLength = 140
 export const defaultThickness = 10
 
-/** @category Slider */
 export interface SliderTrackProps {
   length?: number | string
   thickness?: number | string
@@ -28,7 +27,6 @@ export interface SliderTrackProps {
   __percent?: number
 }
 
-/** @category Slider */
 export function Track({
   length = defaultLength,
   thickness = defaultThickness,

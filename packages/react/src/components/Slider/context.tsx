@@ -57,7 +57,6 @@ export function SliderProvider({ children, ...props }: SliderProviderProps) {
   )
 }
 
-/** @category Slider */
 export function useSliderContext<T>(selector: (state: State) => T): T {
   const store = useContext(SliderContext)
   if (!store) throw new Error('Missing SliderContext.Provider in the tree')

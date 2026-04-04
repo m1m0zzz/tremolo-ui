@@ -9,7 +9,6 @@ import {
 
 import { useSliderContext } from './context'
 
-/** @category Slider */
 export interface SliderThumbProps {
   size?: number | string
   width?: number | string
@@ -25,16 +24,13 @@ export interface SliderThumbProps {
   __percent?: number
 }
 
-/** @category Slider */
 export interface SliderThumbMethods {
   focus: () => void
   blur: () => void
 }
 
-/** @category Slider */
 export const defaultThumbSize = 22
 
-/** @category Slider */
 export const Thumb = forwardRef<SliderThumbMethods, SliderThumbProps>(
   (
     {

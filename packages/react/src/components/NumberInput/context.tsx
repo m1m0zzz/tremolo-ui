@@ -153,7 +153,6 @@ export function NumberInputProvider({
   )
 }
 
-/** @category NumberInput */
 export function useNumberInputContext<T>(
   selector: (state: State & Action) => T,
 ): T {

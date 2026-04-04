@@ -42,7 +42,6 @@ const defaultExternalStyles: SliderProps['externalStyles'] = {
   cursor: 'pointer',
 }
 
-/** @category Slider */
 export interface SliderProps {
   // required
   value: number
@@ -96,9 +95,6 @@ export interface SliderProps {
   // ReactElement<typeof SliderThumb, typeof SliderTrack>[]
 }
 
-/**
- * @category Slider
- */
 export interface SliderMethods {
   focus: () => void
   blur: () => void
@@ -359,7 +355,6 @@ const Root = forwardRef<SliderMethods, Props>(
 
 /**
  * Customizable slider
- * @category Slider
  */
 export const Slider = {
   Root,

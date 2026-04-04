@@ -7,14 +7,12 @@ import { useSliderContext } from './context'
 import { ScaleOption } from './ScaleOption'
 import { generateOptionsList, ScaleOptions } from './type'
 
-/** @category Slider */
 export interface ScaleProps {
   gap?: number | string
   options?: ScaleOptions
   children?: ReactNode
 }
 
-/** @category Slider */
 export function Scale({
   gap = 6,
   options,

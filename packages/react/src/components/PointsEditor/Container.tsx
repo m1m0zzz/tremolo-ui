@@ -3,7 +3,6 @@ import { ComponentPropsWithoutRef, useRef } from 'react'
 
 import { usePointsEditorContext } from './context'
 
-/** @category PointsEditor */
 export function Container({
   className,
   children,

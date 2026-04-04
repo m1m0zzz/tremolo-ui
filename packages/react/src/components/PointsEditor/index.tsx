@@ -43,7 +43,6 @@ const defaultExternalStyles: PointsEditorProps['externalStyles'] = {
   cursor: 'grabbing',
 }
 
-/** @category PointsEditor */
 export interface PointsEditorProps {
   width?: number | string
   height?: number | string
@@ -118,7 +117,6 @@ const Root = forwardRef<HTMLDivElement, Props>(
 
 /**
  * Multiple Point Controller
- * @category PointsEditor
  */
 export const PointsEditor = {
   Root,

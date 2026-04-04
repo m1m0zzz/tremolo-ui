@@ -37,7 +37,6 @@ const defaultExternalStyles: KnobProps['externalStyles'] = {
   cursor: 'grabbing',
 }
 
-/** @category Knob */
 export interface KnobProps {
   // required
   value: number
@@ -93,9 +92,6 @@ export interface KnobProps {
   onChange?: (value: number) => void
 }
 
-/**
- * @category Knob
- */
 export interface KnobMethods {
   focus: () => void
   blur: () => void
@@ -274,8 +270,6 @@ const Root = forwardRef<KnobMethods, Props>(
 
 /**
  * Interactive rotary knob component implemented in SVG.
- *
- * @category Knob
  */
 export const Knob = {
   Root,

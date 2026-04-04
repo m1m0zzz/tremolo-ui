@@ -6,7 +6,6 @@ import { toFixed, xor, normalizeValue } from '@tremolo-ui/functions'
 import { useSliderContext } from './context'
 import { ScaleType } from './type'
 
-/** @category Slider */
 export interface ScaleOptionProps {
   // required
   value: number
@@ -32,7 +31,6 @@ export interface ScaleOptionProps {
   }
 }
 
-/** @category Slider */
 export function ScaleOption({
   value,
   type = 'mark-number',

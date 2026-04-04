@@ -1,18 +1,9 @@
 import { mod } from './util'
 
-/**
- * @category MIDI
- */
 export const whiteKeys = ['A', 'B', 'C', 'D', 'E', 'F', 'G'] as const
 
-/**
- * @category MIDI
- */
 export type WhiteKey = (typeof whiteKeys)[number]
 
-/**
- * @category MIDI
- */
 export const noteKeys = [
   'C',
   'C#',
@@ -28,14 +19,8 @@ export const noteKeys = [
   'B',
 ] as const
 
-/**
- * @category MIDI
- */
 export type NoteKey = (typeof noteKeys)[number]
 
-/**
- * @category MIDI
- */
 export function parseNoteName(noteName: string) {
   const m = noteName.match(/^([a-g])(#{0,2}|b{0,2})(-?\d+)$/i)
   if (!m) throw new Error('Invalid note name')
@@ -49,7 +34,6 @@ export function parseNoteName(noteName: string) {
 
 /**
  * Convert noteName to noteNumber
- * @category MIDI
  */
 export function noteNumber(noteName: string) {
   const { letter, accidental, octave } = parseNoteName(noteName)
@@ -63,7 +47,6 @@ export function noteNumber(noteName: string) {
  * C-1 = 0
  * G9 = 127
  * @param noteNumber noteNumber
- * @category MIDI
  */
 export function noteName(noteNumber: number): `${NoteKey}${number}` {
   const noteIndex = mod(noteNumber, 12)
@@ -73,7 +56,6 @@ export function noteName(noteNumber: number): `${NoteKey}${number}` {
 
 /**
  * Convert noteNumber to noteKey
- * @category MIDI
  */
 export function noteKey(noteNumber: number): NoteKey {
   return noteKeys[mod(noteNumber, 12)]
@@ -81,7 +63,6 @@ export function noteKey(noteNumber: number): NoteKey {
 
 /**
  * @param note noteNumber: 0 ~ 127 or noteName e.g. 'C3'
- * @category MIDI
  */
 export function isWhiteKey(note: number | string) {
   const n = typeof note == 'string' ? noteNumber(note) : note
@@ -98,7 +79,6 @@ export function isWhiteKey(note: number | string) {
 
 /**
  * @param note noteNumber: 0 ~ 127 or noteName e.g. 'C3'
- * @category MIDI
  */
 export function isBlackKey(note: number | string) {
   return !isWhiteKey(note)
@@ -109,7 +89,6 @@ export function isBlackKey(note: number | string) {
  * @param detune [cent]
  * @param a4 A4 frequency [Hz]
  * @returns frequency [Hz]
- * @category MIDI
  */
 export function noteToFrequency(note: number | string, detune = 0, a4 = 440) {
   const n = typeof note == 'string' ? noteNumber(note) : note

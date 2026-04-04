@@ -16,7 +16,6 @@ TODO
 - skew
 */
 
-/** @category NumberInput */
 export interface NumberInputProps {
   value: number | string
 
@@ -88,9 +87,6 @@ export interface NumberInputProps {
   children?: ReactNode
 }
 
-/**
- * @category NumberInput
- */
 export interface NumberInputMethods {
   focus: () => void
   blur: () => void
@@ -177,7 +173,6 @@ const Root = forwardRef<NumberInputMethods, Props>(
 
 /**
  * Input with some useful functions for entering numerical values.
- * @category NumberInput
  */
 export const NumberInput = {
   Root,

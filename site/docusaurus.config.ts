@@ -25,18 +25,18 @@ function typedocPlugins() {
   console.log('gitRevision: ', process.env.COMMIT_SHA)
   return [
     [
-      // for Vercel Deploy
       'docusaurus-plugin-typedoc',
       {
         id: 'functions',
-        entryPoints: [
-          '../packages/functions/src/index.ts',
-          '../packages/functions/src/components/Slider/type.ts',
-          '../packages/functions/src/components/NumberInput/type.ts',
-        ],
+        entryPoints: ['../packages/functions/src/!(index).ts'],
         tsconfig: '../packages/functions/tsconfig.json',
         out: './docs/api/functions',
         readme: 'none',
+        router: 'module',
+        parametersFormat: 'table',
+        enumMembersFormat: 'table',
+        useCodeBlocks: true,
+        // for Vercel Deploy (npm run build:docs:production)
         ...(process.env.COMMIT_SHA && {
           sourceLinkTemplate:
             'https://github.com/m1m0zzz/tremolo-ui/blob/{gitRevision}/{path}#L{line}',
@@ -48,10 +48,19 @@ function typedocPlugins() {
       'docusaurus-plugin-typedoc',
       {
         id: 'react',
-        entryPoints: ['../packages/react/src/index.ts'],
+        entryPoints: [
+          '../packages/react/src/components/**/index.{ts,tsx}',
+          '../packages/react/src/hooks/**/*.{ts,tsx}',
+        ],
+        exclude: ['../packages/react/src/components/_util/**'],
         tsconfig: '../packages/react/tsconfig.json',
         out: './docs/api/react',
         readme: 'none',
+        router: 'module',
+        parametersFormat: 'table',
+        enumMembersFormat: 'table',
+        useCodeBlocks: true,
+        // for Vercel Deploy (npm run build:docs:production)
         ...(process.env.COMMIT_SHA && {
           sourceLinkTemplate:
             'https://github.com/m1m0zzz/tremolo-ui/blob/{gitRevision}/{path}#L{line}',

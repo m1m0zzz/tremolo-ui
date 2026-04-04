@@ -11,9 +11,6 @@ import React, {
 import { usePianoContext } from './context'
 import { KeyLabel, KeyLabelProps } from './KeyLabel'
 
-/**
- * @category Piano
- */
 export interface KeyProps {
   noteNumber: number
 
@@ -36,9 +33,6 @@ export interface KeyProps {
   __width?: number
 }
 
-/**
- * @category Piano
- */
 export interface KeyMethods {
   play: (velocity?: number) => void
   stop: () => void
@@ -48,9 +42,7 @@ export interface KeyMethods {
 type Props = KeyProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KeyProps>
 type ImplProps = Props & { keyType: 'black' | 'white' }
 
-/** @category Piano */
 export const defaultWhiteKeyWidth = 40
-/** @category Piano */
 export const defaultBlackKeyWidth = 26
 
 const KeyImpl = forwardRef<KeyMethods, ImplProps>(
@@ -166,7 +158,6 @@ const KeyImpl = forwardRef<KeyMethods, ImplProps>(
   },
 )
 
-/** @category Piano */
 export const WhiteKey = forwardRef<KeyMethods, Props>(
   (
     {
@@ -190,7 +181,6 @@ export const WhiteKey = forwardRef<KeyMethods, Props>(
   },
 )
 
-/** @category Piano */
 export const BlackKey = forwardRef<KeyMethods, Props>(
   (
     {
