@@ -47,7 +47,7 @@
     "eslint-plugin-lit-a11y": "4.1.4",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "5.2.0",
-    "eslint-plugin-storybook": "10.3.4",
+    "eslint-plugin-storybook": "10.3.5",
     "husky": "9.1.7",
     "jest": "29.7.0",
     "lint-staged": "16.4.0",
