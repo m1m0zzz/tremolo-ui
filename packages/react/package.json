@@ -30,7 +30,7 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "jest-environment-jsdom": "29.7.0",
-    "jotai": "2.19.1",
+    "jotai": "2.20.0",
     "react": "19.2.5",
     "react-dom": "19.2.5",
     "storybook": "10.3.6",
