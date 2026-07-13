@@ -36,7 +36,7 @@
     "site"
   ],
   "devDependencies": {
-    "@arethetypeswrong/core": "0.18.4",
+    "@arethetypeswrong/core": "0.18.5",
     "@eslint/js": "9.39.4",
     "@tsdown/css": "0.21.7",
     "@types/eslint__js": "8.42.3",
