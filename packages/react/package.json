@@ -31,8 +31,8 @@
     "@types/react-dom": "19.2.3",
     "jest-environment-jsdom": "29.7.0",
     "jotai": "2.20.2",
-    "react": "19.2.7",
-    "react-dom": "19.2.7",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
     "storybook": "10.5.0",
     "tone": "15.1.22",
     "@storybook/addon-docs": "10.5.0"
