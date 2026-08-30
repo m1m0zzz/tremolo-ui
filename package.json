@@ -13,6 +13,7 @@
     "format": "prettier . --write",
     "test": "npm run test --workspaces --if-present",
     "build:package": "npm run build:package --workspaces --if-present",
+    "build:sb": "npm run build:package && npm run build:sb -w packages/react",
     "release": "npm run build:package && changeset publish",
     "changeset": "changeset",
     "docs": "npm run start -w site",
