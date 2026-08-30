@@ -42,6 +42,28 @@ npm run build:package -w packages/functions
 ```
 
 
+## Changeset
+
+リリースに含めたい変更をした場合は、changeset を追加します。
+
+```bash npm2yarn
+npm run changeset
+```
+
+`.changeset/` 以下にマークダウンファイルが作られるので、変更と一緒にコミットしてください。
+
+bump の種類は次のように選びます。
+
+- `patch` — バグ修正
+- `minor` — 新機能、**および破壊的変更**（このプロジェクトは `0.x` を維持するため。`major` を選ぶと `1.0.0` になります）
+- `major` — 当面は使いません
+
+`@tremolo-ui/functions` と `@tremolo-ui/react` は常に同じバージョンでリリースされるため、
+片方だけを選んでも両方が bump されます。
+
+リリースは自動化されています。変更が `main` に入ると "Version Packages" プルリクエストが
+作成（または更新）され、それをマージした時点で npm への publish と CHANGELOG の生成が行われます。
+
 ## セキュリティの問題
 
 [脆弱性を報告する](../SECURITY/) を参照してください。

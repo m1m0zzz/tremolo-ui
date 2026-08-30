@@ -44,6 +44,29 @@ In order to use the added functionality with `react` you need to build the packa
 npm run build:package -w packages/functions
 ```
 
+## Changeset
+
+If your change should be included in a release, add a changeset.
+
+```bash npm2yarn
+npm run changeset
+```
+
+This creates a markdown file under `.changeset/`. Commit it together with your change.
+
+Choose the bump type as follows:
+
+- `patch` — bug fixes
+- `minor` — new features, **and breaking changes** (this project stays on `0.x`, and `major` would bump it to `1.0.0`)
+- `major` — do not use for now
+
+`@tremolo-ui/functions` and `@tremolo-ui/react` are always released at the same version,
+so selecting only one of them still bumps both.
+
+Releases are automated: when a change lands on `main`, a "Version Packages" pull request is
+opened (or updated). Merging that pull request publishes the packages to npm and generates
+the CHANGELOG.
+
 ## Security Issues
 
 Please see [Reporting a Vulnerability](../SECURITY)
