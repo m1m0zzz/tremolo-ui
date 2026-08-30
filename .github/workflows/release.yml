@@ -31,10 +31,13 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Test (packages/functions)
-      run: npm run test -w packages/functions
-    - name: Test (packages/react)
-      run: npm run test -w packages/react
+    # packages/react のテストは workspace symlink 越しに @tremolo-ui/functions の dist を
+    # 解決するため、テストより先にビルドする必要がある
+    - name: Build packages
+      run: npm run build:package
+
+    - name: Test
+      run: npm run test
 
     # changeset がある場合は "Version Packages" PR を作成/更新し、
     # その PR が main にマージされた時点で publish-script が走る
