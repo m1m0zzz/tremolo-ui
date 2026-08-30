@@ -1,5 +1,7 @@
 import { useEffect } from 'react'
 
+import { createMIDIMessage } from '@tremolo-ui/dom'
+
 /**
  * Hooks for when you want to process MIDI events in more detail than useMIDIInput.
  */
@@ -8,16 +10,7 @@ export function useMIDIMessage(
   onMIDIMessage: (event: MIDIMessageEvent) => void,
 ) {
   useEffect(() => {
-    if (!midiAccess) return
-
-    for (const input of midiAccess.inputs.values()) {
-      input.addEventListener('midimessage', onMIDIMessage)
-    }
-
-    return () => {
-      for (const input of midiAccess.inputs.values()) {
-        input.removeEventListener('midimessage', onMIDIMessage)
-      }
-    }
+    const instance = createMIDIMessage(midiAccess, onMIDIMessage)
+    return () => instance.destroy()
   }, [midiAccess, onMIDIMessage])
 }

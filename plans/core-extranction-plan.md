@@ -127,15 +127,22 @@ packages/
 
 ロジックの複雑さ抜きでパッケージ分割の配線を検証するのが目的。MIDI 系はコンポーネントと無関係な Web MIDI API ラッパーなので最適。
 
-- [ ] `packages/dom` を作成。`package.json` は functions のものを雛形にする（`type: module`, tsdown, `exports` の require/import 分岐）
-- [ ] ルート `package.json` の `workspaces` に `packages/dom` を追加
-- [ ] `useMIDIAccess` / `useMIDIInput` / `useMIDIMessage` のロジックを `createMIDIAccess` 等としてコアへ移植
-- [ ] `@tremolo-ui/react` 側は同名 hook を維持し、内部でコアを呼ぶだけにする
-- [ ] `.changeset/config.json` の `fixed` に `@tremolo-ui/dom` を追加
-- [ ] `build.yml` にも dom を追加
+- [x] `packages/dom` を作成。`package.json` は functions のものを雛形にする（`type: module`, tsdown, `exports` の require/import 分岐）
+- [x] ルート `package.json` の `workspaces` に `packages/dom` を追加
+- [x] `useMIDIAccess` / `useMIDIInput` / `useMIDIMessage` のロジックを `createMIDIAccess` 等としてコアへ移植
+- [x] `@tremolo-ui/react` 側は同名 hook を維持し、内部でコアを呼ぶだけにする
+- [x] ~~`.changeset/config.json` の `fixed` に `@tremolo-ui/dom` を追加~~ → 変更不要。`fixed` は `[["@tremolo-ui/*"]]` のグロブなので dom を自動的に含む（`changeset status` で確認済み）
+- [x] `build.yml` にも dom を追加
 - [ ] **`@tremolo-ui/dom` の初回 publish はローカルから手動で行う**（trusted publishing は npm 上にパッケージが存在しないと設定できないため）
 - [ ] npm の `@tremolo-ui/dom` 設定で trusted publisher を登録（org/user・repo・ワークフローファイル名。既存2パッケージと同じ workflow を指す）
 - [ ] 実際に 1 リリース通して npm 上で依存が解決できることを確認
+
+**現状**: コードは実装・検証済み（dom のテスト15件、`npm run test` / `lint` / `build:package` / `build:docs` すべて green。react の dist は `@tremolo-ui/dom` を外部依存として保持し、attw / publint も通る）。
+**ただし changeset はまだ追加していない。** dom が npm 上に存在しない状態でリリースが走ると publish に失敗するため、上の手動 publish と trusted publisher 登録が済むまで changeset を追加しないこと。手順:
+
+1. ローカルから `npm publish -w packages/dom`（現在 0.2.1）
+2. npm の `@tremolo-ui/dom` 設定で trusted publisher を登録（repo: `m1m0zzz/tremolo-ui`, workflow: `release.yml`）
+3. `npm run changeset` で changeset を追加して push → version PR をマージ（全パッケージが 0.2.2 へ）
 
 ### Phase 2: `createDrag` / `createWheel`
 
@@ -293,4 +300,6 @@ npm 側の trusted publisher 設定はワークフローの**ファイル名**�
 - [x] `npm install -g npm@latest` のステップは維持
 - [x] CONTRIBUTING に changeset の追加手順を記載
 - [x] `packages/react` の `@tremolo-ui/functions": "^0.1.6"` を実バージョンに合わせて修正してから移行する（ずれたまま移行すると `updateInternalDependencies` の挙動が読みにくくなる）
-- [ ] ダミーの patch changeset で 1 リリース通し、CHANGELOG・タグ・npm 上のバージョンを確認
+- [x] ダミーの patch changeset で 1 リリース通し、CHANGELOG・タグ・npm 上のバージョンを確認
+
+**移行完了（0.2.1 で実リリース済み）。** 確認できたこと: `fixed` により changeset を付けていない functions も同時に bump / publish される / 内部依存レンジが `^0.2.1` に自動更新され、旧 publish.sh のレンジずれが解消 / タグは `@tremolo-ui/<pkg>@0.2.1` のパッケージ単位に変化 / CHANGELOG はコミットリンクと貢献者付きで生成 / **OIDC trusted publishing は問題なく動作し、7.4 の既知問題（E404）は踏まなかった**（公開物に SLSA provenance が付いている）。

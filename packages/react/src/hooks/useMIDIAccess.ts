@@ -1,39 +1,32 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useMemo, useSyncExternalStore } from 'react'
 
-/** @private */
-export const PERMISSION_DENIED = 'PERMISSION_DENIED'
-/** @private */
-export const NOT_SUPPORTED = 'NOT_SUPPORTED'
+import { createMIDIAccess } from '@tremolo-ui/dom'
 
-/** @private */
-export type MIDIAccessError = typeof PERMISSION_DENIED | typeof NOT_SUPPORTED
+export {
+  NOT_SUPPORTED,
+  PERMISSION_DENIED,
+  type MIDIAccessError,
+} from '@tremolo-ui/dom'
 
 /**
  * Hooks for requesting MIDI access in the browser. The first argument allows you to choose whether to request access on mount.
  */
 export function useMIDIAccess(requestOnMount = true) {
-  const [midiAccess, setMidiAccess] = useState<MIDIAccess | null>(null)
-  const [error, setError] = useState<MIDIAccessError | null>(null)
+  const instance = useMemo(() => createMIDIAccess(), [])
 
-  const request = useCallback(() => {
-    if (navigator.requestMIDIAccess) {
-      navigator
-        .requestMIDIAccess()
-        .then((access) => {
-          setMidiAccess(access)
-          setError(null)
-        })
-        .catch(() => {
-          setError(PERMISSION_DENIED)
-        })
-    } else {
-      setError(NOT_SUPPORTED)
-    }
-  }, [])
+  const { midiAccess, error } = useSyncExternalStore(
+    instance.subscribe,
+    instance.getState,
+    instance.getServerState,
+  )
 
   useEffect(() => {
-    if (requestOnMount) request()
-  }, [requestOnMount, request])
+    if (requestOnMount) instance.request()
+  }, [instance, requestOnMount])
 
-  return { request, midiAccess, error }
+  useEffect(() => {
+    return () => instance.destroy()
+  }, [instance])
+
+  return { request: instance.request, midiAccess, error }
 }

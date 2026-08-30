@@ -1,0 +1,55 @@
+{
+  "name": "@tremolo-ui/dom",
+  "version": "0.2.1",
+  "description": "framework-agnostic DOM layer used in @tremolo-ui/*",
+  "type": "module",
+  "sideEffects": false,
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.cts",
+  "scripts": {
+    "test": "jest",
+    "typecheck": "tsc --noEmit",
+    "build:package": "tsc && tsdown",
+    "watch:package": "tsdown --watch",
+    "clean": "npm run clean:build",
+    "clean:build": "rimraf ./dist",
+    "lint": "eslint --fix --ext .ts,.tsx .",
+    "format": "prettier --write ."
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "mimoz",
+    "email": "contact.m1m0zzz@gmail.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/m1m0zzz/tremolo-ui",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m1m0zzz/tremolo-ui.git",
+    "directory": "packages/dom"
+  },
+  "keywords": [
+    "web-audio",
+    "midi",
+    "dom"
+  ],
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  }
+}
