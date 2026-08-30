@@ -15,6 +15,7 @@ export default [
     ignores: [
       '**/build',
       '**/dist',
+      '**/storybook-static',
       '**/.docusaurus',
       '**/*.cache',
       '**/*.config.*',
