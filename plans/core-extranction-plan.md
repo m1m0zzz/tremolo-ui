@@ -222,11 +222,60 @@ pointer capture を使うと、pointerdown を受けた要素が以降のイベ�
 
 ### Phase 6: Vue / Svelte
 
-- [ ] `@tremolo-ui/svelte`（action ベース。コアのシグネチャとほぼ同型なので最も薄い）
-- [ ] `@tremolo-ui/vue`（composable または directive）
-- [ ] CSS の配布方法を再検討（現状 react の `exports` に `./styles/*.css` がコンポーネント単位で並んでいる。共通化するか各パッケージで重複させるか）
+`plans/milestone.md` へ移動。1.0 に向けたマイルストーンとして管理する。
 
 ---
+
+## 4.5 コア化と並行して片付けるもの
+
+Phase の順序に組み込みきれないが、1.0 までに決着させる項目。
+
+### 4.5.1 CSS の完全ヘッドレス化 — Phase 3 と Phase 5 の間
+
+Radix UI / Base UI と同じ方針にする。パッケージはスタイルを配らず、**ドキュメント上でデモの CSS を公開**して、利用者が Tailwind / CSS Modules / plain CSS を自由に選べる形にする。
+
+- [ ] `packages/react` から `index.css` 群を外す方針を決める（完全に消すか、opt-in の「デフォルトテーマ」として別 export に残すか）
+- [ ] `package.json` の `exports` から `./styles/*.css` を整理（Phase 6 の「CSS の配布方法を再検討」はこの項目に統合）
+- [ ] 状態を表す ARIA 属性 / `data-*` 属性が、利用者側から十分にスタイリングできるか確認する。現状は `[aria-disabled]` `[aria-readonly]` `[data-dragging]` を使っている
+- [ ] ドキュメントサイトに、デモで使っている CSS をコピーできる形で載せる
+
+**これは破壊的変更であり、既存利用者は `@tremolo-ui/react/styles/index.css` を import しているため、移行手順を用意する必要がある。**
+
+### 4.5.2 `tremolo-user-select-none` / `tremolo-cursor-*` をどうするか — 4.5.1 とセット
+
+ドラッグ中に body へクラスを付け外しする仕組み（`src/styles/global.css` + `src/components/_util/index.ts`）。Knob / Slider / XYPad / PointsEditor の 4 コンポーネントが `externalStyles` prop 経由で使っている。**CSS をヘッドレス化すると、このグローバル CSS だけがパッケージに残ることになるため、4.5.1 と同時に決める。**
+
+選択肢:
+
+1. コア（`@tremolo-ui/dom`）が `element.style` を直接操作する（クラス不要になり CSS を配らなくて済む）
+2. `data-*` 属性を body に付けるだけにして、スタイルは利用者に任せる
+3. 現状維持（グローバル CSS だけは配り続ける）
+
+`createDrag` は既に `touch-action` を直接操作しているので、1 と整合性が取りやすい。
+
+### 4.5.3 内部ユーティリティの削除
+
+- [ ] `_util/composeRefs.tsx` を削除。Observer 系の削除により、利用箇所は `XYPad/index.tsx` の 1 箇所のみになった（`useComposedRefs` は利用ゼロ）。ref コールバックを 1 つにまとめる形へ整理して不要にする
+- [ ] `_util/type.ts` の `Override` を削除。利用箇所は `Knob/SVGRoot.tsx` の 1 箇所のみ。Observer 系の削除で他は消えた
+
+### 4.5.4 Knob の描画を修正
+
+`ActiveLine` / `InactiveLine` は `viewBox="0 0 100 100"` の中で半径 50 の円弧を描いているが、`strokeWidth` が既定 6 のため線の太さの半分（3）が viewBox からはみ出る。これを `overflow: visible` で誤魔化している。
+
+- [ ] 円弧の半径を `strokeWidth / 2` だけ内側に取り、viewBox 内に収める
+- [ ] `SVGRoot` の `style.overflow = 'visible'`、`index.css` の `.tremolo-knob` と `.tremolo-knob-active-line` の `overflow: visible` を削除
+- [ ] `SVGRoot` の `overflowVisible` prop（宣言されているが未使用）を削除
+- [ ] `strokeWidth` は利用者が変更できるため、半径の計算は実際の `strokeWidth` から導く必要がある。現状 `ActiveLine` / `InactiveLine` がそれぞれ既定値を持っているので、context に集約するか検討する
+
+### 4.5.5 Piano のアーキテクチャ再検討 — Phase 4 の一部
+
+Phase 4 の Piano 対応と一体で進める。
+
+- [ ] `usePianoDrag` を `createDragValue` ベースに置き換える。`useDragWithElement` との差は「pointerdown で発火するか」だけで、Phase 2 で入れた `updateOnPointerDown` オプションで吸収できる見込み
+- [ ] `index.tsx:193` の TODO を消化する。「単一ポインタは useDrag で対応可能だが、マルチタッチには TouchEvent が必要」とあるが、**Pointer Events は `pointerId` で複数ポインタを区別できるため、TouchEvent は不要**。コアに複数ポインタ対応のプリミティブを足す
+- [ ] `index.tsx:238` の `// FIXME`（内容が書かれていない）が何を指すか特定する
+- [ ] `keyboardShortcuts.ts:3` の TODO
+- [ ] 鍵盤の当たり判定（`getHitKeyIndex`）が座標計算とコンポーネント描画に密結合している点を見直す
 
 ## 5. 既存コードで見つかった問題
 
