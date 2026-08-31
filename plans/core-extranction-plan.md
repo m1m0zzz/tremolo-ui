@@ -166,6 +166,8 @@ pointer capture を使うと、pointerdown を受けた要素が以降のイベ�
 | `useDrag` | `[refCallback, pointerDownHandler]` | ref コールバック 1 つ |
 | `useDragWithElement` | `{ refHandler, pointerDownHandler, dragging }` | `{ refCallback, dragging }` |
 | `useWheel` | （なし） | 新規。`useRefCallbackEvent('wheel', ..., { passive: false })` の置き換え |
+| `DragObserver` | あり | **削除**。`useDrag` に一本化 |
+| `WheelObserver` | あり | **削除**。`useWheel` に一本化 |
 
 `useRefCallbackEvent` は `usePianoDrag` からのみ使われる内部 hook として残っている（Phase 4 で Piano をコア化する際に不要になる想定）。
 
@@ -174,8 +176,27 @@ pointer capture を使うと、pointerdown を受けた要素が以降のイベ�
 - **直した**: 5.1 の delta バグ。画面左上端 `(0,0)` から掴むと旧実装は `onDrag` が一度も発火しなかった。回帰テストを `packages/dom/__tests__/pointer/drag.test.ts` に入れてある
 - **直した**: `useDragWithElement` の `onDragStart` に古い正規化値（初回は 0,0）が渡っていた問題。`setDragging(true)` 直後の `handleDrag` が更新前の `dragging === false` を見て早期 return していたため、座標が更新されないまま `onDragStart` が呼ばれていた
 - **直した**: `onDragEnd` が、その要素で pointerdown していなくても window 上の任意の pointerup で発火していた問題
-- **維持した**: pointerdown だけでは値が動かない挙動（ドラッグして初めて動く）。XYPad の「pointer down だけでも onChange を発火させるべき」という TODO はそのまま残してある。UX の変更になるため別途判断が必要
 - **維持した**: ボタンの種類を問わずドラッグが始まる挙動（右クリックドラッグでも値が動く）。フィルタを足すかは別途判断
+
+#### pointerdown での発火はコンポーネントごとに分ける
+
+ドラッグの性質は 2 つに分かれ、pointerdown 単体で値を動かすかどうかは絶対位置型だけの論点になる。
+
+| コンポーネント | 座標の性質 | pointerdown で発火 |
+| --- | --- | --- |
+| Knob | 相対デルタ | 該当なし（デルタしか意味を持たない） |
+| Slider | track の rect で正規化 | **する**（クリックした位置へ飛ぶ） |
+| XYPad | area の rect で正規化 | **する** |
+| PointsEditor / Point | container の rect で正規化 | しない（点の縁を掴んだときに点がずれるため） |
+| Piano | piano の rect で正規化 | する（押下＝発音。従来からこの挙動） |
+
+`useDragWithElement` に `updateOnPointerDown` を追加し、Slider / XYPad のみ有効にした。Phase 3 で `createDragValue` に持ち上げる。
+
+なお Piano だけが従来から pointerdown で発火していたのは設計判断ではなく実装差によるもので、`usePianoDrag` が `dragged.current`（ref）を使うのに対し `useDragWithElement` が `setDragging`（state）を使っていたため、pointerdown 時の処理が更新前の値を見て早期 return していた。
+
+#### DragObserver / WheelObserver を廃止
+
+コア化により両者は「hook を呼んで ref を要素に渡すだけ」の薄いラッパーになり、`as` prop で要素を選べる以外の価値が無くなったため削除した。リポジトリ内の利用箇所は stories のみで、ドキュメントページも CSS も無かった。stories は `useDrag` / `useWheel` のデモとして書き直してある。
 
 
 ### Phase 3: `createDragValue`

@@ -3,11 +3,10 @@ import { useState } from 'react'
 import { toFixed } from '@tremolo-ui/functions'
 
 import { NumberInput } from '../src/components/NumberInput'
-import { WheelObserver } from '../src/components/WheelObserver'
+import { useWheel } from '../src/hooks/useWheel'
 
 export default {
-  title: 'Base Components/WheelObserver',
-  component: WheelObserver,
+  title: 'Hooks/useWheel',
 }
 
 export const Basic = () => {
@@ -15,15 +14,17 @@ export const Basic = () => {
   const [deltaY, setDeltaY] = useState(0)
   const [scale, setScale] = useState(1)
 
+  const wheelRef = useWheel<HTMLDivElement>((event) => {
+    event.preventDefault()
+    const { deltaY } = event
+    setCount((count) => toFixed(count + deltaY * scale, 2))
+    setDeltaY(deltaY)
+  })
+
   return (
     <div>
-      <WheelObserver
-        onWheel={(event) => {
-          event.preventDefault()
-          const { deltaY } = event
-          setCount((count) => toFixed(count + deltaY * scale, 2))
-          setDeltaY(deltaY)
-        }}
+      <div
+        ref={wheelRef}
         style={{
           width: 'fit-content',
           padding: '1rem',
@@ -32,7 +33,7 @@ export const Basic = () => {
         }}
       >
         Wheel here
-      </WheelObserver>
+      </div>
       scale:{' '}
       <NumberInput.Root
         value={scale}

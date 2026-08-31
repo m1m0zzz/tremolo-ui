@@ -7,6 +7,16 @@ import { useCallbackRef } from './useCallbackRef'
 
 interface UseDragWithElement<T extends Element> {
   baseElementRef: RefObject<T | null>
+  /**
+   * Report the position on pointer down, before any movement.
+   *
+   * Enable it where the pointer position *is* the value, so that a plain click
+   * jumps to it. Leave it off where the element being dragged is an object in
+   * its own right, so that grabbing its edge does not shift it under the cursor.
+   *
+   * @default false
+   */
+  updateOnPointerDown?: boolean
   onDrag: (normalizedX: number, normalizedY: number) => void
   onDragStart?: (normalizedX: number, normalizedY: number) => void
   onDragEnd?: (normalizedX: number, normalizedY: number) => void
@@ -20,6 +30,7 @@ interface UseDragWithElement<T extends Element> {
  */
 export function useDragWithElement<T extends Element>({
   baseElementRef,
+  updateOnPointerDown = false,
   onDrag,
   onDragStart,
   onDragEnd,
@@ -55,9 +66,10 @@ export function useDragWithElement<T extends Element>({
       instance.current = createDrag(node, {
         onDragStart: ({ clientX, clientY }) => {
           setDragging(true)
-          // The position is recorded but onDrag is not called: a pointer down
-          // on its own does not move the value, only a drag does.
-          update(clientX, clientY)
+          const updated = update(clientX, clientY)
+          if (updated && updateOnPointerDown) {
+            dragHandler(normalizedX.current, normalizedY.current)
+          }
           dragStartHandler(normalizedX.current, normalizedY.current)
         },
         onDrag: ({ clientX, clientY }) => {
@@ -71,7 +83,13 @@ export function useDragWithElement<T extends Element>({
         },
       })
     },
-    [update, dragHandler, dragStartHandler, dragEndHandler],
+    [
+      update,
+      updateOnPointerDown,
+      dragHandler,
+      dragStartHandler,
+      dragEndHandler,
+    ],
   )
 
   return { refCallback, dragging }

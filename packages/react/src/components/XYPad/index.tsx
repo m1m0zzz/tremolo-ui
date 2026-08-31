@@ -234,6 +234,7 @@ export const Root = forwardRef<XYPadMethods, Props>(
     const { refCallback: dragRefCallback } = useDragWithElement<HTMLDivElement>(
       {
         baseElementRef: areaElementRef,
+        updateOnPointerDown: true,
         onDrag: onDrag,
         onDragStart: (nx, ny) => {
           if (readonly) return
@@ -254,8 +255,6 @@ export const Root = forwardRef<XYPadMethods, Props>(
             y.max,
           )
 
-          // TODO: ドラッグせず、pointer downだけの場合でも、onChange を発火させるべき
-          // onChange()
           onDragStart?.(valueX, valueY)
         },
         onDragEnd: (nx, ny) => {

@@ -16,7 +16,6 @@ export {
   type InitFunction,
   type RelativeSizingProps,
 } from './components/AnimationCanvas'
-export { DragObserver, type DragObserverProps } from './components/DragObserver'
 export { Knob, type KnobProps, type KnobMethods } from './components/Knob'
 export {
   NumberInput,
@@ -55,10 +54,6 @@ export {
   type SliderThumbProps,
   type SliderTrackProps,
 } from './components/Slider'
-export {
-  WheelObserver,
-  type WheelObserverProps,
-} from './components/WheelObserver'
 export {
   XYPad,
   type XYPadProps,

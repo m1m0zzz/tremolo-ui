@@ -218,6 +218,7 @@ const Root = forwardRef<SliderMethods, Props>(
     const { refCallback: dragRefCallback } = useDragWithElement<HTMLDivElement>(
       {
         baseElementRef: trackElementRef,
+        updateOnPointerDown: true,
         onDrag: onDrag,
         onDragStart: (nx, ny) => {
           if (readonly) return

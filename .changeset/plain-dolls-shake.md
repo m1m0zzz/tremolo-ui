@@ -9,4 +9,8 @@ Move pointer drag and wheel handling into `@tremolo-ui/dom` as `createDrag` and 
 
 Fixes a bug where a drag starting at screen coordinate 0 (the top or left edge of the screen) never reported any movement, and a bug where `useDragWithElement` passed stale coordinates to `onDragStart`.
 
+`Slider` and `XYPad` now move to the pointer position on pointer down, instead of waiting for the first movement.
+
 Breaking: `useDrag` now returns a single ref callback instead of `[refCallback, pointerDownHandler]`, and `useDragWithElement` returns `{ refCallback, dragging }` instead of `{ refHandler, pointerDownHandler, dragging }`. A new `useWheel` hook is exported.
+
+Breaking: `DragObserver` and `WheelObserver` are removed. They had become thin wrappers around `useDrag` and `useWheel`, which replace them.

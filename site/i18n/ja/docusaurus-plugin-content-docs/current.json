@@ -51,10 +51,6 @@
     "message": "AnimationCanvas",
     "description": "The label for category AnimationCanvas in sidebar typedocSidebar"
   },
-  "sidebar.typedocSidebar.category.DragObserver": {
-    "message": "DragObserver",
-    "description": "The label for category DragObserver in sidebar typedocSidebar"
-  },
   "sidebar.typedocSidebar.category.Knob": {
     "message": "Knob",
     "description": "The label for category Knob in sidebar typedocSidebar"
@@ -74,10 +70,6 @@
   "sidebar.typedocSidebar.category.Slider": {
     "message": "Slider",
     "description": "The label for category Slider in sidebar typedocSidebar"
-  },
-  "sidebar.typedocSidebar.category.WheelObserver": {
-    "message": "WheelObserver",
-    "description": "The label for category WheelObserver in sidebar typedocSidebar"
   },
   "sidebar.typedocSidebar.category.XYPad": {
     "message": "XYPad",
@@ -231,14 +223,6 @@
     "message": "AnimationCanvas",
     "description": "The label for the doc item AnimationCanvas in sidebar typedocSidebar, linking to the doc api/react/functions/AnimationCanvas"
   },
-  "sidebar.typedocSidebar.doc.DragObserverProps": {
-    "message": "DragObserverProps",
-    "description": "The label for the doc item DragObserverProps in sidebar typedocSidebar, linking to the doc api/react/interfaces/DragObserverProps"
-  },
-  "sidebar.typedocSidebar.doc.DragObserver": {
-    "message": "DragObserver",
-    "description": "The label for the doc item DragObserver in sidebar typedocSidebar, linking to the doc api/react/functions/DragObserver"
-  },
   "sidebar.typedocSidebar.doc.KnobMethods": {
     "message": "KnobMethods",
     "description": "The label for the doc item KnobMethods in sidebar typedocSidebar, linking to the doc api/react/interfaces/KnobMethods"
@@ -366,14 +350,6 @@
   "sidebar.typedocSidebar.doc.useSliderContext": {
     "message": "useSliderContext",
     "description": "The label for the doc item useSliderContext in sidebar typedocSidebar, linking to the doc api/react/functions/useSliderContext"
-  },
-  "sidebar.typedocSidebar.doc.WheelObserverProps": {
-    "message": "WheelObserverProps",
-    "description": "The label for the doc item WheelObserverProps in sidebar typedocSidebar, linking to the doc api/react/interfaces/WheelObserverProps"
-  },
-  "sidebar.typedocSidebar.doc.WheelObserver": {
-    "message": "WheelObserver",
-    "description": "The label for the doc item WheelObserver in sidebar typedocSidebar, linking to the doc api/react/functions/WheelObserver"
   },
   "sidebar.typedocSidebar.doc.ValueOptions": {
     "message": "ValueOptions",
