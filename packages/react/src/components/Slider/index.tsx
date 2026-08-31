@@ -23,13 +23,7 @@ import {
 
 import { useDragWithElement } from '../../hooks/useDragWithElement'
 import { useWheel } from '../../hooks/useWheel'
-import {
-  addUserSelectNone,
-  Cursor,
-  removeUserSelectNone,
-  resetCursorStyle,
-  setCursorStyle,
-} from '../_util'
+import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 
 import { SliderProvider } from './context'
 import { Scale } from './Scale'
@@ -218,12 +212,12 @@ const Root = forwardRef<SliderMethods, Props>(
     const { refCallback: dragRefCallback } = useDragWithElement<HTMLDivElement>(
       {
         baseElementRef: trackElementRef,
+        cursor: readonly ? undefined : externalStyles.cursor,
         updateOnPointerDown: true,
         onDrag: onDrag,
         onDragStart: (nx, ny) => {
           if (readonly) return
           if (externalStyles.userSelectNone) addUserSelectNone()
-          if (externalStyles.cursor) setCursorStyle(externalStyles.cursor)
 
           thumbRef.current?.focus()
           onDragStart?.(
@@ -238,7 +232,6 @@ const Root = forwardRef<SliderMethods, Props>(
           if (readonly) return
 
           if (externalStyles.userSelectNone) removeUserSelectNone()
-          if (externalStyles.cursor) resetCursorStyle()
 
           onDragEnd?.(
             clamp(

@@ -2,6 +2,9 @@ import { createDrag, type DragState } from '../../src/pointer/drag'
 
 import { pointerEvent, withPointerCapture } from './helpers'
 
+/** Instances created by setup(), destroyed after each test. */
+const instances: { destroy: () => void }[] = []
+
 function setup(options: Parameters<typeof createDrag>[1] = {}) {
   const element = document.createElement('div')
   document.body.appendChild(element)
@@ -18,10 +21,15 @@ function setup(options: Parameters<typeof createDrag>[1] = {}) {
     ...options,
   })
 
+  instances.push(instance)
+
   return { element, instance, onDragStart, onDrag, onDragEnd }
 }
 
 afterEach(() => {
+  // A drag left in progress keeps a document level listener alive,
+  // which would leak into the next test.
+  for (const instance of instances.splice(0)) instance.destroy()
   document.body.innerHTML = ''
 })
 
@@ -191,13 +199,89 @@ describe('createDrag', () => {
     expect(s.clientY).toBe(14)
   })
 
-  test('destroy removes the listener and restores touch-action', () => {
+  test('destroy removes the listener', () => {
     const { element, instance, onDragStart } = setup()
     instance.destroy()
     element.dispatchEvent(
       pointerEvent('pointerdown', { screenX: 0, screenY: 0 }),
     )
     expect(onDragStart).not.toHaveBeenCalled()
+  })
+
+  // A long press would otherwise start a text selection, because touch-action
+  // tells the browser the element will not be panned.
+  // Of the properties applied, jsdom only implements user-select.
+  test('suppresses selection while the instance is alive', () => {
+    const { element, instance } = setup()
+    expect(element.style.getPropertyValue('user-select')).toBe('none')
+
+    instance.destroy()
+    expect(element.style.getPropertyValue('user-select')).toBe('')
+  })
+
+  test('cancels selectstart while a drag is in progress', () => {
+    const { element } = setup()
+
+    const before = new Event('selectstart', { bubbles: true, cancelable: true })
+    document.dispatchEvent(before)
+    expect(before.defaultPrevented).toBe(false)
+
+    element.dispatchEvent(
+      pointerEvent('pointerdown', { screenX: 0, screenY: 0 }),
+    )
+    const during = new Event('selectstart', { bubbles: true, cancelable: true })
+    document.dispatchEvent(during)
+    expect(during.defaultPrevented).toBe(true)
+
+    element.dispatchEvent(pointerEvent('pointerup', { screenX: 0, screenY: 0 }))
+    const after = new Event('selectstart', { bubbles: true, cancelable: true })
+    document.dispatchEvent(after)
+    expect(after.defaultPrevented).toBe(false)
+  })
+
+  test('applies the cursor to the element only while dragging', () => {
+    const { element } = setup({ cursor: 'grabbing' })
+    expect(element.style.cursor).toBe('')
+
+    element.dispatchEvent(
+      pointerEvent('pointerdown', { screenX: 0, screenY: 0 }),
+    )
+    expect(element.style.cursor).toBe('grabbing')
+    // The document is never touched; pointer capture keeps the cursor in
+    // effect once the pointer leaves the element.
+    expect(document.body.style.cursor).toBe('')
+
+    element.dispatchEvent(pointerEvent('pointerup', { screenX: 0, screenY: 0 }))
+    expect(element.style.cursor).toBe('')
+  })
+
+  test('restores a cursor the element already had', () => {
+    const element = document.createElement('div')
+    element.style.cursor = 'pointer'
+    document.body.appendChild(element)
+    withPointerCapture(element)
+    const instance = createDrag(element, { cursor: 'grabbing' })
+    instances.push(instance)
+
+    element.dispatchEvent(
+      pointerEvent('pointerdown', { screenX: 0, screenY: 0 }),
+    )
+    expect(element.style.cursor).toBe('grabbing')
+
+    element.dispatchEvent(pointerEvent('pointerup', { screenX: 0, screenY: 0 }))
+    expect(element.style.cursor).toBe('pointer')
+  })
+
+  test('restores a style the element already had', () => {
+    const element = document.createElement('div')
+    element.style.setProperty('user-select', 'text')
+    document.body.appendChild(element)
+
+    const instance = createDrag(element, {})
+    expect(element.style.getPropertyValue('user-select')).toBe('none')
+
+    instance.destroy()
+    expect(element.style.getPropertyValue('user-select')).toBe('text')
   })
 
   test('destroy during a drag stops tracking', () => {

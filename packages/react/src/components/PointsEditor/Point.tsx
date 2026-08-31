@@ -4,12 +4,7 @@ import { ComponentPropsWithoutRef } from 'react'
 import { clamp } from '@tremolo-ui/functions'
 
 import { useDragWithElement } from '../../hooks/useDragWithElement'
-import {
-  addUserSelectNone,
-  removeUserSelectNone,
-  resetCursorStyle,
-  setCursorStyle,
-} from '../_util'
+import { addUserSelectNone, removeUserSelectNone } from '../_util'
 
 import { usePointsEditorContext } from './context'
 
@@ -79,6 +74,7 @@ export function Point<T extends PointBaseType>({
   const { refCallback: dragRefCallback, dragging } =
     useDragWithElement<HTMLDivElement>({
       baseElementRef: containerElementRef,
+      cursor: readonly ? undefined : externalStyles.cursor,
       onDrag: (x, y) => {
         if (readonly) return
 
@@ -87,14 +83,12 @@ export function Point<T extends PointBaseType>({
       onDragStart: (x, y) => {
         if (readonly) return
         if (externalStyles.userSelectNone) addUserSelectNone()
-        if (externalStyles.cursor) setCursorStyle(externalStyles.cursor)
 
         onDragStart?.(clampPoint({ x, y }, min, max))
       },
       onDragEnd: (x, y) => {
         if (readonly) return
         if (externalStyles.userSelectNone) removeUserSelectNone()
-        if (externalStyles.cursor) resetCursorStyle()
 
         onDragEnd?.(clampPoint({ x, y }, min, max))
       },

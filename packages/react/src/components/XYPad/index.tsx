@@ -22,13 +22,7 @@ import {
 
 import { useDragWithElement } from '../../hooks/useDragWithElement'
 import { useWheel } from '../../hooks/useWheel'
-import {
-  addUserSelectNone,
-  Cursor,
-  removeUserSelectNone,
-  resetCursorStyle,
-  setCursorStyle,
-} from '../_util'
+import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 import { composeRefs } from '../_util/composeRefs'
 
 import { Area, XYPadAreaProps } from './Area'
@@ -234,13 +228,13 @@ export const Root = forwardRef<XYPadMethods, Props>(
     const { refCallback: dragRefCallback } = useDragWithElement<HTMLDivElement>(
       {
         baseElementRef: areaElementRef,
+        cursor: readonly ? undefined : externalStyles.cursor,
         updateOnPointerDown: true,
         onDrag: onDrag,
         onDragStart: (nx, ny) => {
           if (readonly) return
 
           if (externalStyles.userSelectNone) addUserSelectNone()
-          if (externalStyles.cursor) setCursorStyle(externalStyles.cursor)
 
           thumbRef.current?.focus()
 
@@ -261,7 +255,6 @@ export const Root = forwardRef<XYPadMethods, Props>(
           if (readonly) return
 
           if (externalStyles.userSelectNone) removeUserSelectNone()
-          if (externalStyles.cursor) resetCursorStyle()
 
           const valueX = clamp(
             stepValue(rawValue(nx, x.min, x.max, x.skew), x.step),

@@ -251,11 +251,18 @@ Radix UI / Base UI と同じ方針にする。パッケージはスタイルを�
 2. `data-*` 属性を body に付けるだけにして、スタイルは利用者に任せる
 3. 現状維持（グローバル CSS だけは配り続ける）
 
-`createDrag` は既に `touch-action` を直接操作しているので、1 と整合性が取りやすい。
+`createDrag` は既に `touch-action` / `user-select` / `-webkit-user-select` / `-webkit-touch-callout` を要素に直接適用し、ドラッグ中は `selectstart` をキャンセルしているので、1 と整合性が取りやすい。
+
+**`tremolo-cursor-*` は Phase 2 で不要になった。** ドラッグ中の cursor は `createDrag` の `cursor` オプションが要素へ直接適用する形に変えた（pointer capture により、ポインタが要素の外へ出てもその cursor が維持されるため、body を触る必要がない）。`_util` の `setCursorStyle` / `resetCursorStyle` と `global.css` の `.tremolo-cursor-*` は**現在どこからも使われていない**ので削除できる。
+
+ドラッグ中にページ全体へ掛ける `tremolo-user-select-none` の方は残っており、ここで判断する。
+
+> 補足: body へ cursor クラスを付ける実装は、タッチの長押しでページ全体が一瞬選択状態になる不具合の原因だった（ドラッグ開始と同時に文書全体のスタイルが再計算されるため）。Storybook 上で要因を 1 つずつ切り分けて特定した。
 
 ### 4.5.3 内部ユーティリティの削除
 
 - [ ] `_util/composeRefs.tsx` を削除。Observer 系の削除により、利用箇所は `XYPad/index.tsx` の 1 箇所のみになった（`useComposedRefs` は利用ゼロ）。ref コールバックを 1 つにまとめる形へ整理して不要にする
+  - 注意: `composeRefs(...)` は毎レンダー新しい関数を返すため、React が ref を毎回付け直す。ref コールバック内でリソースを確保する実装と組み合わせると、再レンダーのたびに破棄・再生成される（Phase 2 でこの不具合を出した）。hook 側は node を state で保持して回避しているが、整理する際は memo 化された `useComposedRefs` を使うか、ref を 1 つにまとめること
 - [ ] `_util/type.ts` の `Override` を削除。利用箇所は `Knob/SVGRoot.tsx` の 1 箇所のみ。Observer 系の削除で他は消えた
 
 ### 4.5.4 Knob の描画を修正

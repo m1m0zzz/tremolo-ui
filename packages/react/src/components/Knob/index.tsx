@@ -18,13 +18,7 @@ import {
 
 import { useDrag } from '../../hooks/useDrag'
 import { useWheel } from '../../hooks/useWheel'
-import {
-  addUserSelectNone,
-  Cursor,
-  removeUserSelectNone,
-  resetCursorStyle,
-  setCursorStyle,
-} from '../_util'
+import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 
 import { ActiveLine } from './ActiveLine'
 import { KnobProvider } from './context'
@@ -175,17 +169,16 @@ const Root = forwardRef<KnobMethods, Props>(
 
     // --- hooks ---
     const dragRefCallback = useDrag<HTMLElement | SVGElement>({
+      cursor: readonly ? undefined : externalStyles.cursor,
       onDrag: onDrag,
       onDragStart: () => {
         setDragging(true)
         valueRef.current = normalizeValue(value, min, max, skew)
         if (externalStyles.userSelectNone) addUserSelectNone()
-        if (externalStyles.cursor) setCursorStyle(externalStyles.cursor)
       },
       onDragEnd: () => {
         setDragging(false)
         if (externalStyles.userSelectNone) removeUserSelectNone()
-        if (externalStyles.cursor) resetCursorStyle()
       },
     })
 

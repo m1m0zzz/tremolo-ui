@@ -1,6 +1,6 @@
-import { useCallback, useRef } from 'react'
+import { useEffect, useState } from 'react'
 
-import { createWheel, type WheelInstance } from '@tremolo-ui/dom'
+import { createWheel } from '@tremolo-ui/dom'
 
 import { useCallbackRef } from './useCallbackRef'
 
@@ -15,16 +15,17 @@ export function useWheel<T extends Element>(
   onWheel: (event: WheelEvent) => void,
 ): (node: T | null) => void {
   const wheelHandler = useCallbackRef(onWheel)
-  const instance = useRef<WheelInstance | null>(null)
 
-  return useCallback(
-    (node: T | null) => {
-      instance.current?.destroy()
-      instance.current = null
-      if (!node) return
+  // See useDrag for why the node is held in state.
+  const [node, setNode] = useState<T | null>(null)
 
-      instance.current = createWheel(node, (event) => wheelHandler(event))
-    },
-    [wheelHandler],
-  )
+  useEffect(() => {
+    if (!node) return
+
+    const instance = createWheel(node, (event) => wheelHandler(event))
+
+    return () => instance.destroy()
+  }, [node, wheelHandler])
+
+  return setNode
 }

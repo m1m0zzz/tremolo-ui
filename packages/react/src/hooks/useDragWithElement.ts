@@ -1,6 +1,6 @@
-import { RefObject, useCallback, useRef, useState } from 'react'
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
 
-import { createDrag, type DragInstance } from '@tremolo-ui/dom'
+import { createDrag } from '@tremolo-ui/dom'
 import { normalizeValue } from '@tremolo-ui/functions'
 
 import { useCallbackRef } from './useCallbackRef'
@@ -17,6 +17,8 @@ interface UseDragWithElement<T extends Element> {
    * @default false
    */
   updateOnPointerDown?: boolean
+  /** CSS cursor to show while dragging. Applied to the element itself. */
+  cursor?: string
   onDrag: (normalizedX: number, normalizedY: number) => void
   onDragStart?: (normalizedX: number, normalizedY: number) => void
   onDragEnd?: (normalizedX: number, normalizedY: number) => void
@@ -31,6 +33,7 @@ interface UseDragWithElement<T extends Element> {
 export function useDragWithElement<T extends Element>({
   baseElementRef,
   updateOnPointerDown = false,
+  cursor,
   onDrag,
   onDragStart,
   onDragEnd,
@@ -55,42 +58,43 @@ export function useDragWithElement<T extends Element>({
     [baseElementRef],
   )
 
-  const instance = useRef<DragInstance | null>(null)
+  // See useDrag for why the node is held in state.
+  const [node, setNode] = useState<Element | null>(null)
 
-  const refCallback = useCallback(
-    (node: Element | null) => {
-      instance.current?.destroy()
-      instance.current = null
-      if (!node) return
+  useEffect(() => {
+    if (!node) return
 
-      instance.current = createDrag(node, {
-        onDragStart: ({ clientX, clientY }) => {
-          setDragging(true)
-          const updated = update(clientX, clientY)
-          if (updated && updateOnPointerDown) {
-            dragHandler(normalizedX.current, normalizedY.current)
-          }
-          dragStartHandler(normalizedX.current, normalizedY.current)
-        },
-        onDrag: ({ clientX, clientY }) => {
-          if (update(clientX, clientY)) {
-            dragHandler(normalizedX.current, normalizedY.current)
-          }
-        },
-        onDragEnd: () => {
-          setDragging(false)
-          dragEndHandler(normalizedX.current, normalizedY.current)
-        },
-      })
-    },
-    [
-      update,
-      updateOnPointerDown,
-      dragHandler,
-      dragStartHandler,
-      dragEndHandler,
-    ],
-  )
+    const instance = createDrag(node, {
+      cursor,
+      onDragStart: ({ clientX, clientY }) => {
+        setDragging(true)
+        const updated = update(clientX, clientY)
+        if (updated && updateOnPointerDown) {
+          dragHandler(normalizedX.current, normalizedY.current)
+        }
+        dragStartHandler(normalizedX.current, normalizedY.current)
+      },
+      onDrag: ({ clientX, clientY }) => {
+        if (update(clientX, clientY)) {
+          dragHandler(normalizedX.current, normalizedY.current)
+        }
+      },
+      onDragEnd: () => {
+        setDragging(false)
+        dragEndHandler(normalizedX.current, normalizedY.current)
+      },
+    })
 
-  return { refCallback, dragging }
+    return () => instance.destroy()
+  }, [
+    node,
+    update,
+    updateOnPointerDown,
+    cursor,
+    dragHandler,
+    dragStartHandler,
+    dragEndHandler,
+  ])
+
+  return { refCallback: setNode, dragging }
 }

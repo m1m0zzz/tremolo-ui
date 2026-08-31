@@ -1,6 +1,6 @@
-import { useCallback, useRef } from 'react'
+import { useEffect, useState } from 'react'
 
-import { createDrag, type DragInstance } from '@tremolo-ui/dom'
+import { createDrag } from '@tremolo-ui/dom'
 
 import { useCallbackRef } from './useCallbackRef'
 
@@ -10,6 +10,9 @@ interface UseDragProps {
    * Prevents onDrag events from firing, for example, when double-clicking.
    */
   threshold?: number
+
+  /** CSS cursor to show while dragging. Applied to the element itself. */
+  cursor?: string
 
   onDrag?: (x: number, y: number, deltaX: number, deltaY: number) => void
   onDragStart?: () => void
@@ -23,6 +26,7 @@ interface UseDragProps {
  */
 export function useDrag<T extends Element>({
   threshold = 1,
+  cursor,
   onDrag,
   onDragStart,
   onDragEnd,
@@ -31,21 +35,24 @@ export function useDrag<T extends Element>({
   const dragStartHandler = useCallbackRef(onDragStart)
   const dragEndHandler = useCallbackRef(onDragEnd)
 
-  const instance = useRef<DragInstance | null>(null)
+  // The node is held in state rather than bound in the ref callback itself, so
+  // that re-attaching the ref with the same node does not restart the drag.
+  // React re-attaches on every render when the caller passes an inline ref.
+  const [node, setNode] = useState<T | null>(null)
 
-  return useCallback(
-    (node: T | null) => {
-      instance.current?.destroy()
-      instance.current = null
-      if (!node) return
+  useEffect(() => {
+    if (!node) return
 
-      instance.current = createDrag(node, {
-        threshold,
-        onDragStart: () => dragStartHandler(),
-        onDrag: ({ x, y, deltaX, deltaY }) => dragHandler(x, y, deltaX, deltaY),
-        onDragEnd: () => dragEndHandler(),
-      })
-    },
-    [threshold, dragHandler, dragStartHandler, dragEndHandler],
-  )
+    const instance = createDrag(node, {
+      threshold,
+      cursor,
+      onDragStart: () => dragStartHandler(),
+      onDrag: ({ x, y, deltaX, deltaY }) => dragHandler(x, y, deltaX, deltaY),
+      onDragEnd: () => dragEndHandler(),
+    })
+
+    return () => instance.destroy()
+  }, [node, threshold, cursor, dragHandler, dragStartHandler, dragEndHandler])
+
+  return setNode
 }
