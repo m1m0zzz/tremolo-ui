@@ -21,7 +21,7 @@ import {
 } from '@tremolo-ui/functions'
 
 import { useDragWithElement } from '../../hooks/useDragWithElement'
-import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
+import { useWheel } from '../../hooks/useWheel'
 import {
   addUserSelectNone,
   Cursor,
@@ -231,8 +231,8 @@ export const Root = forwardRef<XYPadMethods, Props>(
     )
 
     // --- hooks ---
-    const { refHandler: touchMoveRefCallback, pointerDownHandler } =
-      useDragWithElement<HTMLDivElement>({
+    const { refCallback: dragRefCallback } = useDragWithElement<HTMLDivElement>(
+      {
         baseElementRef: areaElementRef,
         onDrag: onDrag,
         onDragStart: (nx, ny) => {
@@ -276,30 +276,24 @@ export const Root = forwardRef<XYPadMethods, Props>(
           )
           onDragEnd?.(valueX, valueY)
         },
-      })
-
-    const wheelRefCallback = useRefCallbackEvent(
-      'wheel',
-      (event) => {
-        if (!onChange || readonly) return
-        const target = event.shiftKey ? x : y
-        if (!target.wheel) return
-        event.preventDefault()
-        let delta = target.wheel[1]
-        if (event.deltaY < 0) delta *= -1
-        if (target.reverse) delta *= -1
-        const newValue = updateValueByEvent(target.wheel[0], target, delta)
-        if (event.shiftKey) {
-          onChange(newValue, y.value)
-        } else {
-          onChange(x.value, newValue)
-        }
       },
-      {
-        passive: false,
-      },
-      [x, y, onChange, readonly, updateValueByEvent],
     )
+
+    const wheelRefCallback = useWheel<HTMLDivElement>((event) => {
+      if (!onChange || readonly) return
+      const target = event.shiftKey ? x : y
+      if (!target.wheel) return
+      event.preventDefault()
+      let delta = target.wheel[1]
+      if (event.deltaY < 0) delta *= -1
+      if (target.reverse) delta *= -1
+      const newValue = updateValueByEvent(target.wheel[0], target, delta)
+      if (event.shiftKey) {
+        onChange(newValue, y.value)
+      } else {
+        onChange(x.value, newValue)
+      }
+    })
 
     useImperativeHandle(forwardedRef, () => {
       return {
@@ -317,7 +311,7 @@ export const Root = forwardRef<XYPadMethods, Props>(
       // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <div
         className={clsx('tremolo-xy-pad', className)}
-        ref={composeRefs(rootRef, wheelRefCallback, touchMoveRefCallback)}
+        ref={composeRefs(rootRef, wheelRefCallback, dragRefCallback)}
         tabIndex={-1}
         aria-disabled={disabled}
         aria-readonly={readonly}
@@ -327,10 +321,7 @@ export const Root = forwardRef<XYPadMethods, Props>(
           WebkitTapHighlightColor: 'transparent',
           ...style,
         }}
-        onPointerDown={(event) => {
-          pointerDownHandler(event)
-          onPointerDown?.(event)
-        }}
+        onPointerDown={onPointerDown}
         onKeyDown={(event) => {
           handleKeyDown(event)
           onKeyDown?.(event)

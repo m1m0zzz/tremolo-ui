@@ -1,9 +1,9 @@
-import { useRef, useCallback, RefObject, useState } from 'react'
+import { RefObject, useCallback, useRef, useState } from 'react'
 
+import { createDrag, type DragInstance } from '@tremolo-ui/dom'
 import { normalizeValue } from '@tremolo-ui/functions'
 
-import { useEventListener } from './useEventListener'
-import { useRefCallbackEvent } from './useRefCallbackEvent'
+import { useCallbackRef } from './useCallbackRef'
 
 interface UseDragWithElement<T extends Element> {
   baseElementRef: RefObject<T | null>
@@ -12,6 +12,12 @@ interface UseDragWithElement<T extends Element> {
   onDragEnd?: (normalizedX: number, normalizedY: number) => void
 }
 
+/**
+ * Track a pointer drag, reporting the position normalized against
+ * the bounding rect of `baseElementRef`.
+ *
+ * @returns a ref callback for the element that starts the drag, and whether a drag is in progress
+ */
 export function useDragWithElement<T extends Element>({
   baseElementRef,
   onDrag,
@@ -22,51 +28,51 @@ export function useDragWithElement<T extends Element>({
   const normalizedX = useRef(0)
   const normalizedY = useRef(0)
 
-  const handleDrag = useCallback(
-    (event: MouseEvent | React.PointerEvent<T> | TouchEvent) => {
-      if (!baseElementRef.current || !dragging) {
-        return
-      }
-      const isTouch = event instanceof TouchEvent
-      if (isTouch && event.cancelable) event.preventDefault()
-      const { left, top, right, bottom } =
-        baseElementRef.current.getBoundingClientRect()
-      const mouseX = isTouch ? event.touches[0].clientX : event.clientX
-      const mouseY = isTouch ? event.touches[0].clientY : event.clientY
-      const nx = normalizeValue(mouseX, left, right)
-      const ny = normalizeValue(mouseY, top, bottom)
-      normalizedX.current = nx
-      normalizedY.current = ny
-      onDrag(nx, ny)
+  const dragHandler = useCallbackRef(onDrag)
+  const dragStartHandler = useCallbackRef(onDragStart)
+  const dragEndHandler = useCallbackRef(onDragEnd)
+
+  const update = useCallback(
+    (clientX: number, clientY: number) => {
+      const base = baseElementRef.current
+      if (!base) return false
+      const { left, top, right, bottom } = base.getBoundingClientRect()
+      normalizedX.current = normalizeValue(clientX, left, right)
+      normalizedY.current = normalizeValue(clientY, top, bottom)
+      return true
     },
-    [onDrag, baseElementRef, dragging],
+    [baseElementRef],
   )
 
-  const refHandler = useRefCallbackEvent(
-    'touchmove',
-    handleDrag,
-    { passive: false },
-    [onDrag],
-  )
+  const instance = useRef<DragInstance | null>(null)
 
-  const pointerDownHandler = useCallback(
-    (event: React.PointerEvent<T>) => {
-      // dragging.current = true
-      setDragging(true)
-      handleDrag(event)
-      onDragStart?.(normalizedX.current, normalizedY.current)
+  const refCallback = useCallback(
+    (node: Element | null) => {
+      instance.current?.destroy()
+      instance.current = null
+      if (!node) return
+
+      instance.current = createDrag(node, {
+        onDragStart: ({ clientX, clientY }) => {
+          setDragging(true)
+          // The position is recorded but onDrag is not called: a pointer down
+          // on its own does not move the value, only a drag does.
+          update(clientX, clientY)
+          dragStartHandler(normalizedX.current, normalizedY.current)
+        },
+        onDrag: ({ clientX, clientY }) => {
+          if (update(clientX, clientY)) {
+            dragHandler(normalizedX.current, normalizedY.current)
+          }
+        },
+        onDragEnd: () => {
+          setDragging(false)
+          dragEndHandler(normalizedX.current, normalizedY.current)
+        },
+      })
     },
-    [handleDrag, onDragStart],
+    [update, dragHandler, dragStartHandler, dragEndHandler],
   )
 
-  useEventListener(globalThis.window, 'pointermove', handleDrag)
-
-  useEventListener(globalThis.window, 'pointerup', () => {
-    if (!dragging) return
-    // dragging.current = false
-    setDragging(false)
-    onDragEnd?.(normalizedX.current, normalizedY.current)
-  })
-
-  return { refHandler, pointerDownHandler, dragging }
+  return { refCallback, dragging }
 }

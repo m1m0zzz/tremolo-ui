@@ -84,3 +84,4 @@ export {
 } from './hooks/useMIDIAccess'
 export { useMIDIInput } from './hooks/useMIDIInput'
 export { useMIDIMessage } from './hooks/useMIDIMessage'
+export { useWheel } from './hooks/useWheel'

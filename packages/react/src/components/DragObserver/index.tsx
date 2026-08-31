@@ -32,11 +32,10 @@ export function DragObserver<T extends ElementType = 'div'>(
     onDragStart,
     onDragEnd,
     children,
-    onPointerDown,
     ...attributes
   } = props
 
-  const [refCallback, pointerDownHandler] = useDrag({
+  const dragRefCallback = useDrag({
     threshold: threshold,
     onDrag: onDrag,
     onDragStart: onDragStart,
@@ -44,14 +43,7 @@ export function DragObserver<T extends ElementType = 'div'>(
   })
 
   return (
-    <Component
-      ref={refCallback}
-      onPointerDown={(e) => {
-        pointerDownHandler(e)
-        onPointerDown?.(e)
-      }}
-      {...attributes}
-    >
+    <Component ref={dragRefCallback} {...attributes}>
       {children}
     </Component>
   )

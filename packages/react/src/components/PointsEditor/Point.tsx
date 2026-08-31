@@ -76,32 +76,29 @@ export function Point<T extends PointBaseType>({
 
   // Piano: 値が更新されることで、イベントハンドラがリセットされる
 
-  const {
-    refHandler: touchMoveRefCallback,
-    pointerDownHandler,
-    dragging,
-  } = useDragWithElement<HTMLDivElement>({
-    baseElementRef: containerElementRef,
-    onDrag: (x, y) => {
-      if (readonly) return
+  const { refCallback: dragRefCallback, dragging } =
+    useDragWithElement<HTMLDivElement>({
+      baseElementRef: containerElementRef,
+      onDrag: (x, y) => {
+        if (readonly) return
 
-      onChange?.(clampPoint({ x, y }, min, max))
-    },
-    onDragStart: (x, y) => {
-      if (readonly) return
-      if (externalStyles.userSelectNone) addUserSelectNone()
-      if (externalStyles.cursor) setCursorStyle(externalStyles.cursor)
+        onChange?.(clampPoint({ x, y }, min, max))
+      },
+      onDragStart: (x, y) => {
+        if (readonly) return
+        if (externalStyles.userSelectNone) addUserSelectNone()
+        if (externalStyles.cursor) setCursorStyle(externalStyles.cursor)
 
-      onDragStart?.(clampPoint({ x, y }, min, max))
-    },
-    onDragEnd: (x, y) => {
-      if (readonly) return
-      if (externalStyles.userSelectNone) removeUserSelectNone()
-      if (externalStyles.cursor) resetCursorStyle()
+        onDragStart?.(clampPoint({ x, y }, min, max))
+      },
+      onDragEnd: (x, y) => {
+        if (readonly) return
+        if (externalStyles.userSelectNone) removeUserSelectNone()
+        if (externalStyles.cursor) resetCursorStyle()
 
-      onDragEnd?.(clampPoint({ x, y }, min, max))
-    },
-  })
+        onDragEnd?.(clampPoint({ x, y }, min, max))
+      },
+    })
 
   const colors: Record<string, string | undefined> = {
     '--color': color,
@@ -109,10 +106,7 @@ export function Point<T extends PointBaseType>({
 
   return (
     <div
-      ref={(div) => {
-        // wheelRefCallback(div)
-        touchMoveRefCallback(div)
-      }}
+      ref={dragRefCallback}
       className={clsx('tremolo-points-editor-point', className)}
       // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
       tabIndex={0}
@@ -127,10 +121,7 @@ export function Point<T extends PointBaseType>({
         top: `${value.y * 100}%`,
         ...style,
       }}
-      onPointerDown={(event) => {
-        pointerDownHandler(event)
-        onPointerDown?.(event)
-      }}
+      onPointerDown={onPointerDown}
       {...props}
     />
   )

@@ -1,6 +1,6 @@
 import { ComponentProps, ElementType, ReactNode } from 'react'
 
-import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
+import { useWheel } from '../../hooks/useWheel'
 import { composeRefs } from '../_util/composeRefs'
 import { Override } from '../_util/type'
 
@@ -31,14 +31,9 @@ export function WheelObserver<T extends ElementType = 'div'>(
 ) {
   const { as: Component = 'div', children, onWheel, ref, ...attributes } = props
 
-  const wheelRefCallback = useRefCallbackEvent(
-    'wheel',
-    (event) => {
-      if (onWheel) onWheel(event)
-    },
-    { passive: false },
-    [onWheel],
-  )
+  const wheelRefCallback = useWheel((event) => {
+    if (onWheel) onWheel(event)
+  })
 
   return (
     <Component ref={composeRefs(ref, wheelRefCallback)} {...attributes}>

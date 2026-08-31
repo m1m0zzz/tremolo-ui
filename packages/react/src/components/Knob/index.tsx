@@ -17,7 +17,7 @@ import {
 } from '@tremolo-ui/functions'
 
 import { useDrag } from '../../hooks/useDrag'
-import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
+import { useWheel } from '../../hooks/useWheel'
 import {
   addUserSelectNone,
   Cursor,
@@ -174,9 +174,7 @@ const Root = forwardRef<KnobMethods, Props>(
     )
 
     // --- hooks ---
-    const [touchMoveRefCallback, pointerDownHandler] = useDrag<
-      HTMLElement | SVGElement
-    >({
+    const dragRefCallback = useDrag<HTMLElement | SVGElement>({
       onDrag: onDrag,
       onDragStart: () => {
         setDragging(true)
@@ -191,18 +189,13 @@ const Root = forwardRef<KnobMethods, Props>(
       },
     })
 
-    const wheelRefCallback = useRefCallbackEvent(
-      'wheel',
-      (event) => {
-        if (!wheel || readonly) return
-        event.preventDefault()
-        if (!onChange || event.deltaY == 0) return
-        const x = Math.sign(event.deltaY) * -wheel[1]
-        onChange(updateValueByEvent(wheel[0], x))
-      },
-      { passive: false },
-      [wheel, onChange, readonly, updateValueByEvent],
-    )
+    const wheelRefCallback = useWheel<HTMLElement>((event) => {
+      if (!wheel || readonly) return
+      event.preventDefault()
+      if (!onChange || event.deltaY == 0) return
+      const x = Math.sign(event.deltaY) * -wheel[1]
+      onChange(updateValueByEvent(wheel[0], x))
+    })
 
     useImperativeHandle(forwardedRef, () => {
       return {
@@ -229,7 +222,7 @@ const Root = forwardRef<KnobMethods, Props>(
           ref={(elm) => {
             elmRef.current = elm
             wheelRefCallback(elm)
-            touchMoveRefCallback(elm)
+            dragRefCallback(elm)
           }}
           className={clsx('tremolo-knob', className)}
           tabIndex={0}
@@ -245,10 +238,7 @@ const Root = forwardRef<KnobMethods, Props>(
             height: size,
             ...style,
           }}
-          onPointerDown={(event) => {
-            pointerDownHandler(event)
-            onPointerDown?.(event)
-          }}
+          onPointerDown={onPointerDown}
           onDoubleClick={(event) => {
             if (enableDoubleClickDefault && onChange) {
               onChange(defaultValue)

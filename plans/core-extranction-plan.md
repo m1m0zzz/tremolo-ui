@@ -133,25 +133,50 @@ packages/
 - [x] `@tremolo-ui/react` 側は同名 hook を維持し、内部でコアを呼ぶだけにする
 - [x] ~~`.changeset/config.json` の `fixed` に `@tremolo-ui/dom` を追加~~ → 変更不要。`fixed` は `[["@tremolo-ui/*"]]` のグロブなので dom を自動的に含む（`changeset status` で確認済み）
 - [x] `build.yml` にも dom を追加
-- [ ] **`@tremolo-ui/dom` の初回 publish はローカルから手動で行う**（trusted publishing は npm 上にパッケージが存在しないと設定できないため）
-- [ ] npm の `@tremolo-ui/dom` 設定で trusted publisher を登録（org/user・repo・ワークフローファイル名。既存2パッケージと同じ workflow を指す）
-- [ ] 実際に 1 リリース通して npm 上で依存が解決できることを確認
+- [x] **`@tremolo-ui/dom` の初回 publish はローカルから手動で行う**（trusted publishing は npm 上にパッケージが存在しないと設定できないため）
+- [x] npm の `@tremolo-ui/dom` 設定で trusted publisher を登録（org/user・repo・ワークフローファイル名。既存2パッケージと同じ workflow を指す）
+- [x] 実際に 1 リリース通して npm 上で依存が解決できることを確認
 
-**現状**: コードは実装・検証済み（dom のテスト15件、`npm run test` / `lint` / `build:package` / `build:docs` すべて green。react の dist は `@tremolo-ui/dom` を外部依存として保持し、attw / publint も通る）。
-**ただし changeset はまだ追加していない。** dom が npm 上に存在しない状態でリリースが走ると publish に失敗するため、上の手動 publish と trusted publisher 登録が済むまで changeset を追加しないこと。手順:
+**Phase 1 完了（0.3.0 でリリース済み）。** 3パッケージとも provenance 付きで publish され、新パッケージでも OIDC trusted publishing が機能することを確認した。クリーンな環境で `npm i @tremolo-ui/react@0.3.0` を実行し、dom / functions が 0.3.0 で解決されること、ESM・CJS 双方で import できることも確認済み。
 
-1. ローカルから `npm publish -w packages/dom`（現在 0.2.1）
-2. npm の `@tremolo-ui/dom` 設定で trusted publisher を登録（repo: `m1m0zzz/tremolo-ui`, workflow: `release.yml`）
-3. `npm run changeset` で changeset を追加して push → version PR をマージ（全パッケージが 0.2.2 へ）
+#### Phase 1 で分かったこと（vue / svelte 追加時にも効く）
+
+1. **新パッケージのコードを main に入れる前に、手動 publish と trusted publisher 登録を済ませること。** 計画では「changeset を追加しなければリリースは走らない」前提だったが、`changesets/action` は `publish-script` を渡してあると **changeset が無いときにこそ publish を実行する**。`changeset publish` はレジストリに無いバージョンを publish しようとするため、npm 上に存在しない新パッケージが main に入った時点で E404 で落ちる。正しい順序は「ローカルから手動 publish → trusted publisher 登録 → コードを push」。
+2. **ローカル publish には npm へのログインが必要。** 従来の publish は全て CI の OIDC 経由だったため、ローカルの authToken が失効していても気付かない。scoped パッケージでは未認証でも 401 ではなく **E404 が返る**ので、`npm whoami` で切り分けること。
+3. **publish 直後、レジストリの読み取り側が数分 404 を返す。** `PUT 200` がログにあれば publish は成功している。バージョン指定エンドポイント（`/@scope/name/x.y.z`）の方が先に 200 になる。
+4. **`.changeset/config.json` の `fixed` は変更不要。** `[["@tremolo-ui/*"]]` のグロブが新パッケージを自動的に含む。
+5. **Vercel の Storybook プロジェクトのビルドコマンドはパッケージ追加の影響を受ける。** `npm run build:package -w packages/functions` のように個別指定していると新パッケージの dist が無く、Vite が解決できずに落ちる。ルートの `npm run build:sb`（全ワークスペースをビルドしてから Storybook をビルド）を使うこと。
+6. **拡張子のない `LICENSE` は `.prettierignore` に必要。** 新パッケージに LICENSE を追加すると lint-staged の prettier がパーサを推論できず pre-commit が落ちる。
 
 ### Phase 2: `createDrag` / `createWheel`
 
-- [ ] `useDrag` のバグ修正（後述）を反映した `createDrag` をコアに実装
-- [ ] Pointer Events に一本化（現行の `useDrag` は `pointerdown` + `mousemove` + `touchmove` + `pointerup` の混在）
-- [ ] `setPointerCapture` を使い、window への `mousemove` / `pointerup` 購読を不要にする
-- [ ] `createWheel` は現行 `useRefCallbackEvent('wheel', ..., { passive: false })` の挙動を踏襲する
-- [ ] `DragObserver` / `WheelObserver` / `useDrag` / `useDragWithElement` をコア呼び出しに差し替え
-- [ ] 既存の Storybook で回帰確認
+- [x] `useDrag` のバグ修正（後述）を反映した `createDrag` をコアに実装
+- [x] Pointer Events に一本化（現行の `useDrag` は `pointerdown` + `mousemove` + `touchmove` + `pointerup` の混在）
+- [x] `setPointerCapture` を使い、window への `mousemove` / `pointerup` 購読を不要にする
+- [x] `createWheel` は現行 `useRefCallbackEvent('wheel', ..., { passive: false })` の挙動を踏襲する
+- [x] `DragObserver` / `WheelObserver` / `useDrag` / `useDragWithElement` をコア呼び出しに差し替え
+- [ ] 既存の Storybook で回帰確認（**ビルドは通るが、実際のドラッグ操作はブラウザでの手動確認が必要**）
+
+#### Phase 2 での公開 API 変更
+
+pointer capture を使うと、pointerdown を受けた要素が以降のイベントを受け取るため、`pointerDownHandler` を呼び出し側に返す必要がなくなった。
+
+| | 変更前 | 変更後 |
+| --- | --- | --- |
+| `useDrag` | `[refCallback, pointerDownHandler]` | ref コールバック 1 つ |
+| `useDragWithElement` | `{ refHandler, pointerDownHandler, dragging }` | `{ refCallback, dragging }` |
+| `useWheel` | （なし） | 新規。`useRefCallbackEvent('wheel', ..., { passive: false })` の置き換え |
+
+`useRefCallbackEvent` は `usePianoDrag` からのみ使われる内部 hook として残っている（Phase 4 で Piano をコア化する際に不要になる想定）。
+
+#### Phase 2 で直したもの / 意図的に維持したもの
+
+- **直した**: 5.1 の delta バグ。画面左上端 `(0,0)` から掴むと旧実装は `onDrag` が一度も発火しなかった。回帰テストを `packages/dom/__tests__/pointer/drag.test.ts` に入れてある
+- **直した**: `useDragWithElement` の `onDragStart` に古い正規化値（初回は 0,0）が渡っていた問題。`setDragging(true)` 直後の `handleDrag` が更新前の `dragging === false` を見て早期 return していたため、座標が更新されないまま `onDragStart` が呼ばれていた
+- **直した**: `onDragEnd` が、その要素で pointerdown していなくても window 上の任意の pointerup で発火していた問題
+- **維持した**: pointerdown だけでは値が動かない挙動（ドラッグして初めて動く）。XYPad の「pointer down だけでも onChange を発火させるべき」という TODO はそのまま残してある。UX の変更になるため別途判断が必要
+- **維持した**: ボタンの種類を問わずドラッグが始まる挙動（右クリックドラッグでも値が動く）。フィルタを足すかは別途判断
+
 
 ### Phase 3: `createDragValue`
 
@@ -184,7 +209,7 @@ packages/
 
 ## 5. 既存コードで見つかった問題
 
-### 5.1 `useDrag` の delta 計算バグ（実バグ）
+### 5.1 `useDrag` の delta 計算バグ（実バグ）→ **Phase 2 で修正済み**
 
 `packages/react/src/hooks/useDrag.ts`
 
@@ -207,7 +232,7 @@ if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return
 
 修正: `!== undefined` で判定する。なお現行コードは `pointerup` で `undefined` に戻すことで「ドラッグ中か」の判定も兼ねているため、`!== undefined` にすればその役割は維持される。コア化時に明示的な `dragging` フラグへ分離するのが望ましい。
 
-### 5.2 `useDrag` のイベント混在（設計上の問題）
+### 5.2 `useDrag` のイベント混在（設計上の問題）→ **Phase 2 で解消済み**
 
 `pointerdown`（React 合成イベント）で開始し、移動は window の `mousemove` と要素の `touchmove` を購読、終了は window の `pointerup`。pointer 系と mouse/touch 系が混在している。
 

@@ -22,7 +22,7 @@ import {
 } from '@tremolo-ui/functions'
 
 import { useDragWithElement } from '../../hooks/useDragWithElement'
-import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
+import { useWheel } from '../../hooks/useWheel'
 import {
   addUserSelectNone,
   Cursor,
@@ -215,8 +215,8 @@ const Root = forwardRef<SliderMethods, Props>(
     )
 
     // --- hooks ---
-    const { refHandler: touchMoveRefCallback, pointerDownHandler } =
-      useDragWithElement<HTMLDivElement>({
+    const { refCallback: dragRefCallback } = useDragWithElement<HTMLDivElement>(
+      {
         baseElementRef: trackElementRef,
         onDrag: onDrag,
         onDragStart: (nx, ny) => {
@@ -247,28 +247,22 @@ const Root = forwardRef<SliderMethods, Props>(
             ),
           )
         },
-      })
-
-    const wheelRefCallback = useRefCallbackEvent(
-      'wheel',
-      (event) => {
-        if (!wheel || !onChange || readonly) return
-        event.preventDefault()
-        let x
-        if (!vertical && event.deltaX != 0) {
-          x = event.deltaX > 0 ? wheel[1] : -wheel[1]
-        } else {
-          if (event.deltaY == 0) return
-          x = event.deltaY > 0 ? -wheel[1] : wheel[1]
-        }
-        if (vertical && reverse) x *= -1
-        onChange(updateValueByEvent(wheel[0], x))
       },
-      {
-        passive: false,
-      },
-      [wheel, vertical, readonly, onChange, updateValueByEvent],
     )
+
+    const wheelRefCallback = useWheel<HTMLDivElement>((event) => {
+      if (!wheel || !onChange || readonly) return
+      event.preventDefault()
+      let x
+      if (!vertical && event.deltaX != 0) {
+        x = event.deltaX > 0 ? wheel[1] : -wheel[1]
+      } else {
+        if (event.deltaY == 0) return
+        x = event.deltaY > 0 ? -wheel[1] : wheel[1]
+      }
+      if (vertical && reverse) x *= -1
+      onChange(updateValueByEvent(wheel[0], x))
+    })
 
     useImperativeHandle(forwardedRef, () => {
       return {
@@ -296,7 +290,7 @@ const Root = forwardRef<SliderMethods, Props>(
           className={clsx('tremolo-slider', className)}
           ref={(div) => {
             wheelRefCallback(div)
-            touchMoveRefCallback(div)
+            dragRefCallback(div)
           }}
           tabIndex={-1}
           role="slider"
@@ -310,10 +304,7 @@ const Root = forwardRef<SliderMethods, Props>(
             margin: `calc(${styleHelper(thumbProps?.size ?? 22)} / 2)`, // half thumb size
             ...style,
           }}
-          onPointerDown={(event) => {
-            pointerDownHandler(event)
-            onPointerDown?.(event)
-          }}
+          onPointerDown={onPointerDown}
           onKeyDown={(event) => {
             handleKeyDown(event)
             onKeyDown?.(event)
