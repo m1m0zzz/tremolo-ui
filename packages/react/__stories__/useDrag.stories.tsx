@@ -1,10 +1,9 @@
 import { useState } from 'react'
 
-import { DragObserver } from '../src/components/DragObserver'
+import { useDrag } from '../src/hooks/useDrag'
 
 export default {
-  title: 'Base Components/DragObserver',
-  component: DragObserver,
+  title: 'Hooks/useDrag',
 }
 
 export const Basic = () => {
@@ -14,26 +13,29 @@ export const Basic = () => {
   const [dy, setDy] = useState(0)
   const [dragging, setDragging] = useState(false)
 
+  const dragRef = useDrag<HTMLDivElement>({
+    onDragStart: () => {
+      setDragging(true)
+    },
+    onDragEnd: () => {
+      setDragging(false)
+    },
+    onDrag: (x, y, dx, dy) => {
+      setX(x)
+      setY(y)
+      setDx(dx)
+      setDy(dy)
+    },
+  })
+
   return (
     <div
       style={{
         userSelect: 'none',
       }}
     >
-      <DragObserver
-        onDragStart={() => {
-          setDragging(true)
-        }}
-        onDragEnd={() => {
-          setDragging(false)
-        }}
-        onDrag={(x, y, dx, dy) => {
-          setX(x)
-          setY(y)
-          setDx(dx)
-          setDy(dy)
-        }}
-        onDoubleClick={() => {}}
+      <div
+        ref={dragRef}
         style={{
           padding: '1rem',
           marginBottom: '0.5rem',
@@ -42,7 +44,7 @@ export const Basic = () => {
       >
         Drag here
         <div>dragging: {String(dragging)}</div>
-      </DragObserver>
+      </div>
       <div>x: {x}</div>
       <div>y: {y}</div>
       <div>dx: {dx}</div>

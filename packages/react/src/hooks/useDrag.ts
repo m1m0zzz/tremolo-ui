@@ -1,10 +1,18 @@
-import { useRef, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 
-import { useEventListener } from './useEventListener'
-import { useRefCallbackEvent } from './useRefCallbackEvent'
+import { createDrag } from '@tremolo-ui/dom'
+
+import { useCallbackRef } from './useCallbackRef'
 
 interface UseDragProps {
+  /**
+   * Threshold at which the onDrag event fires.
+   * Prevents onDrag events from firing, for example, when double-clicking.
+   */
   threshold?: number
+
+  /** CSS cursor to show while dragging. Applied to the element itself. */
+  cursor?: string
 
   onDrag?: (x: number, y: number, deltaX: number, deltaY: number) => void
   onDragStart?: () => void
@@ -12,82 +20,39 @@ interface UseDragProps {
 }
 
 /**
- * @returns [refCallback, pointerDownHandler]
+ * Track a pointer drag on an element.
+ *
+ * @returns a ref callback to attach to the element being dragged
  */
 export function useDrag<T extends Element>({
-  threshold: _threshold = 1,
+  threshold = 1,
+  cursor,
   onDrag,
   onDragStart,
   onDragEnd,
-}: UseDragProps): [
-  (div: EventTarget | null) => void,
-  (event: React.PointerEvent<T>) => void,
-] {
-  const dragOffsetX = useRef<number | undefined>(undefined)
-  const dragOffsetY = useRef<number | undefined>(undefined)
-  const dragStartX = useRef(0)
-  const dragStartY = useRef(0)
+}: UseDragProps): (node: T | null) => void {
+  const dragHandler = useCallbackRef(onDrag)
+  const dragStartHandler = useCallbackRef(onDragStart)
+  const dragEndHandler = useCallbackRef(onDragEnd)
 
-  const threshold = Math.max(_threshold, 1)
+  // The node is held in state rather than bound in the ref callback itself, so
+  // that re-attaching the ref with the same node does not restart the drag.
+  // React re-attaches on every render when the caller passes an inline ref.
+  const [node, setNode] = useState<T | null>(null)
 
-  const handleDrag = useCallback(
-    (
-      event: MouseEvent | React.MouseEvent<T, MouseEvent> | TouchEvent,
-      first = false,
-    ) => {
-      const isTouch = event instanceof TouchEvent
-      if (isTouch && event.cancelable) event.preventDefault()
-      const screenX = isTouch ? event.touches[0].screenX : event.screenX
-      const screenY = isTouch ? event.touches[0].screenY : event.screenY
-      let deltaX = 0
-      let deltaY = 0
-      if (first) {
-        dragStartX.current = screenX
-        dragStartY.current = screenY
-      }
-      if (dragOffsetX.current) {
-        deltaX = screenX - dragOffsetX.current
-        dragOffsetX.current = screenX
-      }
-      if (dragOffsetY.current) {
-        deltaY = screenY - dragOffsetY.current
-        dragOffsetY.current = screenY
-      }
-      if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return
-      onDrag?.(
-        screenX - dragStartX.current,
-        screenY - dragStartY.current,
-        deltaX,
-        deltaY,
-      )
-    },
-    [threshold, onDrag],
-  )
+  useEffect(() => {
+    if (!node) return
 
-  const pointerDownHandler = useCallback(
-    (event: React.PointerEvent<T>) => {
-      dragOffsetX.current = event.screenX
-      dragOffsetY.current = event.screenY
-      handleDrag(event, true)
-      onDragStart?.()
-    },
-    [handleDrag, onDragStart],
-  )
+    const instance = createDrag(node, {
+      threshold,
+      cursor,
+      onDragStart: () => dragStartHandler(),
+      onDrag: ({ x, y, deltaX, deltaY }) => dragHandler(x, y, deltaX, deltaY),
+      onDragEnd: () => dragEndHandler(),
+    })
 
-  const refHandler = useRefCallbackEvent(
-    'touchmove',
-    handleDrag,
-    { passive: false },
-    [onDrag],
-  )
+    return () => instance.destroy()
+  }, [node, threshold, cursor, dragHandler, dragStartHandler, dragEndHandler])
 
-  useEventListener(globalThis.window, 'mousemove', handleDrag)
-
-  useEventListener(globalThis.window, 'pointerup', () => {
-    dragOffsetX.current = undefined
-    dragOffsetY.current = undefined
-    onDragEnd?.()
-  })
-
-  return [refHandler, pointerDownHandler]
+  return setNode
 }

@@ -133,25 +133,71 @@ packages/
 - [x] `@tremolo-ui/react` 側は同名 hook を維持し、内部でコアを呼ぶだけにする
 - [x] ~~`.changeset/config.json` の `fixed` に `@tremolo-ui/dom` を追加~~ → 変更不要。`fixed` は `[["@tremolo-ui/*"]]` のグロブなので dom を自動的に含む（`changeset status` で確認済み）
 - [x] `build.yml` にも dom を追加
-- [ ] **`@tremolo-ui/dom` の初回 publish はローカルから手動で行う**（trusted publishing は npm 上にパッケージが存在しないと設定できないため）
-- [ ] npm の `@tremolo-ui/dom` 設定で trusted publisher を登録（org/user・repo・ワークフローファイル名。既存2パッケージと同じ workflow を指す）
-- [ ] 実際に 1 リリース通して npm 上で依存が解決できることを確認
+- [x] **`@tremolo-ui/dom` の初回 publish はローカルから手動で行う**（trusted publishing は npm 上にパッケージが存在しないと設定できないため）
+- [x] npm の `@tremolo-ui/dom` 設定で trusted publisher を登録（org/user・repo・ワークフローファイル名。既存2パッケージと同じ workflow を指す）
+- [x] 実際に 1 リリース通して npm 上で依存が解決できることを確認
 
-**現状**: コードは実装・検証済み（dom のテスト15件、`npm run test` / `lint` / `build:package` / `build:docs` すべて green。react の dist は `@tremolo-ui/dom` を外部依存として保持し、attw / publint も通る）。
-**ただし changeset はまだ追加していない。** dom が npm 上に存在しない状態でリリースが走ると publish に失敗するため、上の手動 publish と trusted publisher 登録が済むまで changeset を追加しないこと。手順:
+**Phase 1 完了（0.3.0 でリリース済み）。** 3パッケージとも provenance 付きで publish され、新パッケージでも OIDC trusted publishing が機能することを確認した。クリーンな環境で `npm i @tremolo-ui/react@0.3.0` を実行し、dom / functions が 0.3.0 で解決されること、ESM・CJS 双方で import できることも確認済み。
 
-1. ローカルから `npm publish -w packages/dom`（現在 0.2.1）
-2. npm の `@tremolo-ui/dom` 設定で trusted publisher を登録（repo: `m1m0zzz/tremolo-ui`, workflow: `release.yml`）
-3. `npm run changeset` で changeset を追加して push → version PR をマージ（全パッケージが 0.2.2 へ）
+#### Phase 1 で分かったこと（vue / svelte 追加時にも効く）
+
+1. **新パッケージのコードを main に入れる前に、手動 publish と trusted publisher 登録を済ませること。** 計画では「changeset を追加しなければリリースは走らない」前提だったが、`changesets/action` は `publish-script` を渡してあると **changeset が無いときにこそ publish を実行する**。`changeset publish` はレジストリに無いバージョンを publish しようとするため、npm 上に存在しない新パッケージが main に入った時点で E404 で落ちる。正しい順序は「ローカルから手動 publish → trusted publisher 登録 → コードを push」。
+2. **ローカル publish には npm へのログインが必要。** 従来の publish は全て CI の OIDC 経由だったため、ローカルの authToken が失効していても気付かない。scoped パッケージでは未認証でも 401 ではなく **E404 が返る**ので、`npm whoami` で切り分けること。
+3. **publish 直後、レジストリの読み取り側が数分 404 を返す。** `PUT 200` がログにあれば publish は成功している。バージョン指定エンドポイント（`/@scope/name/x.y.z`）の方が先に 200 になる。
+4. **`.changeset/config.json` の `fixed` は変更不要。** `[["@tremolo-ui/*"]]` のグロブが新パッケージを自動的に含む。
+5. **Vercel の Storybook プロジェクトのビルドコマンドはパッケージ追加の影響を受ける。** `npm run build:package -w packages/functions` のように個別指定していると新パッケージの dist が無く、Vite が解決できずに落ちる。ルートの `npm run build:sb`（全ワークスペースをビルドしてから Storybook をビルド）を使うこと。
+6. **拡張子のない `LICENSE` は `.prettierignore` に必要。** 新パッケージに LICENSE を追加すると lint-staged の prettier がパーサを推論できず pre-commit が落ちる。
 
 ### Phase 2: `createDrag` / `createWheel`
 
-- [ ] `useDrag` のバグ修正（後述）を反映した `createDrag` をコアに実装
-- [ ] Pointer Events に一本化（現行の `useDrag` は `pointerdown` + `mousemove` + `touchmove` + `pointerup` の混在）
-- [ ] `setPointerCapture` を使い、window への `mousemove` / `pointerup` 購読を不要にする
-- [ ] `createWheel` は現行 `useRefCallbackEvent('wheel', ..., { passive: false })` の挙動を踏襲する
-- [ ] `DragObserver` / `WheelObserver` / `useDrag` / `useDragWithElement` をコア呼び出しに差し替え
-- [ ] 既存の Storybook で回帰確認
+- [x] `useDrag` のバグ修正（後述）を反映した `createDrag` をコアに実装
+- [x] Pointer Events に一本化（現行の `useDrag` は `pointerdown` + `mousemove` + `touchmove` + `pointerup` の混在）
+- [x] `setPointerCapture` を使い、window への `mousemove` / `pointerup` 購読を不要にする
+- [x] `createWheel` は現行 `useRefCallbackEvent('wheel', ..., { passive: false })` の挙動を踏襲する
+- [x] `DragObserver` / `WheelObserver` / `useDrag` / `useDragWithElement` をコア呼び出しに差し替え
+- [ ] 既存の Storybook で回帰確認（**ビルドは通るが、実際のドラッグ操作はブラウザでの手動確認が必要**）
+
+#### Phase 2 での公開 API 変更
+
+pointer capture を使うと、pointerdown を受けた要素が以降のイベントを受け取るため、`pointerDownHandler` を呼び出し側に返す必要がなくなった。
+
+| | 変更前 | 変更後 |
+| --- | --- | --- |
+| `useDrag` | `[refCallback, pointerDownHandler]` | ref コールバック 1 つ |
+| `useDragWithElement` | `{ refHandler, pointerDownHandler, dragging }` | `{ refCallback, dragging }` |
+| `useWheel` | （なし） | 新規。`useRefCallbackEvent('wheel', ..., { passive: false })` の置き換え |
+| `DragObserver` | あり | **削除**。`useDrag` に一本化 |
+| `WheelObserver` | あり | **削除**。`useWheel` に一本化 |
+
+`useRefCallbackEvent` は `usePianoDrag` からのみ使われる内部 hook として残っている（Phase 4 で Piano をコア化する際に不要になる想定）。
+
+#### Phase 2 で直したもの / 意図的に維持したもの
+
+- **直した**: 5.1 の delta バグ。画面左上端 `(0,0)` から掴むと旧実装は `onDrag` が一度も発火しなかった。回帰テストを `packages/dom/__tests__/pointer/drag.test.ts` に入れてある
+- **直した**: `useDragWithElement` の `onDragStart` に古い正規化値（初回は 0,0）が渡っていた問題。`setDragging(true)` 直後の `handleDrag` が更新前の `dragging === false` を見て早期 return していたため、座標が更新されないまま `onDragStart` が呼ばれていた
+- **直した**: `onDragEnd` が、その要素で pointerdown していなくても window 上の任意の pointerup で発火していた問題
+- **維持した**: ボタンの種類を問わずドラッグが始まる挙動（右クリックドラッグでも値が動く）。フィルタを足すかは別途判断
+
+#### pointerdown での発火はコンポーネントごとに分ける
+
+ドラッグの性質は 2 つに分かれ、pointerdown 単体で値を動かすかどうかは絶対位置型だけの論点になる。
+
+| コンポーネント | 座標の性質 | pointerdown で発火 |
+| --- | --- | --- |
+| Knob | 相対デルタ | 該当なし（デルタしか意味を持たない） |
+| Slider | track の rect で正規化 | **する**（クリックした位置へ飛ぶ） |
+| XYPad | area の rect で正規化 | **する** |
+| PointsEditor / Point | container の rect で正規化 | しない（点の縁を掴んだときに点がずれるため） |
+| Piano | piano の rect で正規化 | する（押下＝発音。従来からこの挙動） |
+
+`useDragWithElement` に `updateOnPointerDown` を追加し、Slider / XYPad のみ有効にした。Phase 3 で `createDragValue` に持ち上げる。
+
+なお Piano だけが従来から pointerdown で発火していたのは設計判断ではなく実装差によるもので、`usePianoDrag` が `dragged.current`（ref）を使うのに対し `useDragWithElement` が `setDragging`（state）を使っていたため、pointerdown 時の処理が更新前の値を見て早期 return していた。
+
+#### DragObserver / WheelObserver を廃止
+
+コア化により両者は「hook を呼んで ref を要素に渡すだけ」の薄いラッパーになり、`as` prop で要素を選べる以外の価値が無くなったため削除した。リポジトリ内の利用箇所は stories のみで、ドキュメントページも CSS も無かった。stories は `useDrag` / `useWheel` のデモとして書き直してある。
+
 
 ### Phase 3: `createDragValue`
 
@@ -176,15 +222,71 @@ packages/
 
 ### Phase 6: Vue / Svelte
 
-- [ ] `@tremolo-ui/svelte`（action ベース。コアのシグネチャとほぼ同型なので最も薄い）
-- [ ] `@tremolo-ui/vue`（composable または directive）
-- [ ] CSS の配布方法を再検討（現状 react の `exports` に `./styles/*.css` がコンポーネント単位で並んでいる。共通化するか各パッケージで重複させるか）
+`plans/milestone.md` へ移動。1.0 に向けたマイルストーンとして管理する。
 
 ---
 
+## 4.5 コア化と並行して片付けるもの
+
+Phase の順序に組み込みきれないが、1.0 までに決着させる項目。
+
+### 4.5.1 CSS の完全ヘッドレス化 — Phase 3 と Phase 5 の間
+
+Radix UI / Base UI と同じ方針にする。パッケージはスタイルを配らず、**ドキュメント上でデモの CSS を公開**して、利用者が Tailwind / CSS Modules / plain CSS を自由に選べる形にする。
+
+- [ ] `packages/react` から `index.css` 群を外す方針を決める（完全に消すか、opt-in の「デフォルトテーマ」として別 export に残すか）
+- [ ] `package.json` の `exports` から `./styles/*.css` を整理（Phase 6 の「CSS の配布方法を再検討」はこの項目に統合）
+- [ ] 状態を表す ARIA 属性 / `data-*` 属性が、利用者側から十分にスタイリングできるか確認する。現状は `[aria-disabled]` `[aria-readonly]` `[data-dragging]` を使っている
+- [ ] ドキュメントサイトに、デモで使っている CSS をコピーできる形で載せる
+
+**これは破壊的変更であり、既存利用者は `@tremolo-ui/react/styles/index.css` を import しているため、移行手順を用意する必要がある。**
+
+### 4.5.2 `tremolo-user-select-none` / `tremolo-cursor-*` をどうするか — 4.5.1 とセット
+
+ドラッグ中に body へクラスを付け外しする仕組み（`src/styles/global.css` + `src/components/_util/index.ts`）。Knob / Slider / XYPad / PointsEditor の 4 コンポーネントが `externalStyles` prop 経由で使っている。**CSS をヘッドレス化すると、このグローバル CSS だけがパッケージに残ることになるため、4.5.1 と同時に決める。**
+
+選択肢:
+
+1. コア（`@tremolo-ui/dom`）が `element.style` を直接操作する（クラス不要になり CSS を配らなくて済む）
+2. `data-*` 属性を body に付けるだけにして、スタイルは利用者に任せる
+3. 現状維持（グローバル CSS だけは配り続ける）
+
+`createDrag` は既に `touch-action` / `user-select` / `-webkit-user-select` / `-webkit-touch-callout` を要素に直接適用し、ドラッグ中は `selectstart` をキャンセルしているので、1 と整合性が取りやすい。
+
+**`tremolo-cursor-*` は Phase 2 で不要になった。** ドラッグ中の cursor は `createDrag` の `cursor` オプションが要素へ直接適用する形に変えた（pointer capture により、ポインタが要素の外へ出てもその cursor が維持されるため、body を触る必要がない）。`_util` の `setCursorStyle` / `resetCursorStyle` と `global.css` の `.tremolo-cursor-*` は**現在どこからも使われていない**ので削除できる。
+
+ドラッグ中にページ全体へ掛ける `tremolo-user-select-none` の方は残っており、ここで判断する。
+
+> 補足: body へ cursor クラスを付ける実装は、タッチの長押しでページ全体が一瞬選択状態になる不具合の原因だった（ドラッグ開始と同時に文書全体のスタイルが再計算されるため）。Storybook 上で要因を 1 つずつ切り分けて特定した。
+
+### 4.5.3 内部ユーティリティの削除
+
+- [ ] `_util/composeRefs.tsx` を削除。Observer 系の削除により、利用箇所は `XYPad/index.tsx` の 1 箇所のみになった（`useComposedRefs` は利用ゼロ）。ref コールバックを 1 つにまとめる形へ整理して不要にする
+  - 注意: `composeRefs(...)` は毎レンダー新しい関数を返すため、React が ref を毎回付け直す。ref コールバック内でリソースを確保する実装と組み合わせると、再レンダーのたびに破棄・再生成される（Phase 2 でこの不具合を出した）。hook 側は node を state で保持して回避しているが、整理する際は memo 化された `useComposedRefs` を使うか、ref を 1 つにまとめること
+- [ ] `_util/type.ts` の `Override` を削除。利用箇所は `Knob/SVGRoot.tsx` の 1 箇所のみ。Observer 系の削除で他は消えた
+
+### 4.5.4 Knob の描画を修正
+
+`ActiveLine` / `InactiveLine` は `viewBox="0 0 100 100"` の中で半径 50 の円弧を描いているが、`strokeWidth` が既定 6 のため線の太さの半分（3）が viewBox からはみ出る。これを `overflow: visible` で誤魔化している。
+
+- [ ] 円弧の半径を `strokeWidth / 2` だけ内側に取り、viewBox 内に収める
+- [ ] `SVGRoot` の `style.overflow = 'visible'`、`index.css` の `.tremolo-knob` と `.tremolo-knob-active-line` の `overflow: visible` を削除
+- [ ] `SVGRoot` の `overflowVisible` prop（宣言されているが未使用）を削除
+- [ ] `strokeWidth` は利用者が変更できるため、半径の計算は実際の `strokeWidth` から導く必要がある。現状 `ActiveLine` / `InactiveLine` がそれぞれ既定値を持っているので、context に集約するか検討する
+
+### 4.5.5 Piano のアーキテクチャ再検討 — Phase 4 の一部
+
+Phase 4 の Piano 対応と一体で進める。
+
+- [ ] `usePianoDrag` を `createDragValue` ベースに置き換える。`useDragWithElement` との差は「pointerdown で発火するか」だけで、Phase 2 で入れた `updateOnPointerDown` オプションで吸収できる見込み
+- [ ] `index.tsx:193` の TODO を消化する。「単一ポインタは useDrag で対応可能だが、マルチタッチには TouchEvent が必要」とあるが、**Pointer Events は `pointerId` で複数ポインタを区別できるため、TouchEvent は不要**。コアに複数ポインタ対応のプリミティブを足す
+- [ ] `index.tsx:238` の `// FIXME`（内容が書かれていない）が何を指すか特定する
+- [ ] `keyboardShortcuts.ts:3` の TODO
+- [ ] 鍵盤の当たり判定（`getHitKeyIndex`）が座標計算とコンポーネント描画に密結合している点を見直す
+
 ## 5. 既存コードで見つかった問題
 
-### 5.1 `useDrag` の delta 計算バグ（実バグ）
+### 5.1 `useDrag` の delta 計算バグ（実バグ）→ **Phase 2 で修正済み**
 
 `packages/react/src/hooks/useDrag.ts`
 
@@ -207,7 +309,7 @@ if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return
 
 修正: `!== undefined` で判定する。なお現行コードは `pointerup` で `undefined` に戻すことで「ドラッグ中か」の判定も兼ねているため、`!== undefined` にすればその役割は維持される。コア化時に明示的な `dragging` フラグへ分離するのが望ましい。
 
-### 5.2 `useDrag` のイベント混在（設計上の問題）
+### 5.2 `useDrag` のイベント混在（設計上の問題）→ **Phase 2 で解消済み**
 
 `pointerdown`（React 合成イベント）で開始し、移動は window の `mousemove` と要素の `touchmove` を購読、終了は window の `pointerup`。pointer 系と mouse/touch 系が混在している。
 

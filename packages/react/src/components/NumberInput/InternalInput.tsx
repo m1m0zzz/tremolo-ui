@@ -17,7 +17,7 @@ import {
   stepValue,
 } from '@tremolo-ui/functions'
 
-import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
+import { useWheel } from '../../hooks/useWheel'
 
 import { safeClamp, useNumberInputContext } from './context'
 import { parseValue } from './type'
@@ -125,20 +125,15 @@ export const InternalInput = forwardRef<
       [keyboard, readonly, onChange, updateValueByEvent],
     )
 
-    const wheelRefCallback = useRefCallbackEvent(
-      'wheel',
-      (event) => {
-        if (!wheel || readonly) return
-        event.preventDefault()
-        if (!onChange || event.deltaY == 0) return
-        const x = Math.sign(event.deltaY) * -wheel[1]
-        const parsed = parseValue(String(updateValueByEvent(wheel[0], x)))
-        // console.log('wheel control')
-        onChange?.(parsed.rawValue, parsed.formatValue)
-      },
-      { passive: false },
-      [wheel, readonly, onChange, updateValueByEvent],
-    )
+    const wheelRefCallback = useWheel<HTMLInputElement>((event) => {
+      if (!wheel || readonly) return
+      event.preventDefault()
+      if (!onChange || event.deltaY == 0) return
+      const x = Math.sign(event.deltaY) * -wheel[1]
+      const parsed = parseValue(String(updateValueByEvent(wheel[0], x)))
+      // console.log('wheel control')
+      onChange?.(parsed.rawValue, parsed.formatValue)
+    })
 
     useImperativeHandle(ref, () => {
       return {

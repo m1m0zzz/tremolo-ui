@@ -12,3 +12,10 @@ export {
   type MIDIInputInstance,
 } from './midi/input'
 export { createMIDIMessage, type MIDIMessageInstance } from './midi/message'
+export {
+  createDrag,
+  type DragInstance,
+  type DragOptions,
+  type DragState,
+} from './pointer/drag'
+export { createWheel, type WheelInstance } from './pointer/wheel'

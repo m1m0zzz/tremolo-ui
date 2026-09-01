@@ -22,14 +22,8 @@ import {
 } from '@tremolo-ui/functions'
 
 import { useDragWithElement } from '../../hooks/useDragWithElement'
-import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
-import {
-  addUserSelectNone,
-  Cursor,
-  removeUserSelectNone,
-  resetCursorStyle,
-  setCursorStyle,
-} from '../_util'
+import { useWheel } from '../../hooks/useWheel'
+import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 
 import { SliderProvider } from './context'
 import { Scale } from './Scale'
@@ -215,14 +209,15 @@ const Root = forwardRef<SliderMethods, Props>(
     )
 
     // --- hooks ---
-    const { refHandler: touchMoveRefCallback, pointerDownHandler } =
-      useDragWithElement<HTMLDivElement>({
+    const { refCallback: dragRefCallback } = useDragWithElement<HTMLDivElement>(
+      {
         baseElementRef: trackElementRef,
+        cursor: readonly ? undefined : externalStyles.cursor,
+        updateOnPointerDown: true,
         onDrag: onDrag,
         onDragStart: (nx, ny) => {
           if (readonly) return
           if (externalStyles.userSelectNone) addUserSelectNone()
-          if (externalStyles.cursor) setCursorStyle(externalStyles.cursor)
 
           thumbRef.current?.focus()
           onDragStart?.(
@@ -237,7 +232,6 @@ const Root = forwardRef<SliderMethods, Props>(
           if (readonly) return
 
           if (externalStyles.userSelectNone) removeUserSelectNone()
-          if (externalStyles.cursor) resetCursorStyle()
 
           onDragEnd?.(
             clamp(
@@ -247,28 +241,22 @@ const Root = forwardRef<SliderMethods, Props>(
             ),
           )
         },
-      })
-
-    const wheelRefCallback = useRefCallbackEvent(
-      'wheel',
-      (event) => {
-        if (!wheel || !onChange || readonly) return
-        event.preventDefault()
-        let x
-        if (!vertical && event.deltaX != 0) {
-          x = event.deltaX > 0 ? wheel[1] : -wheel[1]
-        } else {
-          if (event.deltaY == 0) return
-          x = event.deltaY > 0 ? -wheel[1] : wheel[1]
-        }
-        if (vertical && reverse) x *= -1
-        onChange(updateValueByEvent(wheel[0], x))
       },
-      {
-        passive: false,
-      },
-      [wheel, vertical, readonly, onChange, updateValueByEvent],
     )
+
+    const wheelRefCallback = useWheel<HTMLDivElement>((event) => {
+      if (!wheel || !onChange || readonly) return
+      event.preventDefault()
+      let x
+      if (!vertical && event.deltaX != 0) {
+        x = event.deltaX > 0 ? wheel[1] : -wheel[1]
+      } else {
+        if (event.deltaY == 0) return
+        x = event.deltaY > 0 ? -wheel[1] : wheel[1]
+      }
+      if (vertical && reverse) x *= -1
+      onChange(updateValueByEvent(wheel[0], x))
+    })
 
     useImperativeHandle(forwardedRef, () => {
       return {
@@ -296,7 +284,7 @@ const Root = forwardRef<SliderMethods, Props>(
           className={clsx('tremolo-slider', className)}
           ref={(div) => {
             wheelRefCallback(div)
-            touchMoveRefCallback(div)
+            dragRefCallback(div)
           }}
           tabIndex={-1}
           role="slider"
@@ -310,10 +298,7 @@ const Root = forwardRef<SliderMethods, Props>(
             margin: `calc(${styleHelper(thumbProps?.size ?? 22)} / 2)`, // half thumb size
             ...style,
           }}
-          onPointerDown={(event) => {
-            pointerDownHandler(event)
-            onPointerDown?.(event)
-          }}
+          onPointerDown={onPointerDown}
           onKeyDown={(event) => {
             handleKeyDown(event)
             onKeyDown?.(event)

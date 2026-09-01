@@ -17,14 +17,8 @@ import {
 } from '@tremolo-ui/functions'
 
 import { useDrag } from '../../hooks/useDrag'
-import { useRefCallbackEvent } from '../../hooks/useRefCallbackEvent'
-import {
-  addUserSelectNone,
-  Cursor,
-  removeUserSelectNone,
-  resetCursorStyle,
-  setCursorStyle,
-} from '../_util'
+import { useWheel } from '../../hooks/useWheel'
+import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 
 import { ActiveLine } from './ActiveLine'
 import { KnobProvider } from './context'
@@ -174,35 +168,27 @@ const Root = forwardRef<KnobMethods, Props>(
     )
 
     // --- hooks ---
-    const [touchMoveRefCallback, pointerDownHandler] = useDrag<
-      HTMLElement | SVGElement
-    >({
+    const dragRefCallback = useDrag<HTMLElement | SVGElement>({
+      cursor: readonly ? undefined : externalStyles.cursor,
       onDrag: onDrag,
       onDragStart: () => {
         setDragging(true)
         valueRef.current = normalizeValue(value, min, max, skew)
         if (externalStyles.userSelectNone) addUserSelectNone()
-        if (externalStyles.cursor) setCursorStyle(externalStyles.cursor)
       },
       onDragEnd: () => {
         setDragging(false)
         if (externalStyles.userSelectNone) removeUserSelectNone()
-        if (externalStyles.cursor) resetCursorStyle()
       },
     })
 
-    const wheelRefCallback = useRefCallbackEvent(
-      'wheel',
-      (event) => {
-        if (!wheel || readonly) return
-        event.preventDefault()
-        if (!onChange || event.deltaY == 0) return
-        const x = Math.sign(event.deltaY) * -wheel[1]
-        onChange(updateValueByEvent(wheel[0], x))
-      },
-      { passive: false },
-      [wheel, onChange, readonly, updateValueByEvent],
-    )
+    const wheelRefCallback = useWheel<HTMLElement>((event) => {
+      if (!wheel || readonly) return
+      event.preventDefault()
+      if (!onChange || event.deltaY == 0) return
+      const x = Math.sign(event.deltaY) * -wheel[1]
+      onChange(updateValueByEvent(wheel[0], x))
+    })
 
     useImperativeHandle(forwardedRef, () => {
       return {
@@ -229,7 +215,7 @@ const Root = forwardRef<KnobMethods, Props>(
           ref={(elm) => {
             elmRef.current = elm
             wheelRefCallback(elm)
-            touchMoveRefCallback(elm)
+            dragRefCallback(elm)
           }}
           className={clsx('tremolo-knob', className)}
           tabIndex={0}
@@ -245,10 +231,7 @@ const Root = forwardRef<KnobMethods, Props>(
             height: size,
             ...style,
           }}
-          onPointerDown={(event) => {
-            pointerDownHandler(event)
-            onPointerDown?.(event)
-          }}
+          onPointerDown={onPointerDown}
           onDoubleClick={(event) => {
             if (enableDoubleClickDefault && onChange) {
               onChange(defaultValue)
