@@ -23,7 +23,6 @@ import {
 import { useDragWithElement } from '../../hooks/useDragWithElement'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
-import { composeRefs } from '../_util/composeRefs'
 
 import { Area, XYPadAreaProps } from './Area'
 import { Thumb, XYPadThumbMethods, XYPadThumbProps } from './Thumb'
@@ -303,7 +302,11 @@ export const Root = forwardRef<XYPadMethods, Props>(
       // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <div
         className={clsx('tremolo-xy-pad', className)}
-        ref={composeRefs(rootRef, wheelRefCallback, dragRefCallback)}
+        ref={(node) => {
+          rootRef.current = node
+          wheelRefCallback(node)
+          dragRefCallback(node)
+        }}
         tabIndex={-1}
         aria-disabled={disabled}
         aria-readonly={readonly}

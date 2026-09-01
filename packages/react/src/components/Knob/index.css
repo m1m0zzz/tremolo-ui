@@ -1,7 +1,6 @@
 .tremolo-knob {
   display: inline-block;
   cursor: grab;
-  overflow: visible;
   outline: 0;
 
   &[aria-readonly='true'] {
@@ -14,7 +13,6 @@
 }
 
 .tremolo-knob-active-line {
-  overflow: visible;
   color: oklch(69.2% 0.17548 266.373);
 
   :where(.tremolo-knob:focus, .tremolo-knob:hover) & {
