@@ -1,6 +1,6 @@
 # 公開 API スナップショット (v0.2.0)
 
-コア切り出し（`plans/core-extranction-plan.md`）で `@tremolo-ui/react` に破壊的変更を入れる前の状態。
+コア切り出し（`plans/core-extraction-plan.md`）で `@tremolo-ui/react` に破壊的変更を入れる前の状態。
 移行後に差分を説明するための基準として残す。
 
 取得コミット: `bdbad60`

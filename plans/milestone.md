@@ -4,7 +4,7 @@
 
 1.0 を出すために必要な作業を 3 つにまとめる。詳細な手順は各リンク先で管理する。
 
-現在: 全パッケージ 0.3.0。破壊的変更を入れつつ 0.x に留まるため、changeset では `major` ではなく `minor` を選ぶ運用（[core-extranction-plan.md 7.3](./core-extranction-plan.md)）。
+現在: 全パッケージ 0.3.0。破壊的変更を入れつつ 0.x に留まるため、changeset では `major` ではなく `minor` を選ぶ運用（[core-extraction-plan.md 7.3](./core-extraction-plan.md)）。
 
 ---
 
@@ -12,7 +12,7 @@
 
 React 依存のロジックを framework-agnostic なコアへ切り出し、Vue / Svelte のラッパーを作れる状態にする。
 
-詳細: **[core-extranction-plan.md](./core-extranction-plan.md)**
+詳細: **[core-extraction-plan.md](./core-extraction-plan.md)**
 
 | | 状態 |
 | --- | --- |
@@ -59,14 +59,14 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 - [ ] `.changeset/config.json` の `fixed` は `[["@tremolo-ui/*"]]` のグロブなので**変更不要**
 - [ ] `packages/<name>/LICENSE` を置く場合、`.prettierignore` に `LICENSE` があること（追加済み）
 - [ ] Vercel の Storybook プロジェクトのビルドコマンドは `npm run build:sb`（全ワークスペースをビルドしてから Storybook をビルドする）であること
-- [ ] CSS の配布方法を決めてから着手する（各パッケージで重複させるか、共通パッケージにするか）。core-extranction-plan.md 4.5.1 と一体
+- [ ] CSS の配布方法を決めてから着手する（各パッケージで重複させるか、共通パッケージにするか）。core-extraction-plan.md 4.5.1 と一体
 
 ---
 
 ## 3. ドキュメント整備
 
 - [ ] **`@tremolo-ui/dom` のドキュメントを追加する。** 現在 typedoc の対象は `functions` と `react` のみで（`site/docusaurus.config.ts` の `typedocPlugins()`）、dom は API リファレンスにすら載っていない
-- [ ] **CSS のデモを公開する形に作り替える。** Radix UI / Base UI と同じく、パッケージはスタイルを配らず、ドキュメント上でデモの CSS をコピーできるようにする（core-extranction-plan.md 4.5.1）
+- [ ] **CSS のデモを公開する形に作り替える。** Radix UI / Base UI と同じく、パッケージはスタイルを配らず、ドキュメント上でデモの CSS をコピーできるようにする（core-extraction-plan.md 4.5.1）
 - [ ] **hooks のドキュメントを充実させる。** 現在 `site/docs/hooks/` には `web-midi-api` しかない。`useDrag` / `useWheel` / `useDragWithElement` は typedoc の自動生成のみ
 - [ ] **Vue / Svelte を足したときのドキュメント構成を決める。** 現在の `site/docs/components/<Name>/index.mdx` は React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）。フレームワークごとにタブを分けるのか、サイト自体を分けるのか
 - [ ] **移行ガイドを書く。** 0.x の間に入れた破壊的変更（`useDrag` / `useDragWithElement` の戻り値変更、`DragObserver` / `WheelObserver` の削除、CSS の配布方法変更）をまとめる
