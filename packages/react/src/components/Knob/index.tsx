@@ -2,8 +2,10 @@ import clsx from 'clsx'
 import {
   ComponentPropsWithoutRef,
   forwardRef,
+  ReactNode,
   useCallback,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -22,7 +24,7 @@ import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 import { useComposedRefs } from '../_util/composeRefs'
 
 import { ActiveLine } from './ActiveLine'
-import { KnobProvider } from './context'
+import { calcAngles, KnobProvider } from './context'
 import { InactiveLine } from './InactiveLine'
 import { SVGRoot } from './SVGRoot'
 import { Thumb } from './Thumb'
@@ -56,6 +58,10 @@ export interface KnobProps {
   startValue?: number
 
   /** width and height */
+  /**
+   * Width and height of the knob.
+   * Defaults to the `--knob-size` CSS variable (50px).
+   */
   size?: number | string
 
   /**
@@ -85,6 +91,21 @@ export interface KnobProps {
   angleRange?: number
 
   onChange?: (value: number) => void
+
+  /**
+   * The knob renders exactly what you compose here; there is no default
+   * markup to fall back to.
+   *
+   * @example
+   * <Knob.Root value={value} min={0} max={100} onChange={setValue}>
+   *   <Knob.SVGRoot>
+   *     <Knob.InactiveLine />
+   *     <Knob.ActiveLine />
+   *     <Knob.Thumb />
+   *   </Knob.SVGRoot>
+   * </Knob.Root>
+   */
+  children: ReactNode
 }
 
 export interface KnobMethods {
@@ -199,6 +220,11 @@ const Root = forwardRef<KnobMethods, Props>(
       wheelRefCallback,
     )
 
+    const context = useMemo(() => {
+      const config = { value, min, max, step, skew, startValue, angleRange }
+      return { ...config, ...calcAngles(config) }
+    }, [value, min, max, step, skew, startValue, angleRange])
+
     useImperativeHandle(forwardedRef, () => {
       return {
         focus() {
@@ -211,15 +237,7 @@ const Root = forwardRef<KnobMethods, Props>(
     }, [])
 
     return (
-      <KnobProvider
-        value={value}
-        min={min}
-        max={max}
-        step={step}
-        skew={skew}
-        startValue={startValue}
-        angleRange={angleRange}
-      >
+      <KnobProvider value={context}>
         <div
           ref={rootRefCallback}
           className={clsx('tremolo-knob', className)}
@@ -249,7 +267,7 @@ const Root = forwardRef<KnobMethods, Props>(
           }}
           {...props}
         >
-          {children || <SVGRoot />}
+          {children}
         </div>
       </KnobProvider>
     )

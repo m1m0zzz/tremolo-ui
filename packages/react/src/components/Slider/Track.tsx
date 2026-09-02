@@ -1,7 +1,9 @@
 import clsx from 'clsx'
-import { ComponentPropsWithoutRef, CSSProperties, ReactElement } from 'react'
+import { ComponentPropsWithoutRef, CSSProperties, ReactNode, Ref } from 'react'
 
 import { styleHelper, xor } from '@tremolo-ui/functions'
+
+import { useComposedRefs } from '../_util/composeRefs'
 
 import { useSliderContext } from './context'
 
@@ -19,12 +21,9 @@ export interface SliderTrackProps {
 
   className?: string
   style?: CSSProperties
-  children?: ReactElement
-
-  /** @internal */
-  __thumb?: ReactElement
-  /** @internal */
-  __percent?: number
+  /** `<Slider.Thumb />` goes here. */
+  children?: ReactNode
+  ref?: Ref<HTMLDivElement>
 }
 
 export function Track({
@@ -36,14 +35,15 @@ export function Track({
   className,
   style,
   defaultStyle = true,
-  __thumb,
-  __percent = 0,
+  ref,
   ...props
 }: SliderTrackProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof SliderTrackProps>) {
-  const vertical = useSliderContext((s) => s.vertical)
-  const reverse = useSliderContext((s) => s.reverse)
-  const disabled = useSliderContext((s) => s.disabled)
+  const { vertical, reverse, disabled, percent, trackRef } = useSliderContext()
+
+  // The track is what the pointer position is normalized against, so the
+  // context ref is composed with any ref the caller passed.
+  const composedRef = useComposedRefs<HTMLDivElement>(ref, trackRef)
 
   const direction = vertical ? 'bottom' : 'right'
   const colors = {
@@ -53,6 +53,7 @@ export function Track({
 
   return (
     <div
+      ref={composedRef}
       className={clsx('tremolo-slider-track', className)}
       aria-disabled={disabled}
       data-vertical={vertical}
@@ -62,8 +63,8 @@ export function Track({
           : {
               ...colors,
               background: xor(vertical, reverse)
-                ? `linear-gradient(to ${direction}, var(--inactive) ${__percent}%, var(--active) ${__percent}%)`
-                : `linear-gradient(to ${direction}, var(--active) ${__percent}%, var(--inactive) ${__percent}%)`,
+                ? `linear-gradient(to ${direction}, var(--inactive) ${percent}%, var(--active) ${percent}%)`
+                : `linear-gradient(to ${direction}, var(--active) ${percent}%, var(--inactive) ${percent}%)`,
               borderRadius: styleHelper(thickness!, '/', 2),
               width: !vertical ? length : thickness,
               height: vertical ? length : thickness,
@@ -73,7 +74,6 @@ export function Track({
       {...props}
     >
       {children}
-      {__thumb}
     </div>
   )
 }

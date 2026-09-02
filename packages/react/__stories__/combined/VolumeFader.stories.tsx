@@ -90,15 +90,6 @@ export const VolumeFader = () => {
         vertical
         wheel={['normalized', 0.1]}
       >
-        <Slider.Thumb
-          className={styles.thumb}
-          style={{
-            width: '2.4rem',
-            height: '1.2rem',
-            borderRadius: '0.6rem',
-            border: '1px solid #aaa',
-          }}
-        />
         <Slider.Track
           active="#555"
           inactive="#555"
@@ -118,6 +109,15 @@ export const VolumeFader = () => {
               const rms = getRMS(dataArray.current)
               const barH = normalizeValue(rms, min, max, skew) * height
               ctx.fillRect(0, height - barH, width, height)
+            }}
+          />
+          <Slider.Thumb
+            className={styles.thumb}
+            style={{
+              width: '2.4rem',
+              height: '1.2rem',
+              borderRadius: '0.6rem',
+              border: '1px solid #aaa',
             }}
           />
         </Slider.Track>

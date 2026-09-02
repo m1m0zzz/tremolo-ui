@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { memo, useState } from 'react'
+import { CSSProperties, memo, useState } from 'react'
 
 import {
   integerPart,
@@ -10,42 +10,13 @@ import {
 import { AnimationCanvas } from '../src/components/AnimationCanvas'
 import { XYPad } from '../src/components/XYPad'
 
-import { InputEventOptionString } from './lib/typeUtils'
-
-const valueOptionsDetail = `{
-  value: number
-  min: number
-  max: number
-  step?: number
-  skew?: number
-  reverse?: boolean
-  wheel?: ${InputEventOptionString} | null
-  keyboard?: ${InputEventOptionString} | null
-}`
-
 export default {
   title: 'Components/XYPad/Root',
   component: XYPad.Root,
   argTypes: {
-    x: {
+    value: {
       description:
-        'NOTE: The `value` of controls is not valid because it is wrapped in useState.',
-      table: {
-        type: {
-          summary: 'ValueOptions',
-          detail: valueOptionsDetail,
-        },
-      },
-    },
-    y: {
-      description:
-        'NOTE: The `value` of controls is not valid because it is wrapped in useState.',
-      table: {
-        type: {
-          summary: 'ValueOptions',
-          detail: valueOptionsDetail,
-        },
-      },
+        'NOTE: The value of controls is not valid because it is wrapped in useState.',
     },
     children: {
       control: false,
@@ -57,16 +28,8 @@ type Story = StoryObj<typeof XYPad.Root>
 
 export const Basic: Story = {
   args: {
-    x: {
-      value: 0,
-      min: 0,
-      max: 100,
-    },
-    y: {
-      value: 0,
-      min: 0,
-      max: 100,
-    },
+    min: 0,
+    max: 100,
   },
   render: (args) => {
     const [valueX, setValueX] = useState(32)
@@ -76,21 +39,18 @@ export const Basic: Story = {
       <>
         <XYPad.Root
           {...args}
-          x={{
-            ...args.x,
-            value: valueX,
-          }}
-          y={{
-            ...args.y,
-            value: valueY,
-          }}
-          onChange={(x, y) => {
+          value={[valueX, valueY]}
+          onChange={([x, y]) => {
             setValueX(x)
             setValueY(y)
           }}
-          onDragStart={(x, y) => console.log(`drag start: x=${x}, y=${y}`)}
-          onDragEnd={(x, y) => console.log(`drag end: x=${x}, y=${y}`)}
-        />
+          onDragStart={([x, y]) => console.log(`drag start: x=${x}, y=${y}`)}
+          onDragEnd={([x, y]) => console.log(`drag end: x=${x}, y=${y}`)}
+        >
+          <XYPad.Area>
+            <XYPad.Thumb />
+          </XYPad.Area>
+        </XYPad.Root>
         <p>x: {valueX}</p>
         <p>y: {valueY}</p>
       </>
@@ -198,33 +158,25 @@ export const AdvancedFilterPad = () => {
         }}
       >
         <XYPad.Root
-          x={{
-            value: frequency,
-            min: 20,
-            max: 20_000,
-            skew: skewWithCenterValue(2000, 20, 20_000),
-            step: 0.1,
-            wheel: ['normalized', 0.05],
-            keyboard: ['normalized', 0.05],
-          }}
-          y={{
-            value: q,
-            min: 0.01,
-            max: 2,
-            step: 0.01,
-            reverse: true,
-            wheel: ['raw', 0.1],
-            keyboard: ['raw', 0.1],
-          }}
-          onChange={(x, y) => {
+          value={[frequency, q]}
+          min={[20, 0.01]}
+          max={[20_000, 2]}
+          step={[0.1, 0.01]}
+          skew={[skewWithCenterValue(2000, 20, 20_000), 1]}
+          reverse={[false, true]}
+          wheel={['normalized', 0.05]}
+          keyboard={['normalized', 0.05]}
+          style={{ '--thumb-size': '40px' } as CSSProperties}
+          onChange={([x, y]) => {
             setFrequency(x)
             setQ(y)
           }}
         >
-          <XYPad.Area width={200} color="transparent" />
-          <XYPad.Thumb size={40}>
-            <ThumbAnimation />
-          </XYPad.Thumb>
+          <XYPad.Area width={200} color="transparent">
+            <XYPad.Thumb>
+              <ThumbAnimation />
+            </XYPad.Thumb>
+          </XYPad.Area>
         </XYPad.Root>
       </div>
       <div

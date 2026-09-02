@@ -1,15 +1,20 @@
-import { SVGProps } from 'react'
+import { ReactNode, SVGProps } from 'react'
 
-import { ActiveLine } from './ActiveLine'
 import { viewBoxSize } from './context'
-import { InactiveLine } from './InactiveLine'
-import { Thumb } from './Thumb'
+
+export interface SVGRootProps {
+  /**
+   * `<Knob.InactiveLine />`, `<Knob.ActiveLine />` and `<Knob.Thumb />` go
+   * here, in the order you want them painted.
+   */
+  children: ReactNode
+}
 
 export function SVGRoot({
   children,
   style,
   ...props
-}: SVGProps<SVGSVGElement>) {
+}: SVGRootProps & Omit<SVGProps<SVGSVGElement>, keyof SVGRootProps>) {
   return (
     <svg
       viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
@@ -19,13 +24,7 @@ export function SVGRoot({
       }}
       {...props}
     >
-      {children || (
-        <>
-          <InactiveLine />
-          <ActiveLine />
-          <Thumb />
-        </>
-      )}
+      {children}
     </svg>
   )
 }

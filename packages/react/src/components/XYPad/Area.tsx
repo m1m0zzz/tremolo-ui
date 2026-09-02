@@ -1,5 +1,9 @@
 import clsx from 'clsx'
-import { ComponentPropsWithoutRef, CSSProperties, ReactElement } from 'react'
+import { ComponentPropsWithoutRef, CSSProperties, ReactNode, Ref } from 'react'
+
+import { useComposedRefs } from '../_util/composeRefs'
+
+import { useXYPadContext } from './context'
 
 export interface XYPadAreaProps {
   width?: number | string
@@ -7,10 +11,9 @@ export interface XYPadAreaProps {
   color?: string
   className?: string
   style?: CSSProperties
-  children?: ReactElement
-
-  /** inherit */
-  __thumb?: ReactElement
+  /** `<XYPad.Thumb />` goes here. */
+  children?: ReactNode
+  ref?: Ref<HTMLDivElement>
 }
 
 export function Area({
@@ -20,12 +23,19 @@ export function Area({
   children,
   className,
   style,
-  __thumb,
+  ref,
   ...props
 }: XYPadAreaProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadAreaProps>) {
+  const { areaRef } = useXYPadContext()
+
+  // The area is what the pointer position is normalized against, so the
+  // context ref is composed with any ref the caller passed.
+  const composedRef = useComposedRefs<HTMLDivElement>(ref, areaRef)
+
   return (
     <div
+      ref={composedRef}
       className={clsx('tremolo-xy-pad-area', className)}
       style={{
         ...{ '--color': color },
@@ -36,7 +46,6 @@ export function Area({
       {...props}
     >
       {children}
-      {__thumb}
     </div>
   )
 }

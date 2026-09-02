@@ -1,6 +1,16 @@
 .tremolo-xy-pad {
+  /* Half the thumb size. The thumb overhangs the edges of the area, so the
+     pad reserves room for it. Override this when using a different size. */
+  --thumb-size: 22px;
+
   display: inline-block;
+  margin: calc(var(--thumb-size) / 2);
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &[aria-readonly='true'] {
+    cursor: not-allowed;
+  }
 }
 
 .tremolo-xy-pad-area {
@@ -19,6 +29,8 @@
 .tremolo-xy-pad-thumb {
   --color: oklch(59.5% 0.17548 266.373);
 
+  width: var(--thumb-size);
+  height: var(--thumb-size);
   border-radius: 50%;
   outline: none;
   background-color: var(--color);

@@ -55,7 +55,7 @@ for (let i = 0; i < frameLength; i++) {
 // }
 
 export default {
-  title: 'combined/WaveSelector',
+  title: 'combined/WavetableSynth/WaveSelector',
   tags: ['!autodocs'],
 }
 
@@ -138,10 +138,11 @@ export const WaveSelector = ({
                 )
               }}
             />
+
+            <Slider.Thumb>
+              <></>
+            </Slider.Thumb>
           </Slider.Track>
-          <Slider.Thumb>
-            <></>
-          </Slider.Thumb>
         </Slider.Root>
         <div
           style={{
@@ -202,22 +203,19 @@ export const WaveSelector = ({
             margin: 10,
           }}
         >
-          <Slider.Track
-            thickness={6}
-            length="100%"
-            active={themeColor}
-          ></Slider.Track>
-          <Slider.Thumb>
-            <div
-              style={{
-                border: `solid 4px ${themeColor}`,
-                background: 'white',
-                borderRadius: '50%',
-                width: 12,
-                height: 12,
-              }}
-            ></div>
-          </Slider.Thumb>
+          <Slider.Track thickness={6} length="100%" active={themeColor}>
+            <Slider.Thumb>
+              <div
+                style={{
+                  border: `solid 4px ${themeColor}`,
+                  background: 'white',
+                  borderRadius: '50%',
+                  width: 12,
+                  height: 12,
+                }}
+              ></div>
+            </Slider.Thumb>
+          </Slider.Track>
         </Slider.Root>
         <NumberInput.Root
           value={position}

@@ -1,5 +1,11 @@
 .tremolo-knob {
+  /* The knob has no intrinsic size: the SVG inside scales to its box.
+     Override with the `size` prop, or by setting this variable. */
+  --knob-size: 50px;
+
   display: inline-block;
+  width: var(--knob-size);
+  height: var(--knob-size);
   cursor: grab;
   outline: 0;
 

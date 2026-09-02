@@ -40,7 +40,13 @@ export const ControlFocus = () => {
           min={0}
           max={100}
           onChange={(v) => setValue(v)}
-        />
+        >
+          <Knob.SVGRoot>
+            <Knob.InactiveLine />
+            <Knob.ActiveLine />
+            <Knob.Thumb />
+          </Knob.SVGRoot>
+        </Knob.Root>
         <NumberInput.Root
           ref={refs.current.numberInput}
           value={value}
@@ -54,24 +60,25 @@ export const ControlFocus = () => {
           min={0}
           max={100}
           onChange={(v) => setValue(v)}
-        />
+        >
+          <Slider.Track>
+            <Slider.Thumb />
+          </Slider.Track>
+        </Slider.Root>
         <XYPad.Root
           ref={refs.current.xyPad}
-          x={{
-            value: value,
-            min: 0,
-            max: 100,
-          }}
-          y={{
-            value: value2,
-            min: 0,
-            max: 100,
-          }}
-          onChange={(x, y) => {
+          value={[value, value2]}
+          min={0}
+          max={100}
+          onChange={([x, y]) => {
             setValue(x)
             setValue2(y)
           }}
-        />
+        >
+          <XYPad.Area>
+            <XYPad.Thumb />
+          </XYPad.Area>
+        </XYPad.Root>
       </div>
       <div>
         <p>Focus Controller</p>

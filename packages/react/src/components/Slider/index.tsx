@@ -3,7 +3,7 @@ import React, {
   ComponentPropsWithoutRef,
   CSSProperties,
   forwardRef,
-  ReactElement,
+  ReactNode,
   useCallback,
   useImperativeHandle,
   useMemo,
@@ -17,7 +17,6 @@ import {
   stepValue,
   toFixed,
   InputEventOption,
-  styleHelper,
   xor,
 } from '@tremolo-ui/functions'
 
@@ -29,8 +28,8 @@ import { useComposedRefs } from '../_util/composeRefs'
 import { SliderProvider } from './context'
 import { Scale } from './Scale'
 import { ScaleOption } from './ScaleOption'
-import { Thumb, SliderThumbMethods, SliderThumbProps } from './Thumb'
-import { Track, SliderTrackProps } from './Track'
+import { Thumb, SliderThumbMethods } from './Thumb'
+import { Track } from './Track'
 
 const defaultExternalStyles: SliderProps['externalStyles'] = {
   userSelectNone: true,
@@ -85,9 +84,18 @@ export interface SliderProps {
   onChange?: (value: number) => void
   onDragStart?: (value: number) => void
   onDragEnd?: (value: number) => void
-  /** \<SliderThumb /> | \<SliderTrack /> */
-  children?: ReactElement | ReactElement[]
-  // ReactElement<typeof SliderThumb, typeof SliderTrack>[]
+  /**
+   * The slider renders exactly what you compose here; there is no default
+   * markup to fall back to.
+   *
+   * @example
+   * <Slider.Root value={value} min={0} max={100} onChange={setValue}>
+   *   <Slider.Track>
+   *     <Slider.Thumb />
+   *   </Slider.Track>
+   * </Slider.Root>
+   */
+  children: ReactNode
 }
 
 export interface SliderMethods {
@@ -128,7 +136,7 @@ const Root = forwardRef<SliderMethods, Props>(
     forwardedRef,
   ) => {
     // -- state and ref ---
-    const trackElementRef = useRef<HTMLDivElement>(null)
+    const trackRef = useRef<HTMLDivElement>(null)
     const thumbRef = useRef<SliderThumbMethods>(null)
 
     // --- interpret props ---
@@ -146,27 +154,6 @@ const Root = forwardRef<SliderMethods, Props>(
       [vertical, reverse],
     )
     const percent = displayReversed ? rev : p
-
-    let trackProps: SliderTrackProps = {}
-    let thumbProps: SliderThumbProps = {}
-    let scaleComponent: ReactElement | undefined = undefined
-    if (children != undefined) {
-      React.Children.forEach(children, (child) => {
-        if (React.isValidElement(child)) {
-          if (child.type == Thumb) {
-            thumbProps = child.props as SliderThumbProps
-          } else if (child.type == Track) {
-            trackProps = child.props as SliderTrackProps
-          } else if (child.type == Scale) {
-            scaleComponent = child
-          } else {
-            throw new Error('only <SliderThumb> or <SliderTrack>')
-          }
-        } else {
-          throw new Error('children is an invalid element.')
-        }
-      })
-    }
 
     // --- internal functions ---
     const onDrag = useCallback(
@@ -212,7 +199,7 @@ const Root = forwardRef<SliderMethods, Props>(
     // --- hooks ---
     const { refCallback: dragRefCallback } = useDragWithElement<HTMLDivElement>(
       {
-        baseElementRef: trackElementRef,
+        baseElementRef: trackRef,
         cursor: readonly ? undefined : externalStyles.cursor,
         updateOnPointerDown: true,
         onDrag: onDrag,
@@ -266,6 +253,35 @@ const Root = forwardRef<SliderMethods, Props>(
       wheelRefCallback,
     )
 
+    const context = useMemo(
+      () => ({
+        value,
+        min,
+        max,
+        step,
+        skew,
+        vertical,
+        reverse,
+        disabled,
+        readonly,
+        percent,
+        trackRef,
+        thumbRef,
+      }),
+      [
+        value,
+        min,
+        max,
+        step,
+        skew,
+        vertical,
+        reverse,
+        disabled,
+        readonly,
+        percent,
+      ],
+    )
+
     useImperativeHandle(forwardedRef, () => {
       return {
         focus() {
@@ -278,16 +294,7 @@ const Root = forwardRef<SliderMethods, Props>(
     }, [])
 
     return (
-      <SliderProvider
-        min={min}
-        max={max}
-        step={step}
-        skew={skew}
-        vertical={vertical}
-        reverse={reverse}
-        disabled={disabled}
-        readonly={readonly}
-      >
+      <SliderProvider value={context}>
         <div
           className={clsx('tremolo-slider', className)}
           ref={rootRefCallback}
@@ -299,10 +306,8 @@ const Root = forwardRef<SliderMethods, Props>(
           aria-orientation={vertical ? 'vertical' : 'horizontal'}
           aria-disabled={disabled}
           aria-readonly={readonly}
-          style={{
-            margin: `calc(${styleHelper(thumbProps?.size ?? 22)} / 2)`, // half thumb size
-            ...style,
-          }}
+          data-vertical={vertical}
+          style={style}
           onPointerDown={onPointerDown}
           onKeyDown={(event) => {
             handleKeyDown(event)
@@ -318,25 +323,7 @@ const Root = forwardRef<SliderMethods, Props>(
           }}
           {...props}
         >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: vertical ? 'row' : 'column',
-              width: !vertical ? '100%' : undefined,
-              height: vertical ? '100%' : undefined,
-            }}
-          >
-            <div className="tremolo-slider-track-wrapper" ref={trackElementRef}>
-              <Track
-                __percent={percent}
-                __thumb={
-                  <Thumb ref={thumbRef} __percent={percent} {...thumbProps} />
-                }
-                {...trackProps}
-              />
-            </div>
-            {scaleComponent}
-          </div>
+          {children}
         </div>
       </SliderProvider>
     )

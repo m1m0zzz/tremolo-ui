@@ -107,7 +107,13 @@ export const WithAnotherComponents: Story = {
             min={args.min ?? Number.MIN_SAFE_INTEGER}
             max={args.max ?? Number.MAX_SAFE_INTEGER}
             onChange={(v) => setValue(v)}
-          />
+          >
+            <Knob.SVGRoot>
+              <Knob.InactiveLine />
+              <Knob.ActiveLine />
+              <Knob.Thumb />
+            </Knob.SVGRoot>
+          </Knob.Root>
           {value}
         </div>
         <NumberInput.Root {...args} value={value} onBlur={(v) => setValue(v)}>

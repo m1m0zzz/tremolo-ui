@@ -1,7 +1,9 @@
-import { createContext, useContext, useEffect, useRef } from 'react'
-import { createStore, useStore } from 'zustand'
+import { createContext, RefObject, useContext } from 'react'
 
-type State = {
+import type { SliderThumbMethods } from './Thumb'
+
+export type SliderContextValue = {
+  value: number
   min: number
   max: number
   step: number
@@ -10,55 +12,35 @@ type State = {
   reverse: boolean
   disabled: boolean
   readonly: boolean
+
+  /**
+   * Position of the thumb, 0-100, already accounting for the display direction
+   * implied by `vertical` and `reverse`.
+   */
+  percent: number
+
+  /** `Track` registers its element here; `Root` normalizes the pointer against it. */
+  trackRef: RefObject<HTMLDivElement | null>
+  /** `Thumb` registers itself here; `Root` focuses it when a drag starts. */
+  thumbRef: RefObject<SliderThumbMethods | null>
 }
 
-type SliderStore = ReturnType<typeof createSliderStore>
+const SliderContext = createContext<SliderContextValue | null>(null)
 
-const createSliderStore = (initProps?: Partial<State>) => {
-  const DEFAULT_PROPS: State = {
-    min: 0,
-    max: 0,
-    step: 0,
-    skew: 0,
-    vertical: false,
-    reverse: false,
-    disabled: false,
-    readonly: false,
-  }
+export const SliderProvider = SliderContext.Provider
 
-  return createStore<State>()(() => ({
-    ...DEFAULT_PROPS,
-    ...initProps,
-  }))
-}
-
-const SliderContext = createContext<SliderStore | null>(null)
-
-type SliderProviderProps = React.PropsWithChildren<Partial<State>>
-
-export function SliderProvider({ children, ...props }: SliderProviderProps) {
-  const storeRef = useRef<SliderStore>(null)
-  if (!storeRef.current) {
-    storeRef.current = createSliderStore(props)
-  }
-
-  useEffect(() => {
-    if (storeRef.current) {
-      storeRef.current.setState(props)
-    } else {
-      storeRef.current = createSliderStore(props)
-    }
-  }, [props])
-
-  return (
-    <SliderContext.Provider value={storeRef.current}>
-      {children}
-    </SliderContext.Provider>
-  )
-}
-
-export function useSliderContext<T>(selector: (state: State) => T): T {
-  const store = useContext(SliderContext)
-  if (!store) throw new Error('Missing SliderContext.Provider in the tree')
-  return useStore(store, selector)
+/**
+ * Everything here is derived during render, so there is no state to keep in
+ * sync: `value` comes from the props of `Root` and the rest follows from it.
+ */
+export function useSliderContext(): SliderContextValue
+export function useSliderContext<T>(
+  selector: (state: SliderContextValue) => T,
+): T
+export function useSliderContext<T>(
+  selector?: (state: SliderContextValue) => T,
+) {
+  const context = useContext(SliderContext)
+  if (!context) throw new Error('Missing SliderContext.Provider in the tree')
+  return selector ? selector(context) : context
 }

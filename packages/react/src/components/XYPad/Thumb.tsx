@@ -2,30 +2,26 @@ import clsx from 'clsx'
 import {
   ComponentPropsWithoutRef,
   CSSProperties,
-  forwardRef,
   ReactNode,
+  Ref,
   useImperativeHandle,
   useRef,
 } from 'react'
 
-export interface XYPadThumbProps {
-  size?: number | string
-  width?: number | string
-  height?: number | string
+import { useXYPadContext } from './context'
 
+export interface XYPadThumbProps {
+  /**
+   * Size comes from the `--thumb-size` CSS variable on `XYPad.Root`, so that
+   * the root can reserve the matching amount of space around the area.
+   */
   color?: string
 
   wrapperClassName?: string
   wrapperStyle?: CSSProperties
 
   children?: ReactNode
-
-  /** @internal */
-  __disabled?: boolean
-  /** @internal */
-  __readonly?: boolean
-  /** @internal */
-  __css?: CSSProperties
+  ref?: Ref<XYPadThumbMethods>
 }
 
 export interface XYPadThumbMethods {
@@ -36,67 +32,59 @@ export interface XYPadThumbMethods {
 type Props = XYPadThumbProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadThumbProps>
 
-export const Thumb = forwardRef<XYPadThumbMethods, Props>(
-  (
-    {
-      size,
-      width = 22,
-      height = 22,
-      color,
-      children,
-      wrapperClassName,
-      wrapperStyle,
-      className,
-      style,
-      __disabled,
-      __readonly,
-      __css,
-      ...props
-    }: Props,
-    ref,
-  ) => {
-    const wrapperRef = useRef<HTMLDivElement>(null)
+export function Thumb({
+  color,
+  children,
+  wrapperClassName,
+  wrapperStyle,
+  className,
+  style,
+  ref,
+  ...props
+}: Props) {
+  const elementRef = useRef<HTMLDivElement>(null)
+  const { disabled, readonly, percent, thumbRef } = useXYPadContext()
 
-    useImperativeHandle(ref, () => {
-      return {
-        focus() {
-          wrapperRef.current?.focus()
-        },
-        blur() {
-          wrapperRef.current?.blur()
-        },
-      }
-    }, [])
+  const methods = () => ({
+    focus() {
+      elementRef.current?.focus()
+    },
+    blur() {
+      elementRef.current?.blur()
+    },
+  })
 
-    return (
-      <div
-        className={clsx('tremolo-xy-pad-thumb-wrapper', wrapperClassName)}
-        style={{
-          ...__css,
-          ...wrapperStyle,
-        }}
-        {...props}
-      >
-        {children ? (
-          children
-        ) : (
-          // default thumb
-          <div
-            ref={wrapperRef}
-            className={clsx('tremolo-xy-pad-thumb', className)}
-            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-            tabIndex={0}
-            aria-disabled={__disabled}
-            aria-readonly={__readonly}
-            style={{
-              ...{ '--color': color },
-              width: size ?? width,
-              height: size ?? height,
-              ...style,
-            }}
-          ></div>
-        )}
-      </div>
-    )
-  },
-)
+  useImperativeHandle(ref, methods, [])
+  // Root focuses the thumb when a drag starts, wherever the user placed it.
+  useImperativeHandle(thumbRef, methods, [])
+
+  return (
+    <div
+      className={clsx('tremolo-xy-pad-thumb-wrapper', wrapperClassName)}
+      style={{
+        left: `${percent[0]}%`,
+        top: `${percent[1]}%`,
+        ...wrapperStyle,
+      }}
+      {...props}
+    >
+      {children ? (
+        children
+      ) : (
+        // default thumb
+        <div
+          ref={elementRef}
+          className={clsx('tremolo-xy-pad-thumb', className)}
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+          tabIndex={0}
+          aria-disabled={disabled}
+          aria-readonly={readonly}
+          style={{
+            ...{ '--color': color },
+            ...style,
+          }}
+        ></div>
+      )}
+    </div>
+  )
+}

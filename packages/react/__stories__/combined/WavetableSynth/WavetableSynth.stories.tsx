@@ -39,7 +39,7 @@ import './index.css'
 import styles from './WavetableSynth.module.css'
 
 export default {
-  title: 'combined/WavetableSynth',
+  title: 'combined/WavetableSynth/WavetableSynth',
   tags: ['!autodocs'],
 }
 
