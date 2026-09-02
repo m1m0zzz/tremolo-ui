@@ -10,6 +10,7 @@ import {
   useRef,
 } from 'react'
 
+import type { AxisOptions } from '@tremolo-ui/dom'
 import {
   clamp,
   normalizeValue,
@@ -19,7 +20,7 @@ import {
   InputEventOption,
 } from '@tremolo-ui/functions'
 
-import { useDragWithElement } from '../../hooks/useDragWithElement'
+import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 import { useComposedRefs } from '../_util/composeRefs'
@@ -172,27 +173,6 @@ export const Root = forwardRef<XYPadMethods, Props>(
       [value],
     )
 
-    const onDrag = useCallback(
-      (nx: number, ny: number) => {
-        if (!onChange || readonly) return
-        const next = [nx, ny].map((n, i) => {
-          const raw = rawValue(reverse[i] ? 1 - n : n, min[i], max[i], skew[i])
-          return clamp(stepValue(raw, step[i]), min[i], max[i])
-        }) as XY<number>
-        onChange(next)
-      },
-      [onChange, readonly, min, max, skew, step, reverse],
-    )
-
-    const valueAt = useCallback(
-      (nx: number, ny: number): XY<number> =>
-        [nx, ny].map((n, i) => {
-          const raw = rawValue(reverse[i] ? 1 - n : n, min[i], max[i], skew[i])
-          return clamp(stepValue(raw, step[i]), min[i], max[i])
-        }) as XY<number>,
-      [min, max, skew, step, reverse],
-    )
-
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (!onChange || readonly || !keyboard) return
@@ -210,25 +190,39 @@ export const Root = forwardRef<XYPadMethods, Props>(
     )
 
     // --- hooks ---
-    const { refCallback: dragRefCallback } = useDragWithElement<HTMLDivElement>(
-      {
-        baseElementRef: areaRef,
-        updateOnPointerDown: true,
-        cursor: readonly ? undefined : externalStyles.cursor,
-        onDrag: onDrag,
-        onDragStart: (nx, ny) => {
-          if (readonly) return
-          if (externalStyles.userSelectNone) addUserSelectNone()
-          thumbRef.current?.focus()
-          onDragStart?.(valueAt(nx, ny))
-        },
-        onDragEnd: (nx, ny) => {
-          if (readonly) return
-          if (externalStyles.userSelectNone) removeUserSelectNone()
-          onDragEnd?.(valueAt(nx, ny))
-        },
-      },
+    const axis = useMemo(
+      (): XY<AxisOptions> =>
+        [0, 1].map((i) => ({
+          min: min[i],
+          max: max[i],
+          step: step[i],
+          skew: skew[i],
+          reverse: reverse[i],
+        })) as XY<AxisOptions>,
+      [min, max, step, skew, reverse],
     )
+
+    const { refCallback: dragRefCallback } = useDragValue<HTMLDivElement>({
+      axis,
+      baseElementRef: areaRef,
+      updateOnPointerDown: true,
+      cursor: readonly ? undefined : externalStyles.cursor,
+      onChange: (v) => {
+        if (readonly) return
+        onChange?.(v)
+      },
+      onDragStart: (v) => {
+        if (readonly) return
+        if (externalStyles.userSelectNone) addUserSelectNone()
+        thumbRef.current?.focus()
+        onDragStart?.(v)
+      },
+      onDragEnd: (v) => {
+        if (readonly) return
+        if (externalStyles.userSelectNone) removeUserSelectNone()
+        onDragEnd?.(v)
+      },
+    })
 
     const wheelRefCallback = useWheel<HTMLDivElement>((event) => {
       if (!onChange || readonly || !wheel) return

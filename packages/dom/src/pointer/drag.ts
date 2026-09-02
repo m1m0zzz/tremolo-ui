@@ -36,6 +36,11 @@ export type DragOptions = {
 }
 
 export interface DragInstance {
+  /**
+   * Replace the given options. Lets a wrapper feed fresh handlers in without
+   * tearing down the listeners, which would abort a drag in progress.
+   */
+  update: (options: DragOptions) => void
   destroy: () => void
 }
 
@@ -70,8 +75,9 @@ type CaptureTarget = {
  */
 export function createDrag(
   element: Element,
-  { threshold = 0, cursor, onDragStart, onDrag, onDragEnd }: DragOptions = {},
+  options: DragOptions = {},
 ): DragInstance {
+  let opts = options
   const capture = element as CaptureTarget
   const style = (element as Partial<HTMLElement>).style
 
@@ -126,9 +132,9 @@ export function createDrag(
     startX = lastX = pointerEvent.screenX
     startY = lastY = pointerEvent.screenY
 
-    if (cursor && style) {
+    if (opts.cursor && style) {
       previousCursor = style.cursor
-      style.cursor = cursor
+      style.cursor = opts.cursor
     }
 
     capture.setPointerCapture?.(pointerId)
@@ -144,7 +150,7 @@ export function createDrag(
     moveTarget.addEventListener('pointercancel', handlePointerUp)
     globalThis.document?.addEventListener('selectstart', preventSelectStart)
 
-    onDragStart?.(state(pointerEvent, 0, 0))
+    opts.onDragStart?.(state(pointerEvent, 0, 0))
   }
 
   function handlePointerMove(event: Event) {
@@ -157,12 +163,13 @@ export function createDrag(
     // Movement below the threshold accumulates until it crosses it. Dropping it
     // instead would swallow a slow drag entirely: pointer coordinates are
     // fractional, so each event can move less than a pixel and never report.
+    const threshold = opts.threshold ?? 0
     if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return
 
     lastX = pointerEvent.screenX
     lastY = pointerEvent.screenY
 
-    onDrag?.(state(pointerEvent, deltaX, deltaY))
+    opts.onDrag?.(state(pointerEvent, deltaX, deltaY))
   }
 
   function handlePointerUp(event: Event) {
@@ -174,7 +181,7 @@ export function createDrag(
     const finalState = state(pointerEvent, deltaX, deltaY)
 
     stopTracking()
-    onDragEnd?.(finalState)
+    opts.onDragEnd?.(finalState)
   }
 
   function stopTracking() {
@@ -184,8 +191,8 @@ export function createDrag(
     moveTarget?.removeEventListener('pointerup', handlePointerUp)
     moveTarget?.removeEventListener('pointercancel', handlePointerUp)
     globalThis.document?.removeEventListener('selectstart', preventSelectStart)
-    if (cursor && style) {
-      style.cursor = previousCursor ?? ''
+    if (previousCursor !== undefined && style) {
+      style.cursor = previousCursor
       previousCursor = undefined
     }
     moveTarget = null
@@ -195,6 +202,9 @@ export function createDrag(
   element.addEventListener('pointerdown', handlePointerDown)
 
   return {
+    update: (next) => {
+      opts = { ...opts, ...next }
+    },
     destroy: () => {
       stopTracking()
       element.removeEventListener('pointerdown', handlePointerDown)

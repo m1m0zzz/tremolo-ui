@@ -67,9 +67,9 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 - [ ] **`@tremolo-ui/dom` のドキュメントを追加する。** 現在 typedoc の対象は `functions` と `react` のみで（`site/docusaurus.config.ts` の `typedocPlugins()`）、dom は API リファレンスにすら載っていない
 - [ ] **CSS のデモを公開する形に作り替える。** Radix UI / Base UI と同じく、パッケージはスタイルを配らず、ドキュメント上でデモの CSS をコピーできるようにする（core-extraction-plan.md 4.5.1）
-- [ ] **hooks のドキュメントを充実させる。** 現在 `site/docs/hooks/` には `web-midi-api` しかない。`useDrag` / `useWheel` / `useDragWithElement` は typedoc の自動生成のみ
+- [ ] **hooks のドキュメントを充実させる。** 現在 `site/docs/hooks/` には `web-midi-api` しかない。`useDrag` / `useWheel` / `useDragValue` は typedoc の自動生成のみ
 - [ ] **Vue / Svelte を足したときのドキュメント構成を決める。** 現在の `site/docs/components/<Name>/index.mdx` は React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）。フレームワークごとにタブを分けるのか、サイト自体を分けるのか
-- [ ] **移行ガイドを書く。** 0.x の間に入れた破壊的変更（`useDrag` / `useDragWithElement` の戻り値変更、`DragObserver` / `WheelObserver` の削除、CSS の配布方法変更）をまとめる
+- [ ] **移行ガイドを書く。** 0.x の間に入れた破壊的変更（`useDrag` の戻り値変更、`useDragWithElement` の `useDragValue` への置き換え、`DragObserver` / `WheelObserver` の削除、CSS の配布方法変更）をまとめる
 - [ ] `site/docs/support/CHANGELOG.md` は手書きだが、changesets 移行により各パッケージの `CHANGELOG.md` が自動生成されるようになった。二重管理をやめる
 - [ ] 1.0 時点で `README.md` の「*tremolo-ui is now WIP*」と「An unstable version (0.x) has been released.」を更新する
 

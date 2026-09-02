@@ -7,9 +7,9 @@ import {
   useImperativeHandle,
   useMemo,
   useRef,
-  useState,
 } from 'react'
 
+import type { AxisOptions, XY } from '@tremolo-ui/dom'
 import {
   clamp,
   InputEventOption,
@@ -18,7 +18,7 @@ import {
   stepValue,
 } from '@tremolo-ui/functions'
 
-import { useDrag } from '../../hooks/useDrag'
+import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 import { useComposedRefs } from '../_util/composeRefs'
@@ -144,23 +144,11 @@ const Root = forwardRef<KnobMethods, Props>(
     }: Props,
     forwardedRef,
   ) => {
-    const [dragging, setDragging] = useState(false)
-    const valueRef = useRef(0)
     const elmRef = useRef<HTMLElement | SVGElement>(null)
 
     const externalStyles = { ...defaultExternalStyles, ..._externalStyles }
 
     // --- internal functions ---
-    const onDrag = useCallback(
-      (_x: number, y: number) => {
-        if (!onChange || readonly) return
-        const v = rawValue(valueRef.current - y / 100, min, max, skew)
-        const clamped = clamp(stepValue(v, step), min, max)
-        onChange(clamped)
-      },
-      [max, min, onChange, readonly, skew, step],
-    )
-
     const updateValueByEvent = useCallback(
       (eventType: InputEventOption[0], x: number) => {
         let newValue
@@ -190,16 +178,33 @@ const Root = forwardRef<KnobMethods, Props>(
     )
 
     // --- hooks ---
-    const dragRefCallback = useDrag<HTMLElement | SVGElement>({
+    // The knob has no travel of its own: the value moves away from where it
+    // stood when the drag started, 100px of movement spanning the whole range.
+    // Only the vertical axis carries a value, reversed so that dragging up
+    // raises it.
+    const axis = useMemo(
+      (): XY<AxisOptions> => [
+        { min, max, step, skew },
+        { min, max, step, skew, reverse: true },
+      ],
+      [min, max, step, skew],
+    )
+
+    const { refCallback: dragRefCallback, dragging } = useDragValue<
+      HTMLElement | SVGElement
+    >({
+      axis,
+      getValue: () => [value, value],
+      threshold: 1,
       cursor: readonly ? undefined : externalStyles.cursor,
-      onDrag: onDrag,
+      onChange: (v) => {
+        if (readonly) return
+        onChange?.(v[1])
+      },
       onDragStart: () => {
-        setDragging(true)
-        valueRef.current = normalizeValue(value, min, max, skew)
         if (externalStyles.userSelectNone) addUserSelectNone()
       },
       onDragEnd: () => {
-        setDragging(false)
         if (externalStyles.userSelectNone) removeUserSelectNone()
       },
     })

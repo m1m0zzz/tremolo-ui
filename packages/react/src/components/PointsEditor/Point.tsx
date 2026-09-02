@@ -3,7 +3,7 @@ import { ComponentPropsWithoutRef } from 'react'
 
 import { clamp } from '@tremolo-ui/functions'
 
-import { useDragWithElement } from '../../hooks/useDragWithElement'
+import { useDragValue } from '../../hooks/useDragValue'
 import { addUserSelectNone, removeUserSelectNone } from '../_util'
 
 import { usePointsEditorContext } from './context'
@@ -67,26 +67,25 @@ export function Point<T extends PointBaseType>({
   const __disabled = usePointsEditorContext((s) => s.disabled)
   const __readonly = usePointsEditorContext((s) => s.readonly)
 
-  // console.log(value.x, value.y)
-
-  // Piano: 値が更新されることで、イベントハンドラがリセットされる
-
+  // A point is placed by its position within the container, so the value is
+  // the position itself: no scaling, and no rounding to a step.
   const { refCallback: dragRefCallback, dragging } =
-    useDragWithElement<HTMLDivElement>({
+    useDragValue<HTMLDivElement>({
+      axis: { min: 0, max: 1 },
       baseElementRef: containerElementRef,
       cursor: readonly ? undefined : externalStyles.cursor,
-      onDrag: (x, y) => {
+      onChange: ([x, y]) => {
         if (readonly) return
 
         onChange?.(clampPoint({ x, y }, min, max))
       },
-      onDragStart: (x, y) => {
+      onDragStart: ([x, y]) => {
         if (readonly) return
         if (externalStyles.userSelectNone) addUserSelectNone()
 
         onDragStart?.(clampPoint({ x, y }, min, max))
       },
-      onDragEnd: (x, y) => {
+      onDragEnd: ([x, y]) => {
         if (readonly) return
         if (externalStyles.userSelectNone) removeUserSelectNone()
 

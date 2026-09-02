@@ -67,7 +67,11 @@ npm run build:docs
 
 ### インタラクション用 hooks
 
-ポインタ / ホイール / MIDI の実体は `@tremolo-ui/dom`（`createDrag` / `createWheel` / `createMIDIAccess` など）にあり、`packages/react/src/hooks/` の hook はそれを React に橋渡しするだけ。`useDrag` / `useWheel` は ref コールバックを 1 つ返し、`useDragWithElement` は `{ refCallback, dragging }` を返す。
+ポインタ / ホイール / MIDI の実体は `@tremolo-ui/dom`（`createDrag` / `createDragValue` / `createWheel` / `createMIDIAccess` など）にあり、`packages/react/src/hooks/` の hook はそれを React に橋渡しするだけ。`useDrag` / `useWheel` は ref コールバックを 1 つ返し、`useDragValue` は `{ refCallback, dragging }` を返す。
+
+Slider / Knob / XYPad / PointsEditor のドラッグは全て `useDragValue`（＝ `createDragValue`）を通る。mapping が「ポインタの動き → 各軸 0-1 の位置」を、`axis`（`min` `max` `step` `skew` `reverse`）が「位置 → 値」を担当する。`elementMapping` は要素の rect に対する正規化（値＝指した位置）、`relativeMapping` はドラッグ開始時の値からの相対移動。値はコアではなくラッパーが持ち、コアは `getValue()` で読む。
+
+`createDrag` / `createDragValue` は `update()` を持つ。React 側は node ごとにインスタンスを 1 つ作り、毎レンダー `update()` で props を流し込む。設定を effect の依存に入れるとドラッグ中に破棄・再生成されてしまうため。
 
 **ドラッグ系 hook は要素を state で保持し、生成・破棄を `useEffect` で行う。** ref コールバックの中でインスタンスを作ると、呼び出し側がインライン ref を書いた場合に再レンダーのたびに ref が付け直され（`ref(null)` → `ref(node)`）、ドラッグが中断される。
 
