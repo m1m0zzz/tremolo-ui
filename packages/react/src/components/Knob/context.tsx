@@ -1,33 +1,32 @@
-import {
-  createContext,
-  PropsWithChildren,
-  useContext,
-  useEffect,
-  useRef,
-} from 'react'
-import { createStore, useStore } from 'zustand'
+import { createContext, useContext } from 'react'
 
 import { normalizeValue, radian } from '@tremolo-ui/functions'
 
 export const viewBoxSize = 100
 export const center = viewBoxSize / 2
 
-type State = {
+export type KnobConfig = {
   value: number
   min: number
   max: number
   step: number
-  skew: number // | SkewFunction // TODO
+  skew: number
   startValue: number
+  /** angle range [degree] */
   angleRange: number
 }
 
-type DrawingState = {
-  p: number // normalized value
-  r1: number // ロータリー開始位置
-  r2: number // activeLineの開始位置
-  r3: number // activeLineの終了位置
-  r4: number // ロータリー終了位置
+export type KnobContextValue = KnobConfig & {
+  /** normalized value */
+  p: number
+  /** ロータリー開始位置 */
+  r1: number
+  /** activeLine の開始位置 */
+  r2: number
+  /** activeLine の終了位置 */
+  r3: number
+  /** ロータリー終了位置 */
+  r4: number
 }
 
 /**
@@ -52,14 +51,15 @@ export function arcRadius(strokeWidth: number | string | undefined) {
   return Number.isFinite(width) ? center - width / 2 : center
 }
 
-function calcDrawingState({
+/** 設定から描画に必要な角度を導出する。レンダー中に呼ぶ。 */
+export function calcAngles({
   value,
   min,
   max,
   skew,
   startValue,
   angleRange,
-}: State) {
+}: KnobConfig) {
   const p = normalizeValue(value, min, max, skew)
   const s = normalizeValue(startValue, min, max, skew)
 
@@ -71,42 +71,18 @@ function calcDrawingState({
   return { p, r1, r2, r3, r4 }
 }
 
-type KnobStore = ReturnType<typeof createKnobStore>
+const KnobContext = createContext<KnobContextValue | null>(null)
 
-const createKnobStore = (initProps: State) => {
-  return createStore<State & DrawingState>()(() => ({
-    ...initProps,
-    ...calcDrawingState(initProps),
-  }))
-}
+export const KnobProvider = KnobContext.Provider
 
-const KnobContext = createContext<KnobStore | null>(null)
-
-export function KnobProvider({ children, ...props }: PropsWithChildren<State>) {
-  const storeRef = useRef<KnobStore>(null)
-  if (!storeRef.current) {
-    storeRef.current = createKnobStore(props)
-  }
-
-  useEffect(() => {
-    if (storeRef.current) {
-      storeRef.current.setState({ ...props, ...calcDrawingState(props) })
-    } else {
-      storeRef.current = createKnobStore(props)
-    }
-  }, [props])
-
-  return (
-    <KnobContext.Provider value={storeRef.current}>
-      {children}
-    </KnobContext.Provider>
-  )
-}
-
-export function useKnobContext<T>(
-  selector: (state: State & DrawingState) => T,
-): T {
-  const store = useContext(KnobContext)
-  if (!store) throw new Error('Missing KnobContext.Provider in the tree')
-  return useStore(store, selector)
+/**
+ * Everything here is derived during render, so there is no state to keep in
+ * sync: `value` comes from the props of `Root` and the rest follows from it.
+ */
+export function useKnobContext(): KnobContextValue
+export function useKnobContext<T>(selector: (state: KnobContextValue) => T): T
+export function useKnobContext<T>(selector?: (state: KnobContextValue) => T) {
+  const context = useContext(KnobContext)
+  if (!context) throw new Error('Missing KnobContext.Provider in the tree')
+  return selector ? selector(context) : context
 }

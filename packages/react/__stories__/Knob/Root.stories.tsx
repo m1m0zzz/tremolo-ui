@@ -44,7 +44,13 @@ export const Basic: Story = {
 
     return (
       <>
-        <Knob.Root {...args} value={value} onChange={(v) => setValue(v)} />
+        <Knob.Root {...args} value={value} onChange={(v) => setValue(v)}>
+          <Knob.SVGRoot>
+            <Knob.InactiveLine />
+            <Knob.ActiveLine />
+            <Knob.Thumb />
+          </Knob.SVGRoot>
+        </Knob.Root>
         <p>value: {value}</p>
       </>
     )
@@ -87,7 +93,13 @@ export const Logarithmic: Story = {
         <div style={{ display: 'flex', justifyContent: 'center', gap: 32 }}>
           <div style={container}>
             <p>liner</p>
-            <Knob.Root {...args} value={value} onChange={(v) => setValue(v)} />
+            <Knob.Root {...args} value={value} onChange={(v) => setValue(v)}>
+              <Knob.SVGRoot>
+                <Knob.InactiveLine />
+                <Knob.ActiveLine />
+                <Knob.Thumb />
+              </Knob.SVGRoot>
+            </Knob.Root>
             <p>freq. {fmt(value)}</p>
           </div>
           <div style={container}>
@@ -102,7 +114,13 @@ export const Logarithmic: Story = {
               )}
               step={0.1}
               onChange={(v) => setValue2(v)}
-            />
+            >
+              <Knob.SVGRoot>
+                <Knob.InactiveLine />
+                <Knob.ActiveLine />
+                <Knob.Thumb />
+              </Knob.SVGRoot>
+            </Knob.Root>
             <p>freq. {fmt(value2)}</p>
           </div>
         </div>

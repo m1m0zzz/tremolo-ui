@@ -1,8 +1,8 @@
 import clsx from 'clsx'
 import {
   CSSProperties,
-  forwardRef,
   ReactNode,
+  Ref,
   useImperativeHandle,
   useRef,
 } from 'react'
@@ -19,9 +19,7 @@ export interface SliderThumbProps {
   className?: string
   style?: CSSProperties
   children?: ReactNode
-
-  /** @internal */
-  __percent?: number
+  ref?: Ref<SliderThumbMethods>
 }
 
 export interface SliderThumbMethods {
@@ -31,64 +29,61 @@ export interface SliderThumbMethods {
 
 export const defaultThumbSize = 22
 
-export const Thumb = forwardRef<SliderThumbMethods, SliderThumbProps>(
-  (
-    {
-      size,
-      width = defaultThumbSize,
-      height = defaultThumbSize,
-      color,
-      children,
-      className,
-      style,
-      __percent,
-    }: SliderThumbProps,
-    ref,
-  ) => {
-    const wrapperRef = useRef<HTMLDivElement>(null)
-    const vertical = useSliderContext((s) => s.vertical)
-    const disabled = useSliderContext((s) => s.disabled)
-    const readonly = useSliderContext((s) => s.readonly)
+export function Thumb({
+  size,
+  width,
+  height,
+  color,
+  children,
+  className,
+  style,
+  ref,
+}: SliderThumbProps) {
+  const elementRef = useRef<HTMLDivElement>(null)
+  const { vertical, disabled, readonly, percent, thumbRef } = useSliderContext()
 
-    useImperativeHandle(ref, () => {
-      return {
-        focus() {
-          wrapperRef.current?.focus()
-        },
-        blur() {
-          wrapperRef.current?.blur()
-        },
-      }
-    }, [])
+  const methods = () => ({
+    focus() {
+      elementRef.current?.focus()
+    },
+    blur() {
+      elementRef.current?.blur()
+    },
+  })
 
-    return (
-      <div
-        className="tremolo-slider-thumb-wrapper"
-        style={{
-          top: vertical ? `${__percent}%` : '50%',
-          left: !vertical ? `${__percent}%` : '50%',
-        }}
-      >
-        {children ? (
-          children
-        ) : (
-          // default slider thumb
-          <div
-            ref={wrapperRef}
-            className={clsx('tremolo-slider-thumb', className)}
-            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-            tabIndex={0}
-            aria-disabled={disabled}
-            aria-readonly={readonly}
-            style={{
-              ...{ '--color': color },
-              width: size ?? width,
-              height: size ?? height,
-              ...style,
-            }}
-          ></div>
-        )}
-      </div>
-    )
-  },
-)
+  useImperativeHandle(ref, methods, [])
+  // Root focuses the thumb when a drag starts, wherever the user placed it.
+
+  useImperativeHandle(thumbRef, methods, [])
+
+  return (
+    <div
+      className="tremolo-slider-thumb-wrapper"
+      style={{
+        top: vertical ? `${percent}%` : '50%',
+        left: !vertical ? `${percent}%` : '50%',
+      }}
+    >
+      {children ? (
+        children
+      ) : (
+        // default slider thumb
+        <div
+          ref={elementRef}
+          className={clsx('tremolo-slider-thumb', className)}
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+          tabIndex={0}
+          aria-disabled={disabled}
+          aria-readonly={readonly}
+          style={{
+            ...{ '--color': color },
+            // Falls back to --thumb-size from the CSS
+            width: size ?? width,
+            height: size ?? height,
+            ...style,
+          }}
+        ></div>
+      )}
+    </div>
+  )
+}

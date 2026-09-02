@@ -1,8 +1,18 @@
 .tremolo-slider {
-  display: inline-block;
+  /* Half the thumb size. The thumb overhangs the ends of the track, so the
+     slider reserves room for it. Override this when using a different size. */
+  --thumb-size: 22px;
+
+  display: inline-flex;
+  flex-direction: column;
+  margin: calc(var(--thumb-size) / 2);
   cursor: pointer;
   outline: 0;
   -webkit-tap-highlight-color: transparent;
+
+  &[data-vertical='true'] {
+    flex-direction: row;
+  }
 
   &[aria-readonly='true'] {
     cursor: not-allowed;
@@ -17,6 +27,9 @@
 
 .tremolo-slider-thumb {
   --color: oklch(59.5% 0.17548 266.373);
+
+  width: var(--thumb-size);
+  height: var(--thumb-size);
 
   background: var(--color);
   border-radius: 50%;

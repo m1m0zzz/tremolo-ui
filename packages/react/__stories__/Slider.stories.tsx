@@ -49,7 +49,11 @@ export const Basic: Story = {
           onChange={(v) => setValue(v)}
           onDragStart={(v) => console.log('drag start: ', v)}
           onDragEnd={(v) => console.log('drag end: ', v)}
-        />
+        >
+          <Slider.Track>
+            <Slider.Thumb />
+          </Slider.Track>
+        </Slider.Root>
         <p>value: {value}</p>
       </>
     )
@@ -91,7 +95,11 @@ export const LogarithmicParameter: Story = {
           value={value}
           skew={skewWithCenterValue(centerValue, args.min, args.max)}
           onChange={(v) => setValue(v)}
-        />
+        >
+          <Slider.Track>
+            <Slider.Thumb />
+          </Slider.Track>
+        </Slider.Root>
         <p>{value <= -100 ? '-inf' : value} dB</p>
       </>
     )
@@ -118,15 +126,16 @@ export const CustomImage = () => {
           style={{
             borderRadius: 0,
           }}
-        ></Slider.Track>
-        <Slider.Thumb>
-          <img
-            src={'/tremolo-slider-thumb.png'}
-            alt="slider thumb"
-            draggable={false}
-            style={{ display: 'block' }} // remove bottom gap
-          />
-        </Slider.Thumb>
+        >
+          <Slider.Thumb>
+            <img
+              src={'/tremolo-slider-thumb.png'}
+              alt="slider thumb"
+              draggable={false}
+              style={{ display: 'block' }} // remove bottom gap
+            />
+          </Slider.Thumb>
+        </Slider.Track>
       </Slider.Root>
       <p>value: {value}</p>
     </>
@@ -174,8 +183,9 @@ export const Flex = () => {
             style={{
               width: '100%',
             }}
-          />
-          <Slider.Thumb color="rgb(87, 71, 233)" />
+          >
+            <Slider.Thumb color="rgb(87, 71, 233)" />
+          </Slider.Track>
         </Slider.Root>
         <div
           style={{
@@ -225,7 +235,9 @@ export const Flex = () => {
             style={{
               height: '100%',
             }}
-          />
+          >
+            <Slider.Thumb />
+          </Slider.Track>
         </Slider.Root>
         <div
           style={{
@@ -258,6 +270,9 @@ export const ConfigScale = () => {
           onChange={(v) => setValue(v)}
           vertical
         >
+          <Slider.Track>
+            <Slider.Thumb />
+          </Slider.Track>
           <Slider.Scale>
             <Slider.ScaleOption value={0} type="mark-number" />
             <Slider.ScaleOption value={25} type="mark" />
@@ -275,6 +290,9 @@ export const ConfigScale = () => {
           max={100}
           onChange={(v) => setValue2(v)}
         >
+          <Slider.Track>
+            <Slider.Thumb />
+          </Slider.Track>
           <Slider.Scale gap={0} style={{ height: 42 }}>
             <Slider.ScaleOption
               value={0}
@@ -308,6 +326,9 @@ export const ConfigScale = () => {
           onChange={(v) => setValue3(v)}
           vertical
         >
+          <Slider.Track>
+            <Slider.Thumb />
+          </Slider.Track>
           <Slider.Scale options={['step', 'number']} />
         </Slider.Root>
         <p>value: {value3}</p>

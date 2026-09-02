@@ -22,7 +22,11 @@ function App() {
         min={0}
         max={100}
         onChange={(v) => setValue(v)}
-      />
+      >
+        <Slider.Track>
+          <Slider.Thumb />
+        </Slider.Track>
+      </Slider.Root>
       <span
         style={{
           width: '2rem',

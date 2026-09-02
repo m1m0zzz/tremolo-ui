@@ -258,7 +258,11 @@ export const NoAnimate = () => {
         }}
       >
         <span>hue</span>
-        <Slider.Root value={value} min={0} max={360} onChange={setValue} />
+        <Slider.Root value={value} min={0} max={360} onChange={setValue}>
+          <Slider.Track>
+            <Slider.Thumb />
+          </Slider.Track>
+        </Slider.Root>
         <span>{value} deg</span>
       </div>
     </section>
