@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { createWheel } from '@tremolo-ui/dom'
 
-import { useCallbackRef } from './useCallbackRef'
+import { useCallbackRef } from './_internal/useCallbackRef'
 
 /**
  * Listen to wheel events on an element.

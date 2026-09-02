@@ -74,7 +74,7 @@ Slider / Knob / XYPad は children をそのまま描画し、`children` は型�
 
 **設定は effect の依存に入れず、インスタンスの `update()` で流し込む。** 依存に入れると、ドラッグ中に `min` / `max` などが変わった時点でインスタンスが破棄されてドラッグが切れる。
 
-`useRefCallbackEvent` は passive でないリスナを張るための内部 hook で、現在は `usePianoDrag` からのみ使われている。`useCallbackRef` / `usePianoDrag` / `useRefCallbackEvent` は内部用（`src/index.ts` から re-export していない）で、それ以外は公開 API。`src/index.ts` に追加したものは公開 API になり、生成される typedoc にも載る。
+内部専用の hook は `src/hooks/_internal/` に置く（`useCallbackRef` / `usePianoDrag` / `useRefCallbackEvent`）。`src/hooks/` 直下にあるものは公開 API で、`src/index.ts` から re-export され、生成される typedoc にも載る。`useRefCallbackEvent` は passive でないリスナを張るためのもので、現在は `usePianoDrag` からのみ使われている。
 
 ### スタイリング
 

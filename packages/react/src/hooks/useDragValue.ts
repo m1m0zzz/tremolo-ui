@@ -10,7 +10,7 @@ import {
   type XYOrSingle,
 } from '@tremolo-ui/dom'
 
-import { useCallbackRef } from './useCallbackRef'
+import { useCallbackRef } from './_internal/useCallbackRef'
 
 export interface UseDragValueOptions {
   /** Scaling of each axis; a single value applies to both. */

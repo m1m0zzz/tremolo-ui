@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-import { useCallbackRef } from './useCallbackRef'
+import { useCallbackRef } from './_internal/useCallbackRef'
 
 type Target = EventTarget | null | (() => EventTarget | null)
 type Options = boolean | AddEventListenerOptions

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { createDrag } from '@tremolo-ui/dom'
 
-import { useCallbackRef } from './useCallbackRef'
+import { useCallbackRef } from './_internal/useCallbackRef'
 
 interface UseDragProps {
   /**
