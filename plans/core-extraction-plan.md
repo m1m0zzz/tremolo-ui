@@ -199,6 +199,43 @@ pointer capture を使うと、pointerdown を受けた要素が以降のイベ�
 コア化により両者は「hook を呼んで ref を要素に渡すだけ」の薄いラッパーになり、`as` prop で要素を選べる以外の価値が無くなったため削除した。リポジトリ内の利用箇所は stories のみで、ドキュメントページも CSS も無かった。stories は `useDrag` / `useWheel` のデモとして書き直してある。
 
 
+### Phase 2.5: Slider / Knob / XYPad の実装統一
+
+Phase 3 の前に、3 つの「範囲付きスカラー」コンポーネントを同じ実装に揃えた。
+
+- [x] children をそのまま描画する形に統一（`Children.forEach` による props 抜き取りを廃止）
+- [x] フォールバックを全廃し `children` を型で必須に（`Knob.SVGRoot` も同様）
+- [x] zustand store を React context に置き換え、設定・値・導出値をレンダー中に計算
+- [x] `XYPad` の軸ごと設定を `[x, y]` タプルに変更（Slider の `min={0}` の自然な拡張）
+- [ ] ブラウザでの目視確認
+
+#### バラバラだった原因
+
+value の置き場所の違いは設計判断ではなく、**children の扱いの違いから機械的に決まっていた**。
+
+| | children | 結果 |
+| --- | --- | --- |
+| Slider / XYPad | 子から props を抜き取り、要素は捨てて自前で再描画 | props で値を渡せる → store は設定のみ |
+| Knob | そのまま描画 | props で渡せない → store に value を入れるしかない |
+
+抜き取り方式は `child.type == Thumb` の一致判定なので、ユーザーが子をラップしたり独自のマークアップに混ぜたりすると例外になっていた。compound component としては Knob 側が正しい形。
+
+#### value を store に持たない理由
+
+`value` は props から来るため、store に入れた時点でコピーになり同期が必要になる。実際、`SliderProvider` / `KnobProvider` はどちらも `useEffect(..., [props])` で毎レンダー `setState` しており、さらに effect は描画後に走るため **値が変わったフレームでは store が古い値を返していた**。レンダー中に導出すればコピーも同期も不要になる。
+
+zustand の利点であるセレクタ購読も、`value` が props である以上 Root が再レンダーすれば子も再レンダーするため、ここでは効果が出ない。サブコンポーネントは Slider で 4 つ、Knob で 3 つ。
+
+#### 60fps の話（訂正）
+
+「コアが value を持てば再レンダーなしに 60fps 追従できる」は、**現在の制御コンポーネント API のままでは成立しない**。`value` が props である限り利用者側が 60fps で `setState` する。この利点を得るには非制御 + 命令的なパス（`defaultValue` + `ref.setValue()`）を別途足す必要があり、値の所有者の議論とは切り離して判断できる。
+
+#### 決めたこと
+
+- `wheel` / `keyboard` の軸ごと指定は廃止（XYPad はホイールを Shift で軸切り替えする 1 つの操作として扱う）
+- つまみ半分の余白は CSS 変数（`--thumb-size`）へ。Root が children からつまみの大きさを知る手段が無くなったため
+- `Knob` の既定サイズも CSS 変数（`--knob-size`、50px）へ。`size` 未指定だと要素が潰れて何も見えない不具合があった
+
 ### Phase 3: `createDragValue`
 
 - [ ] `useDragWithElement`（要素の bounding rect に対する正規化）をコアへ移植

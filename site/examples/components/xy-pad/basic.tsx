@@ -12,21 +12,18 @@ function App() {
   return (
     <div>
       <XYPad.Root
-        x={{
-          value: valueX,
-          min: 0,
-          max: 100,
-        }}
-        y={{
-          value: valueY,
-          min: 0,
-          max: 100,
-        }}
-        onChange={(x, y) => {
+        value={[valueX, valueY]}
+        min={0}
+        max={100}
+        onChange={([x, y]) => {
           setValueX(x)
           setValueY(y)
         }}
-      />
+      >
+        <XYPad.Area>
+          <XYPad.Thumb />
+        </XYPad.Area>
+      </XYPad.Root>
       <p>
         x: {valueX}, y: {valueY}
       </p>

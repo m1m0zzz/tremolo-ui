@@ -67,21 +67,18 @@ export const ControlFocus = () => {
         </Slider.Root>
         <XYPad.Root
           ref={refs.current.xyPad}
-          x={{
-            value: value,
-            min: 0,
-            max: 100,
-          }}
-          y={{
-            value: value2,
-            min: 0,
-            max: 100,
-          }}
-          onChange={(x, y) => {
+          value={[value, value2]}
+          min={0}
+          max={100}
+          onChange={([x, y]) => {
             setValue(x)
             setValue2(y)
           }}
-        />
+        >
+          <XYPad.Area>
+            <XYPad.Thumb />
+          </XYPad.Area>
+        </XYPad.Root>
       </div>
       <div>
         <p>Focus Controller</p>

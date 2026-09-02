@@ -61,7 +61,8 @@ export {
   type XYPadAreaProps,
   type XYPadThumbProps,
   type XYPadThumbMethods,
-  type ValueOptions,
+  type XY,
+  type XYOrSingle,
 } from './components/XYPad'
 
 // hooks
