@@ -93,7 +93,7 @@ describe('createDrag', () => {
     })
   })
 
-  test('movement below the threshold is dropped, not accumulated', () => {
+  test('movement below the threshold accumulates until it crosses it', () => {
     const { element, onDrag } = setup({ threshold: 5 })
 
     element.dispatchEvent(
@@ -108,23 +108,45 @@ describe('createDrag', () => {
     expect(onDrag).not.toHaveBeenCalled()
 
     element.dispatchEvent(
-      pointerEvent('pointermove', { screenX: 20, screenY: 0 }),
+      pointerEvent('pointermove', { screenX: 6, screenY: 0 }),
     )
+    // The 2px and 4px steps were carried over rather than thrown away.
     expect(onDrag).toHaveBeenCalledTimes(1)
-    expect(onDrag.mock.calls[0][0]).toMatchObject({ x: 20, deltaX: 16 })
+    expect(onDrag.mock.calls[0][0]).toMatchObject({ x: 6, deltaX: 6 })
   })
 
-  test('a threshold below 1 is clamped to 1', () => {
-    const { element, onDrag } = setup({ threshold: 0 })
+  // Regression: pointer coordinates are fractional, so a slow drag moves less
+  // than a pixel per event. Discarding those steps swallowed the drag entirely.
+  test('reports a slow drag made of sub-pixel steps', () => {
+    const { element, onDrag } = setup({ threshold: 1 })
+
+    element.dispatchEvent(
+      pointerEvent('pointerdown', { screenX: 0, screenY: 0 }),
+    )
+    for (const screenX of [0.4, 0.8, 1.2, 1.6, 2.0, 2.4]) {
+      element.dispatchEvent(
+        pointerEvent('pointermove', { screenX, screenY: 0 }),
+      )
+    }
+
+    // Each step is 0.4px, so it reports every time the carried over movement
+    // reaches 1px. Before the fix nothing was reported at all.
+    expect(onDrag).toHaveBeenCalledTimes(2)
+    expect(onDrag.mock.calls[0][0]).toMatchObject({ x: 1.2 })
+    expect(onDrag.mock.calls[1][0]).toMatchObject({ x: 2.4 })
+  })
+
+  test('the default threshold reports every move', () => {
+    const { element, onDrag } = setup()
 
     element.dispatchEvent(
       pointerEvent('pointerdown', { screenX: 0, screenY: 0 }),
     )
     element.dispatchEvent(
-      pointerEvent('pointermove', { screenX: 0, screenY: 0 }),
+      pointerEvent('pointermove', { screenX: 0.2, screenY: 0 }),
     )
 
-    expect(onDrag).not.toHaveBeenCalled()
+    expect(onDrag).toHaveBeenCalledTimes(1)
   })
 
   test('onDragEnd fires on pointerup and stops further tracking', () => {

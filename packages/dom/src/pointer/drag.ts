@@ -13,11 +13,13 @@ export type DragState = {
 
 export type DragOptions = {
   /**
-   * Minimum movement in pixels before `onDrag` fires.
-   * Prevents `onDrag` from firing on, for example, a double click.
-   * Values below 1 are clamped to 1.
+   * Minimum movement in pixels before `onDrag` fires. Movement below it is
+   * carried over to the next event rather than discarded, so a slow drag still
+   * reports once it adds up.
    *
-   * @default 1
+   * Prevents `onDrag` from firing on, for example, a double click.
+   *
+   * @default 0
    */
   threshold?: number
 
@@ -68,15 +70,8 @@ type CaptureTarget = {
  */
 export function createDrag(
   element: Element,
-  {
-    threshold: _threshold = 1,
-    cursor,
-    onDragStart,
-    onDrag,
-    onDragEnd,
-  }: DragOptions = {},
+  { threshold = 0, cursor, onDragStart, onDrag, onDragEnd }: DragOptions = {},
 ): DragInstance {
-  const threshold = Math.max(_threshold, 1)
   const capture = element as CaptureTarget
   const style = (element as Partial<HTMLElement>).style
 
@@ -158,11 +153,14 @@ export function createDrag(
 
     const deltaX = pointerEvent.screenX - lastX
     const deltaY = pointerEvent.screenY - lastY
+
+    // Movement below the threshold accumulates until it crosses it. Dropping it
+    // instead would swallow a slow drag entirely: pointer coordinates are
+    // fractional, so each event can move less than a pixel and never report.
+    if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return
+
     lastX = pointerEvent.screenX
     lastY = pointerEvent.screenY
-
-    // Movement below the threshold is dropped rather than accumulated.
-    if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return
 
     onDrag?.(state(pointerEvent, deltaX, deltaY))
   }
