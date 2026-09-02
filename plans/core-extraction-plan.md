@@ -318,6 +318,19 @@ Radix UI / Base UI と同じ方針にする。パッケージはスタイルを�
 
 あわせて `SVGRoot` の props から未使用の `block` / `overflowVisible` を削除した。`block` は destructure されておらず、渡すと不正な属性として `<svg>` に流れる状態だった。
 
+### 4.5.6 サブコンポーネントの配置ミスを検出する
+
+children をそのまま描画する形（Phase 2.5）にしたことで、**サブコンポーネントを間違った階層に置いても型エラーにも実行時エラーにもならず、レイアウトだけが静かに壊れる**ようになった。
+
+実例: `combined/VolumeFader` は `<Slider.Thumb>` が `<Slider.Track>` の兄弟のまま残っており、Thumb の `position: absolute` の基準が最も近い配置済み祖先である body になって崩れていた。ビルドもテストも通っていた。
+
+- [ ] `Slider.Track` が「Track の中にいる」ことを示す context を張り、`Slider.Thumb` がそれを見つけられなければ開発ビルドで警告を出す
+- [ ] `XYPad.Area` / `XYPad.Thumb` も同様
+- [ ] `Knob.SVGRoot` と `ActiveLine` / `InactiveLine` / `Thumb` も同じ関係にあるので対象に含めるか検討する
+- [ ] 本番ビルドでは警告のコードごと落とす（`process.env.NODE_ENV !== 'production'` で囲う）
+
+Radix UI も同種の親子チェックを持っている。合成を自由にした代償なので、セットで入れておくのが望ましい。
+
 ### 4.5.5 Piano のアーキテクチャ再検討 — Phase 4 の一部
 
 Phase 4 の Piano 対応と一体で進める。
