@@ -55,7 +55,7 @@ for (let i = 0; i < frameLength; i++) {
 // }
 
 export default {
-  title: 'combined/WaveSelector',
+  title: 'combined/WavetableSynth/WaveSelector',
   tags: ['!autodocs'],
 }
 

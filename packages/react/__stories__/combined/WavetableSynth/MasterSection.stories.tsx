@@ -19,7 +19,7 @@ import {
 import styles from './MasterSection.module.css'
 
 export default {
-  title: 'combined/MasterSection',
+  title: 'combined/WavetableSynth/MasterSection',
   tags: ['!autodocs'],
 }
 

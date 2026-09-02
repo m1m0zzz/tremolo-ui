@@ -25,7 +25,7 @@ import {
 import styles from './ADSR.module.css'
 
 export default {
-  title: 'combined/ADSR',
+  title: 'combined/WavetableSynth/ADSR',
   tags: ['!autodocs'],
 }
 
