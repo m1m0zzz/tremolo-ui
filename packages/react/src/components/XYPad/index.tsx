@@ -23,6 +23,7 @@ import {
 import { useDragWithElement } from '../../hooks/useDragWithElement'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
+import { useComposedRefs } from '../_util/composeRefs'
 
 import { Area, XYPadAreaProps } from './Area'
 import { Thumb, XYPadThumbMethods, XYPadThumbProps } from './Thumb'
@@ -286,6 +287,14 @@ export const Root = forwardRef<XYPadMethods, Props>(
       }
     })
 
+    // Composed once, so React attaches the refs a single time instead of
+    // detaching and re-attaching on every render.
+    const rootRefCallback = useComposedRefs<HTMLDivElement>(
+      rootRef,
+      dragRefCallback,
+      wheelRefCallback,
+    )
+
     useImperativeHandle(forwardedRef, () => {
       return {
         focus() {
@@ -302,11 +311,7 @@ export const Root = forwardRef<XYPadMethods, Props>(
       // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <div
         className={clsx('tremolo-xy-pad', className)}
-        ref={(node) => {
-          rootRef.current = node
-          wheelRefCallback(node)
-          dragRefCallback(node)
-        }}
+        ref={rootRefCallback}
         tabIndex={-1}
         aria-disabled={disabled}
         aria-readonly={readonly}

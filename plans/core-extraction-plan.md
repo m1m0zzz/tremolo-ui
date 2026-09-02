@@ -261,8 +261,11 @@ Radix UI / Base UI と同じ方針にする。パッケージはスタイルを�
 
 ### 4.5.3 内部ユーティリティの削除
 
-- [x] `_util/composeRefs.tsx` を削除。Observer 系の削除により、利用箇所は `XYPad/index.tsx` の 1 箇所のみになった（`useComposedRefs` は利用ゼロ）。ref コールバックを 1 つにまとめる形へ整理して不要にする
-  - 注意: `composeRefs(...)` は毎レンダー新しい関数を返すため、React が ref を毎回付け直す。ref コールバック内でリソースを確保する実装と組み合わせると、再レンダーのたびに破棄・再生成される（Phase 2 でこの不具合を出した）。hook 側は node を state で保持して回避しているが、整理する際は memo 化された `useComposedRefs` を使うか、ref を 1 つにまとめること
+- [x] ~~`_util/composeRefs.tsx` を削除~~ → **削除せず、Slider / Knob / XYPad の Root で `useComposedRefs` を使う形にした。**
+  - `composeRefs(...)` も、それを置き換えたインライン ref も、毎レンダー新しい関数になるため React が ref を付け直す（`node → null → node`）。ref コールバック内でリソースを確保する実装と組み合わせると再レンダーのたびに破棄・再生成される（Phase 2 でこの不具合を出した）
+  - hook 側は node を state で保持して耐性を持たせてあるが、無駄な付け直しは残る。memo 化された `useComposedRefs` でまとめると付け直し自体が無くなる
+  - `useDrag` / `useWheel` / `useDragWithElement` が返すコールバックは `useState` の setter なので安定しており、`useComposedRefs` の依存として問題ない
+  - 付け直しが起きないことを `__tests__/util/composeRefs.test.tsx` で検証している
 - [x] `_util/type.ts` の `Override` を削除。利用箇所は `Knob/SVGRoot.tsx` の 1 箇所のみ。Observer 系の削除で他は消えた
 
 ### 4.5.4 Knob の描画を修正

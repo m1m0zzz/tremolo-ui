@@ -24,6 +24,7 @@ import {
 import { useDragWithElement } from '../../hooks/useDragWithElement'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
+import { useComposedRefs } from '../_util/composeRefs'
 
 import { SliderProvider } from './context'
 import { Scale } from './Scale'
@@ -258,6 +259,13 @@ const Root = forwardRef<SliderMethods, Props>(
       onChange(updateValueByEvent(wheel[0], x))
     })
 
+    // Composed once, so React attaches the refs a single time instead of
+    // detaching and re-attaching on every render.
+    const rootRefCallback = useComposedRefs<HTMLDivElement>(
+      dragRefCallback,
+      wheelRefCallback,
+    )
+
     useImperativeHandle(forwardedRef, () => {
       return {
         focus() {
@@ -282,10 +290,7 @@ const Root = forwardRef<SliderMethods, Props>(
       >
         <div
           className={clsx('tremolo-slider', className)}
-          ref={(div) => {
-            wheelRefCallback(div)
-            dragRefCallback(div)
-          }}
+          ref={rootRefCallback}
           tabIndex={-1}
           role="slider"
           aria-valuenow={value}

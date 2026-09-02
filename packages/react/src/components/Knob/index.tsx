@@ -19,6 +19,7 @@ import {
 import { useDrag } from '../../hooks/useDrag'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
+import { useComposedRefs } from '../_util/composeRefs'
 
 import { ActiveLine } from './ActiveLine'
 import { KnobProvider } from './context'
@@ -190,6 +191,14 @@ const Root = forwardRef<KnobMethods, Props>(
       onChange(updateValueByEvent(wheel[0], x))
     })
 
+    // Composed once, so React attaches the refs a single time instead of
+    // detaching and re-attaching on every render.
+    const rootRefCallback = useComposedRefs<HTMLElement | SVGElement>(
+      elmRef,
+      dragRefCallback,
+      wheelRefCallback,
+    )
+
     useImperativeHandle(forwardedRef, () => {
       return {
         focus() {
@@ -212,11 +221,7 @@ const Root = forwardRef<KnobMethods, Props>(
         angleRange={angleRange}
       >
         <div
-          ref={(elm) => {
-            elmRef.current = elm
-            wheelRefCallback(elm)
-            dragRefCallback(elm)
-          }}
+          ref={rootRefCallback}
           className={clsx('tremolo-knob', className)}
           tabIndex={0}
           role="slider"
