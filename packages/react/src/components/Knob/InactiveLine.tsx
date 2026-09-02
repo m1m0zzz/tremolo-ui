@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { SVGProps } from 'react'
 
-import { center, useKnobContext } from './context'
+import { arcRadius, pointOnArc, useKnobContext } from './context'
 
 export function InactiveLine({
   stroke = 'currentColor',
@@ -17,21 +17,19 @@ export function InactiveLine({
   const r2 = useKnobContext((s) => s.r2)
   const r3 = useKnobContext((s) => s.r3)
   const r4 = useKnobContext((s) => s.r4)
-  const x1 = useKnobContext((s) => s.x1)
-  const y1 = useKnobContext((s) => s.y1)
-  const x2 = useKnobContext((s) => s.x2)
-  const y2 = useKnobContext((s) => s.y2)
-  const x3 = useKnobContext((s) => s.x3)
-  const y3 = useKnobContext((s) => s.y3)
-  const x4 = useKnobContext((s) => s.x4)
-  const y4 = useKnobContext((s) => s.y4)
+
+  const radius = arcRadius(strokeWidth)
+  const p1 = pointOnArc(r1, radius)
+  const p2 = pointOnArc(r2, radius)
+  const p3 = pointOnArc(r3, radius)
+  const p4 = pointOnArc(r4, radius)
 
   return (
     <>
       {startValue > min && (
         <path
           className={clsx('tremolo-knob-inactive-line', className)}
-          d={`M ${x1} ${y1} A ${center} ${center} -135 ${r2 - r1 > 180 ? 1 : 0} 1 ${x2} ${y2}`}
+          d={`M ${p1.x} ${p1.y} A ${radius} ${radius} -135 ${r2 - r1 > 180 ? 1 : 0} 1 ${p2.x} ${p2.y}`}
           fill="none"
           stroke={stroke}
           strokeWidth={strokeWidth}
@@ -41,7 +39,7 @@ export function InactiveLine({
       {startValue < max && (
         <path
           className={clsx('tremolo-knob-inactive-line', className)}
-          d={`M ${x3} ${y3} A ${center} ${center} -135 ${r4 - r3 > 180 ? 1 : 0} 1 ${x4} ${y4}`}
+          d={`M ${p3.x} ${p3.y} A ${radius} ${radius} -135 ${r4 - r3 > 180 ? 1 : 0} 1 ${p4.x} ${p4.y}`}
           fill="none"
           stroke={stroke}
           strokeWidth={strokeWidth}

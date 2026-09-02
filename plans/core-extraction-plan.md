@@ -155,7 +155,7 @@ packages/
 - [x] `setPointerCapture` を使い、window への `mousemove` / `pointerup` 購読を不要にする
 - [x] `createWheel` は現行 `useRefCallbackEvent('wheel', ..., { passive: false })` の挙動を踏襲する
 - [x] `DragObserver` / `WheelObserver` / `useDrag` / `useDragWithElement` をコア呼び出しに差し替え
-- [ ] 既存の Storybook で回帰確認（**ビルドは通るが、実際のドラッグ操作はブラウザでの手動確認が必要**）
+- [x] 既存の Storybook で回帰確認（マウス・タッチ・実機まで確認済み。過程で回帰を 2 件見つけて修正した）
 
 #### Phase 2 での公開 API 変更
 
@@ -261,18 +261,25 @@ Radix UI / Base UI と同じ方針にする。パッケージはスタイルを�
 
 ### 4.5.3 内部ユーティリティの削除
 
-- [ ] `_util/composeRefs.tsx` を削除。Observer 系の削除により、利用箇所は `XYPad/index.tsx` の 1 箇所のみになった（`useComposedRefs` は利用ゼロ）。ref コールバックを 1 つにまとめる形へ整理して不要にする
-  - 注意: `composeRefs(...)` は毎レンダー新しい関数を返すため、React が ref を毎回付け直す。ref コールバック内でリソースを確保する実装と組み合わせると、再レンダーのたびに破棄・再生成される（Phase 2 でこの不具合を出した）。hook 側は node を state で保持して回避しているが、整理する際は memo 化された `useComposedRefs` を使うか、ref を 1 つにまとめること
-- [ ] `_util/type.ts` の `Override` を削除。利用箇所は `Knob/SVGRoot.tsx` の 1 箇所のみ。Observer 系の削除で他は消えた
+- [x] ~~`_util/composeRefs.tsx` を削除~~ → **削除せず、Slider / Knob / XYPad の Root で `useComposedRefs` を使う形にした。**
+  - `composeRefs(...)` も、それを置き換えたインライン ref も、毎レンダー新しい関数になるため React が ref を付け直す（`node → null → node`）。ref コールバック内でリソースを確保する実装と組み合わせると再レンダーのたびに破棄・再生成される（Phase 2 でこの不具合を出した）
+  - hook 側は node を state で保持して耐性を持たせてあるが、無駄な付け直しは残る。memo 化された `useComposedRefs` でまとめると付け直し自体が無くなる
+  - `useDrag` / `useWheel` / `useDragWithElement` が返すコールバックは `useState` の setter なので安定しており、`useComposedRefs` の依存として問題ない
+  - 付け直しが起きないことを `__tests__/util/composeRefs.test.tsx` で検証している
+- [x] `_util/type.ts` の `Override` を削除。利用箇所は `Knob/SVGRoot.tsx` の 1 箇所のみ。Observer 系の削除で他は消えた
 
 ### 4.5.4 Knob の描画を修正
 
 `ActiveLine` / `InactiveLine` は `viewBox="0 0 100 100"` の中で半径 50 の円弧を描いているが、`strokeWidth` が既定 6 のため線の太さの半分（3）が viewBox からはみ出る。これを `overflow: visible` で誤魔化している。
 
-- [ ] 円弧の半径を `strokeWidth / 2` だけ内側に取り、viewBox 内に収める
-- [ ] `SVGRoot` の `style.overflow = 'visible'`、`index.css` の `.tremolo-knob` と `.tremolo-knob-active-line` の `overflow: visible` を削除
-- [ ] `SVGRoot` の `overflowVisible` prop（宣言されているが未使用）を削除
-- [ ] `strokeWidth` は利用者が変更できるため、半径の計算は実際の `strokeWidth` から導く必要がある。現状 `ActiveLine` / `InactiveLine` がそれぞれ既定値を持っているので、context に集約するか検討する
+- [x] 円弧の半径を `strokeWidth / 2` だけ内側に取り、viewBox 内に収める
+- [x] `SVGRoot` の `style.overflow = 'visible'`、`index.css` の `.tremolo-knob` と `.tremolo-knob-active-line` の `overflow: visible` を削除
+- [x] `SVGRoot` の `overflowVisible` prop（宣言されているが未使用）を削除
+- [x] `strokeWidth` は利用者が変更できるため、半径の計算は実際の `strokeWidth` から導く必要がある。現状 `ActiveLine` / `InactiveLine` がそれぞれ既定値を持っているので、context に集約するか検討する
+
+**対応済み。** context に集約するのではなく、逆にストアから座標（`x1`〜`y4`）を外し、角度（`r1`〜`r4`）だけを持たせる形にした。`ActiveLine` と `InactiveLine` は別々の `strokeWidth` を取れるため、座標をストアで先に計算すると太さを反映できないため。座標は `pointOnArc(angle, radius)`、半径は `arcRadius(strokeWidth)` で各コンポーネントが求める。
+
+あわせて `SVGRoot` の props から未使用の `block` / `overflowVisible` を削除した。`block` は destructure されておらず、渡すと不正な属性として `<svg>` に流れる状態だった。
 
 ### 4.5.5 Piano のアーキテクチャ再検討 — Phase 4 の一部
 
