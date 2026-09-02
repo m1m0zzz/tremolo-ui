@@ -58,6 +58,10 @@ export interface KnobProps {
   startValue?: number
 
   /** width and height */
+  /**
+   * Width and height of the knob.
+   * Defaults to the `--knob-size` CSS variable (50px).
+   */
   size?: number | string
 
   /**
