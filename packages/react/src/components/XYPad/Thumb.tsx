@@ -11,10 +11,10 @@ import {
 import { useXYPadContext } from './context'
 
 export interface XYPadThumbProps {
-  size?: number | string
-  width?: number | string
-  height?: number | string
-
+  /**
+   * Size comes from the `--thumb-size` CSS variable on `XYPad.Root`, so that
+   * the root can reserve the matching amount of space around the area.
+   */
   color?: string
 
   wrapperClassName?: string
@@ -33,9 +33,6 @@ type Props = XYPadThumbProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadThumbProps>
 
 export function Thumb({
-  size,
-  width,
-  height,
   color,
   children,
   wrapperClassName,
@@ -84,9 +81,6 @@ export function Thumb({
           aria-readonly={readonly}
           style={{
             ...{ '--color': color },
-            // Falls back to --thumb-size from the CSS
-            width: size ?? width,
-            height: size ?? height,
             ...style,
           }}
         ></div>

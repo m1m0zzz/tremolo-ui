@@ -10,10 +10,10 @@ import {
 import { useSliderContext } from './context'
 
 export interface SliderThumbProps {
-  size?: number | string
-  width?: number | string
-  height?: number | string
-
+  /**
+   * Size comes from the `--thumb-size` CSS variable on `Slider.Root`, so that
+   * the root can reserve the matching amount of space around the track.
+   */
   color?: string
 
   className?: string
@@ -27,12 +27,7 @@ export interface SliderThumbMethods {
   blur: () => void
 }
 
-export const defaultThumbSize = 22
-
 export function Thumb({
-  size,
-  width,
-  height,
   color,
   children,
   className,
@@ -77,9 +72,6 @@ export function Thumb({
           aria-readonly={readonly}
           style={{
             ...{ '--color': color },
-            // Falls back to --thumb-size from the CSS
-            width: size ?? width,
-            height: size ?? height,
             ...style,
           }}
         ></div>

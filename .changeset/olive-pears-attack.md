@@ -28,4 +28,6 @@ Breaking: `XYPad` takes per-axis settings as `[x, y]` tuples mirroring `Slider`,
 </XYPad.Root>
 ```
 
-The space reserved for the thumb is now the `--thumb-size` CSS variable on `Slider` and `XYPad`, since the root can no longer read the thumb's size off its children.
+Breaking: `size`, `width` and `height` are gone from `Slider.Thumb` and `XYPad.Thumb`. The thumb size is the `--thumb-size` CSS variable on the root, which is also what the root uses to reserve space around the track or area, so the two can no longer disagree.
+
+`Slider.Track` and `XYPad.Area` now accept a `ref`, composed with the one the root needs for normalizing the pointer position.

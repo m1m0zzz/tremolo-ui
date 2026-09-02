@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { memo, useState } from 'react'
+import { CSSProperties, memo, useState } from 'react'
 
 import {
   integerPart,
@@ -166,13 +166,14 @@ export const AdvancedFilterPad = () => {
           reverse={[false, true]}
           wheel={['normalized', 0.05]}
           keyboard={['normalized', 0.05]}
+          style={{ '--thumb-size': '40px' } as CSSProperties}
           onChange={([x, y]) => {
             setFrequency(x)
             setQ(y)
           }}
         >
           <XYPad.Area width={200} color="transparent">
-            <XYPad.Thumb size={40}>
+            <XYPad.Thumb>
               <ThumbAnimation />
             </XYPad.Thumb>
           </XYPad.Area>

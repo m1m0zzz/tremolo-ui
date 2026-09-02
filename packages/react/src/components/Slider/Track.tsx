@@ -1,7 +1,9 @@
 import clsx from 'clsx'
-import { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react'
+import { ComponentPropsWithoutRef, CSSProperties, ReactNode, Ref } from 'react'
 
 import { styleHelper, xor } from '@tremolo-ui/functions'
+
+import { useComposedRefs } from '../_util/composeRefs'
 
 import { useSliderContext } from './context'
 
@@ -21,6 +23,7 @@ export interface SliderTrackProps {
   style?: CSSProperties
   /** `<Slider.Thumb />` goes here. */
   children?: ReactNode
+  ref?: Ref<HTMLDivElement>
 }
 
 export function Track({
@@ -32,10 +35,15 @@ export function Track({
   className,
   style,
   defaultStyle = true,
+  ref,
   ...props
 }: SliderTrackProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof SliderTrackProps>) {
   const { vertical, reverse, disabled, percent, trackRef } = useSliderContext()
+
+  // The track is what the pointer position is normalized against, so the
+  // context ref is composed with any ref the caller passed.
+  const composedRef = useComposedRefs<HTMLDivElement>(ref, trackRef)
 
   const direction = vertical ? 'bottom' : 'right'
   const colors = {
@@ -45,8 +53,7 @@ export function Track({
 
   return (
     <div
-      // The track is what the pointer position is normalized against.
-      ref={trackRef}
+      ref={composedRef}
       className={clsx('tremolo-slider-track', className)}
       aria-disabled={disabled}
       data-vertical={vertical}
