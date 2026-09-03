@@ -310,6 +310,7 @@ export type XYInput<T> = [T] extends [readonly unknown[]]
 - [ ] AnimationCanvas（rAF + ResizeObserver + DPR。`canvas.ts` と `index.tsx` 計 約280行）
 - [ ] NumberInput（テキスト入力はラッパー担当、ドラッグ/矢印キー増減はコア、パース・フォーマット・clamp・step は純粋関数）
 - [ ] NumberInputは InternalInputをInputFieldとして公開。他のコンポーネント同様 Compound Component パターンで公開
+- [ ] **`<input>` に `tabIndex` を設定すべきか決める。** 設定する場合、フォーカス時のスタイルはラッパー側に `:focus-within` で当てる
 
 ### Phase 5: zustand 除去
 
@@ -402,6 +403,22 @@ Phase 4 の Piano 対応と一体で進める。
 - [ ] `index.tsx:238` の `// FIXME`（内容が書かれていない）が何を指すか特定する
 - [ ] `keyboardShortcuts.ts:3` の TODO
 - [ ] 鍵盤の当たり判定（`getHitKeyIndex`）が座標計算とコンポーネント描画に密結合している点を見直す
+
+### 4.5.7 MIDI の作り込み
+
+Phase 1 で `@tremolo-ui/dom` へ移した部分。移植は「React hook のロジックをそのまま移す」ことを目的にしたので、機能面は当時のままになっている。
+
+- [ ] **対応するイベントを増やす。** 現在 `createMIDIInput` が扱うのは note on / note off / pitch bend の 3 つだけ（`packages/dom/src/midi/input.ts`）。control change やその他のメッセージをどこまで扱うか決める
+- [ ] **`createMIDIAccess` のエラーハンドリング方針を決める。** 現在は `NOT_SUPPORTED` / `PERMISSION_DENIED` の 2 値に潰している（`packages/dom/src/midi/access.ts`）。デバイスの着脱（`statechange`）や、権限を後から許可された場合の扱いを含めて整理する
+
+### 4.5.8 Knob で対数スケールのときに値が飛ぶ
+
+**dom への移行前から知られている問題。** `skew` を設定した Knob をドラッグすると、見た目の値がジャンプすることがある。
+
+Phase 3 で値の算出経路は `createDragValue` に一本化されたので（位置 → `reverse` → `rawValue` → `stepValue` → `clamp`）、再現条件の切り分けはしやすくなっている。`relativeMapping` がドラッグ開始時の値を正規化して原点に取るため、`step` で丸められた値から正規化し直すと原点がずれる、という筋を最初に確認する。
+
+- [ ] 再現条件を特定する（`skew` と `step` の組み合わせ、どの値域で起きるか）
+- [ ] 原因を切り分けて直し、回帰テストを入れる
 
 ## 5. 既存コードで見つかった問題
 
