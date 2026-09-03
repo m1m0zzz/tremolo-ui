@@ -98,7 +98,7 @@ Slider / Knob / XYPad は children をそのまま描画し、`children` は型�
 
 プレーンな CSS。コンポーネントごとに `index.css` を 1 つ持ち、クラス名は `tremolo-` プレフィックス。状態は ARIA 属性をセレクタとして表現する（`&[aria-disabled='true']`、`&[aria-readonly='true']`）ため、コンポーネント側で該当属性を必ず設定すること。
 
-ドラッグ中のスタイルは 2 系統ある。`touch-action` / `user-select` / `cursor` は `createDrag` が**対象要素に直接**適用し `destroy()` で戻す（pointer capture により、ポインタが要素外へ出ても維持される）。ページ全体へ掛ける `tremolo-user-select-none` は `src/styles/global.css` にあり `src/components/_util/index.ts` が付け外しする。同ファイルの `setCursorStyle` / `resetCursorStyle` と `.tremolo-cursor-*` は**現在どこからも使われていない**（削除は CSS ヘッドレス化の判断とセットで保留中。`plans/core-extraction-plan.md` 4.5.2）。
+ドラッグ中のスタイルは 2 系統ある。`touch-action` / `user-select` / `cursor` は `createDrag` が**対象要素に直接**適用し `destroy()` で戻す（pointer capture により、ポインタが要素外へ出ても維持される）。ページ全体へ掛ける `tremolo-user-select-none` は `src/styles/global.css` にあり `src/components/_util/index.ts` が付け外しする。同ファイルの `setCursorStyle` / `resetCursorStyle` と `.tremolo-cursor-*` は**現在どこからも使われていない**（削除は CSS ヘッドレス化の判断とセットで保留中。`plans/core-extraction-plan.md` 5.2）。
 
 コンポーネントの CSS を追加するときは 3 箇所の編集が必要: `src/index.ts` での import（バンドル版 `styles/index.css` 用）、`packages/react/package.json` の `exports` への `./styles/<Name>.css` 追加、`.storybook/preview.ts` での import。
 

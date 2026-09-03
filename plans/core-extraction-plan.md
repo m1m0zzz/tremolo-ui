@@ -3,8 +3,6 @@
 対象リポジトリ: `m1m0zzz/tremolo-ui`
 目的: React 依存のロジックを framework-agnostic なコアへ切り出し、React / Vue / Svelte のラッパーを提供できる構成にする。
 
----
-
 ## 1. 現状（リポジトリで確認済み）
 
 ### パッケージ構成
@@ -58,9 +56,7 @@ npm workspaces のモノレポ。`packages/functions`, `packages/react`, `site` 
 - publish は **npm trusted publishing (OIDC)**。`permissions: id-token: write` + `npm install -g npm@latest`（OIDC は npm CLI 11.5.1 以上が必要）
 - changesets は未導入
 
-**これらは changesets へ置き換える（第7章参照）。**
-
----
+**これらは changesets へ置き換える（第8章参照）。**
 
 ## 2. 決定事項
 
@@ -82,8 +78,6 @@ npm workspaces のモノレポ。`packages/functions`, `packages/react`, `site` 
    - 現状 Knob は既にストアに value を持ち、Slider は持たない。どちらに寄せるか要決定
 2. **NumberInput の扱い**（`<input>` のテキストが値の裏付けであり、他5つと性質が異なる。制御コンポーネント衝突・カーソル位置維持・IME 中間文字列の考慮が必要）
 3. **`@tremolo-ui/dom` の公開範囲**（`createDrag` / `createWheel` を公開 API にするか内部専用にするか）
-
----
 
 ## 3. 目標構成
 
@@ -112,8 +106,6 @@ packages/
 - Svelte: action（`use:drag={handlers}`）
 - Vue: composable または custom directive
 
----
-
 ## 4. 作業タスク
 
 ### Phase 0: 準備
@@ -121,7 +113,7 @@ packages/
 - [x] `packages/react` の依存 `@tremolo-ui/functions": "^0.1.6"` が実バージョン 0.2.0 とずれている。意図的か確認し、必要なら修正
 - [x] devDependencies の `eslint-plugin-lit-a11y` が Web Components 中止により不要か確認、不要なら削除
 - [x] 現行の React 公開 API のスナップショットを残す（破壊的変更の差分を後から説明するため）
-- [x] **changesets への移行を先に完了させる（第7章）**。dom 追加より前にやること
+- [x] **changesets への移行を先に完了させる（第8章）**。dom 追加より前にやること
 
 ### Phase 1: `@tremolo-ui/dom` の器を作り、MIDI だけ移す
 
@@ -306,11 +298,13 @@ export type XYInput<T> = [T] extends [readonly unknown[]]
 
 ### Phase 4: 残りのコンポーネント
 
-- [ ] Piano（マルチタッチ、グリッサンド。`usePianoDrag` が該当）
 - [ ] AnimationCanvas（rAF + ResizeObserver + DPR。`canvas.ts` と `index.tsx` 計 約280行）
 - [ ] NumberInput（テキスト入力はラッパー担当、ドラッグ/矢印キー増減はコア、パース・フォーマット・clamp・step は純粋関数）
 - [ ] NumberInputは InternalInputをInputFieldとして公開。他のコンポーネント同様 Compound Component パターンで公開
 - [ ] **`<input>` に `tabIndex` を設定すべきか決める。** 設定する場合、フォーカス時のスタイルはラッパー側に `:focus-within` で当てる
+- [ ] Piano
+  - [ ] 既存のTODO: マルチタッチ、グリッサンド。(`usePianoDrag` が該当)
+  - [ ] コンポーネント設計の検討
 
 ### Phase 5: zustand 除去
 
@@ -324,13 +318,11 @@ export type XYInput<T> = [T] extends [readonly unknown[]]
 
 `plans/milestone.md` へ移動。1.0 に向けたマイルストーンとして管理する。
 
----
-
-## 4.5 コア化と並行して片付けるもの
+## 5. コア化と並行して片付けるもの
 
 Phase の順序に組み込みきれないが、1.0 までに決着させる項目。
 
-### 4.5.1 CSS の完全ヘッドレス化 — Phase 3 と Phase 5 の間
+### 5.1 CSS の完全ヘッドレス化 — Phase 3 と Phase 5 の間
 
 Radix UI / Base UI と同じ方針にする。パッケージはスタイルを配らず、**ドキュメント上でデモの CSS を公開**して、利用者が Tailwind / CSS Modules / plain CSS を自由に選べる形にする。
 
@@ -341,9 +333,9 @@ Radix UI / Base UI と同じ方針にする。パッケージはスタイルを�
 
 **これは破壊的変更であり、既存利用者は `@tremolo-ui/react/styles/index.css` を import しているため、移行手順を用意する必要がある。**
 
-### 4.5.2 `tremolo-user-select-none` / `tremolo-cursor-*` をどうするか — 4.5.1 とセット
+### 5.2 `tremolo-user-select-none` / `tremolo-cursor-*` をどうするか — 5.1 とセット
 
-ドラッグ中に body へクラスを付け外しする仕組み（`src/styles/global.css` + `src/components/_util/index.ts`）。Knob / Slider / XYPad / PointsEditor の 4 コンポーネントが `externalStyles` prop 経由で使っている。**CSS をヘッドレス化すると、このグローバル CSS だけがパッケージに残ることになるため、4.5.1 と同時に決める。**
+ドラッグ中に body へクラスを付け外しする仕組み（`src/styles/global.css` + `src/components/_util/index.ts`）。Knob / Slider / XYPad / PointsEditor の 4 コンポーネントが `externalStyles` prop 経由で使っている。**CSS をヘッドレス化すると、このグローバル CSS だけがパッケージに残ることになるため、5.1 と同時に決める。**
 
 選択肢:
 
@@ -359,7 +351,7 @@ Radix UI / Base UI と同じ方針にする。パッケージはスタイルを�
 
 > 補足: body へ cursor クラスを付ける実装は、タッチの長押しでページ全体が一瞬選択状態になる不具合の原因だった（ドラッグ開始と同時に文書全体のスタイルが再計算されるため）。Storybook 上で要因を 1 つずつ切り分けて特定した。
 
-### 4.5.3 内部ユーティリティの削除
+### 5.3 内部ユーティリティの削除
 
 - [x] ~~`_util/composeRefs.tsx` を削除~~ → **削除せず、Slider / Knob / XYPad の Root で `useComposedRefs` を使う形にした。**
   - `composeRefs(...)` も、それを置き換えたインライン ref も、毎レンダー新しい関数になるため React が ref を付け直す（`node → null → node`）。ref コールバック内でリソースを確保する実装と組み合わせると再レンダーのたびに破棄・再生成される（Phase 2 でこの不具合を出した）
@@ -368,7 +360,7 @@ Radix UI / Base UI と同じ方針にする。パッケージはスタイルを�
   - 付け直しが起きないことを `__tests__/util/composeRefs.test.tsx` で検証している
 - [x] `_util/type.ts` の `Override` を削除。利用箇所は `Knob/SVGRoot.tsx` の 1 箇所のみ。Observer 系の削除で他は消えた
 
-### 4.5.4 Knob の描画を修正
+### 5.4 Knob の描画を修正
 
 `ActiveLine` / `InactiveLine` は `viewBox="0 0 100 100"` の中で半径 50 の円弧を描いているが、`strokeWidth` が既定 6 のため線の太さの半分（3）が viewBox からはみ出る。これを `overflow: visible` で誤魔化している。
 
@@ -381,7 +373,17 @@ Radix UI / Base UI と同じ方針にする。パッケージはスタイルを�
 
 あわせて `SVGRoot` の props から未使用の `block` / `overflowVisible` を削除した。`block` は destructure されておらず、渡すと不正な属性として `<svg>` に流れる状態だった。
 
-### 4.5.6 サブコンポーネントの配置ミスを検出する
+### 5.5 Piano のアーキテクチャ再検討 — Phase 4 の一部
+
+Phase 4 の Piano 対応と一体で進める。
+
+- [ ] `usePianoDrag` を `createDragValue` ベースに置き換える。`useDragWithElement` との差は「pointerdown で発火するか」だけで、Phase 2 で入れた `updateOnPointerDown` オプションで吸収できる見込み
+- [ ] `index.tsx:193` の TODO を消化する。「単一ポインタは useDrag で対応可能だが、マルチタッチには TouchEvent が必要」とあるが、**Pointer Events は `pointerId` で複数ポインタを区別できるため、TouchEvent は不要**。コアに複数ポインタ対応のプリミティブを足す
+- [ ] `index.tsx:238` の `// FIXME`（内容が書かれていない）が何を指すか特定する
+- [ ] `keyboardShortcuts.ts:3` の TODO
+- [ ] 鍵盤の当たり判定（`getHitKeyIndex`）が座標計算とコンポーネント描画に密結合している点を見直す
+
+### 5.6 サブコンポーネントの配置ミスを検出する
 
 children をそのまま描画する形（Phase 2.5）にしたことで、**サブコンポーネントを間違った階層に置いても型エラーにも実行時エラーにもならず、レイアウトだけが静かに壊れる**ようになった。
 
@@ -394,24 +396,14 @@ children をそのまま描画する形（Phase 2.5）にしたことで、**サ
 
 Radix UI も同種の親子チェックを持っている。合成を自由にした代償なので、セットで入れておくのが望ましい。
 
-### 4.5.5 Piano のアーキテクチャ再検討 — Phase 4 の一部
-
-Phase 4 の Piano 対応と一体で進める。
-
-- [ ] `usePianoDrag` を `createDragValue` ベースに置き換える。`useDragWithElement` との差は「pointerdown で発火するか」だけで、Phase 2 で入れた `updateOnPointerDown` オプションで吸収できる見込み
-- [ ] `index.tsx:193` の TODO を消化する。「単一ポインタは useDrag で対応可能だが、マルチタッチには TouchEvent が必要」とあるが、**Pointer Events は `pointerId` で複数ポインタを区別できるため、TouchEvent は不要**。コアに複数ポインタ対応のプリミティブを足す
-- [ ] `index.tsx:238` の `// FIXME`（内容が書かれていない）が何を指すか特定する
-- [ ] `keyboardShortcuts.ts:3` の TODO
-- [ ] 鍵盤の当たり判定（`getHitKeyIndex`）が座標計算とコンポーネント描画に密結合している点を見直す
-
-### 4.5.7 MIDI の作り込み
+### 5.7 MIDI の作り込み
 
 Phase 1 で `@tremolo-ui/dom` へ移した部分。移植は「React hook のロジックをそのまま移す」ことを目的にしたので、機能面は当時のままになっている。
 
 - [ ] **対応するイベントを増やす。** 現在 `createMIDIInput` が扱うのは note on / note off / pitch bend の 3 つだけ（`packages/dom/src/midi/input.ts`）。control change やその他のメッセージをどこまで扱うか決める
 - [ ] **`createMIDIAccess` のエラーハンドリング方針を決める。** 現在は `NOT_SUPPORTED` / `PERMISSION_DENIED` の 2 値に潰している（`packages/dom/src/midi/access.ts`）。デバイスの着脱（`statechange`）や、権限を後から許可された場合の扱いを含めて整理する
 
-### 4.5.8 Knob で対数スケールのときに値が飛ぶ
+### 5.8 Knob で対数スケールのときに値が飛ぶ
 
 **dom への移行前から知られている問題。** `skew` を設定した Knob をドラッグすると、見た目の値がジャンプすることがある。
 
@@ -420,9 +412,9 @@ Phase 3 で値の算出経路は `createDragValue` に一本化されたので�
 - [ ] 再現条件を特定する（`skew` と `step` の組み合わせ、どの値域で起きるか）
 - [ ] 原因を切り分けて直し、回帰テストを入れる
 
-## 5. 既存コードで見つかった問題
+## 6. 既存コードで見つかった問題
 
-### 5.1 `useDrag` の delta 計算バグ（実バグ）→ **Phase 2 で修正済み**
+### 6.1 `useDrag` の delta 計算バグ（実バグ）→ **Phase 2 で修正済み**
 
 `packages/react/src/hooks/useDrag.ts`
 
@@ -445,20 +437,18 @@ if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return
 
 修正: `!== undefined` で判定する。なお現行コードは `pointerup` で `undefined` に戻すことで「ドラッグ中か」の判定も兼ねているため、`!== undefined` にすればその役割は維持される。コア化時に明示的な `dragging` フラグへ分離するのが望ましい。
 
-### 5.2 `useDrag` のイベント混在（設計上の問題）→ **Phase 2 で解消済み**
+### 6.2 `useDrag` のイベント混在（設計上の問題）→ **Phase 2 で解消済み**
 
 `pointerdown`（React 合成イベント）で開始し、移動は window の `mousemove` と要素の `touchmove` を購読、終了は window の `pointerup`。pointer 系と mouse/touch 系が混在している。
 
 ブラウザはペン入力に対して互換マウスイベントを発火するため直ちに壊れるとは限らないが、保守上は Pointer Events への統一が望ましい。`useDragWithElement` は `pointermove` で統一されており、そちらが正しい形。
 
-### 5.3 確認事項（バグとは断定していない）
+### 6.3 確認事項（バグとは断定していない）
 
 - ~~`packages/react` の `@tremolo-ui/functions` 依存が `^0.1.6`、実バージョンは 0.2.0~~ → **調査済み・修正済み（意図的ではない）**。0.1.6 のリリースでは `^0.1.5 → ^0.1.6` に更新できているが、0.2.0 のリリース（`86e43e7`）ではバージョンしか上がっていない。publish.sh の `npm i "@tremolo-ui/functions@$NEW_VERSION"` は、その時点でまだ npm に存在しないバージョンを指定するため、レンジ更新が成立しないことがある（`.npmrc` の `min-release-age` は 0.2.0 より後に追加されたので原因ではない）。結果として npm 上の `@tremolo-ui/react@0.2.0` は `@tremolo-ui/functions@^0.1.6` に依存している。ただし functions の v0.1.6→0.2.0 の差分は JSDoc の `@category` タグ削除のみで公開 API は同一のため、実害は出ていない。changesets の `updateInternalDependencies` はローカルのバージョンを見て書き換えるため、この不具合は構造的に解消される
 - 両パッケージのトップレベル `"types": "dist/index.d.cts"` が CJS 用の宣言ファイルを指している。`exports` マップ側は require/import で正しく分岐しているため実害は出にくいが、`exports` を見ない古いツールチェーンでは ESM 利用者に CJS の型が渡る。`@arethetypeswrong/core` が devDependencies に入っているので、それで検証するとよい
 
----
-
-## 6. 検証状況
+## 7. 検証状況
 
 **リポジトリを読んで確認済み**: パッケージ構成、両 package.json の依存と exports、`@tremolo-ui/functions` の全公開関数、コンポーネント/hooks の一覧とファイル構成、5つの zustand ストアの `State` 型、`useDrag` / `useDragWithElement` / `useRefCallbackEvent` / `DragObserver` / `WheelObserver` の全文、`PointsEditor/Point.tsx` の前半、`scripts/publish.sh`、`.github/workflows/release.yml`、ルート `package.json`
 
@@ -466,13 +456,11 @@ if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return
 
 上記の未確認ファイルは Phase 3〜4 の対象であり、着手時に読む必要がある。特に Piano と AnimationCanvas は本計画で内部を確認していないため、工数見積もりは暫定。
 
----
-
-## 7. changesets への移行
+## 8. changesets への移行
 
 `scripts/publish.sh` + タグ駆動 release.yml を廃止し、changesets に置き換える。dom / vue / svelte を追加していく前提では、依存範囲の更新と CHANGELOG 生成が自動化される利点が大きい。**Phase 1 より前に完了させること。**
 
-### 7.1 挙動の変化
+### 8.1 挙動の変化
 
 | | 現行 | changesets |
 | --- | --- | --- |
@@ -483,7 +471,7 @@ if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return
 
 タグ形式が変わるため、`release.yml` のトリガを `on: push: tags:` から `on: push: branches: [main]` に変更する必要がある。
 
-### 7.2 設定
+### 8.2 設定
 
 ```jsonc
 // .changeset/config.json
@@ -504,7 +492,7 @@ if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return
 - **`access: "public"`**: デフォルトは `restricted`。scoped パッケージなので必須（各 package.json の `publishConfig.access: "public"` は残しておく）
 - ルートの `package.json` と `site` は `private: true` なので、デフォルト設定では対象外になる
 
-### 7.3 0.x でのバージョン運用
+### 8.3 0.x でのバージョン運用
 
 破壊的変更を入れつつ 0.x に留まりたいので、**破壊的変更でも `major` ではなく `minor` を選ぶ運用**にする。
 
@@ -517,7 +505,7 @@ if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return
 
 `major` は 0.x を維持せず 1.0.0 になる。また `fixed` が効いており、changeset を付けたのが react だけでも functions が同時に bump され、内部依存のレンジも自動で更新される。
 
-### 7.4 OIDC (trusted publishing) との組み合わせ — 要注意
+### 8.4 OIDC (trusted publishing) との組み合わせ — 要注意
 
 `changeset publish` は内部で npm の publish を呼ぶため OIDC 自体は機能するが、既知の落とし穴が2つある。
 
@@ -528,7 +516,7 @@ if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return
 
 npm 側の trusted publisher 設定はワークフローの**ファイル名**に紐づく。`release.yml` という名前を維持すれば既存2パッケージの設定を変更せずに済む。changesets/action は version PR 作成と publish を同一ワークフローで行うため（changesets/action#515）、ワークフローを分割したくなるが、分割すると npm 側の再設定が必要になる点に注意。
 
-### 7.5 タスク
+### 8.5 タスク
 
 - [x] `@changesets/cli` を devDependencies に追加し `npx changeset init`
 - [x] `.changeset/config.json` を上記の内容に設定（この時点では `fixed` は functions / react のみ）
