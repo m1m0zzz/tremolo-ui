@@ -3,7 +3,6 @@ import { useState } from 'react'
 
 import { Knob } from '../../src/components/Knob'
 import { NumberInput, NumberInputProps } from '../../src/components/NumberInput'
-import { inputEventOptionType } from '../lib/typeUtils'
 
 export default {
   title: 'Components/NumberInput/Root',
@@ -11,29 +10,6 @@ export default {
   argTypes: {
     value: {
       control: false,
-      table: {
-        type: {
-          summary: 'number | string',
-        },
-      },
-    },
-    units: {
-      table: {
-        type: {
-          summary: 'string | Units',
-          detail: 'string | [string, number][]',
-        },
-      },
-    },
-    wheel: {
-      table: {
-        type: inputEventOptionType,
-      },
-    },
-    keyboard: {
-      table: {
-        type: inputEventOptionType,
-      },
     },
     children: {
       control: false,

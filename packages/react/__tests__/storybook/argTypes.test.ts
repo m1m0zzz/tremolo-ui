@@ -1,4 +1,4 @@
-import { applyRawTypeSummaries } from '../../.storybook/argTypes'
+import { applyRawTypeSummaries, expandAliases } from '../../.storybook/argTypes'
 
 import type { StrictArgTypes } from 'storybook/internal/types'
 
@@ -29,6 +29,7 @@ describe('applyRawTypeSummaries', () => {
       component({
         wheel: { name: 'union', raw: 'InputEventOption | null' },
       }),
+      {},
     )
 
     expect(result.wheel.table?.type?.summary).toBe('InputEventOption | null')
@@ -38,6 +39,7 @@ describe('applyRawTypeSummaries', () => {
     const result = applyRawTypeSummaries(
       argTypes({ wheel: "['raw' | 'normalized', number] | null" }),
       component({ wheel: { name: 'union', raw: 'InputEventOption | null' } }),
+      {},
     )
 
     expect(result.wheel.table?.type?.summary).toBe(
@@ -52,6 +54,7 @@ describe('applyRawTypeSummaries', () => {
       component({
         onChange: { name: 'signature', raw: '(value: number) => void' },
       }),
+      {},
     )
 
     expect(result.onChange.table?.type?.summary).toBe('(value: number) => void')
@@ -61,6 +64,7 @@ describe('applyRawTypeSummaries', () => {
     const result = applyRawTypeSummaries(
       argTypes({ min: 'number' }),
       component({ min: { name: 'number' } }),
+      {},
     )
 
     expect(result.min.table?.type?.summary).toBe('number')
@@ -68,7 +72,7 @@ describe('applyRawTypeSummaries', () => {
 
   test('passes through a component without docgen', () => {
     const given = argTypes({ min: 'number' })
-    expect(applyRawTypeSummaries(given, undefined)).toBe(given)
+    expect(applyRawTypeSummaries(given, undefined, {})).toBe(given)
   })
 })
 
@@ -78,11 +82,75 @@ describe('applyRawTypeSummaries, multi-line types', () => {
     const result = applyRawTypeSummaries(
       argTypes({ externalStyles: 'signature' }),
       component({ externalStyles: { name: 'signature', raw } }),
+      {},
     )
 
     expect(result.externalStyles.table?.type?.summary).toBe(
       '{ userSelectNone?: boolean cursor?: Cursor }',
     )
     expect(result.externalStyles.table?.type?.detail).toBe(raw)
+  })
+})
+
+describe('applyRawTypeSummaries, comments', () => {
+  test('drops a line comment, which would swallow the rest of the summary', () => {
+    const raw = '{\n  keys: string[]\n  // TODO\n  flags?: boolean\n}'
+    const result = applyRawTypeSummaries(
+      argTypes({ keyboardShortcuts: 'signature' }),
+      component({ keyboardShortcuts: { name: 'signature', raw } }),
+      {},
+    )
+
+    expect(result.keyboardShortcuts.table?.type?.summary).toBe(
+      '{ keys: string[] flags?: boolean }',
+    )
+    expect(result.keyboardShortcuts.table?.type?.detail).toBe(raw)
+  })
+})
+
+describe('expandAliases', () => {
+  const aliases = {
+    InputEventOption: '["normalized" | "raw", number]',
+    Cursor: '"grab" | "grabbing"',
+    ScaleOptions: '["step", ScaleType]',
+    ScaleType: '"mark" | "number"',
+    Self: 'Self',
+  }
+
+  test('replaces an alias with what it stands for', () => {
+    expect(expandAliases('InputEventOption | null', aliases)).toBe(
+      '["normalized" | "raw", number] | null',
+    )
+  })
+
+  test('replaces an alias inside another expansion', () => {
+    expect(expandAliases('ScaleOptions', aliases)).toBe(
+      '["step", "mark" | "number"]',
+    )
+  })
+
+  test('leaves an unknown name alone', () => {
+    expect(expandAliases('XYOrSingle<number>', aliases)).toBe(
+      'XYOrSingle<number>',
+    )
+  })
+
+  test('does not loop on an alias that names itself', () => {
+    expect(expandAliases('Self', aliases)).toBe('Self')
+  })
+})
+
+describe('applyRawTypeSummaries, aliases', () => {
+  test('puts the resolved type in the detail', () => {
+    const result = applyRawTypeSummaries(
+      argTypes({ wheel: 'union' }),
+      component({ wheel: { name: 'union', raw: 'InputEventOption | null' } }),
+      { InputEventOption: '["normalized" | "raw", number]' },
+    )
+
+    expect(result.wheel.table?.type).toEqual({
+      summary: 'InputEventOption | null',
+      detail: '["normalized" | "raw", number] | null',
+    })
   })
 })

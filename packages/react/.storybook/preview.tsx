@@ -1,4 +1,6 @@
-import { argTypesEnhancers } from './argTypes'
+import typeAliases from 'virtual:tremolo-type-aliases'
+
+import { typeSummaryEnhancers } from './argTypes'
 
 import type { Preview } from '@storybook/react-vite'
 
@@ -15,7 +17,7 @@ import '../src/components/Slider/index.css'
 import '../src/components/XYPad/index.css'
 
 const preview: Preview = {
-  argTypesEnhancers,
+  argTypesEnhancers: typeSummaryEnhancers(typeAliases),
   parameters: {
     controls: {
       matchers: {
