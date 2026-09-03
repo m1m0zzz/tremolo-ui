@@ -22,7 +22,6 @@ export {
   createDragValue,
   elementMapping,
   relativeMapping,
-  type AxisInput,
   type AxisOptions,
   type DragValueInstance,
   type DragValueMapping,

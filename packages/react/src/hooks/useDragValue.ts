@@ -4,7 +4,7 @@ import {
   createDragValue,
   elementMapping,
   relativeMapping,
-  type AxisInput,
+  type AxisOptions,
   type DragValueInstance,
   type XY,
   type XYInput,
@@ -14,7 +14,7 @@ import { useCallbackRef } from './_internal/useCallbackRef'
 
 export interface UseDragValueOptions {
   /** Scaling of each axis; a single value applies to both. */
-  axis: AxisInput
+  axis: XYInput<AxisOptions>
 
   /**
    * Normalize the pointer against the bounding rect of this element, so that

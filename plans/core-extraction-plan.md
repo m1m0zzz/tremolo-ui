@@ -285,7 +285,19 @@ zustand の利点であるセレクタ購読も、`value` が props である以
 
 `XY` / `XYOrSingle` / `toXY` の定義は `@tremolo-ui/dom` に移し、`XYPad/context.tsx` はそれを re-export するだけにした。
 
-あわせて `XYOrSingle<T>` を **`XYInput<T extends XYValue>`** に改名し、ペア側を `readonly [x: T, y: T]` にした。`T` をプリミティブに制限しているのは、単一値とペアの判別が `Array.isArray` である以上、`T` 自体が配列になり得ると区別が付かないため。`createDragValue` の `axis` は `AxisOptions`（オブジェクト）なので `XYInput` を使わず、`AxisInput` として別に定義している。
+あわせて `XYOrSingle<T>` を **`XYInput<T>`** に改名し、ペア側を `readonly [x: T, y: T]` にした。
+
+判別が `Array.isArray` である以上、`T` 自体が配列だと単一値とペアを区別できない。そこを条件型で表現し、**配列のときだけ単一値の形を落とす**（ペアでしか書けなくなる）。
+
+```ts
+export type XYInput<T> = [T] extends [readonly unknown[]]
+  ? readonly [x: T, y: T]
+  : T | readonly [x: T, y: T]
+```
+
+プリミティブの whitelist で制限する案もあったが、それだと `createDragValue` の `axis`（`AxisOptions` というオブジェクト）に使えず、同じ形の型と型述語をもう一組定義することになる。条件型なら実行時の要件（配列でないこと）をそのまま型にできる。
+
+`toXY` の引数は `XYInput<T>` ではなく `T | readonly [x: T, y: T]` と書き下している。条件型は絞り込めないため。制限は型を宣言する側（props など）に置く。
 
 #### ついでに直したもの
 

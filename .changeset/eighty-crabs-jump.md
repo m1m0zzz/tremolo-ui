@@ -20,7 +20,7 @@ const { refCallback, dragging } = useDragValue({
 })
 ```
 
-Breaking: the `XYOrSingle` type of `XYPad` is now `XYInput`, and its pair form is a `readonly` tuple. Its type parameter is constrained to primitives, since a single value is told from a pair with `Array.isArray`, which can only work while the value itself is not an array.
+Breaking: the `XYOrSingle` type of `XYPad` is now `XYInput`, and its pair form is a `readonly` tuple. A single value is told from a pair with `Array.isArray`, so where the value could itself be an array the single form is dropped and only the pair is left.
 
 `createDrag` and `createDragValue` also gained `update()`, so a wrapper can feed fresh settings in without tearing down the listeners. Changing `min` or `max` while a drag is in progress no longer aborts it.
 
