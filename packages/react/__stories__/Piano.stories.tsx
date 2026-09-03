@@ -14,17 +14,10 @@ import {
 import { useMIDIAccess } from '../src/hooks/useMIDIAccess'
 import { useMIDIInput } from '../src/hooks/useMIDIInput'
 
-import { sizesOptionType } from './lib/typeUtils'
-
 export default {
   title: 'Components/Piano/Root',
   component: Piano.Root,
   argTypes: {
-    height: {
-      table: {
-        type: sizesOptionType,
-      },
-    },
     children: {
       control: false,
     },

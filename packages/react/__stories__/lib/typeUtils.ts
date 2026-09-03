@@ -4,7 +4,3 @@ export const inputEventOptionType = {
   summary: `InputEventOption | null`,
   detail: `${InputEventOptionString} | null`,
 }
-
-export const sizesOptionType = {
-  summary: 'number | `${number}%`',
-}
