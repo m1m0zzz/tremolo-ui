@@ -70,6 +70,37 @@ export function collectPropTypes(entryPoints: string[]): ComponentPropTypes[] {
     return checker.typeToString(type, undefined, IN_ALIAS)
   }
 
+  const unwrap = (node: ts.TypeNode): ts.TypeNode =>
+    ts.isParenthesizedTypeNode(node) ? unwrap(node.type) : node
+
+  /**
+   * Write out the type of one prop.
+   *
+   * A union is written in the order it was written in, rather than the order
+   * the checker keeps it in, which is the order its members happened to be
+   * created in and so has little to do with the source. Only the outermost
+   * union can be put back in order: below it `typeToString` writes a whole
+   * subtree at once, and a union that came out of a computation
+   * (`keyof typeof`, a generic instantiated) was never written down at all.
+   */
+  function printProp(prop: ts.Symbol, declaration: ts.Declaration): string {
+    const node =
+      (ts.isPropertySignature(declaration) ||
+        ts.isPropertyDeclaration(declaration)) &&
+      declaration.type &&
+      unwrap(declaration.type)
+
+    if (node && ts.isUnionTypeNode(node)) {
+      // `undefined` needs no filtering here: an optional prop carries it in
+      // the type, not in what was written.
+      return node.types
+        .map((member) => print(checker.getTypeAtLocation(member)))
+        .join(' | ')
+    }
+
+    return print(checker.getTypeOfSymbolAtLocation(prop, declaration))
+  }
+
   /** The props of a component value, or null where it is not one. */
   function propsOf(
     symbol: ts.Symbol,
@@ -87,9 +118,7 @@ export function collectPropTypes(entryPoints: string[]): ComponentPropTypes[] {
       .getProperties()) {
       const declaration = prop.declarations?.[0]
       if (!declaration || !ours(declaration.getSourceFile().fileName)) continue
-      props[prop.name] = print(
-        checker.getTypeOfSymbolAtLocation(prop, declaration),
-      ).replace(/\s+/g, ' ')
+      props[prop.name] = printProp(prop, declaration).replace(/\s+/g, ' ')
     }
     return props
   }
