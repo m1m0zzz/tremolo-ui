@@ -242,7 +242,7 @@ zustand の利点であるセレクタ購読も、`value` が props である以
 - [x] `createDragValue` として、座標写像を差し替え可能な形にまとめる
 - [x] Knob / Slider / XYPad / PointsEditor を `createDragValue` ベースに差し替え
 - [x] Phase 2/3 の時点で「値の所有者」を確定させ、全コンポーネントで `value` / `onChange` の意味論（step の丸め、範囲外の扱い）を揃える
-- [ ] ブラウザでの目視確認
+- [x] ブラウザでの目視確認
 
 #### 構造
 
