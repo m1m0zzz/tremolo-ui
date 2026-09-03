@@ -4,7 +4,7 @@ import { join, dirname, resolve } from 'path'
 
 import { type InlineConfig, type UserConfig } from 'vite'
 
-import { collectTypeAliases } from './typeAliases'
+import { collectPropTypes, propTypesModule } from './propTypes'
 
 import type { StorybookConfig } from '@storybook/react-vite'
 
@@ -19,25 +19,26 @@ function getAbsolutePath(value: string) {
 }
 
 /**
- * Serves the type aliases to `preview.tsx`, which uses them to print a type
- * behind an alias in the Controls table. Resolving them needs the TypeScript
- * compiler, so it happens here rather than in the browser.
+ * Serves the resolved prop types to `preview.tsx`, which prints them in the
+ * Controls table. Resolving them needs the TypeScript compiler, so it happens
+ * here rather than in the browser.
  */
-function typeAliasesPlugin() {
-  const moduleId = 'virtual:tremolo-type-aliases'
+function propTypesPlugin() {
+  const moduleId = 'virtual:tremolo-prop-types'
   const resolvedId = '\0' + moduleId
 
   return {
-    name: 'tremolo-type-aliases',
+    name: 'tremolo-prop-types',
     resolveId: (id: string) => (id === moduleId ? resolvedId : undefined),
     load(id: string) {
       if (id !== resolvedId) return
-      const aliases = collectTypeAliases([
-        resolve(import.meta.dirname, '../src/index.ts'),
-        resolve(import.meta.dirname, '../../functions/src/index.ts'),
-        resolve(import.meta.dirname, '../../dom/src/index.ts'),
-      ])
-      return `export default ${JSON.stringify(aliases)}`
+      return propTypesModule(
+        collectPropTypes([
+          resolve(import.meta.dirname, '../src/index.ts'),
+          resolve(import.meta.dirname, '../../functions/src/index.ts'),
+          resolve(import.meta.dirname, '../../dom/src/index.ts'),
+        ]),
+      )
     },
   }
 }
@@ -62,7 +63,7 @@ const config: StorybookConfig = {
     const { mergeConfig } = await import('vite')
 
     return mergeConfig<InlineConfig, UserConfig>(config, {
-      plugins: [typeAliasesPlugin()],
+      plugins: [propTypesPlugin()],
       server: {
         allowedHosts: ['.ngrok-free.dev'],
         hmr: {

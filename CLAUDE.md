@@ -106,6 +106,8 @@ Slider / Knob / XYPad は children をそのまま描画し、`children` は型�
 
 Storybook の stories は `packages/react/__stories__/`、テストは `packages/react/__tests__/` に置く（`src/` の外、コンポーネント名に対応する構成）。
 
+Controls に出る型は `.storybook/propTypes.ts` が補っている。react-docgen は型をソースに書かれたまま記録するため、エイリアスやジェネリックは名前しか出ない。ビルド時に TypeScript の checker で prop ごとの型を解決し、**コンポーネントそのものをキーにした Map**（`virtual:tremolo-prop-types`）として preview に渡している。名前をキーにしないのは、`Root` だけではどのコンポーネントのものか分からないため。
+
 **`Root` は `export const Root = forwardRef(...)` の形で export すること。** Storybook の docgen（`react-docgen`）は export されたコンポーネント定義しか拾わないため、`const Root` のままだと props が 1 つも認識されず、**Controls パネルに story の `args` / `argTypes` で明示したものしか出てこない**。`Slider` の `reverse` が出ていなかったのがこれ。`src/index.ts` から re-export しなければ公開 API には入らない。`tsdown.config.ts` はパッケージビルドのたびに `publint`（error）と `attw`（warn）を実行するので、exports map や型解決のミスは `build:package` で失敗する。
 
 ## 規約

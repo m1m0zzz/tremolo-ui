@@ -1,4 +1,4 @@
-import { applyRawTypeSummaries, expandAliases } from '../../.storybook/argTypes'
+import { applyPropTypes, type PropTypes } from '../../.storybook/argTypes'
 
 import type { StrictArgTypes } from 'storybook/internal/types'
 
@@ -22,24 +22,81 @@ function component(props: Record<string, { name: string; raw?: string }>) {
   }
 }
 
-describe('applyRawTypeSummaries', () => {
+/** The map the Storybook build hands over, keyed by the component itself. */
+function propTypes(
+  subject: unknown,
+  resolved: Record<string, string> = {},
+): PropTypes {
+  return new Map([[subject, resolved]])
+}
+
+describe('applyPropTypes', () => {
   test('replaces a bare kind name with the type as written', () => {
-    const result = applyRawTypeSummaries(
+    const subject = component({
+      wheel: { name: 'union', raw: 'InputEventOption | null' },
+    })
+    const result = applyPropTypes(
       argTypes({ wheel: 'union' }),
-      component({
-        wheel: { name: 'union', raw: 'InputEventOption | null' },
-      }),
-      {},
+      subject,
+      propTypes(subject),
     )
 
     expect(result.wheel.table?.type?.summary).toBe('InputEventOption | null')
   })
 
+  test('puts the resolved type in the detail', () => {
+    const subject = component({
+      wheel: { name: 'union', raw: 'InputEventOption | null' },
+    })
+    const result = applyPropTypes(
+      argTypes({ wheel: 'union' }),
+      subject,
+      propTypes(subject, {
+        wheel: 'null | ["raw" | "normalized", number]',
+      }),
+    )
+
+    expect(result.wheel.table?.type).toEqual({
+      summary: 'InputEventOption | null',
+      detail: 'null | ["raw" | "normalized", number]',
+    })
+  })
+
+  test('leaves the detail out where it would repeat the summary', () => {
+    const subject = component({
+      size: { name: 'union', raw: 'number | string' },
+    })
+    const result = applyPropTypes(
+      argTypes({ size: 'union' }),
+      subject,
+      propTypes(subject, { size: 'number | string' }),
+    )
+
+    expect(result.size.table?.type).toEqual({ summary: 'number | string' })
+  })
+
+  test('drops a line comment, which would swallow the rest of the summary', () => {
+    const raw = '{\n  keys: string[]\n  // TODO\n  flags?: boolean\n}'
+    const subject = component({ keyboardShortcuts: { name: 'signature', raw } })
+    const result = applyPropTypes(
+      argTypes({ keyboardShortcuts: 'signature' }),
+      subject,
+      propTypes(subject),
+    )
+
+    expect(result.keyboardShortcuts.table?.type?.summary).toBe(
+      '{ keys: string[] flags?: boolean }',
+    )
+  })
+
   test('leaves a summary the story set itself', () => {
-    const result = applyRawTypeSummaries(
+    const subject = component({
+      wheel: { name: 'union', raw: 'InputEventOption | null' },
+    })
+    const result = applyPropTypes(
       argTypes({ wheel: "['raw' | 'normalized', number] | null" }),
-      component({ wheel: { name: 'union', raw: 'InputEventOption | null' } }),
-      {},
+      subject,
+      propTypes(subject, { wheel: 'null | ["raw" | "normalized", number]' }),
     )
 
     expect(result.wheel.table?.type?.summary).toBe(
@@ -47,24 +104,25 @@ describe('applyRawTypeSummaries', () => {
     )
   })
 
-  test('leaves a type that is already printed in full', () => {
-    // Storybook prints Array / Record / signature from `raw` on its own.
-    const result = applyRawTypeSummaries(
+  test('leaves a type Storybook already prints in full', () => {
+    const subject = component({
+      onChange: { name: 'signature', raw: '(value: number) => void' },
+    })
+    const result = applyPropTypes(
       argTypes({ onChange: '(value: number) => void' }),
-      component({
-        onChange: { name: 'signature', raw: '(value: number) => void' },
-      }),
-      {},
+      subject,
+      propTypes(subject),
     )
 
     expect(result.onChange.table?.type?.summary).toBe('(value: number) => void')
   })
 
   test('leaves plain types alone', () => {
-    const result = applyRawTypeSummaries(
+    const subject = component({ min: { name: 'number' } })
+    const result = applyPropTypes(
       argTypes({ min: 'number' }),
-      component({ min: { name: 'number' } }),
-      {},
+      subject,
+      propTypes(subject),
     )
 
     expect(result.min.table?.type?.summary).toBe('number')
@@ -72,83 +130,19 @@ describe('applyRawTypeSummaries', () => {
 
   test('passes through a component without docgen', () => {
     const given = argTypes({ min: 'number' })
-    expect(applyRawTypeSummaries(given, undefined, {})).toBe(given)
-  })
-})
-
-describe('applyRawTypeSummaries, multi-line types', () => {
-  test('collapses the summary and keeps the whole shape as the detail', () => {
-    const raw = '{\n  userSelectNone?: boolean\n  cursor?: Cursor\n}'
-    const result = applyRawTypeSummaries(
-      argTypes({ externalStyles: 'signature' }),
-      component({ externalStyles: { name: 'signature', raw } }),
-      {},
-    )
-
-    expect(result.externalStyles.table?.type?.summary).toBe(
-      '{ userSelectNone?: boolean cursor?: Cursor }',
-    )
-    expect(result.externalStyles.table?.type?.detail).toBe(raw)
-  })
-})
-
-describe('applyRawTypeSummaries, comments', () => {
-  test('drops a line comment, which would swallow the rest of the summary', () => {
-    const raw = '{\n  keys: string[]\n  // TODO\n  flags?: boolean\n}'
-    const result = applyRawTypeSummaries(
-      argTypes({ keyboardShortcuts: 'signature' }),
-      component({ keyboardShortcuts: { name: 'signature', raw } }),
-      {},
-    )
-
-    expect(result.keyboardShortcuts.table?.type?.summary).toBe(
-      '{ keys: string[] flags?: boolean }',
-    )
-    expect(result.keyboardShortcuts.table?.type?.detail).toBe(raw)
-  })
-})
-
-describe('expandAliases', () => {
-  const aliases = {
-    InputEventOption: '["normalized" | "raw", number]',
-    Cursor: '"grab" | "grabbing"',
-    ScaleOptions: '["step", ScaleType]',
-    ScaleType: '"mark" | "number"',
-    Self: 'Self',
-  }
-
-  test('replaces an alias with what it stands for', () => {
-    expect(expandAliases('InputEventOption | null', aliases)).toBe(
-      '["normalized" | "raw", number] | null',
-    )
+    expect(applyPropTypes(given, undefined, new Map())).toBe(given)
   })
 
-  test('replaces an alias inside another expansion', () => {
-    expect(expandAliases('ScaleOptions', aliases)).toBe(
-      '["step", "mark" | "number"]',
-    )
-  })
-
-  test('leaves an unknown name alone', () => {
-    expect(expandAliases('XYInput<number>', aliases)).toBe('XYInput<number>')
-  })
-
-  test('does not loop on an alias that names itself', () => {
-    expect(expandAliases('Self', aliases)).toBe('Self')
-  })
-})
-
-describe('applyRawTypeSummaries, aliases', () => {
-  test('puts the resolved type in the detail', () => {
-    const result = applyRawTypeSummaries(
-      argTypes({ wheel: 'union' }),
-      component({ wheel: { name: 'union', raw: 'InputEventOption | null' } }),
-      { InputEventOption: '["normalized" | "raw", number]' },
-    )
-
-    expect(result.wheel.table?.type).toEqual({
-      summary: 'InputEventOption | null',
-      detail: '["normalized" | "raw", number] | null',
+  test('still fills the summary for a component the map does not hold', () => {
+    const subject = component({
+      size: { name: 'union', raw: 'number | string' },
     })
+    const result = applyPropTypes(
+      argTypes({ size: 'union' }),
+      subject,
+      new Map(),
+    )
+
+    expect(result.size.table?.type).toEqual({ summary: 'number | string' })
   })
 })
