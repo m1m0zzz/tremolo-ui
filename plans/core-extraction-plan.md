@@ -283,7 +283,9 @@ zustand の利点であるセレクタ購読も、`value` が props である以
 
 `useDrag`（相対デルタのみの低レベル hook）は公開のまま残す。Knob が使わなくなったため、リポジトリ内の利用箇所は stories とテストのみ。
 
-`XY` / `XYOrSingle` / `toXY` の定義は `@tremolo-ui/dom` に移し、`XYPad/context.tsx` はそれを re-export するだけにした（`@tremolo-ui/react` の公開 API は変わらない）。
+`XY` / `XYOrSingle` / `toXY` の定義は `@tremolo-ui/dom` に移し、`XYPad/context.tsx` はそれを re-export するだけにした。
+
+あわせて `XYOrSingle<T>` を **`XYInput<T extends XYValue>`** に改名し、ペア側を `readonly [x: T, y: T]` にした。`T` をプリミティブに制限しているのは、単一値とペアの判別が `Array.isArray` である以上、`T` 自体が配列になり得ると区別が付かないため。`createDragValue` の `axis` は `AxisOptions`（オブジェクト）なので `XYInput` を使わず、`AxisInput` として別に定義している。
 
 #### ついでに直したもの
 

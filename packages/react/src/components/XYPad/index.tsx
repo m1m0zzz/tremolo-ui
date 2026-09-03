@@ -26,7 +26,7 @@ import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 import { useComposedRefs } from '../_util/composeRefs'
 
 import { Area } from './Area'
-import { toXY, XY, XYOrSingle, XYPadProvider } from './context'
+import { toXY, XY, XYInput, XYPadProvider } from './context'
 import { Thumb, XYPadThumbMethods } from './Thumb'
 
 const defaultExternalStyles: XYPadProps['externalStyles'] = {
@@ -42,12 +42,12 @@ const defaultExternalStyles: XYPadProps['externalStyles'] = {
  */
 export interface XYPadProps {
   value: XY<number>
-  min: XYOrSingle<number>
-  max: XYOrSingle<number>
+  min: XYInput<number>
+  max: XYInput<number>
 
-  step?: XYOrSingle<number>
-  skew?: XYOrSingle<number>
-  reverse?: XYOrSingle<boolean>
+  step?: XYInput<number>
+  skew?: XYInput<number>
+  reverse?: XYInput<boolean>
 
   /**
    * wheel control option. Shift selects the x axis.
@@ -314,4 +314,4 @@ export const XYPad = {
 
 export { type XYPadThumbProps, type XYPadThumbMethods } from './Thumb'
 export { type XYPadAreaProps } from './Area'
-export { useXYPadContext, type XY, type XYOrSingle } from './context'
+export { useXYPadContext, type XY, type XYInput } from './context'

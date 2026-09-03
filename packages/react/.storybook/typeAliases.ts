@@ -10,7 +10,7 @@ import ts from 'typescript'
  * alias shows the alias name and nothing else. This is what fills that in.
  *
  * Generic aliases are left out: their definition is written in terms of type
- * parameters (`XYOrSingle<T> = T | XY<T>`), so substituting the name for it
+ * parameters (`XYInput<T> = T | readonly [T, T]`), so substituting the name for it
  * would produce nonsense. A name declared more than once with different
  * definitions is left out too, since there is no telling which one a summary
  * means.

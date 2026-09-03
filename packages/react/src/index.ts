@@ -62,7 +62,7 @@ export {
   type XYPadThumbProps,
   type XYPadThumbMethods,
   type XY,
-  type XYOrSingle,
+  type XYInput,
 } from './components/XYPad'
 
 // hooks

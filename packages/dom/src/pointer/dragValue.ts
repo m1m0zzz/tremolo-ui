@@ -5,7 +5,7 @@ import {
   stepValue,
 } from '@tremolo-ui/functions'
 
-import { toXY, type XY, type XYOrSingle } from '../xy'
+import { toXY, type XY, type XYInput } from '../xy'
 
 import { createDrag, type DragState } from './drag'
 
@@ -28,6 +28,26 @@ export interface AxisOptions {
    * @default false
    */
   reverse?: boolean
+}
+
+/**
+ * The scaling of both axes, or one that applies to both.
+ *
+ * `XYInput` is not used here: it tells a single value from a pair with
+ * `Array.isArray`, which is only safe for primitives, and an axis is an
+ * object.
+ */
+export type AxisInput = AxisOptions | readonly [x: AxisOptions, y: AxisOptions]
+
+// See `xy.ts`: a readonly tuple needs an explicit predicate to narrow.
+function isAxisPair(
+  axis: AxisInput,
+): axis is readonly [x: AxisOptions, y: AxisOptions] {
+  return Array.isArray(axis)
+}
+
+function toAxes(axis: AxisInput): XY<AxisOptions> {
+  return isAxisPair(axis) ? [axis[0], axis[1]] : [axis, axis]
 }
 
 /** Where the value of each axis currently sits, as a position (see {@link DragValueMapping}). */
@@ -89,7 +109,7 @@ export function relativeMapping({
    * Pixels of movement that span the whole range.
    * @default 100
    */
-  pixelRange?: XYOrSingle<number>
+  pixelRange?: XYInput<number>
 } = {}): DragValueMapping {
   const [rangeX, rangeY] = toXY(pixelRange)
   let origin: XY<number> = [0, 0]
@@ -110,7 +130,7 @@ export function relativeMapping({
 
 export interface DragValueOptions {
   /** Scaling of each axis; a single value applies to both. */
-  axis: XYOrSingle<AxisOptions>
+  axis: AxisInput
 
   /** How pointer movement becomes a position. */
   mapping: DragValueMapping
@@ -168,7 +188,7 @@ export function createDragValue(
   let opts = options
   let lastValue: XY<number> = [0, 0]
 
-  const axes = () => toXY(opts.axis)
+  const axes = () => toAxes(opts.axis)
 
   function valueOf(position: XY<number>): XY<number> {
     return axes().map((axis, i) => {

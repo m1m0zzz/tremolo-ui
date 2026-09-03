@@ -22,6 +22,7 @@ export {
   createDragValue,
   elementMapping,
   relativeMapping,
+  type AxisInput,
   type AxisOptions,
   type DragValueInstance,
   type DragValueMapping,
@@ -29,4 +30,4 @@ export {
   type MappingContext,
 } from './pointer/dragValue'
 export { createWheel, type WheelInstance } from './pointer/wheel'
-export { toXY, type XY, type XYOrSingle } from './xy'
+export { toXY, type XY, type XYInput } from './xy'

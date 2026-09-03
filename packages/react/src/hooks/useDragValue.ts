@@ -4,17 +4,17 @@ import {
   createDragValue,
   elementMapping,
   relativeMapping,
-  type AxisOptions,
+  type AxisInput,
   type DragValueInstance,
   type XY,
-  type XYOrSingle,
+  type XYInput,
 } from '@tremolo-ui/dom'
 
 import { useCallbackRef } from './_internal/useCallbackRef'
 
 export interface UseDragValueOptions {
   /** Scaling of each axis; a single value applies to both. */
-  axis: XYOrSingle<AxisOptions>
+  axis: AxisInput
 
   /**
    * Normalize the pointer against the bounding rect of this element, so that
@@ -35,7 +35,7 @@ export interface UseDragValueOptions {
    * Pixels of movement that span the whole range, with `getValue`.
    * @default 100
    */
-  pixelRange?: XYOrSingle<number>
+  pixelRange?: XYInput<number>
 
   /** @see DragValueOptions.updateOnPointerDown */
   updateOnPointerDown?: boolean

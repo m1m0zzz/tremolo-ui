@@ -130,9 +130,7 @@ describe('expandAliases', () => {
   })
 
   test('leaves an unknown name alone', () => {
-    expect(expandAliases('XYOrSingle<number>', aliases)).toBe(
-      'XYOrSingle<number>',
-    )
+    expect(expandAliases('XYInput<number>', aliases)).toBe('XYInput<number>')
   })
 
   test('does not loop on an alias that names itself', () => {
