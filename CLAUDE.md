@@ -104,7 +104,9 @@ Slider / Knob / XYPad は children をそのまま描画し、`children` は型�
 
 ### stories とテスト
 
-Storybook の stories は `packages/react/__stories__/`、テストは `packages/react/__tests__/` に置く（`src/` の外、コンポーネント名に対応する構成）。`tsdown.config.ts` はパッケージビルドのたびに `publint`（error）と `attw`（warn）を実行するので、exports map や型解決のミスは `build:package` で失敗する。
+Storybook の stories は `packages/react/__stories__/`、テストは `packages/react/__tests__/` に置く（`src/` の外、コンポーネント名に対応する構成）。
+
+**`Root` は `export const Root = forwardRef(...)` の形で export すること。** Storybook の docgen（`react-docgen`）は export されたコンポーネント定義しか拾わないため、`const Root` のままだと props が 1 つも認識されず、**Controls パネルに story の `args` / `argTypes` で明示したものしか出てこない**。`Slider` の `reverse` が出ていなかったのがこれ。`src/index.ts` から re-export しなければ公開 API には入らない。`tsdown.config.ts` はパッケージビルドのたびに `publint`（error）と `attw`（warn）を実行するので、exports map や型解決のミスは `build:package` で失敗する。
 
 ## 規約
 

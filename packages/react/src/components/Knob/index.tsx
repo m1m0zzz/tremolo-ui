@@ -115,7 +115,7 @@ export interface KnobMethods {
 
 type Props = KnobProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KnobProps>
 
-const Root = forwardRef<KnobMethods, Props>(
+export const Root = forwardRef<KnobMethods, Props>(
   (
     {
       value,

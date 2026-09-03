@@ -80,7 +80,7 @@ export interface PianoMethods {
 type Props = PianoProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof PianoProps>
 
-const Root = forwardRef<PianoMethods, Props>(
+export const Root = forwardRef<PianoMethods, Props>(
   (
     {
       noteRange,

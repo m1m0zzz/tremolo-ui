@@ -107,7 +107,7 @@ export interface SliderMethods {
 type Props = SliderProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof SliderProps>
 
-const Root = forwardRef<SliderMethods, Props>(
+export const Root = forwardRef<SliderMethods, Props>(
   (
     {
       value,

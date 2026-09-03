@@ -15,8 +15,7 @@ export default {
   component: XYPad.Root,
   argTypes: {
     value: {
-      description:
-        'NOTE: The value of controls is not valid because it is wrapped in useState.',
+      control: false,
     },
     children: {
       control: false,
