@@ -6,8 +6,6 @@ import { skewWithCenterValue } from '@tremolo-ui/functions'
 import { NumberInput } from '../src/components/NumberInput'
 import { Slider } from '../src/components/Slider'
 
-import { inputEventOptionType } from './lib/typeUtils'
-
 export default {
   title: 'Components/Slider/Root',
   component: Slider.Root,
@@ -17,16 +15,6 @@ export default {
     },
     children: {
       control: false,
-    },
-    wheel: {
-      table: {
-        type: inputEventOptionType,
-      },
-    },
-    keyboard: {
-      table: {
-        type: inputEventOptionType,
-      },
     },
   },
 } satisfies Meta<typeof Slider.Root>

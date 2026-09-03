@@ -75,7 +75,7 @@ export interface PointsEditorProps {
 type Props = PointsEditorProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorProps>
 
-const Root = forwardRef<HTMLDivElement, Props>(
+export const Root = forwardRef<HTMLDivElement, Props>(
   (
     {
       width = 200,

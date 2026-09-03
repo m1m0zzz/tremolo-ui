@@ -207,7 +207,7 @@ Phase 3 の前に、3 つの「範囲付きスカラー」コンポーネント�
 - [x] フォールバックを全廃し `children` を型で必須に（`Knob.SVGRoot` も同様）
 - [x] zustand store を React context に置き換え、設定・値・導出値をレンダー中に計算
 - [x] `XYPad` の軸ごと設定を `[x, y]` タプルに変更（Slider の `min={0}` の自然な拡張）
-- [ ] ブラウザでの目視確認
+- [x] ブラウザでの目視確認
 
 #### バラバラだった原因
 
@@ -238,16 +238,78 @@ zustand の利点であるセレクタ購読も、`value` が props である以
 
 ### Phase 3: `createDragValue`
 
-- [ ] `useDragWithElement`（要素の bounding rect に対する正規化）をコアへ移植
-- [ ] `createDragValue` として、座標写像を差し替え可能な形にまとめる
-- [ ] Knob / Slider / XYPad / PointsEditor を `createDragValue` ベースに差し替え
-- [ ] Phase 2/3 の時点で「値の所有者」を確定させ、全コンポーネントで `value` / `onChange` の意味論（step の丸め、範囲外の扱い）を揃える
+- [x] `useDragWithElement`（要素の bounding rect に対する正規化）をコアへ移植
+- [x] `createDragValue` として、座標写像を差し替え可能な形にまとめる
+- [x] Knob / Slider / XYPad / PointsEditor を `createDragValue` ベースに差し替え
+- [x] Phase 2/3 の時点で「値の所有者」を確定させ、全コンポーネントで `value` / `onChange` の意味論（step の丸め、範囲外の扱い）を揃える
+- [x] ブラウザでの目視確認
+
+#### 構造
+
+`createDragValue(element, options)` は `createDrag` の上に「座標 → 値」の変換を乗せたもの。責務を 2 つに割った。
+
+| | 担当 | 差し替え可能 |
+| --- | --- | --- |
+| mapping | ポインタの動き → 各軸の 0-1 の位置 | する（`DragValueMapping`） |
+| axis | 0-1 の位置 → 値（`min` `max` `step` `skew` `reverse`） | しない。全コンポーネント共通 |
+
+同梱する mapping は 2 つ。
+
+- `elementMapping(getElement)`: 要素の bounding rect に対して正規化する。**値＝指した位置**。Slider / XYPad / PointsEditor
+- `relativeMapping({ pixelRange })`: ドラッグ開始時の値からの相対移動。ポインタの位置自体には意味がない。Knob
+
+値の算出順序を 1 か所に固定した: 位置 → `reverse` → `rawValue`（skew）→ `stepValue` → `clamp`。従来も 4 コンポーネントとも同じ順序だったが、それぞれが自前で書いていた。
+
+#### 決めたこと
+
+- **値の所有者はラッパー。** コアは値を保持せず、必要なとき（`relativeMapping` の開始時）だけ `getValue()` で読む。Phase 2.5 で「value は props から来るのでコピーすると同期が要る」と結論した延長で、コアでも同じ扱いにした。非制御 + 命令的なパス（`defaultValue` + `ref.setValue()`）を足すかは、これとは独立に判断できる
+- **`reverse` は「画面の向きを反転する」意味に統一。** 位置は常に画面に従う（x は右、y は下）。垂直 Slider は `xor(vertical, reverse)` を、Knob は y 軸に `reverse: true` を渡す（上へドラッグすると値が増える）
+- **`step` を省略すると丸めない。** PointsEditor の Point は 0-1 の位置がそのまま値なので、丸めが要らない。`stepValue` は `step <= 0` で例外を投げるため、0 を渡す形にはできない
+- **PointsEditor の `clampPoint` は React 側に残した。** 点ごとの `min` / `max` は軸のレンジではなく可動範囲の制限で、`rawValue` に渡すと再スケールになってしまう（左端が 0.2 ではなく 0.2〜1.0 の写像になる）
+
+#### `update()` を追加した
+
+`createDrag` / `createDragValue` に `update(options)` を足し、リスナを張り直さずに設定を差し替えられるようにした（Embla と同じ形）。React 側は「node ごとにインスタンスを 1 つ作り、毎レンダー `update()` で最新の props を流し込む」ようになる。
+
+これがないと `min` / `max` / `step` を effect の依存に入れることになり、**ドラッグ中にそれらが変わるとインスタンスが破棄されてドラッグが中断する**。`__tests__/hooks/useDragValue.test.tsx` に回帰テストがある。
+
+#### Phase 3 での公開 API 変更
+
+| | 変更前 | 変更後 |
+| --- | --- | --- |
+| `useDragWithElement` | `{ refCallback, dragging }`、正規化座標を渡す | **削除**。`useDragValue` に置き換え |
+| `useDragValue` | （なし） | 新規。`{ refCallback, dragging }`、**値**を `XY<number>` で渡す |
+| `@tremolo-ui/dom` | | `createDragValue` / `elementMapping` / `relativeMapping` / `toXY` と型を追加 |
+
+`useDrag`（相対デルタのみの低レベル hook）は公開のまま残す。Knob が使わなくなったため、リポジトリ内の利用箇所は stories とテストのみ。
+
+`XY` / `XYOrSingle` / `toXY` の定義は `@tremolo-ui/dom` に移し、`XYPad/context.tsx` はそれを re-export するだけにした。
+
+あわせて `XYOrSingle<T>` を **`XYInput<T>`** に改名し、ペア側を `readonly [x: T, y: T]` にした。
+
+判別が `Array.isArray` である以上、`T` 自体が配列だと単一値とペアを区別できない。そこを条件型で表現し、**配列のときだけ単一値の形を落とす**（ペアでしか書けなくなる）。
+
+```ts
+export type XYInput<T> = [T] extends [readonly unknown[]]
+  ? readonly [x: T, y: T]
+  : T | readonly [x: T, y: T]
+```
+
+プリミティブの whitelist で制限する案もあったが、それだと `createDragValue` の `axis`（`AxisOptions` というオブジェクト）に使えず、同じ形の型と型述語をもう一組定義することになる。条件型なら実行時の要件（配列でないこと）をそのまま型にできる。
+
+`toXY` の引数は `XYInput<T>` ではなく `T | readonly [x: T, y: T]` と書き下している。条件型は絞り込めないため。制限は型を宣言する側（props など）に置く。
+
+#### ついでに直したもの
+
+- 正規化の基準要素が幅・高さ 0 になっていると `normalizeValue` が `RangeError` を投げていた（`min < max` を要求するため）。位置 0 を返すようにした
+- `@tremolo-ui/dom` が `@tremolo-ui/functions` に依存するようになった（スケール変換のため）。`fixed` グループなのでバージョンは自動で揃う
 
 ### Phase 4: 残りのコンポーネント
 
 - [ ] Piano（マルチタッチ、グリッサンド。`usePianoDrag` が該当）
 - [ ] AnimationCanvas（rAF + ResizeObserver + DPR。`canvas.ts` と `index.tsx` 計 約280行）
 - [ ] NumberInput（テキスト入力はラッパー担当、ドラッグ/矢印キー増減はコア、パース・フォーマット・clamp・step は純粋関数）
+- [ ] NumberInputは InternalInputをInputFieldとして公開。他のコンポーネント同様 Compound Component パターンで公開
 
 ### Phase 5: zustand 除去
 

@@ -1,3 +1,7 @@
+import propTypes from 'virtual:tremolo-prop-types'
+
+import { propTypeEnhancers } from './argTypes'
+
 import type { Preview } from '@storybook/react-vite'
 
 // storybook css
@@ -13,6 +17,7 @@ import '../src/components/Slider/index.css'
 import '../src/components/XYPad/index.css'
 
 const preview: Preview = {
+  argTypesEnhancers: propTypeEnhancers(propTypes),
   parameters: {
     controls: {
       matchers: {

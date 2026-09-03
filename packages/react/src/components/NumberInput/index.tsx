@@ -95,7 +95,7 @@ export interface NumberInputMethods {
 type Props = NumberInputProps &
   Omit<ComponentPropsWithoutRef<'input'>, keyof NumberInputProps | 'type'>
 
-const Root = forwardRef<NumberInputMethods, Props>(
+export const Root = forwardRef<NumberInputMethods, Props>(
   (
     {
       value,

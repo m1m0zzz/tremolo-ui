@@ -2,7 +2,8 @@ import { useRef, useCallback, RefObject } from 'react'
 
 import { normalizeValue } from '@tremolo-ui/functions'
 
-import { useEventListener } from './useEventListener'
+import { useEventListener } from '../useEventListener'
+
 import { useRefCallbackEvent } from './useRefCallbackEvent'
 
 interface UsePianoDrag<T extends Element> {

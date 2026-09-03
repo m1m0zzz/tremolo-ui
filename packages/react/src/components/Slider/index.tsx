@@ -10,6 +10,7 @@ import React, {
   useRef,
 } from 'react'
 
+import type { AxisOptions, XY } from '@tremolo-ui/dom'
 import {
   clamp,
   normalizeValue,
@@ -20,7 +21,7 @@ import {
   xor,
 } from '@tremolo-ui/functions'
 
-import { useDragWithElement } from '../../hooks/useDragWithElement'
+import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 import { useComposedRefs } from '../_util/composeRefs'
@@ -106,7 +107,7 @@ export interface SliderMethods {
 type Props = SliderProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof SliderProps>
 
-const Root = forwardRef<SliderMethods, Props>(
+export const Root = forwardRef<SliderMethods, Props>(
   (
     {
       value,
@@ -156,17 +157,6 @@ const Root = forwardRef<SliderMethods, Props>(
     const percent = displayReversed ? rev : p
 
     // --- internal functions ---
-    const onDrag = useCallback(
-      (nx: number, ny: number) => {
-        if (!onChange || readonly) return
-        const n = vertical ? ny : nx
-        const v = rawValue(displayReversed ? 1 - n : n, min, max, skew)
-        const v2 = clamp(stepValue(v, step), min, max)
-        onChange(v2)
-      },
-      [displayReversed, max, min, onChange, readonly, skew, step, vertical],
-    )
-
     const updateValueByEvent = useCallback(
       (eventType: InputEventOption[0], x: number) => {
         let newValue
@@ -197,40 +187,41 @@ const Root = forwardRef<SliderMethods, Props>(
     )
 
     // --- hooks ---
-    const { refCallback: dragRefCallback } = useDragWithElement<HTMLDivElement>(
-      {
-        baseElementRef: trackRef,
-        cursor: readonly ? undefined : externalStyles.cursor,
-        updateOnPointerDown: true,
-        onDrag: onDrag,
-        onDragStart: (nx, ny) => {
-          if (readonly) return
-          if (externalStyles.userSelectNone) addUserSelectNone()
+    // The pointer is normalized against the track on both axes; only the one
+    // the slider runs along is read back.
+    const axis: AxisOptions = {
+      min,
+      max,
+      step,
+      skew,
+      reverse: displayReversed,
+    }
+    const valueOf = (v: XY<number>) => v[vertical ? 1 : 0]
 
-          thumbRef.current?.focus()
-          onDragStart?.(
-            clamp(
-              stepValue(rawValue(vertical ? ny : nx, min, max, skew), step),
-              min,
-              max,
-            ),
-          )
-        },
-        onDragEnd: (nx, ny) => {
-          if (readonly) return
-
-          if (externalStyles.userSelectNone) removeUserSelectNone()
-
-          onDragEnd?.(
-            clamp(
-              stepValue(rawValue(vertical ? ny : nx, min, max, skew), step),
-              min,
-              max,
-            ),
-          )
-        },
+    const { refCallback: dragRefCallback } = useDragValue<HTMLDivElement>({
+      axis,
+      baseElementRef: trackRef,
+      cursor: readonly ? undefined : externalStyles.cursor,
+      updateOnPointerDown: true,
+      onChange: (v) => {
+        if (readonly) return
+        onChange?.(valueOf(v))
       },
-    )
+      onDragStart: (v) => {
+        if (readonly) return
+        if (externalStyles.userSelectNone) addUserSelectNone()
+
+        thumbRef.current?.focus()
+        onDragStart?.(valueOf(v))
+      },
+      onDragEnd: (v) => {
+        if (readonly) return
+
+        if (externalStyles.userSelectNone) removeUserSelectNone()
+
+        onDragEnd?.(valueOf(v))
+      },
+    })
 
     const wheelRefCallback = useWheel<HTMLDivElement>((event) => {
       if (!wheel || !onChange || readonly) return

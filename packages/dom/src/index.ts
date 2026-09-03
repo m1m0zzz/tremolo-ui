@@ -18,4 +18,15 @@ export {
   type DragOptions,
   type DragState,
 } from './pointer/drag'
+export {
+  createDragValue,
+  elementMapping,
+  relativeMapping,
+  type AxisOptions,
+  type DragValueInstance,
+  type DragValueMapping,
+  type DragValueOptions,
+  type MappingContext,
+} from './pointer/dragValue'
 export { createWheel, type WheelInstance } from './pointer/wheel'
+export { toXY, type XY, type XYInput } from './xy'

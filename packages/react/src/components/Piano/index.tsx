@@ -23,8 +23,8 @@ import {
   noteKeys,
 } from '@tremolo-ui/functions'
 
+import { usePianoDrag } from '../../hooks/_internal/usePianoDrag'
 import { useEventListener } from '../../hooks/useEventListener'
-import { usePianoDrag } from '../../hooks/usePianoDrag'
 
 import { NoteRange, PianoProvider } from './context'
 import {
@@ -80,7 +80,7 @@ export interface PianoMethods {
 type Props = PianoProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof PianoProps>
 
-const Root = forwardRef<PianoMethods, Props>(
+export const Root = forwardRef<PianoMethods, Props>(
   (
     {
       noteRange,

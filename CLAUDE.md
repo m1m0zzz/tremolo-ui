@@ -51,27 +51,48 @@ npm run build:docs
 
 **site と Storybook は workspace の symlink 経由でパッケージのビルド済み `dist/` を参照している。** `packages/*/src` を変更したら、site（やドキュメントの example）に反映する前に `npm run build:package` が必要。`react` から `dom` / `functions` の新しいコードを使う場合も同様。
 
+### PR を作る前に
+
+**パッケージだけでなく、成果物を全てビルドすること。**
+
+```bash
+npm run lint
+npm run test
+npm run build:sb      # build:package + Storybook
+npm run build:docs    # ドキュメントサイト（typedoc の生成が走る。en / ja 両方）
+```
+
+GitHub Actions（`build.yml`）が回すのは `build:package` と `test` だけで、**ドキュメントサイトと Storybook のビルドは Vercel でしか検証されない。** push して PR を作ってからでないと落ちたことに気づけないので、手元で通しておく。
+
+過去に踏んだもの:
+
+- `packages/*/src` にファイルを足す・移すと、`site/docusaurus.config.ts` の typedoc の `entryPoints` が拾って API ページを生成する。Docusaurus は `_` で始まるパスを docs から除外するため、`_util` や `_internal` を `exclude` に入れておかないと「存在しない doc id を指すサイドバー」になってビルドが落ちる
+- パッケージを追加したとき、Vercel の Storybook プロジェクトのビルドコマンドが個別指定だと新しい `dist` が無くて落ちる（`plans/core-extraction-plan.md` Phase 1）
+
 ## アーキテクチャ
 
 ### namespace オブジェクトによる compound component
 
-各コンポーネントのディレクトリ（`packages/react/src/components/<Name>/`）は単一のコンポーネントではなくプレーンなオブジェクトを export する。例: `Slider = { Root, Thumb, Track, Scale, ScaleOption }`、`Knob = { Root, SVGRoot, InactiveLine, ActiveLine, Thumb }`。`Root` は `forwardRef` で、`useImperativeHandle` により `*Methods` インターフェース（`focus` / `blur` など）を公開する。子要素はユーザーが組み立てるが、`children` が無い場合は `Root` が既定の描画を行う。
+各コンポーネントのディレクトリ（`packages/react/src/components/<Name>/`）は単一のコンポーネントではなくプレーンなオブジェクトを export する。例: `Slider = { Root, Thumb, Track, Scale, ScaleOption }`、`Knob = { Root, SVGRoot, InactiveLine, ActiveLine, Thumb }`。`Root` は `forwardRef` で、`useImperativeHandle` により `*Methods` インターフェース（`focus` / `blur` など）を公開する。
 
-`/** @internal */` が付き `__` で始まる props（`__percent`、`__thumb` など）は、`Root` が計算済みの状態をサブコンポーネントへ渡すための内部 API。ドキュメント化・公開はしない。
+Slider / Knob / XYPad は children をそのまま描画し、`children` は型で必須。既定の描画へのフォールバックは無い。**Piano だけが旧来の形のまま**で、`React.Children.map` で子に props を注入し、children が無ければ自前で描画する。`/** @internal */` が付き `__` で始まる props はその注入用の内部 API で、残っているのは `Piano/key.tsx` と `Piano/KeyLabel.tsx` のみ。ドキュメント化・公開はしない。
 
-### コンポーネントごとの zustand store を React context で配る
+### サブコンポーネントへの設定の配り方
 
-サブコンポーネントを持つコンポーネントには `context.tsx` があり、`createStore` と、store を ref に保持して props を `setState` で同期する `<XProvider>`、そして `useXContext(selector)` を定義している。サブコンポーネントは props のバケツリレーではなく store から設定を読む。
+サブコンポーネントを持つコンポーネントには `context.tsx` があり、サブコンポーネントは props のバケツリレーではなく `useXContext(selector)` でそこから読む。中身は 2 通りある。
 
-注意: **store の中身はコンポーネント間で統一されていない。** Slider の store は設定のみ（`value` を持たない）、Knob / NumberInput は `value` を持ち、Piano / NumberInput はコールバックも持つ。この点と、framework-agnostic なコアを切り出す進行中の計画（`destroy()` を持つ Embla 型の命令的インスタンス、`scripts/publish.sh` を changesets の `fixed` へ置き換える等）は `plans/core-extraction-plan.md` に記載がある。
+- Slider / Knob / XYPad: 素の React context。`value` も導出値もレンダー中に計算するので、同期する state が無い
+- NumberInput / Piano / PointsEditor: zustand の `createStore` を context で配り、props を `setState` で同期する。**未移行**（`plans/core-extraction-plan.md` の Phase 5）
 
 ### インタラクション用 hooks
 
-ポインタ / ホイール / MIDI の実体は `@tremolo-ui/dom`（`createDrag` / `createWheel` / `createMIDIAccess` など）にあり、`packages/react/src/hooks/` の hook はそれを React に橋渡しするだけ。`useDrag` / `useWheel` は ref コールバックを 1 つ返し、`useDragWithElement` は `{ refCallback, dragging }` を返す。
+ポインタ / ホイール / MIDI の実体は `@tremolo-ui/dom`（`createDrag` / `createDragValue` / `createWheel` / `createMIDIAccess` など）にあり、`packages/react/src/hooks/` の hook はそれを React に橋渡しするだけ。`useDrag` / `useWheel` は ref コールバックを 1 つ返し、`useDragValue` は `{ refCallback, dragging }` を返す。Slider / Knob / XYPad / PointsEditor のドラッグは全て `useDragValue` を通る（設計の意図は `plans/core-extraction-plan.md` の Phase 3）。
 
 **ドラッグ系 hook は要素を state で保持し、生成・破棄を `useEffect` で行う。** ref コールバックの中でインスタンスを作ると、呼び出し側がインライン ref を書いた場合に再レンダーのたびに ref が付け直され（`ref(null)` → `ref(node)`）、ドラッグが中断される。
 
-`useRefCallbackEvent` は passive でないリスナを張るための内部 hook で、現在は `usePianoDrag` からのみ使われている。`useCallbackRef` / `usePianoDrag` / `useRefCallbackEvent` は内部用（`src/index.ts` から re-export していない）で、それ以外は公開 API。`src/index.ts` に追加したものは公開 API になり、生成される typedoc にも載る。
+**設定は effect の依存に入れず、インスタンスの `update()` で流し込む。** 依存に入れると、ドラッグ中に `min` / `max` などが変わった時点でインスタンスが破棄されてドラッグが切れる。
+
+内部専用の hook は `src/hooks/_internal/` に置く（`useCallbackRef` / `usePianoDrag` / `useRefCallbackEvent`）。`src/hooks/` 直下にあるものは公開 API で、`src/index.ts` から re-export され、生成される typedoc にも載る。`useRefCallbackEvent` は passive でないリスナを張るためのもので、現在は `usePianoDrag` からのみ使われている。
 
 ### スタイリング
 
@@ -83,7 +104,11 @@ npm run build:docs
 
 ### stories とテスト
 
-Storybook の stories は `packages/react/__stories__/`、テストは `packages/react/__tests__/` に置く（`src/` の外、コンポーネント名に対応する構成）。`tsdown.config.ts` はパッケージビルドのたびに `publint`（error）と `attw`（warn）を実行するので、exports map や型解決のミスは `build:package` で失敗する。
+Storybook の stories は `packages/react/__stories__/`、テストは `packages/react/__tests__/` に置く（`src/` の外、コンポーネント名に対応する構成）。
+
+Controls に出る型は `.storybook/propTypes.ts` が補っている。react-docgen は型をソースに書かれたまま記録するため、エイリアスやジェネリックは名前しか出ない。ビルド時に TypeScript の checker で prop ごとの型を解決し、**コンポーネントそのものをキーにした Map**（`virtual:tremolo-prop-types`）として preview に渡している。名前をキーにしないのは、`Root` だけではどのコンポーネントのものか分からないため。
+
+**`Root` は `export const Root = forwardRef(...)` の形で export すること。** Storybook の docgen（`react-docgen`）は export されたコンポーネント定義しか拾わないため、`const Root` のままだと props が 1 つも認識されず、**Controls パネルに story の `args` / `argTypes` で明示したものしか出てこない**。`Slider` の `reverse` が出ていなかったのがこれ。`src/index.ts` から re-export しなければ公開 API には入らない。`tsdown.config.ts` はパッケージビルドのたびに `publint`（error）と `attw`（warn）を実行するので、exports map や型解決のミスは `build:package` で失敗する。
 
 ## 規約
 

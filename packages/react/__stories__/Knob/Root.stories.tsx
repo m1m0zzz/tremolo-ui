@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { normalizeValue, skewWithCenterValue } from '@tremolo-ui/functions'
 
 import { Knob } from '../../src/components/Knob'
-import { inputEventOptionType } from '../lib/typeUtils'
 
 export default {
   title: 'Components/Knob/Root',
@@ -12,16 +11,6 @@ export default {
   argTypes: {
     value: {
       control: false,
-    },
-    wheel: {
-      table: {
-        type: inputEventOptionType,
-      },
-    },
-    keyboard: {
-      table: {
-        type: inputEventOptionType,
-      },
     },
     children: {
       control: false,
