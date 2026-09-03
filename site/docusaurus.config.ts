@@ -52,7 +52,13 @@ function typedocPlugins() {
           '../packages/react/src/components/**/index.{ts,tsx}',
           '../packages/react/src/hooks/**/*.{ts,tsx}',
         ],
-        exclude: ['../packages/react/src/components/_util/**'],
+        // Docusaurus skips underscore-prefixed paths, so a page generated
+        // for one would leave the sidebar pointing at a doc id that does not
+        // exist and fail the build.
+        exclude: [
+          '../packages/react/src/components/_util/**',
+          '../packages/react/src/hooks/_internal/**',
+        ],
         tsconfig: '../packages/react/tsconfig.json',
         out: './docs/api/react',
         readme: 'none',
