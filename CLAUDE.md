@@ -51,6 +51,24 @@ npm run build:docs
 
 **site と Storybook は workspace の symlink 経由でパッケージのビルド済み `dist/` を参照している。** `packages/*/src` を変更したら、site（やドキュメントの example）に反映する前に `npm run build:package` が必要。`react` から `dom` / `functions` の新しいコードを使う場合も同様。
 
+### PR を作る前に
+
+**パッケージだけでなく、成果物を全てビルドすること。**
+
+```bash
+npm run lint
+npm run test
+npm run build:sb      # build:package + Storybook
+npm run build:docs    # ドキュメントサイト（typedoc の生成が走る。en / ja 両方）
+```
+
+GitHub Actions（`build.yml`）が回すのは `build:package` と `test` だけで、**ドキュメントサイトと Storybook のビルドは Vercel でしか検証されない。** push して PR を作ってからでないと落ちたことに気づけないので、手元で通しておく。
+
+過去に踏んだもの:
+
+- `packages/*/src` にファイルを足す・移すと、`site/docusaurus.config.ts` の typedoc の `entryPoints` が拾って API ページを生成する。Docusaurus は `_` で始まるパスを docs から除外するため、`_util` や `_internal` を `exclude` に入れておかないと「存在しない doc id を指すサイドバー」になってビルドが落ちる
+- パッケージを追加したとき、Vercel の Storybook プロジェクトのビルドコマンドが個別指定だと新しい `dist` が無くて落ちる（`plans/core-extraction-plan.md` Phase 1）
+
 ## アーキテクチャ
 
 ### namespace オブジェクトによる compound component
