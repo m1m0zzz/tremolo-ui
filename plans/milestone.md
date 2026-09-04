@@ -19,7 +19,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 | Phase 2: `createDrag` / `createWheel` | 完了 |
 | Phase 2.5: Slider / Knob / XYPad の実装統一 | 完了 |
 | Phase 3: `createDragValue` | 完了 |
-| Phase 4: Piano / AnimationCanvas / NumberInput | NumberInput は完了（[4.1](./core-extraction-plan.md)）。AnimationCanvas / Piano は未着手 |
+| Phase 4: Piano / AnimationCanvas / NumberInput | NumberInput（[4.1](./core-extraction-plan.md)）と AnimationCanvas（[4.2](./core-extraction-plan.md)）は完了。Piano は未着手 |
 | Phase 5: zustand 除去 | 一部完了（NumberInput は 4.1 で除去済み。Piano / PointsEditor が残り） |
 | 5 章: CSS ヘッドレス化・MIDI の作り込み など | 一部完了（5.3 / 5.4 / 5.8 / 5.9 済み） |
 
@@ -33,7 +33,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 ## 2. テスト整備
 
-- [ ] **dom 移行前からテストが無い部分にテストを足す。** `packages/react/__tests__/` があるのは Knob / NumberInput / Slider / hooks / util / storybook のみで、Piano・PointsEditor・AnimationCanvas・XYPad には専用のテストが無い（XYPad は `__tests__/drag.test.tsx` と `compose.test.tsx` で部分的に触れているだけ）
+- [ ] **dom 移行前からテストが無い部分にテストを足す。** `packages/react/__tests__/` があるのは AnimationCanvas / Knob / NumberInput / Slider / hooks / util / storybook のみで、Piano・PointsEditor・XYPad には専用のテストが無い（XYPad は `__tests__/drag.test.tsx` と `compose.test.tsx` で部分的に触れているだけ）
 - [ ] **テストと story を実装コードと同じディレクトリに置く。** 現在は `src/` の外に `__tests__/` と `__stories__/` を並べる構成
 
   1 つのコンポーネントに対応するものは `src/components/<Name>/` へ移す。**複数のコンポーネントにまたがるものは `__tests__/` / `__stories__/` に残す**（`__tests__/drag.test.tsx`、`__tests__/Slider/compose.test.tsx`、`__stories__/combined/` など）。story 用のスタイルとヘルパー（`__stories__/lib/`、`__stories__/styles/`、`public/`、`intro.mdx`）も残す。

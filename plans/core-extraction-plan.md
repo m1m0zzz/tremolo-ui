@@ -298,11 +298,32 @@ export type XYInput<T> = [T] extends [readonly unknown[]]
 
 ### Phase 4: 残りのコンポーネント
 
-- [ ] AnimationCanvas（rAF + ResizeObserver + DPR。`canvas.ts` と `index.tsx` 計 約280行）
+- [x] AnimationCanvas → **4.2** で完了
 - [ ] NumberInput → 設計は **4.1** で確定済み
 - [ ] Piano
   - [ ] 既存のTODO: マルチタッチ、グリッサンド。(`usePianoDrag` が該当)
   - [ ] コンポーネント設計の検討
+
+#### 4.2 AnimationCanvas
+
+`createAnimationCanvas(canvas, options)` として `@tremolo-ui/dom` へ移した。React 側は「node を state で保持し、インスタンスを 1 回だけ作り、毎レンダー `update()` で最新のハンドラを流し込む」形で、`useDragValue` と同じ構造になっている。
+
+`packages/react/src/components/AnimationCanvas/canvas.ts` は `packages/dom/src/canvas/context.ts` へ移動（`setDprConfig` → `applyDevicePixelRatio`、状態のコピーを `readDrawingState` / `writeDrawingState` に切り出し）。
+
+##### 直したもの
+
+いずれも移行前から存在したバグで、`packages/react/__tests__/AnimationCanvas/index.test.tsx` は**旧実装に対して実際に落ちる**ことを確認してある。
+
+- **毎レンダーでアニメーションが再起動していた。** effect の依存に `draw` / `init` / `options` が入っており、これらはほぼ全ての利用箇所でインラインで書かれるため毎レンダー新しくなる。結果として 2D context・`ResizeObserver`・rAF ループが破棄・再生成され、`init` が繰り返し呼ばれ、`count` と `elapsedTime` が 0 に戻っていた。state を持つコンポーネント（メーター等）の隣では frame 0 から進めない
+- **マウント後に `width` / `height` を変えても効かなかった。** effect の依存に入っていないため、canvas の属性だけが書き換わって DPR の transform が再適用されず、描画スケールが狂う
+- **`relativeSize` の初回サイズだけ `parent.clientWidth`、以降は observer の `contentRect` だった。** 両者は親の padding 分ずれる。`ResizeObserver` は observe した時点で現在のサイズを通知するので、初回も含めて observer に一本化した
+
+##### 決めたこと
+
+- **`relativeSize` と `contextAttributes` はインスタンス生成時に固定。** 前者は `ResizeObserver` を張るかどうか、後者は context の生成に関わるため、`update()` では受け付けない（`createDragValue` の `mapping` と同じ扱い）
+- **フリッカー抑制用の隠し `<canvas>` は DOM に描画しない。** コアが必要になった時点で `document.createElement` で作る。React 側は fragment が不要になり `<canvas>` 1 つだけを返す
+- **サイズはコアが所有する。** React は `width` / `height` 属性を設定せず、`size` オプションとして渡す。これで属性の書き換えと DPR 設定の二重管理が無くなる
+- リサイズ時のスナップショットは、旧実装の `scale(1/dpr)` → `drawImage` → `scale(dpr)` をそのまま移植した。dpr が打ち消し合って位置・大きさは正しいが、**dpr > 1 では一度縮小してから拡大するため解像度が落ちる**（リサイズ中の一瞬だけなので今回は変えていない）
 
 #### 4.1 NumberInput の再設計
 

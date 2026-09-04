@@ -2,18 +2,16 @@ import clsx from 'clsx'
 import {
   ComponentPropsWithoutRef,
   ReactElement,
-  RefObject,
-  useCallback,
   useEffect,
   useRef,
+  useState,
 } from 'react'
 
 import {
-  DrawingContext,
-  drawingState,
-  DrawingStateValue,
-  setDprConfig,
-} from './canvas'
+  createAnimationCanvas,
+  type AnimationCanvasInstance,
+  type AnimationFrame,
+} from '@tremolo-ui/dom'
 
 export type InitFunction = (
   context: CanvasRenderingContext2D,
@@ -27,20 +25,7 @@ export type InitFunction = (
 
 export type DrawFunction = (
   context: CanvasRenderingContext2D,
-  option: {
-    /** current canvas width */
-    width: number
-    /** current canvas height */
-    height: number
-    /** frame count */
-    count: number
-    /** delta time (ms) */
-    deltaTime: number
-    /** elapsed time (ms) */
-    elapsedTime: number
-    /** frame per second */
-    fps: number
-  },
+  option: AnimationFrame,
 ) => void
 
 export interface CommonProps {
@@ -87,10 +72,10 @@ export function AnimationCanvas({
   animate = true,
   options,
   // absolute
-  width: _width = 100,
-  height: _height = 100,
+  width = 100,
+  height = 100,
   // relative
-  relativeSize,
+  relativeSize = false,
   reduceFlickering = true,
   // canvas props
   className,
@@ -101,142 +86,63 @@ export function AnimationCanvas({
     ComponentPropsWithoutRef<'canvas'>,
     keyof AnimationCanvasProps
   >): ReactElement {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const memoCanvasRef = useRef<HTMLCanvasElement>(null)
-  const reqIdRef = useRef(-1)
-  const widthRef = useRef(0)
-  const heightRef = useRef(0)
-  const deltaMemoRef = useRef(-1)
-  const startTimeRef = useRef(-1)
+  // See useDrag for why the node is held in state rather than a ref: an inline
+  // ref would be re-attached on every render and tear the instance down.
+  const [node, setNode] = useState<HTMLCanvasElement | null>(null)
 
-  const loop = useCallback(
-    (
-      context: CanvasRenderingContext2D,
-      width: RefObject<number>,
-      height: RefObject<number>,
-      count: number,
-    ) => {
-      const now = performance.now()
-      const deltaTime = now - deltaMemoRef.current
-      const elapsedTime = now - startTimeRef.current
-      deltaMemoRef.current = now
-      if (animate) {
-        reqIdRef.current = requestAnimationFrame(() =>
-          loop(context, width, height, count + 1),
-        )
-      }
-      draw(context, {
-        width: width.current,
-        height: height.current,
-        count: count + 1,
-        deltaTime,
-        elapsedTime,
-        fps: 1000 / deltaTime,
-      })
-    },
-    [draw, animate],
-  )
+  // Read when the instance is created. The effect below keeps it current, and
+  // runs right after, so a stale handler is replaced within the same commit.
+  const latest = useRef({
+    draw,
+    init,
+    animate,
+    width,
+    height,
+    reduceFlickering,
+  })
+  const instanceRef = useRef<AnimationCanvasInstance | null>(null)
 
   useEffect(() => {
-    if (!canvasRef.current) return
-    const canvas = canvasRef.current
-    const context = canvas.getContext('2d', options)
-    if (!context) throw new Error('Cannot get canvas context.')
-    const dpr = globalThis.devicePixelRatio
+    if (!node) return
 
-    const firstRendering = (width: number, height: number) => {
-      setDprConfig(canvas, context, width, height, dpr)
-      widthRef.current = width
-      heightRef.current = height
+    const current = latest.current
+    const instance = createAnimationCanvas(node, {
+      draw: (context, frame) => latest.current.draw(context, frame),
+      init: (context, size) => latest.current.init?.(context, size),
+      animate: current.animate,
+      size: { width: current.width, height: current.height },
+      reduceFlickering: current.reduceFlickering,
+      relativeSize,
+      contextAttributes: options,
+    })
+    instanceRef.current = instance
 
-      if (init) init(context, { width, height })
-      const now = performance.now()
-      deltaMemoRef.current = now
-      startTimeRef.current = now
-      loop(context, widthRef, heightRef, -1)
+    return () => {
+      instanceRef.current = null
+      instance.destroy()
     }
+    // `relativeSize` and `options` decide how the instance is wired, so they
+    // are the only settings that rebuild it. Everything else is pushed in
+    // below, which leaves the animation running.
+  }, [node, relativeSize, options])
 
-    if (relativeSize) {
-      const parent = canvas.parentElement
-      if (!parent) throw new Error("Canvas doesn't have a parent element.")
-      const memoCanvas = memoCanvasRef.current
-      const memoContext = memoCanvas?.getContext('2d', options)
-
-      const ro = new ResizeObserver((entries) => {
-        for (const entry of entries) {
-          const w = entry.contentRect.width
-          const h = entry.contentRect.height
-          const contextMemo = {} as DrawingContext
-          if (reduceFlickering && memoCanvas && memoContext) {
-            // Prevents loss of some context when the canvas is resized
-            for (const prop of drawingState) {
-              ;(contextMemo[prop] as DrawingStateValue) = context[prop]
-            }
-            memoCanvas.width = w * dpr
-            memoCanvas.height = h * dpr
-            memoContext.scale(1 / dpr, 1 / dpr)
-            if (canvas.width > 0 && canvas.height > 0) {
-              memoContext.drawImage(canvas, 0, 0)
-            }
-          }
-
-          setDprConfig(canvas, context, w, h, dpr)
-          widthRef.current = w
-          heightRef.current = h
-
-          if (
-            reduceFlickering &&
-            memoContext &&
-            memoCanvas &&
-            memoCanvas.width > 0 &&
-            memoCanvas.height > 0
-          ) {
-            for (const prop of drawingState) {
-              ;(context[prop] as DrawingStateValue) = contextMemo[prop]
-            }
-
-            context.drawImage(memoContext.canvas, 0, 0)
-          }
-
-          if (!animate) {
-            // re rendering
-            loop(context, widthRef, heightRef, -1)
-          }
-        }
-      })
-      ro.observe(parent)
-
-      const width = parent.clientWidth
-      const height = parent.clientHeight
-      firstRendering(width, height)
-
-      return () => {
-        if (reqIdRef.current) cancelAnimationFrame(reqIdRef.current)
-        ro.disconnect()
-      }
-    } else {
-      const { width, height } = canvas.getBoundingClientRect()
-      firstRendering(width, height)
-
-      return () => {
-        if (reqIdRef.current) cancelAnimationFrame(reqIdRef.current)
-      }
-    }
-  }, [loop, init, options, reduceFlickering, relativeSize, animate])
+  // Runs after every render: the handlers come from props and are cheap to
+  // push, and updating in place keeps the frame count and elapsed time going.
+  useEffect(() => {
+    latest.current = { draw, init, animate, width, height, reduceFlickering }
+    instanceRef.current?.update({
+      animate,
+      size: { width, height },
+      reduceFlickering,
+    })
+  })
 
   return (
-    <>
-      <canvas
-        className={clsx('tremolo-animation-canvas', className)}
-        width={relativeSize ? 0 : _width}
-        height={relativeSize ? 0 : _height}
-        ref={canvasRef}
-        onContextMenu={onContextMenu}
-        {...props}
-      ></canvas>
-      {relativeSize && reduceFlickering && (
-        <canvas style={{ display: 'none' }} ref={memoCanvasRef}></canvas>
-      )}
-    </>
+    <canvas
+      className={clsx('tremolo-animation-canvas', className)}
+      ref={setNode}
+      onContextMenu={onContextMenu}
+      {...props}
+    />
   )
 }
