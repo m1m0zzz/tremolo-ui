@@ -83,9 +83,9 @@ export interface NumberInputProps {
    */
   keyboard?: InputEventOption | null
   /**
-   * Pixels of vertical drag on `Stepper` that span the whole range.
-   * Requires `min` and `max`; if null, dragging does nothing.
-   * @default 100
+   * Pixels of vertical drag on `Stepper` that move the value by one `step`.
+   * If null, no event will be triggered
+   * @default 1
    */
   drag?: number | null
 
@@ -144,7 +144,7 @@ export const Root = forwardRef<NumberInputMethods, Props>(
       clampValue = true,
       wheel = ['raw', 1],
       keyboard = ['raw', 1],
-      drag = 100,
+      drag = 1,
       disabled = false,
       readonly = false,
       className,

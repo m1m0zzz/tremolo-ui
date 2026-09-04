@@ -8,9 +8,9 @@ import {
   useRef,
 } from 'react'
 
-import type { AxisOptions, XY } from '@tremolo-ui/dom'
+import { applyDelta } from '@tremolo-ui/functions'
 
-import { useDragValue } from '../../hooks/useDragValue'
+import { useDrag } from '../../hooks/useDrag'
 import { useComposedRefs } from '../_util/composeRefs'
 
 import { StepperProvider, useNumberInputContext } from './context'
@@ -25,7 +25,7 @@ export interface StepperProps {
 
 /**
  * The area the steppers sit in, and a drag handle in its own right: dragging it
- * up and down sweeps the value the way a knob does.
+ * up and down moves the value one `step` every `drag` pixels.
  *
  * The drag lives here rather than on `InputField` because `createDrag` turns
  * off text selection on whatever element it is attached to.
@@ -37,39 +37,44 @@ export function Stepper({
   ref,
   ...props
 }: StepperProps & Omit<ComponentPropsWithoutRef<'div'>, keyof StepperProps>) {
-  const { value, min, max, step, skew, readonly, drag, changeValue } =
+  const { value, step, readonly, drag, range, changeValue } =
     useNumberInputContext()
 
   /**
-   * Set once the drag has actually moved, so that the press-and-hold repeat of
-   * a stepper stands down and leaves the value to the drag. A ref, because it
-   * is read from inside the repeat rather than rendered.
+   * Set once the drag has actually moved the value, so that the press-and-hold
+   * repeat of a stepper stands down and leaves the value to the drag. A ref,
+   * because it is read from inside the repeat rather than rendered.
    */
   const draggingRef = useRef(false)
+  /**
+   * Where the drag started, taken on the first move rather than on pointer
+   * down: the steppers act on pointer down, so by then the value may already
+   * have been nudged once, and the drag should carry on from there.
+   */
+  const originRef = useRef<{ y: number; value: number } | null>(null)
 
-  // A relative drag normalizes the value against the range, so an unbounded
-  // input has nothing to sweep: 100px would move it by a rounding error.
-  const dragEnabled = drag != null && min != undefined && max != undefined
-
-  const axis = useMemo(
-    (): XY<AxisOptions> => [
-      { min: min ?? 0, max: max ?? 1, step, skew },
-      // Dragging up raises the value, as on a knob.
-      { min: min ?? 0, max: max ?? 1, step, skew, reverse: true },
-    ],
-    [min, max, step, skew],
-  )
-
-  const { refCallback: dragRefCallback } = useDragValue<HTMLDivElement>({
-    axis,
-    getValue: () => [value, value],
-    pixelRange: drag ?? 100,
-    // A click must not read as a drag: the steppers below act on pointer down.
-    threshold: 3,
+  const dragRefCallback = useDrag<HTMLDivElement>({
+    threshold: 1,
     cursor: readonly ? undefined : 'ns-resize',
-    onChange: (v) => {
+    onDragStart: () => {
+      originRef.current = null
+      draggingRef.current = false
+    },
+    onDrag: (_x, y) => {
+      if (readonly || drag == null) return
+      if (!originRef.current) {
+        originRef.current = { y, value }
+        return
+      }
+      // Dragging up raises the value, as on a knob.
+      const steps = Math.round(-(y - originRef.current.y) / drag)
+      if (steps == 0) return
       draggingRef.current = true
-      changeValue(v[1])
+      // The same pipeline the wheel and the arrow keys use. Counting from where
+      // the drag started keeps it from accumulating a rounding error.
+      changeValue(
+        applyDelta(originRef.current.value, steps, ['raw', step], range),
+      )
     },
     onDragEnd: () => {
       draggingRef.current = false
@@ -78,7 +83,7 @@ export function Stepper({
 
   const composedRef = useComposedRefs<HTMLDivElement>(
     ref,
-    dragEnabled && !readonly ? dragRefCallback : undefined,
+    drag != null && !readonly ? dragRefCallback : undefined,
   )
 
   const context = useMemo(() => ({ draggingRef }), [])

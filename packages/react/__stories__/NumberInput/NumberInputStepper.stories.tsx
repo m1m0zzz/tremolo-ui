@@ -12,8 +12,8 @@ type Story = StoryObj<typeof NumberInput.Stepper>
 
 /**
  * Clicking a stepper moves the value by one `step` and repeats while held.
- * Dragging the stepper area up and down sweeps the whole range, which needs
- * `min` and `max` to have something to sweep.
+ * Dragging the stepper area up and down moves it one `step` every `drag`
+ * pixels, whether or not the input has a range.
  */
 export const Basic: Story = {
   render: (args) => {

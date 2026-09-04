@@ -26,7 +26,7 @@ export type NumberInputContextValue = {
   range: ValueRange
 
   keyboard: InputEventOption | null
-  /** Pixels of vertical drag on `Stepper` that span the whole range. */
+  /** Pixels of vertical drag on `Stepper` that move the value by one `step`. */
   drag: number | null
 
   /** What the input shows: the draft while editing, the formatted value otherwise. */

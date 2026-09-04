@@ -376,7 +376,7 @@ export interface NumberInputProps {
   // 操作（null で無効）
   wheel?: InputEventOption | null      // 既定 ['raw', 1]。フォーカス時のみ有効（5.9）
   keyboard?: InputEventOption | null   // 既定 ['raw', 1]
-  drag?: number | null                 // 新規。Stepper 上。フルレンジに要する px、既定 100
+  drag?: number | null                 // 新規。Stepper 上。1 step あたりの px、既定 1
 
   /** 確定時と Stepper / wheel / keyboard / drag で min-max に丸める @default true */
   clampValue?: boolean
@@ -421,10 +421,14 @@ props の処遇:
 
 `createDrag` は要素に `user-select: none` / `touch-action: none` を**インスタンスの生存中ずっと**当てるため、`<input>` に付けるとテキスト選択が死ぬ。よってドラッグは `Stepper`（コンテナ）に限定する。
 
-- `Stepper` に `createDragValue` + `relativeMapping({ pixelRange: drag })`、`updateOnPointerDown: false`、`threshold: 3`
+**感度は固定**（`drag` px の移動で 1 `step`、既定 1）。`createDragValue` + `relativeMapping` で Knob と同じ「フルレンジを一定 px で舐める」形にすると、`min` / `max` が両方無いと成立しない（既定の `MIN/MAX_SAFE_INTEGER` で正規化されるため 100px 動かしても実質ゼロ）。NumberInput は範囲を持たない使い方が普通にあるので、そこで no-op になるのは実用的でない。
+
+- `Stepper` に `useDrag`（`threshold: 1`、`cursor: 'ns-resize'`）
+- 値は `applyDelta(originValue, steps, ['raw', step], range)` で求める。**wheel / キーボードと完全に同じ経路**を通るので、`createDragValue` を使わなくても算出が分岐しない
+- `steps` はドラッグ開始時からの総移動量から毎回求める（`relativeMapping` と同じ理由で、差分を積むと丸め誤差が溜まる）
+- **原点は pointerdown ではなく最初の移動で取る。** `Increment` / `DecrementStepper` は pointerdown で ±step するため、pointerdown 時点の値を原点にするとそのクリック分が捨てられる
 - `Increment` / `DecrementStepper` は従来どおり pointerdown で ±step + 長押しリピート
-- `createDrag` の `onDragStart` は threshold ではなく **pointerdown で発火する**ので、リピートの停止は「最初の `onChange`（= threshold 超え）」で行う
-- **`drag` は `min` / `max` の両方が指定されているときだけ有効。** `relativeMapping` は min-max で 0-1 に正規化するので、既定の `MIN/MAX_SAFE_INTEGER` では 100px ドラッグしても実質動かない。未指定なら no-op（開発ビルドで警告）。既存の「`normalized` は min/max 必須」ルールと同じ扱い
+- `createDrag` の `onDragStart` は threshold ではなく **pointerdown で発火する**ので、リピートの停止は「ドラッグが実際に値を動かした時点」で行う
 
 長押しリピートは当面 React の `useLongPress` のまま。`createLongPress` として dom へ出すのは Vue / Svelte 着手時でよい。
 
@@ -514,7 +518,7 @@ NumberInput は `clampValue === false` のとき `min` / `max` に `MIN/MAX_SAFE
 - [x] `Root` から `variant` / `activeColor` / `wrapperClassName` / `keepWithinRange` / `clampValueOnBlur` を削除、`clampValue` / `skew` / `format` / `parse` / `drag` を追加
 - [x] `selectWithFocus` / `blurOnEnter` / `onFocus` / `onBlur` を `InputField` へ移す
 - [x] tab stop を input に移し、`role="spinbutton"` と `aria-value*` を付ける。`data-error` → `data-out-of-range`
-- [x] `Stepper` にドラッグを足す（`createDragValue` + `relativeMapping`、`threshold: 3`、最初の `onChange` で長押しリピートを止める）
+- [x] `Stepper` にドラッグを足す（`useDrag` + `applyDelta` の固定感度、`threshold: 1`、値が動いた時点で長押しリピートを止める）
 - [x] `Stepper` の `dynamic` と `Increment` / `DecrementStepper` の `size` を削除し、CSS 変数へ
 - [x] `index.css` を新しい DOM 構造に合わせる（`variant` のセレクタを外し、フォーカス表示は input の `:focus` か wrapper の `:focus-within` に統一）
 - [x] stories を書き直す（`Variant` は削除、`SelectWithFocus` は `SelectOnFocus` に、`ClampValue` / `CustomFormat` を追加）。`__stories__/combined/` と `useWheel.stories.tsx`、`Piano` / `PointsEditor` / `Slider` の stories も追随済み
