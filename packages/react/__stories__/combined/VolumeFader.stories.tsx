@@ -122,14 +122,14 @@ export const VolumeFader = () => {
             }}
           />
         </Slider.Track>
-        <Slider.Scale>
-          <Slider.ScaleOption value={6} labelWidth={30} />
-          <Slider.ScaleOption value={0} labelWidth={30} />
-          <Slider.ScaleOption value={-6} labelWidth={30} />
-          <Slider.ScaleOption value={-12} labelWidth={30} />
-          <Slider.ScaleOption value={-24} labelWidth={30} />
-          <Slider.ScaleOption value={-100} labelWidth={30} label="-inf" />
-        </Slider.Scale>
+        <Slider.Marks>
+          <Slider.MarksOption value={6} labelWidth={30} />
+          <Slider.MarksOption value={0} labelWidth={30} />
+          <Slider.MarksOption value={-6} labelWidth={30} />
+          <Slider.MarksOption value={-12} labelWidth={30} />
+          <Slider.MarksOption value={-24} labelWidth={30} />
+          <Slider.MarksOption value={-100} labelWidth={30} label="-inf" />
+        </Slider.Marks>
       </Slider.Root>
       <p>{volume <= -100 ? '-inf' : volume} dB</p>
     </div>

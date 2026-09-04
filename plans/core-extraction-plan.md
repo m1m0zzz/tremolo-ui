@@ -757,16 +757,18 @@ export interface Scale {
 
 **`Scale` 型と `Slider.Scale`（目盛りを描くサブコンポーネント）で名前が衝突している。** `<Slider.Root scale={…}><Slider.Scale/></Slider.Root>` は紛らわしい。
 
-**`Slider.Marks` へ改名することで決定。対応は別 PR で行う。** 本 PR では `Slider/index.tsx` の `type Scale as ValueScale` による回避に留めてある。
+**対応済み。`Slider.Marks` へ改名した。**
 
-改名時に触る必要があるもの:
+| 変更前 | 変更後 |
+| --- | --- |
+| `Slider.Scale` / `Slider.ScaleOption` | `Slider.Marks` / `Slider.MarksOption` |
+| `ScaleProps` / `ScaleOptionProps` | `MarksProps` / `MarksOptionProps` |
+| `ScaleOptions` / `ScaleType` | `MarksOptions` / `MarksType` |
+| `.tremolo-slider-scale*` | `.tremolo-slider-marks*` |
 
-- `src/components/Slider/Scale.tsx` → `Marks.tsx`（`ScaleProps` → `MarksProps`）
-- `ScaleOption.tsx` → `MarksOption.tsx`（`ScaleOptionProps` / `ScaleOptions` / `ScaleType` も同様）
-- `Slider` の namespace オブジェクトと `src/index.ts` の re-export
-- `index.css` の `.tremolo-slider-scale*` クラス名、`packages/react/package.json` の `exports`
-- `__stories__` / `__tests__` / `site/docs` の参照
-- 改名後は `Slider/index.tsx` の `type Scale as ValueScale` を素の `Scale` に戻せる
+`Slider/index.tsx` の `type Scale as ValueScale` は素の `Scale` に戻した。
+
+`packages/react/package.json` の `exports` は**変更不要**だった。`./styles/Slider.css` はコンポーネント単位の指定で、CSS ファイル自体は移動していないため（変わったのはクラス名だけ）。`site/docs` にも `Slider.Scale` の記述は無く、i18n に残る `ScaleProps` / `ScaleOptionProps` は typedoc の生成物なので `docs:wtr` で再生成される。
 
 ### 5.9 wheel はフォーカス時のみ発火させる — 全コンポーネント
 

@@ -17,7 +17,7 @@ import {
   toFixed,
   InputEventOption,
   xor,
-  type Scale as ValueScale,
+  type Scale,
 } from '@tremolo-ui/functions'
 
 import { useDragValue } from '../../hooks/useDragValue'
@@ -26,8 +26,8 @@ import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 import { useComposedRefs } from '../_util/composeRefs'
 
 import { SliderProvider } from './context'
-import { Scale } from './Scale'
-import { ScaleOption } from './ScaleOption'
+import { Marks } from './Marks'
+import { MarksOption } from './MarksOption'
 import { Thumb, SliderThumbMethods } from './Thumb'
 import { Track } from './Track'
 
@@ -51,11 +51,9 @@ export interface SliderProps {
    * `exponentialScale`, `curveScale(n)`, `symmetricSkewScale(n)`, or
    * `skewScale(n)` for a value that has to match a JUCE parameter.
    *
-   * Not to be confused with `Slider.Scale`, which draws the tick marks.
-   *
    * @default linearScale
    */
-  scale?: ValueScale
+  scale?: Scale
   /**
    * slider orientation
    * aria-orientation property is also applied.
@@ -328,13 +326,13 @@ export const Slider = {
   Root,
   Thumb,
   Track,
-  Scale,
-  ScaleOption,
+  Marks,
+  MarksOption,
 }
 
 export { useSliderContext } from './context'
 export { type SliderThumbMethods, type SliderThumbProps } from './Thumb'
 export { type SliderTrackProps } from './Track'
-export { type ScaleProps } from './Scale'
-export { type ScaleOptionProps } from './ScaleOption'
-export { type ScaleOptions, type ScaleType } from './type'
+export { type MarksProps } from './Marks'
+export { type MarksOptionProps } from './MarksOption'
+export { type MarksOptions, type MarksType } from './type'

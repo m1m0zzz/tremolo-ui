@@ -1,17 +1,17 @@
 import { decimalPart, toFixed } from '@tremolo-ui/functions'
 
-export type ScaleType = 'mark' | 'mark-number' | 'number'
-export type ScaleOptions = ['step', ScaleType] | [number, ScaleType]
+export type MarksType = 'mark' | 'mark-number' | 'number'
+export type MarksOptions = ['step', MarksType] | [number, MarksType]
 
 export function generateOptionsList(
-  options: ScaleOptions,
+  options: MarksOptions,
   min: number,
   max: number,
   step: number,
 ) {
   const optionsList: {
     value: number
-    type: ScaleType
+    type: MarksType
   }[] = []
   const per = options[0] == 'step' ? step : options[0]
   const count = Math.floor(max / per) - Math.ceil(min / per) + 1

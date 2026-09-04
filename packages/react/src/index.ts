@@ -48,8 +48,8 @@ export {
 export {
   Slider,
   useSliderContext,
-  type ScaleOptionProps,
-  type ScaleProps,
+  type MarksOptionProps,
+  type MarksProps,
   type SliderMethods,
   type SliderProps,
   type SliderThumbMethods,

@@ -266,13 +266,13 @@ export const ConfigScale = () => {
           <Slider.Track>
             <Slider.Thumb />
           </Slider.Track>
-          <Slider.Scale>
-            <Slider.ScaleOption value={0} type="mark-number" />
-            <Slider.ScaleOption value={25} type="mark" />
-            <Slider.ScaleOption value={50} type="mark-number" />
-            <Slider.ScaleOption value={75} type="mark" />
-            <Slider.ScaleOption value={100} type="mark-number" />
-          </Slider.Scale>
+          <Slider.Marks>
+            <Slider.MarksOption value={0} type="mark-number" />
+            <Slider.MarksOption value={25} type="mark" />
+            <Slider.MarksOption value={50} type="mark-number" />
+            <Slider.MarksOption value={75} type="mark" />
+            <Slider.MarksOption value={100} type="mark-number" />
+          </Slider.Marks>
         </Slider.Root>
         <p>value: {value}</p>
       </section>
@@ -286,27 +286,27 @@ export const ConfigScale = () => {
           <Slider.Track>
             <Slider.Thumb />
           </Slider.Track>
-          <Slider.Scale gap={0} style={{ height: 42 }}>
-            <Slider.ScaleOption
+          <Slider.Marks gap={0} style={{ height: 42 }}>
+            <Slider.MarksOption
               value={0}
               type="mark-number"
               length="1rem"
               styles={{ label: { color: 'red' } }}
             />
-            <Slider.ScaleOption value={25} type="mark" />
-            <Slider.ScaleOption
+            <Slider.MarksOption value={25} type="mark" />
+            <Slider.MarksOption
               value={50}
               type="mark-number"
               length="0.75rem"
             />
-            <Slider.ScaleOption value={75} type="mark" />
-            <Slider.ScaleOption
+            <Slider.MarksOption value={75} type="mark" />
+            <Slider.MarksOption
               value={100}
               type="mark-number"
               length="1rem"
               styles={{ label: { color: 'blue' } }}
             />
-          </Slider.Scale>
+          </Slider.Marks>
         </Slider.Root>
         <p>value: {value2}</p>
       </section>
@@ -322,7 +322,7 @@ export const ConfigScale = () => {
           <Slider.Track>
             <Slider.Thumb />
           </Slider.Track>
-          <Slider.Scale options={['step', 'number']} />
+          <Slider.Marks options={['step', 'number']} />
         </Slider.Root>
         <p>value: {value3}</p>
       </section>

@@ -70,12 +70,12 @@
   }
 }
 
-.tremolo-slider-scale {
+.tremolo-slider-marks {
   display: block;
   position: relative;
 }
 
-.tremolo-slider-scale-option {
+.tremolo-slider-marks-option {
   display: flex;
   color: oklch(25.197% 0.00003 271.152);
   flex-direction: column;
@@ -91,11 +91,11 @@
   }
 }
 
-.tremolo-slider-scale-option-mark {
+.tremolo-slider-marks-option-mark {
   background-color: currentColor;
 }
 
-.tremolo-slider-scale-option-label {
+.tremolo-slider-marks-option-label {
   text-align: right;
 }
 
