@@ -53,7 +53,9 @@ export const ControlFocus = () => {
           min={0}
           max={100}
           onChange={(v) => setValue(v)}
-        />
+        >
+          <NumberInput.InputField />
+        </NumberInput.Root>
         <Slider.Root
           ref={refs.current.slider}
           value={value}

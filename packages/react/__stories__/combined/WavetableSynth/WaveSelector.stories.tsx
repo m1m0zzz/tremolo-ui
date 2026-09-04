@@ -158,13 +158,14 @@ export const WaveSelector = ({
               min={MIN_SEMITONE}
               max={MAX_SEMITONE}
               units={'st'}
-              selectWithFocus="number"
-              variant="flushed"
-              activeColor={themeColor}
-              className={style.numberInput}
-              wrapperClassName={style.numberInputWrapper}
-              onBlur={(v) => setSemitone(v)}
-            />
+              className={style.numberInputWrapper}
+              onChange={(v) => setSemitone(v)}
+            >
+              <NumberInput.InputField
+                selectOnFocus="number"
+                className={style.numberInput}
+              />
+            </NumberInput.Root>
           </div>
           <div>
             <span className="label">Det: </span>
@@ -173,13 +174,14 @@ export const WaveSelector = ({
               min={MIN_DETUNE}
               max={MAX_DETUNE}
               units={'ct'}
-              selectWithFocus="number"
-              variant="flushed"
-              activeColor={themeColor}
-              className={style.numberInput}
-              wrapperClassName={style.numberInputWrapper}
-              onBlur={(v) => setDetune(v)}
-            />
+              className={style.numberInputWrapper}
+              onChange={(v) => setDetune(v)}
+            >
+              <NumberInput.InputField
+                selectOnFocus="number"
+                className={style.numberInput}
+              />
+            </NumberInput.Root>
           </div>
         </div>
       </div>
@@ -222,13 +224,14 @@ export const WaveSelector = ({
           min={0}
           max={100}
           units="%"
-          selectWithFocus="number"
-          variant="flushed"
-          activeColor={themeColor}
-          className={style.numberInput}
-          wrapperClassName={style.numberInputWrapper}
-          onBlur={(v) => setPosition(v)}
-        />
+          className={style.numberInputWrapper}
+          onChange={(v) => setPosition(v)}
+        >
+          <NumberInput.InputField
+            selectOnFocus="number"
+            className={style.numberInput}
+          />
+        </NumberInput.Root>
       </div>
     </div>
   )

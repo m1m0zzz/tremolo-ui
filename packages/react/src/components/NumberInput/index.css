@@ -1,6 +1,7 @@
-.tremolo-number-input-wrapper {
+.tremolo-number-input {
   --border-radius: 4px;
   --stepper-width: 20px;
+  --stepper-icon-size: 12px;
   --active-color: oklch(59.5% 0.17548 266.373);
   --border-color: oklch(81% 0 0);
 
@@ -9,70 +10,34 @@
   position: relative;
   width: 140px;
   height: min-content;
-  border-style: solid;
-  border-color: var(--border-color);
-  border-width: 0px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
   outline: none;
   transition: all 0.1s;
 
-  &:not(:focus-within):has(> .tremolo-number-input[data-error='true']) {
+  &:hover {
+    --border-color: oklch(65.335% 0 0);
+  }
+
+  &:focus-within {
+    --border-color: var(--active-color);
+    box-shadow: 0px 0px 0px 2px
+      color-mix(in srgb, var(--active-color) 10%, transparent);
+  }
+
+  &:not(:focus-within):has(
+      .tremolo-number-input-field[data-out-of-range='true']
+    ) {
     border-color: oklch(64.245% 0.21266 25.499);
   }
 
-  &[data-variant='outline'] {
-    border-width: 1px;
-    border-radius: var(--border-radius);
-
-    &:hover {
-      --border-color: oklch(65.335% 0 0);
-    }
-
-    &:focus-within {
-      --border-color: var(--active-color);
-      box-shadow: 0px 0px 0px 2px
-        color-mix(in srgb, var(--active-color) 10%, transparent);
-    }
-  }
-
-  &[data-variant='filled'] {
-    --bg: oklch(95.88% 0 0);
-    border-width: 1px;
-    border-radius: var(--border-radius);
-    border-color: transparent;
-    background-color: var(--bg);
-
-    &:hover {
-      --bg: oklch(93.166% 0 0);
-    }
-
-    &:focus-within {
-      background-color: inherit;
-      --border-color: var(--active-color);
-      box-shadow: 0px 0px 0px 2px
-        color-mix(in srgb, var(--active-color) 10%, transparent);
-    }
-  }
-
-  &[data-variant='flushed'] {
-    border-bottom-width: 1px;
-
-    &:hover {
-      --border-color: oklch(65.335% 0 0);
-    }
-
-    &:focus-within {
-      --border-color: var(--active-color);
-      box-shadow: 0px 2px 0px 0px
-        color-mix(in srgb, var(--active-color) 10%, transparent);
-    }
-  }
-
-  &[data-stepper='false'] {
+  /* Only leave room for the stepper when one was composed in. */
+  &:not(:has(.tremolo-number-input-stepper)) {
     --stepper-width: 0px;
   }
 }
 
-.tremolo-number-input {
+.tremolo-number-input-field {
   display: block;
   color: inherit;
   width: calc(100% - 20px - var(--stepper-width));
@@ -100,26 +65,28 @@
   width: var(--stepper-width);
   transition: all 0.1s linear;
 
-  &[data-dynamic='true'] {
-    opacity: 0;
-    transform: translateX(40%);
-  }
+  /* Kept out of the way until the input is being used. */
+  opacity: 0;
+  transform: translateX(40%);
 }
 
-:is(
-    .tremolo-number-input-wrapper:hover,
-    .tremolo-number-input-wrapper:focus-within
-  )
+:is(.tremolo-number-input:hover, .tremolo-number-input:focus-within)
   .tremolo-number-input-stepper {
   opacity: 1;
   transform: translateX(0);
 }
 
-.tremolo-number-input-increment-stepper {
-  border-inline-start-width: 1px;
-  border-inline-start-style: solid;
-  border-inline-start-color: oklch(84.522% 0 0);
-  font-size: calc(0.75rem);
+.tremolo-number-input-stepper-icon {
+  width: var(--stepper-icon-size);
+  height: var(--stepper-icon-size);
+}
+
+:is(
+  .tremolo-number-input-increment-stepper,
+  .tremolo-number-input-decrement-stepper
+) {
+  border-inline-start: 1px solid oklch(84.522% 0 0);
+  font-size: 0.75rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -127,59 +94,28 @@
   max-height: 50%;
   user-select: none;
   cursor: pointer;
-  border-top-right-radius: var(--border-radius);
 
   &[aria-disabled='false']:active {
     background-color: oklch(37.798% 0.03812 254.612 / 0.055);
   }
 
-  &[aria-disabled='true'] {
-    cursor: not-allowed;
-  }
-
+  &[aria-disabled='true'],
   &[aria-readonly='true'] {
     cursor: not-allowed;
   }
+}
+
+.tremolo-number-input-increment-stepper {
+  border-top-right-radius: var(--border-radius);
 }
 
 .tremolo-number-input-decrement-stepper {
-  border-inline-start-width: 1px;
-  border-inline-start-style: solid;
-  border-inline-start-color: oklch(84.522% 0 0);
   border-top: 1px solid oklch(84.522% 0 0);
-  font-size: calc(0.75rem);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex: 1 1 0%;
-  max-height: 50%;
-  user-select: none;
-  cursor: pointer;
   border-bottom-right-radius: var(--border-radius);
-
-  &[aria-disabled='false']:active {
-    background-color: oklch(37.798% 0.03812 254.612 / 0.055);
-  }
-
-  &[aria-disabled='true'] {
-    cursor: not-allowed;
-  }
-
-  &[aria-readonly='true'] {
-    cursor: not-allowed;
-  }
 }
 
 :where(.dark, [data-theme='dark']) {
-  .tremolo-number-input-wrapper {
+  .tremolo-number-input {
     --border-color: oklch(52% 0 0);
-
-    &[data-variant='filled'] {
-      --bg: oklch(43.5% 0 0);
-
-      &:hover {
-        --bg: oklch(46.6% 0 0);
-      }
-    }
   }
 }

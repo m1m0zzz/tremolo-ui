@@ -10,9 +10,14 @@ export default {
 
 type Story = StoryObj<typeof NumberInput.Stepper>
 
+/**
+ * Clicking a stepper moves the value by one `step` and repeats while held.
+ * Dragging the stepper area up and down sweeps the whole range, which needs
+ * `min` and `max` to have something to sweep.
+ */
 export const Basic: Story = {
   render: (args) => {
-    const [value, setValue] = useState(32)
+    const [value, setValue] = useState(5)
     const [step, setStep] = useState(1)
 
     return (
@@ -23,9 +28,9 @@ export const Basic: Story = {
           min={0}
           max={10}
           units={'Hz'}
-          keepWithinRange={false}
           onChange={(v) => setValue(v)}
         >
+          <NumberInput.InputField />
           <NumberInput.Stepper {...args}>
             <NumberInput.IncrementStepper />
             <NumberInput.DecrementStepper />
@@ -34,7 +39,9 @@ export const Basic: Story = {
         <p>config</p>
         <div>
           <span>step: </span>
-          <NumberInput.Root value={step} step={0.01} onChange={setStep} />
+          <NumberInput.Root value={step} step={0.01} onChange={setStep}>
+            <NumberInput.InputField />
+          </NumberInput.Root>
         </div>
       </div>
     )
