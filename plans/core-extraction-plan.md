@@ -444,15 +444,57 @@ value(position)  = min + (max - min) * position ^ (1 / skew)
 
 **Knob 固有ではない。** `AxisOptions` は Slider / XYPad も通るので同じ曲線になる。Knob で目立つのは `pixelRange = 100` により 1px の重みが大きいため。また `0e95f89^`（Phase 2.5 以前）の Knob も `normalizeValue` で origin を取り `rawValue(origin - y / 100)` を計算しており、**算術は dom 移行前と完全に同一**。計画本文の「移行前から知られている問題」と整合する。
 
-なお JUCE の `NormalisableRange` も同じ冪乗則で、同じ端の劣化を持つ。tremolo-ui の `skew` は JUCE 互換の仕様と言える。
+#### 他フレームワークの値マッピング調査
+
+`skew` は JUCE の `NormalisableRange` を参照して実装したものだが、**冪乗則 skew を持つのは JUCE 系だけで、他のエコシステムでは真の指数写像が主流**だった。
+
+**(1) 冪乗則（tremolo-ui の `skew` と同型）**
+
+| | 式 | 備考 |
+| --- | --- | --- |
+| JUCE `NormalisableRange` | `pow(p, skew)` / `exp(log(p) / skew)` | `setSkewForCentre` = `log(0.5) / log((centre - start) / (end - start))`。**tremolo-ui の `normalizeValue` / `rawValue` / `skewWithCenterValue` は式まで完全に一致する移植** |
+| iPlug2 `ShapePowCurve` | `min + pow(p, mShape) * (max - min)` | 指数が逆数の取り方（`mShape == 1 / skew`） |
+
+**(2) 真の指数写像 `min * (max / min) ^ p`** — こちらが web / DSP 側の主流
+
+| | 式 | min の扱い |
+| --- | --- | --- |
+| iPlug2 `ShapeExp` | `exp(log(min) + p * log(max / min))` | `min <= 0` なら `1e-8` にクランプ |
+| SuperCollider `ExponentialWarp` | `(max / min) ** p * min` | 「minval と maxval は両方非ゼロで同符号」とソースにコメント |
+| Faust `[scale:log]` (`LogValueConverter`) | log 空間で線形補間 | `max(DBL_EPSILON, min)` でガード |
+| webaudio-controls (`log` 属性) | `log(value / min) / log(max / min)` | ガードなし |
+| Web Audio API `exponentialRampToValueAtTime` | — | 正の値のみ（仕様上の制約） |
+
+**(3) 端が縮退しない第 3 の系統** — SuperCollider `CurveWarp`: `value(p) = b - a * e^(curve * p)`（`a = range / (1 - e^curve)`, `b = min + a`）。エンベロープのカーブと同じ族で、**`min = 0` や負値でも使え、両端の微分が有限**。tremolo-ui は `min` に符号の制約を置いていないので、指数写像より素直に嵌まる可能性がある。
+
+**(4) 非対応** — NexusUI の Dial、HTML `<input type="range">`、Radix / Base UI の Slider は線形のみ。
+
+**結論: `skew` の仕様自体は一般的で、問題は「冪乗則しか無いこと」。** JUCE も iPlug2 も冪乗則は複数ある写像の 1 つに過ぎず、必ず脱出口が併設されている。
+
+- JUCE: `NormalisableRange` に `convertFrom0To1Function` / `convertTo0To1Function` のラムダを渡せる。加えて `symmetricSkew`（中央から両端へ skew を掛ける対称版）を持つ
+- iPlug2: `ShapePowCurve` と `ShapeExp` が並列
+
+tremolo-ui は冪乗則だけを移植したため、対数スケールが必要な場面で逃げ道が無い。
+
+#### ドラッグ感度の既定値が JUCE の 2.5 倍
+
+JUCE の rotary ドラッグは
+
+```cpp
+newPos = owner.valueToProportionOfLength (valueOnMouseDown)
+           + mouseDiff * (1.0 / pixelsForFullDragExtent);
+```
+
+で、`relativeMapping` と**アルゴリズムまで同一**。ただし `pixelsForFullDragExtent` の既定は **250px**、tremolo-ui の `pixelRange` は **100px**。1px あたりの飛び幅がそのまま 2.5 倍になっている（dB ノブ下端の 7.96 dB/px は 250px なら 3.2 dB/px）。
 
 #### 直し方の選択肢
 
-- **A. 曲線を差し替え可能にする（推奨）。** `AxisOptions` に真の指数スケールを足す（`scale: 'linear' | 'exponential'`、または正規化↔値の関数ペア）。`KnobProps` の `skew?: number // | SkewFunction // TODO` は元々この方向を示している。`min > 0` が前提になる点は要検討。`@tremolo-ui/functions` の `normalizeValue` / `rawValue` は公開 API なので、置き換えではなく追加にする
+- **A. 曲線を差し替え可能にする（推奨）。** `AxisOptions` に写像を足す。JUCE のラムダ、iPlug2 の `Shape`、SuperCollider の `Warp` と同じ構造で、`createDragValue` の `axis`（0-1 の位置 → 値）がちょうどその差し込み口になっている。候補は真の指数写像（`min > 0` が前提）と `CurveWarp` 型（符号の制約なし）。`KnobProps` の `skew?: number // | SkewFunction // TODO` は元々この方向を示している。`@tremolo-ui/functions` の `normalizeValue` / `rawValue` は公開 API なので、置き換えではなく追加にする
 - **B. 端の劣化だけ緩和する。** 下端付近で実効ステップに下限を設ける等。対症療法で、曲線が対数でない問題は残る
-- **C. 仕様として文書化する。** JUCE と同じ特性であることを明記し、`min` を 0 に近づけないよう案内する
+- **C. 仕様として文書化する。** JUCE / iPlug2 の冪乗則と同じ特性であることを明記し、`min` を 0 に近づけないよう案内する
+- **D. `pixelRange` の既定を 100 → 250 にする（JUCE に合わせる）。** 単体では直らないが A と独立に効き、破壊的変更としても小さい
 
-A を採るなら Phase 4 / 5 とは独立に進められる。B / C なら 5.8 はここで閉じられる。
+A + D が本筋。B は採らない。
 
 ## 6. 既存コードで見つかった問題
 
