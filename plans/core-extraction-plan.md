@@ -531,9 +531,20 @@ export interface Scale {
 
 `exponentialScale.normalize` / `curveScale.normalize` は**値をクランプしてから対数を取る**必要がある。範囲外の値では比が負になり、`Math.log` が NaN を返すため（位置をクランプしても手遅れ）。テストで固定してある。
 
-#### 残った論点
+#### フォローアップ: `Slider.Scale` → `Slider.Marks` に改名する
 
-**`Scale` 型と `Slider.Scale`（目盛りを描くサブコンポーネント）で名前が衝突している。** `<Slider.Root scale={…}><Slider.Scale/></Slider.Root>` は紛らわしい。`Slider/index.tsx` では `type Scale as ValueScale` で回避してあるが、利用者から見た紛らわしさは残る。`Slider.Scale` を `Slider.Marks` などに改名するか、別の解を検討する。
+**`Scale` 型と `Slider.Scale`（目盛りを描くサブコンポーネント）で名前が衝突している。** `<Slider.Root scale={…}><Slider.Scale/></Slider.Root>` は紛らわしい。
+
+**`Slider.Marks` へ改名することで決定。対応は別 PR で行う。** 本 PR では `Slider/index.tsx` の `type Scale as ValueScale` による回避に留めてある。
+
+改名時に触る必要があるもの:
+
+- `src/components/Slider/Scale.tsx` → `Marks.tsx`（`ScaleProps` → `MarksProps`）
+- `ScaleOption.tsx` → `MarksOption.tsx`（`ScaleOptionProps` / `ScaleOptions` / `ScaleType` も同様）
+- `Slider` の namespace オブジェクトと `src/index.ts` の re-export
+- `index.css` の `.tremolo-slider-scale*` クラス名、`packages/react/package.json` の `exports`
+- `__stories__` / `__tests__` / `site/docs` の参照
+- 改名後は `Slider/index.tsx` の `type Scale as ValueScale` を素の `Scale` に戻せる
 
 ## 6. 既存コードで見つかった問題
 
