@@ -6,44 +6,24 @@ export function clamp(value: number, min: number, max: number) {
 }
 
 /**
- * Normalize the value from 0 to 1
+ * Normalize the value from 0 to 1, spreading the range evenly.
+ *
+ * This is the linear mapping and takes no curve of its own; a `Scale` builds
+ * whatever curve it needs on top of it.
  */
-export function normalizeValue(
-  rawValue: number,
-  min: number,
-  max: number,
-  skew = 1,
-) {
+export function normalizeValue(value: number, min: number, max: number) {
   if (min >= max) throw new RangeError('requirements: min < max')
-  const v = clamp((rawValue - min) / (max - min), 0, 1)
-  return Math.pow(v, skew)
+  return clamp((value - min) / (max - min), 0, 1)
 }
 
 /**
- * Convert normalized values back to raw values.
+ * Convert normalized values back to raw values, spreading the range evenly.
+ *
+ * The inverse of {@link normalizeValue}.
  */
-export function rawValue(
-  normalizedValue: number,
-  min: number,
-  max: number,
-  skew = 1,
-) {
+export function rawValue(normalizedValue: number, min: number, max: number) {
   if (min >= max) throw new RangeError('requirements: min < max')
-  const v =
-    skew == 1
-      ? clamp(normalizedValue, 0, 1)
-      : Math.exp(Math.log(clamp(normalizedValue, 0, 1)) / skew)
-  return min + v * (max - min)
-}
-
-export function skewWithCenterValue(
-  centerValue: number,
-  min: number,
-  max: number,
-) {
-  if (!(min <= centerValue && centerValue <= max))
-    throw new RangeError('requirements: min <= centerValue <= max')
-  return Math.log(0.5) / Math.log((centerValue - min) / (max - min))
+  return min + clamp(normalizedValue, 0, 1) * (max - min)
 }
 
 export function stepValue(value: number, step: number) {

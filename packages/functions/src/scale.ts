@@ -55,9 +55,33 @@ export const linearScale: Scale = {
  */
 export function skewScale(skew: number): Scale {
   return {
-    normalize: (value, min, max) => normalizeValue(value, min, max, skew),
-    denormalize: (position, min, max) => rawValue(position, min, max, skew),
+    // The two expressions JUCE uses, kept verbatim so the numbers agree with
+    // a NormalisableRange: pow() one way, exp(log()) the other.
+    normalize: (value, min, max) =>
+      Math.pow(normalizeValue(value, min, max), skew),
+    denormalize: (position, min, max) =>
+      rawValue(
+        skew === 1
+          ? position
+          : Math.exp(Math.log(clamp(position, 0, 1)) / skew),
+        min,
+        max,
+      ),
   }
+}
+
+/**
+ * The skew factor for {@link skewScale} that puts `centerValue` at the middle
+ * of the travel — JUCE's `NormalisableRange::setSkewForCentre`.
+ */
+export function skewWithCenterValue(
+  centerValue: number,
+  min: number,
+  max: number,
+) {
+  if (!(min <= centerValue && centerValue <= max))
+    throw new RangeError('requirements: min <= centerValue <= max')
+  return Math.log(0.5) / Math.log((centerValue - min) / (max - min))
 }
 
 /**

@@ -23,4 +23,13 @@ Replace `skew` with `scale`, and add scales that do not break down at the ends o
 
 A `Scale` takes `min` and `max` as arguments rather than holding them, so it carries no state and can be a module level constant.
 
+`normalizeValue()` and `rawValue()` lose their `skew` parameter and are now the linear mapping alone — every curve lives in a `Scale`. `skewWithCenterValue()` keeps its behaviour and moves next to `skewScale()`.
+
+```diff
+-normalizeValue(value, min, max, skew)
++skewScale(skew).normalize(value, min, max)
+-rawValue(position, min, max, skew)
++skewScale(skew).denormalize(position, min, max)
+```
+
 This fixes the value jumping on a knob with a logarithmic scale. The power law is applied to `value - min`, so its slope at `min` is either infinite or zero: a dB knob over `-60..6` moved 12% of its range on the first pixel of a drag, and a frequency knob over `20..22000` did not move at all for the first 12 pixels. `exponentialScale` and `curveScale` have neither problem. `skewScale` still behaves this way, since matching JUCE is the point of it.

@@ -2,7 +2,6 @@ import {
   clamp,
   normalizeValue,
   rawValue,
-  skewWithCenterValue,
   stepValue,
   decimalPart,
   integerPart,
@@ -22,11 +21,7 @@ describe('unit', () => {
     expect(normalizeValue(-2.3, -2.3, -1.6)).toBe(0)
     expect(normalizeValue(10e-4, Math.E, Math.PI)).toBe(0)
     expect(normalizeValue(1_000_000_000, Math.E, Math.PI)).toBe(1)
-
-    let skew = skewWithCenterValue(2000, 20, 20_000)
-    expect(normalizeValue(2000, 20, 20_000, skew)).toBe(0.5)
-    skew = skewWithCenterValue(-10, -100, 0)
-    expect(normalizeValue(-10, -100, 0, skew)).toBe(0.5)
+    expect(() => normalizeValue(1, 10, 10)).toThrow(RangeError)
   })
 
   test('rawValue()', () => {
@@ -35,7 +30,10 @@ describe('unit', () => {
       stepValue(rawValue(normalizeValue(Math.PI, 0, 100), 0, 100), 10e-7),
     ).toBe(3.141593) // 3.1415927...
 
-    // TODO: skewed raw value
+    // The curve belongs to a Scale; these two are the linear mapping only.
+    expect(rawValue(-0.5, 0, 100)).toBe(0)
+    expect(rawValue(1.5, 0, 100)).toBe(100)
+    expect(() => rawValue(0.5, 10, 10)).toThrow(RangeError)
   })
 
   test('stepValue()', () => {
@@ -52,11 +50,6 @@ describe('unit', () => {
     expect(stepValue(5.9, 4)).toBe(4)
     expect(stepValue(6, 4)).toBe(8)
     expect(stepValue(-2.3675323105127717, 0.1)).toBe(-2.4)
-  })
-
-  test('skewWithCenterValue()', () => {
-    const skew = skewWithCenterValue(100, 10, 1000)
-    expect(stepValue(rawValue(0.5, 10, 1000, skew), 1)).toBe(100)
   })
 
   test('decimalPart', () => {

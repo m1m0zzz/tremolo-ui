@@ -82,6 +82,25 @@ describe('skewScale', () => {
   test('skewWithCenterValue puts the centre at half the travel', () => {
     const scale = skewScale(skewWithCenterValue(663, MIN, MAX))
     expect(scale.denormalize(0.5, MIN, MAX)).toBeCloseTo(663, 6)
+
+    // Moved here from math.test.ts along with skewWithCenterValue itself.
+    expect(
+      skewScale(skewWithCenterValue(2000, 20, 20_000)).normalize(
+        2000,
+        20,
+        20_000,
+      ),
+    ).toBe(0.5)
+    expect(
+      skewScale(skewWithCenterValue(-10, -100, 0)).normalize(-10, -100, 0),
+    ).toBe(0.5)
+    expect(
+      skewScale(skewWithCenterValue(100, 10, 1000)).denormalize(0.5, 10, 1000),
+    ).toBeCloseTo(100, 6)
+  })
+
+  test('skewWithCenterValue rejects a centre outside the range', () => {
+    expect(() => skewWithCenterValue(2000, 20, 1000)).toThrow(RangeError)
   })
 
   test('skew < 1 gives the lower end more travel', () => {

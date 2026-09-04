@@ -9,7 +9,6 @@ export {
   normalizeValue,
   radian,
   rawValue,
-  skewWithCenterValue,
   stepValue,
   toFixed,
 } from './math'
@@ -20,6 +19,7 @@ export {
   exponentialScale,
   linearScale,
   skewScale,
+  skewWithCenterValue,
   symmetricSkewScale,
 } from './scale'
 export {
