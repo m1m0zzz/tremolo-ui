@@ -13,6 +13,8 @@ import type { AxisOptions, XY } from '@tremolo-ui/dom'
 import {
   applyDelta,
   InputEventOption,
+  linearScale,
+  type Scale,
   type ValueRange,
 } from '@tremolo-ui/functions'
 
@@ -40,7 +42,16 @@ export interface KnobProps {
 
   // optional
   step?: number
-  skew?: number // | SkewFunction // TODO
+  /**
+   * How the value is distributed across the travel.
+   *
+   * Pick one of the scales from `@tremolo-ui/functions`: `linearScale`,
+   * `exponentialScale`, `curveScale(n)`, `symmetricSkewScale(n)`, or
+   * `skewScale(n)` for a value that has to match a JUCE parameter.
+   *
+   * @default linearScale
+   */
+  scale?: Scale
   /**
    * value set when double-clicking
    * restriction: enableDoubleClickDefault = true
@@ -126,7 +137,7 @@ export const Root = forwardRef<KnobMethods, Props>(
       min,
       max,
       step = 1,
-      skew = 1,
+      scale = linearScale,
       defaultValue = min,
       startValue = min,
       size,
@@ -154,8 +165,8 @@ export const Root = forwardRef<KnobMethods, Props>(
 
     // --- internal functions ---
     const range: ValueRange = useMemo(
-      () => ({ min, max, step, skew }),
-      [min, max, step, skew],
+      () => ({ min, max, step, scale }),
+      [min, max, step, scale],
     )
 
     const handleKeyDown = useCallback(
@@ -216,9 +227,9 @@ export const Root = forwardRef<KnobMethods, Props>(
     )
 
     const context = useMemo(() => {
-      const config = { value, min, max, step, skew, startValue, angleRange }
+      const config = { value, min, max, step, scale, startValue, angleRange }
       return { ...config, ...calcAngles(config) }
-    }, [value, min, max, step, skew, startValue, angleRange])
+    }, [value, min, max, step, scale, startValue, angleRange])
 
     useImperativeHandle(forwardedRef, () => {
       return {

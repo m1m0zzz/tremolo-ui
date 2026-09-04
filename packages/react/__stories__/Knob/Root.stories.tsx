@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-import { normalizeValue, skewWithCenterValue } from '@tremolo-ui/functions'
+import { exponentialScale, linearScale } from '@tremolo-ui/functions'
 
 import { Knob } from '../../src/components/Knob'
 
@@ -55,8 +55,8 @@ export const Logarithmic: Story = {
     keyboard: ['normalized', 0.05],
   },
   render: (args) => {
-    const [value, setValue] = useState(10)
-    const [value2, setValue2] = useState(10)
+    const [value, setValue] = useState(440)
+    const [value2, setValue2] = useState(440)
 
     const container: React.CSSProperties = {
       display: 'flex',
@@ -74,14 +74,12 @@ export const Logarithmic: Story = {
       <div>
         <p>
           <pre>
-            <code>
-              skew = skewWithCenterValue(Math.sqrt(min, max), min, max)
-            </code>
+            <code>scale = exponentialScale</code>
           </pre>
         </p>
         <div style={{ display: 'flex', justifyContent: 'center', gap: 32 }}>
           <div style={container}>
-            <p>liner</p>
+            <p>linear</p>
             <Knob.Root {...args} value={value} onChange={(v) => setValue(v)}>
               <Knob.SVGRoot>
                 <Knob.InactiveLine />
@@ -96,11 +94,7 @@ export const Logarithmic: Story = {
             <Knob.Root
               {...args}
               value={value2}
-              skew={skewWithCenterValue(
-                Math.sqrt(args.min * args.max),
-                args.min,
-                args.max,
-              )}
+              scale={exponentialScale}
               step={0.1}
               onChange={(v) => setValue2(v)}
             >
@@ -154,7 +148,7 @@ export const Customizing: Story = {
   render: (args) => {
     const [value, setValue] = useState(10)
 
-    const p = normalizeValue(value, args.min, args.max, args.skew)
+    const p = (args.scale ?? linearScale).normalize(value, args.min, args.max)
     const color = `rgba(106, 155, 121, ${p})`
 
     return (

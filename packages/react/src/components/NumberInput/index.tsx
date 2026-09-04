@@ -16,7 +16,9 @@ import {
   clamp,
   formatValue,
   InputEventOption,
+  linearScale,
   parseValue,
+  type Scale,
   type Units,
   type ValueRange,
 } from '@tremolo-ui/functions'
@@ -39,7 +41,13 @@ export interface NumberInputProps {
   min?: number
   max?: number
   step?: number
-  skew?: number
+  /**
+   * How the value is distributed across the travel of a drag or a
+   * `'normalized'` wheel / keyboard nudge.
+   *
+   * @default linearScale
+   */
+  scale?: Scale
 
   /**
    * Unit to display the value in, or a list to pick from by magnitude.
@@ -136,7 +144,7 @@ export const Root = forwardRef<NumberInputMethods, Props>(
       min,
       max,
       step = 1,
-      skew = 1,
+      scale = linearScale,
       units,
       digit,
       format: formatProp,
@@ -181,9 +189,9 @@ export const Root = forwardRef<NumberInputMethods, Props>(
         min: (clampValue ? min : undefined) ?? Number.MIN_SAFE_INTEGER,
         max: (clampValue ? max : undefined) ?? Number.MAX_SAFE_INTEGER,
         step,
-        skew,
+        scale,
       }),
-      [clampValue, min, max, step, skew],
+      [clampValue, min, max, step, scale],
     )
 
     const text = draft ?? format(value)
@@ -243,7 +251,7 @@ export const Root = forwardRef<NumberInputMethods, Props>(
         min,
         max,
         step,
-        skew,
+        scale,
         disabled,
         readonly,
         clampValue,
@@ -268,7 +276,7 @@ export const Root = forwardRef<NumberInputMethods, Props>(
         min,
         max,
         step,
-        skew,
+        scale,
         disabled,
         readonly,
         clampValue,

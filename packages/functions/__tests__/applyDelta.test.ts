@@ -1,4 +1,4 @@
-import { applyDelta } from '../src/math'
+import { applyDelta, skewScale } from '../src/scale'
 
 describe('applyDelta()', () => {
   const range = { min: 0, max: 100, step: 1 }
@@ -43,11 +43,11 @@ describe('applyDelta()', () => {
     expect(applyDelta(0.5, 1, ['raw', 0.03], { min: 0, max: 1 })).toBe(0.53)
   })
 
-  test('applies skew in normalized mode', () => {
-    const skewed = { min: 0, max: 100, skew: 2 }
+  test('applies the scale in normalized mode', () => {
+    const skewed = { min: 0, max: 100, scale: skewScale(2) }
     // normalizeValue(25, 0, 100, 2) === 0.0625, +0.1875 => 0.25 => rawValue 50
     expect(applyDelta(25, 1, ['normalized', 0.1875], skewed)).toBeCloseTo(50)
-    // raw mode ignores skew
+    // raw mode ignores the scale
     expect(applyDelta(25, 1, ['raw', 10], skewed)).toBe(35)
   })
 })

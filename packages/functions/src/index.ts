@@ -1,6 +1,4 @@
 export {
-  type ValueRange,
-  applyDelta,
   clamp,
   dbToGain,
   decimalPart,
@@ -11,10 +9,21 @@ export {
   normalizeValue,
   radian,
   rawValue,
-  skewWithCenterValue,
   stepValue,
   toFixed,
 } from './math'
+export {
+  type Scale,
+  type ValueRange,
+  applyDelta,
+  curveScale,
+  curveWithCenterValue,
+  exponentialScale,
+  linearScale,
+  skewScale,
+  skewWithCenterValue,
+  symmetricSkewScale,
+} from './scale'
 export {
   type NoteKey,
   type WhiteKey,

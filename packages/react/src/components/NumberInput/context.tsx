@@ -1,6 +1,6 @@
 import { createContext, RefObject, useContext } from 'react'
 
-import type { InputEventOption, ValueRange } from '@tremolo-ui/functions'
+import type { InputEventOption, Scale, ValueRange } from '@tremolo-ui/functions'
 
 export type NumberInputContextValue = {
   value: number
@@ -13,7 +13,8 @@ export type NumberInputContextValue = {
   min?: number
   max?: number
   step: number
-  skew: number
+  /** How the value is distributed across the travel. */
+  scale: Scale
 
   disabled: boolean
   readonly: boolean

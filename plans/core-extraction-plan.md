@@ -626,10 +626,147 @@ Phase 1 で `@tremolo-ui/dom` へ移した部分。移植は「React hook のロ
 
 **dom への移行前から知られている問題。** `skew` を設定した Knob をドラッグすると、見た目の値がジャンプすることがある。
 
-Phase 3 で値の算出経路は `createDragValue` に一本化されたので（位置 → `reverse` → `rawValue` → `stepValue` → `clamp`）、再現条件の切り分けはしやすくなっている。`relativeMapping` がドラッグ開始時の値を正規化して原点に取るため、`step` で丸められた値から正規化し直すと原点がずれる、という筋を最初に確認する。
+- [x] 再現条件を特定する（`skew` と `step` の組み合わせ、どの値域で起きるか）
+- [x] 直し方を決める（下記の A / B / C）
+- [x] 直して回帰テストを入れる
 
-- [ ] 再現条件を特定する（`skew` と `step` の組み合わせ、どの値域で起きるか）
-- [ ] 原因を切り分けて直し、回帰テストを入れる
+**対応済み。** `skew` を廃止し、`Scale` インターフェースと 5 つのプリセットに置き換えた（下記「対応した内容」）。
+
+#### 調査結果
+
+**当初の仮説（`step` で丸めた値から正規化し直すと原点がずれる）は外れ。** `relativeMapping` の `origin` はドラッグ開始時に 1 度だけ取り、以降は `state.y`（開始からの**総**移動量）に対して `origin + y / pixelRange` を計算するので、ドラッグ中に丸め誤差は蓄積しない。5px 上げてから 5px 下げると元の値へ正確に戻る（レンジの端で飽和していない限り）。
+
+**原因は `skew` の定義そのもの。** `normalizeValue` / `rawValue` は `value - min` に対する冪乗則で、
+
+```
+position(value) = ((value - min) / (max - min)) ^ skew
+value(position)  = min + (max - min) * position ^ (1 / skew)
+```
+
+`value(position)` の微分は `position = 0` で発散する（`skew > 1`）か 0 になる（`skew < 1`）。ノブの回転角は `position` に比例する（`calcAngles` も同じ `normalizeValue` を使う）ので、**レンジの下端では 1px の回転が巨大な値変化、または完全な無変化になる。**
+
+`pixelRange = 100`（全 travel が 100px）での 1px あたりの値変化:
+
+| 設定 | skew | 下端 | 中央 | 上端 |
+| --- | --- | --- | --- | --- |
+| dB `-60..6` / center `-12` | 2.177 | **7.96 dB** | 0.44 dB | 0.30 dB |
+| freq `20..22000` / center `663` | 0.196 | **0.00 Hz** | 68 Hz | **1097 Hz** |
+| linear `0..100` | 1 | 1.00 | 1.00 | 1.00 |
+
+- `skew > 1`: 最小値から 1px 動かすとレンジの 12% が飛ぶ。これが報告されている「ジャンプ」
+- `skew < 1`: 逆に下端が不感帯になる。`min=20 / step=1` では 13px 動かして初めて 21Hz になり、そこから急加速する
+
+**あわせて見つかった構造的な問題: 冪乗則が `value - min` に掛かるため、対数スケールになっていない。** 20Hz–22kHz のノブで最初の 1 オクターブ（20→40Hz）が travel の 25% を占め、残り 9 オクターブが 75% に押し込まれる。真の指数スケール `min * (max / min) ^ position` なら 1 オクターブ = 9.9px で均等になる。
+
+| | 20→40 | 40→80 | 80→160 | … | 10240→20480 |
+| --- | --- | --- | --- | --- | --- |
+| 現行（`skew`） | 25.3px | 6.1px | 5.7px | … | 12.6px |
+| 指数スケール | 9.9px | 9.9px | 9.9px | … | 9.9px |
+
+**Knob 固有ではない。** `AxisOptions` は Slider / XYPad も通るので同じ曲線になる。Knob で目立つのは `pixelRange = 100` により 1px の重みが大きいため。また `0e95f89^`（Phase 2.5 以前）の Knob も `normalizeValue` で origin を取り `rawValue(origin - y / 100)` を計算しており、**算術は dom 移行前と完全に同一**。計画本文の「移行前から知られている問題」と整合する。
+
+#### 他フレームワークの値マッピング調査
+
+`skew` は JUCE の `NormalisableRange` を参照して実装したものだが、**冪乗則 skew を持つのは JUCE 系だけで、他のエコシステムでは真の指数写像が主流**だった。
+
+**(1) 冪乗則（tremolo-ui の `skew` と同型）**
+
+| | 式 | 備考 |
+| --- | --- | --- |
+| JUCE `NormalisableRange` | `pow(p, skew)` / `exp(log(p) / skew)` | `setSkewForCentre` = `log(0.5) / log((centre - start) / (end - start))`。**tremolo-ui の `normalizeValue` / `rawValue` / `skewWithCenterValue` は式まで完全に一致する移植** |
+| iPlug2 `ShapePowCurve` | `min + pow(p, mShape) * (max - min)` | 指数が逆数の取り方（`mShape == 1 / skew`） |
+
+**(2) 真の指数写像 `min * (max / min) ^ p`** — こちらが web / DSP 側の主流
+
+| | 式 | min の扱い |
+| --- | --- | --- |
+| iPlug2 `ShapeExp` | `exp(log(min) + p * log(max / min))` | `min <= 0` なら `1e-8` にクランプ |
+| SuperCollider `ExponentialWarp` | `(max / min) ** p * min` | 「minval と maxval は両方非ゼロで同符号」とソースにコメント |
+| Faust `[scale:log]` (`LogValueConverter`) | log 空間で線形補間 | `max(DBL_EPSILON, min)` でガード |
+| webaudio-controls (`log` 属性) | `log(value / min) / log(max / min)` | ガードなし |
+| Web Audio API `exponentialRampToValueAtTime` | — | 正の値のみ（仕様上の制約） |
+
+**(3) 端が縮退しない第 3 の系統** — SuperCollider `CurveWarp`: `value(p) = b - a * e^(curve * p)`（`a = range / (1 - e^curve)`, `b = min + a`）。エンベロープのカーブと同じ族で、**`min = 0` や負値でも使え、両端の微分が有限**。tremolo-ui は `min` に符号の制約を置いていないので、指数写像より素直に嵌まる可能性がある。
+
+**(4) 非対応** — NexusUI の Dial、HTML `<input type="range">`、Radix / Base UI の Slider は線形のみ。
+
+**結論: `skew` の仕様自体は一般的で、問題は「冪乗則しか無いこと」。** JUCE も iPlug2 も冪乗則は複数ある写像の 1 つに過ぎず、必ず脱出口が併設されている。
+
+- JUCE: `NormalisableRange` に `convertFrom0To1Function` / `convertTo0To1Function` のラムダを渡せる。加えて `symmetricSkew`（中央から両端へ skew を掛ける対称版）を持つ
+- iPlug2: `ShapePowCurve` と `ShapeExp` が並列
+
+tremolo-ui は冪乗則だけを移植したため、対数スケールが必要な場面で逃げ道が無い。
+
+#### ドラッグ感度の既定値が JUCE の 2.5 倍
+
+JUCE の rotary ドラッグは
+
+```cpp
+newPos = owner.valueToProportionOfLength (valueOnMouseDown)
+           + mouseDiff * (1.0 / pixelsForFullDragExtent);
+```
+
+で、`relativeMapping` と**アルゴリズムまで同一**。ただし `pixelsForFullDragExtent` の既定は **250px**、tremolo-ui の `pixelRange` は **100px**。1px あたりの飛び幅がそのまま 2.5 倍になっている（dB ノブ下端の 7.96 dB/px は 250px なら 3.2 dB/px）。
+
+#### 直し方の選択肢
+
+- **A. 曲線を差し替え可能にする（推奨）。** `AxisOptions` に写像を足す。JUCE のラムダ、iPlug2 の `Shape`、SuperCollider の `Warp` と同じ構造で、`createDragValue` の `axis`（0-1 の位置 → 値）がちょうどその差し込み口になっている。候補は真の指数写像（`min > 0` が前提）と `CurveWarp` 型（符号の制約なし）。`KnobProps` の `skew?: number // | SkewFunction // TODO` は元々この方向を示している。`@tremolo-ui/functions` の `normalizeValue` / `rawValue` は公開 API なので、置き換えではなく追加にする
+- **B. 端の劣化だけ緩和する。** 下端付近で実効ステップに下限を設ける等。対症療法で、曲線が対数でない問題は残る
+- **C. 仕様として文書化する。** JUCE / iPlug2 の冪乗則と同じ特性であることを明記し、`min` を 0 に近づけないよう案内する
+- ~~**D. `pixelRange` の既定を 100 → 250 にする（JUCE に合わせる）。**~~ → **採用しない。** 既定の操作感を変えるだけで 5.8 の原因には触れないため
+
+**A で進める。** B / C / D は採らない。
+
+#### 対応した内容
+
+`@tremolo-ui/functions` に `Scale` インターフェースと 5 つのプリセットを追加し、`skew`（`AxisOptions.skew` と Slider / Knob / XYPad の `skew` prop）を **`scale` に一本化**した。
+
+```ts
+export interface Scale {
+  normalize: (value: number, min: number, max: number) => number
+  denormalize: (position: number, min: number, max: number) => number
+}
+```
+
+| プリセット | 用途 |
+| --- | --- |
+| `linearScale`（既定） | 値が既に知覚と線形なもの。dB 値、パン、%、MIDI ノート番号 |
+| `exponentialScale` | 比率が意味を持つもの。周波数、フリーランのレート、ディレイタイム。`min`/`max` が非ゼロ同符号であることが必須 |
+| `curveScale(curve)` | 汎用テーパー。`min = 0` や 0 をまたぐレンジで使える。`curve > 0` で下端が細かく、`curve < 0` で上端が細かい。`curveWithCenterValue()` と組み合わせる |
+| `symmetricSkewScale(skew)` | 中央対称。双極性コントロールで 0 付近を細かくしたいとき（JUCE の `symmetricSkew`） |
+| `skewScale(skew)` | JUCE `NormalisableRange` の冪乗則。**JUCE / iPlug2 のパラメータと数値を一致させる互換用。** `skewWithCenterValue()` はこれに対して使う |
+
+**`min` / `max` を保持せず引数で受ける**設計にしたので、`Scale` は状態を持たずモジュールレベルの定数にできる。毎レンダー同じオブジェクトを渡してもコストがかからない。
+
+判断:
+
+- **冪乗則そのものは `skewScale` として残した。** JUCE を WebView で使うケースでは、C++ 側の `NormalisableRange` とノブ位置・オートメーション曲線を一致させる必要があるため。端の縮退も JUCE と同じままにしてある（それが互換の意味）。ドキュメントで「新規設計では `exponentialScale` / `curveScale` を薦める」と案内する
+- **`ValueRange.skew` を `scale` にした。** #141 が `ValueRange` と `applyDelta` を新設していたので、`AxisOptions extends ValueRange` の構造に乗せる形で統合した。ドラッグと wheel / keyboard の nudge が 1 つのスケール記述を共有する
+- **`ValueRange` / `applyDelta` を `math.ts` から `scale.ts` へ移した。** `ValueRange` が `Scale` を参照し、`applyDelta` が `linearScale` を実行時に使うため、`math.ts` に置いたままだと math → scale → math の循環 import になる。公開名は変わらない
+- **`normalizeValue` / `rawValue` から `skew` 引数を外し、線形の写像だけを担わせた。** `scale` に一本化した後、`skew` を渡していたのは `skewScale` だけで、他の呼び出し箇所（`elementMapping` と `usePianoDrag` のピクセル正規化、`NumberInput`）は全て線形だった。曲がりは全て `Scale` 側に置き、この 2 つは公開 API の線形プリミティブとして残す。JUCE 互換の式（`pow` と `exp(log())`）は `skewScale` の中に移してある
+- `skewWithCenterValue` も `math.ts` から `scale.ts` の `skewScale` の隣へ移した（挙動は変更なし）。これで `math.ts` に skew の概念が残らない
+
+回帰テスト:
+
+- `packages/functions/__tests__/scale.test.ts` — 5 つ全てについて往復・端点・単調性・範囲外クランプ・空レンジの拒否、各プリセット固有の性質
+- `packages/dom/__tests__/pointer/scaleJump.test.ts` — 実際のドラッグ経路で 5.8 の症状を固定。`skewScale` は dB ノブの下端で 1px あたり 8dB 飛び、周波数ノブでは 12px 動かしても値が変わらない。`curveScale` / `exponentialScale` はどちらも起きない
+
+`exponentialScale.normalize` / `curveScale.normalize` は**値をクランプしてから対数を取る**必要がある。範囲外の値では比が負になり、`Math.log` が NaN を返すため（位置をクランプしても手遅れ）。テストで固定してある。
+
+#### フォローアップ: `Slider.Scale` → `Slider.Marks` に改名する
+
+**`Scale` 型と `Slider.Scale`（目盛りを描くサブコンポーネント）で名前が衝突している。** `<Slider.Root scale={…}><Slider.Scale/></Slider.Root>` は紛らわしい。
+
+**`Slider.Marks` へ改名することで決定。対応は別 PR で行う。** 本 PR では `Slider/index.tsx` の `type Scale as ValueScale` による回避に留めてある。
+
+改名時に触る必要があるもの:
+
+- `src/components/Slider/Scale.tsx` → `Marks.tsx`（`ScaleProps` → `MarksProps`）
+- `ScaleOption.tsx` → `MarksOption.tsx`（`ScaleOptionProps` / `ScaleOptions` / `ScaleType` も同様）
+- `Slider` の namespace オブジェクトと `src/index.ts` の re-export
+- `index.css` の `.tremolo-slider-scale*` クラス名、`packages/react/package.json` の `exports`
+- `__stories__` / `__tests__` / `site/docs` の参照
+- 改名後は `Slider/index.tsx` の `type Scale as ValueScale` を素の `Scale` に戻せる
 
 ### 5.9 wheel はフォーカス時のみ発火させる — 全コンポーネント
 

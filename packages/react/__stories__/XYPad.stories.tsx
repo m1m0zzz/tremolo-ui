@@ -3,7 +3,8 @@ import { CSSProperties, memo, useState } from 'react'
 
 import {
   integerPart,
-  skewWithCenterValue,
+  exponentialScale,
+  linearScale,
   toFixed,
 } from '@tremolo-ui/functions'
 
@@ -161,7 +162,7 @@ export const AdvancedFilterPad = () => {
           min={[20, 0.01]}
           max={[20_000, 2]}
           step={[0.1, 0.01]}
-          skew={[skewWithCenterValue(2000, 20, 20_000), 1]}
+          scale={[exponentialScale, linearScale]}
           reverse={[false, true]}
           wheel={['normalized', 0.05]}
           keyboard={['normalized', 0.05]}

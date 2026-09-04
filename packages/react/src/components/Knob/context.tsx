@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react'
 
-import { normalizeValue, radian } from '@tremolo-ui/functions'
+import { radian, type Scale } from '@tremolo-ui/functions'
 
 export const viewBoxSize = 100
 export const center = viewBoxSize / 2
@@ -10,7 +10,7 @@ export type KnobConfig = {
   min: number
   max: number
   step: number
-  skew: number
+  scale: Scale
   startValue: number
   /** angle range [degree] */
   angleRange: number
@@ -56,12 +56,12 @@ export function calcAngles({
   value,
   min,
   max,
-  skew,
+  scale,
   startValue,
   angleRange,
 }: KnobConfig) {
-  const p = normalizeValue(value, min, max, skew)
-  const s = normalizeValue(startValue, min, max, skew)
+  const p = scale.normalize(value, min, max)
+  const s = scale.normalize(startValue, min, max)
 
   const r1 = -angleRange / 2
   const r2 = r1 + Math.min(p, s) * angleRange

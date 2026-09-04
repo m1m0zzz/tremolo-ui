@@ -1,6 +1,7 @@
 import { createContext, RefObject, useContext } from 'react'
 
 import { toXY, type XY, type XYInput } from '@tremolo-ui/dom'
+import type { Scale } from '@tremolo-ui/functions'
 
 import type { XYPadThumbMethods } from './Thumb'
 
@@ -11,7 +12,8 @@ export type XYPadContextValue = {
   min: XY<number>
   max: XY<number>
   step: XY<number>
-  skew: XY<number>
+  /** How the value of each axis is distributed across the travel. */
+  scale: XY<Scale>
   reverse: XY<boolean>
   disabled: boolean
   readonly: boolean

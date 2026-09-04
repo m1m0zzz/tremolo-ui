@@ -13,10 +13,11 @@ import React, {
 import type { AxisOptions, XY } from '@tremolo-ui/dom'
 import {
   applyDelta,
-  normalizeValue,
+  linearScale,
   toFixed,
   InputEventOption,
   xor,
+  type Scale as ValueScale,
 } from '@tremolo-ui/functions'
 
 import { useDragValue } from '../../hooks/useDragValue'
@@ -43,7 +44,18 @@ export interface SliderProps {
 
   // optional
   step?: number
-  skew?: number // TODO | SkewFunction
+  /**
+   * How the value is distributed across the travel.
+   *
+   * Pick one of the scales from `@tremolo-ui/functions`: `linearScale`,
+   * `exponentialScale`, `curveScale(n)`, `symmetricSkewScale(n)`, or
+   * `skewScale(n)` for a value that has to match a JUCE parameter.
+   *
+   * Not to be confused with `Slider.Scale`, which draws the tick marks.
+   *
+   * @default linearScale
+   */
+  scale?: ValueScale
   /**
    * slider orientation
    * aria-orientation property is also applied.
@@ -118,7 +130,7 @@ export const Root = forwardRef<SliderMethods, Props>(
       min,
       max,
       step = 1,
-      skew = 1,
+      scale = linearScale,
       vertical = false,
       reverse = false,
       externalStyles: _externalStyles,
@@ -147,7 +159,7 @@ export const Root = forwardRef<SliderMethods, Props>(
     // --- interpret props ---
     const externalStyles = { ...defaultExternalStyles, ..._externalStyles }
 
-    const p = toFixed(normalizeValue(value, min, max, skew) * 100)
+    const p = toFixed(scale.normalize(value, min, max) * 100)
     const rev = toFixed(100 - p)
     // NOTE
     // normal -> normal (right)
@@ -165,8 +177,8 @@ export const Root = forwardRef<SliderMethods, Props>(
     // the slider runs along is read back. `AxisOptions` extends `ValueRange`,
     // so the same object also describes the scaling for `applyDelta`.
     const axis: AxisOptions = useMemo(
-      () => ({ min, max, step, skew, reverse: displayReversed }),
-      [min, max, step, skew, displayReversed],
+      () => ({ min, max, step, scale, reverse: displayReversed }),
+      [min, max, step, scale, displayReversed],
     )
 
     const handleKeyDown = useCallback(
@@ -238,7 +250,7 @@ export const Root = forwardRef<SliderMethods, Props>(
         min,
         max,
         step,
-        skew,
+        scale,
         vertical,
         reverse,
         disabled,
@@ -252,7 +264,7 @@ export const Root = forwardRef<SliderMethods, Props>(
         min,
         max,
         step,
-        skew,
+        scale,
         vertical,
         reverse,
         disabled,

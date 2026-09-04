@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 
-import { normalizeValue, skewWithCenterValue } from '@tremolo-ui/functions'
+import { curveScale, curveWithCenterValue } from '@tremolo-ui/functions'
 
 import { AnimationCanvas } from '../../src/components/AnimationCanvas'
 import { Slider } from '../../src/components/Slider'
@@ -23,7 +23,8 @@ export const VolumeFader = () => {
 
   const min = -100
   const max = 6
-  const skew = skewWithCenterValue(-10, min, max)
+  // The range crosses 0 dB, so exponentialScale cannot be used here.
+  const scale = curveScale(curveWithCenterValue(-10, min, max))
 
   const handleAudio = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!audioRef.current) return
@@ -80,12 +81,12 @@ export const VolumeFader = () => {
         value={volume}
         min={min}
         max={max}
-        skew={skew}
+        scale={scale}
         step={0.1}
         onChange={(v) => {
           setVolume(v)
           if (!gainNode) return
-          gainNode.gain.value = normalizeValue(v, min, max, skew)
+          gainNode.gain.value = scale.normalize(v, min, max)
         }}
         vertical
         wheel={['normalized', 0.1]}
@@ -107,7 +108,7 @@ export const VolumeFader = () => {
               if (!analyzerNode || !dataArray.current) return
               analyzerNode.getFloatTimeDomainData(dataArray.current)
               const rms = getRMS(dataArray.current)
-              const barH = normalizeValue(rms, min, max, skew) * height
+              const barH = scale.normalize(rms, min, max) * height
               ctx.fillRect(0, height - barH, width, height)
             }}
           />
