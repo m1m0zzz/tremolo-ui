@@ -408,8 +408,10 @@ Phase 1 で `@tremolo-ui/dom` へ移した部分。移植は「React hook のロ
 **dom への移行前から知られている問題。** `skew` を設定した Knob をドラッグすると、見た目の値がジャンプすることがある。
 
 - [x] 再現条件を特定する（`skew` と `step` の組み合わせ、どの値域で起きるか）
-- [ ] 直し方を決める（下記の A / B / C）
-- [ ] 直して回帰テストを入れる
+- [x] 直し方を決める（下記の A / B / C）
+- [x] 直して回帰テストを入れる
+
+**対応済み。** `skew` を廃止し、`Scale` インターフェースと 5 つのプリセットに置き換えた（下記「対応した内容」）。
 
 #### 調査結果
 
@@ -492,9 +494,46 @@ newPos = owner.valueToProportionOfLength (valueOnMouseDown)
 - **A. 曲線を差し替え可能にする（推奨）。** `AxisOptions` に写像を足す。JUCE のラムダ、iPlug2 の `Shape`、SuperCollider の `Warp` と同じ構造で、`createDragValue` の `axis`（0-1 の位置 → 値）がちょうどその差し込み口になっている。候補は真の指数写像（`min > 0` が前提）と `CurveWarp` 型（符号の制約なし）。`KnobProps` の `skew?: number // | SkewFunction // TODO` は元々この方向を示している。`@tremolo-ui/functions` の `normalizeValue` / `rawValue` は公開 API なので、置き換えではなく追加にする
 - **B. 端の劣化だけ緩和する。** 下端付近で実効ステップに下限を設ける等。対症療法で、曲線が対数でない問題は残る
 - **C. 仕様として文書化する。** JUCE / iPlug2 の冪乗則と同じ特性であることを明記し、`min` を 0 に近づけないよう案内する
-- **D. `pixelRange` の既定を 100 → 250 にする（JUCE に合わせる）。** 単体では直らないが A と独立に効き、破壊的変更としても小さい
+- ~~**D. `pixelRange` の既定を 100 → 250 にする（JUCE に合わせる）。**~~ → **採用しない。** 既定の操作感を変えるだけで 5.8 の原因には触れないため
 
-A + D が本筋。B は採らない。
+**A で進める。** B / C / D は採らない。
+
+#### 対応した内容
+
+`@tremolo-ui/functions` に `Scale` インターフェースと 5 つのプリセットを追加し、`skew`（`AxisOptions.skew` と Slider / Knob / XYPad の `skew` prop）を **`scale` に一本化**した。
+
+```ts
+export interface Scale {
+  normalize: (value: number, min: number, max: number) => number
+  denormalize: (position: number, min: number, max: number) => number
+}
+```
+
+| プリセット | 用途 |
+| --- | --- |
+| `linearScale`（既定） | 値が既に知覚と線形なもの。dB 値、パン、%、MIDI ノート番号 |
+| `exponentialScale` | 比率が意味を持つもの。周波数、フリーランのレート、ディレイタイム。`min`/`max` が非ゼロ同符号であることが必須 |
+| `curveScale(curve)` | 汎用テーパー。`min = 0` や 0 をまたぐレンジで使える。`curve > 0` で下端が細かく、`curve < 0` で上端が細かい。`curveWithCenterValue()` と組み合わせる |
+| `symmetricSkewScale(skew)` | 中央対称。双極性コントロールで 0 付近を細かくしたいとき（JUCE の `symmetricSkew`） |
+| `skewScale(skew)` | JUCE `NormalisableRange` の冪乗則。**JUCE / iPlug2 のパラメータと数値を一致させる互換用。** `skewWithCenterValue()` はこれに対して使う |
+
+**`min` / `max` を保持せず引数で受ける**設計にしたので、`Scale` は状態を持たずモジュールレベルの定数にできる。毎レンダー同じオブジェクトを渡してもコストがかからない。
+
+判断:
+
+- **冪乗則そのものは `skewScale` として残した。** JUCE を WebView で使うケースでは、C++ 側の `NormalisableRange` とノブ位置・オートメーション曲線を一致させる必要があるため。端の縮退も JUCE と同じままにしてある（それが互換の意味）。ドキュメントで「新規設計では `exponentialScale` / `curveScale` を薦める」と案内する
+- `normalizeValue` / `rawValue` は公開 API として残す。`elementMapping` や `usePianoDrag` のピクセル正規化にも使われており、`linearScale` / `skewScale` の実装もこれを通しているので JUCE 互換の数値が保たれる
+
+回帰テスト:
+
+- `packages/functions/__tests__/scale.test.ts` — 5 つ全てについて往復・端点・単調性・範囲外クランプ・空レンジの拒否、各プリセット固有の性質
+- `packages/dom/__tests__/pointer/scaleJump.test.ts` — 実際のドラッグ経路で 5.8 の症状を固定。`skewScale` は dB ノブの下端で 1px あたり 8dB 飛び、周波数ノブでは 12px 動かしても値が変わらない。`curveScale` / `exponentialScale` はどちらも起きない
+
+`exponentialScale.normalize` / `curveScale.normalize` は**値をクランプしてから対数を取る**必要がある。範囲外の値では比が負になり、`Math.log` が NaN を返すため（位置をクランプしても手遅れ）。テストで固定してある。
+
+#### 残った論点
+
+**`Scale` 型と `Slider.Scale`（目盛りを描くサブコンポーネント）で名前が衝突している。** `<Slider.Root scale={…}><Slider.Scale/></Slider.Root>` は紛らわしい。`Slider/index.tsx` では `type Scale as ValueScale` で回避してあるが、利用者から見た紛らわしさは残る。`Slider.Scale` を `Slider.Marks` などに改名するか、別の解を検討する。
 
 ## 6. 既存コードで見つかった問題
 

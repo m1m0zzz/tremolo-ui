@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai'
 
-import { skewWithCenterValue } from '@tremolo-ui/functions'
+import { curveScale, curveWithCenterValue } from '@tremolo-ui/functions'
 
 import { Knob } from '../../../src/components/Knob'
 
@@ -43,7 +43,9 @@ export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
           defaultValue={0}
           onChange={(v) => setMasterVolume(v)}
           size={30}
-          skew={skewWithCenterValue(-12, MIN_MASTER_VOLUME, MAX_MASTER_VOLUME)}
+          scale={curveScale(
+            curveWithCenterValue(-12, MIN_MASTER_VOLUME, MAX_MASTER_VOLUME),
+          )}
           step={0.1}
         >
           <Knob.SVGRoot>

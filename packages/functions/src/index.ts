@@ -14,6 +14,15 @@ export {
   toFixed,
 } from './math'
 export {
+  type Scale,
+  curveScale,
+  curveWithCenterValue,
+  exponentialScale,
+  linearScale,
+  skewScale,
+  symmetricSkewScale,
+} from './scale'
+export {
   type NoteKey,
   type WhiteKey,
   isBlackKey,

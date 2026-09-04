@@ -1,5 +1,7 @@
 import { createContext, RefObject, useContext } from 'react'
 
+import type { Scale } from '@tremolo-ui/functions'
+
 import type { SliderThumbMethods } from './Thumb'
 
 export type SliderContextValue = {
@@ -7,7 +9,8 @@ export type SliderContextValue = {
   min: number
   max: number
   step: number
-  skew: number
+  /** How the value is distributed across the travel. */
+  scale: Scale
   vertical: boolean
   reverse: boolean
   disabled: boolean

@@ -5,27 +5,27 @@
   },
   "sidebar.tutorialSidebar.category.Tutorials": {
     "message": "Tutorials",
-    "description": "The label for category Tutorials in sidebar tutorialSidebar"
+    "description": "The label for category 'Tutorials' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.Components": {
     "message": "Components",
-    "description": "The label for category Components in sidebar tutorialSidebar"
+    "description": "The label for category 'Components' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.Hooks": {
     "message": "Hooks",
-    "description": "The label for category Hooks in sidebar tutorialSidebar"
+    "description": "The label for category 'Hooks' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.Guides": {
     "message": "Guides",
-    "description": "The label for category Guides in sidebar tutorialSidebar"
+    "description": "The label for category 'Guides' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.Support": {
     "message": "Support",
-    "description": "The label for category Support in sidebar tutorialSidebar"
+    "description": "The label for category 'Support' in sidebar 'tutorialSidebar'"
   },
   "sidebar.typedocSidebar.category.@tremolo-ui/functions": {
     "message": "@tremolo-ui/functions",
-    "description": "The label for category @tremolo-ui/functions in sidebar typedocSidebar"
+    "description": "The label for category '@tremolo-ui/functions' in sidebar 'typedocSidebar'"
   },
   "sidebar.typedocSidebar.category.MIDI": {
     "message": "MIDI",
@@ -45,7 +45,7 @@
   },
   "sidebar.typedocSidebar.category.@tremolo-ui/react": {
     "message": "@tremolo-ui/react",
-    "description": "The label for category @tremolo-ui/react in sidebar typedocSidebar"
+    "description": "The label for category '@tremolo-ui/react' in sidebar 'typedocSidebar'"
   },
   "sidebar.typedocSidebar.category.AnimationCanvas": {
     "message": "AnimationCanvas",
@@ -77,7 +77,7 @@
   },
   "sidebar.typedocSidebar.category.hooks": {
     "message": "hooks",
-    "description": "The label for category hooks in sidebar typedocSidebar"
+    "description": "The label for category 'hooks' in sidebar 'typedocSidebar'"
   },
   "sidebar.typedocSidebar.doc.NoteKey": {
     "message": "NoteKey",
@@ -221,7 +221,7 @@
   },
   "sidebar.typedocSidebar.doc.AnimationCanvas": {
     "message": "AnimationCanvas",
-    "description": "The label for the doc item AnimationCanvas in sidebar typedocSidebar, linking to the doc api/react/functions/AnimationCanvas"
+    "description": "The label for the doc item 'AnimationCanvas' in sidebar 'typedocSidebar', linking to the doc api/react/components/AnimationCanvas"
   },
   "sidebar.typedocSidebar.doc.KnobMethods": {
     "message": "KnobMethods",
@@ -233,7 +233,7 @@
   },
   "sidebar.typedocSidebar.doc.Knob": {
     "message": "Knob",
-    "description": "The label for the doc item Knob in sidebar typedocSidebar, linking to the doc api/react/variables/Knob"
+    "description": "The label for the doc item 'Knob' in sidebar 'typedocSidebar', linking to the doc api/react/components/Knob"
   },
   "sidebar.typedocSidebar.doc.DecrementStepperProps": {
     "message": "DecrementStepperProps",
@@ -257,7 +257,7 @@
   },
   "sidebar.typedocSidebar.doc.NumberInput": {
     "message": "NumberInput",
-    "description": "The label for the doc item NumberInput in sidebar typedocSidebar, linking to the doc api/react/variables/NumberInput"
+    "description": "The label for the doc item 'NumberInput' in sidebar 'typedocSidebar', linking to the doc api/react/components/NumberInput"
   },
   "sidebar.typedocSidebar.doc.KeyLabelProps": {
     "message": "KeyLabelProps",
@@ -285,7 +285,7 @@
   },
   "sidebar.typedocSidebar.doc.Piano": {
     "message": "Piano",
-    "description": "The label for the doc item Piano in sidebar typedocSidebar, linking to the doc api/react/variables/Piano"
+    "description": "The label for the doc item 'Piano' in sidebar 'typedocSidebar', linking to the doc api/react/components/Piano"
   },
   "sidebar.typedocSidebar.doc.SHORTCUTS": {
     "message": "SHORTCUTS",
@@ -309,7 +309,7 @@
   },
   "sidebar.typedocSidebar.doc.PointsEditor": {
     "message": "PointsEditor",
-    "description": "The label for the doc item PointsEditor in sidebar typedocSidebar, linking to the doc api/react/variables/PointsEditor"
+    "description": "The label for the doc item 'PointsEditor' in sidebar 'typedocSidebar', linking to the doc api/react/components/PointsEditor"
   },
   "sidebar.typedocSidebar.doc.clampPoint": {
     "message": "clampPoint",
@@ -345,7 +345,7 @@
   },
   "sidebar.typedocSidebar.doc.Slider": {
     "message": "Slider",
-    "description": "The label for the doc item Slider in sidebar typedocSidebar, linking to the doc api/react/variables/Slider"
+    "description": "The label for the doc item 'Slider' in sidebar 'typedocSidebar', linking to the doc api/react/components/Slider"
   },
   "sidebar.typedocSidebar.doc.useSliderContext": {
     "message": "useSliderContext",
@@ -377,15 +377,15 @@
   },
   "sidebar.typedocSidebar.doc.XYPad": {
     "message": "XYPad",
-    "description": "The label for the doc item XYPad in sidebar typedocSidebar, linking to the doc api/react/variables/XYPad"
+    "description": "The label for the doc item 'XYPad' in sidebar 'typedocSidebar', linking to the doc api/react/components/XYPad"
   },
   "sidebar.typedocSidebar.doc.useAnimationFrame": {
     "message": "useAnimationFrame",
-    "description": "The label for the doc item useAnimationFrame in sidebar typedocSidebar, linking to the doc api/react/functions/useAnimationFrame"
+    "description": "The label for the doc item 'useAnimationFrame' in sidebar 'typedocSidebar', linking to the doc api/react/hooks/useAnimationFrame"
   },
   "sidebar.typedocSidebar.doc.useDrag": {
     "message": "useDrag",
-    "description": "The label for the doc item useDrag in sidebar typedocSidebar, linking to the doc api/react/functions/useDrag"
+    "description": "The label for the doc item 'useDrag' in sidebar 'typedocSidebar', linking to the doc api/react/hooks/useDrag"
   },
   "sidebar.typedocSidebar.doc.useDragWithElement": {
     "message": "useDragWithElement",
@@ -393,26 +393,62 @@
   },
   "sidebar.typedocSidebar.doc.useEventListener": {
     "message": "useEventListener",
-    "description": "The label for the doc item useEventListener in sidebar typedocSidebar, linking to the doc api/react/functions/useEventListener"
+    "description": "The label for the doc item 'useEventListener' in sidebar 'typedocSidebar', linking to the doc api/react/hooks/useEventListener"
   },
   "sidebar.typedocSidebar.doc.useInterval": {
     "message": "useInterval",
-    "description": "The label for the doc item useInterval in sidebar typedocSidebar, linking to the doc api/react/functions/useInterval"
+    "description": "The label for the doc item 'useInterval' in sidebar 'typedocSidebar', linking to the doc api/react/hooks/useInterval"
   },
   "sidebar.typedocSidebar.doc.useLongPress": {
     "message": "useLongPress",
-    "description": "The label for the doc item useLongPress in sidebar typedocSidebar, linking to the doc api/react/functions/useLongPress"
+    "description": "The label for the doc item 'useLongPress' in sidebar 'typedocSidebar', linking to the doc api/react/hooks/useLongPress"
   },
   "sidebar.typedocSidebar.doc.useMIDIAccess": {
     "message": "useMIDIAccess",
-    "description": "The label for the doc item useMIDIAccess in sidebar typedocSidebar, linking to the doc api/react/functions/useMIDIAccess"
+    "description": "The label for the doc item 'useMIDIAccess' in sidebar 'typedocSidebar', linking to the doc api/react/hooks/useMIDIAccess"
   },
   "sidebar.typedocSidebar.doc.useMIDIInput": {
     "message": "useMIDIInput",
-    "description": "The label for the doc item useMIDIInput in sidebar typedocSidebar, linking to the doc api/react/functions/useMIDIInput"
+    "description": "The label for the doc item 'useMIDIInput' in sidebar 'typedocSidebar', linking to the doc api/react/hooks/useMIDIInput"
   },
   "sidebar.typedocSidebar.doc.useMIDIMessage": {
     "message": "useMIDIMessage",
-    "description": "The label for the doc item useMIDIMessage in sidebar typedocSidebar, linking to the doc api/react/functions/useMIDIMessage"
+    "description": "The label for the doc item 'useMIDIMessage' in sidebar 'typedocSidebar', linking to the doc api/react/hooks/useMIDIMessage"
+  },
+  "sidebar.tutorialSidebar.category.Components.link.generated-index.title": {
+    "message": "Components",
+    "description": "The generated-index page title for category 'Components' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.typedocSidebar.category.components": {
+    "message": "components",
+    "description": "The label for category 'components' in sidebar 'typedocSidebar'"
+  },
+  "sidebar.typedocSidebar.doc.math": {
+    "message": "math",
+    "description": "The label for the doc item 'math' in sidebar 'typedocSidebar', linking to the doc api/functions/math"
+  },
+  "sidebar.typedocSidebar.doc.midi": {
+    "message": "midi",
+    "description": "The label for the doc item 'midi' in sidebar 'typedocSidebar', linking to the doc api/functions/midi"
+  },
+  "sidebar.typedocSidebar.doc.scale": {
+    "message": "scale",
+    "description": "The label for the doc item 'scale' in sidebar 'typedocSidebar', linking to the doc api/functions/scale"
+  },
+  "sidebar.typedocSidebar.doc.types": {
+    "message": "types",
+    "description": "The label for the doc item 'types' in sidebar 'typedocSidebar', linking to the doc api/functions/types"
+  },
+  "sidebar.typedocSidebar.doc.util": {
+    "message": "util",
+    "description": "The label for the doc item 'util' in sidebar 'typedocSidebar', linking to the doc api/functions/util"
+  },
+  "sidebar.typedocSidebar.doc.useDragValue": {
+    "message": "useDragValue",
+    "description": "The label for the doc item 'useDragValue' in sidebar 'typedocSidebar', linking to the doc api/react/hooks/useDragValue"
+  },
+  "sidebar.typedocSidebar.doc.useWheel": {
+    "message": "useWheel",
+    "description": "The label for the doc item 'useWheel' in sidebar 'typedocSidebar', linking to the doc api/react/hooks/useWheel"
   }
 }

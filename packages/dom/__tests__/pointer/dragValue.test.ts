@@ -1,3 +1,5 @@
+import { exponentialScale, skewScale } from '@tremolo-ui/functions'
+
 import {
   createDragValue,
   elementMapping,
@@ -202,9 +204,9 @@ describe('axis scaling', () => {
     expect(lastValue(onChange)).toEqual([10, 4])
   })
 
-  test('applies the skew', () => {
+  test('applies the scale', () => {
     const { element, onChange } = setup({
-      axis: { min: 0, max: 100, skew: 0.5, step: undefined },
+      axis: { min: 0, max: 100, scale: skewScale(0.5), step: undefined },
     })
 
     element.dispatchEvent(
@@ -215,6 +217,34 @@ describe('axis scaling', () => {
     )
 
     expect(lastValue(onChange)).toEqual([25, 25])
+  })
+
+  test('a scale other than linear also drives the relative mapping', () => {
+    // relativeMapping reads the current value back through the scale to find
+    // its origin, so the two directions have to agree.
+    let value = 1000
+    const { element, onChange } = setup({
+      axis: { min: 20, max: 20000, scale: exponentialScale, step: undefined },
+      mapping: relativeMapping({ pixelRange: 100 }),
+      getValue: (): XY<number> => [value, value],
+    })
+
+    element.dispatchEvent(pointerEvent('pointerdown', { screenX: 0 }))
+    // No movement: the value has to come back unchanged.
+    element.dispatchEvent(pointerEvent('pointermove', { screenX: 0 }))
+    expect(lastValue(onChange)[0]).toBeCloseTo(1000, 6)
+
+    // A tenth of the travel is a tenth of the way from 20 to 20000 in ratio,
+    // which is the same factor wherever the drag starts.
+    element.dispatchEvent(pointerEvent('pointermove', { screenX: 10 }))
+    const factor = Math.pow(20000 / 20, 0.1)
+    expect(lastValue(onChange)[0]).toBeCloseTo(1000 * factor, 6)
+
+    value = 100
+    element.dispatchEvent(pointerEvent('pointerup', { screenX: 10 }))
+    element.dispatchEvent(pointerEvent('pointerdown', { screenX: 0 }))
+    element.dispatchEvent(pointerEvent('pointermove', { screenX: 10 }))
+    expect(lastValue(onChange)[0]).toBeCloseTo(100 * factor, 6)
   })
 
   test('reverse flips the axis', () => {

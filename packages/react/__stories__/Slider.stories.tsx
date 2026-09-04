@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-import { skewWithCenterValue } from '@tremolo-ui/functions'
+import { curveScale, curveWithCenterValue } from '@tremolo-ui/functions'
 
 import { NumberInput } from '../src/components/NumberInput'
 import { Slider } from '../src/components/Slider'
@@ -53,7 +53,7 @@ export const LogarithmicParameter: Story = {
     min: -100,
     max: 0,
     step: 0.1,
-    skew: skewWithCenterValue(-10, -100, 0),
+    scale: curveScale(curveWithCenterValue(-10, -100, 0)),
     vertical: true,
     wheel: ['normalized', 0.1],
     keyboard: ['normalized', 0.1],
@@ -66,7 +66,8 @@ export const LogarithmicParameter: Story = {
       <>
         <h1>Logarithmic parameter</h1>
         <p>
-          skew={'{'}skewWithCenterValue(centerValue, min, max){'}'}
+          scale={'{'}curveScale(curveWithCenterValue(centerValue, min, max))
+          {'}'}
         </p>
         <p>
           min = {args.min}, max = {args.max}
@@ -81,7 +82,9 @@ export const LogarithmicParameter: Story = {
         <Slider.Root
           {...args}
           value={value}
-          skew={skewWithCenterValue(centerValue, args.min, args.max)}
+          scale={curveScale(
+            curveWithCenterValue(centerValue, args.min, args.max),
+          )}
           onChange={(v) => setValue(v)}
         >
           <Slider.Track>

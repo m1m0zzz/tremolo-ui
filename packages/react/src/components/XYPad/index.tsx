@@ -13,11 +13,11 @@ import {
 import type { AxisOptions } from '@tremolo-ui/dom'
 import {
   clamp,
-  normalizeValue,
-  rawValue,
+  linearScale,
   stepValue,
   toFixed,
   InputEventOption,
+  type Scale,
 } from '@tremolo-ui/functions'
 
 import { useDragValue } from '../../hooks/useDragValue'
@@ -46,7 +46,16 @@ export interface XYPadProps {
   max: XYInput<number>
 
   step?: XYInput<number>
-  skew?: XYInput<number>
+  /**
+   * How the value of each axis is distributed across the travel.
+   *
+   * Pick one of the scales from `@tremolo-ui/functions`: `linearScale`,
+   * `exponentialScale`, `curveScale(n)`, `symmetricSkewScale(n)`, or
+   * `skewScale(n)` for a value that has to match a JUCE parameter.
+   *
+   * @default linearScale
+   */
+  scale?: XYInput<Scale>
   reverse?: XYInput<boolean>
 
   /**
@@ -102,7 +111,7 @@ export const Root = forwardRef<XYPadMethods, Props>(
       min: _min,
       max: _max,
       step: _step = 1,
-      skew: _skew = 1,
+      scale: _scale = linearScale,
       reverse: _reverse = false,
       wheel = ['raw', 1],
       keyboard = ['raw', 1],
@@ -134,17 +143,17 @@ export const Root = forwardRef<XYPadMethods, Props>(
     const min = useMemo(() => toXY(_min), [_min])
     const max = useMemo(() => toXY(_max), [_max])
     const step = useMemo(() => toXY(_step), [_step])
-    const skew = useMemo(() => toXY(_skew), [_skew])
+    const scale = useMemo(() => toXY(_scale), [_scale])
     const reverse = useMemo(() => toXY(_reverse), [_reverse])
 
     const percent = useMemo((): XY<number> => {
       const normalized = [0, 1].map((i) =>
-        normalizeValue(value[i], min[i], max[i], skew[i]),
+        scale[i].normalize(value[i], min[i], max[i]),
       )
       return [0, 1].map((i) =>
         toFixed((reverse[i] ? 1 - normalized[i] : normalized[i]) * 100),
       ) as XY<number>
-    }, [value, min, max, skew, reverse])
+    }, [value, min, max, scale, reverse])
 
     // --- internal functions ---
     /** @param axis 0 = x, 1 = y */
@@ -152,19 +161,14 @@ export const Root = forwardRef<XYPadMethods, Props>(
       (eventType: InputEventOption[0], axis: 0 | 1, delta: number) => {
         let v
         if (eventType == 'normalized') {
-          const n = normalizeValue(
-            value[axis],
-            min[axis],
-            max[axis],
-            skew[axis],
-          )
-          v = rawValue(n + delta, min[axis], max[axis], skew[axis])
+          const n = scale[axis].normalize(value[axis], min[axis], max[axis])
+          v = scale[axis].denormalize(n + delta, min[axis], max[axis])
         } else {
           v = value[axis] + delta
         }
         return clamp(stepValue(v, step[axis]), min[axis], max[axis])
       },
-      [value, min, max, skew, step],
+      [value, min, max, scale, step],
     )
 
     const withAxis = useCallback(
@@ -196,10 +200,10 @@ export const Root = forwardRef<XYPadMethods, Props>(
           min: min[i],
           max: max[i],
           step: step[i],
-          skew: skew[i],
+          scale: scale[i],
           reverse: reverse[i],
         })) as XY<AxisOptions>,
-      [min, max, step, skew, reverse],
+      [min, max, step, scale, reverse],
     )
 
     const { refCallback: dragRefCallback } = useDragValue<HTMLDivElement>({
@@ -248,7 +252,7 @@ export const Root = forwardRef<XYPadMethods, Props>(
         min,
         max,
         step,
-        skew,
+        scale,
         reverse,
         disabled,
         readonly,
@@ -256,7 +260,7 @@ export const Root = forwardRef<XYPadMethods, Props>(
         areaRef,
         thumbRef,
       }),
-      [value, min, max, step, skew, reverse, disabled, readonly, percent],
+      [value, min, max, step, scale, reverse, disabled, readonly, percent],
     )
 
     useImperativeHandle(forwardedRef, () => {

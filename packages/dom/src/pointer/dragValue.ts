@@ -1,8 +1,9 @@
 import {
   clamp,
+  linearScale,
   normalizeValue,
-  rawValue,
   stepValue,
+  type Scale,
 } from '@tremolo-ui/functions'
 
 import { toXY, type XY, type XYInput } from '../xy'
@@ -17,8 +18,12 @@ export interface AxisOptions {
    * Rounding applied to the value. Left unrounded when omitted.
    */
   step?: number
-  /** @default 1 */
-  skew?: number
+  /**
+   * How the value is distributed across the travel.
+   *
+   * @default linearScale
+   */
+  scale?: Scale
   /**
    * Flip the axis so that its far end is `min`.
    *
@@ -173,8 +178,9 @@ export function createDragValue(
   function valueOf(position: XY<number>): XY<number> {
     return axes().map((axis, i) => {
       const p = axis.reverse ? 1 - position[i] : position[i]
-      // rawValue clamps the position, so a mapping may report outside 0-1.
-      const value = rawValue(p, axis.min, axis.max, axis.skew ?? 1)
+      // A scale clamps the position, so a mapping may report outside 0-1.
+      const scale = axis.scale ?? linearScale
+      const value = scale.denormalize(p, axis.min, axis.max)
       const stepped = axis.step ? stepValue(value, axis.step) : value
       // Rounding to the step can leave the range.
       return clamp(stepped, axis.min, axis.max)
@@ -191,7 +197,8 @@ export function createDragValue(
       }
       const value = getValue()
       return axes().map((axis, i) => {
-        const n = normalizeValue(value[i], axis.min, axis.max, axis.skew ?? 1)
+        const scale = axis.scale ?? linearScale
+        const n = scale.normalize(value[i], axis.min, axis.max)
         return axis.reverse ? 1 - n : n
       }) as XY<number>
     },

@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { ComponentPropsWithoutRef, CSSProperties, useCallback } from 'react'
 
-import { toFixed, xor, normalizeValue } from '@tremolo-ui/functions'
+import { toFixed, xor } from '@tremolo-ui/functions'
 
 import { useSliderContext } from './context'
 import { ScaleType } from './type'
@@ -48,19 +48,17 @@ export function ScaleOption({
   Omit<ComponentPropsWithoutRef<'div'>, keyof ScaleOptionProps>) {
   const min = useSliderContext((s) => s.min)
   const max = useSliderContext((s) => s.max)
-  const skew = useSliderContext((s) => s.skew)
+  const scale = useSliderContext((s) => s.scale)
   const vertical = useSliderContext((s) => s.vertical)
   const reverse = useSliderContext((s) => s.reverse)
 
   const calcPercent = useCallback(
-    (rawValue: number) => {
-      return toFixed(
-        xor(vertical, reverse)
-          ? 100 - normalizeValue(rawValue, min, max, skew) * 100
-          : normalizeValue(rawValue, min, max, skew) * 100,
-      )
+    (value: number) => {
+      // The marks have to sit on the same curve the thumb runs along.
+      const percent = scale.normalize(value, min, max) * 100
+      return toFixed(xor(vertical, reverse) ? 100 - percent : percent)
     },
-    [vertical, reverse, max, min, skew],
+    [vertical, reverse, max, min, scale],
   )
 
   return (
