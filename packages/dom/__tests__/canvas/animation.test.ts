@@ -266,6 +266,44 @@ describe('relativeSize', () => {
     expect(context.drawImage).toHaveBeenCalled()
   })
 
+  test('keeps the snapshot at full device resolution', () => {
+    // The snapshot used to be scaled down by the device pixel ratio and back
+    // up again, which cost resolution on a HiDPI screen. It is now copied at
+    // the canvas's own device size and drawn back at its old CSS size, so
+    // nothing is resampled while the ratio stays put.
+    globalThis.devicePixelRatio = 2
+    const { context } = setup({ relativeSize: true }, { withParent: true })
+
+    resizeObserver.resize(100, 80)
+    context.drawImage.mockClear()
+    resizeObserver.resize(150, 80)
+
+    const [source, ...placement] = context.drawImage.mock.calls[0]
+    const memo = source as HTMLCanvasElement
+    // Copied at the old backing store size, in device pixels.
+    expect(memo.width).toBe(200)
+    expect(memo.height).toBe(160)
+    // Drawn back at the old size in CSS pixels, which the context is scaled to.
+    expect(placement).toEqual([0, 0, 100, 80])
+  })
+
+  test('rescales the snapshot when the device pixel ratio changes', () => {
+    globalThis.devicePixelRatio = 1
+    const { context } = setup({ relativeSize: true }, { withParent: true })
+
+    resizeObserver.resize(100, 80)
+    globalThis.devicePixelRatio = 2
+    context.drawImage.mockClear()
+    resizeObserver.resize(100, 80)
+
+    const [source, ...placement] = context.drawImage.mock.calls[0]
+    const memo = source as HTMLCanvasElement
+    // Taken at the old ratio…
+    expect(memo.width).toBe(100)
+    // …and still placed at the same CSS size, so it lands where it was.
+    expect(placement).toEqual([0, 0, 100, 80])
+  })
+
   test('reduceFlickering off leaves the resized canvas blank', () => {
     const { context } = setup(
       { relativeSize: true, reduceFlickering: false },

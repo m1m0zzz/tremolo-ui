@@ -323,7 +323,9 @@ export type XYInput<T> = [T] extends [readonly unknown[]]
 - **`relativeSize` と `contextAttributes` はインスタンス生成時に固定。** 前者は `ResizeObserver` を張るかどうか、後者は context の生成に関わるため、`update()` では受け付けない（`createDragValue` の `mapping` と同じ扱い）
 - **フリッカー抑制用の隠し `<canvas>` は DOM に描画しない。** コアが必要になった時点で `document.createElement` で作る。React 側は fragment が不要になり `<canvas>` 1 つだけを返す
 - **サイズはコアが所有する。** React は `width` / `height` 属性を設定せず、`size` オプションとして渡す。これで属性の書き換えと DPR 設定の二重管理が無くなる
-- リサイズ時のスナップショットは、旧実装の `scale(1/dpr)` → `drawImage` → `scale(dpr)` をそのまま移植した。dpr が打ち消し合って位置・大きさは正しいが、**dpr > 1 では一度縮小してから拡大するため解像度が落ちる**（リサイズ中の一瞬だけなので今回は変えていない）
+- **リサイズ時のスナップショットを解像度を落とさない形に直した。** 旧実装は memo canvas を `scale(1/dpr)` して書き込み、戻すときに context 側の `scale(dpr)` で拡大していた。dpr が打ち消し合うので位置と大きさは正しいが、**dpr > 1 では一度縮小してから拡大するため解像度が落ちていた**
+
+  現在は memo を canvas と同じデバイスピクセル数で取り（`memo.width = canvas.width`、transform は identity なので等倍コピー）、戻すときは **CSS ピクセル座標系のまま「元の CSS サイズ」を指定して描く**（`context.drawImage(memo, 0, 0, previousWidth, previousHeight)`）。context は既に dpr 倍にスケールされているので、dpr が変わらなければデバイスピクセルの 1:1 コピーになり再サンプリングが起きない。dpr が変わった場合（ディスプレイ間の移動など）はフル解像度から 1 回だけ正しくリスケールされる
 
 #### 4.1 NumberInput の再設計
 

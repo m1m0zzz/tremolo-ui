@@ -139,15 +139,12 @@ export function createAnimationCanvas(
   }
 
   /**
-   * Copy the canvas onto the memo canvas, sized for the resize about to
-   * happen. The memo is scaled down by the device pixel ratio here and back up
-   * when it is drawn again, so the two cancel out.
+   * Copy the canvas onto the memo canvas at its full device resolution, 1:1.
+   *
+   * Assigning to `memo.width` resets the memo's transform to the identity, so
+   * the copy neither scales nor resamples.
    */
-  function takeSnapshot(
-    w: number,
-    h: number,
-    dpr: number,
-  ): DrawingContext | null {
+  function takeSnapshot(): DrawingContext | null {
     if (!(opts.reduceFlickering ?? true)) return null
     if (!memo) {
       memo = globalThis.document?.createElement('canvas') ?? null
@@ -156,30 +153,43 @@ export function createAnimationCanvas(
     if (!memo || !memoContext) return null
 
     const state = readDrawingState(context)
-    memo.width = w * dpr
-    memo.height = h * dpr
-    memoContext.scale(1 / dpr, 1 / dpr)
+    memo.width = canvas.width
+    memo.height = canvas.height
     if (canvas.width > 0 && canvas.height > 0) {
       memoContext.drawImage(canvas, 0, 0)
     }
     return state
   }
 
-  function restoreSnapshot(state: DrawingContext | null) {
+  /**
+   * Put the snapshot back, given the size in CSS pixels it was taken at.
+   *
+   * The context is scaled to CSS pixels, so drawing the snapshot at its old
+   * CSS size leaves it exactly where it was. While the device pixel ratio
+   * stays put that is a 1:1 copy of device pixels, and when it changes the
+   * snapshot is rescaled once, from its full resolution.
+   */
+  function restoreSnapshot(
+    state: DrawingContext | null,
+    previousWidth: number,
+    previousHeight: number,
+  ) {
     if (!state || !memo || !memoContext) return
     if (memo.width <= 0 || memo.height <= 0) return
     writeDrawingState(context, state)
-    context.drawImage(memo, 0, 0)
+    context.drawImage(memo, 0, 0, previousWidth, previousHeight)
   }
 
   function applySize(w: number, h: number) {
     const dpr = devicePixelRatio()
-    const state = takeSnapshot(w, h, dpr)
+    const previousWidth = width
+    const previousHeight = height
+    const state = takeSnapshot()
     applyDevicePixelRatio(canvas, context, w, h, dpr)
     width = w
     height = h
     sized = true
-    restoreSnapshot(state)
+    restoreSnapshot(state, previousWidth, previousHeight)
   }
 
   function drawFrame() {

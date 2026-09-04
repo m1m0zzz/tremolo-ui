@@ -22,6 +22,7 @@ Fixed along the way:
 
 - **`width` and `height` had no effect once mounted.** They were not effect dependencies, so changing them reset the canvas's backing store without re-applying the device pixel ratio transform, leaving the drawing at the wrong scale.
 - **The first size of a `relativeSize` canvas came from `parent.clientWidth`, later ones from the observer's `contentRect`.** Those differ by the parent's padding, so a padded parent drew at one size and then jumped. The `ResizeObserver` now reports every size, including the first.
+- **Resizing blurred the canvas on a HiDPI screen.** The snapshot that carries the drawing across a resize was scaled down by the device pixel ratio on the way out and back up on the way in. The two cancelled out, so it landed in the right place at the right size, but it had been through a downscale and an upscale. It is now copied at the canvas's own device resolution and drawn back at its old CSS size, which is a 1:1 copy of device pixels while the ratio holds — and a single correct rescale from full resolution when the ratio changes.
 - The hidden `<canvas>` used to carry the drawing across a resize is no longer rendered into the document; the core makes one off-document when it needs it.
 
 `AnimationCanvas` keeps the same props. `@tremolo-ui/dom` gains `createAnimationCanvas`, `drawingState` and `isDrawingState`, with the `AnimationFrame`, `AnimationCanvasOptions` and `AnimationCanvasInstance` types.
