@@ -88,6 +88,8 @@ export interface AnimationCanvasInstance {
    *
    * `relativeSize` and `contextAttributes` are fixed for the lifetime of the
    * instance and are ignored here.
+   *
+   * While `animate` is off this also draws a frame, since nothing else would.
    */
   update: (options: Partial<AnimationCanvasOptions>) => void
 
@@ -276,15 +278,19 @@ export function createAnimationCanvas(
 
       if (!relativeSize) {
         const { width: w = 100, height: h = 100 } = opts.size ?? {}
-        if (w != width || h != height) {
-          applySize(w, h)
-          if (!(opts.animate ?? true)) drawFrame()
-        }
+        if (w != width || h != height) applySize(w, h)
       }
 
       const animating = opts.animate ?? true
       if (animating && !wasAnimating) startLoop()
       if (!animating && wasAnimating) stopLoop()
+
+      // Without a loop running, a resize and this call are the only things
+      // that can put anything new on the canvas — so a new `draw` has to be
+      // painted here. That is what makes a canvas driven by state rather than
+      // by time work: the wrapper re-renders, pushes the new handler in, and
+      // the frame it draws reflects it.
+      if (!animating) drawFrame()
     },
     redraw: drawFrame,
     destroy: () => {

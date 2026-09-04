@@ -321,6 +321,8 @@ export type XYInput<T> = [T] extends [readonly unknown[]]
 ##### 決めたこと
 
 - **`relativeSize` と `contextAttributes` はインスタンス生成時に固定。** 前者は `ResizeObserver` を張るかどうか、後者は context の生成に関わるため、`update()` では受け付けない（`createDragValue` の `mapping` と同じ扱い）
+- **`animate` が false のとき、`update()` は 1 フレーム描く。** ループが止まっているので、リサイズと `update()` 以外に新しい描画を canvas へ出す手段が無い。ドキュメントの "Reactive Canvas"（`useState` + `animate={false}`）はこれで成立する。React 側は生成直後の 1 回だけ `update()` を飛ばし、マウント時に同じフレームを 2 度描かないようにしている
+- **`options`（`contextAttributes`）は effect の依存に入れない。** インラインで書かれるとインスタンスが毎レンダー作り直されるため、ref 経由で生成時にだけ読む。マウント後の変更は効かない旨を prop の JSDoc に明記した
 - **フリッカー抑制用の隠し `<canvas>` は DOM に描画しない。** コアが必要になった時点で `document.createElement` で作る。React 側は fragment が不要になり `<canvas>` 1 つだけを返す
 - **サイズはコアが所有する。** React は `width` / `height` 属性を設定せず、`size` オプションとして渡す。これで属性の書き換えと DPR 設定の二重管理が無くなる
 - **リサイズ時のスナップショットを解像度を落とさない形に直した。** 旧実装は memo canvas を `scale(1/dpr)` して書き込み、戻すときに context 側の `scale(dpr)` で拡大していた。dpr が打ち消し合うので位置と大きさは正しいが、**dpr > 1 では一度縮小してから拡大するため解像度が落ちていた**

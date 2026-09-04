@@ -125,6 +125,61 @@ describe('AnimationCanvas', () => {
     expect(canvas.style.width).toBe('40px')
   })
 
+  // The "Reactive Canvas" pattern the docs describe: useState + animate={false},
+  // where a re-render is what asks for a repaint.
+  test('animate={false} redraws when state changes', () => {
+    const drawn: string[] = []
+
+    function Host() {
+      const [color, setColor] = useState('red')
+      return (
+        <>
+          <button onClick={() => setColor('blue')}>change</button>
+          <AnimationCanvas
+            animate={false}
+            width={10}
+            height={10}
+            draw={() => drawn.push(color)}
+          />
+        </>
+      )
+    }
+
+    const { getByText } = render(<Host />)
+    expect(drawn).toEqual(['red'])
+
+    act(() => getByText('change').click())
+
+    expect(drawn).toEqual(['red', 'blue'])
+  })
+
+  test('an inline options object does not rebuild the canvas', () => {
+    const init = jest.fn()
+
+    function Host() {
+      const [, setTick] = useState(0)
+      return (
+        <>
+          <button onClick={() => setTick((n) => n + 1)}>re-render</button>
+          <AnimationCanvas
+            width={10}
+            height={10}
+            options={{ alpha: false }}
+            init={init}
+            draw={() => {}}
+          />
+        </>
+      )
+    }
+
+    const { getByText } = render(<Host />)
+    act(() => flush())
+    act(() => getByText('re-render').click())
+    act(() => flush())
+
+    expect(init).toHaveBeenCalledTimes(1)
+  })
+
   test('unmounting cancels the loop', () => {
     const draw = jest.fn()
     const { unmount } = render(

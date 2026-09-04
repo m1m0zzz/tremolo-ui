@@ -33,6 +33,9 @@ export interface CommonProps {
   init?: InitFunction
   animate?: boolean
   /**
+   * Read once, when the 2D context is created, so changing it later has no
+   * effect. Passing a fresh object on every render is therefore harmless.
+   *
    * @see https://developer.mozilla.org/docs/Web/API/HTMLCanvasElement/getContext#contextattributes
    */
   options?: CanvasRenderingContext2DSettings
@@ -99,8 +102,11 @@ export function AnimationCanvas({
     width,
     height,
     reduceFlickering,
+    options,
   })
   const instanceRef = useRef<AnimationCanvasInstance | null>(null)
+  /** Set while the instance below is newer than the effect that pushes into it. */
+  const justCreated = useRef(false)
 
   useEffect(() => {
     if (!node) return
@@ -113,23 +119,40 @@ export function AnimationCanvas({
       size: { width: current.width, height: current.height },
       reduceFlickering: current.reduceFlickering,
       relativeSize,
-      contextAttributes: options,
+      contextAttributes: current.options,
     })
     instanceRef.current = instance
+    justCreated.current = true
 
     return () => {
       instanceRef.current = null
       instance.destroy()
     }
-    // `relativeSize` and `options` decide how the instance is wired, so they
-    // are the only settings that rebuild it. Everything else is pushed in
-    // below, which leaves the animation running.
-  }, [node, relativeSize, options])
+    // Only `relativeSize` decides how the instance is wired, so it is the one
+    // setting that rebuilds it. `options` is read from the ref above rather
+    // than depended on: it is almost always written inline, and depending on
+    // it would tear the canvas down on every render.
+  }, [node, relativeSize])
 
   // Runs after every render: the handlers come from props and are cheap to
   // push, and updating in place keeps the frame count and elapsed time going.
   useEffect(() => {
-    latest.current = { draw, init, animate, width, height, reduceFlickering }
+    latest.current = {
+      draw,
+      init,
+      animate,
+      width,
+      height,
+      reduceFlickering,
+      options,
+    }
+    // The instance was built from `latest` a moment ago, so there is nothing
+    // to push yet. Skipping matters with `animate` off, where `update()` draws
+    // a frame and would otherwise paint the same one twice on mount.
+    if (justCreated.current) {
+      justCreated.current = false
+      return
+    }
     instanceRef.current?.update({
       animate,
       size: { width, height },

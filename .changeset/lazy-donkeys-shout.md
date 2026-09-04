@@ -25,4 +25,8 @@ Fixed along the way:
 - **Resizing blurred the canvas on a HiDPI screen.** The snapshot that carries the drawing across a resize was scaled down by the device pixel ratio on the way out and back up on the way in. The two cancelled out, so it landed in the right place at the right size, but it had been through a downscale and an upscale. It is now copied at the canvas's own device resolution and drawn back at its old CSS size, which is a 1:1 copy of device pixels while the ratio holds — and a single correct rescale from full resolution when the ratio changes.
 - The hidden `<canvas>` used to carry the drawing across a resize is no longer rendered into the document; the core makes one off-document when it needs it.
 
+With `animate` off, `update()` draws a frame: the loop is not running, so a resize and that call are the only things that can put a new drawing on the canvas. That is what keeps the documented "reactive canvas" — `useState` with `animate={false}` — repainting when state changes.
+
+`options` is no longer an effect dependency. It is read once when the context is created, so writing it inline no longer rebuilds the canvas on every render.
+
 `AnimationCanvas` keeps the same props. `@tremolo-ui/dom` gains `createAnimationCanvas`, `drawingState` and `isDrawingState`, with the `AnimationFrame`, `AnimationCanvasOptions` and `AnimationCanvasInstance` types.

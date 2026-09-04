@@ -169,9 +169,11 @@ describe('update', () => {
     const drawn = draw.mock.calls.length
 
     instance.update({ animate: false })
+    // Turning it off paints once, then nothing is scheduled.
+    expect(draw).toHaveBeenCalledTimes(drawn + 1)
     frames.flush()
     expect(frames.pending()).toBe(0)
-    expect(draw).toHaveBeenCalledTimes(drawn)
+    expect(draw).toHaveBeenCalledTimes(drawn + 1)
 
     instance.update({ animate: true })
     expect(frames.pending()).toBe(1)
@@ -214,6 +216,40 @@ describe('animate: false', () => {
 
     expect(draw).toHaveBeenCalledTimes(1)
     expect(frames.pending()).toBe(0)
+  })
+
+  // The "reactive canvas" pattern: state drives the drawing and a re-render is
+  // what asks for a repaint. Without a loop running, update() is the only
+  // thing that can put the new drawing on the canvas.
+  test('update draws a frame, so a new handler reaches the canvas', () => {
+    const { instance, draw } = setup({ animate: false })
+
+    expect(draw).toHaveBeenCalledTimes(1)
+
+    const next = jest.fn()
+    instance.update({ draw: next })
+
+    expect(next).toHaveBeenCalledTimes(1)
+    expect(lastFrame(next).count).toBe(1)
+  })
+
+  test('update keeps drawing on every call while not animating', () => {
+    const { instance, draw } = setup({ animate: false })
+
+    instance.update({ draw })
+    instance.update({ draw })
+
+    expect(draw).toHaveBeenCalledTimes(3)
+  })
+
+  test('update does not draw an extra frame while animating', () => {
+    const { instance, draw } = setup()
+
+    frames.flush()
+    const drawn = draw.mock.calls.length
+    instance.update({ draw })
+
+    expect(draw).toHaveBeenCalledTimes(drawn)
   })
 
   test('redraw() draws another frame', () => {
