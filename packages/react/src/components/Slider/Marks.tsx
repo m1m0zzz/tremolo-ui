@@ -4,23 +4,23 @@ import { ComponentPropsWithoutRef, ReactNode } from 'react'
 import { xor } from '@tremolo-ui/functions'
 
 import { useSliderContext } from './context'
-import { ScaleOption } from './ScaleOption'
-import { generateOptionsList, ScaleOptions } from './type'
+import { MarksOption } from './MarksOption'
+import { generateOptionsList, MarksOptions } from './type'
 
-export interface ScaleProps {
+export interface MarksProps {
   gap?: number | string
-  options?: ScaleOptions
+  options?: MarksOptions
   children?: ReactNode
 }
 
-export function Scale({
+export function Marks({
   gap = 6,
   options,
   children,
   className,
   style,
   ...props
-}: ScaleProps & Omit<ComponentPropsWithoutRef<'div'>, keyof ScaleProps>) {
+}: MarksProps & Omit<ComponentPropsWithoutRef<'div'>, keyof MarksProps>) {
   const min = useSliderContext((s) => s.min)
   const max = useSliderContext((s) => s.max)
   const step = useSliderContext((s) => s.step)
@@ -34,7 +34,7 @@ export function Scale({
 
   return (
     <div
-      className={clsx('tremolo-slider-scale', className)}
+      className={clsx('tremolo-slider-marks', className)}
       style={{
         marginLeft: vertical ? gap : undefined,
         marginTop: !vertical ? gap : undefined,
@@ -44,7 +44,7 @@ export function Scale({
     >
       {options
         ? optionsList.map(({ value, type }, index) => {
-            return <ScaleOption key={index} value={value} type={type} />
+            return <MarksOption key={index} value={value} type={type} />
           })
         : children}
     </div>

@@ -4,14 +4,14 @@ import { ComponentPropsWithoutRef, CSSProperties, useCallback } from 'react'
 import { toFixed, xor } from '@tremolo-ui/functions'
 
 import { useSliderContext } from './context'
-import { ScaleType } from './type'
+import { MarksType } from './type'
 
-export interface ScaleOptionProps {
+export interface MarksOptionProps {
   // required
   value: number
 
   // optional
-  type?: ScaleType
+  type?: MarksType
   /** Display text instead of value. */
   label?: string
   /** mark thickness */
@@ -31,7 +31,7 @@ export interface ScaleOptionProps {
   }
 }
 
-export function ScaleOption({
+export function MarksOption({
   value,
   type = 'mark-number',
   label,
@@ -44,8 +44,8 @@ export function ScaleOption({
   className,
   style,
   ...props
-}: ScaleOptionProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof ScaleOptionProps>) {
+}: MarksOptionProps &
+  Omit<ComponentPropsWithoutRef<'div'>, keyof MarksOptionProps>) {
   const min = useSliderContext((s) => s.min)
   const max = useSliderContext((s) => s.max)
   const scale = useSliderContext((s) => s.scale)
@@ -63,7 +63,7 @@ export function ScaleOption({
 
   return (
     <div
-      className={clsx('tremolo-slider-scale-option', className)}
+      className={clsx('tremolo-slider-marks-option', className)}
       style={{
         left: !vertical ? `${calcPercent(value)}%` : undefined,
         top: vertical ? `${calcPercent(value)}%` : undefined,
@@ -74,7 +74,7 @@ export function ScaleOption({
     >
       {type != 'number' && (
         <div
-          className={clsx('tremolo-slider-scale-option-mark', classes?.mark)}
+          className={clsx('tremolo-slider-marks-option-mark', classes?.mark)}
           style={{
             width: !vertical ? thickness : length,
             height: vertical ? thickness : length,
@@ -87,7 +87,7 @@ export function ScaleOption({
       )}
       {type != 'mark' && (
         <div
-          className={clsx('tremolo-slider-scale-option-label', classes?.label)}
+          className={clsx('tremolo-slider-marks-option-label', classes?.label)}
           style={{
             width: labelWidth,
             ...styles?.label,
