@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { createWheel } from '@tremolo-ui/dom'
+import { createWheel, type WheelOptions } from '@tremolo-ui/dom'
 
 import { useCallbackRef } from './_internal/useCallbackRef'
 
@@ -13,6 +13,7 @@ import { useCallbackRef } from './_internal/useCallbackRef'
  */
 export function useWheel<T extends Element>(
   onWheel: (event: WheelEvent) => void,
+  { requireFocus = false }: WheelOptions = {},
 ): (node: T | null) => void {
   const wheelHandler = useCallbackRef(onWheel)
 
@@ -22,10 +23,12 @@ export function useWheel<T extends Element>(
   useEffect(() => {
     if (!node) return
 
-    const instance = createWheel(node, (event) => wheelHandler(event))
+    const instance = createWheel(node, (event) => wheelHandler(event), {
+      requireFocus,
+    })
 
     return () => instance.destroy()
-  }, [node, wheelHandler])
+  }, [node, wheelHandler, requireFocus])
 
   return setNode
 }

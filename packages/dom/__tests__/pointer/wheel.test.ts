@@ -46,4 +46,52 @@ describe('createWheel', () => {
 
     expect(onWheel).not.toHaveBeenCalled()
   })
+
+  describe('requireFocus', () => {
+    function setup() {
+      const element = document.createElement('div')
+      const child = document.createElement('input')
+      element.appendChild(child)
+      document.body.appendChild(element)
+      const onWheel = jest.fn()
+      const instance = createWheel(element, onWheel, { requireFocus: true })
+      return { element, child, onWheel, instance }
+    }
+
+    test('ignores events while the focus is elsewhere', () => {
+      const { element, onWheel } = setup()
+
+      element.dispatchEvent(wheelEvent(120))
+
+      expect(onWheel).not.toHaveBeenCalled()
+    })
+
+    test('reports events while a descendant has the focus', () => {
+      const { element, child, onWheel } = setup()
+      child.focus()
+
+      element.dispatchEvent(wheelEvent(120))
+
+      expect(onWheel).toHaveBeenCalledTimes(1)
+    })
+
+    test('reports events while the element itself has the focus', () => {
+      const { element, onWheel } = setup()
+      element.tabIndex = -1
+      element.focus()
+
+      element.dispatchEvent(wheelEvent(120))
+
+      expect(onWheel).toHaveBeenCalledTimes(1)
+    })
+
+    test('update can lift the requirement', () => {
+      const { element, onWheel, instance } = setup()
+      instance.update({ requireFocus: false })
+
+      element.dispatchEvent(wheelEvent(120))
+
+      expect(onWheel).toHaveBeenCalledTimes(1)
+    })
+  })
 })
