@@ -182,6 +182,7 @@ export const OneOctave = () => {
         max={9}
         onChange={(v) => setOctave(v)}
       >
+        <NumberInput.InputField />
         <NumberInput.Stepper>
           <NumberInput.IncrementStepper />
           <NumberInput.DecrementStepper />

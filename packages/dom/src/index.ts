@@ -28,5 +28,9 @@ export {
   type DragValueOptions,
   type MappingContext,
 } from './pointer/dragValue'
-export { createWheel, type WheelInstance } from './pointer/wheel'
+export {
+  createWheel,
+  type WheelInstance,
+  type WheelOptions,
+} from './pointer/wheel'
 export { toXY, type XY, type XYInput } from './xy'

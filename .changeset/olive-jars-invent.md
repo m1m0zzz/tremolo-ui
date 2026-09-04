@@ -6,7 +6,7 @@
 
 Replace `skew` with `scale`, and add scales that do not break down at the ends of the range
 
-**Breaking.** The `skew` prop of `Slider.Root`, `Knob.Root` and `XYPad.Root`, and `AxisOptions.skew` in `@tremolo-ui/dom`, are replaced by `scale`, which takes a `Scale` from `@tremolo-ui/functions`.
+**Breaking.** The `skew` prop of `Slider.Root`, `Knob.Root`, `XYPad.Root` and `NumberInput.Root`, and `ValueRange.skew` in `@tremolo-ui/functions`, are replaced by `scale`, which takes a `Scale`.
 
 ```diff
 -<Knob.Root min={20} max={22000} skew={skewWithCenterValue(663, 20, 22000)} …>
@@ -23,7 +23,7 @@ Replace `skew` with `scale`, and add scales that do not break down at the ends o
 
 A `Scale` takes `min` and `max` as arguments rather than holding them, so it carries no state and can be a module level constant.
 
-`normalizeValue()` and `rawValue()` lose their `skew` parameter and are now the linear mapping alone — every curve lives in a `Scale`. `skewWithCenterValue()` keeps its behaviour and moves next to `skewScale()`.
+`normalizeValue()` and `rawValue()` lose their `skew` parameter and are now the linear mapping alone — every curve lives in a `Scale`. `applyDelta()` takes the scale through its `ValueRange`. `skewWithCenterValue()`, `ValueRange` and `applyDelta()` keep their behaviour and move next to the scales they belong to; the names exported from the package are unchanged.
 
 ```diff
 -normalizeValue(value, min, max, skew)

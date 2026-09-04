@@ -14,6 +14,8 @@ export {
 } from './math'
 export {
   type Scale,
+  type ValueRange,
+  applyDelta,
   curveScale,
   curveWithCenterValue,
   exponentialScale,
@@ -36,4 +38,5 @@ export {
   whiteKeys,
 } from './midi'
 export { type InputEventOption } from './types'
+export { type Units, formatValue, parseValue, selectUnit } from './unit'
 export { isEmpty, mod, styleHelper, xor } from './util'

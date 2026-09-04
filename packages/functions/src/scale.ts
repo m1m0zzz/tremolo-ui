@@ -1,4 +1,6 @@
-import { clamp, normalizeValue, rawValue } from './math'
+import { clamp, normalizeValue, rawValue, stepValue } from './math'
+
+import type { InputEventOption } from './types'
 
 /**
  * How a value is distributed across the travel of a control.
@@ -229,4 +231,54 @@ export function curveWithCenterValue(
   // value(0.5) - min = range / (1 + e^(curve / 2))
   const proportion = (centerValue - min) / (max - min)
   return 2 * Math.log(1 / proportion - 1)
+}
+
+/**
+ * How a value is scaled: the range it lives in, how it is rounded, and how it
+ * is distributed across the travel.
+ *
+ * `AxisOptions` of `@tremolo-ui/dom` extends this, so a drag and a
+ * wheel / keyboard nudge run the same value pipeline.
+ */
+export interface ValueRange {
+  min: number
+  max: number
+  /**
+   * Rounding applied to the value. Left unrounded when omitted.
+   */
+  step?: number
+  /**
+   * How the value is distributed across the travel.
+   *
+   * @default linearScale
+   */
+  scale?: Scale
+}
+
+/**
+ * Move a value by an amount of input, as reported by a wheel or an arrow key.
+ *
+ * The pipeline matches `createDragValue` of `@tremolo-ui/dom`: scale, then
+ * step, then clamp. Which key or which sign of `deltaY` counts as which
+ * direction is left to the caller, since it differs per component.
+ *
+ * @param direction which way, and how many times, to apply the option. The
+ * size of one step is `option[1]`, so this is normally `1` or `-1`.
+ *
+ * @example
+ * // ArrowDown on a slider whose keyboard option is ['raw', 1]
+ * applyDelta(value, -1, keyboard, { min, max, step, scale })
+ */
+export function applyDelta(
+  value: number,
+  direction: number,
+  [mode, amount]: InputEventOption,
+  { min, max, step, scale = linearScale }: ValueRange,
+): number {
+  const x = direction * amount
+  const next =
+    mode == 'normalized'
+      ? scale.denormalize(scale.normalize(value, min, max) + x, min, max)
+      : value + x
+  return clamp(step ? stepValue(next, step) : next, min, max)
 }

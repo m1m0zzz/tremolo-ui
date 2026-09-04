@@ -12,9 +12,8 @@ import React, {
 
 import type { AxisOptions, XY } from '@tremolo-ui/dom'
 import {
-  clamp,
+  applyDelta,
   linearScale,
-  stepValue,
   toFixed,
   InputEventOption,
   xor,
@@ -118,6 +117,12 @@ export interface SliderMethods {
 type Props = SliderProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof SliderProps>
 
+/**
+ * The wheel only acts while the focus is inside, so that scrolling a page past
+ * the control does not change its value.
+ */
+const WHEEL_OPTIONS = { requireFocus: true }
+
 export const Root = forwardRef<SliderMethods, Props>(
   (
     {
@@ -168,18 +173,12 @@ export const Root = forwardRef<SliderMethods, Props>(
     const percent = displayReversed ? rev : p
 
     // --- internal functions ---
-    const updateValueByEvent = useCallback(
-      (eventType: InputEventOption[0], x: number) => {
-        let newValue
-        if (eventType == 'normalized') {
-          const n = scale.normalize(value, min, max)
-          newValue = scale.denormalize(n + x, min, max)
-        } else {
-          newValue = value + x
-        }
-        return clamp(stepValue(newValue, step), min, max)
-      },
-      [max, min, scale, step, value],
+    // The pointer is normalized against the track on both axes; only the one
+    // the slider runs along is read back. `AxisOptions` extends `ValueRange`,
+    // so the same object also describes the scaling for `applyDelta`.
+    const axis: AxisOptions = useMemo(
+      () => ({ min, max, step, scale, reverse: displayReversed }),
+      [min, max, step, scale, displayReversed],
     )
 
     const handleKeyDown = useCallback(
@@ -188,25 +187,15 @@ export const Root = forwardRef<SliderMethods, Props>(
         const key = event.key
         if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
           event.preventDefault()
-          let x =
-            key == 'ArrowRight' || key == 'ArrowUp' ? keyboard[1] : -keyboard[1]
-          if (reverse) x *= -1
-          onChange(updateValueByEvent(keyboard[0], x))
+          let direction = key == 'ArrowRight' || key == 'ArrowUp' ? 1 : -1
+          if (reverse) direction *= -1
+          onChange(applyDelta(value, direction, keyboard, axis))
         }
       },
-      [keyboard, onChange, readonly, reverse, updateValueByEvent],
+      [keyboard, onChange, readonly, reverse, value, axis],
     )
 
     // --- hooks ---
-    // The pointer is normalized against the track on both axes; only the one
-    // the slider runs along is read back.
-    const axis: AxisOptions = {
-      min,
-      max,
-      step,
-      scale,
-      reverse: displayReversed,
-    }
     const valueOf = (v: XY<number>) => v[vertical ? 1 : 0]
 
     const { refCallback: dragRefCallback } = useDragValue<HTMLDivElement>({
@@ -237,16 +226,16 @@ export const Root = forwardRef<SliderMethods, Props>(
     const wheelRefCallback = useWheel<HTMLDivElement>((event) => {
       if (!wheel || !onChange || readonly) return
       event.preventDefault()
-      let x
+      let direction
       if (!vertical && event.deltaX != 0) {
-        x = event.deltaX > 0 ? wheel[1] : -wheel[1]
+        direction = event.deltaX > 0 ? 1 : -1
       } else {
         if (event.deltaY == 0) return
-        x = event.deltaY > 0 ? -wheel[1] : wheel[1]
+        direction = event.deltaY > 0 ? -1 : 1
       }
-      if (vertical && reverse) x *= -1
-      onChange(updateValueByEvent(wheel[0], x))
-    })
+      if (vertical && reverse) direction *= -1
+      onChange(applyDelta(value, direction, wheel, axis))
+    }, WHEEL_OPTIONS)
 
     // Composed once, so React attaches the refs a single time instead of
     // detaching and re-attaching on every render.

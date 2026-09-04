@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
 import { Knob } from '../../src/components/Knob'
-import { NumberInput, NumberInputProps } from '../../src/components/NumberInput'
+import { NumberInput } from '../../src/components/NumberInput'
 
 export default {
   title: 'Components/NumberInput/Root',
@@ -19,22 +19,26 @@ export default {
 
 type Story = StoryObj<typeof NumberInput.Root>
 
+const hzUnits: [string, number][] = [
+  ['Hz', 1],
+  ['kHz', 1000],
+]
+
 export const Basic: Story = {
   render: (args) => {
     const [value, setValue] = useState(32)
 
     return (
-      <NumberInput.Root {...args} value={value} onChange={(v) => setValue(v)} />
+      <NumberInput.Root {...args} value={value} onChange={(v) => setValue(v)}>
+        <NumberInput.InputField />
+      </NumberInput.Root>
     )
   },
 }
 
 export const UnitsAndDigit: Story = {
   args: {
-    units: [
-      ['Hz', 1],
-      ['kHz', 1000],
-    ],
+    units: hzUnits,
     digit: 4,
   },
   render: (args) => {
@@ -42,6 +46,7 @@ export const UnitsAndDigit: Story = {
 
     return (
       <NumberInput.Root {...args} value={value} onChange={(v) => setValue(v)}>
+        <NumberInput.InputField />
         <NumberInput.Stepper>
           <NumberInput.IncrementStepper />
           <NumberInput.DecrementStepper />
@@ -51,14 +56,45 @@ export const UnitsAndDigit: Story = {
   },
 }
 
+/**
+ * `format` / `parse` take over from `units` / `digit` entirely, so the text can
+ * be anything the value can be read back out of.
+ */
+export const CustomFormat: Story = {
+  args: {
+    min: 0,
+    max: 1,
+    step: 0.01,
+  },
+  render: (args) => {
+    const [value, setValue] = useState(0.5)
+
+    return (
+      <div>
+        <NumberInput.Root
+          {...args}
+          value={value}
+          format={(v) => `${Math.round(v * 100)}%`}
+          parse={(t) => (parseFloat(t) || 0) / 100}
+          onChange={(v) => setValue(v)}
+        >
+          <NumberInput.InputField />
+          <NumberInput.Stepper>
+            <NumberInput.IncrementStepper />
+            <NumberInput.DecrementStepper />
+          </NumberInput.Stepper>
+        </NumberInput.Root>
+        <p>value: {value}</p>
+      </div>
+    )
+  },
+}
+
 export const WithAnotherComponents: Story = {
   args: {
     min: 0,
     max: 100,
-    units: [
-      ['Hz', 1],
-      ['kHz', 1000],
-    ],
+    units: hzUnits,
   },
   render: (args) => {
     const [value, setValue] = useState(0)
@@ -92,7 +128,8 @@ export const WithAnotherComponents: Story = {
           </Knob.Root>
           {value}
         </div>
-        <NumberInput.Root {...args} value={value} onBlur={(v) => setValue(v)}>
+        <NumberInput.Root {...args} value={value} onChange={(v) => setValue(v)}>
+          <NumberInput.InputField />
           <NumberInput.Stepper>
             <NumberInput.IncrementStepper />
             <NumberInput.DecrementStepper />
@@ -103,116 +140,78 @@ export const WithAnotherComponents: Story = {
   },
 }
 
-export const Variant = () => {
-  const [value1, setValue1] = useState(0)
-  const [value2, setValue2] = useState(0)
-  const [value3, setValue3] = useState(0)
-  const [value4, setValue4] = useState(0)
-
-  const data: {
-    variant: NumberInputProps['variant']
-    v: number
-    setter: React.Dispatch<React.SetStateAction<number>>
-  }[] = [
-    { variant: 'outline', v: value1, setter: setValue1 },
-    { variant: 'filled', v: value2, setter: setValue2 },
-    { variant: 'flushed', v: value3, setter: setValue3 },
-    { variant: 'unstyled', v: value4, setter: setValue4 },
-  ]
+/**
+ * Typing is never clamped, so a value can be entered digit by digit. With
+ * `clampValue` on, the entry is brought back into range once it is committed.
+ */
+export const ClampValue = () => {
+  const [clamped, setClamped] = useState(50)
+  const [unclamped, setUnclamped] = useState(50)
 
   return (
     <div>
-      {data.map(({ variant, v, setter }) => {
-        return (
-          <section key={variant} style={{ marginBottom: '2rem' }}>
-            <p>{variant}</p>
-            <div>
-              <NumberInput.Root
-                value={v}
-                units={[
-                  ['Hz', 1],
-                  ['kHz', 1000],
-                ]}
-                variant={variant}
-                onChange={(v) => setter(v)}
-              />
-            </div>
-          </section>
-        )
-      })}
+      <section style={{ marginBottom: '2rem' }}>
+        <p>clampValue (default), min=0 max=100</p>
+        <NumberInput.Root
+          value={clamped}
+          min={0}
+          max={100}
+          onChange={setClamped}
+        >
+          <NumberInput.InputField />
+          <NumberInput.Stepper>
+            <NumberInput.IncrementStepper />
+            <NumberInput.DecrementStepper />
+          </NumberInput.Stepper>
+        </NumberInput.Root>
+        <p>value: {clamped}</p>
+      </section>
+      <section>
+        <p>clampValue={'{false}'}, min=0 max=100 — out of range is kept</p>
+        <NumberInput.Root
+          value={unclamped}
+          min={0}
+          max={100}
+          clampValue={false}
+          onChange={setUnclamped}
+        >
+          <NumberInput.InputField />
+          <NumberInput.Stepper>
+            <NumberInput.IncrementStepper />
+            <NumberInput.DecrementStepper />
+          </NumberInput.Stepper>
+        </NumberInput.Root>
+        <p>value: {unclamped}</p>
+      </section>
     </div>
   )
 }
 
-export const SelectWithFocus = () => {
+export const SelectOnFocus = () => {
   const [value1, setValue1] = useState(32)
   const [value2, setValue2] = useState(32)
   const [value3, setValue3] = useState(32)
 
+  const data: {
+    selectOnFocus: 'none' | 'all' | 'number'
+    v: number
+    setter: (v: number) => void
+  }[] = [
+    { selectOnFocus: 'none', v: value1, setter: setValue1 },
+    { selectOnFocus: 'all', v: value2, setter: setValue2 },
+    { selectOnFocus: 'number', v: value3, setter: setValue3 },
+  ]
+
   return (
     <div>
-      <section style={{ marginBottom: '2rem' }}>
-        <p>
-          selectWithFocus={'{'}undefined{'}'} (default)
-        </p>
-        <NumberInput.Root
-          value={value1}
-          units={[
-            ['Hz', 1],
-            ['kHz', 1000],
-          ]}
-          onChange={(v) => setValue1(v)}
-        />
-      </section>
-      <section style={{ marginBottom: '2rem' }}>
-        <p>selectWithFocus='all'</p>
-        <NumberInput.Root
-          value={value2}
-          units={[
-            ['Hz', 1],
-            ['kHz', 1000],
-          ]}
-          selectWithFocus="all"
-          onChange={(v) => setValue2(v)}
-        />
-      </section>
-      <section style={{ marginBottom: '2rem' }}>
-        <p>selectWithFocus='number'</p>
-        <NumberInput.Root
-          value={value3}
-          units={[
-            ['Hz', 1],
-            ['kHz', 1000],
-          ]}
-          selectWithFocus="number"
-          onChange={(v) => setValue3(v)}
-        />
-      </section>
+      {data.map(({ selectOnFocus, v, setter }) => (
+        <section key={selectOnFocus} style={{ marginBottom: '2rem' }}>
+          <p>selectOnFocus=&apos;{selectOnFocus}&apos;</p>
+          <NumberInput.Root value={v} units={hzUnits} onChange={setter}>
+            <NumberInput.InputField selectOnFocus={selectOnFocus} />
+          </NumberInput.Root>
+        </section>
+      ))}
     </div>
   )
-}
-
-export const WithStepper: Story = {
-  args: {
-    min: 0,
-    max: 100,
-    units: [
-      ['Hz', 1],
-      ['kHz', 1000],
-    ],
-  },
-  render: (args) => {
-    const [value, setValue] = useState(32)
-
-    return (
-      <div>
-        <NumberInput.Root {...args} value={value} onChange={(v) => setValue(v)}>
-          <NumberInput.Stepper>
-            <NumberInput.IncrementStepper />
-            <NumberInput.DecrementStepper />
-          </NumberInput.Stepper>
-        </NumberInput.Root>
-      </div>
-    )
-  },
 }

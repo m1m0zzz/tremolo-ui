@@ -450,5 +450,9 @@
   "sidebar.typedocSidebar.doc.useWheel": {
     "message": "useWheel",
     "description": "The label for the doc item 'useWheel' in sidebar 'typedocSidebar', linking to the doc api/react/hooks/useWheel"
+  },
+  "sidebar.typedocSidebar.doc.unit": {
+    "message": "unit",
+    "description": "The label for the doc item 'unit' in sidebar 'typedocSidebar', linking to the doc api/functions/unit"
   }
 }

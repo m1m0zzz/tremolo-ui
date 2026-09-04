@@ -2,9 +2,10 @@ import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
 import { mapValue } from '@tremolo-ui/functions'
+import type { Units } from '@tremolo-ui/functions'
 
 import { AnimationCanvas } from '../src/components/AnimationCanvas'
-import { NumberInput, Units } from '../src/components/NumberInput'
+import { NumberInput } from '../src/components/NumberInput'
 import { PointBaseType, PointsEditor } from '../src/components/PointsEditor'
 
 import styles from './styles/PointsEditor.module.css'
@@ -317,12 +318,11 @@ export const ADSRWithSlope = () => {
               <NumberInput.Root
                 key={props.id}
                 digit={0}
-                wrapperClassName={styles.inputWrapper}
-                className={styles.input}
-                variant="flushed"
-                activeColor={themeColor}
+                className={styles.inputWrapper}
                 {...props}
-              />
+              >
+                <NumberInput.InputField className={styles.input} />
+              </NumberInput.Root>
             )
           })}
           {[
@@ -354,12 +354,11 @@ export const ADSRWithSlope = () => {
                 max={100}
                 digit={0}
                 units={'%'}
-                wrapperClassName={styles.inputWrapper}
-                className={styles.input}
-                variant="flushed"
-                activeColor={themeColor}
+                className={styles.inputWrapper}
                 onChange={onChange}
-              />
+              >
+                <NumberInput.InputField className={styles.input} />
+              </NumberInput.Root>
             )
           })}
         </div>

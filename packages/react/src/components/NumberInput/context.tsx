@@ -1,162 +1,90 @@
-import { createContext, useContext, useEffect, useRef } from 'react'
-import { createStore, useStore } from 'zustand'
+import { createContext, RefObject, useContext } from 'react'
 
-import { clamp } from '@tremolo-ui/functions'
+import type { InputEventOption, Scale, ValueRange } from '@tremolo-ui/functions'
 
-import { parseValue, Units } from './type'
+export type NumberInputContextValue = {
+  value: number
 
-type State = {
-  value: string
-  valueAsNumber: number
-  step: number
-
+  /**
+   * The range the caller asked for. Left undefined when unbounded, which is
+   * what `aria-valuemin` / `aria-valuemax` and the steppers need to tell apart
+   * from a range that happens to sit at the edge of the safe integers.
+   */
   min?: number
   max?: number
-  units?: string | Units
-  digit?: number
-  readonly?: boolean
-  keepWithinRange?: boolean
-  onChange?: (value: number, text: string) => void
+  step: number
+  /** How the value is distributed across the travel. */
+  scale: Scale
+
+  disabled: boolean
+  readonly: boolean
+  clampValue: boolean
+
+  /**
+   * The effective scaling for `applyDelta` and for clamping on commit, with the
+   * unbounded ends filled in. Ignores `min` / `max` when `clampValue` is off.
+   */
+  range: ValueRange
+
+  keyboard: InputEventOption | null
+  /** Pixels of vertical drag on `Stepper` that move the value by one `step`. */
+  drag: number | null
+
+  /** What the input shows: the draft while editing, the formatted value otherwise. */
+  text: string
+  editing: boolean
+  /** Whether the value sits outside `min` / `max`. Not judged while editing. */
+  outOfRange: boolean
+  /** Whether a stepper would have no effect, for `aria-disabled`. */
+  atMin: boolean
+  atMax: boolean
+
+  format: (value: number) => string
+  parse: (text: string) => number
+
+  /** Typing. Replaces the draft and reports the parsed value, unclamped. */
+  setDraft: (text: string) => void
+  /** Blur or Enter. Clamps the draft, reports it, and drops the draft. */
+  commitDraft: () => void
+  /** Drops the draft and replaces the value: steppers, wheel, keyboard, drag. */
+  changeValue: (next: number) => void
+  /** Moves the value by one `option` in `direction`, normally +1 or -1. */
+  nudge: (direction: number, option: InputEventOption) => void
+
+  /** `InputField` registers itself here; `Root` focuses it through its methods. */
+  inputRef: RefObject<HTMLInputElement | null>
 }
 
-type Action = {
-  increment: () => void
-  decrement: () => void
-  change: (value: string) => void
-}
+const NumberInputContext = createContext<NumberInputContextValue | null>(null)
 
-type NumberInputStore = ReturnType<typeof createNumberInputStore>
+export const NumberInputProvider = NumberInputContext.Provider
 
-type ProviderProps = Partial<Omit<State, 'value'> & { value: number | string }>
-
-export function safeClamp(
-  value: number,
-  min = Number.MIN_SAFE_INTEGER,
-  max = Number.MAX_SAFE_INTEGER,
-) {
-  return clamp(value, min, max)
-}
-
-const createNumberInputStore = (initProps?: ProviderProps) => {
-  const DEFAULT_PROPS: State = {
-    value: '',
-    valueAsNumber: 0,
-    min: 0,
-    max: 0,
-    step: 1,
-    readonly: false,
-    keepWithinRange: true,
-    onChange: (_v: number, _t: string) => {},
-  }
-
-  return createStore<State & Action>()((set) => ({
-    ...DEFAULT_PROPS,
-    ...initProps,
-    ...{
-      value: parseValue(
-        String(initProps?.value || ''),
-        initProps?.units,
-        initProps?.digit,
-      ).formatValue,
-      valueAsNumber: parseValue(
-        String(initProps?.value || ''),
-        initProps?.units,
-        initProps?.digit,
-      ).rawValue,
-    },
-    increment: () =>
-      set((state) => {
-        if (state.readonly) return {}
-        const current = parseValue(
-          state.value,
-          state.units,
-          state.digit,
-        ).rawValue
-        let next = current + (state.step ?? 1)
-        if (state.keepWithinRange) {
-          next = safeClamp(next, state.min, state.max)
-        }
-        const v = parseValue(String(next), state.units, state.digit).formatValue
-        state?.onChange?.(next, v)
-        return {
-          value: v,
-          valueAsNumber: next,
-        }
-      }),
-    decrement: () =>
-      set((state) => {
-        if (state.readonly) return {}
-        const current = parseValue(
-          state.value,
-          state.units,
-          state.digit,
-        ).rawValue
-        let next = current - (state.step ?? 1)
-        if (state.keepWithinRange) {
-          next = safeClamp(next, state.min, state.max)
-        }
-        const v = parseValue(String(next), state.units, state.digit).formatValue
-        state?.onChange?.(next, v)
-        return {
-          value: v,
-          valueAsNumber: next,
-        }
-      }),
-    change: (value) =>
-      set((state) => {
-        if (state.readonly) return {}
-        const v = value ?? ''
-        return {
-          value: v,
-          valueAsNumber: parseValue(v, state.units, state.digit).rawValue,
-        }
-      }),
-  }))
-}
-
-const NumberInputContext = createContext<NumberInputStore | null>(null)
-
-type NumberInputProviderProps = React.PropsWithChildren<ProviderProps>
-
-export function NumberInputProvider({
-  children,
-  ...props
-}: NumberInputProviderProps) {
-  const storeRef = useRef<NumberInputStore>(null)
-  if (!storeRef.current) {
-    storeRef.current = createNumberInputStore(props)
-  }
-
-  useEffect(() => {
-    if (storeRef.current) {
-      const parsed = parseValue(
-        String(props?.value || ''),
-        props?.units,
-        props?.digit,
-      )
-      storeRef.current.setState({
-        ...props,
-        ...{
-          value: parsed.formatValue,
-          valueAsNumber: parsed.rawValue,
-        },
-      })
-    } else {
-      storeRef.current = createNumberInputStore(props)
-    }
-  }, [props])
-
-  return (
-    <NumberInputContext.Provider value={storeRef.current}>
-      {children}
-    </NumberInputContext.Provider>
-  )
-}
-
+/**
+ * The only state behind this is the editing draft; `value` comes from the props
+ * of `Root` and everything else is derived during render.
+ */
+export function useNumberInputContext(): NumberInputContextValue
 export function useNumberInputContext<T>(
-  selector: (state: State & Action) => T,
-): T {
-  const store = useContext(NumberInputContext)
-  if (!store) throw new Error('Missing NumberInputContext.Provider in the tree')
-  return useStore(store, selector)
+  selector: (state: NumberInputContextValue) => T,
+): T
+export function useNumberInputContext<T>(
+  selector?: (state: NumberInputContextValue) => T,
+) {
+  const context = useContext(NumberInputContext)
+  if (!context)
+    throw new Error('Missing NumberInputContext.Provider in the tree')
+  return selector ? selector(context) : context
+}
+
+/** Set by `Stepper` once a drag has actually moved, so the steppers stand down. */
+export type StepperContextValue = {
+  draggingRef: RefObject<boolean>
+}
+
+const StepperContext = createContext<StepperContextValue | null>(null)
+
+export const StepperProvider = StepperContext.Provider
+
+export function useStepperContext(): StepperContextValue | null {
+  return useContext(StepperContext)
 }

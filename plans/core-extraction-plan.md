@@ -76,7 +76,7 @@ npm workspaces のモノレポ。`packages/functions`, `packages/react`, `site` 
 1. **値の所有者**（コアが `value` を保持するか、ラッパーが保持するか）
    - コアが保持する案の根拠: AnimationCanvas でオートメーション/LFO 由来の値を毎フレーム描画する場合、値が React state にあると 60fps で再レンダリングが走る。コアが保持すれば `subscribe` で再レンダリングなしに追従できる
    - 現状 Knob は既にストアに value を持ち、Slider は持たない。どちらに寄せるか要決定
-2. **NumberInput の扱い**（`<input>` のテキストが値の裏付けであり、他5つと性質が異なる。制御コンポーネント衝突・カーソル位置維持・IME 中間文字列の考慮が必要）
+2. ~~**NumberInput の扱い**~~ → **Phase 4.1 で決定。Root が持つ state は編集中の draft 1 つだけで、他はレンダー中に導出する**（制御コンポーネント衝突・カーソル位置維持・IME 中間文字列はこれで構造的に解消される）
 3. **`@tremolo-ui/dom` の公開範囲**（`createDrag` / `createWheel` を公開 API にするか内部専用にするか）
 
 ## 3. 目標構成
@@ -299,12 +299,231 @@ export type XYInput<T> = [T] extends [readonly unknown[]]
 ### Phase 4: 残りのコンポーネント
 
 - [ ] AnimationCanvas（rAF + ResizeObserver + DPR。`canvas.ts` と `index.tsx` 計 約280行）
-- [ ] NumberInput（テキスト入力はラッパー担当、ドラッグ/矢印キー増減はコア、パース・フォーマット・clamp・step は純粋関数）
-- [ ] NumberInputは InternalInputをInputFieldとして公開。他のコンポーネント同様 Compound Component パターンで公開
-- [ ] **`<input>` に `tabIndex` を設定すべきか決める。** 設定する場合、フォーカス時のスタイルはラッパー側に `:focus-within` で当てる
+- [ ] NumberInput → 設計は **4.1** で確定済み
 - [ ] Piano
   - [ ] 既存のTODO: マルチタッチ、グリッサンド。(`usePianoDrag` が該当)
   - [ ] コンポーネント設計の検討
+
+#### 4.1 NumberInput の再設計
+
+現行の NumberInput は Chakra UI の Input を参考にしており、Phase 2.5 で Slider / Knob / XYPad を揃えた形とはアーキテクチャが違う。**破壊的変更を許容して作り直す。**
+
+##### 現状の何が合っていないか
+
+| 現状 | 問題 |
+| --- | --- |
+| `variant='outline' \| 'filled' \| 'flushed' \| 'unstyled'` | テーマ prop。5.1 の CSS ヘッドレス化で消える運命。他コンポーネントに対応物が無い |
+| `activeColor` / `wrapperClassName` | `--active-color` は CSS 変数で足りる。`wrapperClassName` は Root が wrapper と input の両方を描くせい |
+| `InternalInput` が非公開 | **Phase 2.5 で統一した「children をそのまま描画」に唯一従っていない。** children は Stepper 専用で、`<input>` は Root が勝手に描く |
+| wrapper に `tabIndex={0}` / input に `tabIndex={-1}` | Tab でフォーカスが行くのは wrapper。テキスト入力なのに逆。`role="spinbutton"` も無い |
+| `onChange(value: number, text: string)` | Slider / Knob は `onChange(value)`。引数が違う |
+| `value: number \| string` | *Number*Input なのに string を受ける |
+| `keepWithinRange` / `clampValueOnBlur` / `blurOnEnter` / `selectWithFocus` | Chakra から個別に持ってきた挙動 prop が 4 つ。責務の階層が混ざっている |
+| zustand ストアが `value: string` を保持 + `useEffect(..., [props])` | Phase 2.5 で Slider / Knob から潰したのと同じ不具合（値が変わったフレームで古い値を返す）。`selectionStart` の手動復元というカーソル維持ハックも生んでいる |
+
+##### 核心: テキストと値の所有権
+
+これが「NumberInput は他と性質が違う」の正体。整理するとこうなる。
+
+- **`value` は `number`。表示テキストは常に `format(value)` の派生。**
+- **例外は「編集中」だけ。** タイプしている間の文字列（draft）は `value` の写しではなく、input の一時的な state。
+
+つまり **Root が持つ state は draft 1 つだけ**で、他は全部レンダー中に導出できる。
+
+```
+Root の state:  draft: string | null      // null = 非編集
+表示テキスト:    draft ?? format(value)
+```
+
+| 入力源 | draft | onChange |
+| --- | --- | --- |
+| タイプ | `draft = text` | `parse(text)` が有限なら発火。**clamp しない**（`max=100` で "1500" が打てなくなるため） |
+| blur / Enter | `draft = null` | `clampValue` なら clamp して発火 |
+| Stepper / wheel / keyboard / drag | `draft = null` | clamp 済みの値で発火 |
+
+draft が必要な理由は 2 つ。(1) `value=1500` / `units=[['Hz',1],['kHz',1000]]` のとき、"15" とタイプした瞬間に `format` が走ると画面が "15Hz" に書き換わって続きが打てない。(2) `"1."` `"-"` `""` は parse できない/しても値が変になる中間状態で、それを保持する場所がどこかに要る。
+
+これにより `selectionStart` の手動復元も IME 中間文字列の問題も構造的に消える。他は全てレンダー中の導出になるので、**zustand は Phase 5 を待たずにこの作業で落ちる**（Phase 2.5 と同じ React context へ）。
+
+##### 新しい API
+
+```jsx
+<NumberInput.Root value={v} min={0} max={100} units="Hz" onChange={setV}>
+  <NumberInput.InputField />
+  <NumberInput.Stepper>
+    <NumberInput.IncrementStepper />
+    <NumberInput.DecrementStepper />
+  </NumberInput.Stepper>
+</NumberInput.Root>
+```
+
+```ts
+export interface NumberInputProps {
+  /** 値。表示は format(value) の派生で、編集中だけ draft が優先される */
+  value: number
+
+  min?: number
+  max?: number
+  step?: number
+  skew?: number                        // 新規（index.tsx の TODO）
+
+  // 表示
+  units?: string | Units               // 既定の format / parse を組み立てる
+  digit?: number
+  format?: (value: number) => string   // 指定すると units / digit より優先
+  parse?: (text: string) => number
+
+  // 操作（null で無効）
+  wheel?: InputEventOption | null      // 既定 ['raw', 1]。フォーカス時のみ有効（5.9）
+  keyboard?: InputEventOption | null   // 既定 ['raw', 1]
+  drag?: number | null                 // 新規。Stepper 上。1 step あたりの px、既定 1
+
+  /** 確定時と Stepper / wheel / keyboard / drag で min-max に丸める @default true */
+  clampValue?: boolean
+
+  disabled?: boolean
+  readonly?: boolean
+  onChange?: (value: number) => void
+  children: ReactNode                  // 必須。フォールバック無し
+}
+```
+
+- `Root`: `<div>` のみ。フォーカス不可。context を配り、wheel を張る。**children 必須**（Slider / Knob / XYPad の前例）
+- `InputField`: draft の所有者。唯一の tab stop。`selectWithFocus` / `blurOnEnter` / 素の `onFocus` / `onBlur` はここへ移す
+- `Stepper`: ドラッグ領域。`Increment` / `Decrement` はクリック + 長押しリピート領域
+
+props の処遇:
+
+| 現状の prop | 変更後 |
+| --- | --- |
+| `variant` | **削除** → ドキュメントでデモ CSS を配る（5.1） |
+| `activeColor` / `wrapperClassName` | **削除** → CSS 変数 / `Root` の `className` |
+| `keepWithinRange` + `clampValueOnBlur` | `clampValue?: boolean`（既定 true）に統合 |
+| `selectWithFocus` / `blurOnEnter` | `InputField` の prop へ |
+| `onFocus` / `onBlur`（独自シグネチャ） | `InputField` に素の DOM ハンドラとして通す |
+| `Stepper` の `dynamic` | **削除** → デモ CSS 側でホバー表示を実装 |
+| `Increment` / `DecrementStepper` の `size` | **削除** → `--stepper-icon-size`（Slider.Thumb の `--thumb-size`、Knob の `--knob-size` と同じ扱い） |
+
+##### DOM / ARIA
+
+| | 現状 | 変更後 |
+| --- | --- | --- |
+| tab stop | wrapper (`tabIndex={0}`)、input は `-1` | **input のみ。** wrapper は `tabIndex` 無し |
+| role | 無し | `<input type="text" inputMode="decimal" role="spinbutton">` |
+| ARIA | `aria-disabled` / `aria-readonly` | + `aria-valuenow` / `aria-valuemin` / `aria-valuemax` / `aria-valuetext` |
+| 範囲外の表現 | `data-error` | `data-out-of-range`（`clampValue={false}` か、範囲外の `value` を渡されたとき。draft がある間は判定しない） |
+| `readonly` | `aria-readonly` のみ | `readOnly` 属性も付ける |
+| `disabled` | `aria-disabled` のみ | 変更なし（「見た目だけ、readonly と併用」という Slider の方針を維持。input としては驚きがあるのでドキュメントに書く） |
+
+`index.tsx` の TODO にある `numberMode`（フォーカス時だけ `type="number"`）は**採用しない**。スピナーとロケールの問題を持ち込むだけで、モバイルのキーボードは `inputMode="decimal"` で足りる。
+
+##### Stepper のドラッグ
+
+`createDrag` は要素に `user-select: none` / `touch-action: none` を**インスタンスの生存中ずっと**当てるため、`<input>` に付けるとテキスト選択が死ぬ。よってドラッグは `Stepper`（コンテナ）に限定する。
+
+**感度は固定**（`drag` px の移動で 1 `step`、既定 1）。`createDragValue` + `relativeMapping` で Knob と同じ「フルレンジを一定 px で舐める」形にすると、`min` / `max` が両方無いと成立しない（既定の `MIN/MAX_SAFE_INTEGER` で正規化されるため 100px 動かしても実質ゼロ）。NumberInput は範囲を持たない使い方が普通にあるので、そこで no-op になるのは実用的でない。
+
+- `Stepper` に `useDrag`（`threshold: 1`、`cursor: 'ns-resize'`）
+- 値は `applyDelta(originValue, steps, ['raw', step], range)` で求める。**wheel / キーボードと完全に同じ経路**を通るので、`createDragValue` を使わなくても算出が分岐しない
+- `steps` はドラッグ開始時からの総移動量から毎回求める（`relativeMapping` と同じ理由で、差分を積むと丸め誤差が溜まる）
+- **原点は pointerdown ではなく最初の移動で取る。** `Increment` / `DecrementStepper` は pointerdown で ±step するため、pointerdown 時点の値を原点にするとそのクリック分が捨てられる
+- `Increment` / `DecrementStepper` は従来どおり pointerdown で ±step + 長押しリピート
+- `createDrag` の `onDragStart` は threshold ではなく **pointerdown で発火する**ので、リピートの停止は「ドラッグが実際に値を動かした時点」で行う
+
+長押しリピートは当面 React の `useLongPress` のまま。`createLongPress` として dom へ出すのは Vue / Svelte 着手時でよい。
+
+##### パッケージ配置
+
+| 出すもの | 行き先 | 備考 |
+| --- | --- | --- |
+| `parseValue` / `selectUnit` / `Units` | **`@tremolo-ui/functions`** | 純粋関数。`dbToGain` の隣が自然で、Vue / Svelte からも要る |
+| `applyDelta` / `ValueRange` | **`@tremolo-ui/functions`** | 下記 |
+| wheel / drag | 既存の `createWheel` / `createDragValue` | 新規実装なし |
+
+`<input>` の制御そのものはコアに出さない。controlled / `v-model` / `bind:value` はフレームワークごとに流儀が違いすぎる。
+
+##### `applyDelta`: `updateValueByEvent` の 4 コピーを 1 つにする
+
+`updateValueByEvent` は Slider / Knob / XYPad / NumberInput に 4 つある。Slider と Knob は完全に同一、XYPad は同じものを `[axis]` で添字アクセスしているだけ。**NumberInput だけ 3 点ずれている。**
+
+| | Slider / Knob / XYPad | NumberInput |
+| --- | --- | --- |
+| `skew` | 渡す | 渡さない（prop 自体が無い） |
+| `raw` モードの clamp | する | **しない**（`keepWithinRange` は Stepper 側だけで見ている） |
+| min / max の必須チェック | なし（必須 prop） | `if (!min \|\| !max) throw`（→ 6.4 の実バグ） |
+
+`createDragValue` の値算出パイプライン（`reverse` → `rawValue` → `stepValue` → `clamp`）と同じ順序・同じ型に揃える。
+
+```ts
+// packages/functions/src/math.ts
+export interface ValueRange {
+  min: number
+  max: number
+  /** 省略すると丸めない（createDragValue の AxisOptions と同じ規則） */
+  step?: number
+  /** @default 1 */
+  skew?: number
+}
+
+/**
+ * wheel / キーボードの増減を値へ適用する。
+ * 算出順序は createDragValue と同一: skew → step → clamp。
+ */
+export function applyDelta(
+  value: number,
+  /** 向きと回数。大きさは option[1] が決める（通常 +1 / -1） */
+  direction: number,
+  [mode, amount]: InputEventOption,
+  { min, max, step, skew = 1 }: ValueRange,
+): number {
+  const x = direction * amount
+  const next =
+    mode === 'normalized'
+      ? rawValue(normalizeValue(value, min, max, skew) + x, min, max, skew)
+      : value + x
+  return clamp(step ? stepValue(next, step) : next, min, max)
+}
+```
+
+`dom` の `AxisOptions` は `ValueRange` を継承する形にする。ドラッグとキー / ホイールが同じ型・同じ順序を通ることが型に出る（`dom` は既に `functions` に依存しているので依存の向きも問題ない）。
+
+```ts
+// packages/dom/src/pointer/dragValue.ts
+export interface AxisOptions extends ValueRange {
+  reverse?: boolean
+}
+```
+
+各コンポーネントに残るのは**「どのキー / どの `deltaY` を ±1 のどちらに割り当てるか」だけ**になる（Slider は `reverse` で反転、XYPad は軸判定、NumberInput は上下キーのみ）。ここはコンポーネント固有なので共通化しない。
+
+NumberInput は `clampValue === false` のとき `min` / `max` に `MIN/MAX_SAFE_INTEGER` を渡す。この組み合わせでは `normalized` モードは意味を持たない（元々 min / max が要るため）。
+
+##### 実装して変わった点
+
+- **`units.ts` ではなく `unit.ts`（単数）にした。** typedoc はファイル名をページの H1 にするため、`units.ts` だと `# units` と `### Units` の slug が衝突し、`[Units](#units)` が壊れたアンカーになって `build:docs` が警告を出す。`math.ts` / `midi.ts` / `util.ts` と同じ単数形に揃えた
+- **`parseValue` を 2 つに割った。** 旧 `parseValue` は `{ rawValue, formatValue, unit }` を返す parse と format の合体で、draft 方式では両者を別々に呼ぶ必要がある。`formatValue(value, units?, digit?)` と `parseValue(text, units?)` にした
+- **`selectWithFocus='number'` の実装を変えた。** 旧実装は `formatValue.length - unit.length` で単位の長さを引いていたが、任意の `format` では単位の長さが分からない。表示テキストの先頭の数値部分を正規表現で取る形にしたので、どんな format でも動く
+- **`Increment` / `DecrementStepper` に `aria-label` を付けた。** `role="button"` で中身が矢印 SVG だけのため、アクセシブルな名前が無かった（旧実装からの問題）。`{...props}` が後なので利用者が上書きできる
+- **`stepperButton.tsx` に共通化した。** `IncrementStepper` と `DecrementStepper` は「どちらへ動かすか」と「どちらの矢印か」しか違わない。`components/**/index.{ts,tsx}` だけが typedoc の entryPoint なので、この分割は API ページに影響しない
+- **Stepper の増減も `applyDelta` を通るので step の倍数に丸まる。** 旧実装は `value + step` をそのまま使っていた。0.5 の状態で `step=1` の + を押すと 1.5 ではなく 2 になる。Slider / Knob と同じ規則になった
+
+##### タスク
+
+- [x] `applyDelta` / `ValueRange` を `@tremolo-ui/functions` に追加し、テストを書く
+- [x] Slider / Knob / XYPad / NumberInput の `updateValueByEvent` を `applyDelta` に置き換える（同じ変更にまとめる。一時的にも 2 経路を作らない）
+- [x] `dom` の `AxisOptions` を `ValueRange` の継承に変える
+- [x] `parseValue` / `selectUnit` / `Units` を `functions` へ移し、`formatValue` / `parseValue` に分割する。テストも移す（`functions/__tests__/unit.test.ts`）
+- [x] `NumberInput/context.tsx` の zustand を React context に置き換える（state は draft のみ）
+- [x] `InternalInput` を `InputField` として公開し、`Root` は children をそのまま描画する形にする
+- [x] `Root` から `variant` / `activeColor` / `wrapperClassName` / `keepWithinRange` / `clampValueOnBlur` を削除、`clampValue` / `skew` / `format` / `parse` / `drag` を追加
+- [x] `selectWithFocus` / `blurOnEnter` / `onFocus` / `onBlur` を `InputField` へ移す
+- [x] tab stop を input に移し、`role="spinbutton"` と `aria-value*` を付ける。`data-error` → `data-out-of-range`
+- [x] `Stepper` にドラッグを足す（`useDrag` + `applyDelta` の固定感度、`threshold: 1`、値が動いた時点で長押しリピートを止める）
+- [x] `Stepper` の `dynamic` と `Increment` / `DecrementStepper` の `size` を削除し、CSS 変数へ
+- [x] `index.css` を新しい DOM 構造に合わせる（`variant` のセレクタを外し、フォーカス表示は input の `:focus` か wrapper の `:focus-within` に統一）
+- [x] stories を書き直す（`Variant` は削除、`SelectWithFocus` は `SelectOnFocus` に、`ClampValue` / `CustomFormat` を追加）。`__stories__/combined/` と `useWheel.stories.tsx`、`Piano` / `PointsEditor` / `Slider` の stories も追随済み
+- [x] `site/examples/components/number-input/basic.tsx` を更新する（`site/docs/components/NumberInput/index.mdx` は例を参照するだけなので変更不要）
+- [ ] ブラウザでの目視確認（IME での入力、モバイルのキーボード、Stepper のドラッグと長押しの切り分け）
 
 ### Phase 5: zustand 除去
 
@@ -522,6 +741,8 @@ export interface Scale {
 判断:
 
 - **冪乗則そのものは `skewScale` として残した。** JUCE を WebView で使うケースでは、C++ 側の `NormalisableRange` とノブ位置・オートメーション曲線を一致させる必要があるため。端の縮退も JUCE と同じままにしてある（それが互換の意味）。ドキュメントで「新規設計では `exponentialScale` / `curveScale` を薦める」と案内する
+- **`ValueRange.skew` を `scale` にした。** #141 が `ValueRange` と `applyDelta` を新設していたので、`AxisOptions extends ValueRange` の構造に乗せる形で統合した。ドラッグと wheel / keyboard の nudge が 1 つのスケール記述を共有する
+- **`ValueRange` / `applyDelta` を `math.ts` から `scale.ts` へ移した。** `ValueRange` が `Scale` を参照し、`applyDelta` が `linearScale` を実行時に使うため、`math.ts` に置いたままだと math → scale → math の循環 import になる。公開名は変わらない
 - **`normalizeValue` / `rawValue` から `skew` 引数を外し、線形の写像だけを担わせた。** `scale` に一本化した後、`skew` を渡していたのは `skewScale` だけで、他の呼び出し箇所（`elementMapping` と `usePianoDrag` のピクセル正規化、`NumberInput`）は全て線形だった。曲がりは全て `Scale` 側に置き、この 2 つは公開 API の線形プリミティブとして残す。JUCE 互換の式（`pow` と `exp(log())`）は `skewScale` の中に移してある
 - `skewWithCenterValue` も `math.ts` から `scale.ts` の `skewScale` の隣へ移した（挙動は変更なし）。これで `math.ts` に skew の概念が残らない
 
@@ -546,6 +767,48 @@ export interface Scale {
 - `index.css` の `.tremolo-slider-scale*` クラス名、`packages/react/package.json` の `exports`
 - `__stories__` / `__tests__` / `site/docs` の参照
 - 改名後は `Slider/index.tsx` の `type Scale as ValueScale` を素の `Scale` に戻せる
+
+### 5.9 wheel はフォーカス時のみ発火させる — 全コンポーネント
+
+現在 wheel を持つのは Slider / Knob / XYPad / PointsEditor / NumberInput の 5 つで、**いずれもホバーしているだけで発火し、`event.preventDefault()` でページスクロールを奪う。** 長いフォームやドキュメントの上をスクロールしていて、たまたま通過したコントロールの値が変わる事故が起きる。Base UI / Chakra v3 も NumberField は「フォーカス時のみ」にしている。
+
+- [x] `createWheel` に「要素の中にフォーカスがあるときだけ発火する」オプションを足す（`requireFocus`。あわせて `update()` も追加）
+- [x] Slider / Knob / XYPad / NumberInput をそれに切り替える（**PointsEditor は対象外**。`wheel` / `keyboard` prop を宣言しているだけで、どこからも使っていない。下記参照）
+- [ ] 移行ガイドに載せる（挙動の破壊的変更）
+
+#### 判定は `activeElement` そのものではなく `contains` で行う
+
+素直に「wheel を張った要素がフォーカスされているか」で判定すると壊れる。**フォーカス可能な要素はサブコンポーネントの既定描画の中にしかない**ためで、利用者が children を差し替えると tab stop が消える。
+
+| | wheel を張る要素 | `tabIndex={0}` を持つ要素 |
+| --- | --- | --- |
+| Slider | `Root`（`tabIndex={-1}`） | `Thumb` の**既定描画のみ**（`children` を渡すと消える） |
+| XYPad | `Root`（`tabIndex={-1}`） | `Thumb` の既定描画のみ（同上） |
+| Knob | `Root`（`tabIndex={0}`） | Root 自身 |
+| PointsEditor | container | `Point` |
+| NumberInput | `Root` | `InputField`（4.1 で input へ移す） |
+
+そこで判定は `element.contains(element.ownerDocument.activeElement)` にする。`Root` は `tabIndex={-1}` でもクリックでフォーカスを受けられるので、Thumb を完全に差し替えられていても動く。
+
+```ts
+// packages/dom/src/pointer/wheel.ts
+export interface WheelOptions {
+  /**
+   * 要素の中にフォーカスがあるときだけ発火する。
+   * ホバーしただけでページスクロールを奪わないようにするためのもの。
+   * @default false
+   */
+  requireFocus?: boolean
+}
+```
+
+React 側ではなくコアに置くのは、Vue / Svelte でも同じ判定が要るため。
+
+#### PointsEditor の `wheel` / `keyboard` は配線されていない
+
+切り替え作業中に判明した。`PointsEditorProps` は `wheel` / `keyboard` を宣言していて型にもドキュメントにも出るが、`index.tsx` は `useWheel` を呼んでおらず、キー操作も実装していない。**渡しても何も起きない。**
+
+- [ ] 配線するか、prop を削除するかを決める（Phase 4 / 5 で PointsEditor に触るときに一緒に片付ける）
 
 ## 6. 既存コードで見つかった問題
 
@@ -582,6 +845,22 @@ if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return
 
 - ~~`packages/react` の `@tremolo-ui/functions` 依存が `^0.1.6`、実バージョンは 0.2.0~~ → **調査済み・修正済み（意図的ではない）**。0.1.6 のリリースでは `^0.1.5 → ^0.1.6` に更新できているが、0.2.0 のリリース（`86e43e7`）ではバージョンしか上がっていない。publish.sh の `npm i "@tremolo-ui/functions@$NEW_VERSION"` は、その時点でまだ npm に存在しないバージョンを指定するため、レンジ更新が成立しないことがある（`.npmrc` の `min-release-age` は 0.2.0 より後に追加されたので原因ではない）。結果として npm 上の `@tremolo-ui/react@0.2.0` は `@tremolo-ui/functions@^0.1.6` に依存している。ただし functions の v0.1.6→0.2.0 の差分は JSDoc の `@category` タグ削除のみで公開 API は同一のため、実害は出ていない。changesets の `updateInternalDependencies` はローカルのバージョンを見て書き換えるため、この不具合は構造的に解消される
 - 両パッケージのトップレベル `"types": "dist/index.d.cts"` が CJS 用の宣言ファイルを指している。`exports` マップ側は require/import で正しく分岐しているため実害は出にくいが、`exports` を見ない古いツールチェーンでは ESM 利用者に CJS の型が渡る。`@arethetypeswrong/core` が devDependencies に入っているので、それで検証するとよい
+
+### 6.4 NumberInput の `normalized` モードが `min={0}` で例外を投げる（実バグ）→ **Phase 4.1 で修正済み**
+
+`packages/react/src/components/NumberInput/InternalInput.tsx`
+
+```ts
+if (!min || !max) {
+  throw new Error(
+    '[NumberInput] "min" and "max" are required when InputEventOption[0] is set to "normalized".',
+  )
+}
+```
+
+`min={0}` は `!0 === true` なので、**min / max を正しく指定していても `wheel={['normalized', ...]}` / `keyboard={['normalized', ...]}` にすると例外が飛ぶ。** 6.1 の `useDrag` の delta バグと同じ「0 を falsy で弾く」型。
+
+修正: `applyDelta` への置き換えで消えた。回帰テストは `packages/functions/__tests__/applyDelta.test.ts` と `packages/react/__tests__/NumberInput/draft.test.tsx` にある。
 
 ## 7. 検証状況
 
