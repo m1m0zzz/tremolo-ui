@@ -407,10 +407,52 @@ Phase 1 で `@tremolo-ui/dom` へ移した部分。移植は「React hook のロ
 
 **dom への移行前から知られている問題。** `skew` を設定した Knob をドラッグすると、見た目の値がジャンプすることがある。
 
-Phase 3 で値の算出経路は `createDragValue` に一本化されたので（位置 → `reverse` → `rawValue` → `stepValue` → `clamp`）、再現条件の切り分けはしやすくなっている。`relativeMapping` がドラッグ開始時の値を正規化して原点に取るため、`step` で丸められた値から正規化し直すと原点がずれる、という筋を最初に確認する。
+- [x] 再現条件を特定する（`skew` と `step` の組み合わせ、どの値域で起きるか）
+- [ ] 直し方を決める（下記の A / B / C）
+- [ ] 直して回帰テストを入れる
 
-- [ ] 再現条件を特定する（`skew` と `step` の組み合わせ、どの値域で起きるか）
-- [ ] 原因を切り分けて直し、回帰テストを入れる
+#### 調査結果
+
+**当初の仮説（`step` で丸めた値から正規化し直すと原点がずれる）は外れ。** `relativeMapping` の `origin` はドラッグ開始時に 1 度だけ取り、以降は `state.y`（開始からの**総**移動量）に対して `origin + y / pixelRange` を計算するので、ドラッグ中に丸め誤差は蓄積しない。5px 上げてから 5px 下げると元の値へ正確に戻る（レンジの端で飽和していない限り）。
+
+**原因は `skew` の定義そのもの。** `normalizeValue` / `rawValue` は `value - min` に対する冪乗則で、
+
+```
+position(value) = ((value - min) / (max - min)) ^ skew
+value(position)  = min + (max - min) * position ^ (1 / skew)
+```
+
+`value(position)` の微分は `position = 0` で発散する（`skew > 1`）か 0 になる（`skew < 1`）。ノブの回転角は `position` に比例する（`calcAngles` も同じ `normalizeValue` を使う）ので、**レンジの下端では 1px の回転が巨大な値変化、または完全な無変化になる。**
+
+`pixelRange = 100`（全 travel が 100px）での 1px あたりの値変化:
+
+| 設定 | skew | 下端 | 中央 | 上端 |
+| --- | --- | --- | --- | --- |
+| dB `-60..6` / center `-12` | 2.177 | **7.96 dB** | 0.44 dB | 0.30 dB |
+| freq `20..22000` / center `663` | 0.196 | **0.00 Hz** | 68 Hz | **1097 Hz** |
+| linear `0..100` | 1 | 1.00 | 1.00 | 1.00 |
+
+- `skew > 1`: 最小値から 1px 動かすとレンジの 12% が飛ぶ。これが報告されている「ジャンプ」
+- `skew < 1`: 逆に下端が不感帯になる。`min=20 / step=1` では 13px 動かして初めて 21Hz になり、そこから急加速する
+
+**あわせて見つかった構造的な問題: 冪乗則が `value - min` に掛かるため、対数スケールになっていない。** 20Hz–22kHz のノブで最初の 1 オクターブ（20→40Hz）が travel の 25% を占め、残り 9 オクターブが 75% に押し込まれる。真の指数スケール `min * (max / min) ^ position` なら 1 オクターブ = 9.9px で均等になる。
+
+| | 20→40 | 40→80 | 80→160 | … | 10240→20480 |
+| --- | --- | --- | --- | --- | --- |
+| 現行（`skew`） | 25.3px | 6.1px | 5.7px | … | 12.6px |
+| 指数スケール | 9.9px | 9.9px | 9.9px | … | 9.9px |
+
+**Knob 固有ではない。** `AxisOptions` は Slider / XYPad も通るので同じ曲線になる。Knob で目立つのは `pixelRange = 100` により 1px の重みが大きいため。また `0e95f89^`（Phase 2.5 以前）の Knob も `normalizeValue` で origin を取り `rawValue(origin - y / 100)` を計算しており、**算術は dom 移行前と完全に同一**。計画本文の「移行前から知られている問題」と整合する。
+
+なお JUCE の `NormalisableRange` も同じ冪乗則で、同じ端の劣化を持つ。tremolo-ui の `skew` は JUCE 互換の仕様と言える。
+
+#### 直し方の選択肢
+
+- **A. 曲線を差し替え可能にする（推奨）。** `AxisOptions` に真の指数スケールを足す（`scale: 'linear' | 'exponential'`、または正規化↔値の関数ペア）。`KnobProps` の `skew?: number // | SkewFunction // TODO` は元々この方向を示している。`min > 0` が前提になる点は要検討。`@tremolo-ui/functions` の `normalizeValue` / `rawValue` は公開 API なので、置き換えではなく追加にする
+- **B. 端の劣化だけ緩和する。** 下端付近で実効ステップに下限を設ける等。対症療法で、曲線が対数でない問題は残る
+- **C. 仕様として文書化する。** JUCE と同じ特性であることを明記し、`min` を 0 に近づけないよう案内する
+
+A を採るなら Phase 4 / 5 とは独立に進められる。B / C なら 5.8 はここで閉じられる。
 
 ## 6. 既存コードで見つかった問題
 
