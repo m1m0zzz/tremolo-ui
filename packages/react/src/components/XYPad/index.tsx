@@ -12,10 +12,8 @@ import {
 
 import type { AxisOptions } from '@tremolo-ui/dom'
 import {
-  clamp,
+  applyDelta,
   normalizeValue,
-  rawValue,
-  stepValue,
   toFixed,
   InputEventOption,
 } from '@tremolo-ui/functions'
@@ -95,6 +93,12 @@ export interface XYPadMethods {
 type Props = XYPadProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadProps>
 
+/**
+ * The wheel only acts while the focus is inside, so that scrolling a page past
+ * the control does not change its value.
+ */
+const WHEEL_OPTIONS = { requireFocus: true }
+
 export const Root = forwardRef<XYPadMethods, Props>(
   (
     {
@@ -147,49 +151,10 @@ export const Root = forwardRef<XYPadMethods, Props>(
     }, [value, min, max, skew, reverse])
 
     // --- internal functions ---
-    /** @param axis 0 = x, 1 = y */
-    const updateValueByEvent = useCallback(
-      (eventType: InputEventOption[0], axis: 0 | 1, delta: number) => {
-        let v
-        if (eventType == 'normalized') {
-          const n = normalizeValue(
-            value[axis],
-            min[axis],
-            max[axis],
-            skew[axis],
-          )
-          v = rawValue(n + delta, min[axis], max[axis], skew[axis])
-        } else {
-          v = value[axis] + delta
-        }
-        return clamp(stepValue(v, step[axis]), min[axis], max[axis])
-      },
-      [value, min, max, skew, step],
-    )
-
-    const withAxis = useCallback(
-      (axis: 0 | 1, next: number): XY<number> =>
-        axis == 0 ? [next, value[1]] : [value[0], next],
-      [value],
-    )
-
-    const handleKeyDown = useCallback(
-      (event: React.KeyboardEvent<HTMLDivElement>) => {
-        if (!onChange || readonly || !keyboard) return
-        const key = event.key
-        if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
-          const axis: 0 | 1 = key == 'ArrowRight' || key == 'ArrowLeft' ? 0 : 1
-          event.preventDefault()
-          let delta = keyboard[1]
-          if (key == 'ArrowLeft' || key == 'ArrowUp') delta *= -1
-          if (reverse[axis]) delta *= -1
-          onChange(withAxis(axis, updateValueByEvent(keyboard[0], axis, delta)))
-        }
-      },
-      [onChange, readonly, keyboard, reverse, withAxis, updateValueByEvent],
-    )
-
-    // --- hooks ---
+    // `AxisOptions` extends `ValueRange`, so the same pair also describes the
+    // scaling for `applyDelta`. Its `reverse` only concerns the drag, where
+    // positions follow the screen; the key and wheel handlers below flip the
+    // direction themselves.
     const axis = useMemo(
       (): XY<AxisOptions> =>
         [0, 1].map((i) => ({
@@ -201,6 +166,37 @@ export const Root = forwardRef<XYPadMethods, Props>(
         })) as XY<AxisOptions>,
       [min, max, step, skew, reverse],
     )
+
+    const withAxis = useCallback(
+      (axis: 0 | 1, next: number): XY<number> =>
+        axis == 0 ? [next, value[1]] : [value[0], next],
+      [value],
+    )
+
+    /** @param i 0 = x, 1 = y */
+    const nudge = useCallback(
+      (i: 0 | 1, direction: number, option: InputEventOption): XY<number> =>
+        withAxis(i, applyDelta(value[i], direction, option, axis[i])),
+      [value, axis, withAxis],
+    )
+
+    const handleKeyDown = useCallback(
+      (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (!onChange || readonly || !keyboard) return
+        const key = event.key
+        if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
+          const i: 0 | 1 = key == 'ArrowRight' || key == 'ArrowLeft' ? 0 : 1
+          event.preventDefault()
+          let direction = 1
+          if (key == 'ArrowLeft' || key == 'ArrowUp') direction *= -1
+          if (reverse[i]) direction *= -1
+          onChange(nudge(i, direction, keyboard))
+        }
+      },
+      [onChange, readonly, keyboard, reverse, nudge],
+    )
+
+    // --- hooks ---
 
     const { refCallback: dragRefCallback } = useDragValue<HTMLDivElement>({
       axis,
@@ -226,13 +222,13 @@ export const Root = forwardRef<XYPadMethods, Props>(
 
     const wheelRefCallback = useWheel<HTMLDivElement>((event) => {
       if (!onChange || readonly || !wheel) return
-      const axis: 0 | 1 = event.shiftKey ? 0 : 1
+      const i: 0 | 1 = event.shiftKey ? 0 : 1
       event.preventDefault()
-      let delta = wheel[1]
-      if (event.deltaY < 0) delta *= -1
-      if (reverse[axis]) delta *= -1
-      onChange(withAxis(axis, updateValueByEvent(wheel[0], axis, delta)))
-    })
+      let direction = 1
+      if (event.deltaY < 0) direction *= -1
+      if (reverse[i]) direction *= -1
+      onChange(nudge(i, direction, wheel))
+    }, WHEEL_OPTIONS)
 
     // Composed once, so React attaches the refs a single time instead of
     // detaching and re-attaching on every render.

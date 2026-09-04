@@ -11,11 +11,9 @@ import {
 
 import type { AxisOptions, XY } from '@tremolo-ui/dom'
 import {
-  clamp,
+  applyDelta,
   InputEventOption,
-  normalizeValue,
-  rawValue,
-  stepValue,
+  type ValueRange,
 } from '@tremolo-ui/functions'
 
 import { useDragValue } from '../../hooks/useDragValue'
@@ -115,6 +113,12 @@ export interface KnobMethods {
 
 type Props = KnobProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KnobProps>
 
+/**
+ * The wheel only acts while the focus is inside, so that scrolling a page past
+ * the control does not change its value.
+ */
+const WHEEL_OPTIONS = { requireFocus: true }
+
 export const Root = forwardRef<KnobMethods, Props>(
   (
     {
@@ -149,18 +153,9 @@ export const Root = forwardRef<KnobMethods, Props>(
     const externalStyles = { ...defaultExternalStyles, ..._externalStyles }
 
     // --- internal functions ---
-    const updateValueByEvent = useCallback(
-      (eventType: InputEventOption[0], x: number) => {
-        let newValue
-        if (eventType == 'normalized') {
-          const n = normalizeValue(value, min, max, skew)
-          newValue = rawValue(n + x, min, max, skew)
-        } else {
-          newValue = value + x
-        }
-        return clamp(stepValue(newValue, step), min, max)
-      },
-      [max, min, skew, step, value],
+    const range: ValueRange = useMemo(
+      () => ({ min, max, step, skew }),
+      [min, max, step, skew],
     )
 
     const handleKeyDown = useCallback(
@@ -169,12 +164,11 @@ export const Root = forwardRef<KnobMethods, Props>(
         const key = event.key
         if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
           event.preventDefault()
-          const x =
-            key == 'ArrowRight' || key == 'ArrowUp' ? keyboard[1] : -keyboard[1]
-          onChange(updateValueByEvent(keyboard[0], x))
+          const direction = key == 'ArrowRight' || key == 'ArrowUp' ? 1 : -1
+          onChange(applyDelta(value, direction, keyboard, range))
         }
       },
-      [keyboard, onChange, readonly, updateValueByEvent],
+      [keyboard, onChange, readonly, value, range],
     )
 
     // --- hooks ---
@@ -183,11 +177,8 @@ export const Root = forwardRef<KnobMethods, Props>(
     // Only the vertical axis carries a value, reversed so that dragging up
     // raises it.
     const axis = useMemo(
-      (): XY<AxisOptions> => [
-        { min, max, step, skew },
-        { min, max, step, skew, reverse: true },
-      ],
-      [min, max, step, skew],
+      (): XY<AxisOptions> => [range, { ...range, reverse: true }],
+      [range],
     )
 
     const { refCallback: dragRefCallback, dragging } = useDragValue<
@@ -213,9 +204,8 @@ export const Root = forwardRef<KnobMethods, Props>(
       if (!wheel || readonly) return
       event.preventDefault()
       if (!onChange || event.deltaY == 0) return
-      const x = Math.sign(event.deltaY) * -wheel[1]
-      onChange(updateValueByEvent(wheel[0], x))
-    })
+      onChange(applyDelta(value, -Math.sign(event.deltaY), wheel, range))
+    }, WHEEL_OPTIONS)
 
     // Composed once, so React attaches the refs a single time instead of
     // detaching and re-attaching on every render.
