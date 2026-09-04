@@ -3,22 +3,20 @@ import {
   normalizeValue,
   rawValue,
   stepValue,
+  type ValueRange,
 } from '@tremolo-ui/functions'
 
 import { toXY, type XY, type XYInput } from '../xy'
 
 import { createDrag, type DragState } from './drag'
 
-/** How the 0-1 travel of one axis maps onto a value. */
-export interface AxisOptions {
-  min: number
-  max: number
-  /**
-   * Rounding applied to the value. Left unrounded when omitted.
-   */
-  step?: number
-  /** @default 1 */
-  skew?: number
+/**
+ * How the 0-1 travel of one axis maps onto a value.
+ *
+ * Extends `ValueRange` so that a drag and an `applyDelta` nudge from a wheel
+ * or an arrow key share one description of the scaling.
+ */
+export interface AxisOptions extends ValueRange {
   /**
    * Flip the axis so that its far end is `min`.
    *

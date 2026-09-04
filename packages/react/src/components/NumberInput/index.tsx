@@ -1,64 +1,79 @@
 import clsx from 'clsx'
-import { ComponentPropsWithoutRef, forwardRef, ReactNode } from 'react'
+import {
+  ComponentPropsWithoutRef,
+  CSSProperties,
+  forwardRef,
+  ReactNode,
+  useCallback,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 
-import { InputEventOption } from '@tremolo-ui/functions'
+import {
+  applyDelta,
+  clamp,
+  formatValue,
+  InputEventOption,
+  parseValue,
+  type Units,
+  type ValueRange,
+} from '@tremolo-ui/functions'
+
+import { useWheel } from '../../hooks/useWheel'
 
 import { NumberInputProvider } from './context'
 import { DecrementStepper } from './DecrementStepper'
 import { IncrementStepper } from './IncrementStepper'
-import { InternalInput } from './InternalInput'
+import { InputField } from './InputField'
 import { Stepper } from './Stepper'
-import { Units } from './type'
-
-/*
-TODO
-- numberMode: focusが当たった時だけ、parse + type="number"にする
-- skew
-*/
 
 export interface NumberInputProps {
-  value: number | string
+  /**
+   * The value. What the input shows is `format(value)`, except while the user
+   * is typing, when their own text stands until it is committed.
+   */
+  value: number
 
-  /**
-   * Number.MIN_SAFE_INTEGER
-   */
   min?: number
-  /**
-   * Number.MAX_SAFE_INTEGER
-   */
   max?: number
   step?: number
+  skew?: number
 
   /**
+   * Unit to display the value in, or a list to pick from by magnitude.
+   * Builds the default `format` and `parse`.
+   *
    * @example
    * units='Hz'
    * units={[['Hz', 1], ['kHz', 1000]]}
    * units={[['ms', 1], ['s', 1000]]}
    */
   units?: string | Units
-
   /**
-   * Digits for rounding numbers.
+   * Digits after the decimal point, for the default `format`.
+   *
    * @example
-   * with:
-   * units={[['Hz', 1], ['kHz', 1000]]}
-   * digit={3}
-   * results:
-   * value=100 -> 100Hz, value=1600 -> 1.60Hz
+   * // units={[['Hz', 1], ['kHz', 1000]]} digit={2}
+   * // 100 -> 100.00Hz, 1600 -> 1.60kHz
    */
   digit?: number
-
-  readonly?: boolean
-
-  variant?: 'outline' | 'filled' | 'flushed' | 'unstyled'
-
-  selectWithFocus?: 'all' | 'number' | 'none'
-  blurOnEnter?: boolean
-  keepWithinRange?: boolean
-  clampValueOnBlur?: boolean
+  /** Render the value as text. Takes precedence over `units` / `digit`. */
+  format?: (value: number) => string
+  /** Read a value back out of the text. Takes precedence over `units`. */
+  parse?: (text: string) => number
 
   /**
-   * wheel control option
+   * Keep the value within `min` and `max` when it is committed or stepped.
+   * Typing is never clamped, so that a value can be entered digit by digit.
+   * @default true
+   */
+  clampValue?: boolean
+
+  /**
+   * Wheel control option. Only applies while the focus is inside, so that
+   * scrolling past the input does not change it.
    * If null, no event will be triggered
    */
   wheel?: InputEventOption | null
@@ -67,24 +82,43 @@ export interface NumberInputProps {
    * If null, no event will be triggered
    */
   keyboard?: InputEventOption | null
+  /**
+   * Pixels of vertical drag on `Stepper` that move the value by one `step`.
+   * If null, no event will be triggered
+   * @default 1
+   */
+  drag?: number | null
 
-  activeColor?: string
+  /**
+   * Only the appearance will change.
+   * Please consider using with readonly.
+   * aria-disabled property is also applied.
+   */
+  disabled?: boolean
+  /**
+   * Make the value unchangeable.
+   * aria-readonly property is also applied.
+   */
+  readonly?: boolean
 
-  wrapperClassName?: string
+  className?: string
+  style?: CSSProperties
+  onChange?: (value: number) => void
 
-  onChange?: (value: number, text: string) => void
-  onFocus?: (
-    value: number,
-    text: string,
-    event: React.FocusEvent<HTMLInputElement, Element>,
-  ) => void
-  onBlur?: (
-    value: number,
-    text: string,
-    event: React.FocusEvent<HTMLInputElement, Element>,
-  ) => void
-
-  children?: ReactNode
+  /**
+   * The input renders exactly what you compose here; there is no default
+   * markup to fall back to.
+   *
+   * @example
+   * <NumberInput.Root value={value} min={0} max={100} onChange={setValue}>
+   *   <NumberInput.InputField />
+   *   <NumberInput.Stepper>
+   *     <NumberInput.IncrementStepper />
+   *     <NumberInput.DecrementStepper />
+   *   </NumberInput.Stepper>
+   * </NumberInput.Root>
+   */
+  children: ReactNode
 }
 
 export interface NumberInputMethods {
@@ -93,7 +127,7 @@ export interface NumberInputMethods {
 }
 
 type Props = NumberInputProps &
-  Omit<ComponentPropsWithoutRef<'input'>, keyof NumberInputProps | 'type'>
+  Omit<ComponentPropsWithoutRef<'div'>, keyof NumberInputProps>
 
 export const Root = forwardRef<NumberInputMethods, Props>(
   (
@@ -102,68 +136,178 @@ export const Root = forwardRef<NumberInputMethods, Props>(
       min,
       max,
       step = 1,
+      skew = 1,
       units,
-      readonly = false,
-      disabled = false,
       digit,
-      variant = 'outline',
-      selectWithFocus = 'none',
-      blurOnEnter = true,
-      keepWithinRange = true,
-      clampValueOnBlur = true,
+      format: formatProp,
+      parse: parseProp,
+      clampValue = true,
       wheel = ['raw', 1],
       keyboard = ['raw', 1],
-      activeColor,
-      wrapperClassName,
+      drag = 1,
+      disabled = false,
+      readonly = false,
       className,
+      style,
       onChange,
-      onFocus,
-      onBlur,
       children,
       ...props
     }: Props,
     forwardedRef,
   ) => {
-    const colors: Record<string, string | undefined> = {
-      '--active-color': activeColor,
-    }
+    // --- state and ref ---
+    const inputRef = useRef<HTMLInputElement>(null)
+    /**
+     * The text being typed. The only state here: it is not a copy of `value`,
+     * but the half-finished entry that has no value to be derived from yet.
+     */
+    const [draft, setDraft] = useState<string | null>(null)
+
+    // --- interpret props ---
+    const format = useCallback(
+      (v: number) =>
+        formatProp ? formatProp(v) : formatValue(v, units, digit),
+      [formatProp, units, digit],
+    )
+    const parse = useCallback(
+      (t: string) => (parseProp ? parseProp(t) : parseValue(t, units)),
+      [parseProp, units],
+    )
+
+    // An unbounded end, and a range the caller opted out of enforcing, both
+    // become the widest range the value pipeline can express.
+    const range: ValueRange = useMemo(
+      () => ({
+        min: (clampValue ? min : undefined) ?? Number.MIN_SAFE_INTEGER,
+        max: (clampValue ? max : undefined) ?? Number.MAX_SAFE_INTEGER,
+        step,
+        skew,
+      }),
+      [clampValue, min, max, step, skew],
+    )
+
+    const text = draft ?? format(value)
+    const editing = draft != null
+    const outOfRange =
+      !editing &&
+      ((min != undefined && value < min) || (max != undefined && value > max))
+
+    // --- internal functions ---
+    const handleDraft = useCallback(
+      (next: string) => {
+        if (readonly) return
+        setDraft(next)
+        // Deliberately unclamped: clamping here would make "1500" impossible
+        // to type into an input whose max is 100.
+        const parsed = parse(next)
+        if (Number.isFinite(parsed)) onChange?.(parsed)
+      },
+      [readonly, parse, onChange],
+    )
+
+    const changeValue = useCallback(
+      (next: number) => {
+        if (readonly) return
+        setDraft(null)
+        if (next != value) onChange?.(next)
+      },
+      [readonly, value, onChange],
+    )
+
+    const commitDraft = useCallback(() => {
+      if (draft == null || readonly) return
+      // `range` is already the widest possible range when clampValue is off.
+      changeValue(clamp(parse(draft), range.min, range.max))
+    }, [draft, readonly, parse, range, changeValue])
+
+    const nudge = useCallback(
+      (direction: number, option: InputEventOption) => {
+        changeValue(applyDelta(value, direction, option, range))
+      },
+      [changeValue, value, range],
+    )
+
+    // --- hooks ---
+    const wheelRefCallback = useWheel<HTMLDivElement>(
+      (event) => {
+        if (!wheel || readonly || event.deltaY == 0) return
+        event.preventDefault()
+        nudge(-Math.sign(event.deltaY), wheel)
+      },
+      { requireFocus: true },
+    )
+
+    const context = useMemo(
+      () => ({
+        value,
+        min,
+        max,
+        step,
+        skew,
+        disabled,
+        readonly,
+        clampValue,
+        range,
+        keyboard,
+        text,
+        editing,
+        outOfRange,
+        atMin: clampValue && min != undefined && value <= min,
+        atMax: clampValue && max != undefined && value >= max,
+        drag,
+        format,
+        parse,
+        setDraft: handleDraft,
+        commitDraft,
+        changeValue,
+        nudge,
+        inputRef,
+      }),
+      [
+        value,
+        min,
+        max,
+        step,
+        skew,
+        disabled,
+        readonly,
+        clampValue,
+        range,
+        keyboard,
+        text,
+        editing,
+        outOfRange,
+        drag,
+        format,
+        parse,
+        handleDraft,
+        commitDraft,
+        changeValue,
+        nudge,
+      ],
+    )
+
+    useImperativeHandle(forwardedRef, () => {
+      return {
+        focus() {
+          inputRef.current?.focus()
+        },
+        blur() {
+          inputRef.current?.blur()
+        },
+      }
+    }, [])
+
     return (
-      <NumberInputProvider
-        value={String(value)}
-        min={min}
-        max={max}
-        step={step}
-        units={units}
-        digit={digit}
-        readonly={readonly}
-        keepWithinRange={keepWithinRange}
-        onChange={onChange}
-      >
+      <NumberInputProvider value={context}>
         <div
-          className={clsx('tremolo-number-input-wrapper', wrapperClassName)}
-          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-          tabIndex={0}
-          style={{
-            ...colors,
-          }}
-          data-stepper={!!children}
-          data-variant={variant}
+          ref={wheelRefCallback}
+          className={clsx('tremolo-number-input', className)}
+          aria-disabled={disabled}
+          aria-readonly={readonly}
+          style={style}
+          {...props}
         >
-          <InternalInput
-            ref={forwardedRef}
-            readonly={readonly}
-            disabled={disabled}
-            selectWithFocus={selectWithFocus}
-            blurOnEnter={blurOnEnter}
-            clampValueOnBlur={clampValueOnBlur}
-            wheel={wheel}
-            keyboard={keyboard}
-            className={className}
-            onChange={onChange}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            {...props}
-          />
           {children}
         </div>
       </NumberInputProvider>
@@ -176,12 +320,14 @@ export const Root = forwardRef<NumberInputMethods, Props>(
  */
 export const NumberInput = {
   Root,
+  InputField,
   Stepper,
   IncrementStepper,
   DecrementStepper,
 }
 
+export { useNumberInputContext } from './context'
+export { type NumberInputFieldProps } from './InputField'
 export { type StepperProps } from './Stepper'
 export { type IncrementStepperProps } from './IncrementStepper'
 export { type DecrementStepperProps } from './DecrementStepper'
-export { type Units } from './type'

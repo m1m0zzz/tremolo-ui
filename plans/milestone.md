@@ -19,14 +19,14 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 | Phase 2: `createDrag` / `createWheel` | 完了 |
 | Phase 2.5: Slider / Knob / XYPad の実装統一 | 完了 |
 | Phase 3: `createDragValue` | 完了 |
-| Phase 4: Piano / AnimationCanvas / NumberInput | 未着手 |
-| Phase 5: zustand 除去 | 未着手 |
-| 5 章: CSS ヘッドレス化・MIDI の作り込み・Knob の値飛び など | 一部完了（5.3 / 5.4 済み） |
+| Phase 4: Piano / AnimationCanvas / NumberInput | NumberInput は完了（[4.1](./core-extraction-plan.md)）。AnimationCanvas / Piano は未着手 |
+| Phase 5: zustand 除去 | 一部完了（NumberInput は 4.1 で除去済み。Piano / PointsEditor が残り） |
+| 5 章: CSS ヘッドレス化・MIDI の作り込み・Knob の値飛び など | 一部完了（5.3 / 5.4 / 5.9 済み） |
 
 着手前に決める必要がある未確定事項（同ドキュメント 2 章）:
 
 1. ~~値の所有者~~ → **Phase 3 で決定。ラッパーが持ち、コアは必要なときだけ `getValue()` で読む**
-2. NumberInput の扱い（`<input>` のテキストが値の裏付けであり他と性質が異なる）— Phase 4 で必要
+2. ~~NumberInput の扱い~~ → **Phase 4.1 で決定。Root が持つ state は編集中の draft 1 つだけ**
 3. `@tremolo-ui/dom` の公開範囲（`createDrag` / `createWheel` を公開 API にするか）
 
 > 3 については、Phase 2 の時点で `createDrag` / `createWheel` を `@tremolo-ui/dom` の公開 API として export 済み。Phase 3 で `createDragValue` / `elementMapping` / `relativeMapping` も加わった。追認するか、内部専用へ戻すかを決める。
@@ -78,7 +78,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 - [ ] **CSS のデモを公開する形に作り替える。** Radix UI / Base UI と同じく、パッケージはスタイルを配らず、ドキュメント上でデモの CSS をコピーできるようにする（core-extraction-plan.md 5.1）
 - [ ] **hooks のドキュメントを充実させる。** 現在 `site/docs/hooks/` には `web-midi-api` しかない。`useDrag` / `useWheel` / `useDragValue` は typedoc の自動生成のみ
 - [ ] **Vue / Svelte を足したときのドキュメント構成を決める。** 現在の `site/docs/components/<Name>/index.mdx` は React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）。フレームワークごとにタブを分けるのか、サイト自体を分けるのか
-- [ ] **移行ガイドを書く。** 0.x の間に入れた破壊的変更（`useDrag` の戻り値変更、`useDragWithElement` の `useDragValue` への置き換え、`DragObserver` / `WheelObserver` の削除、CSS の配布方法変更）をまとめる
+- [ ] **移行ガイドを書く。** 0.x の間に入れた破壊的変更（`useDrag` の戻り値変更、`useDragWithElement` の `useDragValue` への置き換え、`DragObserver` / `WheelObserver` の削除、CSS の配布方法変更、NumberInput の再設計、wheel をフォーカス時のみに変更）をまとめる
 - [ ] `site/docs/support/CHANGELOG.md` は手書きだが、changesets 移行により各パッケージの `CHANGELOG.md` が自動生成されるようになった。二重管理をやめる
 - [ ] 1.0 時点で `README.md` の「*tremolo-ui is now WIP*」と「An unstable version (0.x) has been released.」を更新する
 

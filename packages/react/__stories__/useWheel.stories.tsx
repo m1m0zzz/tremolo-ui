@@ -39,7 +39,6 @@ export const Basic = () => {
         value={scale}
         min={0.1}
         step={0.1}
-        width={10}
         onChange={(value) => {
           setScale(value)
         }}
@@ -47,7 +46,9 @@ export const Basic = () => {
           width: 80,
           marginRight: '0.5rem',
         }}
-      />
+      >
+        <NumberInput.InputField />
+      </NumberInput.Root>
       <button type="button" onClick={() => setCount(0)}>
         Reset count
       </button>

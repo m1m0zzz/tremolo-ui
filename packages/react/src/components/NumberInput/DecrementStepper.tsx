@@ -1,57 +1,24 @@
-import clsx from 'clsx'
-import { ComponentPropsWithoutRef, ReactNode } from 'react'
+import { ComponentPropsWithoutRef } from 'react'
 
-import { useLongPress } from '../../hooks/useLongPress'
+import {
+  StepperArrow,
+  StepperButton,
+  StepperButtonProps,
+} from './stepperButton'
 
-import { useNumberInputContext } from './context'
+export type DecrementStepperProps = StepperButtonProps
 
-export interface DecrementStepperProps {
-  size?: number
-  children?: ReactNode
-}
-
-export function DecrementStepper({
-  size = 12,
-  children,
-  className,
-  ...props
-}: DecrementStepperProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof DecrementStepperProps>) {
-  const min = useNumberInputContext((s) => s.min)
-  const valueAsNumber = useNumberInputContext((s) => s.valueAsNumber)
-  const readonly = useNumberInputContext((s) => s.readonly)
-  const keepWithinRange = useNumberInputContext((s) => s.keepWithinRange)
-  const decrement = useNumberInputContext((s) => s.decrement)
-
-  const press = useLongPress(decrement)
-
+/** Lowers the value by one `step`, repeating while held. */
+export function DecrementStepper(
+  props: DecrementStepperProps &
+    Omit<ComponentPropsWithoutRef<'div'>, keyof DecrementStepperProps>,
+) {
   return (
-    // eslint-disable-next-line jsx-a11y/role-supports-aria-props
-    <div
-      className={clsx('tremolo-number-input-decrement-stepper', className)}
-      role="button"
-      tabIndex={-1}
-      aria-disabled={
-        keepWithinRange && valueAsNumber <= (min ?? Number.MIN_SAFE_INTEGER)
-      }
-      aria-readonly={readonly}
-      onPointerDown={press}
+    <StepperButton
+      direction={-1}
+      variant="decrement"
+      icon={<StepperArrow up={false} />}
       {...props}
-    >
-      {children || (
-        <svg
-          width={size}
-          height={size}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
-      )}
-    </div>
+    />
   )
 }

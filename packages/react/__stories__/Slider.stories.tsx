@@ -76,7 +76,9 @@ export const LogarithmicParameter: Story = {
           <NumberInput.Root
             value={centerValue}
             onChange={(v) => setCenterValue(v)}
-          />
+          >
+            <NumberInput.InputField />
+          </NumberInput.Root>
         </div>
         <Slider.Root
           {...args}

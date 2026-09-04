@@ -13,6 +13,8 @@
 
 以下は、移動させなくて良い。まだ検討段階のもの
 
+- Knob をドラッグしたときに、カーソル位置を固定する
+- pixelRange のデフォルト値検討
 - MIDIまわりのコンポーネント追加
   - ピアノロール
   - ステップシーケンサー
@@ -20,3 +22,4 @@
 - `functions` コード検出
 - `functions` FFT
 - ToggleButton
+- NumberInput inputmode

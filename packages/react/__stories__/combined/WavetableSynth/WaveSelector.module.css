@@ -1,6 +1,11 @@
+/* The "flushed" look, which used to be the `variant` prop of NumberInput. */
 .numberInputWrapper {
+  --active-color: #34c2ed;
+
   width: 50px;
   height: 25px;
+  border-width: 0 0 1px 0;
+  border-radius: 0;
 }
 
 .numberInput {

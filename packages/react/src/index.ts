@@ -19,8 +19,10 @@ export {
 export { Knob, type KnobProps, type KnobMethods } from './components/Knob'
 export {
   NumberInput,
+  useNumberInputContext,
   type NumberInputProps,
   type NumberInputMethods,
+  type NumberInputFieldProps,
   type StepperProps,
   type IncrementStepperProps,
   type DecrementStepperProps,
