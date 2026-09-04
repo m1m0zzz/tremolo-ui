@@ -1,4 +1,6 @@
 export {
+  type ValueRange,
+  applyDelta,
   clamp,
   dbToGain,
   decimalPart,
@@ -27,4 +29,5 @@ export {
   whiteKeys,
 } from './midi'
 export { type InputEventOption } from './types'
+export { type Units, formatValue, parseValue, selectUnit } from './unit'
 export { isEmpty, mod, styleHelper, xor } from './util'

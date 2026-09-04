@@ -1,3 +1,5 @@
+import type { InputEventOption } from './types'
+
 /**
  * clamp value between min and max
  */
@@ -94,4 +96,49 @@ export function dbToGain(db: number) {
 
 export function gainToDb(gain: number) {
   return 20 * (Math.log(gain) / Math.LN10)
+}
+
+/**
+ * How a value is scaled: the range it lives in, and how it is rounded.
+ *
+ * `AxisOptions` of `@tremolo-ui/dom` extends this, so a drag and a
+ * wheel / keyboard nudge run the same value pipeline.
+ */
+export interface ValueRange {
+  min: number
+  max: number
+  /**
+   * Rounding applied to the value. Left unrounded when omitted.
+   */
+  step?: number
+  /** @default 1 */
+  skew?: number
+}
+
+/**
+ * Move a value by an amount of input, as reported by a wheel or an arrow key.
+ *
+ * The pipeline matches `createDragValue` of `@tremolo-ui/dom`: skew, then
+ * step, then clamp. Which key or which sign of `deltaY` counts as which
+ * direction is left to the caller, since it differs per component.
+ *
+ * @param direction which way, and how many times, to apply the option. The
+ * size of one step is `option[1]`, so this is normally `1` or `-1`.
+ *
+ * @example
+ * // ArrowDown on a slider whose keyboard option is ['raw', 1]
+ * applyDelta(value, -1, keyboard, { min, max, step, skew })
+ */
+export function applyDelta(
+  value: number,
+  direction: number,
+  [mode, amount]: InputEventOption,
+  { min, max, step, skew = 1 }: ValueRange,
+): number {
+  const x = direction * amount
+  const next =
+    mode == 'normalized'
+      ? rawValue(normalizeValue(value, min, max, skew) + x, min, max, skew)
+      : value + x
+  return clamp(step ? stepValue(next, step) : next, min, max)
 }
