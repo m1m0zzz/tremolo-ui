@@ -2,6 +2,7 @@ import CodeBlock from '@theme/CodeBlock'
 import GitHubLink from '@site/src/components/GitHubLink'
 
 import basic from '!!raw-loader!@site/examples/components/animation-canvas/basic'
+import reactive from '!!raw-loader!@site/examples/components/animation-canvas/reactive'
 import saveRestore from '!!raw-loader!@site/examples/components/animation-canvas/save-restore'
 
 # AnimationCanvas
@@ -35,9 +36,26 @@ ref: [AnimationCanvasProps](/docs/api/react/components/AnimationCanvas/#absolute
 
 ### Reactive Canvas
 
-`React.useState` + `animate={false}`
+By default the canvas redraws on every animation frame. When the drawing is
+driven by state rather than by time, set
+[`animate={false}`](/docs/api/react/components/AnimationCanvas/#animate): the
+canvas then draws only when it has a reason to — when it mounts, when it is
+resized, and **when the component re-renders**.
 
-[CommonProps.animate](/docs/api/react/components/AnimationCanvas/#animate)
+That last one is what makes `React.useState` work as the source of the
+drawing. Pass the new `draw` and the canvas repaints; there is nothing to
+memoize and no redraw to trigger by hand.
+
+See [Reactive](#reactive) below for a working example.
+
+:::tip
+
+Writing `draw` inline is fine either way. The canvas is set up once and the
+handler is swapped in place, so re-rendering never restarts the animation,
+resets `count` and `elapsedTime`, or runs `init` again. Wrapping the component
+in `React.memo`, or holding `draw` in a `useCallback`, is not needed.
+
+:::
 
 
 ## Examples
@@ -50,6 +68,18 @@ ref: [AnimationCanvasProps](/docs/api/react/components/AnimationCanvas/#absolute
   showCode
   sourcePath='examples/components/animation-canvas/basic.tsx'
 >{basic}</CodeBlock>
+
+### Reactive
+
+A canvas driven by state instead of by time, with `animate={false}`. Moving the
+slider re-renders the component, and that is what repaints the canvas.
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/animation-canvas/reactive.tsx'
+>{reactive}</CodeBlock>
 
 ### Save / Restore
 

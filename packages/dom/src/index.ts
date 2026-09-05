@@ -1,4 +1,19 @@
 export {
+  createAnimationCanvas,
+  type AnimationCanvasInstance,
+  type AnimationCanvasOptions,
+  type AnimationFrame,
+  type CanvasDrawFunction,
+  type CanvasInitFunction,
+} from './canvas/animation'
+export {
+  drawingState,
+  isDrawingState,
+  type DrawingContext,
+  type DrawingState,
+  type DrawingStateValue,
+} from './canvas/context'
+export {
   createMIDIAccess,
   NOT_SUPPORTED,
   PERMISSION_DENIED,

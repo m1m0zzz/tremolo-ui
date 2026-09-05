@@ -298,11 +298,36 @@ export type XYInput<T> = [T] extends [readonly unknown[]]
 
 ### Phase 4: 残りのコンポーネント
 
-- [ ] AnimationCanvas（rAF + ResizeObserver + DPR。`canvas.ts` と `index.tsx` 計 約280行）
+- [x] AnimationCanvas → **4.2** で完了
 - [ ] NumberInput → 設計は **4.1** で確定済み
 - [ ] Piano
   - [ ] 既存のTODO: マルチタッチ、グリッサンド。(`usePianoDrag` が該当)
   - [ ] コンポーネント設計の検討
+
+#### 4.2 AnimationCanvas
+
+`createAnimationCanvas(canvas, options)` として `@tremolo-ui/dom` へ移した。React 側は「node を state で保持し、インスタンスを 1 回だけ作り、毎レンダー `update()` で最新のハンドラを流し込む」形で、`useDragValue` と同じ構造になっている。
+
+`packages/react/src/components/AnimationCanvas/canvas.ts` は `packages/dom/src/canvas/context.ts` へ移動（`setDprConfig` → `applyDevicePixelRatio`、状態のコピーを `readDrawingState` / `writeDrawingState` に切り出し）。
+
+##### 直したもの
+
+いずれも移行前から存在したバグで、`packages/react/__tests__/AnimationCanvas/index.test.tsx` は**旧実装に対して実際に落ちる**ことを確認してある。
+
+- **毎レンダーでアニメーションが再起動していた。** effect の依存に `draw` / `init` / `options` が入っており、これらはほぼ全ての利用箇所でインラインで書かれるため毎レンダー新しくなる。結果として 2D context・`ResizeObserver`・rAF ループが破棄・再生成され、`init` が繰り返し呼ばれ、`count` と `elapsedTime` が 0 に戻っていた。state を持つコンポーネント（メーター等）の隣では frame 0 から進めない
+- **マウント後に `width` / `height` を変えても効かなかった。** effect の依存に入っていないため、canvas の属性だけが書き換わって DPR の transform が再適用されず、描画スケールが狂う
+- **`relativeSize` の初回サイズだけ `parent.clientWidth`、以降は observer の `contentRect` だった。** 両者は親の padding 分ずれる。`ResizeObserver` は observe した時点で現在のサイズを通知するので、初回も含めて observer に一本化した
+
+##### 決めたこと
+
+- **`relativeSize` と `contextAttributes` はインスタンス生成時に固定。** 前者は `ResizeObserver` を張るかどうか、後者は context の生成に関わるため、`update()` では受け付けない（`createDragValue` の `mapping` と同じ扱い）
+- **`animate` が false のとき、`update()` は 1 フレーム描く。** ループが止まっているので、リサイズと `update()` 以外に新しい描画を canvas へ出す手段が無い。ドキュメントの "Reactive Canvas"（`useState` + `animate={false}`）はこれで成立する。React 側は生成直後の 1 回だけ `update()` を飛ばし、マウント時に同じフレームを 2 度描かないようにしている
+- **`options`（`contextAttributes`）は effect の依存に入れない。** インラインで書かれるとインスタンスが毎レンダー作り直されるため、ref 経由で生成時にだけ読む。マウント後の変更は効かない旨を prop の JSDoc に明記した
+- **フリッカー抑制用の隠し `<canvas>` は DOM に描画しない。** コアが必要になった時点で `document.createElement` で作る。React 側は fragment が不要になり `<canvas>` 1 つだけを返す
+- **サイズはコアが所有する。** React は `width` / `height` 属性を設定せず、`size` オプションとして渡す。これで属性の書き換えと DPR 設定の二重管理が無くなる
+- **リサイズ時のスナップショットを解像度を落とさない形に直した。** 旧実装は memo canvas を `scale(1/dpr)` して書き込み、戻すときに context 側の `scale(dpr)` で拡大していた。dpr が打ち消し合うので位置と大きさは正しいが、**dpr > 1 では一度縮小してから拡大するため解像度が落ちていた**
+
+  現在は memo を canvas と同じデバイスピクセル数で取り（`memo.width = canvas.width`、transform は identity なので等倍コピー）、戻すときは **CSS ピクセル座標系のまま「元の CSS サイズ」を指定して描く**（`context.drawImage(memo, 0, 0, previousWidth, previousHeight)`）。context は既に dpr 倍にスケールされているので、dpr が変わらなければデバイスピクセルの 1:1 コピーになり再サンプリングが起きない。dpr が変わった場合（ディスプレイ間の移動など）はフル解像度から 1 回だけ正しくリスケールされる
 
 #### 4.1 NumberInput の再設計
 
@@ -744,11 +769,12 @@ export interface Scale {
 - **`ValueRange.skew` を `scale` にした。** #141 が `ValueRange` と `applyDelta` を新設していたので、`AxisOptions extends ValueRange` の構造に乗せる形で統合した。ドラッグと wheel / keyboard の nudge が 1 つのスケール記述を共有する
 - **`ValueRange` / `applyDelta` を `math.ts` から `scale.ts` へ移した。** `ValueRange` が `Scale` を参照し、`applyDelta` が `linearScale` を実行時に使うため、`math.ts` に置いたままだと math → scale → math の循環 import になる。公開名は変わらない
 - **`normalizeValue` / `rawValue` から `skew` 引数を外し、線形の写像だけを担わせた。** `scale` に一本化した後、`skew` を渡していたのは `skewScale` だけで、他の呼び出し箇所（`elementMapping` と `usePianoDrag` のピクセル正規化、`NumberInput`）は全て線形だった。曲がりは全て `Scale` 側に置き、この 2 つは公開 API の線形プリミティブとして残す。JUCE 互換の式（`pow` と `exp(log())`）は `skewScale` の中に移してある
-- `skewWithCenterValue` も `math.ts` から `scale.ts` の `skewScale` の隣へ移した（挙動は変更なし）。これで `math.ts` に skew の概念が残らない
+- `skewWithCenterValue` も `math.ts` から `scales.ts` の `skewScale` の隣へ移した（挙動は変更なし）。これで `math.ts` に skew の概念が残らない
+- **ファイル名は `scale.ts` ではなく `scales.ts`。** typedoc は `router: 'module'` でモジュールごとに 1 ページ出すため、`scale.ts` だとページ見出しの `# scale` と export した `Scale` インターフェースがどちらも `scale` スラッグを取り合い、後から出る `### Scale` が `scale-1` になる。結果 typedoc が生成する `[Scale](#scale)` が壊れたリンクになり、docusaurus のビルドが broken anchor を報告していた。複数形にして衝突を外してある
 
 回帰テスト:
 
-- `packages/functions/__tests__/scale.test.ts` — 5 つ全てについて往復・端点・単調性・範囲外クランプ・空レンジの拒否、各プリセット固有の性質
+- `packages/functions/__tests__/scales.test.ts` — 5 つ全てについて往復・端点・単調性・範囲外クランプ・空レンジの拒否、各プリセット固有の性質
 - `packages/dom/__tests__/pointer/scaleJump.test.ts` — 実際のドラッグ経路で 5.8 の症状を固定。`skewScale` は dB ノブの下端で 1px あたり 8dB 飛び、周波数ノブでは 12px 動かしても値が変わらない。`curveScale` / `exponentialScale` はどちらも起きない
 
 `exponentialScale.normalize` / `curveScale.normalize` は**値をクランプしてから対数を取る**必要がある。範囲外の値では比が負になり、`Math.log` が NaN を返すため（位置をクランプしても手遅れ）。テストで固定してある。

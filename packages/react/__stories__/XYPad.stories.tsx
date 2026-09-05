@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { CSSProperties, memo, useState } from 'react'
+import { CSSProperties, useState } from 'react'
 
 import {
   integerPart,
@@ -91,7 +91,8 @@ const processDots = () => {
   dots.filter((dot) => dot.opacity > 0)
 }
 
-const ThumbAnimation = memo(() => {
+// No memo needed: AnimationCanvas keeps its loop running across re-renders.
+function ThumbAnimation() {
   return (
     <AnimationCanvas
       width={40}
@@ -126,7 +127,7 @@ const ThumbAnimation = memo(() => {
       onContextMenu={(e) => e.preventDefault()}
     />
   )
-})
+}
 
 export const AdvancedFilterPad = () => {
   const [frequency, setFrequency] = useState(2000)

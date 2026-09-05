@@ -1,4 +1,4 @@
-import { applyDelta, skewScale } from '../src/scale'
+import { applyDelta, skewScale } from '../src/scales'
 
 describe('applyDelta()', () => {
   const range = { min: 0, max: 100, step: 1 }
