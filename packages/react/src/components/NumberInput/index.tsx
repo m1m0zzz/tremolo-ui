@@ -14,12 +14,9 @@ import {
 import {
   applyDelta,
   clamp,
-  formatValue,
   InputEventOption,
   linearScale,
-  parseValue,
   type Scale,
-  type Units,
   type ValueRange,
 } from '@tremolo-ui/functions'
 
@@ -50,26 +47,20 @@ export interface NumberInputProps {
   scale?: Scale
 
   /**
-   * Unit to display the value in, or a list to pick from by magnitude.
-   * Builds the default `format` and `parse`.
+   * Render the value as text. Plain digits by default.
+   *
+   * `unitFormat` from `@tremolo-ui/functions` builds this and `parse` together
+   * for a unit, and spreads into the input:
    *
    * @example
-   * units='Hz'
-   * units={[['Hz', 1], ['kHz', 1000]]}
-   * units={[['ms', 1], ['s', 1000]]}
+   * <NumberInput.Root {...unitFormat('Hz', { digits: 2 })} value={v} />
    */
-  units?: string | Units
-  /**
-   * Digits after the decimal point, for the default `format`.
-   *
-   * @example
-   * // units={[['Hz', 1], ['kHz', 1000]]} digit={2}
-   * // 100 -> 100.00Hz, 1600 -> 1.60kHz
-   */
-  digit?: number
-  /** Render the value as text. Takes precedence over `units` / `digit`. */
   format?: (value: number) => string
-  /** Read a value back out of the text. Takes precedence over `units`. */
+  /**
+   * Read a value back out of the text. Has to undo `format`.
+   *
+   * Text with no number in it reads as `NaN`, which leaves the value alone.
+   */
   parse?: (text: string) => number
 
   /**
@@ -134,6 +125,20 @@ export interface NumberInputMethods {
   blur: () => void
 }
 
+/**
+ * A number at the start of the text, and nothing read after it. A half-typed
+ * entry still yields the number in front of it, but text with no number is
+ * `NaN` rather than 0, so that "unreadable" and "the user typed 0" stay apart.
+ */
+const LEADING_NUMBER = /^\s*([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)/
+
+const defaultFormat = (value: number) => String(value)
+
+const defaultParse = (text: string) => {
+  const match = text.match(LEADING_NUMBER)
+  return match ? Number(match[1]) : NaN
+}
+
 type Props = NumberInputProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof NumberInputProps>
 
@@ -145,8 +150,6 @@ export const Root = forwardRef<NumberInputMethods, Props>(
       max,
       step = 1,
       scale = linearScale,
-      units,
-      digit,
       format: formatProp,
       parse: parseProp,
       clampValue = true,
@@ -172,15 +175,8 @@ export const Root = forwardRef<NumberInputMethods, Props>(
     const [draft, setDraft] = useState<string | null>(null)
 
     // --- interpret props ---
-    const format = useCallback(
-      (v: number) =>
-        formatProp ? formatProp(v) : formatValue(v, units, digit),
-      [formatProp, units, digit],
-    )
-    const parse = useCallback(
-      (t: string) => (parseProp ? parseProp(t) : parseValue(t, units)),
-      [parseProp, units],
-    )
+    const format = formatProp ?? defaultFormat
+    const parse = parseProp ?? defaultParse
 
     // An unbounded end, and a range the caller opted out of enforcing, both
     // become the widest range the value pipeline can express.
@@ -224,8 +220,16 @@ export const Root = forwardRef<NumberInputMethods, Props>(
 
     const commitDraft = useCallback(() => {
       if (draft === null || readonly) return
+      const parsed = parse(draft)
+      // Text with no number in it is not a value. Dropping the draft puts the
+      // input back to what it was showing, rather than committing a zero the
+      // user never typed.
+      if (!Number.isFinite(parsed)) {
+        setDraft(null)
+        return
+      }
       // `range` is already the widest possible range when clampValue is off.
-      changeValue(clamp(parse(draft), range.min, range.max))
+      changeValue(clamp(parsed, range.min, range.max))
     }, [draft, readonly, parse, range, changeValue])
 
     const nudge = useCallback(

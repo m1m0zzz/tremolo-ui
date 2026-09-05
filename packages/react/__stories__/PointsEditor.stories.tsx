@@ -1,8 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-import { mapValue } from '@tremolo-ui/functions'
-import type { Units } from '@tremolo-ui/functions'
+import { mapValue, unitFormat } from '@tremolo-ui/functions'
 
 import { AnimationCanvas } from '../src/components/AnimationCanvas'
 import { NumberInput } from '../src/components/NumberInput'
@@ -140,10 +139,9 @@ function add(a: PointBaseType, b: PointBaseType): PointBaseType {
 const MIN_MS = 1
 const MAX_MS = 1000
 
-const MS_SEC_UNITS: Units = [
-  ['ms', 1],
-  ['s', 1000],
-]
+/** Values are kept in milliseconds, so 1500 shows as 1.5s. */
+const MS_SEC = unitFormat('s', { base: 'm', digits: 2 })
+const PERCENT = unitFormat('%', { prefixes: false, digits: 0 })
 
 function slope1(x: number, order: number) {
   return x ** order
@@ -335,7 +333,7 @@ export const ADSRWithSlope = () => {
               value: toRaw('A', A),
               min: MIN_MS,
               max: MAX_MS,
-              units: MS_SEC_UNITS,
+              ...MS_SEC,
               onChange: (rawValue: number) => setA(toNorm('A', rawValue)),
             },
             {
@@ -343,7 +341,7 @@ export const ADSRWithSlope = () => {
               value: toRaw('D', D),
               min: MIN_MS,
               max: MAX_MS,
-              units: MS_SEC_UNITS,
+              ...MS_SEC,
               onChange: (rawValue: number) => setD(toNorm('D', rawValue)),
             },
             {
@@ -351,8 +349,7 @@ export const ADSRWithSlope = () => {
               value: toRaw('S', S),
               min: 0,
               max: 100,
-              digit: 0,
-              units: '%',
+              ...PERCENT,
               onChange: (rawValue: number) => setS(toNorm('S', rawValue)),
             },
             {
@@ -360,14 +357,13 @@ export const ADSRWithSlope = () => {
               value: toRaw('R', R),
               min: MIN_MS,
               max: MAX_MS,
-              units: MS_SEC_UNITS,
+              ...MS_SEC,
               onChange: (rawValue: number) => setR(toNorm('R', rawValue)),
             },
           ].map((props) => {
             return (
               <NumberInput.Root
                 key={props.id}
-                digit={0}
                 className={styles.inputWrapper}
                 {...props}
               >
@@ -402,8 +398,7 @@ export const ADSRWithSlope = () => {
                 value={value}
                 min={-100}
                 max={100}
-                digit={0}
-                units={'%'}
+                {...PERCENT}
                 className={styles.inputWrapper}
                 onChange={onChange}
               >

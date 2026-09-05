@@ -1,6 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
+import { unitFormat } from '@tremolo-ui/functions'
+
 import { Knob } from '../../src/components/Knob'
 import { NumberInput } from '../../src/components/NumberInput'
 
@@ -19,10 +21,8 @@ export default {
 
 type Story = StoryObj<typeof NumberInput.Root>
 
-const hzUnits: [string, number][] = [
-  ['Hz', 1],
-  ['kHz', 1000],
-]
+/** `format` and `parse` come as a pair, so they spread in together. */
+const hz = unitFormat('Hz')
 
 export const Basic: Story = {
   render: (args) => {
@@ -36,10 +36,9 @@ export const Basic: Story = {
   },
 }
 
-export const UnitsAndDigit: Story = {
+export const WithUnit: Story = {
   args: {
-    units: hzUnits,
-    digit: 4,
+    ...unitFormat('Hz', { digits: 4 }),
   },
   render: (args) => {
     const [value, setValue] = useState(4321)
@@ -94,7 +93,7 @@ export const WithAnotherComponents: Story = {
   args: {
     min: 0,
     max: 100,
-    units: hzUnits,
+    ...hz,
   },
   render: (args) => {
     const [value, setValue] = useState(0)
@@ -207,7 +206,7 @@ export const SelectOnFocus = () => {
       {data.map(({ selectOnFocus, v, setter }) => (
         <section key={selectOnFocus} style={{ marginBottom: '2rem' }}>
           <p>selectOnFocus=&apos;{selectOnFocus}&apos;</p>
-          <NumberInput.Root value={v} units={hzUnits} onChange={setter}>
+          <NumberInput.Root value={v} {...hz} onChange={setter}>
             <NumberInput.InputField selectOnFocus={selectOnFocus} />
           </NumberInput.Root>
         </section>

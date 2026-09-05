@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai'
 
-import { clamp } from '@tremolo-ui/functions'
+import { clamp, unitFormat } from '@tremolo-ui/functions'
 
 import { AnimationCanvas } from '../../../src/components/AnimationCanvas'
 import { NumberInput } from '../../../src/components/NumberInput'
@@ -157,7 +157,7 @@ export const WaveSelector = ({
               value={semitone}
               min={MIN_SEMITONE}
               max={MAX_SEMITONE}
-              units={'st'}
+              {...unitFormat('st', { prefixes: false })}
               className={style.numberInputWrapper}
               onChange={(v) => setSemitone(v)}
             >
@@ -173,7 +173,7 @@ export const WaveSelector = ({
               value={detune}
               min={MIN_DETUNE}
               max={MAX_DETUNE}
-              units={'ct'}
+              {...unitFormat('ct', { prefixes: false })}
               className={style.numberInputWrapper}
               onChange={(v) => setDetune(v)}
             >
@@ -223,7 +223,7 @@ export const WaveSelector = ({
           value={position}
           min={0}
           max={100}
-          units="%"
+          {...unitFormat('%', { prefixes: false })}
           className={style.numberInputWrapper}
           onChange={(v) => setPosition(v)}
         >
