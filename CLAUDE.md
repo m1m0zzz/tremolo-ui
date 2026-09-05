@@ -64,6 +64,8 @@ npm run build:docs    # ドキュメントサイト（typedoc の生成が走る
 
 GitHub Actions（`build.yml`）が回すのは `build:package` と `test` だけで、**ドキュメントサイトと Storybook のビルドは Vercel でしか検証されない。** push して PR を作ってからでないと落ちたことに気づけないので、手元で通しておく。
 
+さらに `build.yml` には `paths` フィルタが入っていて、**`.md` のみ / `site/`（`site/package.json` を除く）のみの変更では実行されない。** どちらも `build:package` と `test` の結果に影響しないため。CI が走らないからといって検証が省かれているわけではないが、**changeset だけを足した PR は CI 信号がゼロになる**点は知っておくこと。
+
 過去に踏んだもの:
 
 - `packages/*/src` にファイルを足す・移すと、`site/docusaurus.config.ts` の typedoc の `entryPoints` が拾って API ページを生成する。Docusaurus は `_` で始まるパスを docs から除外するため、`_util` や `_internal` を `exclude` に入れておかないと「存在しない doc id を指すサイドバー」になってビルドが落ちる
