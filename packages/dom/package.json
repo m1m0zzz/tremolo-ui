@@ -1,6 +1,6 @@
 {
   "name": "@tremolo-ui/dom",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "framework-agnostic DOM layer used in @tremolo-ui/*",
   "type": "module",
   "sideEffects": false,
@@ -18,7 +18,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@tremolo-ui/functions": "^0.4.0"
+    "@tremolo-ui/functions": "^0.5.0"
   },
   "files": [
     "dist",
