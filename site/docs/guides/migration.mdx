@@ -15,6 +15,39 @@ All three packages are released together and always share a version.
 
 ## Unreleased
 
+### `NumberInput` formats through `format` and `parse` only
+
+`units` and `digit` are removed. They were a second way to say the same thing,
+and `format` silently won whenever both were given.
+
+```jsx
+// before
+<NumberInput.Root units={[['Hz', 1], ['kHz', 1000]]} digit={2} ... >
+
+// after
+<NumberInput.Root {...unitFormat('Hz', { digits: 2 })} ... >
+```
+
+`unitFormat` comes from `@tremolo-ui/functions` and returns the `format` and
+`parse` pair together, so it spreads straight into the input. It picks an SI
+prefix by magnitude; pass `prefixes: false` for a unit that takes none, and
+`base` for a value stored in a prefixed unit.
+
+```jsx
+// a single symbol appended as-is, which is what `units='dB'` used to do
+<NumberInput.Root {...unitFormat('dB', { prefixes: false, digits: 1 })} ... >
+
+// the value is in milliseconds: 1500 shows as 1.5s
+<NumberInput.Root {...unitFormat('s', { base: 'm' })} ... >
+```
+
+`Units`, `formatValue`, `parseValue` and `selectUnit` are removed from
+`@tremolo-ui/functions` with them.
+
+Text with no number in it now reads as `NaN` rather than 0, and the input keeps
+the value it had. Emptying the field and leaving it used to commit a 0. A
+hand-written `parse` should do the same for text it cannot read.
+
 ### MIDI input takes a handlers object
 
 `useMIDIInput` grew from three handlers to seven, which positional arguments
