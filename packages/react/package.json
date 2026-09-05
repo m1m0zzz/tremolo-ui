@@ -1,6 +1,6 @@
 {
   "name": "@tremolo-ui/react",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "React component library for audio app",
   "type": "module",
   "sideEffects": [
@@ -42,8 +42,8 @@
     "react-dom": "^18 || ^19"
   },
   "dependencies": {
-    "@tremolo-ui/dom": "^0.4.0",
-    "@tremolo-ui/functions": "^0.4.0",
+    "@tremolo-ui/dom": "^0.5.0",
+    "@tremolo-ui/functions": "^0.5.0",
     "clsx": "^2.1.1"
   },
   "files": [
