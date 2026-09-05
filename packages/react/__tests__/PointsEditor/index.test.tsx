@@ -77,6 +77,35 @@ function Subject({
   )
 }
 
+/** Two points, to pin down which one an event reaches. */
+function TwoPoints({ onA, onB }: { onA: jest.Mock; onB: jest.Mock }) {
+  const [a, setA] = useState<PointBaseType>({ x: 0.25, y: 0.5 })
+  const [b, setB] = useState<PointBaseType>({ x: 0.75, y: 0.5 })
+
+  return (
+    <PointsEditor.Root>
+      <PointsEditor.Container data-testid="two-container">
+        <PointsEditor.Point
+          data-testid="a"
+          value={a}
+          onChange={(v) => {
+            setA(v)
+            onA(v)
+          }}
+        />
+        <PointsEditor.Point
+          data-testid="b"
+          value={b}
+          onChange={(v) => {
+            setB(v)
+            onB(v)
+          }}
+        />
+      </PointsEditor.Container>
+    </PointsEditor.Root>
+  )
+}
+
 function setup(props: SubjectProps = {}) {
   const onChange = jest.fn()
   const { container } = render(<Subject onChange={onChange} {...props} />)
@@ -231,6 +260,66 @@ describe('PointsEditor', () => {
     act(() => (point as HTMLElement).focus())
     wheel(point, { deltaY: -1 })
     expect(onChange).toHaveBeenLastCalledWith({ x: 0.5, y: 0.49 })
+  })
+
+  test('the wheel reaches the focused point from anywhere over the editor', () => {
+    const { point, onChange } = setup()
+
+    act(() => (point as HTMLElement).focus())
+    // Nowhere near the point: the listener is on the container, not on the
+    // 16px point the cursor would otherwise have to stay on.
+    wheel(screen.getByTestId('container'), { deltaY: -1 })
+
+    expect(onChange).toHaveBeenLastCalledWith({ x: 0.5, y: 0.49 })
+  })
+
+  test('the wheel moves the focused point, not the one under the cursor', () => {
+    const onA = jest.fn()
+    const onB = jest.fn()
+    render(<TwoPoints onA={onA} onB={onB} />)
+
+    act(() => (screen.getByTestId('a') as HTMLElement).focus())
+    wheel(screen.getByTestId('b'), { deltaY: -1 })
+
+    expect(onA).toHaveBeenLastCalledWith({ x: 0.25, y: 0.49 })
+    expect(onB).not.toHaveBeenCalled()
+  })
+
+  test('only one point acts, however many are mounted', () => {
+    const onA = jest.fn()
+    const onB = jest.fn()
+    render(<TwoPoints onA={onA} onB={onB} />)
+
+    act(() => (screen.getByTestId('a') as HTMLElement).focus())
+    wheel(screen.getByTestId('two-container'), { deltaY: -1 })
+
+    expect(onA).toHaveBeenCalledTimes(1)
+    expect(onB).not.toHaveBeenCalled()
+  })
+
+  test('the wheel takes the scroll only while a point has focus', () => {
+    const { point } = setup()
+
+    const ignored = new WheelEvent('wheel', {
+      bubbles: true,
+      cancelable: true,
+      deltaY: -1,
+    })
+    act(() => {
+      point.dispatchEvent(ignored)
+    })
+    expect(ignored.defaultPrevented).toBe(false)
+
+    act(() => (point as HTMLElement).focus())
+    const taken = new WheelEvent('wheel', {
+      bubbles: true,
+      cancelable: true,
+      deltaY: -1,
+    })
+    act(() => {
+      point.dispatchEvent(taken)
+    })
+    expect(taken.defaultPrevented).toBe(true)
   })
 
   test('shift makes the wheel move the x axis', () => {

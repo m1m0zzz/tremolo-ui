@@ -85,8 +85,12 @@ export const Basic: Story = {
 
 /**
  * A point takes focus, so the arrow keys move it and the wheel moves it while
- * it is focused — shift selects the x axis. `Root` sets the step for every
- * point; a `Point` can override it, or pass `null` to opt out.
+ * it is focused — shift selects the x axis. The wheel works anywhere over the
+ * editor, not only over the point itself, and moves the focused point rather
+ * than the one under the cursor.
+ *
+ * `Root` sets the step for every point; a `Point` can override it, or pass
+ * `null` to opt out.
  */
 export const KeyboardAndWheel = () => {
   const [coarse, setCoarse] = useState<PointBaseType>({ x: 0.25, y: 0.5 })
@@ -94,7 +98,10 @@ export const KeyboardAndWheel = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <p>Click a point, then use the arrow keys or the wheel.</p>
+      <p>
+        Click a point, then use the arrow keys, or the wheel anywhere over the
+        editor.
+      </p>
       <PointsEditor.Root keyboard={['normalized', 0.05]}>
         <PointsEditor.Background
           style={{ background: '#f2f4f5', borderRadius: 4 }}

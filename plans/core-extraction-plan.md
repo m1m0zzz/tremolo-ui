@@ -738,8 +738,25 @@ Phase 5 の最後の 1 つ。zustand の除去だけでなく、触ったつい�
 - **`readonly` / `disabled` が `Root` から `Point` に伝わっていなかった**（実バグ）。`Point` はコンテキストから `__readonly` を読んでいたのに、ドラッグのガードは**ローカルの prop しか見ていなかった**ので、`<PointsEditor.Root readonly>` を書いても点は動かせた。`_readonly ?? rootReadonly` に統一し、ARIA 属性とガードで同じ値を使う
 - **`wheel` / `keyboard` を配線した。** 5.9 で「型にもドキュメントにも出るが何も起きない」と記録していたもの。`Root` に置いたまま `Point` が継承し、`Point` 側で上書きできる形にした（`disabled` / `readonly` と同じ）。`null` は「イベントを起こさない」という意味を持つので、継承は `??` ではなく `=== undefined` で判定する
   - キーボード: 矢印キー。**y は下向きに増える**ので ArrowUp は y を減らす
-  - ホイール: XYPad と同じ規約（shift で x 軸）。`requireFocus: true` なので 5.9 の方針にも従う
+  - ホイール: XYPad と同じ規約（shift で x 軸）。フォーカスが無ければ何もしないので 5.9 の方針にも従う
   - 既定値は `['normalized', 0.01]`。点の値は両軸とも 0..1 なので、ピクセルサイズによらず 100 ステップで端から端まで動く
+
+#### 複数の点があるときのホイールの配り方
+
+Slider / XYPad と違い、PointsEditor には**動かせる点が複数ある**。最初の実装は各 `Point` が自分の要素にリスナを張って `requireFocus: true` を渡していたが、これだと
+
+- ホイールイベントは**カーソル下の要素にしか届かない**
+- `requireFocus` は「その点自身にフォーカスがあるか」を見る
+
+の 2 つが重なり、**「カーソルがその点の上」かつ「その点にフォーカス」が同時に成立しないと何も起きなかった**。既定の点は 16px なので、クリック直後は効いていてもマウスが数ピクセル外れた瞬間に無言で止まる。Slider / XYPad は Root にリスナがあり `root.contains(activeElement)` を見るので「サムにフォーカスがあればコントロール上のどこでも効く」であり、PointsEditor だけ条件が厳しかった。
+
+**各 `Point` がリスナを Container に張り、`activeElement === 自分の要素` で自己フィルタする形にした。** 全ての点がイベントを見て、ちょうど 1 つだけが反応する。
+
+- 判定は `contains` ではなく**厳密一致でなければならない**。`contains` にすると全ての点が「Container 内にフォーカスがある」で一致してしまい、**全部が同時に動く**
+- レジストリ（点を context に登録させる仕組み）は作らなくてよい。各点は自分の要素を持っているので比較するだけで済む。Piano 4.3 で ref 配列のレジストリを消したのと同じ判断
+- `useWheel` に `target?: RefObject<Element | null>` を足した（公開 API の追加）。「返した ref コールバックの先」ではなく「既に別の場所で管理されている要素」に張るための受け口。ref は effect の中で読むので、親が入れる ref でも間に合う（React は ref を子から先に付け、passive effect はその後に走る）
+- 副作用として、**点にフォーカスがある間はエディタ上でページがスクロールしなくなった**（`preventDefault` が呼ばれるため）。Slider / XYPad は既にこの挙動なので揃う方向
+- `Point` を `Container` の外に置くとホイールが効かなくなるが、ドラッグは元から `containerRef` を基準にしているのでその使い方は既に成立していない
 - **`grid` prop を削除した。** TODO のまま未実装で、`Root` で分割代入もされていなかったため `...props` 経由で `<div grid="4">` として DOM に漏れていた（Piano の `blackNoteWidth` と同じ）
 - **`children` を型で必須にした。** Slider / Knob / XYPad / Piano と揃える。既定の描画へのフォールバックは元から無い
 - `Root` に `aria-disabled` / `aria-readonly` を付けた（CSS の状態セレクタの規約）。`index.css` に `[aria-disabled='true']` と `[aria-readonly='false']:focus` を足した（XYPad の Thumb に合わせた）
@@ -752,6 +769,7 @@ Phase 5 の最後の 1 つ。zustand の除去だけでなく、触ったつい�
 | 必須化 | `PointsEditorProps.children` |
 | 追加 | `PointProps` の `wheel` / `keyboard`（`Root` の値を上書きする） |
 | 追加 | `usePointsEditorContext` / `PointsEditorContextValue` / `PointsEditorBackgroundProps` / `PointsEditorContainerProps` を `src/index.ts` から export |
+| 追加 | `useWheel` の `target` オプションと `UseWheelOptions` 型 |
 | 挙動 | `Root` の `readonly` / `disabled` が `Point` に伝わるようになった（**それまで無視されていた**） |
 | 挙動 | `Root` の `wheel` / `keyboard` が実際に効くようになった |
 
@@ -759,7 +777,7 @@ Phase 5 の最後の 1 つ。zustand の除去だけでなく、触ったつい�
 
 #### テスト
 
-`packages/react/__tests__/PointsEditor/index.test.tsx` を新規追加（17 件）。PointsEditor は専用テストが無かった。ドラッグが「動いた距離」ではなく「指した位置」を返すこと、`min` / `max` のクランプ、`readonly` / `disabled` の継承と上書き、矢印キーの向き、ホイールのフォーカス要求、`Container` の ref 合成、`Root` の外での例外までを見る。
+`packages/react/__tests__/PointsEditor/index.test.tsx` を新規追加（17 件）。PointsEditor は専用テストが無かった。ドラッグが「動いた距離」ではなく「指した位置」を返すこと、`min` / `max` のクランプ、`readonly` / `disabled` の継承と上書き、矢印キーの向き、ホイールのフォーカス要求、`Container` の ref 合成、`Root` の外での例外までを見る。点が 2 つある場合のホイールの配り先（フォーカス中の点が動き、カーソル下の点は動かない / 反応するのは 1 つだけ）も含む。
 
 ### Phase 6: Vue / Svelte
 

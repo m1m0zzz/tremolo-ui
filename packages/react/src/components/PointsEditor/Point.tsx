@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { ComponentPropsWithoutRef, useCallback } from 'react'
+import { ComponentPropsWithoutRef, useCallback, useState } from 'react'
 
 import { applyDelta, clamp, InputEventOption } from '@tremolo-ui/functions'
 
@@ -54,12 +54,6 @@ export interface PointProps<T extends PointBaseType> {
  */
 const AXIS = { min: 0, max: 1 }
 
-/**
- * The wheel only acts while the point has focus, so that scrolling a page past
- * the editor does not move anything.
- */
-const WHEEL_OPTIONS = { requireFocus: true }
-
 export function Point<T extends PointBaseType>({
   value,
   min,
@@ -100,6 +94,9 @@ export function Point<T extends PointBaseType>({
   const wheel = _wheel === undefined ? rootWheel : _wheel
   const keyboard = _keyboard === undefined ? rootKeyboard : _keyboard
 
+  // Compared against the focus below, so the point needs its own element.
+  const [element, setElement] = useState<HTMLDivElement | null>(null)
+
   // The value is the position itself: no scaling, and no rounding to a step.
   const { refCallback: dragRefCallback, dragging } =
     useDragValue<HTMLDivElement>({
@@ -133,18 +130,29 @@ export function Point<T extends PointBaseType>({
     [value, min, max, onChange],
   )
 
-  const wheelRefCallback = useWheel<HTMLDivElement>((event) => {
-    if (!onChange || readonly || !wheel) return
-    event.preventDefault()
-    // Scrolling up moves the point towards y = 0; shift switches to x.
-    const axis = event.shiftKey ? 'x' : 'y'
-    const direction = event.deltaY < 0 ? -1 : 1
-    nudge(axis, direction, wheel)
-  }, WHEEL_OPTIONS)
+  // The listener sits on the container rather than on the point: a wheel event
+  // only reaches what the cursor is over, and a point is a 16px target. Every
+  // point sees the event and the focused one acts, so the wheel works anywhere
+  // over the editor, the way it does for Slider and XYPad.
+  //
+  // The focus test is an identity check, not `contains`: with `contains` every
+  // point would match the container's focus and they would all move at once.
+  useWheel(
+    (event) => {
+      if (!onChange || readonly || !wheel) return
+      if (!element || element.ownerDocument.activeElement !== element) return
+      event.preventDefault()
+      // Scrolling up moves the point towards y = 0; shift switches to x.
+      const axis = event.shiftKey ? 'x' : 'y'
+      const direction = event.deltaY < 0 ? -1 : 1
+      nudge(axis, direction, wheel)
+    },
+    { target: containerRef },
+  )
 
   const refCallback = useComposedRefs<HTMLDivElement>(
     dragRefCallback,
-    wheelRefCallback,
+    setElement,
   )
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
