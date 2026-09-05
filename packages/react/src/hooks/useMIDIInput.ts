@@ -1,22 +1,54 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
-import { createMIDIInput } from '@tremolo-ui/dom'
+import {
+  createMIDIInput,
+  PITCH_BEND_CENTER,
+  type MIDIInputHandlers,
+  type MIDIInputInstance,
+} from '@tremolo-ui/dom'
+
+export { PITCH_BEND_CENTER, type MIDIInputHandlers }
 
 /**
- * Hooks for handling note on/off events. To be used with useMIDIAccess. Internally uses useMIDIMessage.
+ * Handle MIDI input events. To be used with {@link useMIDIAccess}.
+ *
+ * The handlers are read fresh on every event, so writing them inline is fine:
+ * the listeners are attached once per `midiAccess` and stay attached. Devices
+ * plugged in later are picked up without anything having to be rebuilt.
+ *
+ * @example
+ * const { midiAccess } = useMIDIAccess()
+ * useMIDIInput(midiAccess, {
+ *   onNoteOnEvent: (note, velocity) => play(note, velocity / 127),
+ *   onNoteOffEvent: (note) => stop(note),
+ *   onControlChangeEvent: (controller, value) => {
+ *     if (controller === 1) setModulation(value / 127)
+ *   },
+ * })
  */
 export function useMIDIInput(
   midiAccess: MIDIAccess | null,
-  onNoteOnEvent?: (note: number, velocity: number) => void,
-  onNoteOffEvent?: (note: number) => void,
-  onPitchBendEvent?: (msb: number, lsb: number) => void,
+  handlers: MIDIInputHandlers,
 ) {
+  // Read when the instance is created. The effect below keeps it current, and
+  // runs right after, so a stale handler is replaced within the same commit.
+  const latest = useRef(handlers)
+  const instanceRef = useRef<MIDIInputInstance | null>(null)
+
   useEffect(() => {
-    const instance = createMIDIInput(midiAccess, {
-      onNoteOnEvent,
-      onNoteOffEvent,
-      onPitchBendEvent,
-    })
-    return () => instance.destroy()
-  }, [midiAccess, onNoteOnEvent, onNoteOffEvent, onPitchBendEvent])
+    const instance = createMIDIInput(midiAccess, latest.current)
+    instanceRef.current = instance
+
+    return () => {
+      instanceRef.current = null
+      instance.destroy()
+    }
+  }, [midiAccess])
+
+  // Runs after every render: handlers come from props and are cheap to push,
+  // and updating in place leaves the listeners untouched.
+  useEffect(() => {
+    latest.current = handlers
+    instanceRef.current?.update(handlers)
+  })
 }

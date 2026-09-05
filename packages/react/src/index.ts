@@ -81,8 +81,14 @@ export {
   useMIDIAccess,
   NOT_SUPPORTED,
   PERMISSION_DENIED,
+  UNAVAILABLE,
   type MIDIAccessError,
+  type MIDIAccessOptions,
 } from './hooks/useMIDIAccess'
-export { useMIDIInput } from './hooks/useMIDIInput'
+export {
+  useMIDIInput,
+  PITCH_BEND_CENTER,
+  type MIDIInputHandlers,
+} from './hooks/useMIDIInput'
 export { useMIDIMessage } from './hooks/useMIDIMessage'
 export { useWheel, type UseWheelOptions } from './hooks/useWheel'
