@@ -299,10 +299,172 @@ export type XYInput<T> = [T] extends [readonly unknown[]]
 ### Phase 4: 残りのコンポーネント
 
 - [x] AnimationCanvas → **4.2** で完了
-- [ ] NumberInput → 設計は **4.1** で確定済み
-- [ ] Piano
-  - [ ] 既存のTODO: マルチタッチ、グリッサンド。(`usePianoDrag` が該当)
-  - [ ] コンポーネント設計の検討
+- [x] NumberInput → **4.1** で完了
+- [x] Piano → **4.3** で完了（[5.5](#55-piano-のアーキテクチャ再検討--phase-4-の一部) と一体）
+
+#### 4.3 Piano の再設計
+
+**compound component をやめる。** Phase 2.5 の形（children をそのまま描画）に揃えるのではなく、逆方向に倒す。`WhiteKey` / `BlackKey` / `KeyLabel` を削除し、`Root` が鍵盤を描く。per-key の customize は `keyProps` / `label` の 2 つのコールバックで受ける。
+
+##### 現行の何が成立していないか
+
+| | 内容 |
+| --- | --- |
+| Key が無いと鳴らない | `onPlayNote` を呼ぶ唯一の場所が `KeyImpl` の `useImperativeHandle`（`key.tsx:90`）。`Root` は `keyRefs.current[i].current.play()` 経由でしか鳴らせない |
+| 幾何が二重管理 | `Root` の `notePosition` / `getHitKeyIndex` は自前の `whiteNoteWidth` と定数 `blackPerWhiteWidth = 0.65` / 高さ比 `0.6` で計算する（`index.tsx:155,166,182,183`）が、Key は自分の `width` / `height` prop で描画する（`key.tsx:125-127`）。既定値が一致しているだけで、`<Piano.WhiteKey width={60}>` と書くと**描画だけ 60 になり、位置と当たり判定は 40 のまま**になる |
+| 死んでいる prop | `PianoProps.blackNoteWidth`（`index.tsx:58`）はどこでも destructure されず、`...props` 経由で `<div>` に不正な属性として流れる。5.4 の `SVGRoot` の `block` と同種 |
+| ref が children の並び順に結合 | `React.Children.map` の index で ref を割り当てる（`index.tsx:129`）ため、children をラップしたり並べ替えると note と ref がずれる |
+| ref を毎レンダー作り直す | `keyRefs.current[i] = createRef()` をレンダー本体で実行している（`index.tsx:107-109`） |
+
+一方で `WhiteKey` / `BlackKey` が実際に提供しているのは `bg` / `activeBg` などを CSS 変数としてインラインで書くことだけで、色は既に `index.css` の `.tremolo-piano-white-key` / `.tremolo-piano-black-key` と `--bg` / `--active-bg` で完結している。**上記 5 つを抱える対価に見合っていない。**
+
+##### 決めたこと
+
+- **`Piano = { Root }` にする。** 名前空間オブジェクトの形は他コンポーネントと揃えたまま残す
+- **`Root` は children を取らない。** 鍵盤の数は `noteRange` 可変なので、Slider のように children で書かせると最小構成が map のボイラープレートになる
+- **幾何は `Root` だけが持つ。** `whiteKeyWidth` / `blackKeyWidthRatio` / `blackKeyHeightRatio` / `keyGap` / `fill` / `height`。`blackNoteWidth` は削除
+- **per-key の customize は 2 つのコールバック。** 内容は `label`、見た目と属性は `keyProps`
+
+  ```ts
+  export interface KeyState {
+    index: number
+    keyType: 'white' | 'black'
+    active: boolean
+    disabled: boolean
+  }
+
+  label?: (note: number, state: KeyState) => ReactNode
+  keyProps?: (note: number, state: KeyState) => ComponentPropsWithoutRef<'div'>
+  ```
+
+  `label` は現行の `(note, index)` から**シグネチャが変わる破壊的変更**（`(_, i) => keys[i]` → `(_, { index }) => keys[index]`）。似た 2 つのコールバックで引数の形が違うのを避けるため揃える。
+
+- **`keyProps` の style は幾何を上書きできない。** `style={{ ...userStyle, left, width, height }}` の順にマージする。per-key コンポーネントに `width` を持たせるのとの決定的な違いがここで、上表の「幾何が二重管理」が構造的に起きなくなる。`className` は `clsx('tremolo-piano-white-key', userClassName)`
+- **鍵盤の DOM に `data-note` / `data-note-key` を出す。** 「全部の C だけ濃く」のような静的な条件は CSS だけで済み、コールバックが要らなくなる
+
+  ```html
+  <div class="tremolo-piano-white-key" data-note="60" data-note-key="C"
+       data-active="true" aria-disabled="false" style="left: …; width: …">
+  ```
+
+- **スケールのハイライトは `keyProps` で書く。** 「D メジャーに含まれる 7 つのピッチクラス」は JS の集合であって CSS のセレクタでは計算できないため、静的な CSS だけでは書けない。逆に compound にしても全鍵盤を手で map し直すことになるので、props を返す関数 1 つが最小の解になる
+
+  ```tsx
+  keyProps={(note) => ({ 'data-in-scale': inScale(note, root, 'major') })}
+  ```
+
+  そのための音楽的スケールを `functions` の `midi.ts` に足した（`scaleIntervals` / `ScaleName` / `inScale` / `scaleNotes`）。**`scales.ts` には入れない。** あちらの `Scale` は値の分布カーブ（`linearScale` / `exponentialScale`、Slider / Knob の `scale` prop）で、同じ語が 2 つの意味を持つのを避けるため。`midi.ts` なら `noteKey` / `noteName` / `noteToFrequency` の隣で、typedoc のページも増えない
+
+- **`renderKey` のような「鍵盤を丸ごと差し替える」入口は作らない。** `label`（content）と `keyProps`（style / 属性）で per-key の需要は埋まる
+- **`label` が空文字を返したら描画しない。** `undefined` と同じ扱いにする。`SHORTCUTS.HOME_ROW_NATURAL` は黒鍵の枠を `''` で埋めるので、`label={(_, { index }) => keys[index]}` がそのまま書けないと空のラベル枠が黒鍵に並ぶ
+
+##### キーボードショートカット
+
+`KeyboardShortcuts.keys` は `noteRange.first` からの半音単位の配列で、消費側は `keys.indexOf(e.key)` だけ（`index.tsx:250,261`）。`KeyboardEvent.key` が空文字になることは無いので、**`''` を置いた位置はショートカット無しになる**。
+
+宣言だけで未実装だった `flags.naturalOnly` を削除し、この規則で白鍵だけを鳴らす `SHORTCUTS.HOME_ROW_NATURAL` を足した。黒鍵の位置を `''` で埋めてあるので、`HOME_ROW` と要素の位置が揃う。どちらも `noteRange.first` が C であることを前提にする（元からの前提）。
+
+##### 発音状態を `Root` へ移す
+
+`activeNotes` を `Root`（正確には後述の `createPianoInput`）が持ち、**ポインタ / キーボードショートカット / `PianoMethods.playNote`（MIDI）の 3 経路が全部そこへ集まる**形にする。Key は状態を持たない表示専用になり、「Key が無いと鳴らない」が構造的に解消する。
+
+- **同じ note を複数の source が押さえうるので、source 単位で数える。** マルチタッチでは、ある指が押さえている鍵盤へ別の指がグリッサンドで乗ることがある。`note → Set<source>`（source は `pointerId` / キーボードのキー / `'api'`）で持ち、**source が 0 になったときだけ `onStopNote` を撃つ**
+- `KeyMethods`（`play` / `stop` / `played`）は公開 API から削除する。`keyRefs` と `createRef` のループも消える
+- `PianoMethods`（`playNote` / `stopNote`）は残す。Web MIDI API の story がこれを使っている
+
+##### なぜ `createDragValue` を使わないか
+
+**旧 5.5 の「`useDragWithElement` との差は pointerdown で発火するかだけで、`updateOnPointerDown` で吸収できる」は誤り。** 2 段階で成立しない。
+
+1. **`createDrag` が単一ポインタ固定。** `drag.ts:130` の `if (pointerId !== null) return` が 2 本目以降の pointerdown を捨てる。ドラッグ状態（`startX` / `lastX` / `moveTarget` / `previousCursor`）も全てインスタンス単位のスカラーで、複数ポインタを保持できない
+2. **それを直しても `createDragValue` の意味論が合わない。** `createDragValue` は「位置 → `AxisOptions`（min / max / step / scale）を通したスカラー値」であり、Piano が要るのは x, y → 鍵盤の当たり判定。12 半音が白鍵 7 つ分の幅に乗るので note は x に対して等間隔ではなく、さらに黒鍵は白鍵に**重なる**（y も見て黒鍵を先に判定する必要がある。現行 `getHitKeyIndex` が `[...blackNotes, ...whiteNotes]` の順で走査しているのがこれ）。`axis: { min: first, max: last, step: 1 }` で通すと単に違う鍵盤が鳴る
+
+`updateOnPointerDown` が吸収するのは発火タイミングだけで、マッピングと複数ポインタは別の問題。
+
+##### パッケージ配置
+
+| 出すもの | 行き先 | 備考 |
+| --- | --- | --- |
+| 鍵盤の幾何（`notePosition` / `pianoWidth` / `noteAt`） | **`@tremolo-ui/functions`**（`piano.ts`） | DOM 非依存の純関数。`isBlackKey` / `noteKey` の隣。Vue / Svelte からも要る |
+| 複数ポインタ対応 | 既存の `createDrag` に `multiPointer` を足す | 下記 |
+| ポインタ入力と発音状態 | **`@tremolo-ui/dom`**（`createPianoInput`） | 下記 |
+| `<div>` の描画・キーボードショートカット | `@tremolo-ui/react` | |
+
+`functions` に `piano.ts` を足すと typedoc の entryPoints が拾う。`unit.ts` で踏んだ「ファイル名の H1 と同名 export の見出しで slug が衝突する」を避けるため、`piano` という名前の export は作らない。
+
+```ts
+// packages/functions/src/piano.ts
+export interface PianoLayout {
+  noteRange: { first: number; last: number }
+  whiteKeyWidth: number
+  /** @default 1 */
+  keyGap?: number
+  /** @default 0.65 */
+  blackKeyWidthRatio?: number
+  /** @default 0.6 */
+  blackKeyHeightRatio?: number
+}
+
+export function notePosition(note: number, layout: PianoLayout): number
+export function pianoWidth(layout: PianoLayout): number
+/** 黒鍵を先に判定する。どの鍵盤でもなければ null */
+export function noteAt(x: number, y: number, height: number, layout: PianoLayout): number | null
+```
+
+これで 5.5 の「当たり判定が座標計算とコンポーネント描画に密結合している」が解ける。
+
+##### `createDrag` の `multiPointer`
+
+新しい `createMultiDrag` は作らない。managed styles・`selectstart` の抑制・pointer capture・capture 失敗時の window フォールバックを二重管理したくないため、`createDrag` を拡張する。
+
+- 内部のスカラー群を `Map<pointerId, { startX, startY, lastX, lastY, moveTarget }>` に置き換え、**単一ポインタは「上限 1 の同じ Map」として同一経路にする**
+- `DragState` に `pointerId` を追加する
+- `multiPointer` は生成時固定（`createAnimationCanvas` の `relativeSize` と同じ扱い）。ドラッグ中に切り替わる意味が無い
+- 既定 `false` なので既存の挙動は変わらない。`cursor` は最初のポインタで適用し、最後のポインタが離れたら戻す
+
+##### `createPianoInput`
+
+```ts
+createPianoInput(element, {
+  layout: PianoLayout,      // update() で差し替え可
+  glissando?: boolean,      // @default true
+  midiMax?: number,
+  onPlayNote?: (note: number, velocity?: number) => void
+  onStopNote?: (note: number) => void
+  onActiveNotesChange?: (notes: number[]) => void
+})
+```
+
+`createDrag({ multiPointer: true })` + `noteAt` の上に、**pointerId → 今押さえている note** と **note → Set\<source\>** を持つ層。glissando（移動で note が変わったら旧 note を stop → 新 note を play）とマルチタッチはここで完結する。
+
+インスタンスは `noteOn(note, { source, velocity })` / `noteOff(note, { source })` を持ち、**キーボードショートカットと `PianoMethods.playNote` もここへ流す**。こうすると「今何が鳴っているか」の所有者が 1 つになり、Vue / Svelte も source 併合を書き直さずに済む。React は `onActiveNotesChange` を `setState` に繋ぐ。
+
+##### 連鎖して片付くもの
+
+- **`__width` / `__note` / `__label` が消滅。** CLAUDE.md が「残っているのは `Piano/key.tsx` と `Piano/KeyLabel.tsx` のみ」と書いている `__` prop が全滅する
+- **Phase 5（zustand 除去）の Piano 分。** サブコンポーネントが無くなるので `Piano/context.tsx` ごと不要になり、置換ではなく削除で終わる
+- **`index.tsx:238` の空 `// FIXME`。** `usePianoDrag` の呼び出しごと消える
+- **`usePianoDrag` と `useRefCallbackEvent`。** 前者は不要になる。後者は `usePianoDrag` からしか使われていないので、`src/hooks/_internal/` から消せる（passive でないリスナが他に要らなければ）
+
+##### タスク
+
+- [x] `functions` の `midi.ts` に音楽的スケールを足した（`scaleIntervals` / `ScaleName` / `inScale` / `scaleNotes`）。major / naturalMinor / harmonicMinor / melodicMinor / 教会旋法 7 つ / majorPentatonic / minorPentatonic / blues / wholeTone / chromatic。`inScale` はオクターブ非依存、引数は `noteNumber` と `noteName` のどちらでも取れる（`isWhiteKey` などと同じ）
+- [x] スケールハイライトの story（`ScaleHighlight`）を足した
+- [x] `packages/functions/src/piano.ts` に `NoteRange` / `PianoLayout` / `getNoteRangeArray` / `notePosition` / `pianoWidth` / `blackKeyWidth` / `noteAt` を足した（テスト 12 件）。**白鍵の当たり判定は `keyGap` を含む slot 全体にした。** 旧実装は `whiteNoteWidth` だけで判定していたため、鍵盤の間に 1px のどこにも当たらない帯があった
+- [x] `createDrag` に `multiPointer` を足した。内部のスカラーを `Map<pointerId, PointerState>` に、リスナは対象ごとに参照カウントで張る（同じ関数を 2 回 `addEventListener` しても 1 つなので、1 本目が離れた時点で 2 本目が死ぬのを防ぐ）。既存 19 件はそのまま通り、新規 7 件を追加
+- [x] `packages/dom/src/piano/input.ts` に `createPianoInput` を実装した（テスト 16 件）。`note → Set<NoteSource>` と `pointerId → note` を持ち、`noteOn` / `noteOff` でキーボード・MIDI も同じ経路に入る
+- [x] `Piano.Root` を書き直した。`key.tsx` / `KeyLabel.tsx` / `context.tsx` / `usePianoDrag.ts` / `useRefCallbackEvent.ts` を削除（`useRefCallbackEvent` は `usePianoDrag` からしか使われていなかった）
+- [x] `keyProps` / `label(note, state)` / `data-note` / `data-note-key` を実装した。**`KeyAttributes` は `Record<`data-${string}`, ...>` との交差にする必要がある**（`data-*` は JSX 構文でだけ許され、オブジェクト型としては通らない。`keyProps` の主用途がこれなので必須）
+- [x] `index.css` は変更不要だった。DOM 構造（キー → ラベル wrapper → ラベル）とクラス名・`data-active` / `aria-disabled` を維持したため
+- [x] `keyboardShortcuts.ts` の `flags.naturalOnly`（宣言だけで未実装）を削除し、`SHORTCUTS.HOME_ROW_NATURAL` を足した
+- [x] `HOME_ROW_NATURAL` の story（`NaturalShortcuts`）を足した
+- [x] `Root` の label 描画で、`''` / `null` / `undefined` はラベルの枠ごと出さない（`0` はラベルとして残す）
+- [x] `__tests__/Piano/index.test.tsx` を新設した（14 件）
+- [x] `__stories__/Piano.stories.tsx` を書き直した（`Styling` は `keyProps` ベース）
+- [x] `site/examples/components/piano/basic.tsx` を更新した（`index.mdx` は example を参照するだけなので変更不要）
+- [x] `__stories__/combined/WavetableSynth/` を追随させた
+- [x] 移行ガイドに載せる破壊的変更を milestone に追記した。changeset は `.changeset/olive-melons-shine.md`
+- [x] ブラウザでの目視確認（マルチタッチ、グリッサンド、`fill` のリサイズ、`ScaleHighlight` の active 色）。jsdom ではポインタと `getBoundingClientRect` を偽装しているので実機での確認が要る
 
 #### 4.2 AnimationCanvas
 
@@ -548,7 +710,7 @@ NumberInput は `clampValue === false` のとき `min` / `max` に `MIN/MAX_SAFE
 - [x] `index.css` を新しい DOM 構造に合わせる（`variant` のセレクタを外し、フォーカス表示は input の `:focus` か wrapper の `:focus-within` に統一）
 - [x] stories を書き直す（`Variant` は削除、`SelectWithFocus` は `SelectOnFocus` に、`ClampValue` / `CustomFormat` を追加）。`__stories__/combined/` と `useWheel.stories.tsx`、`Piano` / `PointsEditor` / `Slider` の stories も追随済み
 - [x] `site/examples/components/number-input/basic.tsx` を更新する（`site/docs/components/NumberInput/index.mdx` は例を参照するだけなので変更不要）
-- [ ] ブラウザでの目視確認（IME での入力、モバイルのキーボード、Stepper のドラッグと長押しの切り分け）
+- [x] ブラウザでの目視確認（IME での入力、モバイルのキーボード、Stepper のドラッグと長押しの切り分け）
 
 ### Phase 5: zustand 除去
 
@@ -619,13 +781,11 @@ Radix UI / Base UI と同じ方針にする。パッケージはスタイルを�
 
 ### 5.5 Piano のアーキテクチャ再検討 — Phase 4 の一部
 
-Phase 4 の Piano 対応と一体で進める。
+**設計は 4.3 に集約した。タスクもそちらにある。** ここには経緯だけ残す。
 
-- [ ] `usePianoDrag` を `createDragValue` ベースに置き換える。`useDragWithElement` との差は「pointerdown で発火するか」だけで、Phase 2 で入れた `updateOnPointerDown` オプションで吸収できる見込み
-- [ ] `index.tsx:193` の TODO を消化する。「単一ポインタは useDrag で対応可能だが、マルチタッチには TouchEvent が必要」とあるが、**Pointer Events は `pointerId` で複数ポインタを区別できるため、TouchEvent は不要**。コアに複数ポインタ対応のプリミティブを足す
-- [ ] `index.tsx:238` の `// FIXME`（内容が書かれていない）が何を指すか特定する
-- [ ] `keyboardShortcuts.ts:3` の TODO
-- [ ] 鍵盤の当たり判定（`getHitKeyIndex`）が座標計算とコンポーネント描画に密結合している点を見直す
+当初の想定「`usePianoDrag` を `createDragValue` ベースに置き換える。差は pointerdown で発火するかだけで `updateOnPointerDown` で吸収できる」は**誤りだった**（理由は 4.3「なぜ `createDragValue` を使わないか」）。マルチタッチには `createDrag` 側の拡張が要り、当たり判定は軸のマッピングでは表せない。
+
+`index.tsx:193` の TODO（マルチタッチには TouchEvent が必要そう）については、**Pointer Events が `pointerId` で複数ポインタを区別できるため TouchEvent は不要**、という判断で変わらない。
 
 ### 5.6 サブコンポーネントの配置ミスを検出する
 
@@ -837,6 +997,20 @@ React 側ではなくコアに置くのは、Vue / Svelte でも同じ判定が�
 切り替え作業中に判明した。`PointsEditorProps` は `wheel` / `keyboard` を宣言していて型にもドキュメントにも出るが、`index.tsx` は `useWheel` を呼んでおらず、キー操作も実装していない。**渡しても何も起きない。**
 
 - [ ] 配線するか、prop を削除するかを決める（Phase 4 / 5 で PointsEditor に触るときに一緒に片付ける）
+
+### 5.10 緩い等価（`==` / `!=`）をやめる
+
+ESLint に `eqeqeq` を設定しておらず、`==` / `!=` がリポジトリ全体に散っている。**現時点で `eqeqeq: ['error', 'always']` を掛けると 88 件**（`packages/*/src` + `site/src` + `__stories__`。内訳は `packages/react/src` 39 / `packages/functions/src` 26 / `packages/react/__stories__` 21 / `packages/dom/src` 8 / `site/src` 5）。
+
+大半は TypeScript で型が付いていて両辺が同じ型なので、実際に型強制は起きていない。**現状で動いているバグは見つかっていない**が、
+
+- 意図して nullish をまとめて見ている箇所（`drag == null`、`min != undefined` など 14 件ほど）と、単に型が同じもの（`key == 'Enter'`、`typeof note == 'string'` など）が**見分けられない**。`== null` は「null と undefined の両方」という意図の表明として有用なのに、周りが全部 `==` だとその情報が消える
+- 実際に `Piano/KeyLabel.tsx` のラベル判定で「`undefined` は入っているのか」が読んで分からない状態になっていた（4.3 で明示的な比較に直した）
+
+- [ ] `eslint.config.*` に `eqeqeq` を足す。`null: 'ignore'` を付けるか、`always` で厳密にするかを決める（`null: 'ignore'` にしても減るのは 7 件だけ。`!= undefined` は対象外なので実質ほぼ変わらない）
+- [ ] 88 件を潰す。**`eqeqeq` の autofix は 1 件も効かない**（ESLint の fixer は両辺の型を確実に判定できるときしか出ないため、実測で fixable 0 件）ので全て手で見る
+- [ ] nullish をまとめて見たい箇所は `== null` を残すのか、`=== null || === undefined` に開くのか、`?? ` / optional chaining に書き換えるのかを決めて統一する
+- [ ] 1 回の変更でまとめて直す。段階的にやると新旧が混在した状態が長く残り、どちらが意図的なのか余計に分からなくなる
 
 ## 6. 既存コードで見つかった問題
 

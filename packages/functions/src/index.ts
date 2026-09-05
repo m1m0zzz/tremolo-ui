@@ -26,7 +26,9 @@ export {
 } from './scales'
 export {
   type NoteKey,
+  type ScaleName,
   type WhiteKey,
+  inScale,
   isBlackKey,
   isWhiteKey,
   noteKey,
@@ -35,8 +37,19 @@ export {
   noteNumber,
   noteToFrequency,
   parseNoteName,
+  scaleIntervals,
+  scaleNotes,
   whiteKeys,
 } from './midi'
+export {
+  type NoteRange,
+  type PianoLayout,
+  blackKeyWidth,
+  getNoteRangeArray,
+  noteAt,
+  notePosition,
+  pianoWidth,
+} from './piano'
 export { type InputEventOption } from './types'
 export { type Units, formatValue, parseValue, selectUnit } from './unit'
 export { isEmpty, mod, styleHelper, xor } from './util'

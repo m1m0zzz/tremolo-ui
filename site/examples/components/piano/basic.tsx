@@ -26,8 +26,7 @@ function App() {
         onStopNote={(noteNumber) => {
           synth.triggerRelease(noteName(noteNumber))
         }}
-        // Notice: need optional chaining (?.)
-        label={(_, i) => SHORTCUTS.HOME_ROW.keys[i]?.toUpperCase()}
+        label={(_, { index }) => SHORTCUTS.HOME_ROW.keys[index]?.toUpperCase()}
       />
     </div>
     // expand end

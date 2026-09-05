@@ -254,7 +254,7 @@ export const WavetableSynth = () => {
       <Piano.Root
         noteRange={{ first: firstNote, last: lastNote }}
         keyboardShortcuts={SHORTCUTS.HOME_ROW}
-        label={(_, i) => SHORTCUTS.HOME_ROW.keys[i]?.toUpperCase()}
+        label={(_, { index }) => SHORTCUTS.HOME_ROW.keys[index]?.toUpperCase()}
         height={120}
         onPlayNote={handlePlay}
         onStopNote={handleStop}

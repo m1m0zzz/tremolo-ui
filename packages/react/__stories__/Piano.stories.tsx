@@ -2,26 +2,22 @@ import { Meta, StoryObj } from '@storybook/react-vite'
 import { useRef, useState } from 'react'
 import * as Tone from 'tone'
 
-import { noteNumber, noteName, isWhiteKey } from '@tremolo-ui/functions'
+import {
+  inScale,
+  noteKey,
+  noteName,
+  noteNumber,
+  type ScaleName,
+} from '@tremolo-ui/functions'
 
 import { NumberInput } from '../src/components/NumberInput'
-import {
-  getNoteRangeArray,
-  Piano,
-  PianoMethods,
-  SHORTCUTS,
-} from '../src/components/Piano'
+import { Piano, PianoMethods, SHORTCUTS } from '../src/components/Piano'
 import { useMIDIAccess } from '../src/hooks/useMIDIAccess'
 import { useMIDIInput } from '../src/hooks/useMIDIInput'
 
 export default {
   title: 'Components/Piano/Root',
   component: Piano.Root,
-  argTypes: {
-    children: {
-      control: false,
-    },
-  },
 } satisfies Meta<typeof Piano.Root>
 
 type Story = StoryObj<typeof Piano.Root>
@@ -33,11 +29,6 @@ export const Basic: Story = {
   },
   render: (args) => {
     const synth = new Tone.PolySynth({ volume: -6 }).toDestination()
-    // synth.set({
-    //   oscillator: {
-    //     type: 'sine'
-    //   }
-    // })
 
     return (
       <div>
@@ -60,8 +51,7 @@ export const Basic: Story = {
           onStopNote={(noteNumber) => {
             synth.triggerRelease(noteName(noteNumber))
           }}
-          // Notice: need optional chaining (?.)
-          label={(_, i) => SHORTCUTS.HOME_ROW.keys[i]?.toUpperCase()}
+          label={(_, { index }) => SHORTCUTS.HOME_ROW.keys[index]}
         />
       </div>
     )
@@ -129,40 +119,123 @@ export const Range = () => {
   )
 }
 
+/**
+ * Both key types are styled through `keyProps`, and only the C keys get a
+ * label. Neither needs a component per key.
+ */
 export const Styling = () => {
   const range = { first: noteNumber('C3'), last: noteNumber('B4') }
 
   return (
-    <Piano.Root noteRange={range} keyboardShortcuts={SHORTCUTS.HOME_ROW}>
-      {getNoteRangeArray(range).map((note) => {
-        return isWhiteKey(note) ? (
-          <Piano.WhiteKey
-            key={note}
-            noteNumber={note}
-            bg="#83888a"
-            activeBg="#5acee8"
+    <Piano.Root
+      noteRange={range}
+      keyboardShortcuts={SHORTCUTS.HOME_ROW}
+      keyProps={(_, { keyType }) =>
+        keyType === 'white'
+          ? { style: { '--bg': '#83888a', '--active-bg': '#5acee8' } }
+          : { style: { '--bg': '#333536', '--active-bg': '#5acee8' } }
+      }
+      label={(note, { keyType }) =>
+        keyType === 'white' && noteKey(note) === 'C'
+          ? noteName(note)
+          : undefined
+      }
+    />
+  )
+}
+
+/**
+ * `keyProps` is given the note, so anything derived from it in JavaScript can
+ * reach the keys. A scale is a set of pitch classes that CSS cannot compute on
+ * its own.
+ *
+ * Playing a highlighted key gives a colour of its own: `--active-bg` is set
+ * alongside `--bg`, so the key CSS does the switching and the callback does
+ * not have to look at `state.active`.
+ */
+export const ScaleHighlight = () => {
+  const [root, setRoot] = useState(noteNumber('D3'))
+  const [scale, setScale] = useState<ScaleName>('major')
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ display: 'flex', gap: 16 }}>
+        <label>
+          root:{' '}
+          <select
+            value={root}
+            onChange={(e) => setRoot(parseInt(e.target.value))}
           >
-            <Piano.KeyLabel
-              label={(note) => {
-                const name = noteName(note)
-                return name.startsWith('C') ? name : undefined
-              }}
-              style={{
-                border: 'none',
-                color: 'white',
-              }}
-            />
-          </Piano.WhiteKey>
-        ) : (
-          <Piano.BlackKey
-            key={note}
-            noteNumber={note}
-            bg="#333536"
-            activeBg="#5acee8"
-          />
-        )
-      })}
-    </Piano.Root>
+            {[...Array(12)].map((_, i) => (
+              <option key={i} value={noteNumber('C3') + i}>
+                {noteKey(noteNumber('C3') + i)}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          scale:{' '}
+          <select
+            value={scale}
+            onChange={(e) => setScale(e.target.value as ScaleName)}
+          >
+            {(
+              [
+                'major',
+                'naturalMinor',
+                'harmonicMinor',
+                'majorPentatonic',
+                'minorPentatonic',
+                'blues',
+                'dorian',
+                'wholeTone',
+              ] satisfies ScaleName[]
+            ).map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <Piano.Root
+        noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}
+        keyProps={(note, { keyType }) =>
+          inScale(note, root, scale)
+            ? {
+                style:
+                  keyType === 'white'
+                    ? { '--bg': '#bfe3ff', '--active-bg': '#3f9ae0' }
+                    : {
+                        '--bg': '#2f5d84',
+                        '--active-bg': '#3f9ae0',
+                        '--active-color': '#04121d',
+                      },
+              }
+            : {}
+        }
+      />
+    </div>
+  )
+}
+
+/**
+ * `SHORTCUTS.HOME_ROW_NATURAL` puts an empty string where a key has no
+ * shortcut, so the black keys are silent and carry no label.
+ */
+export const NaturalShortcuts = () => {
+  const synth = new Tone.PolySynth({ volume: -6 }).toDestination()
+
+  return (
+    <Piano.Root
+      noteRange={{ first: noteNumber('C3'), last: noteNumber('E4') }}
+      keyboardShortcuts={SHORTCUTS.HOME_ROW_NATURAL}
+      onPlayNote={(note) => synth.triggerAttack(noteName(note))}
+      onStopNote={(note) => synth.triggerRelease(noteName(note))}
+      label={(_, { index }) =>
+        SHORTCUTS.HOME_ROW_NATURAL.keys[index]?.toUpperCase()
+      }
+    />
   )
 }
 
@@ -227,7 +300,6 @@ export const WithWebMidiAPI = () => {
   useMIDIInput(
     midiAccess,
     (note: number, velocity: number) => {
-      // console.log(['note on', note, velocity])
       pianoRef.current?.playNote(note, velocity / 127)
     },
     (note: number) => {
@@ -267,8 +339,7 @@ export const WithWebMidiAPI = () => {
         onStopNote={(noteNumber) => {
           synth.triggerRelease(noteName(noteNumber))
         }}
-        // Notice: need optional chaining (?.)
-        label={(_, i) => SHORTCUTS.HOME_ROW.keys[i]?.toUpperCase()}
+        label={(_, { index }) => SHORTCUTS.HOME_ROW.keys[index]}
       />
     </div>
   )

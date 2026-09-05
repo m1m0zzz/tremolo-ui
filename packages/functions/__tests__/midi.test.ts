@@ -1,4 +1,11 @@
-import { noteNumber, noteName, noteToFrequency } from '../src/midi'
+import {
+  inScale,
+  noteNumber,
+  noteName,
+  noteToFrequency,
+  scaleIntervals,
+  scaleNotes,
+} from '../src/midi'
 
 describe('unit test', () => {
   test('noteNumber()', () => {
@@ -53,5 +60,69 @@ describe('unit test', () => {
     expect(noteToFrequency('A4', 0)).toBe(440)
     expect(noteToFrequency('A4', 1200)).toBe(880)
     expect(noteToFrequency('C3', 100)).toBe(noteToFrequency('C#3'))
+  })
+
+  test('scaleIntervals', () => {
+    // A scale is a set of pitch classes: ascending, starting at the root and
+    // staying inside one octave.
+    for (const [name, intervals] of Object.entries(scaleIntervals)) {
+      expect([name, intervals[0]]).toEqual([name, 0])
+      expect([name, intervals.at(-1)! < 12]).toEqual([name, true])
+      expect([name, [...intervals].sort((a, b) => a - b)]).toEqual([
+        name,
+        [...intervals],
+      ])
+      expect([name, new Set(intervals).size]).toEqual([name, intervals.length])
+    }
+
+    // The two spellings of the same sets.
+    expect(scaleIntervals.ionian).toEqual(scaleIntervals.major)
+    expect(scaleIntervals.aeolian).toEqual(scaleIntervals.naturalMinor)
+  })
+
+  test('inScale()', () => {
+    // C major: the white keys.
+    expect(inScale('C4', 'C4', 'major')).toBe(true)
+    expect(inScale('C#4', 'C4', 'major')).toBe(false)
+    expect(inScale('B4', 'C4', 'major')).toBe(true)
+
+    // Octave independent, in both directions.
+    expect(inScale('F#4', 'D3', 'major')).toBe(true)
+    expect(inScale('F#1', 'D3', 'major')).toBe(true)
+    expect(inScale('F4', 'D3', 'major')).toBe(false)
+
+    // noteNumber and noteName are interchangeable.
+    expect(inScale(noteNumber('F#4'), noteNumber('D3'), 'major')).toBe(true)
+
+    expect(inScale('Eb3', 'C3', 'naturalMinor')).toBe(true)
+    expect(inScale('B3', 'C3', 'naturalMinor')).toBe(false)
+    expect(inScale('B3', 'C3', 'harmonicMinor')).toBe(true)
+
+    // Every note is in the chromatic scale, none is missing from it.
+    for (let note = 0; note < 12; note++) {
+      expect(inScale(note, 0, 'chromatic')).toBe(true)
+    }
+  })
+
+  test('scaleNotes()', () => {
+    expect(scaleNotes('C3', 'majorPentatonic')).toEqual([48, 50, 52, 55, 57])
+    expect(scaleNotes(noteNumber('C3'), 'majorPentatonic')).toEqual([
+      48, 50, 52, 55, 57,
+    ])
+
+    // The octave above the root is left out, so octaves concatenate without
+    // repeating a note.
+    expect(scaleNotes('C3', 'major')).toEqual([48, 50, 52, 53, 55, 57, 59])
+    expect(scaleNotes('C3', 'major', 2)).toEqual([
+      ...scaleNotes('C3', 'major'),
+      ...scaleNotes('C4', 'major'),
+    ])
+
+    expect(scaleNotes('C3', 'major', 0)).toEqual([])
+
+    // What scaleNotes produces is what inScale accepts.
+    for (const note of scaleNotes('D3', 'blues', 3)) {
+      expect(inScale(note, 'D3', 'blues')).toBe(true)
+    }
   })
 })

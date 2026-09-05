@@ -28,6 +28,12 @@ export {
 } from './midi/input'
 export { createMIDIMessage, type MIDIMessageInstance } from './midi/message'
 export {
+  createPianoInput,
+  type NoteSource,
+  type PianoInputInstance,
+  type PianoInputOptions,
+} from './piano/input'
+export {
   createDrag,
   type DragInstance,
   type DragOptions,
