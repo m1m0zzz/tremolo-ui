@@ -185,7 +185,7 @@ export const Root = forwardRef<SliderMethods, Props>(
         const key = event.key
         if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
           event.preventDefault()
-          let direction = key == 'ArrowRight' || key == 'ArrowUp' ? 1 : -1
+          let direction = key === 'ArrowRight' || key === 'ArrowUp' ? 1 : -1
           if (reverse) direction *= -1
           onChange(applyDelta(value, direction, keyboard, axis))
         }
@@ -225,10 +225,10 @@ export const Root = forwardRef<SliderMethods, Props>(
       if (!wheel || !onChange || readonly) return
       event.preventDefault()
       let direction
-      if (!vertical && event.deltaX != 0) {
+      if (!vertical && event.deltaX !== 0) {
         direction = event.deltaX > 0 ? 1 : -1
       } else {
-        if (event.deltaY == 0) return
+        if (event.deltaY === 0) return
         direction = event.deltaY > 0 ? -1 : 1
       }
       if (vertical && reverse) direction *= -1

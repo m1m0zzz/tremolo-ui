@@ -35,13 +35,13 @@ function Impl({
   ...props
 }: FullProps & { Icon?: IconType }) {
   const more = [branch, commit, path].filter((v) => v).join('/')
-  if (isFile == undefined) {
+  if (isFile === undefined) {
     const p = path.split('/')
     isFile = p[p.length - 1].includes('.')
   }
 
   const href =
-    more == ''
+    more === ''
       ? `https://github.com/${user}/${repo}`
       : `https://github.com/${user}/${repo}/${isFile ? 'blob' : 'tree'}/${more}`
 

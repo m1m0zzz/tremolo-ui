@@ -41,7 +41,7 @@ export const Basic: Story = {
 
     const sortedPoints = Object.values(points).sort((a, b) => a.x - b.x)
     const svgPath = sortedPoints
-      .map(({ x, y }, i) => (i == 0 ? 'M ' : 'L ') + `${x * w}, ${y * h}`)
+      .map(({ x, y }, i) => (i === 0 ? 'M ' : 'L ') + `${x * w}, ${y * h}`)
       .join()
 
     return (
@@ -393,7 +393,7 @@ export const ADSRWithSlope = () => {
               onChange: (v: number) => setRSlope(percent2slope(v)),
             },
           ].map((props) => {
-            if (props == null) return <div key={'empty'}></div>
+            if (props === null) return <div key={'empty'}></div>
             const { id, value, onChange } = props
             return (
               <NumberInput.Root

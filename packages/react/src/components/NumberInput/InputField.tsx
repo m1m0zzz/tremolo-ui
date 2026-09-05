@@ -88,9 +88,9 @@ export function InputField({
       onChange={(event) => setDraft(event.currentTarget.value)}
       onFocus={(event) => {
         const input = event.currentTarget
-        if (selectOnFocus == 'all') {
+        if (selectOnFocus === 'all') {
           input.setSelectionRange(0, input.value.length)
-        } else if (selectOnFocus == 'number') {
+        } else if (selectOnFocus === 'number') {
           input.setSelectionRange(
             0,
             input.value.match(NUMBER_PREFIX)?.[0].length ?? 0,
@@ -104,16 +104,16 @@ export function InputField({
       }}
       onKeyDown={(event) => {
         const key = event.key
-        if (key == 'Enter') {
+        if (key === 'Enter') {
           commitDraft()
           if (blurOnEnter) event.currentTarget.blur()
         } else if (
           keyboard &&
           !readonly &&
-          (key == 'ArrowUp' || key == 'ArrowDown')
+          (key === 'ArrowUp' || key === 'ArrowDown')
         ) {
           event.preventDefault()
-          nudge(key == 'ArrowUp' ? 1 : -1, keyboard)
+          nudge(key === 'ArrowUp' ? 1 : -1, keyboard)
         }
         onKeyDown?.(event)
       }}

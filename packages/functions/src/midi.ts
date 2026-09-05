@@ -38,7 +38,7 @@ export function parseNoteName(noteName: string) {
 export function noteNumber(noteName: string) {
   const { letter, accidental, octave } = parseNoteName(noteName)
   const noteIndex = noteKeys.indexOf(letter.toLocaleUpperCase() as NoteKey)
-  const accidentalValue = (accidental[0] == 'b' ? -1 : 1) * accidental.length
+  const accidentalValue = (accidental[0] === 'b' ? -1 : 1) * accidental.length
   return noteIndex + 12 * (Number(octave) + 1) + accidentalValue
 }
 
@@ -65,15 +65,15 @@ export function noteKey(noteNumber: number): NoteKey {
  * @param note noteNumber: 0 ~ 127 or noteName e.g. 'C3'
  */
 export function isWhiteKey(note: number | string) {
-  const n = typeof note == 'string' ? noteNumber(note) : note
+  const n = typeof note === 'string' ? noteNumber(note) : note
   return (
-    mod(n, 12) == 0 ||
-    mod(n, 12) == 2 ||
-    mod(n, 12) == 4 ||
-    mod(n, 12) == 5 ||
-    mod(n, 12) == 7 ||
-    mod(n, 12) == 9 ||
-    mod(n, 12) == 11
+    mod(n, 12) === 0 ||
+    mod(n, 12) === 2 ||
+    mod(n, 12) === 4 ||
+    mod(n, 12) === 5 ||
+    mod(n, 12) === 7 ||
+    mod(n, 12) === 9 ||
+    mod(n, 12) === 11
   )
 }
 
@@ -91,7 +91,7 @@ export function isBlackKey(note: number | string) {
  * @returns frequency [Hz]
  */
 export function noteToFrequency(note: number | string, detune = 0, a4 = 440) {
-  const n = typeof note == 'string' ? noteNumber(note) : note
+  const n = typeof note === 'string' ? noteNumber(note) : note
   return (a4 / 32) * 2 ** ((n - 9 + detune / 100) / 12)
 }
 
@@ -146,8 +146,8 @@ export function inScale(
   root: number | string,
   name: ScaleName,
 ): boolean {
-  const n = typeof note == 'string' ? noteNumber(note) : note
-  const r = typeof root == 'string' ? noteNumber(root) : root
+  const n = typeof note === 'string' ? noteNumber(note) : note
+  const r = typeof root === 'string' ? noteNumber(root) : root
   return (scaleIntervals[name] as readonly number[]).includes(mod(n - r, 12))
 }
 
@@ -170,7 +170,7 @@ export function scaleNotes(
   name: ScaleName,
   octaves = 1,
 ): number[] {
-  const r = typeof root == 'string' ? noteNumber(root) : root
+  const r = typeof root === 'string' ? noteNumber(root) : root
   const intervals = scaleIntervals[name] as readonly number[]
   return Array.from({ length: octaves }, (_, octave) =>
     intervals.map((interval) => r + octave * 12 + interval),

@@ -72,7 +72,7 @@ export function MarksOption({
       data-vertical={vertical}
       {...props}
     >
-      {type != 'number' && (
+      {type !== 'number' && (
         <div
           className={clsx('tremolo-slider-marks-option-mark', classes?.mark)}
           style={{
@@ -85,7 +85,7 @@ export function MarksOption({
           data-vertical={vertical}
         ></div>
       )}
-      {type != 'mark' && (
+      {type !== 'mark' && (
         <div
           className={clsx('tremolo-slider-marks-option-label', classes?.label)}
           style={{

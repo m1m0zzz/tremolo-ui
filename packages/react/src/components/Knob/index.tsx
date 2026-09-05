@@ -175,7 +175,7 @@ export const Root = forwardRef<KnobMethods, Props>(
         const key = event.key
         if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
           event.preventDefault()
-          const direction = key == 'ArrowRight' || key == 'ArrowUp' ? 1 : -1
+          const direction = key === 'ArrowRight' || key === 'ArrowUp' ? 1 : -1
           onChange(applyDelta(value, direction, keyboard, range))
         }
       },
@@ -214,7 +214,7 @@ export const Root = forwardRef<KnobMethods, Props>(
     const wheelRefCallback = useWheel<HTMLElement>((event) => {
       if (!wheel || readonly) return
       event.preventDefault()
-      if (!onChange || event.deltaY == 0) return
+      if (!onChange || event.deltaY === 0) return
       onChange(applyDelta(value, -Math.sign(event.deltaY), wheel, range))
     }, WHEEL_OPTIONS)
 

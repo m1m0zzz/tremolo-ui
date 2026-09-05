@@ -102,7 +102,7 @@ function ThumbAnimation() {
         ctx.clearRect(0, 0, width, height)
         ctx.fill()
 
-        if (count % 20 == 0) {
+        if (count % 20 === 0) {
           const size = rand(15, 8)
           const padding = 25
           createDot(

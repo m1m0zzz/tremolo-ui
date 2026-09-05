@@ -17,7 +17,7 @@ export function VolumeMeter({
 
   useAnimationFrame(() => {
     let v = meter.getValue()
-    v = typeof v == 'number' ? v : v[0]
+    v = typeof v === 'number' ? v : v[0]
     v = Math.max(-100, v)
     if (v > -100) {
       setDb(Math.max(-100, v).toFixed(1))
@@ -47,7 +47,7 @@ export function VolumeMeter({
           ctx.clearRect(0, 0, width, height)
 
           const _v = meter.getValue()
-          const v = typeof _v == 'number' ? _v : _v[0]
+          const v = typeof _v === 'number' ? _v : _v[0]
           ctx.fillStyle = v >= 0 ? 'rgb(254, 44, 44)' : themeColor
           ctx.fillRect(0, 0, (width * Math.max(0, v + 100)) / 100, height)
         }}

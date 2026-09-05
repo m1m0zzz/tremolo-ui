@@ -25,7 +25,7 @@ export default async function outdatedTable({ exec, context, pkg }) {
    * @returns {string}
    */
   function status(current, wanted) {
-    return current == wanted ? '✅' : '👷‍♀️'
+    return current === wanted ? '✅' : '👷‍♀️'
   }
 
   /**
@@ -42,12 +42,12 @@ export default async function outdatedTable({ exec, context, pkg }) {
    */
   function workspaceLink(dependent) {
     let workspace = ''
-    if (dependent != 'tremolo-ui') {
-      workspace = workspaces.find((w) => lastItem(w.split('/')) == dependent)
+    if (dependent !== 'tremolo-ui') {
+      workspace = workspaces.find((w) => lastItem(w.split('/')) === dependent)
     }
     const branchName = lastItem(context.ref.split('/'))
     const url = `https://github.com/${context.repo.owner}/${context.repo.repo}/tree/${branchName}/${workspace}`
-    return `[${workspace == '' ? '/' : workspace}](${url})`
+    return `[${workspace === '' ? '/' : workspace}](${url})`
   }
 
   const table = []

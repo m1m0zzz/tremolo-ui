@@ -12,16 +12,16 @@ export function styleHelper(
   influencer?: number,
 ) {
   if (op && influencer) {
-    if (typeof value == 'number') {
-      if (op == '+') return `${value + influencer}px`
-      if (op == '-') return `${value - influencer}px`
-      if (op == '*') return `${value * influencer}px`
-      if (op == '/') return `${value / influencer}px`
+    if (typeof value === 'number') {
+      if (op === '+') return `${value + influencer}px`
+      if (op === '-') return `${value - influencer}px`
+      if (op === '*') return `${value * influencer}px`
+      if (op === '/') return `${value / influencer}px`
     } else {
       return `calc(${value}px ${op} ${influencer})`
     }
   } else {
-    if (typeof value == 'number') {
+    if (typeof value === 'number') {
       return `${value}px`
     } else {
       return value
@@ -30,7 +30,7 @@ export function styleHelper(
 }
 
 export function isEmpty(obj: object) {
-  return Object.keys(obj).length == 0
+  return Object.keys(obj).length === 0
 }
 
 export function mod(n: number, m: number) {
@@ -38,5 +38,5 @@ export function mod(n: number, m: number) {
 }
 
 export function xor(a = false, b = false) {
-  return (a || b) && a != b
+  return (a || b) && a !== b
 }

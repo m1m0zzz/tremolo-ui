@@ -1066,19 +1066,31 @@ React 側ではなくコアに置くのは、Vue / Svelte でも同じ判定が�
 
 - [x] 配線するか、prop を削除するかを決める → **配線した。** 実際の操作対象は `Root` ではなく `Point` なので、`Root` の値を `Point` が継承して上書きできる形にした（Phase 5）
 
-### 5.10 緩い等価（`==` / `!=`）をやめる
+### 5.10 緩い等価（`==` / `!=`）をやめる — **完了**
 
-ESLint に `eqeqeq` を設定しておらず、`==` / `!=` がリポジトリ全体に散っている。**現時点で `eqeqeq: ['error', 'always']` を掛けると 88 件**（`packages/*/src` + `site/src` + `__stories__`。内訳は `packages/react/src` 39 / `packages/functions/src` 26 / `packages/react/__stories__` 21 / `packages/dom/src` 8 / `site/src` 5）。
+ESLint に `eqeqeq` を設定しておらず、`==` / `!=` がリポジトリ全体に散っていた。大半は TypeScript で型が付いていて両辺が同じ型なので実際に型強制は起きておらず、**バグは 1 件も見つからなかった**が、
 
-大半は TypeScript で型が付いていて両辺が同じ型なので、実際に型強制は起きていない。**現状で動いているバグは見つかっていない**が、
-
-- 意図して nullish をまとめて見ている箇所（`drag == null`、`min != undefined` など 14 件ほど）と、単に型が同じもの（`key == 'Enter'`、`typeof note == 'string'` など）が**見分けられない**。`== null` は「null と undefined の両方」という意図の表明として有用なのに、周りが全部 `==` だとその情報が消える
+- 意図して nullish をまとめて見ている箇所（`drag == null` など）と、単に型が同じもの（`key == 'Enter'` など）が**見分けられない**。`== null` は「null と undefined の両方」という意図の表明として有用なのに、周りが全部 `==` だとその情報が消える
 - 実際に `Piano/KeyLabel.tsx` のラベル判定で「`undefined` は入っているのか」が読んで分からない状態になっていた（4.3 で明示的な比較に直した）
 
-- [ ] `eslint.config.*` に `eqeqeq` を足す。`null: 'ignore'` を付けるか、`always` で厳密にするかを決める（`null: 'ignore'` にしても減るのは 7 件だけ。`!= undefined` は対象外なので実質ほぼ変わらない）
-- [ ] 88 件を潰す。**`eqeqeq` の autofix は 1 件も効かない**（ESLint の fixer は両辺の型を確実に判定できるときしか出ないため、実測で fixable 0 件）ので全て手で見る
-- [ ] nullish をまとめて見たい箇所は `== null` を残すのか、`=== null || === undefined` に開くのか、`?? ` / optional chaining に書き換えるのかを決めて統一する
-- [ ] 1 回の変更でまとめて直す。段階的にやると新旧が混在した状態が長く残り、どちらが意図的なのか余計に分からなくなる
+- [x] `eslint.config.js` に `eqeqeq: ['error', 'always']` を追加した。**`null: 'ignore'` は選ばなかった。** 除外されるのは `== null` の 7 件だけで（`!= undefined` は `null: 'ignore'` の対象外）、しかもその 7 件こそ「null なのか undefined なのか」を明示したい箇所だったため、緩めても読みやすさが上がらない
+- [x] 98 件を修正した（`packages/*/src` + `site/src` + `__stories__` + `.storybook` + `scripts`）。**autofix が効いたのは 15 件だけ**で、残り 83 件は手で見た
+- [x] 1 回の変更でまとめて直した。段階的にやると新旧が混在した状態が長く残り、どちらが意図的なのか余計に分からなくなる
+
+#### nullish をどう開いたか
+
+「その型が実際に取りうる方だけを書く」で統一した。`=== null || === undefined` と両方書くのは、片方しか起こり得ない箇所では嘘になる。
+
+| 箇所 | 型 | 直した形 |
+| --- | --- | --- |
+| `animation.ts` の `frameId` | `number \| null` | `!== null` / `=== null` |
+| `NumberInput` の `draft` | `string \| null` | `!== null` / `=== null` |
+| `NumberInput` の `drag`（context 経由） | `number \| null` | `=== null` |
+| `NumberInput` の `min` / `max` | `number \| undefined` | `!== undefined` |
+| `unit.ts` の `digit` | `number \| undefined` | `!== undefined` |
+| `GitHubLink` の `isFile` | `boolean \| undefined` | `=== undefined` |
+
+`site/src/theme` は `eslint.config.js` の `ignores` に入っているので対象外。`Playground/parser.ts` にコメントアウトされた `magicComment == 'expand alt'` が残っているが、これも触っていない。
 
 ## 6. 既存コードで見つかった問題
 

@@ -32,7 +32,7 @@ export type DrawingContext = Pick<CanvasRenderingContext2D, DrawingState>
 
 export function isDrawingState(value: unknown): value is DrawingState {
   const names: readonly string[] = drawingState
-  return typeof value == 'string' && names.includes(value)
+  return typeof value === 'string' && names.includes(value)
 }
 
 /** Copy the drawing state off a context, to put back after a resize. */

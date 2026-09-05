@@ -60,7 +60,7 @@ export function basicShapesWave(t: number, pos = 0) {
 }
 
 export function middleWave(wave1: number[], wave2: number[], percent: number) {
-  if (wave1.length != wave2.length) throw new Error()
+  if (wave1.length !== wave2.length) throw new Error()
   const m = []
   for (let j = 0; j < wave1.length; j++) {
     m.push(wave1[j] * (1 - percent) + wave2[j] * percent)

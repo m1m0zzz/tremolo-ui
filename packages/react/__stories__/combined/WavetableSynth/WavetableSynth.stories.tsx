@@ -70,7 +70,7 @@ function detunedVoices(voice: number, detune: number) {
     .fill(0)
     .map((_, i) => (DETUNE_WIDTH * detune) / (i + 1))
   const bottom = top.map((v) => -v).toReversed()
-  if (voice % 2 == 0) {
+  if (voice % 2 === 0) {
     voices.push(...top, ...bottom)
   } else {
     voices.push(...top, 0, ...bottom)
@@ -88,7 +88,7 @@ function panningVoices(voice: number, width: number) {
     .fill(0)
     .map((_, i) => (0.5 * width) / (i + 1))
   const bottom = top.map((v) => -v).toReversed()
-  if (voice % 2 == 0) {
+  if (voice % 2 === 0) {
     voices.push(...top, ...bottom)
   } else {
     voices.push(...top, 0, ...bottom)
@@ -107,11 +107,11 @@ function generateAndAssignSource(
 ) {
   const noteIndex = noteNumber - firstNote
   if (
-    sourcesMemo[noteIndex]?.position == position &&
-    sourcesMemo[noteIndex]?.semitone == semitone &&
-    sourcesMemo[noteIndex]?.detune == detune &&
-    sourcesMemo[noteIndex]?.voice == voice &&
-    sourcesMemo[noteIndex]?.voiceDetune == voiceDetune
+    sourcesMemo[noteIndex]?.position === position &&
+    sourcesMemo[noteIndex]?.semitone === semitone &&
+    sourcesMemo[noteIndex]?.detune === detune &&
+    sourcesMemo[noteIndex]?.voice === voice &&
+    sourcesMemo[noteIndex]?.voiceDetune === voiceDetune
   )
     return
 
@@ -122,7 +122,7 @@ function generateAndAssignSource(
     const d = detunes[v - MIN_VOICE]
     const freq = noteToFrequency(noteNumber + semitone, detune + d)
     const buffer = ctx.createBuffer(2, Math.ceil(sampleRate / freq), sampleRate)
-    let currentAngle = v == 1 ? 0 : Math.random()
+    let currentAngle = v === 1 ? 0 : Math.random()
     const cyclesPerSample = freq / sampleRate
     for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
       const nowBuffering = buffer.getChannelData(channel)
@@ -136,7 +136,7 @@ function generateAndAssignSource(
     // stop all source
     for (let s = 0; s < sourcesMemo[noteIndex]?.sources.length; s++) {
       const source = sourcesMemo[noteIndex]?.sources[s]
-      if (source.state == 'started') source.stop()
+      if (source.state === 'started') source.stop()
     }
     const source = new ToneBufferSource({
       url: buffer,
