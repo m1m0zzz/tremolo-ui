@@ -783,7 +783,10 @@ Slider / XYPad と違い、PointsEditor には**動かせる点が複数ある**
 
 #### テスト
 
-`packages/react/__tests__/PointsEditor/index.test.tsx` を新規追加（17 件）。PointsEditor は専用テストが無かった。ドラッグが「動いた距離」ではなく「指した位置」を返すこと、`min` / `max` のクランプ、`readonly` / `disabled` の継承と上書き、矢印キーの向き、ホイールのフォーカス要求、`Container` の ref 合成、`Root` の外での例外までを見る。点が 2 つある場合のホイールの配り先（フォーカス中の点が動き、カーソル下の点は動かない / 反応するのは 1 つだけ）も含む。
+`packages/react/__tests__/PointsEditor/index.test.tsx` を新規追加（21 件）。PointsEditor は専用テストが無かった。ドラッグが「動いた距離」ではなく「指した位置」を返すこと、`min` / `max` のクランプ、`readonly` / `disabled` の継承と上書き、矢印キーの向き、ホイールのフォーカス要求、`Container` の ref 合成、`Root` の外での例外までを見る。点が 2 つある場合のホイールの配り先（フォーカス中の点が動き、カーソル下の点は動かない / 反応するのは 1 つだけ）も含む。
+
+- [x] `npm run lint` / `npm run test` / `npm run build:sb` / `npm run build:docs`
+- [x] ブラウザでの目視確認（`KeyboardAndWheel` と `ADSRWithSlope`。ADSR の点の見た目が変わっていたのを受けて `index.css` に足したフォーカスリングと disabled 背景色を外した）
 
 ### Phase 6: Vue / Svelte
 
