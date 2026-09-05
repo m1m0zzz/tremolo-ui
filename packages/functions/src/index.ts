@@ -23,7 +23,7 @@ export {
   skewScale,
   skewWithCenterValue,
   symmetricSkewScale,
-} from './scale'
+} from './scales'
 export {
   type NoteKey,
   type WhiteKey,

@@ -431,10 +431,6 @@
     "message": "midi",
     "description": "The label for the doc item 'midi' in sidebar 'typedocSidebar', linking to the doc api/functions/midi"
   },
-  "sidebar.typedocSidebar.doc.scale": {
-    "message": "scale",
-    "description": "The label for the doc item 'scale' in sidebar 'typedocSidebar', linking to the doc api/functions/scale"
-  },
   "sidebar.typedocSidebar.doc.types": {
     "message": "types",
     "description": "The label for the doc item 'types' in sidebar 'typedocSidebar', linking to the doc api/functions/types"
@@ -454,5 +450,9 @@
   "sidebar.typedocSidebar.doc.unit": {
     "message": "unit",
     "description": "The label for the doc item 'unit' in sidebar 'typedocSidebar', linking to the doc api/functions/unit"
+  },
+  "sidebar.typedocSidebar.doc.scales": {
+    "message": "scales",
+    "description": "The label for the doc item 'scales' in sidebar 'typedocSidebar', linking to the doc api/functions/scales"
   }
 }

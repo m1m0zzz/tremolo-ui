@@ -769,11 +769,12 @@ export interface Scale {
 - **`ValueRange.skew` を `scale` にした。** #141 が `ValueRange` と `applyDelta` を新設していたので、`AxisOptions extends ValueRange` の構造に乗せる形で統合した。ドラッグと wheel / keyboard の nudge が 1 つのスケール記述を共有する
 - **`ValueRange` / `applyDelta` を `math.ts` から `scale.ts` へ移した。** `ValueRange` が `Scale` を参照し、`applyDelta` が `linearScale` を実行時に使うため、`math.ts` に置いたままだと math → scale → math の循環 import になる。公開名は変わらない
 - **`normalizeValue` / `rawValue` から `skew` 引数を外し、線形の写像だけを担わせた。** `scale` に一本化した後、`skew` を渡していたのは `skewScale` だけで、他の呼び出し箇所（`elementMapping` と `usePianoDrag` のピクセル正規化、`NumberInput`）は全て線形だった。曲がりは全て `Scale` 側に置き、この 2 つは公開 API の線形プリミティブとして残す。JUCE 互換の式（`pow` と `exp(log())`）は `skewScale` の中に移してある
-- `skewWithCenterValue` も `math.ts` から `scale.ts` の `skewScale` の隣へ移した（挙動は変更なし）。これで `math.ts` に skew の概念が残らない
+- `skewWithCenterValue` も `math.ts` から `scales.ts` の `skewScale` の隣へ移した（挙動は変更なし）。これで `math.ts` に skew の概念が残らない
+- **ファイル名は `scale.ts` ではなく `scales.ts`。** typedoc は `router: 'module'` でモジュールごとに 1 ページ出すため、`scale.ts` だとページ見出しの `# scale` と export した `Scale` インターフェースがどちらも `scale` スラッグを取り合い、後から出る `### Scale` が `scale-1` になる。結果 typedoc が生成する `[Scale](#scale)` が壊れたリンクになり、docusaurus のビルドが broken anchor を報告していた。複数形にして衝突を外してある
 
 回帰テスト:
 
-- `packages/functions/__tests__/scale.test.ts` — 5 つ全てについて往復・端点・単調性・範囲外クランプ・空レンジの拒否、各プリセット固有の性質
+- `packages/functions/__tests__/scales.test.ts` — 5 つ全てについて往復・端点・単調性・範囲外クランプ・空レンジの拒否、各プリセット固有の性質
 - `packages/dom/__tests__/pointer/scaleJump.test.ts` — 実際のドラッグ経路で 5.8 の症状を固定。`skewScale` は dB ノブの下端で 1px あたり 8dB 飛び、周波数ノブでは 12px 動かしても値が変わらない。`curveScale` / `exponentialScale` はどちらも起きない
 
 `exponentialScale.normalize` / `curveScale.normalize` は**値をクランプしてから対数を取る**必要がある。範囲外の値では比が負になり、`Math.log` が NaN を返すため（位置をクランプしても手遅れ）。テストで固定してある。
