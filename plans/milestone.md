@@ -33,7 +33,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 ## 2. テスト整備
 
-- [ ] **dom 移行前からテストが無い部分にテストを足す。** `packages/react/__tests__/` があるのは AnimationCanvas / Knob / NumberInput / Piano / Slider / hooks / util / storybook で、**XYPad には専用のテストが無い**（`__tests__/drag.test.tsx` と `compose.test.tsx` で部分的に触れているだけ）。Piano は 4.3、PointsEditor は Phase 5 で追加済み
+- [x] **dom 移行前からテストが無い部分にテストを足す。** 全コンポーネントに専用のテストが揃った（Piano は 4.3、PointsEditor は Phase 5、XYPad は 5.7 と同時に追加）。`__tests__/drag.test.tsx` と `__tests__/Slider/compose.test.tsx` は複数コンポーネントにまたがるものとしてそのまま残す
 - [ ] **テストと story を実装コードと同じディレクトリに置く。** 現在は `src/` の外に `__tests__/` と `__stories__/` を並べる構成
 
   1 つのコンポーネントに対応するものは `src/components/<Name>/` へ移す。**複数のコンポーネントにまたがるものは `__tests__/` / `__stories__/` に残す**（`__tests__/drag.test.tsx`、`__tests__/Slider/compose.test.tsx`、`__stories__/combined/` など）。story 用のスタイルとヘルパー（`__stories__/lib/`、`__stories__/styles/`、`public/`、`intro.mdx`）も残す。
