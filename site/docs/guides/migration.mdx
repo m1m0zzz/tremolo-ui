@@ -1,0 +1,204 @@
+---
+title: 🧭Migration
+---
+
+# Migrating through 0.x
+
+tremolo-ui is still on 0.x, so breaking changes ship in minor releases. This
+page collects them in one place, newest first, with what to write instead.
+
+Every release also has generated notes per package:
+[@tremolo-ui/functions](https://github.com/m1m0zzz/tremolo-ui/blob/main/packages/functions/CHANGELOG.md),
+[@tremolo-ui/dom](https://github.com/m1m0zzz/tremolo-ui/blob/main/packages/dom/CHANGELOG.md),
+[@tremolo-ui/react](https://github.com/m1m0zzz/tremolo-ui/blob/main/packages/react/CHANGELOG.md).
+All three packages are released together and always share a version.
+
+## Unreleased
+
+### MIDI input takes a handlers object
+
+`useMIDIInput` grew from three handlers to seven, which positional arguments
+no longer carry.
+
+```jsx
+// before
+useMIDIInput(midiAccess, onNoteOn, onNoteOff, onPitchBend)
+
+// after
+useMIDIInput(midiAccess, {
+  onNoteOnEvent: onNoteOn,
+  onNoteOffEvent: onNoteOff,
+  onPitchBendEvent: onPitchBend,
+})
+```
+
+Every handler is now given the channel as its last argument, as 0&ndash;15.
+Existing handlers ignore it and keep working.
+
+`onPitchBendEvent` receives one 14-bit value rather than two raw bytes, and the
+two bytes it used to be given were named the wrong way round — pitch bend sends
+the low 7 bits first.
+
+```jsx
+// before: the arguments were labelled (msb, lsb), but arrived as (lsb, msb)
+onPitchBendEvent: (msb, lsb) => setBend(((lsb << 7) | msb) - 8192)
+
+// after
+onPitchBendEvent: (value) => setBend(value - PITCH_BEND_CENTER)
+```
+
+`useMIDIAccess().request` takes options now, so passing it straight to an event
+handler sends the click event in as the options object.
+
+```jsx
+// before
+<button onClick={request}>Connect</button>
+
+// after
+<button onClick={() => request()}>Connect</button>
+```
+
+### PointsEditor
+
+`grid` is removed — it was never implemented, and leaked onto the DOM as a
+`grid` attribute. `children` is now required, matching the other components.
+
+`readonly` and `disabled` on `PointsEditor.Root` used to be ignored by the
+points. They now take effect, so an editor that set `readonly` and relied on
+the points still moving has to drop it.
+
+## 0.5.0
+
+### `Piano` is no longer built from key components
+
+`Piano.WhiteKey`, `Piano.BlackKey` and `Piano.KeyLabel` are removed, along with
+the `KeyProps` / `KeyMethods` / `KeyLabelProps` types. `Piano.Root` draws the
+keys itself, and per-key customization is two callbacks.
+
+```jsx
+// before
+<Piano.Root noteRange={range} onPlayNote={play} onStopNote={stop}>
+  <Piano.WhiteKey />
+  <Piano.BlackKey />
+</Piano.Root>
+
+// after
+<Piano.Root
+  noteRange={range}
+  onPlayNote={play}
+  onStopNote={stop}
+  keyProps={(note, { keyType }) => ({ 'data-in-scale': inScale(note, root, 'major') })}
+/>
+```
+
+Each key carries `data-note`, `data-note-key`, `data-active` and
+`aria-disabled`, so static styling needs no callback at all — plain CSS on
+`.tremolo-piano-white-key` / `.tremolo-piano-black-key` reaches everything.
+
+Other changes to `Piano`:
+
+- `label` takes `(note, state)` rather than `(note, index)`; the index is
+  `state.index`. A label of `''`, `null` or `undefined` draws nothing rather
+  than an empty box
+- `whiteNoteWidth` is `whiteKeyWidth`. The dead `blackNoteWidth` is replaced by
+  `blackKeyWidthRatio` / `blackKeyHeightRatio` / `keyGap`
+- `getNoteRangeArray` and `NoteRange` moved to `@tremolo-ui/functions`
+- `KeyboardShortcuts.flags` is removed. It was declared but never implemented;
+  `SHORTCUTS.HOME_ROW_NATURAL` covers what `naturalOnly` was for
+
+### `Slider.Scale` is `Slider.Marks`
+
+The name clashed with the value-curve `Scale` introduced in the same release.
+
+```jsx
+// before
+<Slider.Scale options={[...]} />
+<Slider.ScaleOption value={50} />
+
+// after
+<Slider.Marks options={[...]} />
+<Slider.MarksOption value={50} />
+```
+
+`ScaleProps` and `ScaleOptionProps` become `MarksProps` and `MarksOptionProps`.
+
+### `skew` is replaced by `scale`
+
+A skew factor is now one of a set of named scales, which behave properly at the
+ends of the range.
+
+```jsx
+// before
+<Slider.Root skew={0.5} ... />
+
+// after
+<Slider.Root scale={skewScale(0.5)} ... />
+```
+
+`linearScale` is the default. `exponentialScale` suits frequency, `curveScale(n)`
+takes an exponent, `symmetricSkewScale(n)` bends both halves of a bipolar range,
+and `skewScale(n)` matches a JUCE parameter exactly.
+
+### `NumberInput` is redesigned
+
+- `variant`, `activeColor`, `wrapperClassName`, `keepWithinRange` and
+  `clampValueOnBlur` are removed from `Root`. `clampValue` replaces the last two
+- `selectWithFocus`, `blurOnEnter`, `onFocus` and `onBlur` move to
+  `InputField`; `selectWithFocus` is now `selectOnFocus`
+- The tab stop is the `<input>`, which carries `role="spinbutton"` and the
+  `aria-value*` attributes. `data-error` is `data-out-of-range`
+- `Stepper`'s `dynamic`, and `size` on `IncrementStepper` / `DecrementStepper`,
+  are replaced by CSS variables
+
+### The wheel only acts while the focus is inside
+
+Every component used to change value on a wheel event whether or not it had
+focus, so scrolling a page past one silently changed it. They now require the
+focus to be inside. Nothing to change in your code; the behaviour is different.
+
+## 0.4.0
+
+### `useDragWithElement` is replaced by `useDragValue`
+
+```jsx
+// before
+const ref = useDragWithElement(({ x, y }) => setValue(x * 100))
+
+// after
+const { refCallback, dragging } = useDragValue({
+  axis: { min: 0, max: 100 },
+  baseElementRef: trackRef,
+  onChange: ([x]) => setValue(x),
+})
+```
+
+`useDragValue` reports values rather than normalized coordinates, and covers
+both mappings: `baseElementRef` normalizes the pointer against an element, and
+`getValue` moves the value away from where it stood by the distance dragged.
+
+### `useDrag` returns a ref callback
+
+```jsx
+// before
+const [ref] = useDrag(handlers)
+
+// after
+const ref = useDrag(handlers)
+```
+
+### `DragObserver` and `WheelObserver` are removed
+
+Use `useDrag` and `useWheel`, or `createDrag` and `createWheel` from
+`@tremolo-ui/dom` outside React.
+
+### `XYPad`'s `XYOrSingle` is `XYInput`
+
+Its pair form is a `readonly` tuple. Where the value could itself be an array —
+`scale`, for one — only the pair form is accepted, since a lone array would be
+read as a pair.
+
+## Still to come
+
+The CSS is not headless yet: `@tremolo-ui/react` ships `index.css` files and
+you are expected to import them. That will change before 1.0, and this page
+will carry the steps.

@@ -1,6 +1,6 @@
 import { noteNumber, type PianoLayout } from '@tremolo-ui/functions'
 
-import { createPianoInput } from '../../src/piano/input'
+import { createPianoInput } from '../../src/piano'
 import { pointerEvent, withPointerCapture } from '../pointer/helpers'
 
 const layout: PianoLayout = {
