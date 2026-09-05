@@ -1152,6 +1152,180 @@ ESLint に `eqeqeq` を設定しておらず、`==` / `!=` がリポジトリ全
 
 `site/src/theme` は `eslint.config.js` の `ignores` に入っているので対象外。`Playground/parser.ts` にコメントアウトされた `magicComment == 'expand alt'` が残っているが、これも触っていない。
 
+### 5.11 修飾キー（shift / alt）の同時押しに対応する — drag / wheel / keyboard
+
+DAW のノブやフェーダーは、shift で細かく、alt（option）で既定値に戻す、といった修飾キーの規約を持っている。tremolo-ui には**その仕組みが無い**。
+
+現状で修飾キーを見ているのは 2 箇所だけで、しかも用途が違う。
+
+- `XYPad/index.tsx` の wheel: `event.shiftKey` で x 軸を選ぶ
+- `PointsEditor/Point.tsx` の wheel: 同上
+
+どちらも「軸の切り替え」であって「感度の切り替え」ではない。ドラッグとキーボードには修飾キーの経路そのものが無い。
+
+- [ ] **何を割り当てるか決める。** よくある規約は shift = 微調整（fine）、alt/option = 既定値へリセット、ctrl/cmd = ステップ無視。既に `Knob` はダブルクリックで既定値に戻す（`enableDoubleClickDefault`）ので、alt との役割分担を決める必要がある
+- [ ] **XYPad / PointsEditor の shift = 軸切り替えとぶつかる。** 2 次元のコンポーネントでは shift の意味が既に埋まっている。軸切り替えを別のキーに移すか、2 次元だけ規約を変えるかを決める
+- [ ] **`InputEventOption` の形を見直す。** 現在 `['normalized' | 'raw', number]` の 1 組しか持てないので、修飾キーごとに別の量を渡せない。`{ default: [...], shift: [...], alt: 'reset' }` のような形にするか、感度の倍率だけ別 prop にするか
+- [ ] **どの層で扱うか決める。** キーボードと wheel は React 側のハンドラで `event.shiftKey` を読めるが、**ドラッグは `@tremolo-ui/dom` の `createDragValue` が値を計算している**ので、`DragState` に修飾キーの状態を載せるか、`createDragValue` 自体が感度を切り替えるかを決める必要がある。`DragState.event` に `PointerEvent` は入っているので読めなくはないが、`onChange` は既に計算後の値しか渡さない
+- [ ] **ドラッグ中に修飾キーを押した/離した場合をどうするか。** ポインタが動かない限り `pointermove` は来ないので、押した瞬間には反映されない。`keydown` / `keyup` も見るか、次の移動から効けばよしとするか
+- [ ] 全コンポーネント（Slider / Knob / XYPad / NumberInput / PointsEditor）で規約を揃える。片方だけ対応すると余計に分かりにくい
+
+### 5.12 Knob が場所不足で潰れる
+
+`.tremolo-knob` は `display: inline-block` に `width: var(--knob-size); height: var(--knob-size)`（既定 50px）だけを指定している。**縦横比を保つ指定が無い。**
+
+flex / grid コンテナの中で幅が足りないと、`flex-shrink` の既定値が 1 なので `width` が縮む。一方 `height` は縮まないため、**中の SVG が引き伸ばされて円が楕円になる。** `viewBox="0 0 100 100"` の SVG が `preserveAspectRatio` の既定でボックスに合わせるので、潰れ方がそのまま見える。
+
+- [ ] `aspect-ratio: 1` を入れて、片方だけ縮んでも比率を保つ
+- [ ] `flex-shrink: 0` を入れるか、`min-width` / `min-height` を置くかを決める。**縮ませない**のと**比率を保ったまま縮む**のとで挙動が違うので、どちらが望ましいか決める
+- [ ] `size` prop を渡したときと `--knob-size` を書き換えたときで同じ結果になることを確認する。現在 `size` は `style` の `width` / `height` に直接入るので、CSS 変数を経由しない
+- [ ] 5.1 の CSS ヘッドレス化と衝突しないか確認する。パッケージがスタイルを配らなくなると、この修正も利用者側の CSS に移る可能性がある
+
+### 5.13 NumberInput の上下キーでカーソル位置を保つ
+
+`InputField` の上下キーは `nudge()` で値を変え、`value` が `format(value)` で作り直される。**制御された `<input>` の `value` が置き換わるとキャレットが末尾へ飛ぶ**ので、`1234.5` の `2` の位置にキャレットを置いて上下キーを連打すると、1 回目で末尾に移動してしまう。
+
+桁を選んで上下キーで動かす（DAW や CAD でよくある操作）ができない。
+
+- [ ] **オプションとして足す。** 既定の挙動を変えると既存利用者の見た目が変わるので、`InputField` の prop にする（名前は `keepCaretOnStep` など）
+- [ ] **単にオフセットを復元するだけでは足りない。** 桁数が変わると位置がずれる（`9.9` → `10.0` で 1 文字増える、`10` → `9` で減る）。末尾からのオフセットで測るか、小数点からの相対位置で測るかを決める
+- [ ] **「キャレットのある桁を動かす」まで踏み込むかを決める。** 位置を保つだけなら表示の話だが、桁を見て刻み幅を変える（小数第 1 位にいれば 0.1 ずつ）なら `keyboard` の `InputEventOption` と競合する。5.11 の修飾キーとも関係する
+- [ ] IME 変換中は触らない。`compositionstart` / `compositionend` の間はキャレットを動かさない
+
+### 5.14 NumberInput の `units` / `digit` をやめ、`format` に一本化する
+
+現在 `NumberInput.Root` は `units` / `digit` と `format` / `parse` の**2 系統**を持ち、`format` が渡されていればそちらが勝つ。`units` は `@tremolo-ui/functions` の `formatValue` / `parseValue` / `selectUnit` に支えられている。
+
+2 系統あることで、
+
+- 「`units` を渡したのに効かない」（`format` も渡していた）が起きる
+- `parse` だけ渡すと `format` は `units` 由来のまま、といった噛み合わない組み合わせが型で防げない
+- `Units`（`[string, number][]`）は SI 接頭辞の表を毎回手で書かせる形になっている（`[['Hz', 1], ['kHz', 1000]]`）
+
+#### `digit` も一緒に消す
+
+`digit` は `toFixed` の引数をそのまま渡すだけで、**組み込みフォーマッタにしか効かない**（`format` を渡すと無視される）。`units` を消すなら `digit` のためだけに組み込みフォーマッタを残すことになり、「2 系統ある」という動機がそのまま残る。
+
+現状の挙動を確認した結果:
+
+- **表示専用で値には触らない。** `digit={0}` `step={0.1}` で値 1.6 のとき、表示は `2` → `3` → `4` と 1 ずつ増えるのに実際の値は 1.6 → 2.6 → 3.6。`digit` と `step` は互いを知らない
+- 編集中は `format` を通らない（`text = draft ?? format(value)`）ので、入力中だけ丸めが外れる
+- `toFixed` の癖をそのまま被る。`(1.005).toFixed(2)` は `"1.00"`、`(-0.4).toFixed(0)` は `"-0"`、1e21 以上で指数表記になる
+- 丸めた表示が値になることがある。入力欄に触ると draft が立ち、`commitDraft` が **draft の文字列**を parse するので、`"2"` を編集して戻すと値が 1.6 から 2 になる
+
+**ただし表示と値のズレは `digit` を消しても直らない。** `format={(v) => v.toFixed(0)}` でも同じことが起きる。原因は「表示の桁と `step` が互いを知らない」ことなので 5.15 に分けた。
+
+- [ ] `units` / `digit` / `Units` / `formatValue` / `parseValue` / `selectUnit` を削除し、`format` / `parse` だけにする。破壊的変更なので移行ガイドに載せる
+- [ ] `units` を使っている example / story / ドキュメントを全部書き換える
+
+#### 既存ライブラリの調査
+
+**JS の単位・数値整形ライブラリを一通り見たが、そのまま真似できるものは無かった。**
+
+| ライブラリ | 単位の扱い | 参考になる点 |
+| --- | --- | --- |
+| `Intl.NumberFormat` | `style: 'unit'` は**認可された 45 単位のみ**。`Intl.supportedValuesOf('unit')` に **`hertz` も `decibel` も無い** | オーディオでは使えないことの確認。`notation: 'engineering'` は `299.792E6` の指数表記で SI 接頭辞ではない |
+| React Aria / Base UI の NumberField | `formatOptions` / `format` に `Intl.NumberFormatOptions` を渡すだけ。**関数を取らない** | 最も近い既存コンポーネントが単位の抽象化を持っていない。Hz / dB は利用者が外でやる前提 |
+| `d3-format` | `format('s')` は**値ごとに接頭辞を選び、精度は有効数字**。`formatPrefix(spec, 基準値)` は**接頭辞を固定し、精度は小数桁** | この 2 つが別 API に分かれている。micro は `µ`、範囲は y(10⁻²⁴)〜Y(10²⁴)、`~` で末尾のゼロを落とす |
+| `mathjs` | 単位定義ごとに `prefixes: 'none' \| 'short' \| 'long' \| 'binary_short' \| 'binary_long'` を宣言する。`dB` は単位として定義されている | **「この単位は接頭辞を取らない」を宣言で表す**という形。dB 問題の答えがここにある |
+| `UnitMath` | `autoPrefix: 'auto' \| 'always' \| 'never'`、`prefixMin: 0.1` / `prefixMax: 1000`、`prefixesToChooseFrom: 'common' \| 'all'` | **接頭辞を切り替える閾値**を設定で持つ。表示される数が 0.1〜1000 に収まるように選ぶ |
+| JUCE / webaudio-controls | 単位系そのものが無い。`stringFromValue` / `valueFromString`、`conv` / `rconv` の**関数 2 つ** | オーディオ領域の慣行は「関数 2 つ」。`format` / `parse` 一本化はこれと一致する |
+
+**`format` / `parse` に一本化する方向はオーディオ領域の慣行と一致している。** 我々の価値は便利コンストラクタの質にあり、そこは d3-format / mathjs / UnitMath から borrow できる。
+
+#### 便利コンストラクタ
+
+- [ ] **名前は `siUnit` にしない。** SI でない単位（dB / % / cent / semitone）を接頭辞なしで素通しさせる以上、名前が嘘になる。`unitFormat` を推す
+  - 返すのは `{ format, parse }` の対なので、名前は「何であるか」ではなく「何を作るか」を言うべき
+  - `createUnit` は避ける。mathjs で「単位系に単位を定義する」という別の意味を持っており、かつ `@tremolo-ui/dom` では `create*` が「`destroy()` を持つ命令的インスタンス」を指す
+  - `unit` は短いが、`clamp` / `mapValue` と並ぶ export としては汎用的すぎる
+  - `NumberInput` が要求する 2 つの props をそのまま返すので、スプレッドで渡せる形になる
+
+    ```tsx
+    <NumberInput.Root {...unitFormat('Hz', { digits: 2 })} value={v} onChange={setV}>
+    ```
+
+- [ ] **`basePlace` は位置引数ではなくオプションに入れる。** つまみが 3 つあり、しかも**性質が違う**ので、位置引数だと確実に混同する
+
+  | | 何を決めるか | 先例 |
+  | --- | --- | --- |
+  | `base` | **保存されている値**がどの接頭辞か（ms で持っている） | 無し。d3 も mathjs も「値は基本単位」前提。**我々の追加** |
+  | 接頭辞の選び方 | 値ごとに動的か、固定か、付けないか | d3 の `s` / `formatPrefix`、UnitMath の `autoPrefix` |
+  | 精度 | 小数桁（**A 採用**）か有効数字か | d3 は API ごとに違う |
+
+  ```ts
+  unitFormat('Hz')                                  // 1234 -> '1.23kHz'
+  unitFormat('s', { base: 'm' })                    // 値は ms。1500 -> '1.5s'
+  unitFormat('s', { base: 'm', digits: 2 })         // 1500 -> '1.50s'
+  unitFormat('dB', { prefixes: false, digits: 1 })  // -6.25 -> '-6.3dB'
+  ```
+
+- [ ] **桁数は `digits`（小数桁）で持つ。** 5.13 の議論で A を採用した。`step` から既定値を導く案（B）は、`format` が `(value) => string` の純粋関数である以上 `Root` 側に暗黙の組み立てを足すことになり、「書式は 1 箇所を見れば分かる」という一本化の眼目を削るため採らない
+- [ ] **接頭辞を取らない単位を宣言で表す。** mathjs の `prefixes: 'none'` と同じ考え方。`prefixes: false` で素通し
+- [ ] **接頭辞を切り替える閾値を決める。** 現在の `selectUnit` は「値以下で最大のスケール」なので、0.0005 は `0.0005Hz` のままになる。UnitMath は**表示される数が 0.1〜1000 に収まる**ように選ぶ。この規則を採るかどうか
+- [ ] **`0` を特別扱いする。** 対数で接頭辞を選ぶと `0` が扱えない。基本単位で出す
+- [ ] **どの接頭辞まで使うか決める。** UnitMath の `prefixesToChooseFrom: 'common' | 'all'` と同じ問題。`p n µ m (なし) k M G` あたりに絞るのが実用的で、`yocto` や `yotta` は要らない
+- [ ] **`parse` を対で受け渡す。** 片方だけ差し替えられると噛み合わなくなるので、`{ format, parse }` を返して両方一度に渡す形にする
+
+#### parse 側の落とし穴（調査で判明）
+
+- [ ] **`dB` に接頭辞を付けてはいけない。** `d` は deci なので、`unitFormat('B')` にすると `-6dB` が「-6 デシ B」と解釈される。mathjs も `dB` を独立した単位として定義している
+- [ ] **micro の文字が 2 種類ある。** d3 が使う `µ`（U+00B5 MICRO SIGN）と `μ`（U+03BC GREEK SMALL LETTER MU）は見た目が同じで別コードポイント。**parse は `µ` / `μ` / `u` の 3 通りを全部受ける**（キーボードから `µ` は打てない）。format 側でどちらを出すかも決める
+- [ ] **大文字小文字を潰さない。** `m` は 10⁻³、`M` は 10⁶
+- [ ] **単位記号の前の 1 文字だけを接頭辞として剥がす。** 単位記号自体が接頭辞と同じ文字で始まる場合（`m` = メートル に対する `mm`）に誤読しないよう、単位記号を先に照合してから残りを見る
+
+### 5.15 表示の桁と `step` が互いを知らない
+
+5.14 の調査中に判明した。`NumberInput` の表示桁（現 `digit`、将来の `digits`）と `step` の間に関係が無いため、**両者が矛盾しても何も警告されない。**
+
+`digit={0}` `step={0.1}` で値 1.6 のとき、上下キーを押すと表示は `2` → `3` → `4` と 1 ずつ増えるのに、`onChange` が渡す値は 1.6 → 2.6 → 3.6 になる。ユーザーには「2 から 1 ずつ足した」ようにしか見えない。
+
+`digit` を消しても直らない（`format={(v) => v.toFixed(0)}` で同じことが起きる）ので、5.14 とは別に扱う。
+
+- [ ] **そもそも防ぐべきかを決める。** 「表示は粗く、値は細かく」が正当な要求である場面もある（内部は連続値、表示は丸め）
+- [ ] 防ぐなら、開発ビルドで警告するのが妥当か（5.6 の `useCheckPlacement` と同じ形）。ただし `format` は任意の関数なので、**表示桁を機械的に知る方法が無い**
+- [ ] `step` から表示桁の既定値を導く案（5.14 の B 案）は一本化の眼目と衝突するため採らない。別の解き方が要る
+- [ ] 5.13（上下キーでカーソル位置を保つ）と関係する。桁を選んで動かす操作を入れるなら、表示桁と `step` の関係を先に決める必要がある
+
+### 5.16 NumberInput のフォーカス時に書式を外すオプション
+
+`InputField` が表示するのは `text = draft ?? format(value)` なので、**フォーカスしただけでは書式が付いたまま**になる。`1.23kHz` と出ている欄を編集するには、単位ごと選び直すか、単位文字列の中にキャレットを置いて数字だけ直すことになる。DAW のパラメータ欄は、フォーカスすると素の数値になって打ち直せるものが多い。
+
+`selectOnFocus='number'` は先頭の数字部分だけを**選択**するので近いことはできるが、**表示自体は書式付きのまま**なので、キーで選択を外すと単位の中を編集する羽目になる。
+
+- [ ] **どの数を出すか決める。** ここが本質。`format` が接頭辞を選ぶと、表示上の数と保存されている値が違う
+  - 値をそのまま出す（`1.23kHz` → `1230`）… 桁が跳ねるので見た目の変化が大きいが、`parse` との往復が正確
+  - 表示から数字部分だけを取る（`1.23kHz` → `1.23`）… 変化は小さいが、**単位が消えた時点で 1.23 が何なのか分からなくなる**。この状態で blur すると `parse('1.23')` が 1.23 になり、値が 1000 分の 1 になる
+
+  **前者を採る。** 後者は往復で値が壊れる。
+
+- [ ] **`digits` で丸めた表示のまま編集させない。** 5.14 で見つけた「丸めた表示が値になる」（`digit={0}` で 1.6 が `2` と出ている欄に触れると値が 2 になる）は、フォーカス時に**丸めていない値**を出せば起きなくなる。このオプションはその対策も兼ねる
+- [ ] **prop をどこに置くか。** `selectOnFocus` / `blurOnEnter` と同じく `InputField` に置く（`Root` ではない）。名前は `unformatOnFocus` あたり
+- [ ] **`selectOnFocus` との関係を決める。** 書式を外すなら `'number'` と `'all'` の区別が無くなる（全部が数字になるため）。両立させるのか、`unformatOnFocus` を立てたら `'number'` は `'all'` と同じ扱いにするのかを決める
+- [ ] **既定値は off。** 現在の見た目が変わるため
+- [ ] **キャレットの位置。** フォーカス時にテキストを差し替えるとキャレットが末尾へ行く。`selectOnFocus` を併用しない場合にどこへ置くかは 5.13 と同じ問題
+- [ ] **draft の扱い。** フォーカス時に「素の値」を draft として立てるのか、表示だけ差し替えて draft は null のままにするのかを決める。draft を立てると、**何も編集せずに blur しただけで `commitDraft` が走る**（現在は `draft === null` で早期 return している）
+- [ ] IME 変換中にフォーカスが移る場合を壊さない
+
+### 5.17 テストと story を実装コードと同じディレクトリに置く
+
+`plans/milestone.md` の「2. テスト整備」から移動。全コンポーネントに専用テストが揃った（Piano は 4.3、PointsEditor は Phase 5、XYPad は 5.7 と同時）ので、残るのは配置の話。
+
+現在は `src/` の外に `__tests__/` と `__stories__/` を並べる構成になっている。1 つのコンポーネントに対応するものは `src/components/<Name>/` へ移す。
+
+**複数のコンポーネントにまたがるものは `__tests__/` / `__stories__/` に残す**（`__tests__/drag.test.tsx`、`__tests__/Slider/compose.test.tsx`、`__tests__/util/placement.test.tsx`、`__stories__/combined/` など）。story 用のスタイルとヘルパー（`__stories__/lib/`、`__stories__/styles/`、`public/`、`intro.mdx`）も残す。
+
+移すときに必要な作業:
+
+- [ ] **`package.json` の `files` から test と story を除く。** `files` に `src` を入れているので、そのままだと publish されてしまう。`!` の否定パターンとブレース展開が使える（`npm pack --dry-run` で確認済み）
+  ```jsonc
+  "files": ["dist", "src", "!src/**/*.test.{ts,tsx}", "!src/**/*.stories.{ts,tsx}"]
+  ```
+- [ ] **`.storybook/main.ts` の `stories` に `src/` 配下を足す。** 現在は `../**/__stories__/**/*.stories.*` のみ
+- [ ] **`site/docusaurus.config.ts` の typedoc の `exclude` に足す。** `entryPoints` が `src/components/**/index.{ts,tsx}` と `src/hooks/**/*.{ts,tsx}` なので、そのままだと test / story の API ページが生成される（`_internal` / `_util` で踏んだのと同じ）
+- [ ] **jest の `testMatch` / `roots` を確認する。** `__tests__/` 前提の設定になっていないか
+- [ ] **typedoc のサイドバー翻訳キーが衝突しないか確認する。** ラベルはモジュールパスの最後のセグメントなので、`Slider/index.test.tsx` のようなファイルが拾われると `index` が量産される（`docs/dom` を足したときに踏んだのと同じ問題）
+
 ## 6. 既存コードで見つかった問題
 
 ### 6.1 `useDrag` の delta 計算バグ（実バグ）→ **Phase 2 で修正済み**
