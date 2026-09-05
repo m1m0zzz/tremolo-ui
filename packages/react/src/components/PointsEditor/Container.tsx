@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import { ComponentPropsWithoutRef, ReactNode, Ref } from 'react'
 
 import { useComposedRefs } from '../_util/composeRefs'
+import { Placement } from '../_util/placement'
 
 import { usePointsEditorContext } from './context'
 
@@ -30,7 +31,7 @@ export function Container({
       className={clsx('tremolo-points-editor-container', className)}
       {...props}
     >
-      {children}
+      <Placement name="PointsEditor.Container">{children}</Placement>
     </div>
   )
 }

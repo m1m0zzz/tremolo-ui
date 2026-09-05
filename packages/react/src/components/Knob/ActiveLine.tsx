@@ -1,6 +1,8 @@
 import clsx from 'clsx'
 import { SVGProps } from 'react'
 
+import { useCheckPlacement } from '../_util/placement'
+
 import { arcRadius, pointOnArc, useKnobContext } from './context'
 
 export function ActiveLine({
@@ -9,6 +11,8 @@ export function ActiveLine({
   className,
   ...props
 }: Omit<SVGProps<SVGPathElement>, 'd'>) {
+  useCheckPlacement('Knob.ActiveLine', 'Knob.SVGRoot')
+
   const r2 = useKnobContext((s) => s.r2)
   const r3 = useKnobContext((s) => s.r3)
 

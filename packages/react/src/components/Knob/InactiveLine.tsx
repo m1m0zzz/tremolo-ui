@@ -1,6 +1,8 @@
 import clsx from 'clsx'
 import { SVGProps } from 'react'
 
+import { useCheckPlacement } from '../_util/placement'
+
 import { arcRadius, pointOnArc, useKnobContext } from './context'
 
 export function InactiveLine({
@@ -9,6 +11,8 @@ export function InactiveLine({
   className,
   ...props
 }: Omit<SVGProps<SVGPathElement>, 'd'>) {
+  useCheckPlacement('Knob.InactiveLine', 'Knob.SVGRoot')
+
   const min = useKnobContext((s) => s.min)
   const max = useKnobContext((s) => s.max)
   const startValue = useKnobContext((s) => s.startValue)

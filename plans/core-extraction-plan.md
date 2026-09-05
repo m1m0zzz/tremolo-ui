@@ -855,18 +855,34 @@ Radix UI / Base UI と同じ方針にする。パッケージはスタイルを�
 
 `index.tsx:193` の TODO（マルチタッチには TouchEvent が必要そう）については、**Pointer Events が `pointerId` で複数ポインタを区別できるため TouchEvent は不要**、という判断で変わらない。
 
-### 5.6 サブコンポーネントの配置ミスを検出する
+### 5.6 サブコンポーネントの配置ミスを検出する — **完了**
 
 children をそのまま描画する形（Phase 2.5）にしたことで、**サブコンポーネントを間違った階層に置いても型エラーにも実行時エラーにもならず、レイアウトだけが静かに壊れる**ようになった。
 
 実例: `combined/VolumeFader` は `<Slider.Thumb>` が `<Slider.Track>` の兄弟のまま残っており、Thumb の `position: absolute` の基準が最も近い配置済み祖先である body になって崩れていた。ビルドもテストも通っていた。
 
-- [ ] `Slider.Track` が「Track の中にいる」ことを示す context を張り、`Slider.Thumb` がそれを見つけられなければ開発ビルドで警告を出す
-- [ ] `XYPad.Area` / `XYPad.Thumb` も同様
-- [ ] `Knob.SVGRoot` と `ActiveLine` / `InactiveLine` / `Thumb` も同じ関係にあるので対象に含めるか検討する
-- [ ] 本番ビルドでは警告のコードごと落とす（`process.env.NODE_ENV !== 'production'` で囲う）
+`src/components/_util/placement.tsx` に 2 つ置いた。
 
-Radix UI も同種の親子チェックを持っている。合成を自由にした代償なので、セットで入れておくのが望ましい。
+- `<Placement name="Slider.Track">` — 「ここから下は Track の中」と印を付けるだけの context provider
+- `useCheckPlacement('Slider.Thumb', 'Slider.Track')` — 直近の印が期待と違えば `console.warn`
+
+- [x] `Slider.Track` / `Slider.Thumb`
+- [x] `Slider.Marks` / `Slider.MarksOption`
+- [x] `XYPad.Area` / `XYPad.Thumb`
+- [x] `Knob.SVGRoot` / `ActiveLine` / `InactiveLine` / `Thumb` — 対象に含めた。`<path>` を `<svg>` の外に置くと React も「The tag `<path>` is unrecognized」と言うが、**どのコンポーネントが間違っているかは言えない**
+- [x] `PointsEditor.Container` / `PointsEditor.Point` — Point は `containerRef` を基準にドラッグするので、外に置くとドラッグごと効かない
+- [x] 本番ビルドでは警告を出さない
+
+#### 決めたこと
+
+- **エラーではなく警告にした。** 描画自体は成功するので、投げると「今まで動いていたものが動かなくなる」破壊的変更になる。位置がずれるだけなので警告で足りる
+- **間違った親の名前も出す。** `Slider.Thumb` が `Slider.Marks` の中にあれば「but it is inside Slider.Marks」と言う。単に「Track の中に置け」と言われるより原因に近い
+- **`process.env.NODE_ENV` は使う場所で読む。** モジュール先頭の定数にすると本番判定を後から差し替えられずテストできない。`typeof process !== 'undefined'` のガード付き（`platform: 'neutral'` でビルドしているので、CDN から ESM を直接読むページには `process` が無い）。バンドラは比較を畳めるので、本番ビルドからは警告ごと落ちる
+- **`_util/` に置いたので typedoc には出ない。** `site/docusaurus.config.ts` の `exclude` に `components/_util/**` が既に入っている
+
+#### テスト
+
+`packages/react/__tests__/util/placement.test.tsx`（9 件）。正しく置いたときに黙ること、5 種類の配置ミスそれぞれで警告が出ること、間違った親の名前が出ること、本番ビルドで黙ることを見る。
 
 ### 5.7 MIDI の作り込み
 

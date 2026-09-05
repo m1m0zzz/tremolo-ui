@@ -8,6 +8,8 @@ import {
   useRef,
 } from 'react'
 
+import { useCheckPlacement } from '../_util/placement'
+
 import { useXYPadContext } from './context'
 
 export interface XYPadThumbProps {
@@ -44,6 +46,9 @@ export function Thumb({
 }: Props) {
   const elementRef = useRef<HTMLDivElement>(null)
   const { disabled, readonly, percent, thumbRef } = useXYPadContext()
+
+  // The wrapper is positioned against the area.
+  useCheckPlacement('XYPad.Thumb', 'XYPad.Area')
 
   const methods = () => ({
     focus() {

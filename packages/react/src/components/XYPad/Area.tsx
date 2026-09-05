@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import { ComponentPropsWithoutRef, CSSProperties, ReactNode, Ref } from 'react'
 
 import { useComposedRefs } from '../_util/composeRefs'
+import { Placement } from '../_util/placement'
 
 import { useXYPadContext } from './context'
 
@@ -45,7 +46,7 @@ export function Area({
       }}
       {...props}
     >
-      {children}
+      <Placement name="XYPad.Area">{children}</Placement>
     </div>
   )
 }
