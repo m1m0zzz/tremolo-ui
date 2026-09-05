@@ -6,8 +6,27 @@ name: test & package build
 on:
   push:
     branches: [ "main" ]
+    paths: &build-paths
+      # このワークフローが回すのは build:package と test だけで、どちらも
+      # `--workspaces --if-present`。site にはそのどちらのスクリプトも無いので、
+      # site/ の変更はこのワークフローの結果に一切影響しない。
+      # ただし site/package.json は npm ci の解決結果を変えうるので対象に残す。
+      #
+      # paths-ignore では `!` による除外解除が使えないため paths + `!` を使う。
+      # 後に書いたパターンが勝つので、順序を入れ替えないこと。
+      # アンカーで push / pull_request に同じリストを配る（Actions は 2025-09 から
+      # アンカーとエイリアスに対応。merge key `<<:` だけは使えない）。
+      #
+      # NOTE: main に branch protection を入れて build を必須チェックにすると、
+      # ここでスキップされた PR はチェックが Pending のまま残りマージ不能になる。
+      # そのときは同名の no-op job を用意すること。
+      - '**'
+      - '!**.md'
+      - '!site/**'
+      - 'site/package.json'
   pull_request:
     branches: [ "main" ]
+    paths: *build-paths
 
 jobs:
   build:
