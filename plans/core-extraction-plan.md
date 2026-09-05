@@ -877,7 +877,20 @@ children をそのまま描画する形（Phase 2.5）にしたことで、**サ
 
 - **エラーではなく警告にした。** 描画自体は成功するので、投げると「今まで動いていたものが動かなくなる」破壊的変更になる。位置がずれるだけなので警告で足りる
 - **間違った親の名前も出す。** `Slider.Thumb` が `Slider.Marks` の中にあれば「but it is inside Slider.Marks」と言う。単に「Track の中に置け」と言われるより原因に近い
-- **`process.env.NODE_ENV` は使う場所で読む。** モジュール先頭の定数にすると本番判定を後から差し替えられずテストできない。`typeof process !== 'undefined'` のガード付き（`platform: 'neutral'` でビルドしているので、CDN から ESM を直接読むページには `process` が無い）。バンドラは比較を畳めるので、本番ビルドからは警告ごと落ちる
+- **`process.env.NODE_ENV` は `try` の中にインラインで書く。** ここは推測せず esbuild で実測した（`--minify --define:process.env.NODE_ENV='"production"'`）。
+
+  | 書き方 | 本番バンドルから消えるか |
+  | --- | --- |
+  | `if (process.env.NODE_ENV !== 'production' && ...)` をインライン | **消える** |
+  | `isProduction()` のようなヘルパー経由 | **残る** |
+  | モジュール先頭の `const development = ...` | **残る** |
+  | 上記インラインを `try` で囲む | **消える** |
+
+  バンドラがやるのは `process.env.NODE_ENV` という**式そのものの文字列置換**なので、関数やモジュール定数を挟むと畳めなくなる。最初ヘルパーにしていたが、実際に本番バンドルを作ると `console.warn` もメッセージ文字列もそのまま残っていた。
+
+  `try` で囲むのは `process` が**存在しない**可能性があるため。`platform: 'neutral'` でビルドしているので、CDN から ESM を直接読むページには `process` が無く、裸の参照は `ReferenceError` になる。囲めば畳み込みは維持したまま安全になり、バンドラが置換しない環境では警告が出ないだけで済む。
+
+  実測結果: 本番バンドルでは `useCheckPlacement` が空の `useEffect` だけになり、メッセージ文字列は 1 つも残らない
 - **`_util/` に置いたので typedoc には出ない。** `site/docusaurus.config.ts` の `exclude` に `components/_util/**` が既に入っている
 
 #### テスト

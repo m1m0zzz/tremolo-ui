@@ -1,18 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect } from 'react'
 
 /**
- * The package is built with `platform: 'neutral'`, so `process` may not exist
- * at all: a page loading the ESM build straight from a CDN has no bundler to
- * substitute it, and reading it unguarded would throw a `ReferenceError`.
- *
- * Read where it is used rather than once at module scope: a bundler folds the
- * comparison away either way, and this keeps it observable to a test.
- */
-function isProduction() {
-  return typeof process !== 'undefined' && process.env.NODE_ENV === 'production'
-}
-
-/**
  * The subcomponent that established the current placement, if any.
  *
  * @internal
@@ -53,12 +41,28 @@ export function useCheckPlacement(child: string, parent: string) {
   const found = useContext(PlacementContext)
 
   useEffect(() => {
-    if (found === parent || isProduction()) return
-    console.warn(
-      `[tremolo-ui] ${child} has to be rendered inside ${parent}` +
-        (found === null ? '.' : `, but it is inside ${found}.`) +
-        ' It renders either way, so nothing fails — its position just comes' +
-        ' out wrong.',
-    )
+    try {
+      // `process.env.NODE_ENV` is written out here, inline and first, so that a
+      // bundler substituting it folds the comparison and drops this whole
+      // block — the message strings with it. Reading the flag through a helper
+      // or a module constant leaves the branch in the bundle instead: neither
+      // folds, which was measured with esbuild rather than assumed.
+      //
+      // The read is wrapped because `process` may not exist at all. The
+      // package is built with `platform: 'neutral'`, so a page loading the ESM
+      // straight from a CDN has no bundler to substitute it, and a bare
+      // reference would throw a `ReferenceError` mid-effect.
+      if (process.env.NODE_ENV !== 'production' && found !== parent) {
+        console.warn(
+          `[tremolo-ui] ${child} has to be rendered inside ${parent}` +
+            (found === null ? '.' : `, but it is inside ${found}.`) +
+            ' It renders either way, so nothing fails — its position just' +
+            ' comes out wrong.',
+        )
+      }
+    } catch {
+      // No bundler substituted NODE_ENV, so there is no way to tell a
+      // production build from a development one. Say nothing rather than break.
+    }
   }, [found, child, parent])
 }
