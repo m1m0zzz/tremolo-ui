@@ -29,13 +29,12 @@ export {
 } from './components/NumberInput'
 export {
   Piano,
-  getNoteRangeArray,
   SHORTCUTS,
   type PianoProps,
   type PianoMethods,
-  type KeyProps,
-  type KeyMethods,
-  type KeyLabelProps,
+  type KeyState,
+  type KeyAttributes,
+  type CSSVariables,
   type KeyboardShortcuts,
 } from './components/Piano'
 export {

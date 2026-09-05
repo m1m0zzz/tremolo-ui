@@ -333,4 +333,138 @@ describe('createDrag', () => {
 
     expect(onDrag).toHaveBeenCalledTimes(1)
   })
+
+  describe('multiPointer', () => {
+    test('tracks each pointer with its own totals', () => {
+      const { element, onDragStart, onDrag } = setup({ multiPointer: true })
+
+      element.dispatchEvent(
+        pointerEvent('pointerdown', { pointerId: 1, screenX: 0, screenY: 0 }),
+      )
+      element.dispatchEvent(
+        pointerEvent('pointerdown', { pointerId: 2, screenX: 100, screenY: 0 }),
+      )
+      expect(onDragStart).toHaveBeenCalledTimes(2)
+      expect(onDragStart.mock.calls.map(([s]) => s.pointerId)).toEqual([1, 2])
+
+      element.dispatchEvent(
+        pointerEvent('pointermove', { pointerId: 1, screenX: 10, screenY: 0 }),
+      )
+      element.dispatchEvent(
+        pointerEvent('pointermove', { pointerId: 2, screenX: 130, screenY: 0 }),
+      )
+
+      // Each total is measured from where that pointer went down.
+      expect(
+        onDrag.mock.calls.map(([s]: [DragState]) => [s.pointerId, s.x]),
+      ).toEqual([
+        [1, 10],
+        [2, 30],
+      ])
+    })
+
+    test('one pointer going up leaves the others tracking', () => {
+      const { element, onDrag, onDragEnd } = setup({ multiPointer: true })
+
+      element.dispatchEvent(
+        pointerEvent('pointerdown', { pointerId: 1, screenX: 0, screenY: 0 }),
+      )
+      element.dispatchEvent(
+        pointerEvent('pointerdown', { pointerId: 2, screenX: 100, screenY: 0 }),
+      )
+      element.dispatchEvent(
+        pointerEvent('pointerup', { pointerId: 1, screenX: 0, screenY: 0 }),
+      )
+      expect(onDragEnd).toHaveBeenCalledTimes(1)
+      expect(onDragEnd.mock.calls[0][0].pointerId).toBe(1)
+
+      onDrag.mockClear()
+      element.dispatchEvent(
+        pointerEvent('pointermove', { pointerId: 2, screenX: 130, screenY: 0 }),
+      )
+      expect(onDrag).toHaveBeenCalledTimes(1)
+      expect(onDrag.mock.calls[0][0].pointerId).toBe(2)
+
+      // The one that finished is not tracked any more.
+      onDrag.mockClear()
+      element.dispatchEvent(
+        pointerEvent('pointermove', { pointerId: 1, screenX: 50, screenY: 0 }),
+      )
+      expect(onDrag).not.toHaveBeenCalled()
+    })
+
+    test('the threshold applies to each pointer separately', () => {
+      const { element, onDrag } = setup({ multiPointer: true, threshold: 10 })
+
+      element.dispatchEvent(
+        pointerEvent('pointerdown', { pointerId: 1, screenX: 0, screenY: 0 }),
+      )
+      element.dispatchEvent(
+        pointerEvent('pointerdown', { pointerId: 2, screenX: 100, screenY: 0 }),
+      )
+
+      // Below the threshold for pointer 1, even though pointer 2 is far away.
+      element.dispatchEvent(
+        pointerEvent('pointermove', { pointerId: 1, screenX: 5, screenY: 0 }),
+      )
+      expect(onDrag).not.toHaveBeenCalled()
+
+      element.dispatchEvent(
+        pointerEvent('pointermove', { pointerId: 1, screenX: 12, screenY: 0 }),
+      )
+      expect(onDrag).toHaveBeenCalledTimes(1)
+      expect(onDrag.mock.calls[0][0].pointerId).toBe(1)
+    })
+
+    test('the same pointer going down twice is ignored', () => {
+      const { element, onDragStart } = setup({ multiPointer: true })
+
+      element.dispatchEvent(
+        pointerEvent('pointerdown', { pointerId: 1, screenX: 0, screenY: 0 }),
+      )
+      element.dispatchEvent(
+        pointerEvent('pointerdown', { pointerId: 1, screenX: 50, screenY: 0 }),
+      )
+      expect(onDragStart).toHaveBeenCalledTimes(1)
+    })
+
+    test('holds the cursor until the last pointer is up', () => {
+      const { element } = setup({ multiPointer: true, cursor: 'grabbing' })
+
+      element.dispatchEvent(pointerEvent('pointerdown', { pointerId: 1 }))
+      element.dispatchEvent(pointerEvent('pointerdown', { pointerId: 2 }))
+      expect(element.style.cursor).toBe('grabbing')
+
+      element.dispatchEvent(pointerEvent('pointerup', { pointerId: 1 }))
+      expect(element.style.cursor).toBe('grabbing')
+
+      element.dispatchEvent(pointerEvent('pointerup', { pointerId: 2 }))
+      expect(element.style.cursor).toBe('')
+    })
+
+    test('destroy ends every pointer', () => {
+      const { element, instance, onDrag } = setup({ multiPointer: true })
+
+      element.dispatchEvent(pointerEvent('pointerdown', { pointerId: 1 }))
+      element.dispatchEvent(pointerEvent('pointerdown', { pointerId: 2 }))
+      instance.destroy()
+
+      element.dispatchEvent(
+        pointerEvent('pointermove', { pointerId: 1, screenX: 50 }),
+      )
+      element.dispatchEvent(
+        pointerEvent('pointermove', { pointerId: 2, screenX: 50 }),
+      )
+      expect(onDrag).not.toHaveBeenCalled()
+    })
+
+    test('update cannot switch multiPointer off', () => {
+      const { element, instance, onDragStart } = setup({ multiPointer: true })
+
+      instance.update({ multiPointer: false })
+      element.dispatchEvent(pointerEvent('pointerdown', { pointerId: 1 }))
+      element.dispatchEvent(pointerEvent('pointerdown', { pointerId: 2 }))
+      expect(onDragStart).toHaveBeenCalledTimes(2)
+    })
+  })
 })

@@ -8,6 +8,11 @@ export type DragState = {
   /** Pointer position in viewport coordinates. */
   clientX: number
   clientY: number
+  /**
+   * Which pointer this is. Always the same value for one drag; with
+   * {@link DragOptions.multiPointer} it tells concurrent drags apart.
+   */
+  pointerId: number
   event: PointerEvent
 }
 
@@ -27,8 +32,23 @@ export type DragOptions = {
    * CSS cursor to show while dragging. Applied to the element itself: pointer
    * capture keeps it in effect even once the pointer leaves the element, so
    * there is no need to touch the document.
+   *
+   * With {@link DragOptions.multiPointer} it is set for the first pointer and
+   * restored once the last one is up.
    */
   cursor?: string
+
+  /**
+   * Track every pointer that goes down on the element, rather than only the
+   * first. Each one gets its own `onDragStart` / `onDrag` / `onDragEnd` and
+   * carries its own totals; {@link DragState.pointerId} says which is which.
+   *
+   * Fixed for the lifetime of the instance: switching part way through a drag
+   * has no meaning, so `update()` ignores it.
+   *
+   * @default false
+   */
+  multiPointer?: boolean
 
   onDragStart?: (state: DragState) => void
   onDrag?: (state: DragState) => void
@@ -39,6 +59,9 @@ export interface DragInstance {
   /**
    * Replace the given options. Lets a wrapper feed fresh handlers in without
    * tearing down the listeners, which would abort a drag in progress.
+   *
+   * `multiPointer` is fixed for the lifetime of the instance and is ignored
+   * here.
    */
   update: (options: DragOptions) => void
   destroy: () => void
@@ -64,6 +87,16 @@ type CaptureTarget = {
   hasPointerCapture?: (pointerId: number) => boolean
 }
 
+/** What one pointer needs to report its own movement. */
+type PointerState = {
+  /** Where the listeners for this pointer live. */
+  moveTarget: EventTarget
+  startX: number
+  startY: number
+  lastX: number
+  lastY: number
+}
+
 /**
  * Track a pointer drag on an element.
  *
@@ -72,12 +105,15 @@ type CaptureTarget = {
  * element gets `touch-action: none` so that touch dragging does not scroll the
  * page, plus `user-select: none` so that a long press does not start a text
  * selection instead.
+ *
+ * One pointer at a time by default; see {@link DragOptions.multiPointer}.
  */
 export function createDrag(
   element: Element,
   options: DragOptions = {},
 ): DragInstance {
   let opts = options
+  const multiPointer = options.multiPointer ?? false
   const capture = element as CaptureTarget
   const style = (element as Partial<HTMLElement>).style
 
@@ -89,27 +125,29 @@ export function createDrag(
     }
   }
 
-  let pointerId: number | null = null
-  /** Where the listeners for the current drag live. */
-  let moveTarget: EventTarget | null = null
-  let startX = 0
-  let startY = 0
-  let lastX = 0
-  let lastY = 0
+  const pointers = new Map<number, PointerState>()
+  /**
+   * How many pointers each target carries. Adding the same listener twice is a
+   * no-op and removing it once removes it for good, so a target is subscribed
+   * to while at least one pointer is on it and no longer.
+   */
+  const targets = new Map<EventTarget, number>()
   let previousCursor: string | undefined
 
   function state(
     event: PointerEvent,
+    pointer: PointerState,
     deltaX: number,
     deltaY: number,
   ): DragState {
     return {
-      x: event.screenX - startX,
-      y: event.screenY - startY,
+      x: event.screenX - pointer.startX,
+      y: event.screenY - pointer.startY,
       deltaX,
       deltaY,
       clientX: event.clientX,
       clientY: event.clientY,
+      pointerId: event.pointerId,
       event,
     }
   }
@@ -123,16 +161,37 @@ export function createDrag(
     event.preventDefault()
   }
 
+  function retainTarget(target: EventTarget) {
+    const count = targets.get(target) ?? 0
+    if (count === 0) {
+      target.addEventListener('pointermove', handlePointerMove)
+      target.addEventListener('pointerup', handlePointerUp)
+      target.addEventListener('pointercancel', handlePointerUp)
+    }
+    targets.set(target, count + 1)
+  }
+
+  function releaseTarget(target: EventTarget) {
+    const count = targets.get(target) ?? 0
+    if (count > 1) {
+      targets.set(target, count - 1)
+      return
+    }
+    target.removeEventListener('pointermove', handlePointerMove)
+    target.removeEventListener('pointerup', handlePointerUp)
+    target.removeEventListener('pointercancel', handlePointerUp)
+    targets.delete(target)
+  }
+
   function handlePointerDown(event: Event) {
     const pointerEvent = event as PointerEvent
-    // Only one pointer drives the drag; ignore additional touches.
-    if (pointerId !== null) return
+    const pointerId = pointerEvent.pointerId
+    // Without multiPointer only one pointer drives the drag; ignore the rest.
+    if (pointers.has(pointerId)) return
+    if (!multiPointer && pointers.size > 0) return
 
-    pointerId = pointerEvent.pointerId
-    startX = lastX = pointerEvent.screenX
-    startY = lastY = pointerEvent.screenY
-
-    if (opts.cursor && style) {
+    const isFirst = pointers.size === 0
+    if (isFirst && opts.cursor && style) {
       previousCursor = style.cursor
       style.cursor = opts.cursor
     }
@@ -140,25 +199,35 @@ export function createDrag(
     capture.setPointerCapture?.(pointerId)
     // With pointer capture the element receives the rest of the gesture.
     // Without it (older engines, jsdom) fall back to the window.
-    moveTarget =
+    const moveTarget =
       capture.hasPointerCapture?.(pointerId) === true
         ? element
         : (globalThis.window ?? element)
 
-    moveTarget.addEventListener('pointermove', handlePointerMove)
-    moveTarget.addEventListener('pointerup', handlePointerUp)
-    moveTarget.addEventListener('pointercancel', handlePointerUp)
-    globalThis.document?.addEventListener('selectstart', preventSelectStart)
+    const pointer: PointerState = {
+      moveTarget,
+      startX: pointerEvent.screenX,
+      startY: pointerEvent.screenY,
+      lastX: pointerEvent.screenX,
+      lastY: pointerEvent.screenY,
+    }
+    pointers.set(pointerId, pointer)
 
-    opts.onDragStart?.(state(pointerEvent, 0, 0))
+    retainTarget(moveTarget)
+    if (isFirst) {
+      globalThis.document?.addEventListener('selectstart', preventSelectStart)
+    }
+
+    opts.onDragStart?.(state(pointerEvent, pointer, 0, 0))
   }
 
   function handlePointerMove(event: Event) {
     const pointerEvent = event as PointerEvent
-    if (pointerEvent.pointerId !== pointerId) return
+    const pointer = pointers.get(pointerEvent.pointerId)
+    if (!pointer) return
 
-    const deltaX = pointerEvent.screenX - lastX
-    const deltaY = pointerEvent.screenY - lastY
+    const deltaX = pointerEvent.screenX - pointer.lastX
+    const deltaY = pointerEvent.screenY - pointer.lastY
 
     // Movement below the threshold accumulates until it crosses it. Dropping it
     // instead would swallow a slow drag entirely: pointer coordinates are
@@ -166,47 +235,50 @@ export function createDrag(
     const threshold = opts.threshold ?? 0
     if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return
 
-    lastX = pointerEvent.screenX
-    lastY = pointerEvent.screenY
+    pointer.lastX = pointerEvent.screenX
+    pointer.lastY = pointerEvent.screenY
 
-    opts.onDrag?.(state(pointerEvent, deltaX, deltaY))
+    opts.onDrag?.(state(pointerEvent, pointer, deltaX, deltaY))
   }
 
   function handlePointerUp(event: Event) {
     const pointerEvent = event as PointerEvent
-    if (pointerEvent.pointerId !== pointerId) return
+    const pointer = pointers.get(pointerEvent.pointerId)
+    if (!pointer) return
 
-    const deltaX = pointerEvent.screenX - lastX
-    const deltaY = pointerEvent.screenY - lastY
-    const finalState = state(pointerEvent, deltaX, deltaY)
+    const deltaX = pointerEvent.screenX - pointer.lastX
+    const deltaY = pointerEvent.screenY - pointer.lastY
+    const finalState = state(pointerEvent, pointer, deltaX, deltaY)
 
-    stopTracking()
+    stopTracking(pointerEvent.pointerId)
     opts.onDragEnd?.(finalState)
   }
 
-  function stopTracking() {
-    if (pointerId === null) return
+  function stopTracking(pointerId: number) {
+    const pointer = pointers.get(pointerId)
+    if (!pointer) return
+
     capture.releasePointerCapture?.(pointerId)
-    moveTarget?.removeEventListener('pointermove', handlePointerMove)
-    moveTarget?.removeEventListener('pointerup', handlePointerUp)
-    moveTarget?.removeEventListener('pointercancel', handlePointerUp)
+    releaseTarget(pointer.moveTarget)
+    pointers.delete(pointerId)
+
+    if (pointers.size > 0) return
+
     globalThis.document?.removeEventListener('selectstart', preventSelectStart)
     if (previousCursor !== undefined && style) {
       style.cursor = previousCursor
       previousCursor = undefined
     }
-    moveTarget = null
-    pointerId = null
   }
 
   element.addEventListener('pointerdown', handlePointerDown)
 
   return {
     update: (next) => {
-      opts = { ...opts, ...next }
+      opts = { ...opts, ...next, multiPointer }
     },
     destroy: () => {
-      stopTracking()
+      for (const pointerId of [...pointers.keys()]) stopTracking(pointerId)
       element.removeEventListener('pointerdown', handlePointerDown)
       if (style) {
         for (const [property] of MANAGED_STYLES) {

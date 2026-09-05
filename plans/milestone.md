@@ -19,8 +19,8 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 | Phase 2: `createDrag` / `createWheel` | 完了 |
 | Phase 2.5: Slider / Knob / XYPad の実装統一 | 完了 |
 | Phase 3: `createDragValue` | 完了 |
-| Phase 4: Piano / AnimationCanvas / NumberInput | NumberInput（[4.1](./core-extraction-plan.md)）と AnimationCanvas（[4.2](./core-extraction-plan.md)）は完了。Piano は未着手 |
-| Phase 5: zustand 除去 | 一部完了（NumberInput は 4.1 で除去済み。Piano / PointsEditor が残り） |
+| Phase 4: Piano / AnimationCanvas / NumberInput | 完了（NumberInput [4.1](./core-extraction-plan.md) / AnimationCanvas [4.2](./core-extraction-plan.md) / Piano [4.3](./core-extraction-plan.md)） |
+| Phase 5: zustand 除去 | 一部完了（NumberInput は 4.1、Piano は 4.3 で context ごと削除。**PointsEditor のみ残り**） |
 | 5 章: CSS ヘッドレス化・MIDI の作り込み など | 一部完了（5.3 / 5.4 / 5.8 / 5.9 済み） |
 
 着手前に決める必要がある未確定事項（同ドキュメント 2 章）:
@@ -33,7 +33,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 ## 2. テスト整備
 
-- [ ] **dom 移行前からテストが無い部分にテストを足す。** `packages/react/__tests__/` があるのは AnimationCanvas / Knob / NumberInput / Slider / hooks / util / storybook のみで、Piano・PointsEditor・XYPad には専用のテストが無い（XYPad は `__tests__/drag.test.tsx` と `compose.test.tsx` で部分的に触れているだけ）
+- [ ] **dom 移行前からテストが無い部分にテストを足す。** `packages/react/__tests__/` があるのは AnimationCanvas / Knob / NumberInput / Piano / Slider / hooks / util / storybook で、**PointsEditor・XYPad には専用のテストが無い**（XYPad は `__tests__/drag.test.tsx` と `compose.test.tsx` で部分的に触れているだけ）。Piano は 4.3 で追加済み
 - [ ] **テストと story を実装コードと同じディレクトリに置く。** 現在は `src/` の外に `__tests__/` と `__stories__/` を並べる構成
 
   1 つのコンポーネントに対応するものは `src/components/<Name>/` へ移す。**複数のコンポーネントにまたがるものは `__tests__/` / `__stories__/` に残す**（`__tests__/drag.test.tsx`、`__tests__/Slider/compose.test.tsx`、`__stories__/combined/` など）。story 用のスタイルとヘルパー（`__stories__/lib/`、`__stories__/styles/`、`public/`、`intro.mdx`）も残す。
@@ -78,7 +78,13 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 - [ ] **CSS のデモを公開する形に作り替える。** Radix UI / Base UI と同じく、パッケージはスタイルを配らず、ドキュメント上でデモの CSS をコピーできるようにする（core-extraction-plan.md 5.1）
 - [ ] **hooks のドキュメントを充実させる。** 現在 `site/docs/hooks/` には `web-midi-api` しかない。`useDrag` / `useWheel` / `useDragValue` は typedoc の自動生成のみ
 - [ ] **Vue / Svelte を足したときのドキュメント構成を決める。** 現在の `site/docs/components/<Name>/index.mdx` は React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）。フレームワークごとにタブを分けるのか、サイト自体を分けるのか
-- [ ] **移行ガイドを書く。** 0.x の間に入れた破壊的変更（`useDrag` の戻り値変更、`useDragWithElement` の `useDragValue` への置き換え、`DragObserver` / `WheelObserver` の削除、`skew` の `scale` への置き換え、`Slider.Scale` の `Slider.Marks` への改名、CSS の配布方法変更、NumberInput の再設計、wheel をフォーカス時のみに変更）をまとめる
+- [ ] **移行ガイドを書く。** 0.x の間に入れた破壊的変更（`useDrag` の戻り値変更、`useDragWithElement` の `useDragValue` への置き換え、`DragObserver` / `WheelObserver` の削除、`skew` の `scale` への置き換え、`Slider.Scale` の `Slider.Marks` への改名、CSS の配布方法変更、NumberInput の再設計、wheel をフォーカス時のみに変更、Piano の compound component 廃止 = `WhiteKey` / `BlackKey` / `KeyLabel` / `KeyMethods` の削除、`label` のシグネチャ変更、`getNoteRangeArray` の functions への移動、`whiteNoteWidth` → `whiteKeyWidth`、`KeyboardShortcuts.flags` の削除）をまとめる
+- [ ] **`site/i18n` の typedoc サイドバー翻訳キーを掃除する。** `sidebar.typedocSidebar.doc.*` が en / ja とも **92 個あるのに対し、現行の typedoc サイドバーが持つ label は 25 個**で、69 個が残骸になっている（2026-09-05 時点、`27209dc`）。
+
+  `docusaurus write-translations` は足りないキーを追加するだけで、要らなくなったキーは消さないため溜まり続ける。大半は typedoc を `router: 'module'` にした（シンボルごとのページ → モジュールごとのページ）際に消えた `SliderProps` / `clamp` / `normalizeValue` などのページのキー。ほかに Phase 3 で削除した `useDragWithElement`、#143 で改名した `ScaleProps` / `ScaleOptionProps` が混ざっている。
+
+  ビルドは通るので実害は無いが、ja の翻訳ファイルで「実際に翻訳が要るもの」が埋もれる。掃除するときは `rm -rf site/docs/api && npm run build:docs` で typedoc を生成し直してから、`site/docs/api/**/typedoc-sidebar.cjs` の `label` と突き合わせて差分を消す（`site/docs/api` は gitignore されているので、古い生成物が残っていると誤判定する）。
+
 - [ ] `site/docs/support/CHANGELOG.md` は手書きだが、changesets 移行により各パッケージの `CHANGELOG.md` が自動生成されるようになった。二重管理をやめる
 - [ ] 1.0 時点で `README.md` の「*tremolo-ui is now WIP*」と「An unstable version (0.x) has been released.」を更新する
 
