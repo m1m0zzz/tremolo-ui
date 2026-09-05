@@ -51,5 +51,14 @@ export {
   pianoWidth,
 } from './piano'
 export { type InputEventOption } from './types'
-export { type Units, formatValue, parseValue, selectUnit } from './unit'
+export {
+  type SIPrefix,
+  type UnitFormatOptions,
+  type UnitFormatter,
+  type Units,
+  formatValue,
+  parseValue,
+  selectUnit,
+  unitFormat,
+} from './unit'
 export { isEmpty, mod, styleHelper, xor } from './util'

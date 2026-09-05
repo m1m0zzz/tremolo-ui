@@ -8,10 +8,12 @@
     "Codepen",
     "Codesandbox",
     "csspart",
+    "deci",
     "Imagiro",
     "locrian",
     "mdast",
     "midimessage",
+    "milli",
     "mimoz",
     "mixolydian",
     "nodownload",
@@ -24,6 +26,8 @@
     "Vercel",
     "vite",
     "Wavetable",
+    "yocto",
+    "yotta",
     "zustand"
   ],
   "ignorePaths": [
