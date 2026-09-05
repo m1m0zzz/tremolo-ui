@@ -1161,7 +1161,7 @@ flex / grid コンテナの中で幅が足りないと、`flex-shrink` の既定
 - [ ] **「キャレットのある桁を動かす」まで踏み込むかを決める。** 位置を保つだけなら表示の話だが、桁を見て刻み幅を変える（小数第 1 位にいれば 0.1 ずつ）なら `keyboard` の `InputEventOption` と競合する。5.11 の修飾キーとも関係する
 - [ ] IME 変換中は触らない。`compositionstart` / `compositionend` の間はキャレットを動かさない
 
-### 5.14 NumberInput の `units` をやめ、`format` に一本化する
+### 5.14 NumberInput の `units` / `digit` をやめ、`format` に一本化する
 
 現在 `NumberInput.Root` は `units` / `digit` と `format` / `parse` の**2 系統**を持ち、`format` が渡されていればそちらが勝つ。`units` は `@tremolo-ui/functions` の `formatValue` / `parseValue` / `selectUnit` に支えられている。
 
@@ -1171,22 +1171,90 @@ flex / grid コンテナの中で幅が足りないと、`flex-shrink` の既定
 - `parse` だけ渡すと `format` は `units` 由来のまま、といった噛み合わない組み合わせが型で防げない
 - `Units`（`[string, number][]`）は SI 接頭辞の表を毎回手で書かせる形になっている（`[['Hz', 1], ['kHz', 1000]]`）
 
-- [ ] **`units` / `digit` / `Units` / `formatValue` / `parseValue` / `selectUnit` を削除し、`format` / `parse` だけにする。** 破壊的変更なので移行ガイドに載せる
-- [ ] **`format` 関数を組み立てるユーティリティを `@tremolo-ui/functions` から公開する。** 引数は `(baseUnit: 'Hz', basePlace: 'm' | '' | 'k' = '')` のような形。**値が「どの接頭辞の単位で表されているか」を基準として受け取り**、表示のときに桁に合わせて接頭辞を選び直す
+#### `digit` も一緒に消す
+
+`digit` は `toFixed` の引数をそのまま渡すだけで、**組み込みフォーマッタにしか効かない**（`format` を渡すと無視される）。`units` を消すなら `digit` のためだけに組み込みフォーマッタを残すことになり、「2 系統ある」という動機がそのまま残る。
+
+現状の挙動を確認した結果:
+
+- **表示専用で値には触らない。** `digit={0}` `step={0.1}` で値 1.6 のとき、表示は `2` → `3` → `4` と 1 ずつ増えるのに実際の値は 1.6 → 2.6 → 3.6。`digit` と `step` は互いを知らない
+- 編集中は `format` を通らない（`text = draft ?? format(value)`）ので、入力中だけ丸めが外れる
+- `toFixed` の癖をそのまま被る。`(1.005).toFixed(2)` は `"1.00"`、`(-0.4).toFixed(0)` は `"-0"`、1e21 以上で指数表記になる
+- 丸めた表示が値になることがある。入力欄に触ると draft が立ち、`commitDraft` が **draft の文字列**を parse するので、`"2"` を編集して戻すと値が 1.6 から 2 になる
+
+**ただし表示と値のズレは `digit` を消しても直らない。** `format={(v) => v.toFixed(0)}` でも同じことが起きる。原因は「表示の桁と `step` が互いを知らない」ことなので 5.15 に分けた。
+
+- [ ] `units` / `digit` / `Units` / `formatValue` / `parseValue` / `selectUnit` を削除し、`format` / `parse` だけにする。破壊的変更なので移行ガイドに載せる
+- [ ] `units` を使っている example / story / ドキュメントを全部書き換える
+
+#### 既存ライブラリの調査
+
+**JS の単位・数値整形ライブラリを一通り見たが、そのまま真似できるものは無かった。**
+
+| ライブラリ | 単位の扱い | 参考になる点 |
+| --- | --- | --- |
+| `Intl.NumberFormat` | `style: 'unit'` は**認可された 45 単位のみ**。`Intl.supportedValuesOf('unit')` に **`hertz` も `decibel` も無い** | オーディオでは使えないことの確認。`notation: 'engineering'` は `299.792E6` の指数表記で SI 接頭辞ではない |
+| React Aria / Base UI の NumberField | `formatOptions` / `format` に `Intl.NumberFormatOptions` を渡すだけ。**関数を取らない** | 最も近い既存コンポーネントが単位の抽象化を持っていない。Hz / dB は利用者が外でやる前提 |
+| `d3-format` | `format('s')` は**値ごとに接頭辞を選び、精度は有効数字**。`formatPrefix(spec, 基準値)` は**接頭辞を固定し、精度は小数桁** | この 2 つが別 API に分かれている。micro は `µ`、範囲は y(10⁻²⁴)〜Y(10²⁴)、`~` で末尾のゼロを落とす |
+| `mathjs` | 単位定義ごとに `prefixes: 'none' \| 'short' \| 'long' \| 'binary_short' \| 'binary_long'` を宣言する。`dB` は単位として定義されている | **「この単位は接頭辞を取らない」を宣言で表す**という形。dB 問題の答えがここにある |
+| `UnitMath` | `autoPrefix: 'auto' \| 'always' \| 'never'`、`prefixMin: 0.1` / `prefixMax: 1000`、`prefixesToChooseFrom: 'common' \| 'all'` | **接頭辞を切り替える閾値**を設定で持つ。表示される数が 0.1〜1000 に収まるように選ぶ |
+| JUCE / webaudio-controls | 単位系そのものが無い。`stringFromValue` / `valueFromString`、`conv` / `rconv` の**関数 2 つ** | オーディオ領域の慣行は「関数 2 つ」。`format` / `parse` 一本化はこれと一致する |
+
+**`format` / `parse` に一本化する方向はオーディオ領域の慣行と一致している。** 我々の価値は便利コンストラクタの質にあり、そこは d3-format / mathjs / UnitMath から borrow できる。
+
+#### 便利コンストラクタ
+
+- [ ] **名前は `siUnit` にしない。** SI でない単位（dB / % / cent / semitone）を接頭辞なしで素通しさせる以上、名前が嘘になる。`unitFormat` を推す
+  - 返すのは `{ format, parse }` の対なので、名前は「何であるか」ではなく「何を作るか」を言うべき
+  - `createUnit` は避ける。mathjs で「単位系に単位を定義する」という別の意味を持っており、かつ `@tremolo-ui/dom` では `create*` が「`destroy()` を持つ命令的インスタンス」を指す
+  - `unit` は短いが、`clamp` / `mapValue` と並ぶ export としては汎用的すぎる
+  - `NumberInput` が要求する 2 つの props をそのまま返すので、スプレッドで渡せる形になる
+
+    ```tsx
+    <NumberInput.Root {...unitFormat('Hz', { digits: 2 })} value={v} onChange={setV}>
+    ```
+
+- [ ] **`basePlace` は位置引数ではなくオプションに入れる。** つまみが 3 つあり、しかも**性質が違う**ので、位置引数だと確実に混同する
+
+  | | 何を決めるか | 先例 |
+  | --- | --- | --- |
+  | `base` | **保存されている値**がどの接頭辞か（ms で持っている） | 無し。d3 も mathjs も「値は基本単位」前提。**我々の追加** |
+  | 接頭辞の選び方 | 値ごとに動的か、固定か、付けないか | d3 の `s` / `formatPrefix`、UnitMath の `autoPrefix` |
+  | 精度 | 小数桁（**A 採用**）か有効数字か | d3 は API ごとに違う |
 
   ```ts
-  // 値は Hz。1234 -> '1.23kHz'
-  const hz = siUnit('Hz')
-  // 値は ms（ミリ秒）。1500 -> '1.5s'、0.5 -> '500us'
-  const ms = siUnit('s', 'm')
+  unitFormat('Hz')                                  // 1234 -> '1.23kHz'
+  unitFormat('s', { base: 'm' })                    // 値は ms。1500 -> '1.5s'
+  unitFormat('s', { base: 'm', digits: 2 })         // 1500 -> '1.50s'
+  unitFormat('dB', { prefixes: false, digits: 1 })  // -6.25 -> '-6.3dB'
   ```
 
-  `basePlace` を持たせるのは、**値の単位と表示の単位が一致しない**ケースが実際にあるため。ADSR は内部的に ms で持ちながら 1000ms を `1s` と出したい（`__stories__/PointsEditor.stories.tsx` の `MS_SEC_UNITS` がまさにこれ）。
+- [ ] **桁数は `digits`（小数桁）で持つ。** 5.13 の議論で A を採用した。`step` から既定値を導く案（B）は、`format` が `(value) => string` の純粋関数である以上 `Root` 側に暗黙の組み立てを足すことになり、「書式は 1 箇所を見れば分かる」という一本化の眼目を削るため採らない
+- [ ] **接頭辞を取らない単位を宣言で表す。** mathjs の `prefixes: 'none'` と同じ考え方。`prefixes: false` で素通し
+- [ ] **接頭辞を切り替える閾値を決める。** 現在の `selectUnit` は「値以下で最大のスケール」なので、0.0005 は `0.0005Hz` のままになる。UnitMath は**表示される数が 0.1〜1000 に収まる**ように選ぶ。この規則を採るかどうか
+- [ ] **`0` を特別扱いする。** 対数で接頭辞を選ぶと `0` が扱えない。基本単位で出す
+- [ ] **どの接頭辞まで使うか決める。** UnitMath の `prefixesToChooseFrom: 'common' | 'all'` と同じ問題。`p n µ m (なし) k M G` あたりに絞るのが実用的で、`yocto` や `yotta` は要らない
+- [ ] **`parse` を対で受け渡す。** 片方だけ差し替えられると噛み合わなくなるので、`{ format, parse }` を返して両方一度に渡す形にする
 
-- [ ] **`parse` も対で作る。** 同じユーティリティが `{ format, parse }` を返すのか、`siUnit(...).format` / `.parse` なのか、関数を 2 つ export するのかを決める。片方だけ差し替えられると噛み合わなくなるので、**対で受け渡す形にする方が安全**
-- [ ] **接頭辞の範囲を決める。** `p n u m (none) k M G` あたり。`μ` を使うか `u` にするか（入力のしやすさ）、大文字小文字（`M` と `m` は 10^6 と 10^-3 で別物）をどう扱うか
-- [ ] **`digit` の後継を決める。** 有効数字で丸めるのか、小数点以下の桁数で丸めるのか。接頭辞を選び直す以上、`1.23kHz` と `1234Hz` で桁の意味が変わる
-- [ ] 秒 / ms のように**接頭辞が SI でない単位**（dB、%、cent、semitone）は接頭辞を付けずに素通しできること
+#### parse 側の落とし穴（調査で判明）
+
+- [ ] **`dB` に接頭辞を付けてはいけない。** `d` は deci なので、`unitFormat('B')` にすると `-6dB` が「-6 デシ B」と解釈される。mathjs も `dB` を独立した単位として定義している
+- [ ] **micro の文字が 2 種類ある。** d3 が使う `µ`（U+00B5 MICRO SIGN）と `μ`（U+03BC GREEK SMALL LETTER MU）は見た目が同じで別コードポイント。**parse は `µ` / `μ` / `u` の 3 通りを全部受ける**（キーボードから `µ` は打てない）。format 側でどちらを出すかも決める
+- [ ] **大文字小文字を潰さない。** `m` は 10⁻³、`M` は 10⁶
+- [ ] **単位記号の前の 1 文字だけを接頭辞として剥がす。** 単位記号自体が接頭辞と同じ文字で始まる場合（`m` = メートル に対する `mm`）に誤読しないよう、単位記号を先に照合してから残りを見る
+
+### 5.15 表示の桁と `step` が互いを知らない
+
+5.14 の調査中に判明した。`NumberInput` の表示桁（現 `digit`、将来の `digits`）と `step` の間に関係が無いため、**両者が矛盾しても何も警告されない。**
+
+`digit={0}` `step={0.1}` で値 1.6 のとき、上下キーを押すと表示は `2` → `3` → `4` と 1 ずつ増えるのに、`onChange` が渡す値は 1.6 → 2.6 → 3.6 になる。ユーザーには「2 から 1 ずつ足した」ようにしか見えない。
+
+`digit` を消しても直らない（`format={(v) => v.toFixed(0)}` で同じことが起きる）ので、5.14 とは別に扱う。
+
+- [ ] **そもそも防ぐべきかを決める。** 「表示は粗く、値は細かく」が正当な要求である場面もある（内部は連続値、表示は丸め）
+- [ ] 防ぐなら、開発ビルドで警告するのが妥当か（5.6 の `useCheckPlacement` と同じ形）。ただし `format` は任意の関数なので、**表示桁を機械的に知る方法が無い**
+- [ ] `step` から表示桁の既定値を導く案（5.14 の B 案）は一本化の眼目と衝突するため採らない。別の解き方が要る
+- [ ] 5.13（上下キーでカーソル位置を保つ）と関係する。桁を選んで動かす操作を入れるなら、表示桁と `step` の関係を先に決める必要がある
 
 ## 6. 既存コードで見つかった問題
 
