@@ -27,4 +27,9 @@
   &[data-dragging='true'] {
     cursor: inherit;
   }
+
+  /* Dragging does nothing while readonly, so do not offer to. */
+  &[aria-readonly='true'] {
+    cursor: default;
+  }
 }

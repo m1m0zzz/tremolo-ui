@@ -88,3 +88,11 @@
   grid-template-rows: repeat(3, 1fr);
   gap: 4px 8px;
 }
+
+/*
+ * The package draws no focus ring, so the story adds one: with the keyboard
+ * wired up you have to be able to tell which point is focused.
+ */
+.focusRing:focus {
+  box-shadow: 0px 0px 0px 3px color-mix(in srgb, currentColor 25%, transparent);
+}

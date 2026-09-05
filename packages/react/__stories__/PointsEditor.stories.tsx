@@ -83,6 +83,56 @@ export const Basic: Story = {
   },
 }
 
+/**
+ * A point takes focus, so the arrow keys move it and the wheel moves it while
+ * it is focused — shift selects the x axis. The wheel works anywhere over the
+ * editor, not only over the point itself, and moves the focused point rather
+ * than the one under the cursor.
+ *
+ * `Root` sets the step for every point; a `Point` can override it, or pass
+ * `null` to opt out.
+ */
+export const KeyboardAndWheel = () => {
+  const [coarse, setCoarse] = useState<PointBaseType>({ x: 0.25, y: 0.5 })
+  const [fine, setFine] = useState<PointBaseType>({ x: 0.75, y: 0.5 })
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <p>
+        Click a point, then use the arrow keys, or the wheel anywhere over the
+        editor.
+      </p>
+      <PointsEditor.Root keyboard={['normalized', 0.05]}>
+        <PointsEditor.Background
+          style={{ background: '#f2f4f5', borderRadius: 4 }}
+        />
+        <PointsEditor.Container>
+          <PointsEditor.Point
+            className={styles.focusRing}
+            style={{ color: themeColor }}
+            value={coarse}
+            color={themeColor}
+            onChange={setCoarse}
+          />
+          <PointsEditor.Point
+            className={styles.focusRing}
+            style={{ color: '#ed6a34' }}
+            value={fine}
+            color="#ed6a34"
+            keyboard={['normalized', 0.005]}
+            onChange={setFine}
+          />
+        </PointsEditor.Container>
+      </PointsEditor.Root>
+      <p>
+        blue: 0.05 per key ({coarse.x.toFixed(3)}, {coarse.y.toFixed(3)})
+        <br />
+        orange: 0.005 per key ({fine.x.toFixed(3)}, {fine.y.toFixed(3)})
+      </p>
+    </div>
+  )
+}
+
 function add(a: PointBaseType, b: PointBaseType): PointBaseType {
   return { x: a.x + b.x, y: a.y + b.y }
 }
