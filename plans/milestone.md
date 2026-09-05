@@ -21,7 +21,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 | Phase 3: `createDragValue` | 完了 |
 | Phase 4: Piano / AnimationCanvas / NumberInput | 完了（NumberInput [4.1](./core-extraction-plan.md) / AnimationCanvas [4.2](./core-extraction-plan.md) / Piano [4.3](./core-extraction-plan.md)） |
 | Phase 5: zustand 除去 | 完了（`zustand` を dependencies から削除済み。`useSyncExternalStore` は使わずに済んだ） |
-| 5 章: CSS ヘッドレス化・MIDI の作り込み など | 一部完了（5.3 / 5.4 / 5.8 / 5.9 済み） |
+| 5 章: CSS ヘッドレス化・MIDI の作り込み など | **5.1 / 5.2 のみ残り**（5.3〜5.10 は完了） |
 
 着手前に決める必要がある未確定事項（同ドキュメント 2 章）:
 
@@ -74,18 +74,22 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 ## 4. ドキュメント整備
 
-- [ ] **`@tremolo-ui/dom` のドキュメントを追加する。** 現在 typedoc の対象は `functions` と `react` のみで（`site/docusaurus.config.ts` の `typedocPlugins()`）、dom は API リファレンスにすら載っていない
+- [x] **`@tremolo-ui/dom` のドキュメントを追加する。** typedoc の 3 つ目の plugin として追加し、サイドバーに `@tremolo-ui/dom` のカテゴリを足した。
+
+  **サイドバーの翻訳キーはラベルから作られ、それが 1 つのサイドバー内で衝突するとビルドが落ちる。** typedoc はページのラベルにモジュールパスの**最後のセグメントだけ**を使うので、`dom` を足した時点で `midi/input` と `piano/input` が両方 `input` になり、さらに `dom/piano` と `functions/piano` が衝突した。`sidebars.ts` の `withKeys()` で doc id（既に一意）を `key` に入れて解決している。パッケージが増えるたびに起きるので、新しい typedoc plugin を足すときはこれを通すこと。
+
+  あわせて `packages/dom/src/piano/input.ts` を `piano/index.ts` に改名した（`dom` の公開 API は `exports` が `.` だけなので影響なし）。
 - [ ] **CSS のデモを公開する形に作り替える。** Radix UI / Base UI と同じく、パッケージはスタイルを配らず、ドキュメント上でデモの CSS をコピーできるようにする（core-extraction-plan.md 5.1）
 - [ ] **hooks のドキュメントを充実させる。** 現在 `site/docs/hooks/` には `web-midi-api` しかない。`useDrag` / `useWheel` / `useDragValue` は typedoc の自動生成のみ
 - [ ] **Vue / Svelte を足したときのドキュメント構成を決める。** 現在の `site/docs/components/<Name>/index.mdx` は React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）。フレームワークごとにタブを分けるのか、サイト自体を分けるのか
-- [ ] **移行ガイドを書く。** 0.x の間に入れた破壊的変更（`useDrag` の戻り値変更、`useDragWithElement` の `useDragValue` への置き換え、`DragObserver` / `WheelObserver` の削除、`skew` の `scale` への置き換え、`Slider.Scale` の `Slider.Marks` への改名、CSS の配布方法変更、NumberInput の再設計、wheel をフォーカス時のみに変更、Piano の compound component 廃止 = `WhiteKey` / `BlackKey` / `KeyLabel` / `KeyMethods` の削除、`label` のシグネチャ変更、`getNoteRangeArray` の functions への移動、`whiteNoteWidth` → `whiteKeyWidth`、`KeyboardShortcuts.flags` の削除、PointsEditor の `grid` 削除と `children` 必須化）をまとめる
-- [ ] **`site/i18n` の typedoc サイドバー翻訳キーを掃除する。** `sidebar.typedocSidebar.doc.*` が en / ja とも **92 個あるのに対し、現行の typedoc サイドバーが持つ label は 25 個**で、69 個が残骸になっている（2026-09-05 時点、`27209dc`）。
+- [x] **移行ガイドを書く。** `site/docs/guides/migration.mdx`。新しいものから順に、変更前後のコードを並べて書く。**CSS の配布方法変更（5.1）だけは未着手**なので「Still to come」として残してある
+- [x] **`site/i18n` の typedoc サイドバー翻訳キーを掃除した。** `sidebar.typedocSidebar.*` を en / ja とも**全て削除**した（114 キー → 7 キー）。
 
-  `docusaurus write-translations` は足りないキーを追加するだけで、要らなくなったキーは消さないため溜まり続ける。大半は typedoc を `router: 'module'` にした（シンボルごとのページ → モジュールごとのページ）際に消えた `SliderProps` / `clamp` / `normalizeValue` などのページのキー。ほかに Phase 3 で削除した `useDragWithElement`、#143 で改名した `ScaleProps` / `ScaleOptionProps` が混ざっている。
+  残骸を選り分けるつもりで調べたところ、**107 キーのうち翻訳されているものが 1 つも無かった**（`message` が全てラベルと同一）。しかも typedoc のラベルはモジュールパスとシンボル名（`math`、`useDrag`、`components/Slider`）で、**そもそも翻訳する対象ではない**。消してもラベルにフォールバックするだけなので表示は変わらず、ja の翻訳ファイルには「実際に翻訳が要る 7 個」だけが残る。
 
-  ビルドは通るので実害は無いが、ja の翻訳ファイルで「実際に翻訳が要るもの」が埋もれる。掃除するときは `rm -rf site/docs/api && npm run build:docs` で typedoc を生成し直してから、`site/docs/api/**/typedoc-sidebar.cjs` の `label` と突き合わせて差分を消す（`site/docs/api` は gitignore されているので、古い生成物が残っていると誤判定する）。
+  `docusaurus write-translations` を走らせると再び追加されるが、それは翻訳が要るという意味ではない。API リファレンスのラベルは触らない方針。
 
-- [ ] `site/docs/support/CHANGELOG.md` は手書きだが、changesets 移行により各パッケージの `CHANGELOG.md` が自動生成されるようになった。二重管理をやめる
+- [x] `site/docs/support/CHANGELOG.md` の二重管理をやめた。中身は「TODO: record from version 1.0.0」のスタブのままだったので、各パッケージの `CHANGELOG.md` と GitHub リリース、移行ガイドへのリンクに置き換えた
 - [ ] 1.0 時点で `README.md` の「*tremolo-ui is now WIP*」と「An unstable version (0.x) has been released.」を更新する
 
 ## 1.0 の基準

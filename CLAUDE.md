@@ -68,6 +68,7 @@ GitHub Actions（`build.yml`）が回すのは `build:package` と `test` だけ
 
 - `packages/*/src` にファイルを足す・移すと、`site/docusaurus.config.ts` の typedoc の `entryPoints` が拾って API ページを生成する。Docusaurus は `_` で始まるパスを docs から除外するため、`_util` や `_internal` を `exclude` に入れておかないと「存在しない doc id を指すサイドバー」になってビルドが落ちる
 - パッケージを追加したとき、Vercel の Storybook プロジェクトのビルドコマンドが個別指定だと新しい `dist` が無くて落ちる（`plans/core-extraction-plan.md` Phase 1）
+- **typedoc のサイドバーは 1 つ（`typedocSidebar`）で、Docusaurus の翻訳キーはラベルから作られる。** typedoc はページのラベルにモジュールパスの**最後のセグメントだけ**を使うので、`midi/input.ts` と `piano/input.ts` のように名前が被るとキーが衝突してビルドが落ちる。パッケージをまたいでも起きる（`dom/piano` と `functions/piano`）。`site/sidebars.ts` の `withKeys()` が doc id を `key` に入れて回避しているので、typedoc plugin を足すときは必ずそれを通すこと
 
 ## アーキテクチャ
 

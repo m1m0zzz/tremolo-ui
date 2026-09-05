@@ -47,6 +47,27 @@ function typedocPlugins() {
     [
       'docusaurus-plugin-typedoc',
       {
+        id: 'dom',
+        entryPoints: ['../packages/dom/src/**/*.ts'],
+        exclude: ['../packages/dom/src/index.ts'],
+        tsconfig: '../packages/dom/tsconfig.json',
+        out: './docs/api/dom',
+        readme: 'none',
+        router: 'module',
+        parametersFormat: 'table',
+        enumMembersFormat: 'table',
+        useCodeBlocks: true,
+        // for Vercel Deploy (npm run build:docs:production)
+        ...(process.env.COMMIT_SHA && {
+          sourceLinkTemplate:
+            'https://github.com/m1m0zzz/tremolo-ui/blob/{gitRevision}/{path}#L{line}',
+          gitRevision: process.env.COMMIT_SHA,
+        }),
+      },
+    ],
+    [
+      'docusaurus-plugin-typedoc',
+      {
         id: 'react',
         entryPoints: [
           '../packages/react/src/components/**/index.{ts,tsx}',

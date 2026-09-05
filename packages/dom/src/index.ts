@@ -32,7 +32,7 @@ export {
   type NoteSource,
   type PianoInputInstance,
   type PianoInputOptions,
-} from './piano/input'
+} from './piano'
 export {
   createDrag,
   type DragInstance,

@@ -1,7 +1,37 @@
+import typedocSidebarDom from './docs/api/dom/typedoc-sidebar.cjs'
 import typedocSidebarFunctions from './docs/api/functions/typedoc-sidebar.cjs'
 import typedocSidebarReact from './docs/api/react/typedoc-sidebar.cjs'
 
-import type { SidebarsConfig } from '@docusaurus/plugin-content-docs'
+import type {
+  SidebarsConfig,
+  SidebarItemConfig,
+} from '@docusaurus/plugin-content-docs'
+
+/**
+ * Give every generated item a translation key of its own.
+ *
+ * Docusaurus builds the key from the label, and typedoc labels a page with the
+ * last segment of its module path. Those collide across the one sidebar —
+ * `piano` is a module of both `@tremolo-ui/functions` and `@tremolo-ui/dom`,
+ * and `input` appears twice within `dom` alone — and a collision fails the
+ * build. Doc ids are already unique, so they make the keys.
+ */
+function withKeys(
+  items: SidebarItemConfig[],
+  prefix: string,
+): SidebarItemConfig[] {
+  return items.map((item) => {
+    if (typeof item === 'string') return item
+    if (item.type === 'category') {
+      const key = `${prefix}.${item.label}`
+      return { ...item, key, items: withKeys(item.items, key) }
+    }
+    if (item.type === 'doc') {
+      return { ...item, key: item.id }
+    }
+    return item
+  })
+}
 
 /**
  * Creating a sidebar enables you to:
@@ -82,7 +112,16 @@ const sidebars: SidebarsConfig = {
         type: 'doc',
         id: 'api/functions/index',
       },
-      items: typedocSidebarFunctions,
+      items: withKeys(typedocSidebarFunctions, 'functions'),
+    },
+    {
+      type: 'category',
+      label: '@tremolo-ui/dom',
+      link: {
+        type: 'doc',
+        id: 'api/dom/index',
+      },
+      items: withKeys(typedocSidebarDom, 'dom'),
     },
     {
       type: 'category',
@@ -91,7 +130,7 @@ const sidebars: SidebarsConfig = {
         type: 'doc',
         id: 'api/react/index',
       },
-      items: typedocSidebarReact,
+      items: withKeys(typedocSidebarReact, 'react'),
     },
   ],
 }
