@@ -17,5 +17,6 @@ Breaking changes:
 - `PointsEditorProps.grid` is removed. It was never implemented and leaked onto the DOM as a `grid` attribute
 - `PointsEditorProps.children` is now required, matching the other components
 - `usePointsEditorContext` no longer requires a selector; calls that pass one are unaffected
+- A readonly point no longer shows a `grab` cursor, since dragging it does nothing
 
 `useWheel` gained a `target` option for this, listening on an element that is managed elsewhere instead of on the one its ref callback is attached to.

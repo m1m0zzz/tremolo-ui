@@ -759,7 +759,13 @@ Slider / XYPad と違い、PointsEditor には**動かせる点が複数ある**
 - `Point` を `Container` の外に置くとホイールが効かなくなるが、ドラッグは元から `containerRef` を基準にしているのでその使い方は既に成立していない
 - **`grid` prop を削除した。** TODO のまま未実装で、`Root` で分割代入もされていなかったため `...props` 経由で `<div grid="4">` として DOM に漏れていた（Piano の `blackNoteWidth` と同じ）
 - **`children` を型で必須にした。** Slider / Knob / XYPad / Piano と揃える。既定の描画へのフォールバックは元から無い
-- `Root` に `aria-disabled` / `aria-readonly` を付けた（CSS の状態セレクタの規約）。`index.css` に `[aria-disabled='true']` と `[aria-readonly='false']:focus` を足した（XYPad の Thumb に合わせた）
+- `Root` に `aria-disabled` / `aria-readonly` を付けた（CSS の状態セレクタの規約）。`index.css` に足すのは `[aria-readonly='true'] { cursor: default }` だけにした
+
+  最初は XYPad の Thumb に合わせて `[aria-disabled='true']` の背景色と `[aria-readonly='false']:focus` のフォーカスリングも足したが、**既存の利用者の見た目を変えてしまう**ので外した。`__stories__/styles/PointsEditor.module.css` の ADSR の点は `background: none` の透明な 30px の円で、中の 4px のドットだけを見せている。そこにフォーカスリングが乗ると、透明な円の外周にハロが出る。story 側は `.point:focus .pointInner` で独自のフォーカス表現を既に持っていたので二重にもなっていた。
+
+  `[aria-disabled='true']` の背景色にも同じ問題がある。セレクタの詳細度が `.tremolo-points-editor-point[aria-disabled='true']`（0,2,0）で、利用者の `.point { background: none }`（0,1,0）に**打ち勝ってしまう**。
+
+  **フォーカスの表示自体は課題として残る。** 元から `outline: none` が入っていて既定のフォーカスリングを潰しているのに、代わりが無い。矢印キーを配線した今は「どの点にフォーカスがあるか」が見えないと操作できないので、5.1 の CSS ヘッドレス化で「パッケージはスタイルを配らず、デモの CSS をドキュメントからコピーさせる」と決めるときに一緒に片付ける
 
 #### PointsEditor での公開 API 変更
 

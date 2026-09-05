@@ -108,11 +108,15 @@ export const KeyboardAndWheel = () => {
         />
         <PointsEditor.Container>
           <PointsEditor.Point
+            className={styles.focusRing}
+            style={{ color: themeColor }}
             value={coarse}
             color={themeColor}
             onChange={setCoarse}
           />
           <PointsEditor.Point
+            className={styles.focusRing}
+            style={{ color: '#ed6a34' }}
             value={fine}
             color="#ed6a34"
             keyboard={['normalized', 0.005]}
