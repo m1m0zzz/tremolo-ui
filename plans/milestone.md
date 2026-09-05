@@ -21,7 +21,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 | Phase 3: `createDragValue` | 完了 |
 | Phase 4: Piano / AnimationCanvas / NumberInput | 完了（NumberInput [4.1](./core-extraction-plan.md) / AnimationCanvas [4.2](./core-extraction-plan.md) / Piano [4.3](./core-extraction-plan.md)） |
 | Phase 5: zustand 除去 | 完了（`zustand` を dependencies から削除済み。`useSyncExternalStore` は使わずに済んだ） |
-| 5 章: CSS ヘッドレス化・修飾キー・単位の扱い など | 残り 5.1 / 5.2（CSS ヘッドレス化）、5.11（修飾キー）、5.12（Knob が潰れる）、5.13〜5.15（NumberInput） |
+| 5 章: CSS ヘッドレス化・修飾キー・単位の扱い など | 残り 5.1 / 5.2（CSS ヘッドレス化）、5.11（修飾キー）、5.12（Knob が潰れる）、5.13〜5.16（NumberInput）、5.17（テストと story の配置） |
 
 着手前に決める必要がある未確定事項（同ドキュメント 2 章）:
 
@@ -34,18 +34,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 ## 2. テスト整備
 
 - [x] **dom 移行前からテストが無い部分にテストを足す。** 全コンポーネントに専用のテストが揃った（Piano は 4.3、PointsEditor は Phase 5、XYPad は 5.7 と同時に追加）。`__tests__/drag.test.tsx` と `__tests__/Slider/compose.test.tsx` は複数コンポーネントにまたがるものとしてそのまま残す
-- [ ] **テストと story を実装コードと同じディレクトリに置く。** 現在は `src/` の外に `__tests__/` と `__stories__/` を並べる構成
-
-  1 つのコンポーネントに対応するものは `src/components/<Name>/` へ移す。**複数のコンポーネントにまたがるものは `__tests__/` / `__stories__/` に残す**（`__tests__/drag.test.tsx`、`__tests__/Slider/compose.test.tsx`、`__stories__/combined/` など）。story 用のスタイルとヘルパー（`__stories__/lib/`、`__stories__/styles/`、`public/`、`intro.mdx`）も残す。
-
-  移すときに必要な作業:
-
-  - `package.json` の `files` に `src` を入れているので、そのままだと test と story まで publish される。`files` は `!` の否定パターンとブレース展開を受け付けるので除外できる（`npm pack --dry-run` で確認済み）
-    ```jsonc
-    "files": ["dist", "src", "!src/**/*.test.{ts,tsx}", "!src/**/*.stories.{ts,tsx}"]
-    ```
-  - `.storybook/main.ts` の `stories` が `../**/__stories__/**/*.stories.*` なので、`src/` 配下も拾うように足す
-  - `site/docusaurus.config.ts` の typedoc の `entryPoints` が `src/hooks/**/*.{ts,tsx}` なので、そのままだと test / story の API ページが生成される。`exclude` に足すこと（`_internal` で踏んだのと同じ）
+- [ ] **テストと story を実装コードと同じディレクトリに置く。** → [core-extraction-plan.md 5.17](./core-extraction-plan.md) に移動
 
 ## 3. Vue / Svelte
 

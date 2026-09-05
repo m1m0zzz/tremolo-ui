@@ -1256,6 +1256,45 @@ flex / grid コンテナの中で幅が足りないと、`flex-shrink` の既定
 - [ ] `step` から表示桁の既定値を導く案（5.14 の B 案）は一本化の眼目と衝突するため採らない。別の解き方が要る
 - [ ] 5.13（上下キーでカーソル位置を保つ）と関係する。桁を選んで動かす操作を入れるなら、表示桁と `step` の関係を先に決める必要がある
 
+### 5.16 NumberInput のフォーカス時に書式を外すオプション
+
+`InputField` が表示するのは `text = draft ?? format(value)` なので、**フォーカスしただけでは書式が付いたまま**になる。`1.23kHz` と出ている欄を編集するには、単位ごと選び直すか、単位文字列の中にキャレットを置いて数字だけ直すことになる。DAW のパラメータ欄は、フォーカスすると素の数値になって打ち直せるものが多い。
+
+`selectOnFocus='number'` は先頭の数字部分だけを**選択**するので近いことはできるが、**表示自体は書式付きのまま**なので、キーで選択を外すと単位の中を編集する羽目になる。
+
+- [ ] **どの数を出すか決める。** ここが本質。`format` が接頭辞を選ぶと、表示上の数と保存されている値が違う
+  - 値をそのまま出す（`1.23kHz` → `1230`）… 桁が跳ねるので見た目の変化が大きいが、`parse` との往復が正確
+  - 表示から数字部分だけを取る（`1.23kHz` → `1.23`）… 変化は小さいが、**単位が消えた時点で 1.23 が何なのか分からなくなる**。この状態で blur すると `parse('1.23')` が 1.23 になり、値が 1000 分の 1 になる
+
+  **前者を採る。** 後者は往復で値が壊れる。
+
+- [ ] **`digits` で丸めた表示のまま編集させない。** 5.14 で見つけた「丸めた表示が値になる」（`digit={0}` で 1.6 が `2` と出ている欄に触れると値が 2 になる）は、フォーカス時に**丸めていない値**を出せば起きなくなる。このオプションはその対策も兼ねる
+- [ ] **prop をどこに置くか。** `selectOnFocus` / `blurOnEnter` と同じく `InputField` に置く（`Root` ではない）。名前は `unformatOnFocus` あたり
+- [ ] **`selectOnFocus` との関係を決める。** 書式を外すなら `'number'` と `'all'` の区別が無くなる（全部が数字になるため）。両立させるのか、`unformatOnFocus` を立てたら `'number'` は `'all'` と同じ扱いにするのかを決める
+- [ ] **既定値は off。** 現在の見た目が変わるため
+- [ ] **キャレットの位置。** フォーカス時にテキストを差し替えるとキャレットが末尾へ行く。`selectOnFocus` を併用しない場合にどこへ置くかは 5.13 と同じ問題
+- [ ] **draft の扱い。** フォーカス時に「素の値」を draft として立てるのか、表示だけ差し替えて draft は null のままにするのかを決める。draft を立てると、**何も編集せずに blur しただけで `commitDraft` が走る**（現在は `draft === null` で早期 return している）
+- [ ] IME 変換中にフォーカスが移る場合を壊さない
+
+### 5.17 テストと story を実装コードと同じディレクトリに置く
+
+`plans/milestone.md` の「2. テスト整備」から移動。全コンポーネントに専用テストが揃った（Piano は 4.3、PointsEditor は Phase 5、XYPad は 5.7 と同時）ので、残るのは配置の話。
+
+現在は `src/` の外に `__tests__/` と `__stories__/` を並べる構成になっている。1 つのコンポーネントに対応するものは `src/components/<Name>/` へ移す。
+
+**複数のコンポーネントにまたがるものは `__tests__/` / `__stories__/` に残す**（`__tests__/drag.test.tsx`、`__tests__/Slider/compose.test.tsx`、`__tests__/util/placement.test.tsx`、`__stories__/combined/` など）。story 用のスタイルとヘルパー（`__stories__/lib/`、`__stories__/styles/`、`public/`、`intro.mdx`）も残す。
+
+移すときに必要な作業:
+
+- [ ] **`package.json` の `files` から test と story を除く。** `files` に `src` を入れているので、そのままだと publish されてしまう。`!` の否定パターンとブレース展開が使える（`npm pack --dry-run` で確認済み）
+  ```jsonc
+  "files": ["dist", "src", "!src/**/*.test.{ts,tsx}", "!src/**/*.stories.{ts,tsx}"]
+  ```
+- [ ] **`.storybook/main.ts` の `stories` に `src/` 配下を足す。** 現在は `../**/__stories__/**/*.stories.*` のみ
+- [ ] **`site/docusaurus.config.ts` の typedoc の `exclude` に足す。** `entryPoints` が `src/components/**/index.{ts,tsx}` と `src/hooks/**/*.{ts,tsx}` なので、そのままだと test / story の API ページが生成される（`_internal` / `_util` で踏んだのと同じ）
+- [ ] **jest の `testMatch` / `roots` を確認する。** `__tests__/` 前提の設定になっていないか
+- [ ] **typedoc のサイドバー翻訳キーが衝突しないか確認する。** ラベルはモジュールパスの最後のセグメントなので、`Slider/index.test.tsx` のようなファイルが拾われると `index` が量産される（`docs/dom` を足したときに踏んだのと同じ問題）
+
 ## 6. 既存コードで見つかった問題
 
 ### 6.1 `useDrag` の delta 計算バグ（実バグ）→ **Phase 2 で修正済み**
