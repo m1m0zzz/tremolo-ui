@@ -464,6 +464,7 @@ createPianoInput(element, {
 - [x] `site/examples/components/piano/basic.tsx` を更新した（`index.mdx` は example を参照するだけなので変更不要）
 - [x] `__stories__/combined/WavetableSynth/` を追随させた
 - [x] 移行ガイドに載せる破壊的変更を milestone に追記した。changeset は `.changeset/olive-melons-shine.md`
+- [x] ブラウザでの目視確認（マルチタッチ、グリッサンド、`fill` のリサイズ、`ScaleHighlight` の active 色）。jsdom ではポインタと `getBoundingClientRect` を偽装しているので実機での確認が要る
 
 #### 4.2 AnimationCanvas
 
