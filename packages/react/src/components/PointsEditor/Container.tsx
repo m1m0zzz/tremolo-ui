@@ -1,22 +1,32 @@
 import clsx from 'clsx'
-import { ComponentPropsWithoutRef, useRef } from 'react'
+import { ComponentPropsWithoutRef, ReactNode, Ref } from 'react'
+
+import { useComposedRefs } from '../_util/composeRefs'
 
 import { usePointsEditorContext } from './context'
 
+export interface PointsEditorContainerProps {
+  /** `<PointsEditor.Point />` goes here. */
+  children?: ReactNode
+  ref?: Ref<HTMLDivElement>
+}
+
 export function Container({
-  className,
   children,
+  className,
+  ref,
   ...props
-}: ComponentPropsWithoutRef<'div'>) {
-  const containerElementRef = useRef<HTMLDivElement>(null)
-  const setContainerElementRef = usePointsEditorContext(
-    (s) => s.setContainerElementRef,
-  )
-  setContainerElementRef(containerElementRef)
+}: PointsEditorContainerProps &
+  Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorContainerProps>) {
+  const containerRef = usePointsEditorContext((s) => s.containerRef)
+
+  // The container is what the pointer position is normalized against, so the
+  // context ref is composed with any ref the caller passed.
+  const composedRef = useComposedRefs<HTMLDivElement>(ref, containerRef)
 
   return (
     <div
-      ref={containerElementRef}
+      ref={composedRef}
       className={clsx('tremolo-points-editor-container', className)}
       {...props}
     >

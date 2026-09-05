@@ -1,91 +1,45 @@
-import {
-  createContext,
-  createRef,
-  RefObject,
-  useContext,
-  useEffect,
-  useRef,
-} from 'react'
-import { createStore, useStore } from 'zustand'
+import { createContext, RefObject, useContext } from 'react'
+
+import type { InputEventOption } from '@tremolo-ui/functions'
 
 import { Cursor } from '../_util'
 
-type State = {
-  containerElementRef: RefObject<HTMLDivElement | null>
+export type PointsEditorContextValue = {
   disabled: boolean
   readonly: boolean
+  /** Inherited by every `Point`; `null` turns the wheel off. */
+  wheel: InputEventOption | null
+  /** Inherited by every `Point`; `null` turns the keyboard off. */
+  keyboard: InputEventOption | null
   externalStyles: {
     userSelectNone?: boolean
     cursor?: Cursor
   }
+
+  /**
+   * `Container` registers its element here; `Point` normalizes the pointer
+   * against it, so a point is placed by its position within the container.
+   */
+  containerRef: RefObject<HTMLDivElement | null>
 }
 
-type Action = {
-  setContainerElementRef: (
-    containerElementRef: RefObject<HTMLDivElement | null>,
-  ) => void
-}
+const PointsEditorContext = createContext<PointsEditorContextValue | null>(null)
 
-type PointsEditorStore = ReturnType<typeof createPointsEditorStore>
+export const PointsEditorProvider = PointsEditorContext.Provider
 
-const createPointsEditorStore = (initProps: Partial<State & Action>) => {
-  // const noteRange = initProps.noteRange || { first: 0, last: 127 }
-  const DEFAULT_PROPS: State = {
-    containerElementRef: createRef(),
-    disabled: false,
-    readonly: false,
-    externalStyles: {
-      userSelectNone: true,
-      cursor: 'grabbing',
-    },
-  }
-
-  return createStore<State & Action>()((set) => ({
-    ...DEFAULT_PROPS,
-    ...initProps,
-    setContainerElementRef: (containerElementRef) => {
-      set(() => ({
-        containerElementRef,
-      }))
-    },
-  }))
-}
-
-const PointsEditorContext = createContext<PointsEditorStore | null>(null)
-
-type PointsEditorProviderProps = React.PropsWithChildren<
-  Partial<State & Action>
->
-
-export function PointsEditorProvider({
-  children,
-  ...props
-}: PointsEditorProviderProps) {
-  const storeRef = useRef<PointsEditorStore>(null)
-  if (!storeRef.current) {
-    storeRef.current = createPointsEditorStore(props)
-  }
-
-  useEffect(() => {
-    if (storeRef.current) {
-      storeRef.current.setState(props)
-    } else {
-      storeRef.current = createPointsEditorStore(props)
-    }
-  }, [props])
-
-  return (
-    <PointsEditorContext.Provider value={storeRef.current}>
-      {children}
-    </PointsEditorContext.Provider>
-  )
-}
-
+/**
+ * The settings `Root` was given, for the subcomponents to read. There is no
+ * state to keep in sync: a point's value belongs to the `Point` that draws it.
+ */
+export function usePointsEditorContext(): PointsEditorContextValue
 export function usePointsEditorContext<T>(
-  selector: (state: State & Action) => T,
-): T {
-  const store = useContext(PointsEditorContext)
-  if (!store)
+  selector: (state: PointsEditorContextValue) => T,
+): T
+export function usePointsEditorContext<T>(
+  selector?: (state: PointsEditorContextValue) => T,
+) {
+  const context = useContext(PointsEditorContext)
+  if (!context)
     throw new Error('Missing PointsEditorContext.Provider in the tree')
-  return useStore(store, selector)
+  return selector ? selector(context) : context
 }

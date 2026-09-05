@@ -714,11 +714,52 @@ NumberInput は `clampValue === false` のとき `min` / `max` に `MIN/MAX_SAFE
 
 ### Phase 5: zustand 除去
 
-- [ ] 5コンポーネントのストア内容の方針を統一（設定のみ / 値も持つ）
-- [ ] コアのインスタンスが同等の情報を持つようにする
-- [ ] React 側は `useSyncExternalStore` でセレクタ購読に置換
-- [ ] `zustand` を dependencies から削除
-- [ ] `SliderProvider` の `useEffect(..., [props])` は props が毎レンダー新しいオブジェクトのため毎回 `setState` が走る。置換時に解消する
+**完了。** `zustand` は `packages/react/package.json` から削除した。
+
+当初は「`useSyncExternalStore` でセレクタ購読に置換する」計画だったが、実際に 5 コンポーネントを見直した結果、**外部ストアそのものが要らなかった**。ストアに入っていたのは全て `Root` の props から導出できる設定で、レンダーごとに計算し直しても問題無いものだった。Phase 2.5 で決めた「値は store に持たない」がそのまま効いている。
+
+- [x] Slider / Knob / XYPad — Phase 2.5 で素の React context へ
+- [x] NumberInput — 4.1 で context ごと削除（Root が持つ state は編集中の draft 1 つだけ）
+- [x] Piano — 4.3 で context ごと削除（`Root` が全ての鍵盤を描くので配る相手がいない）
+- [x] PointsEditor — 下記の通り素の React context へ
+- [x] `zustand` を dependencies から削除
+- [x] `SliderProvider` の `useEffect(..., [props])`（props が毎レンダー新しいオブジェクトのため毎回 `setState` が走っていた）は Phase 2.5 で消滅
+
+`useSyncExternalStore` は結局どこにも入れていない。**外から変わる値を購読する必要が無い**（ポインタもホイールも MIDI も、コアのインスタンスがコールバックで通知してくる）ため、使う理由が無かった。
+
+#### PointsEditor の zustand 除去と wheel / keyboard の配線
+
+Phase 5 の最後の 1 つ。zustand の除去だけでなく、触ったついでに 5.9 で見つかっていた「宣言されているだけの prop」も片付けた。
+
+#### 直したもの
+
+- **zustand を素の React context へ。** Slider / Knob / XYPad と同じ形（`PointsEditorProvider = Context.Provider` + オーバーロードした `usePointsEditorContext`）に揃えた
+- **`Container` がレンダー中に `setContainerElementRef()` を呼んでいた**（レンダー中の副作用）。しかも `useRef` を毎マウント作り直して store へ流し込んでいた。`XYPad.Area` と同じく、`Root` が `containerRef` を持ち `Container` は `useComposedRefs` で合成するだけにした
+- **`readonly` / `disabled` が `Root` から `Point` に伝わっていなかった**（実バグ）。`Point` はコンテキストから `__readonly` を読んでいたのに、ドラッグのガードは**ローカルの prop しか見ていなかった**ので、`<PointsEditor.Root readonly>` を書いても点は動かせた。`_readonly ?? rootReadonly` に統一し、ARIA 属性とガードで同じ値を使う
+- **`wheel` / `keyboard` を配線した。** 5.9 で「型にもドキュメントにも出るが何も起きない」と記録していたもの。`Root` に置いたまま `Point` が継承し、`Point` 側で上書きできる形にした（`disabled` / `readonly` と同じ）。`null` は「イベントを起こさない」という意味を持つので、継承は `??` ではなく `=== undefined` で判定する
+  - キーボード: 矢印キー。**y は下向きに増える**ので ArrowUp は y を減らす
+  - ホイール: XYPad と同じ規約（shift で x 軸）。`requireFocus: true` なので 5.9 の方針にも従う
+  - 既定値は `['normalized', 0.01]`。点の値は両軸とも 0..1 なので、ピクセルサイズによらず 100 ステップで端から端まで動く
+- **`grid` prop を削除した。** TODO のまま未実装で、`Root` で分割代入もされていなかったため `...props` 経由で `<div grid="4">` として DOM に漏れていた（Piano の `blackNoteWidth` と同じ）
+- **`children` を型で必須にした。** Slider / Knob / XYPad / Piano と揃える。既定の描画へのフォールバックは元から無い
+- `Root` に `aria-disabled` / `aria-readonly` を付けた（CSS の状態セレクタの規約）。`index.css` に `[aria-disabled='true']` と `[aria-readonly='false']:focus` を足した（XYPad の Thumb に合わせた）
+
+#### PointsEditor での公開 API 変更
+
+| 変更 | 内容 |
+| --- | --- |
+| 削除 | `PointsEditorProps.grid`（未実装。DOM に漏れていた） |
+| 必須化 | `PointsEditorProps.children` |
+| 追加 | `PointProps` の `wheel` / `keyboard`（`Root` の値を上書きする） |
+| 追加 | `usePointsEditorContext` / `PointsEditorContextValue` / `PointsEditorBackgroundProps` / `PointsEditorContainerProps` を `src/index.ts` から export |
+| 挙動 | `Root` の `readonly` / `disabled` が `Point` に伝わるようになった（**それまで無視されていた**） |
+| 挙動 | `Root` の `wheel` / `keyboard` が実際に効くようになった |
+
+`usePointsEditorContext` は zustand のセレクタ必須から、`useSliderContext` / `useXYPadContext` と同じ「セレクタ省略可」のオーバーロードになった。セレクタ付きの呼び出し方はそのまま動く。
+
+#### テスト
+
+`packages/react/__tests__/PointsEditor/index.test.tsx` を新規追加（17 件）。PointsEditor は専用テストが無かった。ドラッグが「動いた距離」ではなく「指した位置」を返すこと、`min` / `max` のクランプ、`readonly` / `disabled` の継承と上書き、矢印キーの向き、ホイールのフォーカス要求、`Container` の ref 合成、`Root` の外での例外までを見る。
 
 ### Phase 6: Vue / Svelte
 
@@ -992,11 +1033,11 @@ export interface WheelOptions {
 
 React 側ではなくコアに置くのは、Vue / Svelte でも同じ判定が要るため。
 
-#### PointsEditor の `wheel` / `keyboard` は配線されていない
+#### PointsEditor の `wheel` / `keyboard` は配線されていない → **Phase 5 で配線した**
 
 切り替え作業中に判明した。`PointsEditorProps` は `wheel` / `keyboard` を宣言していて型にもドキュメントにも出るが、`index.tsx` は `useWheel` を呼んでおらず、キー操作も実装していない。**渡しても何も起きない。**
 
-- [ ] 配線するか、prop を削除するかを決める（Phase 4 / 5 で PointsEditor に触るときに一緒に片付ける）
+- [x] 配線するか、prop を削除するかを決める → **配線した。** 実際の操作対象は `Root` ではなく `Point` なので、`Root` の値を `Point` が継承して上書きできる形にした（Phase 5）
 
 ### 5.10 緩い等価（`==` / `!=`）をやめる
 

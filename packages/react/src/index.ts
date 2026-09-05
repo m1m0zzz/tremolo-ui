@@ -39,8 +39,12 @@ export {
 } from './components/Piano'
 export {
   PointsEditor,
+  usePointsEditorContext,
   clampPoint,
   type PointsEditorProps,
+  type PointsEditorContextValue,
+  type PointsEditorBackgroundProps,
+  type PointsEditorContainerProps,
   type PointProps,
   type PointBaseType,
 } from './components/PointsEditor'

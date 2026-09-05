@@ -27,4 +27,17 @@
   &[data-dragging='true'] {
     cursor: inherit;
   }
+
+  &[aria-disabled='true'] {
+    background-color: oklch(50.462% 0.03307 270.021);
+  }
+
+  &[aria-readonly='true'] {
+    cursor: default;
+  }
+
+  &[aria-readonly='false']:focus {
+    box-shadow: 0px 0px 0px 3px
+      color-mix(in srgb, var(--color) 20%, transparent);
+  }
 }

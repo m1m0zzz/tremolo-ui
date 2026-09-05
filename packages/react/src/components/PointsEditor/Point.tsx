@@ -1,10 +1,12 @@
 import clsx from 'clsx'
-import { ComponentPropsWithoutRef } from 'react'
+import { ComponentPropsWithoutRef, useCallback } from 'react'
 
-import { clamp } from '@tremolo-ui/functions'
+import { applyDelta, clamp, InputEventOption } from '@tremolo-ui/functions'
 
 import { useDragValue } from '../../hooks/useDragValue'
+import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, removeUserSelectNone } from '../_util'
+import { useComposedRefs } from '../_util/composeRefs'
 
 import { usePointsEditorContext } from './context'
 
@@ -31,13 +33,32 @@ export interface PointProps<T extends PointBaseType> {
   height?: number | string
   color?: string
 
+  /** Overrides the `disabled` of `PointsEditor.Root`. */
   disabled?: boolean
+  /** Overrides the `readonly` of `PointsEditor.Root`. */
   readonly?: boolean
+
+  /** Overrides the `wheel` of `PointsEditor.Root`. */
+  wheel?: InputEventOption | null
+  /** Overrides the `keyboard` of `PointsEditor.Root`. */
+  keyboard?: InputEventOption | null
 
   onChange?: (value: PointBaseType) => void
   onDragStart?: (value: PointBaseType) => void
   onDragEnd?: (value: PointBaseType) => void
 }
+
+/**
+ * A point is placed by its position within the container, so its value is a
+ * position: 0..1 on each axis, with y growing downwards.
+ */
+const AXIS = { min: 0, max: 1 }
+
+/**
+ * The wheel only acts while the point has focus, so that scrolling a page past
+ * the editor does not move anything.
+ */
+const WHEEL_OPTIONS = { requireFocus: true }
 
 export function Point<T extends PointBaseType>({
   value,
@@ -48,8 +69,10 @@ export function Point<T extends PointBaseType>({
   height = 16,
   color,
 
-  disabled,
-  readonly,
+  disabled: _disabled,
+  readonly: _readonly,
+  wheel: _wheel,
+  keyboard: _keyboard,
 
   onChange,
   onDragStart,
@@ -58,21 +81,30 @@ export function Point<T extends PointBaseType>({
   className,
   style,
   onPointerDown,
+  onKeyDown,
   ...props
 }: PointProps<T> & Omit<ComponentPropsWithoutRef<'div'>, keyof PointProps<T>>) {
-  const containerElementRef = usePointsEditorContext(
-    (s) => s.containerElementRef,
-  )
-  const externalStyles = usePointsEditorContext((s) => s.externalStyles)
-  const __disabled = usePointsEditorContext((s) => s.disabled)
-  const __readonly = usePointsEditorContext((s) => s.readonly)
+  const {
+    containerRef,
+    externalStyles,
+    disabled: rootDisabled,
+    readonly: rootReadonly,
+    wheel: rootWheel,
+    keyboard: rootKeyboard,
+  } = usePointsEditorContext()
 
-  // A point is placed by its position within the container, so the value is
-  // the position itself: no scaling, and no rounding to a step.
+  const disabled = _disabled ?? rootDisabled
+  const readonly = _readonly ?? rootReadonly
+  // `null` means "no event" and has to survive the fallback, so `??` is not
+  // enough: only an omitted prop inherits from the root.
+  const wheel = _wheel === undefined ? rootWheel : _wheel
+  const keyboard = _keyboard === undefined ? rootKeyboard : _keyboard
+
+  // The value is the position itself: no scaling, and no rounding to a step.
   const { refCallback: dragRefCallback, dragging } =
     useDragValue<HTMLDivElement>({
-      axis: { min: 0, max: 1 },
-      baseElementRef: containerElementRef,
+      axis: AXIS,
+      baseElementRef: containerRef,
       cursor: readonly ? undefined : externalStyles.cursor,
       onChange: ([x, y]) => {
         if (readonly) return
@@ -93,18 +125,55 @@ export function Point<T extends PointBaseType>({
       },
     })
 
+  const nudge = useCallback(
+    (axis: 'x' | 'y', direction: number, option: InputEventOption) => {
+      const next = applyDelta(value[axis], direction, option, AXIS)
+      onChange?.(clampPoint({ ...value, [axis]: next }, min, max))
+    },
+    [value, min, max, onChange],
+  )
+
+  const wheelRefCallback = useWheel<HTMLDivElement>((event) => {
+    if (!onChange || readonly || !wheel) return
+    event.preventDefault()
+    // Scrolling up moves the point towards y = 0; shift switches to x.
+    const axis = event.shiftKey ? 'x' : 'y'
+    const direction = event.deltaY < 0 ? -1 : 1
+    nudge(axis, direction, wheel)
+  }, WHEEL_OPTIONS)
+
+  const refCallback = useComposedRefs<HTMLDivElement>(
+    dragRefCallback,
+    wheelRefCallback,
+  )
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!onChange || readonly || !keyboard) return
+    const key = event.key
+    if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
+      event.preventDefault()
+      // y grows downwards, so ArrowUp moves the point towards 0.
+      const axis = key === 'ArrowRight' || key === 'ArrowLeft' ? 'x' : 'y'
+      const direction = key === 'ArrowLeft' || key === 'ArrowUp' ? -1 : 1
+      nudge(axis, direction, keyboard)
+    }
+  }
+
   const colors: Record<string, string | undefined> = {
     '--color': color,
   }
 
   return (
+    // The point is a drag handle rather than a control of a known kind: it has
+    // no single value to announce, so there is no role that fits it.
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
-      ref={dragRefCallback}
+      ref={refCallback}
       className={clsx('tremolo-points-editor-point', className)}
       // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
       tabIndex={0}
-      aria-disabled={disabled != undefined ? disabled : __disabled}
-      aria-readonly={readonly != undefined ? readonly : __readonly}
+      aria-disabled={disabled}
+      aria-readonly={readonly}
       data-dragging={dragging}
       style={{
         ...colors,
@@ -115,6 +184,10 @@ export function Point<T extends PointBaseType>({
         ...style,
       }}
       onPointerDown={onPointerDown}
+      onKeyDown={(event) => {
+        handleKeyDown(event)
+        onKeyDown?.(event)
+      }}
       {...props}
     />
   )
