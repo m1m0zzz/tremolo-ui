@@ -24,12 +24,19 @@ on:
       - '!**.md'
       - 'site/**'
   pull_request:
-    # NOTE: stacked PR の中段（base が main 以外）は、GitHub がスタックとして
-    # 認識した後のイベントなら base を main として扱うので、この指定でも走る。
-    # ただし gh stack submit は PR を作ってからスタックにまとめるため、
-    # opened の時点ではまだスタックが無く、そこだけ取りこぼす。
-    branches: [ "main" ]
+    # base を絞らないのは stacked PR のため。中段の PR は base が main では
+    # ないので、branches: [main] を書くと拾えないことがある。GitHub は
+    # スタックとして認識した後のイベントなら base をスタックの base として
+    # 扱うが、gh stack submit は PR を作ってからスタックにまとめるので、
+    # opened の時点ではまだスタックが無く、そこを取りこぼす（実測）。
     paths: *build-paths
+
+# 同じ PR / ブランチへ続けて push したとき、古い実行を打ち切る。
+# main への push は打ち切らない。「どのコミットで main が通ったか」の記録が
+# cancelled で欠けるため。
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
