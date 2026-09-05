@@ -297,15 +297,14 @@ export const WithWebMidiAPI = () => {
   const pianoRef = useRef<PianoMethods>(null)
 
   const { midiAccess, error, request } = useMIDIAccess(false)
-  useMIDIInput(
-    midiAccess,
-    (note: number, velocity: number) => {
+  useMIDIInput(midiAccess, {
+    onNoteOnEvent: (note, velocity) => {
       pianoRef.current?.playNote(note, velocity / 127)
     },
-    (note: number) => {
+    onNoteOffEvent: (note) => {
       pianoRef.current?.stopNote(note)
     },
-  )
+  })
 
   const synth = new Tone.PolySynth({ volume: -6 }).toDestination()
 
@@ -323,7 +322,7 @@ export const WithWebMidiAPI = () => {
       </p>
       {midiAccess ? null : (
         <p>
-          <button type="button" onClick={request}>
+          <button type="button" onClick={() => request()}>
             request MIDI Keyboard
           </button>
         </p>

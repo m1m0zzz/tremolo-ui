@@ -725,7 +725,7 @@ NumberInput は `clampValue === false` のとき `min` / `max` に `MIN/MAX_SAFE
 - [x] `zustand` を dependencies から削除
 - [x] `SliderProvider` の `useEffect(..., [props])`（props が毎レンダー新しいオブジェクトのため毎回 `setState` が走っていた）は Phase 2.5 で消滅
 
-`useSyncExternalStore` は結局どこにも入れていない。**外から変わる値を購読する必要が無い**（ポインタもホイールも MIDI も、コアのインスタンスがコールバックで通知してくる）ため、使う理由が無かった。
+zustand の置き換えとしては `useSyncExternalStore` を 1 つも使っていない。**外から変わる値を購読する必要が無い**（ポインタもホイールも、コアのインスタンスがコールバックで通知してくる）ため。唯一使っているのは `useMIDIAccess` で、こちらは Phase 1 の時点から `createMIDIAccess` の `subscribe` / `getState` を購読している。**権限の許可とデバイスの着脱という、React の外から非同期に変わる状態**なので、ここだけは購読が要る。
 
 #### PointsEditor の zustand 除去と wheel / keyboard の配線
 
@@ -897,12 +897,43 @@ children をそのまま描画する形（Phase 2.5）にしたことで、**サ
 
 `packages/react/__tests__/util/placement.test.tsx`（9 件）。正しく置いたときに黙ること、5 種類の配置ミスそれぞれで警告が出ること、間違った親の名前が出ること、本番ビルドで黙ることを見る。
 
-### 5.7 MIDI の作り込み
+### 5.7 MIDI の作り込み — **完了**
 
-Phase 1 で `@tremolo-ui/dom` へ移した部分。移植は「React hook のロジックをそのまま移す」ことを目的にしたので、機能面は当時のままになっている。
+Phase 1 で `@tremolo-ui/dom` へ移した部分。移植は「React hook のロジックをそのまま移す」ことを目的にしたので、機能面は当時のままだった。
 
-- [ ] **対応するイベントを増やす。** 現在 `createMIDIInput` が扱うのは note on / note off / pitch bend の 3 つだけ（`packages/dom/src/midi/input.ts`）。control change やその他のメッセージをどこまで扱うか決める
-- [ ] **`createMIDIAccess` のエラーハンドリング方針を決める。** 現在は `NOT_SUPPORTED` / `PERMISSION_DENIED` の 2 値に潰している（`packages/dom/src/midi/access.ts`）。デバイスの着脱（`statechange`）や、権限を後から許可された場合の扱いを含めて整理する
+#### 見つかったバグ
+
+- **デバイスの着脱に追随していなかった（実バグ）。** `createMIDIMessage` が `const inputs = [...midiAccess.inputs.values()]` と**生成時に 1 回だけ配列を取って**いたため、権限を許可した後に接続したキーボードにはリスナが張られず、**再マウントするまで何も鳴らなかった**。`statechange` を購読して、接続されたら張り、外れたら外す形にした
+- **pitch bend の引数名が逆（実バグ）。** `onPitchBendEvent(msb, lsb)` に `(data[1], data[2])` を渡していたが、pitch bend の 2 バイトは**下位 7 bit が先**で、他のメッセージと並びが逆。`data[1]` は LSB なので名前が入れ替わっていた
+- **React hook が毎レンダーで購読し直していた。** `useMIDIInput` / `useMIDIMessage` は effect の依存にハンドラを入れており、インラインで書くと毎レンダー新しい関数になるため、リスナを張り直していた。Phase 2 以降のドラッグ系と同じ形（インスタンスに `update()` を足し、React 側は `useRef` で最新を流す）に揃えた
+
+#### 増やしたもの
+
+- [x] **チャンネルボイスメッセージを全部扱う。** note on / note off / pitch bend の 3 つだけだったのを、control change / program change / polyphonic aftertouch / channel pressure まで広げた。システムメッセージ（`0xf0`〜）はチャンネルを持たないので `createMIDIInput` では復号せず、`createMIDIMessage` に任せる
+- [x] **チャンネルを捨てなくなった。** `status & 0xf0` で種類だけ取ってチャンネルの下位ニブルを捨てていた。全ハンドラの最後の引数として 0-15 で渡す
+- [x] **pitch bend を 14 bit の 1 つの値にした。** `(msb, lsb)` の生バイト 2 つではなく 0-16383。中央値は `PITCH_BEND_CENTER`（8192）として export した。範囲が非対称（下に 8192、上に 8191）なので、最大値の半分ではない
+- [x] **`createMIDIAccess` のエラーを分けた。** すべての reject を `PERMISSION_DENIED` に潰していたのを、`DOMException` の `name` で振り分ける。`SecurityError` / `NotAllowedError` → `PERMISSION_DENIED`、`NotSupportedError` → `NOT_SUPPORTED`、それ以外（`AbortError` など）→ 新しい `UNAVAILABLE`。「ユーザーが断った（もう一度聞けばよい）」と「ブラウザが対応していない（聞いても無駄）」は区別が要る
+- [x] **`sysex` を渡せるようにした。** `request({ sysex: true })`。ブラウザは sysex を別の、より強い権限として扱うので既定は off
+- [x] **接続中の入力を state に載せた。** `MIDIAccessState.inputs`。`statechange` で更新されるので、デバイス一覧の UI が自分で購読しなくてよい
+
+#### 公開 API の変更
+
+| 変更 | 内容 |
+| --- | --- |
+| 破壊的 | `useMIDIInput(access, onNoteOn, onNoteOff, onPitchBend)` の位置引数をやめ、`useMIDIInput(access, handlers)` のオブジェクトにした。ハンドラが 7 つになったので位置引数では持たない |
+| 破壊的 | `onPitchBendEvent` が `(msb, lsb)` から `(value, channel)` に |
+| 破壊的 | `useMIDIAccess().request` が `(options?: MIDIAccessOptions)` を取るようになった。`onClick={request}` と直接渡していると `MouseEvent` が `options` に入るので `onClick={() => request()}` にする |
+| 追加 | 全ハンドラの末尾に `channel`（0-15） |
+| 追加 | `onControlChangeEvent` / `onProgramChangeEvent` / `onAftertouchEvent` / `onChannelPressureEvent` |
+| 追加 | `PITCH_BEND_CENTER` / `UNAVAILABLE` / `MIDIAccessOptions` / `MIDIInputHandlers` |
+| 追加 | `MIDIAccessState.inputs`、`useMIDIAccess()` の戻り値の `inputs` |
+| 追加 | `createMIDIInput` / `createMIDIMessage` に `update()` |
+
+#### テスト
+
+`packages/dom/__tests__/midi/` を書き直した（access 13 / input 13 / message 7）。着脱の追随、pitch bend の 14 bit 化とバイト順、チャンネルの取り出し、システムメッセージを無視すること、エラーの振り分けを見る。`packages/react/__tests__/hooks/useMIDIInput.test.tsx`（3 件）でインラインハンドラが張り直されないことを見る。
+
+ドキュメントは `site/docs/hooks/web-midi-api/index.mdx` を書き直した。
 
 ### 5.8 Knob で対数スケールのときに値が飛ぶ
 

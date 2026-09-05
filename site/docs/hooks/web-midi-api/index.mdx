@@ -3,6 +3,11 @@ import GitHubLink from '@site/src/components/GitHubLink'
 
 # Hooks for Web MIDI API
 
+Three hooks, one on top of the next. `useMIDIAccess` asks the browser for
+permission, and the other two listen to whatever it hands back.
+
+All of them follow the devices: a keyboard plugged in after permission was
+granted starts working on its own, with nothing to rebuild.
 
 ## useMIDIAccess
 
@@ -10,7 +15,36 @@ import GitHubLink from '@site/src/components/GitHubLink'
   path='packages/react/src/hooks/useMIDIAccess.ts'
 />
 
-Hooks for requesting MIDI access in the browser. The first argument allows you to choose whether to request access on mount.
+Requests MIDI access in the browser. The first argument chooses whether to ask
+on mount; pass `false` to ask later, from a button the user presses.
+
+```jsx
+const { request, midiAccess, error, inputs } = useMIDIAccess(false)
+
+return (
+  <>
+    {midiAccess ? null : <button onClick={() => request()}>Connect MIDI</button>}
+    {error && <p>{error}</p>}
+    <ul>
+      {inputs.map((input) => (
+        <li key={input.id}>{input.name}</li>
+      ))}
+    </ul>
+  </>
+)
+```
+
+`inputs` is the list of connected devices, and it changes as they come and go,
+so a device list needs no `statechange` listener of its own.
+
+`error` is one of `NOT_SUPPORTED` (the browser has no Web MIDI API),
+`PERMISSION_DENIED` (the user said no — asking again is worthwhile) or
+`UNAVAILABLE` (anything else). A failed request leaves any access already
+granted in place.
+
+Pass `{ sysex: true }` to `request` for system exclusive messages. Browsers
+treat that as a separate, more sensitive permission, so ask for it only when
+the app actually reads or sends sysex.
 
 ## useMIDIInput
 
@@ -18,7 +52,43 @@ Hooks for requesting MIDI access in the browser. The first argument allows you t
   path='packages/react/src/hooks/useMIDIInput.ts'
 />
 
-Hooks for handling note on/off events. To be used with useMIDIAccess. Internally uses useMIDIMessage.
+Handles the channel voice messages of every connected input. Handlers are given
+as an object, and every one of them is given the channel last, as 0&ndash;15
+(MIDI channels are written 1&ndash;16 on hardware, so add one before showing it
+to anyone).
+
+```jsx
+useMIDIInput(midiAccess, {
+  onNoteOnEvent: (note, velocity, channel) => play(note, velocity / 127),
+  onNoteOffEvent: (note, channel) => stop(note),
+  onControlChangeEvent: (controller, value) => {
+    if (controller === 1) setModulation(value / 127)
+  },
+  onPitchBendEvent: (value) => {
+    // 0-16383, centred at PITCH_BEND_CENTER (8192)
+    setBend((value - PITCH_BEND_CENTER) / PITCH_BEND_CENTER)
+  },
+})
+```
+
+| handler | arguments |
+| --- | --- |
+| `onNoteOnEvent` | `note`, `velocity` (1&ndash;127), `channel` |
+| `onNoteOffEvent` | `note`, `channel` |
+| `onControlChangeEvent` | `controller`, `value` (0&ndash;127), `channel` |
+| `onProgramChangeEvent` | `program`, `channel` |
+| `onPitchBendEvent` | `value` (0&ndash;16383), `channel` |
+| `onAftertouchEvent` | `note`, `pressure`, `channel` |
+| `onChannelPressureEvent` | `pressure`, `channel` |
+
+A note on with a velocity of 0 is how most devices say note off, so it arrives
+as `onNoteOffEvent`.
+
+Writing the handlers inline is fine: they are read fresh on every event, so a
+re-render never detaches anything.
+
+System messages — clock, sysex, and the rest of `0xf0`&ndash;`0xff` — carry no
+channel and are not decoded here. Use `useMIDIMessage` for those.
 
 ## useMIDIMessage
 
@@ -26,4 +96,11 @@ Hooks for handling note on/off events. To be used with useMIDIAccess. Internally
   path='packages/react/src/hooks/useMIDIMessage.ts'
 />
 
-Hooks for when you want to process MIDI events in more detail than useMIDIInput.
+The raw `midimessage` events, for when you need more detail than
+`useMIDIInput` gives.
+
+```jsx
+useMIDIMessage(midiAccess, (event) => {
+  console.log([...event.data])
+})
+```

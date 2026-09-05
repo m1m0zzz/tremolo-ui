@@ -17,12 +17,15 @@ export {
   createMIDIAccess,
   NOT_SUPPORTED,
   PERMISSION_DENIED,
+  UNAVAILABLE,
   type MIDIAccessError,
   type MIDIAccessInstance,
+  type MIDIAccessOptions,
   type MIDIAccessState,
 } from './midi/access'
 export {
   createMIDIInput,
+  PITCH_BEND_CENTER,
   type MIDIInputHandlers,
   type MIDIInputInstance,
 } from './midi/input'
