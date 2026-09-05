@@ -44,6 +44,10 @@ export default [
       },
     },
     rules: {
+      // Loose equality hides intent: `x == null` meaning "null or undefined"
+      // reads the same as `key == 'Enter'`, where both sides are strings and
+      // nothing is being coerced. Say which one is meant.
+      eqeqeq: ['error', 'always'],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {

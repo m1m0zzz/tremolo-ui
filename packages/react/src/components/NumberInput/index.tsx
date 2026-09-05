@@ -195,10 +195,10 @@ export const Root = forwardRef<NumberInputMethods, Props>(
     )
 
     const text = draft ?? format(value)
-    const editing = draft != null
+    const editing = draft !== null
     const outOfRange =
       !editing &&
-      ((min != undefined && value < min) || (max != undefined && value > max))
+      ((min !== undefined && value < min) || (max !== undefined && value > max))
 
     // --- internal functions ---
     const handleDraft = useCallback(
@@ -217,13 +217,13 @@ export const Root = forwardRef<NumberInputMethods, Props>(
       (next: number) => {
         if (readonly) return
         setDraft(null)
-        if (next != value) onChange?.(next)
+        if (next !== value) onChange?.(next)
       },
       [readonly, value, onChange],
     )
 
     const commitDraft = useCallback(() => {
-      if (draft == null || readonly) return
+      if (draft === null || readonly) return
       // `range` is already the widest possible range when clampValue is off.
       changeValue(clamp(parse(draft), range.min, range.max))
     }, [draft, readonly, parse, range, changeValue])
@@ -238,7 +238,7 @@ export const Root = forwardRef<NumberInputMethods, Props>(
     // --- hooks ---
     const wheelRefCallback = useWheel<HTMLDivElement>(
       (event) => {
-        if (!wheel || readonly || event.deltaY == 0) return
+        if (!wheel || readonly || event.deltaY === 0) return
         event.preventDefault()
         nudge(-Math.sign(event.deltaY), wheel)
       },
@@ -260,8 +260,8 @@ export const Root = forwardRef<NumberInputMethods, Props>(
         text,
         editing,
         outOfRange,
-        atMin: clampValue && min != undefined && value <= min,
-        atMax: clampValue && max != undefined && value >= max,
+        atMin: clampValue && min !== undefined && value <= min,
+        atMax: clampValue && max !== undefined && value >= max,
         drag,
         format,
         parse,

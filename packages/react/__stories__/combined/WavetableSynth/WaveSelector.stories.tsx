@@ -36,7 +36,7 @@ const pulseWave = generateWaveWithFunction(sampleLength, pulse)
 const wavetable: Array<Array<number>> = []
 
 for (let i = 0; i < frameLength; i++) {
-  if (i == 0) {
+  if (i === 0) {
     wavetable.push(sineWave)
   } else if (i <= 33) {
     wavetable.push(middleWave(sineWave, triangleWave, i / 33))
@@ -116,7 +116,7 @@ export const WaveSelector = ({
                         (height - padY * 2) * (100 - pos) * 0.01 -
                         sig * 18,
                     ]
-                    if (i == 0) {
+                    if (i === 0) {
                       ctx.moveTo(...arg)
                     } else {
                       ctx.lineTo(...arg)

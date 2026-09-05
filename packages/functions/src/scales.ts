@@ -277,7 +277,7 @@ export function applyDelta(
 ): number {
   const x = direction * amount
   const next =
-    mode == 'normalized'
+    mode === 'normalized'
       ? scale.denormalize(scale.normalize(value, min, max) + x, min, max)
       : value + x
   return clamp(step ? stepValue(next, step) : next, min, max)

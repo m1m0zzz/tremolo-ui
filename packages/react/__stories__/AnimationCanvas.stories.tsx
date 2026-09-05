@@ -50,7 +50,7 @@ export const Basic: Story = {
               const y =
                 halfH +
                 halfH * 0.5 * Math.sin((4 * Math.PI * (i + count * 2)) / width)
-              if (i == 0) ctx.moveTo(i, y)
+              if (i === 0) ctx.moveTo(i, y)
               else ctx.lineTo(i, y)
             }
             ctx.stroke()

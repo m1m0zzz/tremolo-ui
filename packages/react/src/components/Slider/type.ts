@@ -13,7 +13,7 @@ export function generateOptionsList(
     value: number
     type: MarksType
   }[] = []
-  const per = options[0] == 'step' ? step : options[0]
+  const per = options[0] === 'step' ? step : options[0]
   const count = Math.floor(max / per) - Math.ceil(min / per) + 1
   for (let i = 0; i < count; i++) {
     const value = toFixed(

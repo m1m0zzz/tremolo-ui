@@ -37,8 +37,8 @@ export function formatValue(
   digit?: number,
 ): string {
   const fixed = (v: number) =>
-    digit != undefined ? v.toFixed(digit) : String(v)
-  if (!units || typeof units == 'string') {
+    digit !== undefined ? v.toFixed(digit) : String(v)
+  if (!units || typeof units === 'string') {
     return fixed(value) + (units ?? '')
   }
   const [unit, scale] = selectUnit(units, value)
@@ -60,7 +60,7 @@ export function formatValue(
 export function parseValue(text: string, units?: string | Units): number {
   const str = text.trim()
 
-  if (!units || typeof units == 'string') {
+  if (!units || typeof units === 'string') {
     const m = str.match(/-?\d+(\.\d+)?/)
     const v = Number(m?.[0] ?? '0')
     return isNaN(v) ? 0 : v
@@ -68,6 +68,6 @@ export function parseValue(text: string, units?: string | Units): number {
 
   const m = str.match(/^(-?\d+(\.\d+)?)\s*(\w*)$/)
   if (!m) return 0
-  const found = units.find(([unit]) => unit == m[3])
+  const found = units.find(([unit]) => unit === m[3])
   return (Number(m[1]) || 0) * (found ? found[1] : 1)
 }

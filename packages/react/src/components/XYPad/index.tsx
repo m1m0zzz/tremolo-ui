@@ -179,7 +179,7 @@ export const Root = forwardRef<XYPadMethods, Props>(
 
     const withAxis = useCallback(
       (axis: 0 | 1, next: number): XY<number> =>
-        axis == 0 ? [next, value[1]] : [value[0], next],
+        axis === 0 ? [next, value[1]] : [value[0], next],
       [value],
     )
 
@@ -195,10 +195,10 @@ export const Root = forwardRef<XYPadMethods, Props>(
         if (!onChange || readonly || !keyboard) return
         const key = event.key
         if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
-          const i: 0 | 1 = key == 'ArrowRight' || key == 'ArrowLeft' ? 0 : 1
+          const i: 0 | 1 = key === 'ArrowRight' || key === 'ArrowLeft' ? 0 : 1
           event.preventDefault()
           let direction = 1
-          if (key == 'ArrowLeft' || key == 'ArrowUp') direction *= -1
+          if (key === 'ArrowLeft' || key === 'ArrowUp') direction *= -1
           if (reverse[i]) direction *= -1
           onChange(nudge(i, direction, keyboard))
         }

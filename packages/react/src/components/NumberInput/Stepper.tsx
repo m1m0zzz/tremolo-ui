@@ -61,14 +61,14 @@ export function Stepper({
       draggingRef.current = false
     },
     onDrag: (_x, y) => {
-      if (readonly || drag == null) return
+      if (readonly || drag === null) return
       if (!originRef.current) {
         originRef.current = { y, value }
         return
       }
       // Dragging up raises the value, as on a knob.
       const steps = Math.round(-(y - originRef.current.y) / drag)
-      if (steps == 0) return
+      if (steps === 0) return
       draggingRef.current = true
       // The same pipeline the wheel and the arrow keys use. Counting from where
       // the drag started keeps it from accumulating a rounding error.
@@ -83,7 +83,7 @@ export function Stepper({
 
   const composedRef = useComposedRefs<HTMLDivElement>(
     ref,
-    drag != null && !readonly ? dragRefCallback : undefined,
+    drag !== null && !readonly ? dragRefCallback : undefined,
   )
 
   const context = useMemo(() => ({ draggingRef }), [])

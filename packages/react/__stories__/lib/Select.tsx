@@ -19,7 +19,7 @@ export default function Select<T extends number | string>({
       }}
       onChange={(e) => {
         if (!onChange) return
-        if (typeof options[0] == 'number') {
+        if (typeof options[0] === 'number') {
           onChange(Number(e.currentTarget.value) as T)
         } else {
           onChange(e.currentTarget.value as T)

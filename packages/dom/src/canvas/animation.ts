@@ -222,13 +222,13 @@ export function createAnimationCanvas(
   }
 
   function startLoop() {
-    if (frameId != null) return
+    if (frameId !== null) return
     previousTime = performance.now()
     frameId = requestAnimationFrame(tick)
   }
 
   function stopLoop() {
-    if (frameId == null) return
+    if (frameId === null) return
     cancelAnimationFrame(frameId)
     frameId = null
   }
@@ -278,7 +278,7 @@ export function createAnimationCanvas(
 
       if (!relativeSize) {
         const { width: w = 100, height: h = 100 } = opts.size ?? {}
-        if (w != width || h != height) applySize(w, h)
+        if (w !== width || h !== height) applySize(w, h)
       }
 
       const animating = opts.animate ?? true

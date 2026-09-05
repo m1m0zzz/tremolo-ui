@@ -33,7 +33,7 @@ const preview: Preview = {
       const dark = '#333'
       // const light = '#F8F8F8'
       const html = document.documentElement
-      if (bg == dark) {
+      if (bg === dark) {
         html.classList.add('dark')
       } else {
         html.classList.remove('dark')

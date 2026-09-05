@@ -81,7 +81,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
               ctx.fillStyle = 'rgb(186, 219, 244)'
               ctx.beginPath()
               let x = 0
-              if (keyState.trigger == 'pressed') {
+              if (keyState.trigger === 'pressed') {
                 ctx.moveTo(x0, y0)
                 const per = clamp(msec / attack, 0, 1)
                 x = x0 + (x1 - x0) * per
@@ -184,7 +184,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             </Knob.SVGRoot>
           </Knob.Root>
           <div className={clsx('label', styles.label)}>
-            {gainToDb(sustain / MAX_SUSTAIN) == -Infinity
+            {gainToDb(sustain / MAX_SUSTAIN) === -Infinity
               ? '-Inf'
               : gainToDb(sustain / MAX_SUSTAIN).toFixed(1)}{' '}
             dB
