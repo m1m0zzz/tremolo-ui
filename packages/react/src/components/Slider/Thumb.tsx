@@ -7,6 +7,8 @@ import {
   useRef,
 } from 'react'
 
+import { useCheckPlacement } from '../_util/placement'
+
 import { useSliderContext } from './context'
 
 export interface SliderThumbProps {
@@ -36,6 +38,9 @@ export function Thumb({
 }: SliderThumbProps) {
   const elementRef = useRef<HTMLDivElement>(null)
   const { vertical, disabled, readonly, percent, thumbRef } = useSliderContext()
+
+  // The wrapper is positioned against the track.
+  useCheckPlacement('Slider.Thumb', 'Slider.Track')
 
   const methods = () => ({
     focus() {

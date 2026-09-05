@@ -1,5 +1,7 @@
 import { ReactNode, SVGProps } from 'react'
 
+import { Placement } from '../_util/placement'
+
 import { viewBoxSize } from './context'
 
 export interface SVGRootProps {
@@ -24,7 +26,7 @@ export function SVGRoot({
       }}
       {...props}
     >
-      {children}
+      <Placement name="Knob.SVGRoot">{children}</Placement>
     </svg>
   )
 }

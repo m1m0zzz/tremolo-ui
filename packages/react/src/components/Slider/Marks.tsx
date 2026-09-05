@@ -3,6 +3,8 @@ import { ComponentPropsWithoutRef, ReactNode } from 'react'
 
 import { xor } from '@tremolo-ui/functions'
 
+import { Placement } from '../_util/placement'
+
 import { useSliderContext } from './context'
 import { MarksOption } from './MarksOption'
 import { generateOptionsList, MarksOptions } from './type'
@@ -42,11 +44,13 @@ export function Marks({
       }}
       {...props}
     >
-      {options
-        ? optionsList.map(({ value, type }, index) => {
-            return <MarksOption key={index} value={value} type={type} />
-          })
-        : children}
+      <Placement name="Slider.Marks">
+        {options
+          ? optionsList.map(({ value, type }, index) => {
+              return <MarksOption key={index} value={value} type={type} />
+            })
+          : children}
+      </Placement>
     </div>
   )
 }

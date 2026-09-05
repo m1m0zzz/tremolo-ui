@@ -3,6 +3,8 @@ import { ComponentPropsWithoutRef, CSSProperties, useCallback } from 'react'
 
 import { toFixed, xor } from '@tremolo-ui/functions'
 
+import { useCheckPlacement } from '../_util/placement'
+
 import { useSliderContext } from './context'
 import { MarksType } from './type'
 
@@ -46,6 +48,8 @@ export function MarksOption({
   ...props
 }: MarksOptionProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof MarksOptionProps>) {
+  useCheckPlacement('Slider.MarksOption', 'Slider.Marks')
+
   const min = useSliderContext((s) => s.min)
   const max = useSliderContext((s) => s.max)
   const scale = useSliderContext((s) => s.scale)

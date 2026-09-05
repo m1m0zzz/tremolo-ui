@@ -7,6 +7,7 @@ import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, removeUserSelectNone } from '../_util'
 import { useComposedRefs } from '../_util/composeRefs'
+import { useCheckPlacement } from '../_util/placement'
 
 import { usePointsEditorContext } from './context'
 
@@ -93,6 +94,8 @@ export function Point<T extends PointBaseType>({
   // enough: only an omitted prop inherits from the root.
   const wheel = _wheel === undefined ? rootWheel : _wheel
   const keyboard = _keyboard === undefined ? rootKeyboard : _keyboard
+
+  useCheckPlacement('PointsEditor.Point', 'PointsEditor.Container')
 
   // Compared against the focus below, so the point needs its own element.
   const [element, setElement] = useState<HTMLDivElement | null>(null)

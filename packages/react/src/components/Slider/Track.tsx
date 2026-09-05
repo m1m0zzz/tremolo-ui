@@ -4,6 +4,7 @@ import { ComponentPropsWithoutRef, CSSProperties, ReactNode, Ref } from 'react'
 import { styleHelper, xor } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../_util/composeRefs'
+import { Placement } from '../_util/placement'
 
 import { useSliderContext } from './context'
 
@@ -73,7 +74,7 @@ export function Track({
       }
       {...props}
     >
-      {children}
+      <Placement name="Slider.Track">{children}</Placement>
     </div>
   )
 }
