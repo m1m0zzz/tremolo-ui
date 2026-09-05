@@ -1121,6 +1121,73 @@ ESLint に `eqeqeq` を設定しておらず、`==` / `!=` がリポジトリ全
 
 `site/src/theme` は `eslint.config.js` の `ignores` に入っているので対象外。`Playground/parser.ts` にコメントアウトされた `magicComment == 'expand alt'` が残っているが、これも触っていない。
 
+### 5.11 修飾キー（shift / alt）の同時押しに対応する — drag / wheel / keyboard
+
+DAW のノブやフェーダーは、shift で細かく、alt（option）で既定値に戻す、といった修飾キーの規約を持っている。tremolo-ui には**その仕組みが無い**。
+
+現状で修飾キーを見ているのは 2 箇所だけで、しかも用途が違う。
+
+- `XYPad/index.tsx` の wheel: `event.shiftKey` で x 軸を選ぶ
+- `PointsEditor/Point.tsx` の wheel: 同上
+
+どちらも「軸の切り替え」であって「感度の切り替え」ではない。ドラッグとキーボードには修飾キーの経路そのものが無い。
+
+- [ ] **何を割り当てるか決める。** よくある規約は shift = 微調整（fine）、alt/option = 既定値へリセット、ctrl/cmd = ステップ無視。既に `Knob` はダブルクリックで既定値に戻す（`enableDoubleClickDefault`）ので、alt との役割分担を決める必要がある
+- [ ] **XYPad / PointsEditor の shift = 軸切り替えとぶつかる。** 2 次元のコンポーネントでは shift の意味が既に埋まっている。軸切り替えを別のキーに移すか、2 次元だけ規約を変えるかを決める
+- [ ] **`InputEventOption` の形を見直す。** 現在 `['normalized' | 'raw', number]` の 1 組しか持てないので、修飾キーごとに別の量を渡せない。`{ default: [...], shift: [...], alt: 'reset' }` のような形にするか、感度の倍率だけ別 prop にするか
+- [ ] **どの層で扱うか決める。** キーボードと wheel は React 側のハンドラで `event.shiftKey` を読めるが、**ドラッグは `@tremolo-ui/dom` の `createDragValue` が値を計算している**ので、`DragState` に修飾キーの状態を載せるか、`createDragValue` 自体が感度を切り替えるかを決める必要がある。`DragState.event` に `PointerEvent` は入っているので読めなくはないが、`onChange` は既に計算後の値しか渡さない
+- [ ] **ドラッグ中に修飾キーを押した/離した場合をどうするか。** ポインタが動かない限り `pointermove` は来ないので、押した瞬間には反映されない。`keydown` / `keyup` も見るか、次の移動から効けばよしとするか
+- [ ] 全コンポーネント（Slider / Knob / XYPad / NumberInput / PointsEditor）で規約を揃える。片方だけ対応すると余計に分かりにくい
+
+### 5.12 Knob が場所不足で潰れる
+
+`.tremolo-knob` は `display: inline-block` に `width: var(--knob-size); height: var(--knob-size)`（既定 50px）だけを指定している。**縦横比を保つ指定が無い。**
+
+flex / grid コンテナの中で幅が足りないと、`flex-shrink` の既定値が 1 なので `width` が縮む。一方 `height` は縮まないため、**中の SVG が引き伸ばされて円が楕円になる。** `viewBox="0 0 100 100"` の SVG が `preserveAspectRatio` の既定でボックスに合わせるので、潰れ方がそのまま見える。
+
+- [ ] `aspect-ratio: 1` を入れて、片方だけ縮んでも比率を保つ
+- [ ] `flex-shrink: 0` を入れるか、`min-width` / `min-height` を置くかを決める。**縮ませない**のと**比率を保ったまま縮む**のとで挙動が違うので、どちらが望ましいか決める
+- [ ] `size` prop を渡したときと `--knob-size` を書き換えたときで同じ結果になることを確認する。現在 `size` は `style` の `width` / `height` に直接入るので、CSS 変数を経由しない
+- [ ] 5.1 の CSS ヘッドレス化と衝突しないか確認する。パッケージがスタイルを配らなくなると、この修正も利用者側の CSS に移る可能性がある
+
+### 5.13 NumberInput の上下キーでカーソル位置を保つ
+
+`InputField` の上下キーは `nudge()` で値を変え、`value` が `format(value)` で作り直される。**制御された `<input>` の `value` が置き換わるとキャレットが末尾へ飛ぶ**ので、`1234.5` の `2` の位置にキャレットを置いて上下キーを連打すると、1 回目で末尾に移動してしまう。
+
+桁を選んで上下キーで動かす（DAW や CAD でよくある操作）ができない。
+
+- [ ] **オプションとして足す。** 既定の挙動を変えると既存利用者の見た目が変わるので、`InputField` の prop にする（名前は `keepCaretOnStep` など）
+- [ ] **単にオフセットを復元するだけでは足りない。** 桁数が変わると位置がずれる（`9.9` → `10.0` で 1 文字増える、`10` → `9` で減る）。末尾からのオフセットで測るか、小数点からの相対位置で測るかを決める
+- [ ] **「キャレットのある桁を動かす」まで踏み込むかを決める。** 位置を保つだけなら表示の話だが、桁を見て刻み幅を変える（小数第 1 位にいれば 0.1 ずつ）なら `keyboard` の `InputEventOption` と競合する。5.11 の修飾キーとも関係する
+- [ ] IME 変換中は触らない。`compositionstart` / `compositionend` の間はキャレットを動かさない
+
+### 5.14 NumberInput の `units` をやめ、`format` に一本化する
+
+現在 `NumberInput.Root` は `units` / `digit` と `format` / `parse` の**2 系統**を持ち、`format` が渡されていればそちらが勝つ。`units` は `@tremolo-ui/functions` の `formatValue` / `parseValue` / `selectUnit` に支えられている。
+
+2 系統あることで、
+
+- 「`units` を渡したのに効かない」（`format` も渡していた）が起きる
+- `parse` だけ渡すと `format` は `units` 由来のまま、といった噛み合わない組み合わせが型で防げない
+- `Units`（`[string, number][]`）は SI 接頭辞の表を毎回手で書かせる形になっている（`[['Hz', 1], ['kHz', 1000]]`）
+
+- [ ] **`units` / `digit` / `Units` / `formatValue` / `parseValue` / `selectUnit` を削除し、`format` / `parse` だけにする。** 破壊的変更なので移行ガイドに載せる
+- [ ] **`format` 関数を組み立てるユーティリティを `@tremolo-ui/functions` から公開する。** 引数は `(baseUnit: 'Hz', basePlace: 'm' | '' | 'k' = '')` のような形。**値が「どの接頭辞の単位で表されているか」を基準として受け取り**、表示のときに桁に合わせて接頭辞を選び直す
+
+  ```ts
+  // 値は Hz。1234 -> '1.23kHz'
+  const hz = siUnit('Hz')
+  // 値は ms（ミリ秒）。1500 -> '1.5s'、0.5 -> '500us'
+  const ms = siUnit('s', 'm')
+  ```
+
+  `basePlace` を持たせるのは、**値の単位と表示の単位が一致しない**ケースが実際にあるため。ADSR は内部的に ms で持ちながら 1000ms を `1s` と出したい（`__stories__/PointsEditor.stories.tsx` の `MS_SEC_UNITS` がまさにこれ）。
+
+- [ ] **`parse` も対で作る。** 同じユーティリティが `{ format, parse }` を返すのか、`siUnit(...).format` / `.parse` なのか、関数を 2 つ export するのかを決める。片方だけ差し替えられると噛み合わなくなるので、**対で受け渡す形にする方が安全**
+- [ ] **接頭辞の範囲を決める。** `p n u m (none) k M G` あたり。`μ` を使うか `u` にするか（入力のしやすさ）、大文字小文字（`M` と `m` は 10^6 と 10^-3 で別物）をどう扱うか
+- [ ] **`digit` の後継を決める。** 有効数字で丸めるのか、小数点以下の桁数で丸めるのか。接頭辞を選び直す以上、`1.23kHz` と `1234Hz` で桁の意味が変わる
+- [ ] 秒 / ms のように**接頭辞が SI でない単位**（dB、%、cent、semitone）は接頭辞を付けずに素通しできること
+
 ## 6. 既存コードで見つかった問題
 
 ### 6.1 `useDrag` の delta 計算バグ（実バグ）→ **Phase 2 で修正済み**

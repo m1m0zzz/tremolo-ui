@@ -21,7 +21,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 | Phase 3: `createDragValue` | 完了 |
 | Phase 4: Piano / AnimationCanvas / NumberInput | 完了（NumberInput [4.1](./core-extraction-plan.md) / AnimationCanvas [4.2](./core-extraction-plan.md) / Piano [4.3](./core-extraction-plan.md)） |
 | Phase 5: zustand 除去 | 完了（`zustand` を dependencies から削除済み。`useSyncExternalStore` は使わずに済んだ） |
-| 5 章: CSS ヘッドレス化・MIDI の作り込み など | **5.1 / 5.2 のみ残り**（5.3〜5.10 は完了） |
+| 5 章: CSS ヘッドレス化・修飾キー・単位の扱い など | 残り 5.1 / 5.2（CSS ヘッドレス化）、5.11（修飾キー）、5.12（Knob が潰れる）、5.13 / 5.14（NumberInput） |
 
 着手前に決める必要がある未確定事項（同ドキュメント 2 章）:
 
@@ -90,6 +90,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   `docusaurus write-translations` を走らせると再び追加されるが、それは翻訳が要るという意味ではない。API リファレンスのラベルは触らない方針。
 
 - [x] `site/docs/support/CHANGELOG.md` の二重管理をやめた。中身は「TODO: record from version 1.0.0」のスタブのままだったので、各パッケージの `CHANGELOG.md` と GitHub リリース、移行ガイドへのリンクに置き換えた
+- [ ] `format` に一本化するときに、`units` を使っている example / story / ドキュメントを全部書き換える（core-extraction-plan.md 5.14）
 - [ ] 1.0 時点で `README.md` の「*tremolo-ui is now WIP*」と「An unstable version (0.x) has been released.」を更新する
 
 ## 1.0 の基準
