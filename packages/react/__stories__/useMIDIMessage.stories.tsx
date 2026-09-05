@@ -56,8 +56,10 @@ export const Basic = () => {
           the {LOG_LENGTH} most recent messages, newest first
         </span>
       </p>
-      <ol
+      {/* No marker: its width grows with the count and pushes every row across. */}
+      <ul
         style={{
+          listStyle: 'none',
           margin: 0,
           padding: '0.5rem 1rem',
           border: '1px solid black',
@@ -66,11 +68,14 @@ export const Basic = () => {
         }}
       >
         {logs.map((log) => (
-          <li key={log.id}>
-            <span style={{ opacity: 0.7 }}>{log.time}</span> {log.bytes}
+          <li key={log.id} style={{ display: 'flex', gap: '1rem' }}>
+            <span style={{ opacity: 0.7, width: '6rem', textAlign: 'right' }}>
+              {log.time}
+            </span>
+            <span>{log.bytes}</span>
           </li>
         ))}
-      </ol>
+      </ul>
     </div>
   )
 }
