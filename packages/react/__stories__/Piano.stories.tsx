@@ -148,6 +148,10 @@ export const Styling = () => {
  * `keyProps` is given the note, so anything derived from it in JavaScript can
  * reach the keys. A scale is a set of pitch classes that CSS cannot compute on
  * its own.
+ *
+ * Playing a highlighted key gives a colour of its own: `--active-bg` is set
+ * alongside `--bg`, so the key CSS does the switching and the callback does
+ * not have to look at `state.active`.
  */
 export const ScaleHighlight = () => {
   const [root, setRoot] = useState(noteNumber('D3'))
@@ -201,8 +205,12 @@ export const ScaleHighlight = () => {
             ? {
                 style:
                   keyType === 'white'
-                    ? { '--bg': '#bfe3ff' }
-                    : { '--bg': '#2f5d84' },
+                    ? { '--bg': '#bfe3ff', '--active-bg': '#3f9ae0' }
+                    : {
+                        '--bg': '#2f5d84',
+                        '--active-bg': '#3f9ae0',
+                        '--active-color': '#04121d',
+                      },
               }
             : {}
         }
