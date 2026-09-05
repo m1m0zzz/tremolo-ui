@@ -62,9 +62,11 @@ npm run build:sb      # build:package + Storybook
 npm run build:docs    # ドキュメントサイト（typedoc の生成が走る。en / ja 両方）
 ```
 
-GitHub Actions（`build.yml`）が回すのは `build:package` と `test` だけで、**ドキュメントサイトと Storybook のビルドは Vercel でしか検証されない。** push して PR を作ってからでないと落ちたことに気づけないので、手元で通しておく。
+GitHub Actions（`build.yml`）も `build:package` / `test` / Storybook / ドキュメントサイトを全て回すが、**手元で通してから push すること。** CI は 1 つの job を直列に流すので、docs のビルド失敗に気づくまで数分かかる。
 
-さらに `build.yml` には `paths` フィルタが入っていて、**`.md` のみ / `site/`（`site/package.json` を除く）のみの変更では実行されない。** どちらも `build:package` と `test` の結果に影響しないため。CI が走らないからといって検証が省かれているわけではないが、**changeset だけを足した PR は CI 信号がゼロになる**点は知っておくこと。
+`build.yml` には `paths` フィルタが入っていて、**site の外の `.md` のみの変更（`README.md` / `plans/` / `.changeset/`）では実行されない。** ビルドにもテストにも影響しないため。`site/` 配下は `.md` も含めて対象（最後の `site/**` が除外から戻している）。**changeset だけを足した PR は CI 信号がゼロになる**点は知っておくこと。
+
+Vercel は無料プランでビルド回数の上限があり、**24 時間の rate limit に当たるとプレビューが作られない。** stacked PR で 3 レイヤ同時に上げると 6 デプロイが走って当たる。CI 側でビルドしているので検証は済んでいるが、プレビュー URL は出ない。
 
 過去に踏んだもの:
 
