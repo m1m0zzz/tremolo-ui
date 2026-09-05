@@ -1,19 +1,19 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: test & package build
+name: test & build
 
 on:
   push:
     branches: [ "main" ]
     paths: &build-paths
-      # このワークフローが回すのは build:package と test だけで、どちらも
-      # `--workspaces --if-present`。site にはそのどちらのスクリプトも無いので、
-      # site/ の変更はこのワークフローの結果に一切影響しない。
-      # ただし site/package.json は npm ci の解決結果を変えうるので対象に残す。
+      # ドキュメントサイトと Storybook もここでビルドするので、site/ の変更は
+      # このワークフローの結果に影響する。除外するのは site の外の .md
+      # （README / plans/ / .changeset/）だけ。
       #
       # paths-ignore では `!` による除外解除が使えないため paths + `!` を使う。
-      # 後に書いたパターンが勝つので、順序を入れ替えないこと。
+      # 後に書いたパターンが勝つので、順序を入れ替えないこと。`site/**` が
+      # 最後にあることで、site 配下の .md だけが除外から戻る。
       # アンカーで push / pull_request に同じリストを配る（Actions は 2025-09 から
       # アンカーとエイリアスに対応。merge key `<<:` だけは使えない）。
       #
@@ -22,11 +22,21 @@ on:
       # そのときは同名の no-op job を用意すること。
       - '**'
       - '!**.md'
-      - '!site/**'
-      - 'site/package.json'
+      - 'site/**'
   pull_request:
-    branches: [ "main" ]
+    # base を絞らないのは stacked PR のため。中段の PR は base が main では
+    # ないので、branches: [main] を書くと拾えないことがある。GitHub は
+    # スタックとして認識した後のイベントなら base をスタックの base として
+    # 扱うが、gh stack submit は PR を作ってからスタックにまとめるので、
+    # opened の時点ではまだスタックが無く、そこを取りこぼす（実測）。
     paths: *build-paths
+
+# 同じ PR / ブランチへ続けて push したとき、古い実行を打ち切る。
+# main への push は打ち切らない。「どのコミットで main が通ったか」の記録が
+# cancelled で欠けるため。
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
@@ -46,9 +56,20 @@ jobs:
       run: npm ci
 
     # packages/react のテストは workspace symlink 越しに他パッケージの dist を
-    # 解決するため、テストより先にビルドする必要がある
+    # 解決するため、テストより先にビルドする必要がある。site と Storybook も
+    # 同じ symlink 越しに dist を見るので、この 1 回で全部が揃う。
     - name: Build packages
       run: npm run build:package
 
     - name: Test
       run: npm run test
+
+    # ルートの build:sb / build:docs は build:package を含むが、ここでは
+    # 済んでいるので workspace のスクリプトを直接呼ぶ。
+    - name: Build Storybook
+      run: npm run build:sb -w packages/react
+
+    # docusaurus build は i18n.locales の全ロケール（en / ja）を出す。
+    # COMMIT_SHA は任意で、未設定なら GitHubLink がリビジョン指定を省く。
+    - name: Build docs site
+      run: npm run build -w site
