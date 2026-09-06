@@ -187,6 +187,34 @@ export const ClampValue = () => {
   )
 }
 
+/**
+ * With `unformatOnFocus`, focusing the input drops whatever `format` put
+ * around the value and shows the number itself, ready to be typed over.
+ * Both fields hold the same value; only the left one keeps its format while
+ * you are in it.
+ */
+export const UnformatOnFocus = () => {
+  const [left, setLeft] = useState(1230)
+  const [right, setRight] = useState(1230)
+
+  return (
+    <div style={{ display: 'flex', gap: '2rem' }}>
+      <section>
+        <p>default</p>
+        <NumberInput.Root value={left} {...hz} onChange={setLeft}>
+          <NumberInput.InputField />
+        </NumberInput.Root>
+      </section>
+      <section>
+        <p>unformatOnFocus</p>
+        <NumberInput.Root value={right} {...hz} onChange={setRight}>
+          <NumberInput.InputField unformatOnFocus />
+        </NumberInput.Root>
+      </section>
+    </div>
+  )
+}
+
 export const SelectOnFocus = () => {
   const [value1, setValue1] = useState(32)
   const [value2, setValue2] = useState(32)
