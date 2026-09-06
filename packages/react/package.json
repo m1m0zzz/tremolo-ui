@@ -83,13 +83,6 @@
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
       }
-    },
-    "./styles/index.css": "./dist/index.css",
-      "./styles/Knob.css": "./src/components/Knob/index.css",
-    "./styles/NumberInput.css": "./src/components/NumberInput/index.css",
-    "./styles/Piano.css": "./src/components/Piano/index.css",
-    "./styles/PointsEditor.css": "./src/components/PointsEditor/index.css",
-    "./styles/Slider.css": "./src/components/Slider/index.css",
-    "./styles/XYPad.css": "./src/components/XYPad/index.css"
+    }
   }
 }

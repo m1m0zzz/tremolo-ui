@@ -1,11 +1,3 @@
-// For bundled CSS (@tremolo-ui/react/styles/index.css)
-import './components/Knob/index.css'
-import './components/NumberInput/index.css'
-import './components/Piano/index.css'
-import './components/PointsEditor/index.css'
-import './components/Slider/index.css'
-import './components/XYPad/index.css'
-
 export {
   AnimationCanvas,
   type AbsoluteSizingProps,

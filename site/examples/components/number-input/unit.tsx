@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { NumberInput } from '@tremolo-ui/react'
 import { unitFormat } from '@tremolo-ui/functions'
 
-import '@tremolo-ui/react/styles/index.css'
 // expand end
 
 // Hertz takes SI prefixes, so 1234 is shown as 1.23kHz.

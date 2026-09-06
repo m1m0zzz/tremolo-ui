@@ -2,7 +2,6 @@
 import { useState } from 'react'
 import { Knob } from '@tremolo-ui/react'
 
-import '@tremolo-ui/react/styles/Knob.css'
 import myKnob from './my-knob.module.css'
 // expand end
 

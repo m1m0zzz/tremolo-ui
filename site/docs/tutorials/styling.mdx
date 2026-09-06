@@ -10,39 +10,91 @@ import CodeBlock from '@theme/CodeBlock'
 import cssModule from '!!raw-loader!@site/examples/tutorials/styling/css-module'
 import myKnobCss from '!!raw-loader!@site/examples/tutorials/styling/my-knob.module.css'
 
-Since tremolo-ui is a headless library, you can style it using your preferred method, such as Vanilla CSS, CSS in JS, or Tailwind CSS.
+import knobCss from '!!raw-loader!@site/src/css/tremolo/Knob.css'
+import numberInputCss from '!!raw-loader!@site/src/css/tremolo/NumberInput.css'
+import pianoCss from '!!raw-loader!@site/src/css/tremolo/Piano.css'
+import pointsEditorCss from '!!raw-loader!@site/src/css/tremolo/PointsEditor.css'
+import sliderCss from '!!raw-loader!@site/src/css/tremolo/Slider.css'
+import xyPadCss from '!!raw-loader!@site/src/css/tremolo/XYPad.css'
 
-Here, we'll introduce several ways to change the appearance of components.
+**tremolo-ui ships no CSS.** A component renders its markup, keeps track of the
+value, and handles the pointer, keyboard and wheel; what it looks like is
+yours. Style it with vanilla CSS, CSS Modules, Tailwind, CSS-in-JS — whatever
+the rest of your app already uses.
 
-## ✨Apply the default style
+## 🎨Class names
 
-Import bundled CSS:
+Every element carries a class beginning with `tremolo-`, so plain CSS reaches
+it without any wrapper of your own.
 
-For Vite, apply the following to `src/main.tsx`. For Next.js, apply it to `app/layout.tsx`.
-
-```tsx title="main.tsx"
-import '@tremolo-ui/react/styles/index.css'
+```css
+.tremolo-knob-active-line {
+  color: rebeccapurple;
+}
 ```
 
-Import by component:
+The names follow the component and the part: `tremolo-slider`,
+`tremolo-slider-track`, `tremolo-slider-thumb`, `tremolo-slider-marks`. The
+theme below lists all of them.
 
-Import the CSS corresponding to the component's file.
+## 🚦State
 
-```tsx title="MyKnob.tsx"
-import '@tremolo-ui/react/styles/Knob.css'
-import { Knob } from '@tremolo-ui/react'
+State is on the element as an attribute, not as an extra class, so it is a
+selector away.
 
-export function MyKnob() {
-  // ...
+| Attribute | Where | Meaning |
+| --- | --- | --- |
+| `[aria-disabled="true"]` | every component | `disabled` is set |
+| `[aria-readonly="true"]` | every component | `readonly` is set |
+| `[data-dragging="true"]` | `Knob`, `PointsEditor.Point` | a drag is in progress |
+| `[data-vertical="true"]` | `Slider`, `Slider.Track`, `Slider.MarksOption` | the slider runs vertically |
+| `[data-active="true"]` | `Piano` keys | the note is sounding |
+| `[data-out-of-range="true"]` | `NumberInput.InputField` | the value is outside `min`/`max` |
+
+```css
+.tremolo-slider[aria-disabled='true'] {
+  opacity: 0.5;
+}
 ```
 
-This method helps avoid bundling unused CSS.
+`:focus`, `:hover` and `:focus-within` work as they would anywhere, since the
+focusable element is a real one.
 
-## 👾Customize the appearance
+## 📋The theme used on this site
 
-## 🧩Component-based Styling
+Every example in these docs is styled by the files below. They are the starting
+point rather than a dependency: copy the ones you need into your own project
+and edit them.
 
-Here, we'll introduce one example of how to use CSS Modules.
+Each is plain CSS with no build step, and each one leans on custom properties
+(`--knob-size`, `--thumb-size`, `--active-color` …) so the common changes are a
+one-line override.
+
+<Tabs>
+  <TabItem value="Knob.css" default>
+    <CodeBlock language='css' title='Knob.css'>{knobCss}</CodeBlock>
+  </TabItem>
+  <TabItem value="Slider.css">
+    <CodeBlock language='css' title='Slider.css'>{sliderCss}</CodeBlock>
+  </TabItem>
+  <TabItem value="XYPad.css">
+    <CodeBlock language='css' title='XYPad.css'>{xyPadCss}</CodeBlock>
+  </TabItem>
+  <TabItem value="NumberInput.css">
+    <CodeBlock language='css' title='NumberInput.css'>{numberInputCss}</CodeBlock>
+  </TabItem>
+  <TabItem value="Piano.css">
+    <CodeBlock language='css' title='Piano.css'>{pianoCss}</CodeBlock>
+  </TabItem>
+  <TabItem value="PointsEditor.css">
+    <CodeBlock language='css' title='PointsEditor.css'>{pointsEditorCss}</CodeBlock>
+  </TabItem>
+</Tabs>
+
+## 🧩Component-based styling
+
+Nothing says the styles have to be global. Here is the same knob with CSS
+Modules, passing a class to the part it belongs to.
 
 <Tabs>
   <TabItem value="index.tsx" default>
@@ -54,40 +106,10 @@ Here, we'll introduce one example of how to use CSS Modules.
       sourcePath="examples/tutorials/styling/css-module.tsx"
     >{cssModule}</CodeBlock>
   </TabItem>
-  <TabItem value="my-knob.module.css" default>
-    <CodeBlock language='css'
-    >{myKnobCss}</CodeBlock>
+  <TabItem value="my-knob.module.css">
+    <CodeBlock language='css'>{myKnobCss}</CodeBlock>
   </TabItem>
 </Tabs>
-
-
-## 🌎Global Styling
-
-Learn how to override the default CSS and load it as global CSS.
-
-First, copy `dist/index.css` and create a new css file named `custom.css`.
-
-```bash
-cp node_modules/@tremolo-ui/react/dist/index.css custom.css
-```
-
-```tsx title="index.tsx"
-import 'custom.css'
-```
-
-```css title="custom.css"
-.tremolo-any-component {
-  /* customize style here */
-}
-```
-
-Next, overwrite the css of the component you wish to change.
-
-All components provided by tremolo-ui are prefixed with `tremolo-` followed by the component name.
-
-```tsx title="index.tsx"
-import 'custom.css'
-```
 
 ## 🧭Next Step
 
