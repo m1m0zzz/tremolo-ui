@@ -15,7 +15,8 @@ import {
   applyDelta,
   linearScale,
   toFixed,
-  InputEventOption,
+  InputEventOptions,
+  ModifierState,
   type Scale,
 } from '@tremolo-ui/functions'
 
@@ -23,6 +24,10 @@ import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 import { useComposedRefs } from '../_util/composeRefs'
+import {
+  DEFAULT_KEYBOARD_OPTIONS,
+  DEFAULT_WHEEL_OPTIONS,
+} from '../_util/inputEvent'
 
 import { Area } from './Area'
 import { toXY, XY, XYInput, XYPadProvider } from './context'
@@ -61,12 +66,12 @@ export interface XYPadProps {
    * wheel control option. Shift selects the x axis.
    * If null, no event will be triggered
    */
-  wheel?: InputEventOption | null
+  wheel?: InputEventOptions | null
   /**
    * keyboard control option
    * If null, no event will be triggered
    */
-  keyboard?: InputEventOption | null
+  keyboard?: InputEventOptions | null
 
   externalStyles?: {
     userSelectNone?: boolean
@@ -118,8 +123,8 @@ export const Root = forwardRef<XYPadMethods, Props>(
       step: _step = 1,
       scale: _scale = linearScale,
       reverse: _reverse = false,
-      wheel = ['raw', 1],
-      keyboard = ['raw', 1],
+      wheel = DEFAULT_WHEEL_OPTIONS,
+      keyboard = DEFAULT_KEYBOARD_OPTIONS,
       className,
       style,
       externalStyles: _externalStyles,
@@ -185,8 +190,16 @@ export const Root = forwardRef<XYPadMethods, Props>(
 
     /** @param i 0 = x, 1 = y */
     const nudge = useCallback(
-      (i: 0 | 1, direction: number, option: InputEventOption): XY<number> =>
-        withAxis(i, applyDelta(value[i], direction, option, axis[i])),
+      (
+        i: 0 | 1,
+        direction: number,
+        option: InputEventOptions,
+        modifiers: ModifierState,
+      ): XY<number> =>
+        withAxis(
+          i,
+          applyDelta(value[i], direction, option, axis[i], modifiers),
+        ),
       [value, axis, withAxis],
     )
 
@@ -200,7 +213,7 @@ export const Root = forwardRef<XYPadMethods, Props>(
           let direction = 1
           if (key === 'ArrowLeft' || key === 'ArrowUp') direction *= -1
           if (reverse[i]) direction *= -1
-          onChange(nudge(i, direction, keyboard))
+          onChange(nudge(i, direction, keyboard, event))
         }
       },
       [onChange, readonly, keyboard, reverse, nudge],
@@ -232,12 +245,19 @@ export const Root = forwardRef<XYPadMethods, Props>(
 
     const wheelRefCallback = useWheel<HTMLDivElement>((event) => {
       if (!onChange || readonly || !wheel) return
-      const i: 0 | 1 = event.shiftKey ? 0 : 1
+      // Browsers turn shift+wheel into horizontal scrolling: `deltaY` comes
+      // out empty and `deltaX` carries the movement. Reading whichever axis
+      // moved keeps shift working as the x-axis modifier — and picks up a
+      // trackpad's own horizontal gesture, which never had a modifier.
+      const horizontal = event.deltaX !== 0
+      const delta = horizontal ? event.deltaX : event.deltaY
+      if (delta === 0) return
+      const i: 0 | 1 = horizontal || event.shiftKey ? 0 : 1
       event.preventDefault()
       let direction = 1
-      if (event.deltaY < 0) direction *= -1
+      if (delta < 0) direction *= -1
       if (reverse[i]) direction *= -1
-      onChange(nudge(i, direction, wheel))
+      onChange(nudge(i, direction, wheel, event))
     }, WHEEL_OPTIONS)
 
     // Composed once, so React attaches the refs a single time instead of
