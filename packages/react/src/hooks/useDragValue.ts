@@ -5,6 +5,7 @@ import {
   elementMapping,
   relativeMapping,
   type AxisOptions,
+  type DragState,
   type DragValueInstance,
   type XY,
   type XYInput,
@@ -36,6 +37,13 @@ export interface UseDragValueOptions {
    * @default 100
    */
   pixelRange?: XYInput<number>
+  /**
+   * How much the movement counts, read on every move, with `getValue`.
+   * `0.1` makes the same movement cover a tenth of the range.
+   *
+   * @see relativeMapping
+   */
+  sensitivity?: (state: DragState) => number
 
   /** @see DragValueOptions.updateOnPointerDown */
   updateOnPointerDown?: boolean
@@ -101,6 +109,9 @@ export function useDragValue<T extends Element>(
         ? elementMapping(() => baseElementRef.current)
         : relativeMapping({
             pixelRange: [pixelRangeX ?? 100, pixelRangeY ?? 100],
+            // Read through the ref so that a changed setting reaches a drag
+            // already in progress.
+            sensitivity: (state) => latest.current.sensitivity?.(state) ?? 1,
           }),
       getValue: () => valueGetter() ?? [0, 0],
       updateOnPointerDown: latest.current.updateOnPointerDown,

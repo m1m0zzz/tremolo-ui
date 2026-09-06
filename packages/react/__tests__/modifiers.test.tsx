@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { useState } from 'react'
 
 import { Knob } from '../src/components/Knob'
@@ -203,5 +203,104 @@ describe('the wheel on a two-dimensional control', () => {
     fire(container, { deltaX: 0, deltaY: 1 })
 
     expect(onChange).toHaveBeenLastCalledWith([5, 6])
+  })
+})
+
+describe('shift while dragging a Knob', () => {
+  /**
+   * jsdom lays nothing out and has no PointerEvent, so the drag is driven
+   * through the same helpers the dom tests use: what is asserted here is the
+   * wiring, not the arithmetic.
+   */
+  function KnobSubject({ onChange }: { onChange: (v: number) => void }) {
+    const [value, setValue] = useState(50)
+    return (
+      <Knob.Root
+        min={0}
+        max={100}
+        step={0.01}
+        value={value}
+        onChange={(v) => {
+          setValue(v)
+          onChange(v)
+        }}
+      >
+        <Knob.SVGRoot>
+          <Knob.Thumb />
+        </Knob.SVGRoot>
+      </Knob.Root>
+    )
+  }
+
+  /** jsdom has no PointerEvent and no pointer capture, so both are faked. */
+  const pointerEvent = (
+    type: string,
+    init: { screenY?: number; shiftKey?: boolean } = {},
+  ) => {
+    const event = new MouseEvent(type, { bubbles: true, screenX: 0, ...init })
+    Object.defineProperty(event, 'pointerId', { value: 1 })
+    return event
+  }
+
+  /** The first point is the pointer going down, the rest are moves. */
+  const drag = (
+    element: Element,
+    points: { screenY: number; shiftKey?: boolean }[],
+  ) => {
+    Object.assign(element, {
+      setPointerCapture: () => {},
+      releasePointerCapture: () => {},
+      hasPointerCapture: () => true,
+    })
+    act(() => {
+      element.dispatchEvent(pointerEvent('pointerdown', points[0]))
+    })
+    for (const point of points.slice(1)) {
+      act(() => {
+        element.dispatchEvent(pointerEvent('pointermove', point))
+      })
+    }
+  }
+
+  test('a plain drag covers the whole range in 100px', () => {
+    const onChange = jest.fn()
+    const { container } = render(<KnobSubject onChange={onChange} />)
+    const knob = container.querySelector('.tremolo-knob')!
+
+    // Dragging up raises the value.
+    drag(knob, [{ screenY: 0 }, { screenY: -20 }])
+
+    expect(onChange).toHaveBeenLastCalledWith(70)
+  })
+
+  test('shift makes the same movement count a tenth', () => {
+    const onChange = jest.fn()
+    const { container } = render(<KnobSubject onChange={onChange} />)
+    const knob = container.querySelector('.tremolo-knob')!
+
+    // Held before the pointer goes down, so it counts from the first pixel.
+    drag(knob, [
+      { screenY: 0, shiftKey: true },
+      { screenY: -20, shiftKey: true },
+    ])
+
+    expect(onChange).toHaveBeenLastCalledWith(52)
+  })
+
+  test('pressing shift mid-drag does not move the value', () => {
+    const onChange = jest.fn()
+    const { container } = render(<KnobSubject onChange={onChange} />)
+    const knob = container.querySelector('.tremolo-knob')!
+
+    drag(knob, [
+      { screenY: 0 },
+      { screenY: -20 },
+      // Same position, shift now held. Rescaling the whole travel would drop
+      // the value from 70 to 52.
+      { screenY: -20, shiftKey: true },
+      { screenY: -30, shiftKey: true },
+    ])
+
+    expect(onChange).toHaveBeenLastCalledWith(71)
   })
 })

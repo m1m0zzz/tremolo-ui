@@ -82,27 +82,65 @@ export function elementMapping(
  */
 export function relativeMapping({
   pixelRange = 100,
+  sensitivity,
 }: {
   /**
    * Pixels of movement that span the whole range.
    * @default 100
    */
   pixelRange?: XYInput<number>
+  /**
+   * How much the movement counts, read on every move. `1` is `pixelRange` as
+   * given; `0.1` makes the same movement cover a tenth of the range, which is
+   * what a fine-adjustment modifier wants.
+   *
+   * Changing it mid-drag does not disturb the value: the travel so far is
+   * folded into the origin and measuring starts again from there.
+   */
+  sensitivity?: (state: DragState) => number
 } = {}): DragValueMapping {
-  const [rangeX, rangeY] = toXY(pixelRange)
+  const [baseX, baseY] = toXY(pixelRange)
   let origin: XY<number> = [0, 0]
+  /** Where the current sensitivity took over, in drag coordinates. */
+  let anchor: XY<number> = [0, 0]
+  /** The previous event, so a sensitivity change can be dated back to it. */
+  let previous: XY<number> = [0, 0]
+  let factor = 1
+
+  const travelled = (to: XY<number>, at: number): XY<number> => [
+    origin[0] + ((to[0] - anchor[0]) * at) / baseX,
+    origin[1] + ((to[1] - anchor[1]) * at) / baseY,
+  ]
 
   return {
-    start: (_state, context) => {
+    start: (state, context) => {
       origin = context.position()
+      anchor = [0, 0]
+      previous = [0, 0]
+      // Read here too, so a modifier already held when the pointer went down
+      // applies from the first pixel rather than from the first change.
+      factor = sensitivity ? sensitivity(state) : 1
       return origin
     },
-    // `x` and `y` are measured from the start of the drag, so the position
-    // never accumulates a rounding error of its own.
-    move: (state) => [
-      origin[0] + state.x / rangeX,
-      origin[1] + state.y / rangeY,
-    ],
+    // Measured from the anchor rather than accumulated per event, so the
+    // position picks up no rounding error of its own. The anchor only moves
+    // when the sensitivity does, which is a handful of times per drag at most.
+    move: (state) => {
+      const next = sensitivity ? sensitivity(state) : 1
+      if (next !== factor) {
+        // Fold the travel so far into the origin, or the new sensitivity would
+        // apply to the whole drag and the value would jump.
+        //
+        // Dated to the previous event rather than this one: a key produces no
+        // pointer event of its own, so the change is only seen on the next
+        // move, and that move's own distance belongs to the new sensitivity.
+        origin = travelled(previous, factor)
+        anchor = previous
+        factor = next
+      }
+      previous = [state.x, state.y]
+      return travelled([state.x, state.y], factor)
+    },
   }
 }
 

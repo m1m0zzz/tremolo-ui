@@ -20,19 +20,23 @@ export interface ModifierState {
   metaKey: boolean
 }
 
+/** One setting per modifier key, with `default` for none of them. */
+export type ModifierMap<T> = { default: T } & Partial<Record<Modifier, T>>
+
 /**
- * How much one wheel notch or key press moves the value: a single amount, or
- * one per modifier key.
+ * A single setting, or one per modifier key.
  *
  * @example
  * ['raw', 1]
  * { default: ['raw', 1], shift: ['raw', 0.1] }
  */
-export type InputEventOptions =
-  | InputEventOption
-  | ({ default: InputEventOption } & Partial<
-      Record<Modifier, InputEventOption>
-    >)
+export type ModifierValue<T> = T | ModifierMap<T>
+
+/**
+ * How much one wheel notch or key press moves the value: a single amount, or
+ * one per modifier key.
+ */
+export type InputEventOptions = ModifierValue<InputEventOption>
 
 export interface SelectedInputEvent {
   option: InputEventOption
@@ -55,6 +59,47 @@ const MODIFIER_FLAG = {
 } as const satisfies Record<Modifier, keyof ModifierState>
 
 /**
+ * A map is the only form with a `default` key, which is what tells it apart
+ * from a bare setting. Tuples are arrays, so they never match.
+ */
+function isModifierMap<T>(value: ModifierValue<T>): value is ModifierMap<T> {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    'default' in value
+  )
+}
+
+/**
+ * Pick the setting that applies, given the modifier keys being held.
+ *
+ * @example
+ * selectModifier({ default: 1, shift: 0.1 }, event)
+ */
+export function selectModifier<T>(
+  options: ModifierValue<T>,
+  modifiers?: ModifierState,
+): { value: T; modifier: Modifier | null } {
+  if (!isModifierMap(options)) {
+    // TypeScript cannot subtract the map from `ModifierValue<T>` while `T` is
+    // still a type parameter, so the other half has to be spelled out.
+    return { value: options as T, modifier: null }
+  }
+  if (modifiers) {
+    for (const modifier of MODIFIER_ORDER) {
+      const value = options[modifier]
+      // Compared against undefined rather than checked for truthiness: 0 is a
+      // legitimate setting.
+      if (value !== undefined && modifiers[MODIFIER_FLAG[modifier]]) {
+        return { value, modifier }
+      }
+    }
+  }
+  return { value: options.default, modifier: null }
+}
+
+/**
  * Pick the amount that applies, given the modifier keys being held.
  *
  * @example
@@ -64,14 +109,6 @@ export function selectInputEvent(
   options: InputEventOptions,
   modifiers?: ModifierState,
 ): SelectedInputEvent {
-  if (Array.isArray(options)) return { option: options, modifier: null }
-  if (modifiers) {
-    for (const modifier of MODIFIER_ORDER) {
-      const option = options[modifier]
-      if (option && modifiers[MODIFIER_FLAG[modifier]]) {
-        return { option, modifier }
-      }
-    }
-  }
-  return { option: options.default, modifier: null }
+  const { value, modifier } = selectModifier(options, modifiers)
+  return { option: value, modifier }
 }

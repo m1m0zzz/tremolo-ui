@@ -13,6 +13,8 @@ import type { AxisOptions, XY } from '@tremolo-ui/dom'
 import {
   applyDelta,
   InputEventOptions,
+  type ModifierValue,
+  selectModifier,
   linearScale,
   type Scale,
   type ValueRange,
@@ -23,6 +25,7 @@ import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 import { useComposedRefs } from '../_util/composeRefs'
 import {
+  DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
 } from '../_util/inputEvent'
@@ -91,6 +94,22 @@ export interface KnobProps {
    */
   wheel?: InputEventOptions | null
   /**
+   * How much a drag moves the value, per modifier key.
+   *
+   * `1` is the normal travel of 100px for the whole range; `0.1` makes the
+   * same movement cover a tenth of it. Shift is bound to `0.1` by default, to
+   * match what it does on the arrow keys.
+   *
+   * Pressing or releasing the key mid-drag does not disturb the value: the
+   * travel so far is kept and the new sensitivity applies from there. It takes
+   * effect on the next movement, since a key on its own produces no pointer
+   * event.
+   *
+   * @default { default: 1, shift: 0.1 }
+   */
+  dragSensitivity?: ModifierValue<number>
+
+  /**
    * How much one arrow key press moves the value.
    *
    * Shift moves a tenth of a step by default. Name a modifier to change that,
@@ -153,6 +172,7 @@ export const Root = forwardRef<KnobMethods, Props>(
       externalStyles: _externalStyles,
       wheel = DEFAULT_WHEEL_OPTIONS,
       keyboard = DEFAULT_KEYBOARD_OPTIONS,
+      dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
       enableDoubleClickDefault = true,
       disabled = false,
       readonly = false,
@@ -206,6 +226,8 @@ export const Root = forwardRef<KnobMethods, Props>(
     >({
       axis,
       getValue: () => [value, value],
+      sensitivity: (state) =>
+        selectModifier(dragSensitivity, state.event).value,
       threshold: 1,
       cursor: readonly ? undefined : externalStyles.cursor,
       onChange: (v) => {
