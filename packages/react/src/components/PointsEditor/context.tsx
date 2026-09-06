@@ -1,6 +1,6 @@
 import { createContext, RefObject, useContext } from 'react'
 
-import type { InputEventOption } from '@tremolo-ui/functions'
+import type { InputEventOptions } from '@tremolo-ui/functions'
 
 import { Cursor } from '../_util'
 
@@ -8,9 +8,9 @@ export type PointsEditorContextValue = {
   disabled: boolean
   readonly: boolean
   /** Inherited by every `Point`; `null` turns the wheel off. */
-  wheel: InputEventOption | null
+  wheel: InputEventOptions | null
   /** Inherited by every `Point`; `null` turns the keyboard off. */
-  keyboard: InputEventOption | null
+  keyboard: InputEventOptions | null
   externalStyles: {
     userSelectNone?: boolean
     cursor?: Cursor

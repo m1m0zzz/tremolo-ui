@@ -156,7 +156,7 @@ export function InputField({
           (key === 'ArrowUp' || key === 'ArrowDown')
         ) {
           event.preventDefault()
-          nudge(key === 'ArrowUp' ? 1 : -1, keyboard)
+          nudge(key === 'ArrowUp' ? 1 : -1, keyboard, event)
         }
         onKeyDown?.(event)
       }}

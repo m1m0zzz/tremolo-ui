@@ -1,6 +1,11 @@
 import { createContext, RefObject, useContext } from 'react'
 
-import type { InputEventOption, Scale, ValueRange } from '@tremolo-ui/functions'
+import type {
+  InputEventOptions,
+  ModifierState,
+  Scale,
+  ValueRange,
+} from '@tremolo-ui/functions'
 
 export type NumberInputContextValue = {
   value: number
@@ -26,7 +31,7 @@ export type NumberInputContextValue = {
    */
   range: ValueRange
 
-  keyboard: InputEventOption | null
+  keyboard: InputEventOptions | null
   /** Pixels of vertical drag on `Stepper` that move the value by one `step`. */
   drag: number | null
 
@@ -49,7 +54,11 @@ export type NumberInputContextValue = {
   /** Drops the draft and replaces the value: steppers, wheel, keyboard, drag. */
   changeValue: (next: number) => void
   /** Moves the value by one `option` in `direction`, normally +1 or -1. */
-  nudge: (direction: number, option: InputEventOption) => void
+  nudge: (
+    direction: number,
+    option: InputEventOptions,
+    modifiers?: ModifierState,
+  ) => void
 
   /** `InputField` registers itself here; `Root` focuses it through its methods. */
   inputRef: RefObject<HTMLInputElement | null>

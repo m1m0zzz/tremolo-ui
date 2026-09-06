@@ -15,7 +15,7 @@ import {
   applyDelta,
   linearScale,
   toFixed,
-  InputEventOption,
+  InputEventOptions,
   xor,
   type Scale,
 } from '@tremolo-ui/functions'
@@ -24,6 +24,10 @@ import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 import { useComposedRefs } from '../_util/composeRefs'
+import {
+  DEFAULT_KEYBOARD_OPTIONS,
+  DEFAULT_WHEEL_OPTIONS,
+} from '../_util/inputEvent'
 
 import { SliderProvider } from './context'
 import { Marks } from './Marks'
@@ -70,12 +74,12 @@ export interface SliderProps {
    * wheel control option
    * If null, no event will be triggered
    */
-  wheel?: InputEventOption | null
+  wheel?: InputEventOptions | null
   /**
    * keyboard control option
    * If null, no event will be triggered
    */
-  keyboard?: InputEventOption | null
+  keyboard?: InputEventOptions | null
 
   /**
    * Only the appearance will change.
@@ -132,8 +136,8 @@ export const Root = forwardRef<SliderMethods, Props>(
       vertical = false,
       reverse = false,
       externalStyles: _externalStyles,
-      wheel = ['raw', 1],
-      keyboard = ['raw', 1],
+      wheel = DEFAULT_WHEEL_OPTIONS,
+      keyboard = DEFAULT_KEYBOARD_OPTIONS,
       disabled = false,
       readonly = false,
       onChange,
@@ -187,7 +191,7 @@ export const Root = forwardRef<SliderMethods, Props>(
           event.preventDefault()
           let direction = key === 'ArrowRight' || key === 'ArrowUp' ? 1 : -1
           if (reverse) direction *= -1
-          onChange(applyDelta(value, direction, keyboard, axis))
+          onChange(applyDelta(value, direction, keyboard, axis, event))
         }
       },
       [keyboard, onChange, readonly, reverse, value, axis],
@@ -232,7 +236,7 @@ export const Root = forwardRef<SliderMethods, Props>(
         direction = event.deltaY > 0 ? -1 : 1
       }
       if (vertical && reverse) direction *= -1
-      onChange(applyDelta(value, direction, wheel, axis))
+      onChange(applyDelta(value, direction, wheel, axis, event))
     }, WHEEL_OPTIONS)
 
     // Composed once, so React attaches the refs a single time instead of

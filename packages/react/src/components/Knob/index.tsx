@@ -12,7 +12,7 @@ import {
 import type { AxisOptions, XY } from '@tremolo-ui/dom'
 import {
   applyDelta,
-  InputEventOption,
+  InputEventOptions,
   linearScale,
   type Scale,
   type ValueRange,
@@ -22,6 +22,10 @@ import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 import { useComposedRefs } from '../_util/composeRefs'
+import {
+  DEFAULT_KEYBOARD_OPTIONS,
+  DEFAULT_WHEEL_OPTIONS,
+} from '../_util/inputEvent'
 
 import { ActiveLine } from './ActiveLine'
 import { calcAngles, KnobProvider } from './context'
@@ -85,12 +89,12 @@ export interface KnobProps {
    * wheel control option
    * If null, no event will be triggered
    */
-  wheel?: InputEventOption | null
+  wheel?: InputEventOptions | null
   /**
    * keyboard control option
    * If null, no event will be triggered
    */
-  keyboard?: InputEventOption | null
+  keyboard?: InputEventOptions | null
   enableDoubleClickDefault?: boolean
 
   disabled?: boolean
@@ -142,8 +146,8 @@ export const Root = forwardRef<KnobMethods, Props>(
       startValue = min,
       size,
       externalStyles: _externalStyles,
-      wheel = ['raw', 1],
-      keyboard = ['raw', 1],
+      wheel = DEFAULT_WHEEL_OPTIONS,
+      keyboard = DEFAULT_KEYBOARD_OPTIONS,
       enableDoubleClickDefault = true,
       disabled = false,
       readonly = false,
@@ -176,7 +180,7 @@ export const Root = forwardRef<KnobMethods, Props>(
         if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
           event.preventDefault()
           const direction = key === 'ArrowRight' || key === 'ArrowUp' ? 1 : -1
-          onChange(applyDelta(value, direction, keyboard, range))
+          onChange(applyDelta(value, direction, keyboard, range, event))
         }
       },
       [keyboard, onChange, readonly, value, range],
@@ -215,7 +219,7 @@ export const Root = forwardRef<KnobMethods, Props>(
       if (!wheel || readonly) return
       event.preventDefault()
       if (!onChange || event.deltaY === 0) return
-      onChange(applyDelta(value, -Math.sign(event.deltaY), wheel, range))
+      onChange(applyDelta(value, -Math.sign(event.deltaY), wheel, range, event))
     }, WHEEL_OPTIONS)
 
     // Composed once, so React attaches the refs a single time instead of

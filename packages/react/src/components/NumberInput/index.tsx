@@ -14,13 +14,18 @@ import {
 import {
   applyDelta,
   clamp,
-  InputEventOption,
+  InputEventOptions,
+  ModifierState,
   linearScale,
   type Scale,
   type ValueRange,
 } from '@tremolo-ui/functions'
 
 import { useWheel } from '../../hooks/useWheel'
+import {
+  DEFAULT_KEYBOARD_OPTIONS,
+  DEFAULT_WHEEL_OPTIONS,
+} from '../_util/inputEvent'
 
 import { NumberInputProvider } from './context'
 import { DecrementStepper } from './DecrementStepper'
@@ -75,12 +80,12 @@ export interface NumberInputProps {
    * scrolling past the input does not change it.
    * If null, no event will be triggered
    */
-  wheel?: InputEventOption | null
+  wheel?: InputEventOptions | null
   /**
    * keyboard control option
    * If null, no event will be triggered
    */
-  keyboard?: InputEventOption | null
+  keyboard?: InputEventOptions | null
   /**
    * Pixels of vertical drag on `Stepper` that move the value by one `step`.
    * If null, no event will be triggered
@@ -153,8 +158,8 @@ export const Root = forwardRef<NumberInputMethods, Props>(
       format: formatProp,
       parse: parseProp,
       clampValue = true,
-      wheel = ['raw', 1],
-      keyboard = ['raw', 1],
+      wheel = DEFAULT_WHEEL_OPTIONS,
+      keyboard = DEFAULT_KEYBOARD_OPTIONS,
       drag = 1,
       disabled = false,
       readonly = false,
@@ -233,8 +238,12 @@ export const Root = forwardRef<NumberInputMethods, Props>(
     }, [draft, readonly, parse, range, changeValue])
 
     const nudge = useCallback(
-      (direction: number, option: InputEventOption) => {
-        changeValue(applyDelta(value, direction, option, range))
+      (
+        direction: number,
+        option: InputEventOptions,
+        modifiers?: ModifierState,
+      ) => {
+        changeValue(applyDelta(value, direction, option, range, modifiers))
       },
       [changeValue, value, range],
     )
@@ -244,7 +253,7 @@ export const Root = forwardRef<NumberInputMethods, Props>(
       (event) => {
         if (!wheel || readonly || event.deltaY === 0) return
         event.preventDefault()
-        nudge(-Math.sign(event.deltaY), wheel)
+        nudge(-Math.sign(event.deltaY), wheel, event)
       },
       { requireFocus: true },
     )

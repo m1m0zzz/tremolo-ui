@@ -1,7 +1,12 @@
 import clsx from 'clsx'
 import { ComponentPropsWithoutRef, useCallback, useState } from 'react'
 
-import { applyDelta, clamp, InputEventOption } from '@tremolo-ui/functions'
+import {
+  applyDelta,
+  clamp,
+  type InputEventOptions,
+  type ModifierState,
+} from '@tremolo-ui/functions'
 
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
@@ -40,9 +45,9 @@ export interface PointProps<T extends PointBaseType> {
   readonly?: boolean
 
   /** Overrides the `wheel` of `PointsEditor.Root`. */
-  wheel?: InputEventOption | null
+  wheel?: InputEventOptions | null
   /** Overrides the `keyboard` of `PointsEditor.Root`. */
-  keyboard?: InputEventOption | null
+  keyboard?: InputEventOptions | null
 
   onChange?: (value: PointBaseType) => void
   onDragStart?: (value: PointBaseType) => void
@@ -126,8 +131,13 @@ export function Point<T extends PointBaseType>({
     })
 
   const nudge = useCallback(
-    (axis: 'x' | 'y', direction: number, option: InputEventOption) => {
-      const next = applyDelta(value[axis], direction, option, AXIS)
+    (
+      axis: 'x' | 'y',
+      direction: number,
+      option: InputEventOptions,
+      modifiers: ModifierState,
+    ) => {
+      const next = applyDelta(value[axis], direction, option, AXIS, modifiers)
       onChange?.(clampPoint({ ...value, [axis]: next }, min, max))
     },
     [value, min, max, onChange],
@@ -146,9 +156,16 @@ export function Point<T extends PointBaseType>({
       if (!element || element.ownerDocument.activeElement !== element) return
       event.preventDefault()
       // Scrolling up moves the point towards y = 0; shift switches to x.
-      const axis = event.shiftKey ? 'x' : 'y'
-      const direction = event.deltaY < 0 ? -1 : 1
-      nudge(axis, direction, wheel)
+      // Browsers turn shift+wheel into horizontal scrolling: `deltaY` comes
+      // out empty and `deltaX` carries the movement. Reading whichever axis
+      // moved keeps shift working as the x-axis modifier — and picks up a
+      // trackpad's own horizontal gesture, which never had a modifier.
+      const horizontal = event.deltaX !== 0
+      const delta = horizontal ? event.deltaX : event.deltaY
+      if (delta === 0) return
+      const axis = horizontal || event.shiftKey ? 'x' : 'y'
+      const direction = delta < 0 ? -1 : 1
+      nudge(axis, direction, wheel, event)
     },
     { target: containerRef },
   )
@@ -166,7 +183,7 @@ export function Point<T extends PointBaseType>({
       // y grows downwards, so ArrowUp moves the point towards 0.
       const axis = key === 'ArrowRight' || key === 'ArrowLeft' ? 'x' : 'y'
       const direction = key === 'ArrowLeft' || key === 'ArrowUp' ? -1 : 1
-      nudge(axis, direction, keyboard)
+      nudge(axis, direction, keyboard, event)
     }
   }
 

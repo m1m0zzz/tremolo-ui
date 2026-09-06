@@ -7,7 +7,7 @@ import {
   useRef,
 } from 'react'
 
-import { InputEventOption } from '@tremolo-ui/functions'
+import { InputEventOptions } from '@tremolo-ui/functions'
 
 import { Cursor } from '../_util'
 
@@ -28,7 +28,17 @@ TODO:
  * A point moves over 0..1 in both axes, so a nudge of 0.01 crosses the editor
  * in a hundred steps whatever its pixel size.
  */
-const DEFAULT_INPUT_EVENT_OPTION: InputEventOption = ['normalized', 0.01]
+const DEFAULT_WHEEL: InputEventOptions = ['normalized', 0.01]
+
+/**
+ * Shift is the fine-adjustment key everywhere else, so it is bound here too
+ * — but only on the keyboard. On the wheel it already means the x axis, and
+ * browsers hand shift+wheel over as horizontal scrolling anyway.
+ */
+const DEFAULT_KEYBOARD: InputEventOptions = {
+  default: ['normalized', 0.01],
+  shift: ['normalized', 0.001],
+}
 
 export interface PointsEditorProps {
   width?: number | string
@@ -57,14 +67,14 @@ export interface PointsEditorProps {
    *
    * A `Point` can override it with a `wheel` of its own.
    */
-  wheel?: InputEventOption | null
+  wheel?: InputEventOptions | null
   /**
    * keyboard control option for every `Point`, on the arrow keys.
    * If null, no event will be triggered
    *
    * A `Point` can override it with a `keyboard` of its own.
    */
-  keyboard?: InputEventOption | null
+  keyboard?: InputEventOptions | null
 
   /**
    * The editor renders exactly what you compose here; there is no default
@@ -95,8 +105,8 @@ export const Root = forwardRef<HTMLDivElement, Props>(
       height = 100,
       disabled = false,
       readonly = false,
-      wheel = DEFAULT_INPUT_EVENT_OPTION,
-      keyboard = DEFAULT_INPUT_EVENT_OPTION,
+      wheel = DEFAULT_WHEEL,
+      keyboard = DEFAULT_KEYBOARD,
       externalStyles,
       style,
       className,
