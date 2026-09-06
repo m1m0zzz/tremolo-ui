@@ -15,6 +15,16 @@ All three packages are released together and always share a version.
 
 ## Unreleased
 
+### Arrow keys leave an IME alone
+
+An arrow key no longer steps the value of a `NumberInput` while an IME is
+converting. There it belongs to the candidate list, and stepping fought the
+conversion.
+
+Nothing else changed about the arrow keys. `NumberInput.InputField` takes a new
+`keepCaretOnStep` if you want the caret held on its column while stepping; it
+is off by default.
+
 ### Shift is the fine-adjustment key
 
 Holding shift with an arrow key now moves the value by a tenth of a step, on
