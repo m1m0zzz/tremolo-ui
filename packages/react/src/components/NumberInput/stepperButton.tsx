@@ -1,7 +1,7 @@
-import clsx from 'clsx'
 import { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react'
 
 import { useLongPress } from '../../hooks/useLongPress'
+import { cx } from '../_util/cx'
 
 import { useNumberInputContext, useStepperContext } from './context'
 
@@ -49,7 +49,7 @@ export function StepperButton({
   return (
     // eslint-disable-next-line jsx-a11y/role-supports-aria-props
     <div
-      className={clsx(`tremolo-number-input-${variant}-stepper`, className)}
+      className={cx(`tremolo-number-input-${variant}-stepper`, className)}
       role="button"
       tabIndex={-1}
       // A bare arrow has no accessible name of its own. Overridable, since a

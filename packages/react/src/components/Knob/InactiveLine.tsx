@@ -1,6 +1,6 @@
-import clsx from 'clsx'
 import { SVGProps } from 'react'
 
+import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/placement'
 
 import { arcRadius, pointOnArc, useKnobContext } from './context'
@@ -32,7 +32,7 @@ export function InactiveLine({
     <>
       {startValue > min && (
         <path
-          className={clsx('tremolo-knob-inactive-line', className)}
+          className={cx('tremolo-knob-inactive-line', className)}
           d={`M ${p1.x} ${p1.y} A ${radius} ${radius} -135 ${r2 - r1 > 180 ? 1 : 0} 1 ${p2.x} ${p2.y}`}
           fill="none"
           stroke={stroke}
@@ -42,7 +42,7 @@ export function InactiveLine({
       )}
       {startValue < max && (
         <path
-          className={clsx('tremolo-knob-inactive-line', className)}
+          className={cx('tremolo-knob-inactive-line', className)}
           d={`M ${p3.x} ${p3.y} A ${radius} ${radius} -135 ${r4 - r3 > 180 ? 1 : 0} 1 ${p4.x} ${p4.y}`}
           fill="none"
           stroke={stroke}

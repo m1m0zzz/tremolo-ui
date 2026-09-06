@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import {
   ComponentPropsWithoutRef,
   forwardRef,
@@ -24,6 +23,7 @@ import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 import { useComposedRefs } from '../_util/composeRefs'
+import { cx } from '../_util/cx'
 import {
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
@@ -120,7 +120,7 @@ type Props = XYPadProps &
  */
 const WHEEL_OPTIONS = { requireFocus: true }
 
-export const Root = forwardRef<XYPadMethods, Props>(
+export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
   (
     {
       value,
@@ -307,7 +307,7 @@ export const Root = forwardRef<XYPadMethods, Props>(
       <XYPadProvider value={context}>
         {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
         <div
-          className={clsx('tremolo-xy-pad', className)}
+          className={cx('tremolo-xy-pad', className)}
           ref={rootRefCallback}
           tabIndex={-1}
           aria-disabled={disabled}

@@ -3,9 +3,7 @@
   "version": "0.5.0",
   "description": "React component library for audio app",
   "type": "module",
-  "sideEffects": [
-    "*.css"
-  ],
+  "sideEffects": false,
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.cts",
@@ -43,8 +41,7 @@
   },
   "dependencies": {
     "@tremolo-ui/dom": "^0.5.0",
-    "@tremolo-ui/functions": "^0.5.0",
-    "clsx": "^2.1.1"
+    "@tremolo-ui/functions": "^0.5.0"
   },
   "files": [
     "dist",

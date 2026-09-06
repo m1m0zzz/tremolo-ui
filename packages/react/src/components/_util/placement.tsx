@@ -5,7 +5,7 @@ import { createContext, ReactNode, useContext, useEffect } from 'react'
  *
  * @internal
  */
-const PlacementContext = createContext<string | null>(null)
+const PlacementContext = /* @__PURE__ */ createContext<string | null>(null)
 
 /**
  * Marks its children as being inside `name`, for {@link useCheckPlacement}.

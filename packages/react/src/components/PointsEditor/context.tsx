@@ -23,7 +23,8 @@ export type PointsEditorContextValue = {
   containerRef: RefObject<HTMLDivElement | null>
 }
 
-const PointsEditorContext = createContext<PointsEditorContextValue | null>(null)
+const PointsEditorContext =
+  /* @__PURE__ */ createContext<PointsEditorContextValue | null>(null)
 
 export const PointsEditorProvider = PointsEditorContext.Provider
 

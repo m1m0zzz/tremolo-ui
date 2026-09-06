@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import {
   ComponentPropsWithoutRef,
   forwardRef,
@@ -10,6 +9,7 @@ import {
 import { InputEventOptions } from '@tremolo-ui/functions'
 
 import { Cursor } from '../_util'
+import { cx } from '../_util/cx'
 
 import { Background } from './Background'
 import { Container } from './Container'
@@ -102,7 +102,7 @@ export interface PointsEditorProps {
 type Props = PointsEditorProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorProps>
 
-export const Root = forwardRef<HTMLDivElement, Props>(
+export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   (
     {
       width = 200,
@@ -141,7 +141,7 @@ export const Root = forwardRef<HTMLDivElement, Props>(
       <PointsEditorProvider value={context}>
         <div
           ref={forwardedRef}
-          className={clsx('tremolo-points-editor', className)}
+          className={cx('tremolo-points-editor', className)}
           aria-disabled={disabled}
           aria-readonly={readonly}
           style={{

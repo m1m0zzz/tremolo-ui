@@ -1,8 +1,8 @@
-import clsx from 'clsx'
 import { SVGProps } from 'react'
 
 import { clamp } from '@tremolo-ui/functions'
 
+import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/placement'
 
 import { useKnobContext, viewBoxSize } from './context'
@@ -45,10 +45,10 @@ export function Thumb({
   const r1 = useKnobContext((s) => s.r1)
 
   return (
-    <svg className={clsx('tremolo-knob-thumb', classes?.thumb)} {...props}>
+    <svg className={cx('tremolo-knob-thumb', classes?.thumb)} {...props}>
       <circle cx="50%" cy="50%" r={`${thumbSize / 2}%`} fill={thumb} />
       <line
-        className={clsx('tremolo-knob-thumb-line', classes?.thumbLine)}
+        className={cx('tremolo-knob-thumb-line', classes?.thumbLine)}
         x1="50%"
         y1={`${(viewBoxSize - clamp(thumbSize, 0, 100)) / 2}%`}
         x2="50%"

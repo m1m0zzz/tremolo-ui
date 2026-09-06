@@ -64,7 +64,8 @@ export type NumberInputContextValue = {
   inputRef: RefObject<HTMLInputElement | null>
 }
 
-const NumberInputContext = createContext<NumberInputContextValue | null>(null)
+const NumberInputContext =
+  /* @__PURE__ */ createContext<NumberInputContextValue | null>(null)
 
 export const NumberInputProvider = NumberInputContext.Provider
 
@@ -90,7 +91,8 @@ export type StepperContextValue = {
   draggingRef: RefObject<boolean>
 }
 
-const StepperContext = createContext<StepperContextValue | null>(null)
+const StepperContext =
+  /* @__PURE__ */ createContext<StepperContextValue | null>(null)
 
 export const StepperProvider = StepperContext.Provider
 

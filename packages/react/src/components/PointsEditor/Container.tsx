@@ -1,7 +1,7 @@
-import clsx from 'clsx'
 import { ComponentPropsWithoutRef, ReactNode, Ref } from 'react'
 
 import { useComposedRefs } from '../_util/composeRefs'
+import { cx } from '../_util/cx'
 import { Placement } from '../_util/placement'
 
 import { usePointsEditorContext } from './context'
@@ -28,7 +28,7 @@ export function Container({
   return (
     <div
       ref={composedRef}
-      className={clsx('tremolo-points-editor-container', className)}
+      className={cx('tremolo-points-editor-container', className)}
       {...props}
     >
       <Placement name="PointsEditor.Container">{children}</Placement>

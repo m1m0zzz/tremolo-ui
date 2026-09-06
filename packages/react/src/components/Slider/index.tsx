@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import React, {
   ComponentPropsWithoutRef,
   CSSProperties,
@@ -24,6 +23,7 @@ import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 import { useComposedRefs } from '../_util/composeRefs'
+import { cx } from '../_util/cx'
 import {
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
@@ -130,7 +130,7 @@ type Props = SliderProps &
  */
 const WHEEL_OPTIONS = { requireFocus: true }
 
-export const Root = forwardRef<SliderMethods, Props>(
+export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
   (
     {
       value,
@@ -294,7 +294,7 @@ export const Root = forwardRef<SliderMethods, Props>(
     return (
       <SliderProvider value={context}>
         <div
-          className={clsx('tremolo-slider', className)}
+          className={cx('tremolo-slider', className)}
           ref={rootRefCallback}
           tabIndex={-1}
           role="slider"

@@ -1572,12 +1572,24 @@ Pointer Lock API（`element.requestPointerLock()`）を使うと、カーソル�
 - [ ] **`defaultStyle` の扱い。** 上を通せば要らなくなる。残すなら何のためのものかを言語化する
 - [ ] 移行ガイドに書く。利用者のコードに一番出てくる部分なので、変更前後を並べる
 
-### 5.23 配布物の点検（`clsx` / tree shaking）
+### 5.23 配布物の点検（`clsx` / tree shaking） — **完了**
 
-- [ ] **`clsx` を落とせるか。** `packages/react` の 22 ファイルで使っているが、**全ての呼び出しが `clsx('tremolo-x', className)` の 2 引数**で、オブジェクトも配列も条件も 1 つも無い。数行のローカル関数で置き換えられ、`@tremolo-ui/react` の実行時依存が `@tremolo-ui/dom` / `@tremolo-ui/functions` だけになる（`zustand` は Phase 5 で外した）
-- [ ] **tree shaking が実際に効いているかを測る。** `functions` は `sideEffects: false` を宣言しているが、`dom` / `react` は未確認。Knob だけを import した最小アプリをバンドルして、Piano や MIDI が落ちているかを見る
-- [ ] 落ちていないなら原因を特定する。名前空間オブジェクト（`export const Knob = { Root, Thumb, ... }`）は**オブジェクトリテラルなので、1 つでも触ると全プロパティが残る**。これが効いているかどうかは測ってから判断する
-- [ ] `packages/*/package.json` の `sideEffects` を全パッケージで揃える
+- [x] **`clsx` を落とした。** 22 ファイルの呼び出しが全て `clsx('tremolo-x', className)` の 2 引数で、オブジェクトも配列も条件も 1 つも無かった。`_util/cx.ts` の 1 行の関数に置き換え、`@tremolo-ui/react` の実行時依存を `@tremolo-ui/dom` / `@tremolo-ui/functions` だけにした
+- [x] **tree shaking は効いていなかった。** `Knob` だけを import して esbuild でバンドルすると 32,362 バイトで、全部 import した 39,113 バイトとほとんど変わらなかった。`tremolo-piano` も `tremolo-slider` も `tremolo-number-input` も残っていた
+- [x] **原因は名前空間オブジェクトではなかった。** `forwardRef(...)` と `createContext(...)` が**モジュールのトップレベルの関数呼び出し**で、`/* @__PURE__ */` が付いていなかった。バンドラは副作用があるかもしれないと見なして残すしかないので、`const Knob = { Root: forwardRef(...) }` は `Knob` が未使用でも消えない。13 箇所に注釈を足した
+- [x] `sideEffects` を `["*.css"]` から `false` にした。5.1 でパッケージが CSS を配らなくなり、指す先が無くなっていた
+
+注釈後の実測（esbuild、minify、react を external）:
+
+| import するもの | 前 | 後 |
+| --- | --- | --- |
+| `Knob` だけ | 32,362 | **11,567** |
+| `Slider` だけ | — | 12,518 |
+| `NumberInput` だけ | — | 10,498 |
+| `Piano` だけ | — | 7,866 |
+| 全部 | 39,113 | 39,113 |
+
+`@tremolo-ui/dom` と `@tremolo-ui/functions` は元から効いていた（`createDrag` だけで 2,039 バイト、`clamp` だけで 173 バイト）。**トップレベルの呼び出しを増やすたびに同じことが起きる**ので、`forwardRef` / `createContext` を足すときは注釈も足すこと（CLAUDE.md に書いた）。
 
 ## 6. 既存コードで見つかった問題
 

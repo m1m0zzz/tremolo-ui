@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import { ComponentPropsWithoutRef, useCallback, useState } from 'react'
 
 import {
@@ -12,6 +11,7 @@ import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, removeUserSelectNone } from '../_util'
 import { useComposedRefs } from '../_util/composeRefs'
+import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/placement'
 
 import { usePointsEditorContext } from './context'
@@ -197,7 +197,7 @@ export function Point<T extends PointBaseType>({
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
       ref={refCallback}
-      className={clsx('tremolo-points-editor-point', className)}
+      className={cx('tremolo-points-editor-point', className)}
       // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
       tabIndex={0}
       aria-disabled={disabled}

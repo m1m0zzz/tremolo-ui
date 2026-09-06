@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import {
   ComponentPropsWithoutRef,
   CSSProperties,
@@ -22,6 +21,7 @@ import {
 } from '@tremolo-ui/functions'
 
 import { useWheel } from '../../hooks/useWheel'
+import { cx } from '../_util/cx'
 import {
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
@@ -152,7 +152,7 @@ const defaultParse = (text: string) => {
 type Props = NumberInputProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof NumberInputProps>
 
-export const Root = forwardRef<NumberInputMethods, Props>(
+export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
   (
     {
       value,
@@ -328,7 +328,7 @@ export const Root = forwardRef<NumberInputMethods, Props>(
       <NumberInputProvider value={context}>
         <div
           ref={wheelRefCallback}
-          className={clsx('tremolo-number-input', className)}
+          className={cx('tremolo-number-input', className)}
           aria-disabled={disabled}
           aria-readonly={readonly}
           style={style}

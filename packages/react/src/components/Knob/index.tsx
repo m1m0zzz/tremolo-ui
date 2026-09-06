@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import {
   ComponentPropsWithoutRef,
   forwardRef,
@@ -24,6 +23,7 @@ import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 import { useComposedRefs } from '../_util/composeRefs'
+import { cx } from '../_util/cx'
 import {
   DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
@@ -158,7 +158,7 @@ type Props = KnobProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KnobProps>
  */
 const WHEEL_OPTIONS = { requireFocus: true }
 
-export const Root = forwardRef<KnobMethods, Props>(
+export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
   (
     {
       value,
@@ -277,7 +277,7 @@ export const Root = forwardRef<KnobMethods, Props>(
       <KnobProvider value={context}>
         <div
           ref={rootRefCallback}
-          className={clsx('tremolo-knob', className)}
+          className={cx('tremolo-knob', className)}
           tabIndex={0}
           role="slider"
           aria-valuenow={value}

@@ -1,8 +1,8 @@
-import clsx from 'clsx'
 import { ComponentPropsWithoutRef, CSSProperties, useCallback } from 'react'
 
 import { toFixed, xor } from '@tremolo-ui/functions'
 
+import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/placement'
 
 import { useSliderContext } from './context'
@@ -67,7 +67,7 @@ export function MarksOption({
 
   return (
     <div
-      className={clsx('tremolo-slider-marks-option', className)}
+      className={cx('tremolo-slider-marks-option', className)}
       style={{
         left: !vertical ? `${calcPercent(value)}%` : undefined,
         top: vertical ? `${calcPercent(value)}%` : undefined,
@@ -78,7 +78,7 @@ export function MarksOption({
     >
       {type !== 'number' && (
         <div
-          className={clsx('tremolo-slider-marks-option-mark', classes?.mark)}
+          className={cx('tremolo-slider-marks-option-mark', classes?.mark)}
           style={{
             width: !vertical ? thickness : length,
             height: vertical ? thickness : length,
@@ -91,7 +91,7 @@ export function MarksOption({
       )}
       {type !== 'mark' && (
         <div
-          className={clsx('tremolo-slider-marks-option-label', classes?.label)}
+          className={cx('tremolo-slider-marks-option-label', classes?.label)}
           style={{
             width: labelWidth,
             ...styles?.label,
