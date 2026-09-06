@@ -1,4 +1,4 @@
-import { generateOptionsList } from '../../src/components/Slider/type'
+import { generateOptionsList } from './type'
 
 describe('unit', () => {
   test('generateOptionsList()', () => {

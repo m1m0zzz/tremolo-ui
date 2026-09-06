@@ -79,6 +79,11 @@ function typedocPlugins() {
         exclude: [
           '../packages/react/src/components/_util/**',
           '../packages/react/src/hooks/_internal/**',
+          // Tests and stories sit next to the code they cover. The hooks
+          // entry point takes every file in the directory, so without these
+          // they would each get an API page.
+          '../packages/react/src/**/*.test.{ts,tsx}',
+          '../packages/react/src/**/*.stories.{ts,tsx}',
         ],
         tsconfig: '../packages/react/tsconfig.json',
         out: './docs/api/react',

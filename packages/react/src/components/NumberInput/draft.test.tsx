@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 import { unitFormat } from '@tremolo-ui/functions'
 
-import { NumberInput, NumberInputProps } from '../../src/components/NumberInput'
+import { NumberInput, NumberInputProps } from '.'
 
 /** A controlled NumberInput, the way a caller would wire one up. */
 function Subject({

@@ -1,9 +1,4 @@
-import {
-  arcRadius,
-  center,
-  pointOnArc,
-  viewBoxSize,
-} from '../../src/components/Knob/context'
+import { arcRadius, center, pointOnArc, viewBoxSize } from './context'
 
 describe('arcRadius', () => {
   // The arc used to be drawn at the full radius, so half the stroke fell

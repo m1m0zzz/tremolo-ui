@@ -3,7 +3,7 @@ import { createRef, useState } from 'react'
 
 import { exponentialScale, linearScale } from '@tremolo-ui/functions'
 
-import { XYPad, XYPadMethods, type XY } from '../../src/components/XYPad'
+import { XYPad, XYPadMethods, type XY } from '.'
 
 // jsdom has no PointerEvent and no pointer capture, so both are faked here.
 function pointerEvent(

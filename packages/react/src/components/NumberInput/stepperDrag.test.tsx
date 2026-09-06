@@ -1,7 +1,7 @@
 import { act, render, screen } from '@testing-library/react'
 import { useState } from 'react'
 
-import { NumberInput, NumberInputProps } from '../../src/components/NumberInput'
+import { NumberInput, NumberInputProps } from '.'
 
 // jsdom has no PointerEvent and no pointer capture, so both are faked here.
 function pointerEvent(type: string, screenY = 0) {

@@ -48,7 +48,9 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "!src/**/*.test.{ts,tsx}",
+    "!src/**/*.stories.{ts,tsx}"
   ],
   "publishConfig": {
     "access": "public"

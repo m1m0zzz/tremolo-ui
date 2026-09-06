@@ -1,7 +1,7 @@
 import { render, act } from '@testing-library/react'
 import { useState } from 'react'
 
-import { AnimationCanvas } from '../../src/components/AnimationCanvas'
+import { AnimationCanvas } from '.'
 
 /** jsdom has no 2D context and no ResizeObserver. */
 function stubCanvas() {
