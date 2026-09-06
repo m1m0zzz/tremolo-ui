@@ -50,7 +50,14 @@ export {
   notePosition,
   pianoWidth,
 } from './piano'
-export { type InputEventOption } from './types'
+export {
+  type InputEventOption,
+  type InputEventOptions,
+  type Modifier,
+  type ModifierState,
+  type SelectedInputEvent,
+  selectInputEvent,
+} from './types'
 export {
   type SIPrefix,
   type UnitFormatOptions,
