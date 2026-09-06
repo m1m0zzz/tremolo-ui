@@ -85,8 +85,7 @@
       }
     },
     "./styles/index.css": "./dist/index.css",
-    "./styles/global.css": "./src/styles/global.css",
-    "./styles/Knob.css": "./src/components/Knob/index.css",
+      "./styles/Knob.css": "./src/components/Knob/index.css",
     "./styles/NumberInput.css": "./src/components/NumberInput/index.css",
     "./styles/Piano.css": "./src/components/Piano/index.css",
     "./styles/PointsEditor.css": "./src/components/PointsEditor/index.css",

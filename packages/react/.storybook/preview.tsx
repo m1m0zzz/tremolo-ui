@@ -8,7 +8,6 @@ import type { Preview } from '@storybook/react-vite'
 import './global.css'
 
 // tremolo-ui css
-import '../src/styles/global.css'
 import '../src/components/Knob/index.css'
 import '../src/components/NumberInput/index.css'
 import '../src/components/Piano/index.css'

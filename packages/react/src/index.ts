@@ -1,5 +1,4 @@
 // For bundled CSS (@tremolo-ui/react/styles/index.css)
-import './styles/global.css'
 import './components/Knob/index.css'
 import './components/NumberInput/index.css'
 import './components/Piano/index.css'
