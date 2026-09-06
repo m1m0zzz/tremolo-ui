@@ -4,6 +4,8 @@ import {
   CSSProperties,
   Ref,
   useEffect,
+  useLayoutEffect,
+  useRef,
   useState,
 } from 'react'
 
@@ -32,6 +34,24 @@ export interface NumberInputFieldProps {
    */
   unformatOnFocus?: boolean
   /**
+   * Put the caret back where it was after an arrow key steps the value.
+   *
+   * A controlled input whose `value` is replaced drops the caret at the end,
+   * so without this the second press of a repeated step always acts on the
+   * last digit. With it, the digit under the caret stays under the caret and
+   * a column can be held while stepping.
+   *
+   * The position is measured from the decimal point rather than from either
+   * end, so it survives the number growing or shrinking: the caret between
+   * `9` and `.9` is still between `10` and `.0`.
+   *
+   * It only restores the caret. Which digit it sits on does not change the
+   * size of the step — that is `keyboard`'s to say.
+   *
+   * @default false
+   */
+  keepCaretOnStep?: boolean
+  /**
    * Commit and leave the input when Enter is pressed. Enter commits either way.
    * @default true
    */
@@ -45,6 +65,22 @@ export interface NumberInputFieldProps {
 /** The leading number of the displayed text, whatever the format put around it. */
 const NUMBER_PREFIX = /^\s*-?[\d.,]*/
 
+const numberEnd = (text: string) =>
+  text.match(NUMBER_PREFIX)?.[0].length ?? text.length
+
+/**
+ * The index the caret is measured against: the decimal point, or where one
+ * would go if the number has none.
+ *
+ * Measuring from an end instead would slide the caret across a digit whenever
+ * the number changed length — `9.9` to `10.0` gains a character in front, `10`
+ * to `9` loses one — which is exactly what stepping does.
+ */
+const decimalAnchor = (text: string) => {
+  const dot = text.indexOf('.')
+  return dot === -1 ? numberEnd(text) : dot
+}
+
 /**
  * The text field of a `NumberInput`, and the only place the value can be typed.
  *
@@ -54,6 +90,7 @@ const NUMBER_PREFIX = /^\s*-?[\d.,]*/
 export function InputField({
   selectOnFocus = 'none',
   unformatOnFocus = false,
+  keepCaretOnStep = false,
   blurOnEnter = true,
   className,
   style,
@@ -109,6 +146,29 @@ export function InputField({
     // selection back over what the user is typing.
   }, [focused, selectOnFocus, inputRef])
 
+  /**
+   * Where to put the caret once the stepped value has been rendered, and the
+   * text it was measured against.
+   */
+  const caretAfterStep = useRef<{ offset: number; from: string } | null>(null)
+
+  // A layout effect rather than a plain one: the caret is moved before the
+  // browser paints, so it is never seen at the end of the text first.
+  useLayoutEffect(() => {
+    const pending = caretAfterStep.current
+    if (!pending) return
+    caretAfterStep.current = null
+
+    const input = inputRef.current
+    // The step may have been clamped away, leaving the text as it was. The
+    // caret has not moved either, since the key press was prevented.
+    if (!input || input.value === pending.from) return
+
+    const place = decimalAnchor(input.value) + pending.offset
+    const caret = Math.max(0, Math.min(place, numberEnd(input.value)))
+    input.setSelectionRange(caret, caret)
+  })
+
   const composedRef = useComposedRefs<HTMLInputElement>(ref, inputRef)
 
   return (
@@ -133,7 +193,12 @@ export function InputField({
       step={step}
       data-out-of-range={outOfRange}
       style={style}
-      onChange={(event) => setDraft(event.currentTarget.value)}
+      onChange={(event) => {
+        // The text is the user's own now, so a caret measured against the
+        // stepped one no longer means anything.
+        caretAfterStep.current = null
+        setDraft(event.currentTarget.value)
+      }}
       onFocus={(event) => {
         setFocused(true)
         onFocus?.(event)
@@ -153,9 +218,20 @@ export function InputField({
         } else if (
           keyboard &&
           !readonly &&
-          (key === 'ArrowUp' || key === 'ArrowDown')
+          (key === 'ArrowUp' || key === 'ArrowDown') &&
+          // Arrow keys pick a candidate while an IME is converting. Stepping
+          // the value there would fight the conversion, and moving the caret
+          // would break it outright.
+          !event.nativeEvent.isComposing
         ) {
           event.preventDefault()
+          const input = event.currentTarget
+          if (keepCaretOnStep && input.selectionStart !== null) {
+            caretAfterStep.current = {
+              offset: input.selectionStart - decimalAnchor(input.value),
+              from: input.value,
+            }
+          }
           nudge(key === 'ArrowUp' ? 1 : -1, keyboard, event)
         }
         onKeyDown?.(event)
