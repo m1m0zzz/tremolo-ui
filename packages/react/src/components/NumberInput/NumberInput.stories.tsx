@@ -215,6 +215,43 @@ export const UnformatOnFocus = () => {
   )
 }
 
+/**
+ * `keepCaretOnStep` puts the caret back where it was after an arrow key steps
+ * the value, so a column can be held while stepping. Click into the middle of
+ * a number and hold the up arrow on each field to compare.
+ */
+export const KeepCaretOnStep = () => {
+  const [left, setLeft] = useState(1234.5)
+  const [right, setRight] = useState(1234.5)
+
+  return (
+    <div style={{ display: 'flex', gap: '2rem' }}>
+      <section>
+        <p>default</p>
+        <NumberInput.Root
+          value={left}
+          step={0.1}
+          keyboard={['raw', 0.1]}
+          onChange={setLeft}
+        >
+          <NumberInput.InputField />
+        </NumberInput.Root>
+      </section>
+      <section>
+        <p>keepCaretOnStep</p>
+        <NumberInput.Root
+          value={right}
+          step={0.1}
+          keyboard={['raw', 0.1]}
+          onChange={setRight}
+        >
+          <NumberInput.InputField keepCaretOnStep />
+        </NumberInput.Root>
+      </section>
+    </div>
+  )
+}
+
 export const SelectOnFocus = () => {
   const [value1, setValue1] = useState(32)
   const [value2, setValue2] = useState(32)

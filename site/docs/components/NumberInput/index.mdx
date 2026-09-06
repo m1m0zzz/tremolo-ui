@@ -96,3 +96,23 @@ that ends up on screen. With the format dropped, `'number'` and `'all'` come to
 the same thing, since the whole text is the number.
 
 Both props default to off, so nothing changes until you ask for it.
+
+### Stepping a digit
+
+An arrow key replaces the whole `value`, and a controlled `<input>` whose value
+is replaced drops the caret at the end. Held down, the second press onwards
+therefore always acts on the last digit.
+
+`keepCaretOnStep` puts it back.
+
+```tsx
+<NumberInput.InputField keepCaretOnStep />
+```
+
+The position is measured **from the decimal point**, not from either end, so it
+survives the number changing length. The caret between `9` and `.9` is still
+between `10` and `.0` — measured from the front it would have slid onto the
+wrong column as the extra digit appeared.
+
+It restores the caret and nothing else. Which digit it sits on does not change
+the size of the step; that is `keyboard`'s to say. Off by default.
