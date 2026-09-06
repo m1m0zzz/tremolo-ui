@@ -1,6 +1,9 @@
 import { clamp, normalizeValue, rawValue, stepValue } from './math'
-
-import type { InputEventOption } from './types'
+import {
+  type InputEventOptions,
+  type ModifierState,
+  selectInputEvent,
+} from './types'
 
 /**
  * How a value is distributed across the travel of a control.
@@ -265,20 +268,38 @@ export interface ValueRange {
  * @param direction which way, and how many times, to apply the option. The
  * size of one step is `option[1]`, so this is normally `1` or `-1`.
  *
+ * @param modifiers the event, for `options` that name a modifier key. See
+ * {@link selectInputEvent}.
+ *
  * @example
  * // ArrowDown on a slider whose keyboard option is ['raw', 1]
  * applyDelta(value, -1, keyboard, { min, max, step, scale })
+ *
+ * @example
+ * // Shift+ArrowDown, where `keyboard` is { default: …, shift: ['raw', 0.1] }
+ * applyDelta(value, -1, keyboard, range, event)
  */
 export function applyDelta(
   value: number,
   direction: number,
-  [mode, amount]: InputEventOption,
+  options: InputEventOptions,
   { min, max, step, scale = linearScale }: ValueRange,
+  modifiers?: ModifierState,
 ): number {
+  const {
+    option: [mode, amount],
+    modifier,
+  } = selectInputEvent(options, modifiers)
+
   const x = direction * amount
   const next =
     mode === 'normalized'
       ? scale.denormalize(scale.normalize(value, min, max) + x, min, max)
       : value + x
-  return clamp(step ? stepValue(next, step) : next, min, max)
+
+  // Naming a modifier is a deliberate request to move off the grid, so `step`
+  // does not apply to it. Without this a finer amount would round straight
+  // back to where it started: `stepValue(3 + 0.1, 1)` is 3.
+  const quantum = modifier === null ? step : undefined
+  return clamp(quantum ? stepValue(next, quantum) : next, min, max)
 }
