@@ -2,6 +2,7 @@ import { ComponentPropsWithoutRef, CSSProperties, useCallback } from 'react'
 
 import { toFixed, xor } from '@tremolo-ui/functions'
 
+import { cssLength } from '../_util/cssLength'
 import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/placement'
 
@@ -16,12 +17,13 @@ export interface MarksOptionProps {
   type?: MarksType
   /** Display text instead of value. */
   label?: string
-  /** mark thickness */
+  /** Mark thickness. Sets `--thickness`. */
   thickness?: number | string
-  /** mark length */
+  /** Mark length. Sets `--length`. */
   length?: number | string
-  /** Gap between mark and label. */
+  /** Gap between mark and label. Sets `--gap`. */
   gap?: number | string
+  /** Sets `--label-width`. */
   labelWidth?: number | string
   classes?: {
     mark?: string
@@ -37,9 +39,9 @@ export function MarksOption({
   value,
   type = 'mark-number',
   label,
-  thickness = 1,
-  length = '0.5rem',
-  gap = 2,
+  thickness,
+  length,
+  gap,
   labelWidth,
   classes,
   styles,
@@ -68,34 +70,33 @@ export function MarksOption({
   return (
     <div
       className={cx('tremolo-slider-marks-option', className)}
-      style={{
-        left: !vertical ? `${calcPercent(value)}%` : undefined,
-        top: vertical ? `${calcPercent(value)}%` : undefined,
-        ...style,
-      }}
+      style={
+        {
+          // The mark and the label read these, so they are set once here.
+          '--thickness': cssLength(thickness),
+          '--length': cssLength(length),
+          '--gap': cssLength(gap),
+          '--label-width': cssLength(labelWidth),
+          // Where the mark belongs on the track: the value, not a style.
+          left: !vertical ? `${calcPercent(value)}%` : undefined,
+          top: vertical ? `${calcPercent(value)}%` : undefined,
+          ...style,
+        } as CSSProperties
+      }
       data-vertical={vertical}
       {...props}
     >
       {type !== 'number' && (
         <div
           className={cx('tremolo-slider-marks-option-mark', classes?.mark)}
-          style={{
-            width: !vertical ? thickness : length,
-            height: vertical ? thickness : length,
-            marginBottom: !vertical ? gap : undefined,
-            marginRight: vertical ? gap : undefined,
-            ...styles?.mark,
-          }}
+          style={styles?.mark}
           data-vertical={vertical}
         ></div>
       )}
       {type !== 'mark' && (
         <div
           className={cx('tremolo-slider-marks-option-label', classes?.label)}
-          style={{
-            width: labelWidth,
-            ...styles?.label,
-          }}
+          style={styles?.label}
         >
           {label || value}
         </div>

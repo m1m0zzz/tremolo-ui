@@ -1,5 +1,6 @@
 import {
   ComponentPropsWithoutRef,
+  CSSProperties,
   forwardRef,
   ReactNode,
   useCallback,
@@ -24,6 +25,7 @@ import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 import { useCheckSteps } from '../_util/checkSteps'
 import { useComposedRefs } from '../_util/composeRefs'
+import { cssLength } from '../_util/cssLength'
 import { cx } from '../_util/cx'
 import {
   DEFAULT_DRAG_SENSITIVITY,
@@ -74,10 +76,9 @@ export interface KnobProps {
    */
   startValue?: number
 
-  /** width and height */
   /**
-   * Width and height of the knob.
-   * Defaults to the `--knob-size` CSS variable (50px).
+   * Width and height of the knob. Sets `--knob-size`; the size the theme
+   * gives it stands when this is omitted.
    */
   size?: number | string
 
@@ -310,11 +311,12 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
           aria-disabled={disabled}
           aria-readonly={readonly}
           data-dragging={dragging}
-          style={{
-            width: size,
-            height: size,
-            ...style,
-          }}
+          style={
+            {
+              '--knob-size': cssLength(size),
+              ...style,
+            } as CSSProperties
+          }
           onPointerDown={onPointerDown}
           onDoubleClick={(event) => {
             if (enableDoubleClickDefault && onChange) {

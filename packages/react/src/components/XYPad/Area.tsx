@@ -1,14 +1,18 @@
 import { ComponentPropsWithoutRef, CSSProperties, ReactNode, Ref } from 'react'
 
 import { useComposedRefs } from '../_util/composeRefs'
+import { cssLength } from '../_util/cssLength'
 import { cx } from '../_util/cx'
 import { Placement } from '../_util/placement'
 
 import { useXYPadContext } from './context'
 
 export interface XYPadAreaProps {
+  /** Sets `--width`; the size the theme gives it stands when omitted. */
   width?: number | string
+  /** Sets `--height`. */
   height?: number | string
+  /** Sets `--color`. */
   color?: string
   className?: string
   style?: CSSProperties
@@ -18,8 +22,8 @@ export interface XYPadAreaProps {
 }
 
 export function Area({
-  width = 120,
-  height = 120,
+  width,
+  height,
   color,
   children,
   className,
@@ -38,12 +42,14 @@ export function Area({
     <div
       ref={composedRef}
       className={cx('tremolo-xy-pad-area', className)}
-      style={{
-        ...{ '--color': color },
-        width: width,
-        height: height,
-        ...style,
-      }}
+      style={
+        {
+          '--color': color,
+          '--width': cssLength(width),
+          '--height': cssLength(height),
+          ...style,
+        } as CSSProperties
+      }
       {...props}
     >
       <Placement name="XYPad.Area">{children}</Placement>

@@ -23,6 +23,7 @@ import {
 } from '@tremolo-ui/functions'
 
 import { useEventListener } from '../../hooks/useEventListener'
+import { cssLength } from '../_util/cssLength'
 import { cx } from '../_util/cx'
 
 import { KeyboardShortcuts } from './keyboardShortcuts'
@@ -100,7 +101,10 @@ export interface PianoProps {
    */
   blackKeyHeightRatio?: number
 
-  /** @default `fill ? '100%' : 160` */
+  /**
+   * Sets `--height`; the height the theme gives it stands when omitted, which
+   * follows `fill` through the `data-fill` attribute.
+   */
   height?: number | string
 
   style?: CSSProperties & CSSVariables
@@ -151,7 +155,7 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
       keyGap = 1,
       blackKeyWidthRatio = 0.65,
       blackKeyHeightRatio = 0.6,
-      height = fill ? '100%' : 160,
+      height,
       style,
       className,
       label,
@@ -281,11 +285,15 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
       <div
         ref={setNode}
         className={cx('tremolo-piano', className)}
-        style={{
-          width: fill ? '100%' : pianoWidth(layout),
-          height,
-          ...style,
-        }}
+        data-fill={fill}
+        style={
+          {
+            // Computed from the layout rather than chosen, so it stays inline.
+            width: fill ? '100%' : pianoWidth(layout),
+            '--height': cssLength(height),
+            ...style,
+          } as CSSProperties
+        }
         {...props}
       >
         {notes.map((note, index) => {

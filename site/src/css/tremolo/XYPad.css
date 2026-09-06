@@ -15,8 +15,12 @@
 
 .tremolo-xy-pad-area {
   --color: oklch(95% 0 0);
+  --width: 120px;
+  --height: 120px;
 
   position: relative;
+  width: var(--width);
+  height: var(--height);
   background-color: var(--color);
 }
 

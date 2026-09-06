@@ -1,9 +1,17 @@
 .tremolo-piano {
+  --height: 160px;
+
   display: inline-block;
   box-sizing: border-box;
   user-select: none;
   touch-action: none;
   position: relative;
+  height: var(--height);
+
+  /* The width is the keyboard's own, so a filled piano stretches both ways. */
+  &[data-fill='true'] {
+    --height: 100%;
+  }
 }
 
 .tremolo-piano-white-key {

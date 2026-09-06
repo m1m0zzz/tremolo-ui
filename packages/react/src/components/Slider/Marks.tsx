@@ -1,7 +1,8 @@
-import { ComponentPropsWithoutRef, ReactNode } from 'react'
+import { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react'
 
 import { xor } from '@tremolo-ui/functions'
 
+import { cssLength } from '../_util/cssLength'
 import { cx } from '../_util/cx'
 import { Placement } from '../_util/placement'
 
@@ -10,13 +11,17 @@ import { MarksOption } from './MarksOption'
 import { generateOptionsList, MarksOptions } from './type'
 
 export interface MarksProps {
+  /**
+   * Space between the marks and the track. Sets `--gap`; the theme's own
+   * spacing stands when this is omitted.
+   */
   gap?: number | string
   options?: MarksOptions
   children?: ReactNode
 }
 
 export function Marks({
-  gap = 6,
+  gap,
   options,
   children,
   className,
@@ -37,11 +42,13 @@ export function Marks({
   return (
     <div
       className={cx('tremolo-slider-marks', className)}
-      style={{
-        marginLeft: vertical ? gap : undefined,
-        marginTop: !vertical ? gap : undefined,
-        ...style,
-      }}
+      data-vertical={vertical}
+      style={
+        {
+          '--gap': cssLength(gap),
+          ...style,
+        } as CSSProperties
+      }
       {...props}
     >
       <Placement name="Slider.Marks">

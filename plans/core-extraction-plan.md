@@ -1619,24 +1619,43 @@ step = 1、shift: ['raw', 0.1]、値 5 から shift + ↑ を連打
 - [ ] **まとめて動かすときの clamp。** 1 点ずつ clamp すると選択の形が崩れる。**選択全体で 1 回だけ clamp する**（どれか 1 点が端に着いたら全体が止まる）のが普通
 - [ ] 削除・複製をどこまで入れるか。今の削除の入り口（あるなら）と揃える
 
-### 5.22 見た目に関わる props をどう扱うか決める
+### 5.22 見た目に関わる props をどう扱うか決める — **完了**
 
-**破壊的変更を許可して決着させる。** 5.1 で「パッケージは CSS を配らない」と決めた一方、見た目を決める props はそのまま残っており、**同じことを 4 通りのやり方で表している。**
+5.1 で「パッケージは CSS を配らない」と決めた一方、見た目を決める props はそのまま残っており、**同じことを 4 通りのやり方で表していた。**
 
-| 例 | 形 | CSS 側から上書きできるか |
+| 例 | 形 | CSS 側から上書きできたか |
 | --- | --- | --- |
-| `Knob` の `size` | 既定値なしで `style` の `width` / `height` に流す | できる。prop が無ければ `--knob-size` が効く |
-| `Slider.Track` の `length` / `thickness` | **JS 側に既定値がある**（140 / 10）ので常にインラインで付く | できない（`!important` が要る） |
-| `Slider.Track` の塗り | `percent` から `linear-gradient` をインラインで組み立てる。CSS が渡せるのは `--active` / `--inactive` の色だけ | 部分的にしかできない。`defaultStyle={false}` で丸ごと降りるしかない |
-| `Slider.Thumb` の `color` | カスタムプロパティ `--color` に流す | できる |
+| `Knob` の `size` | 既定値なしで `style` の `width` / `height` に流す | できた |
+| `Slider.Track` の `length` / `thickness` | **JS 側に既定値**（140 / 10）があり常にインラインで付く | できない（`!important` が要る） |
+| `Slider.Track` の塗り | `percent` から `linear-gradient` をインラインで組み立てる | 色だけ。`defaultStyle={false}` で丸ごと降りるしかない |
+| `Slider.Thumb` の `color` | カスタムプロパティ `--color` に流す | できた |
 
-同じ「見た目の prop」でも、既定値を JS に置いた瞬間に CSS が負ける。**`defaultStyle` という逃げ道があること自体が、既定のインラインスタイルが強すぎる証拠。**
+#### 決めたこと
 
-- [ ] **どれか 1 つの形に寄せる。** 有力なのはカスタムプロパティ（`Slider.Thumb` の形）。prop はカスタムプロパティを書くだけになり、既定値は CSS が持つので上書きの優先順位が素直になる
-- [ ] **`percent` を CSS から使えるようにする。** 塗りを CSS 側で書くには `--percent`（か同等のもの）を要素に出す必要がある。出せば `linear-gradient` は利用者の CSS に移せて、`defaultStyle` を消せる
-- [ ] **消す prop を決める。** カスタムプロパティで済むものは、prop が無くても `style` や CSS で書ける。**残す基準は「JS 側の計算が要るか」**（`Piano` の `width` は `pianoWidth(layout)` を通るので残る、など）
-- [ ] **`defaultStyle` の扱い。** 上を通せば要らなくなる。残すなら何のためのものかを言語化する
-- [ ] 移行ガイドに書く。利用者のコードに一番出てくる部分なので、変更前後を並べる
+**カスタムプロパティ 1 つに寄せる。prop はカスタムプロパティを書くだけで、既定値は CSS が持つ。**
+
+```jsx
+<Slider.Track thickness={16} />
+// これと完全に同じ
+<Slider.Track style={{ '--thickness': '16px' }} />
+```
+
+prop / スタイルシート / インラインの 3 つが同じことを言う手段になり、あとは普通のカスケードが決める。**既定値が CSS にあるので、ルール 1 つで全インスタンスが変わる**（prop を全部に渡して回らなくていい）。
+
+- [x] `Knob` → `--knob-size`、`Slider.Track` → `--length` / `--thickness` / `--active` / `--inactive`、`Slider.Marks` → `--gap`、`Slider.MarksOption` → `--thickness` / `--length` / `--gap` / `--label-width`、`XYPad.Area` → `--width` / `--height` / `--color`、`PointsEditor` → `--width` / `--height`、`PointsEditor.Point` → `--width` / `--height` / `--color`、`Piano` → `--height`
+- [x] **`--percent` を出した。** `Slider.Track` が「値がどこにあるか」を publish し、塗りは theme のルールになった。**CSS が自力で知りようがない数字はこれだけ**で、あとは全部 CSS 側で書ける
+- [x] **`defaultStyle` を消した。** 上を通したら要らなくなった。「自分で描く」は**降りる**のではなく**ルールを書く**ことになる
+- [x] **残す基準は「JS 側の計算が要るか」。** 値から出る位置（`Slider.Thumb` の `left`、`PointsEditor.Point` の `left` / `top`、`Slider.MarksOption` の位置、Piano の鍵盤の `left` / `width`）と、`pianoWidth(layout)` から出る Piano の `width` はインラインのまま。**これらは見た目の選択ではなく値そのもの**
+- [x] **数値はピクセルとして書く。** React は自分が知っているプロパティにしか `px` を付けないので、`--size: 50` は無効な値になる。`_util/cssLength.ts` で変換する。文字列はそのまま通すので `'3rem'` / `'100%'` / `'auto'` が効く
+- [x] **状態属性を 2 つ足した。** `Slider.Track` の `data-flipped`（値が向こう端から伸びる）と `Piano` の `data-fill`。塗りと高さを CSS 側で書くのに要る。`Slider.Marks` にも `data-vertical` を足した
+
+#### 副産物
+
+`styleHelper`（`thickness / 2` の border-radius 計算に使っていた）は**リポジトリ内での用途が無くなった**。CSS の `calc()` がやる。公開 API なので今回は残したが、削除の候補。
+
+#### テスト
+
+`packages/react/__tests__/util/styleProps.test.tsx`（8 件）。数値がピクセルになること、文字列がそのまま通ること、**省略したら property が付かない**こと、`--percent` と `data-flipped`、Track がもう自分で塗らないこと、位置はインラインのままであること。
 
 ### 5.23 配布物の点検（`clsx` / tree shaking） — **完了**
 
