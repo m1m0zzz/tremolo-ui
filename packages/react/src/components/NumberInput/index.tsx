@@ -15,6 +15,7 @@ import {
   clamp,
   InputEventOptions,
   ModifierState,
+  type ModifierValue,
   linearScale,
   type Scale,
   type ValueRange,
@@ -24,6 +25,7 @@ import { useWheel } from '../../hooks/useWheel'
 import { useCheckSteps } from '../_util/checkSteps'
 import { cx } from '../_util/cx'
 import {
+  DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
 } from '../_util/inputEvent'
@@ -100,6 +102,20 @@ export interface NumberInputProps {
   drag?: number | null
 
   /**
+   * How much a `Stepper` drag counts, per modifier key.
+   *
+   * `1` is `drag` pixels per `step`; `0.1` makes the same movement cover a
+   * tenth of that. Shift is bound to `0.1` by default, to match what it does
+   * on the arrow keys.
+   *
+   * A modifier entry is not snapped to `step`, which is what lets a finer
+   * amount move at all.
+   *
+   * @default { default: 1, shift: 0.1 }
+   */
+  dragSensitivity?: ModifierValue<number>
+
+  /**
    * Only the appearance will change.
    * Please consider using with readonly.
    * aria-disabled property is also applied.
@@ -167,6 +183,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
       wheel = DEFAULT_WHEEL_OPTIONS,
       keyboard = DEFAULT_KEYBOARD_OPTIONS,
       drag = 1,
+      dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
       disabled = false,
       readonly = false,
       className,
@@ -298,6 +315,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         text,
         editing,
         outOfRange,
+        dragSensitivity,
         atMin: clampValue && min !== undefined && value <= min,
         atMax: clampValue && max !== undefined && value >= max,
         drag,
@@ -324,6 +342,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         editing,
         outOfRange,
         drag,
+        dragSensitivity,
         format,
         parse,
         handleDraft,

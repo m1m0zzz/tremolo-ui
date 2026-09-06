@@ -1526,7 +1526,12 @@ const shown = unformatOnFocus && focused && !editing ? String(value) : text
   **`relativeMapping` より誤差に強い。** あちらは移動量の積算だが、こちらは要素内の絶対位置が毎回取れるので、anchor からの差分 1 回で済む
 - [x] **キーを離しても値はポインタに戻さない。** 戻すと、離した瞬間に「ずれていた分」だけ値が飛ぶ。DAW も戻さない。掴み直せば揃う
 - [x] **押した瞬間は今まで通りポインタ位置に飛ぶ。** `start` で `origin = anchor = 生の位置` にするので、`updateOnPointerDown` のクリック 1 発は変わらない
-- [ ] **NumberInput の Stepper。** `drag`（1 step あたりのピクセル）を持つので `relativeMapping` と同じ形に乗せられるはずだが、未確認
+- [x] **NumberInput の Stepper。** `relativeMapping` には乗せなかった。Stepper は `createDragValue` ではなく `useDrag` を直に使っており、しかも NumberInput のレンジは `min` / `max` が無いと safe-integer 範囲になるので、**レンジに対する割合という考え方がそもそも成立しない**。
+
+  代わりに、感度を「1 step あたりの量」に写して `applyDelta` に渡す。`functions` に `mapModifier` を足して `{ default: 1, shift: 0.1 }` を `{ default: ['raw', step], shift: ['raw', step * 0.1] }` に変換している。
+
+  **修飾キーのマップを保ったまま渡すのが要点。** ここで自分で解決して裸のタプルにすると `applyDelta` から見て modifier が `null` になり、`step` の丸めが復活して細かい量が丸め戻される
+- [x] **`useDrag` の 3 つのハンドラが `DragState` を受け取るようになった。** 修飾キーは `state.event` にしか無く、`onDrag` は `(x, y, deltaX, deltaY)` の 4 数値しか渡していなかった。引数を足しただけなので既存の呼び出しはそのまま動く
 
 #### 誤差について
 
