@@ -15,6 +15,36 @@ All three packages are released together and always share a version.
 
 ## Unreleased
 
+### The package ships no CSS
+
+`@tremolo-ui/react/styles/index.css` and every other `./styles/*.css` export
+are removed, and `dist/index.css` is no longer built. Importing one now fails
+to resolve rather than silently doing nothing, so the break is visible at build
+time.
+
+```diff
+- import '@tremolo-ui/react/styles/index.css'
++ import './tremolo-theme.css'
+```
+
+Nothing about the markup changed: the same `tremolo-` class names and the same
+`aria-*` / `data-*` state attributes are still there, so a stylesheet that
+already overrides them keeps working. What is gone is the one underneath it.
+
+To keep the current appearance, copy the theme from
+[Styling](/docs/tutorials/styling) — the six files that style every example in
+these docs — into your project and import that instead. It is plain CSS with no
+build step, and it is where customisation was heading anyway: previously the
+only way to change a default was to load `dist/index.css` and then out-specify
+it.
+
+`@tremolo-ui/react/styles/global.css` is removed with them, along with the
+`.tremolo-user-select-none` and `.tremolo-cursor-*` classes it held. **This one
+needs nothing done.** The page-wide `user-select: none` applied during a drag
+is now an inline style the component sets, so it works with no stylesheet at
+all, and the cursor classes had already stopped being used — a dragged element
+takes its cursor from `createDrag`.
+
 ### `NumberInput` formats through `format` and `parse` only
 
 `units` and `digit` are removed. They were a second way to say the same thing,
