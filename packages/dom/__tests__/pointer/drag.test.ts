@@ -1,6 +1,6 @@
 import { createDrag, type DragState } from '../../src/pointer/drag'
 
-import { pointerEvent, withPointerCapture } from './helpers'
+import { pointerEvent, withPointerCapture, withPointerLock } from './helpers'
 
 /** Instances created by setup(), destroyed after each test. */
 const instances: { destroy: () => void }[] = []
@@ -466,5 +466,109 @@ describe('createDrag', () => {
       element.dispatchEvent(pointerEvent('pointerdown', { pointerId: 2 }))
       expect(onDragStart).toHaveBeenCalledTimes(2)
     })
+  })
+})
+
+describe('pointer lock', () => {
+  afterEach(() => {
+    Object.defineProperty(document, 'pointerLockElement', {
+      value: null,
+      configurable: true,
+    })
+  })
+
+  test('is not asked for unless it is turned on', () => {
+    const { element } = setup()
+    const lock = withPointerLock(element)
+
+    element.dispatchEvent(pointerEvent('pointerdown', { screenX: 0 }))
+
+    expect(lock.state.requests).toBe(0)
+  })
+
+  test('reads the movement of the event once the lock is held', () => {
+    const { element, onDrag } = setup({ pointerLock: true })
+    const lock = withPointerLock(element)
+
+    // The fake grants it synchronously, so the lock is in place from here.
+    element.dispatchEvent(pointerEvent('pointerdown', { screenX: 0 }))
+    expect(lock.state.requests).toBe(1)
+
+    // Screen coordinates no longer move under the lock; only `movementX` does.
+    element.dispatchEvent(
+      pointerEvent('pointermove', { screenX: 0, movementX: 12 }),
+    )
+    element.dispatchEvent(
+      pointerEvent('pointermove', { screenX: 0, movementX: 8 }),
+    )
+
+    expect(onDrag).toHaveBeenCalledTimes(2)
+    expect((onDrag.mock.calls[1][0] as DragState).x).toBe(20)
+  })
+
+  test('keeps the travel measured before the lock took effect', () => {
+    // The request is asynchronous in a browser, so movement can happen first.
+    const { element, onDrag } = setup({ pointerLock: true })
+
+    element.dispatchEvent(pointerEvent('pointerdown', { screenX: 0 }))
+    element.dispatchEvent(pointerEvent('pointermove', { screenX: 30 }))
+    expect((onDrag.mock.calls[0][0] as DragState).x).toBe(30)
+
+    // Granted only now.
+    const lock = withPointerLock(element)
+    ;(
+      element as Element & { requestPointerLock: () => void }
+    ).requestPointerLock()
+
+    element.dispatchEvent(
+      pointerEvent('pointermove', { screenX: 30, movementX: 5 }),
+    )
+
+    // 30 the ordinary way, then 5 of movement: no jump either way.
+    expect((onDrag.mock.calls[1][0] as DragState).x).toBe(35)
+    expect(lock.state.requests).toBe(1)
+  })
+
+  test('losing the lock ends the drag', () => {
+    const { element, onDrag, onDragEnd } = setup({ pointerLock: true })
+    const lock = withPointerLock(element)
+
+    element.dispatchEvent(pointerEvent('pointerdown', { screenX: 0 }))
+    element.dispatchEvent(
+      pointerEvent('pointermove', { screenX: 0, movementX: 10 }),
+    )
+
+    // Esc, a tab switch, leaving fullscreen: no pointerup is coming.
+    lock.lose()
+
+    expect(onDragEnd).toHaveBeenCalledTimes(1)
+    expect((onDragEnd.mock.calls[0][0] as DragState).x).toBe(10)
+
+    // And the drag really is over.
+    element.dispatchEvent(
+      pointerEvent('pointermove', { screenX: 0, movementX: 10 }),
+    )
+    expect(onDrag).toHaveBeenCalledTimes(1)
+  })
+
+  test('the lock is given back when the pointer comes up', () => {
+    const { element } = setup({ pointerLock: true })
+    withPointerLock(element)
+
+    element.dispatchEvent(pointerEvent('pointerdown', { screenX: 0 }))
+    expect(document.pointerLockElement).toBe(element)
+
+    element.dispatchEvent(pointerEvent('pointerup', { screenX: 0 }))
+    expect(document.pointerLockElement).toBe(null)
+  })
+
+  test('a refused request leaves an ordinary drag', () => {
+    const { element, onDrag } = setup({ pointerLock: true })
+    // No requestPointerLock at all, as on an engine without the API.
+
+    element.dispatchEvent(pointerEvent('pointerdown', { screenX: 0 }))
+    element.dispatchEvent(pointerEvent('pointermove', { screenX: 25 }))
+
+    expect((onDrag.mock.calls[0][0] as DragState).x).toBe(25)
   })
 })

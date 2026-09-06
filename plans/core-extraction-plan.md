@@ -1582,21 +1582,32 @@ step = 1、shift: ['raw', 0.1]、値 5 から shift + ↑ を連打
 
 **5.15（表示の桁と `step` が互いを知らない）とは別物。** 5.15 は「表示と値が食い違う」話で、こちらは「値そのものが汚れる」話だった。
 
-### 5.20 Knob のドラッグ中にポインタを固定する
+### 5.20 Knob のドラッグ中にポインタを固定する — **完了（オプション、既定は off）**
 
-つまみを回す操作は「掴んだ場所からの移動量」なので、ポインタが実際にどこにあるかは値と関係が無い。それでも今はカーソルが画面上を延々と動き続けるため、次の 2 つが起きる。
+つまみを回す操作は「掴んだ場所からの移動量」なので、ポインタが実際にどこにあるかは値と関係が無い。それでもカーソルが画面上を動き続けるため、次の 2 つが起きていた。
 
-- カーソルが Knob から遠く離れる。掴んでいる対象と目線が離れるうえ、離した位置が hover や focus の当たり判定になる
-- **画面端で止まる。** OS がポインタを画面内に閉じ込めるので、そこから先は動かしても pointer イベントの位置が変わらず、値が伸びなくなる。範囲を広く取った Knob や `dragSensitivity` を下げた微調整で当たりやすい
+- カーソルが Knob から遠く離れる
+- **画面端で止まる。** OS がポインタを画面内に閉じ込めるので、そこから先は動かしても座標が変わらず、値が伸びない。`dragSensitivity` を下げた微調整で当たりやすい
 
-Pointer Lock API（`element.requestPointerLock()`）を使うと、カーソルを消したうえで `movementX` / `movementY` だけを受け取れる。画面端の制約も無くなる。
+`createDrag` に `pointerLock` を足した。`element.requestPointerLock()` を pointerdown で呼び、ロック中は `movementX` / `movementY` を積算して `x` / `y` を作る。
 
-- [ ] **オプションにするか、常にそうするかを決める。** tmp-tasklist の時点では「オプションとして追加 or カーソル位置固定のみ」の両案があった
-- [ ] **`relativeMapping` の誤差。** 現在は「anchor からの絶対距離」で位置を出しており差分を足し込んでいない（5.18 参照）。pointer lock には絶対位置が無いので `movementX` の積算になり、**5.19 の蓄積誤差がここにも乗る**
-- [ ] **Knob 専用になる。** `elementMapping` の Slider / XYPad / PointsEditor はポインタの絶対位置がそのまま値なので、ポインタを固定すると成立しない。NumberInput の Stepper は `relativeMapping` 相当なので対象になりうる
-- [ ] **ブラウザの挙動を実機で確認する。** ロックの解除方法（Esc）や通知バーの有無、`unadjustedMovement`（OS のポインタ加速を切る）の対応状況は環境差がある。ここは未確認
-- [ ] **pointer capture との併用。** `createDrag` は今 `setPointerCapture` でイベントを掴んでいる。ロック中は座標が無意味になるので、`createDrag` 側にモードを足すか `createDragValue` の上に載せるかを決める
-- [ ] **解除の取りこぼし。** `pointerup` を待たずにロックが外れる経路（Esc、タブ切り替え、フルスクリーン解除）があるので、`pointerlockchange` でドラッグを終わらせる必要がある
+#### 決めたこと
+
+- [x] **オプションにし、既定は off。** タダではない（ブラウザ自身の通知が出る、Esc で外れる、ユーザー操作を要求され拒否されうる）。**加えて、この環境ではヘッドレスブラウザが無く実機確認ができていない。** 既定を変えるのは実機で確かめてから
+- [x] **拒否はエラーにしない。** `requestPointerLock` が無い / 例外 / promise の reject のどれでも、**普通のドラッグとして続く**だけ。`pointerlockchange` で実際にロックが取れたかを見て切り替えるので、拒否されても座標の読み方は変わらない
+- [x] **ロックが効いた時点で travel を引き継ぐ。** 要求は非同期なので、その間の移動は今まで通り screen 座標で測られている。効いた瞬間の travel を base にして、そこから `movementX` を足す。**前後で飛ばない**
+- [x] **`pointerlockchange` でドラッグを終わらせる。** Esc / タブ切り替え / フルスクリーン解除ではロックだけが外れ、`pointerup` は来ない。最後に見たイベントで `onDragEnd` を呼んで畳む
+- [x] **`elementMapping` の 3 つは対象外。** ポインタの絶対位置がそのまま値なのに、ロック中は `clientX` / `clientY` が凍る。`createDragValue` / `useDragValue` の doc に書いた
+- [x] **NumberInput の Stepper にも入れた。** `relativeMapping` 相当で、画面端の問題も同じように起きる
+- [x] **pointer capture との併用。** そのまま。capture は「イベントがどこに届くか」の話で、ロックは「座標に何が入るか」の話なので競合しない
+
+#### 5.19 の誤差について
+
+**`relativeMapping` の誤差の性質が変わる。** ロック中は絶対位置が無いので `movementX` の積算になり、5.19 で外した「イベントごとの差分を足し込む」形に戻る。ただし積算するのは**ピクセル**（整数か、せいぜい高精細ポインタの小数）であって値ではなく、**値を作る出口では 5.19 の丸めが効く**ので、蓄積した誤差がそのまま値に出ることはない。
+
+#### テスト
+
+`packages/dom/__tests__/pointer/drag.test.ts` に 6 件。jsdom に Pointer Lock API が無いので、`helpers.ts` の `withPointerLock()` で「要求すれば取れる / 外から失える」ロックを作っている。
 
 ### 5.21 PointsEditor の複数選択
 

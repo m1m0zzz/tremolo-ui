@@ -15,6 +15,15 @@ interface UseDragProps {
   cursor?: string
 
   /**
+   * Hide the pointer and read its movement directly, instead of following it
+   * around the screen.
+   *
+   * @see DragOptions.pointerLock
+   * @default false
+   */
+  pointerLock?: boolean
+
+  /**
    * @param state the whole drag, for anything the four numbers leave out —
    * the pointer event and its modifier keys, most of all.
    */
@@ -37,6 +46,7 @@ interface UseDragProps {
 export function useDrag<T extends Element>({
   threshold = 1,
   cursor,
+  pointerLock,
   onDrag,
   onDragStart,
   onDragEnd,
@@ -56,6 +66,7 @@ export function useDrag<T extends Element>({
     const instance = createDrag(node, {
       threshold,
       cursor,
+      pointerLock,
       onDragStart: (state) => dragStartHandler(state),
       onDrag: (state) =>
         dragHandler(state.x, state.y, state.deltaX, state.deltaY, state),
@@ -63,7 +74,15 @@ export function useDrag<T extends Element>({
     })
 
     return () => instance.destroy()
-  }, [node, threshold, cursor, dragHandler, dragStartHandler, dragEndHandler])
+  }, [
+    node,
+    threshold,
+    cursor,
+    pointerLock,
+    dragHandler,
+    dragStartHandler,
+    dragEndHandler,
+  ])
 
   return setNode
 }

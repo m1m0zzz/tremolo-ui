@@ -39,6 +39,28 @@ export type DragOptions = {
   cursor?: string
 
   /**
+   * Hide the pointer and read its movement directly, instead of following it
+   * around the screen.
+   *
+   * A relative drag — a knob, a stepper — does not care where the pointer is,
+   * only how far it moved, and letting it wander has two costs: the cursor
+   * ends up far from what it is holding, and **the drag stops at the edge of
+   * the screen**, where the operating system pins the pointer and the
+   * coordinates stop changing. A fine drag reaches that edge quickly.
+   *
+   * **Not for a drag whose value is the position pointed at** — anything on
+   * `elementMapping`. `clientX` / `clientY` freeze while the pointer is
+   * locked, so there is no position left to read.
+   *
+   * The request needs a user gesture, which a pointerdown is, but it can still
+   * be refused; the drag then carries on as an ordinary one. Read on
+   * pointerdown, so `update()` reaches the next drag rather than the current.
+   *
+   * @default false
+   */
+  pointerLock?: boolean
+
+  /**
    * Track every pointer that goes down on the element, rather than only the
    * first. Each one gets its own `onDragStart` / `onDrag` / `onDragEnd` and
    * carries its own totals; {@link DragState.pointerId} says which is which.
@@ -82,6 +104,7 @@ const MANAGED_STYLES = [
 ] as const
 
 type CaptureTarget = {
+  requestPointerLock?: () => unknown
   setPointerCapture?: (pointerId: number) => void
   releasePointerCapture?: (pointerId: number) => void
   hasPointerCapture?: (pointerId: number) => boolean
@@ -95,6 +118,21 @@ type PointerState = {
   startY: number
   lastX: number
   lastY: number
+  /**
+   * Where the travel stood when the pointer lock took effect, and how far it
+   * has moved since. Screen coordinates stop changing under the lock, so from
+   * that point the movement of each event is added up instead.
+   *
+   * The base is taken when the lock engages rather than on pointerdown: the
+   * request is asynchronous, and whatever movement happened while it was in
+   * flight was measured the ordinary way.
+   */
+  lockBaseX?: number
+  lockBaseY?: number
+  lockMoveX: number
+  lockMoveY: number
+  /** The most recent event, to end the drag with when the lock is lost. */
+  lastEvent: PointerEvent
 }
 
 /**
@@ -133,6 +171,8 @@ export function createDrag(
    */
   const targets = new Map<EventTarget, number>()
   let previousCursor: string | undefined
+  /** The pointer that asked for the lock, while it is still down. */
+  let lockedPointerId: number | null = null
 
   function state(
     event: PointerEvent,
@@ -141,8 +181,14 @@ export function createDrag(
     deltaY: number,
   ): DragState {
     return {
-      x: event.screenX - pointer.startX,
-      y: event.screenY - pointer.startY,
+      x:
+        pointer.lockBaseX !== undefined
+          ? pointer.lockBaseX + pointer.lockMoveX
+          : event.screenX - pointer.startX,
+      y:
+        pointer.lockBaseY !== undefined
+          ? pointer.lockBaseY + pointer.lockMoveY
+          : event.screenY - pointer.startY,
       deltaX,
       deltaY,
       clientX: event.clientX,
@@ -210,12 +256,34 @@ export function createDrag(
       startY: pointerEvent.screenY,
       lastX: pointerEvent.screenX,
       lastY: pointerEvent.screenY,
+      lockMoveX: 0,
+      lockMoveY: 0,
+      lastEvent: pointerEvent,
     }
     pointers.set(pointerId, pointer)
 
     retainTarget(moveTarget)
     if (isFirst) {
       globalThis.document?.addEventListener('selectstart', preventSelectStart)
+    }
+
+    // One pointer can be locked, so the first one takes it.
+    if (isFirst && opts.pointerLock) {
+      lockedPointerId = pointerId
+      globalThis.document?.addEventListener(
+        'pointerlockchange',
+        handleLockChange,
+      )
+      try {
+        // Newer engines return a promise that rejects; older ones fire
+        // `pointerlockerror` instead. Either way a refusal only means the drag
+        // stays an ordinary one, so nothing here has to act on it.
+        const request = capture.requestPointerLock?.() as
+          Promise<void> | undefined
+        request?.catch?.(() => {})
+      } catch {
+        // requestPointerLock threw synchronously; same story.
+      }
     }
 
     opts.onDragStart?.(state(pointerEvent, pointer, 0, 0))
@@ -226,8 +294,15 @@ export function createDrag(
     const pointer = pointers.get(pointerEvent.pointerId)
     if (!pointer) return
 
-    const deltaX = pointerEvent.screenX - pointer.lastX
-    const deltaY = pointerEvent.screenY - pointer.lastY
+    // Under the lock the screen position no longer moves, so the movement the
+    // event reports is the only thing left to read.
+    const locked = pointer.lockBaseX !== undefined
+    const deltaX = locked
+      ? (pointerEvent.movementX ?? 0)
+      : pointerEvent.screenX - pointer.lastX
+    const deltaY = locked
+      ? (pointerEvent.movementY ?? 0)
+      : pointerEvent.screenY - pointer.lastY
 
     // Movement below the threshold accumulates until it crosses it. Dropping it
     // instead would swallow a slow drag entirely: pointer coordinates are
@@ -237,8 +312,39 @@ export function createDrag(
 
     pointer.lastX = pointerEvent.screenX
     pointer.lastY = pointerEvent.screenY
+    pointer.lastEvent = pointerEvent
+    if (locked) {
+      pointer.lockMoveX += deltaX
+      pointer.lockMoveY += deltaY
+    }
 
     opts.onDrag?.(state(pointerEvent, pointer, deltaX, deltaY))
+  }
+
+  function handleLockChange() {
+    if (lockedPointerId === null) return
+    const pointer = pointers.get(lockedPointerId)
+    if (!pointer) return
+
+    if (globalThis.document?.pointerLockElement === element) {
+      // Engaged. Whatever moved while the request was in flight was measured
+      // the ordinary way, so the travel so far becomes the base and the
+      // per-event movement is added to it from here.
+      pointer.lockBaseX = pointer.lastX - pointer.startX
+      pointer.lockBaseY = pointer.lastY - pointer.startY
+      pointer.lockMoveX = 0
+      pointer.lockMoveY = 0
+      return
+    }
+
+    // Lost without the pointer coming up: Esc, a tab switch, leaving
+    // fullscreen. No pointerup is coming, so the drag ends here rather than
+    // hanging on with a pointer nobody can see.
+    if (pointer.lockBaseX === undefined) return
+    const finalState = state(pointer.lastEvent, pointer, 0, 0)
+    const pointerId = lockedPointerId
+    stopTracking(pointerId)
+    opts.onDragEnd?.(finalState)
   }
 
   function handlePointerUp(event: Event) {
@@ -261,6 +367,14 @@ export function createDrag(
     capture.releasePointerCapture?.(pointerId)
     releaseTarget(pointer.moveTarget)
     pointers.delete(pointerId)
+
+    if (lockedPointerId === pointerId) {
+      lockedPointerId = null
+      const document = globalThis.document
+      document?.removeEventListener('pointerlockchange', handleLockChange)
+      // Already gone when the lock is what ended the drag.
+      if (document?.pointerLockElement === element) document.exitPointerLock?.()
+    }
 
     if (pointers.size > 0) return
 

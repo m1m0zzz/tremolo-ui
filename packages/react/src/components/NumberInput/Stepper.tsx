@@ -42,8 +42,16 @@ export function Stepper({
   ref,
   ...props
 }: StepperProps & Omit<ComponentPropsWithoutRef<'div'>, keyof StepperProps>) {
-  const { value, step, readonly, drag, dragSensitivity, range, changeValue } =
-    useNumberInputContext()
+  const {
+    value,
+    step,
+    readonly,
+    drag,
+    dragSensitivity,
+    pointerLock,
+    range,
+    changeValue,
+  } = useNumberInputContext()
 
   /**
    * The sensitivity as an amount per `drag` pixels, so that the drag goes
@@ -84,6 +92,7 @@ export function Stepper({
   const dragRefCallback = useDrag<HTMLDivElement>({
     threshold: 1,
     cursor: readonly ? undefined : 'ns-resize',
+    pointerLock: readonly ? false : pointerLock,
     onDragStart: (state) => {
       originRef.current = null
       draggingRef.current = false
