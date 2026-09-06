@@ -1,7 +1,7 @@
 import { act, render } from '@testing-library/react'
 import { useState } from 'react'
 
-import { useDrag } from '../../src/hooks/useDrag'
+import { useDrag } from './useDrag'
 
 // jsdom has no PointerEvent and no pointer capture, so both are faked here.
 function pointerEvent(

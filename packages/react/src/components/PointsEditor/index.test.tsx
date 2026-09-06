@@ -1,11 +1,7 @@
 import { act, render, screen } from '@testing-library/react'
 import { createRef, useState } from 'react'
 
-import {
-  PointBaseType,
-  PointsEditor,
-  PointProps,
-} from '../../src/components/PointsEditor'
+import { PointBaseType, PointsEditor, PointProps } from '.'
 
 // jsdom has no PointerEvent and no pointer capture, so both are faked here.
 function pointerEvent(

@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react'
 
-import { Knob } from '../../src/components/Knob'
+import { Knob } from '.'
 
 function renderKnob(size?: number) {
   const { container } = render(

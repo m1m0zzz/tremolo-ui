@@ -1,7 +1,7 @@
 import { act, render } from '@testing-library/react'
 import { useState } from 'react'
 
-import { useMIDIInput } from '../../src/hooks/useMIDIInput'
+import { useMIDIInput } from './useMIDIInput'
 
 type FakeInput = {
   addEventListener: jest.Mock

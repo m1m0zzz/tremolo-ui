@@ -3,12 +3,7 @@ import { createRef } from 'react'
 
 import { inScale, noteNumber } from '@tremolo-ui/functions'
 
-import {
-  Piano,
-  PianoMethods,
-  PianoProps,
-  SHORTCUTS,
-} from '../../src/components/Piano'
+import { Piano, PianoMethods, PianoProps, SHORTCUTS } from '.'
 
 const range = { first: noteNumber('C3'), last: noteNumber('B4') }
 
