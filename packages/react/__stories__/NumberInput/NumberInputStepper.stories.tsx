@@ -1,6 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
+import { unitFormat } from '@tremolo-ui/functions'
+
 import { NumberInput } from '../../src/components/NumberInput'
 
 export default {
@@ -27,7 +29,7 @@ export const Basic: Story = {
           step={step}
           min={0}
           max={10}
-          units={'Hz'}
+          {...unitFormat('Hz')}
           onChange={(v) => setValue(v)}
         >
           <NumberInput.InputField />

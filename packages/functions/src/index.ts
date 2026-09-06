@@ -55,10 +55,6 @@ export {
   type SIPrefix,
   type UnitFormatOptions,
   type UnitFormatter,
-  type Units,
-  formatValue,
-  parseValue,
-  selectUnit,
   unitFormat,
 } from './unit'
 export { isEmpty, mod, styleHelper, xor } from './util'

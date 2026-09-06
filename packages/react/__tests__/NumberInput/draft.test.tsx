@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { useState } from 'react'
 
+import { unitFormat } from '@tremolo-ui/functions'
+
 import { NumberInput, NumberInputProps } from '../../src/components/NumberInput'
 
 /** A controlled NumberInput, the way a caller would wire one up. */
@@ -33,16 +35,20 @@ function Subject({
 
 const input = () => screen.getByRole('spinbutton') as HTMLInputElement
 
+/** Hz takes no SI prefix here, so the number is shown exactly as stored. */
+const hz = unitFormat('Hz', { prefixes: false })
+const hz1 = unitFormat('Hz', { prefixes: false, digits: 1 })
+
 describe('the editing draft', () => {
   test('shows the formatted value while not editing', () => {
-    render(<Subject initial={1234} units="Hz" digit={1} />)
+    render(<Subject initial={1234} {...hz1} />)
 
     expect(input().value).toBe('1234.0Hz')
   })
 
   test('leaves the typed text alone instead of reformatting it', () => {
     const onChange = jest.fn()
-    render(<Subject initial={1234} units="Hz" digit={1} onChange={onChange} />)
+    render(<Subject initial={1234} {...hz1} onChange={onChange} />)
 
     fireEvent.change(input(), { target: { value: '15' } })
 
@@ -75,7 +81,7 @@ describe('the editing draft', () => {
   test('blur commits, clamps and reformats', () => {
     const onChange = jest.fn()
     render(
-      <Subject initial={0} min={0} max={100} units="Hz" onChange={onChange} />,
+      <Subject initial={0} min={0} max={100} {...hz} onChange={onChange} />,
     )
 
     fireEvent.change(input(), { target: { value: '150' } })
@@ -116,8 +122,33 @@ describe('the editing draft', () => {
     expect(input().getAttribute('data-out-of-range')).toBe('true')
   })
 
+  test('text with no number in it leaves the value alone', () => {
+    const onChange = jest.fn()
+    render(<Subject initial={5} onChange={onChange} />)
+
+    fireEvent.change(input(), { target: { value: 'abc' } })
+    fireEvent.blur(input())
+
+    // The old parse read unreadable text as 0 and committed it.
+    expect(onChange).not.toHaveBeenCalled()
+    expect(input().value).toBe('5')
+  })
+
+  test('clearing the input and leaving restores what was there', () => {
+    const onChange = jest.fn()
+    render(<Subject initial={5} onChange={onChange} />)
+
+    fireEvent.change(input(), { target: { value: '' } })
+    expect(input().value).toBe('')
+
+    fireEvent.blur(input())
+
+    expect(onChange).not.toHaveBeenCalled()
+    expect(input().value).toBe('5')
+  })
+
   test('a stepper drops the draft rather than stepping from the typed text', () => {
-    render(<Subject initial={0} min={0} max={100} units="Hz" />)
+    render(<Subject initial={0} min={0} max={100} {...hz} />)
 
     fireEvent.change(input(), { target: { value: '10' } })
     fireEvent.pointerDown(screen.getByRole('button', { name: 'Increment' }))
@@ -173,7 +204,7 @@ describe('value changes', () => {
 
 describe('accessibility', () => {
   test('the input carries the spinbutton range', () => {
-    render(<Subject initial={5} min={0} max={10} units="Hz" />)
+    render(<Subject initial={5} min={0} max={10} {...hz} />)
 
     expect(input().getAttribute('aria-valuenow')).toBe('5')
     expect(input().getAttribute('aria-valuemin')).toBe('0')
