@@ -80,7 +80,7 @@ export function Thumb({
         <div
           ref={elementRef}
           className={cx('tremolo-xy-pad-thumb', className)}
-          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+          // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
           tabIndex={0}
           aria-disabled={disabled}
           aria-readonly={readonly}

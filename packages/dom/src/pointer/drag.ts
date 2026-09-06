@@ -295,7 +295,8 @@ export function createDrag(
         // `pointerlockerror` instead. Either way a refusal only means the drag
         // stays an ordinary one, so nothing here has to act on it.
         const request = capture.requestPointerLock?.() as
-          Promise<void> | undefined
+          | Promise<void>
+          | undefined
         request?.catch?.(() => {})
       } catch {
         // requestPointerLock threw synchronously; same story.

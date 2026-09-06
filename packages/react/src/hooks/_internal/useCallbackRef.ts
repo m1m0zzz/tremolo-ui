@@ -18,6 +18,6 @@ export function useCallbackRef<Args extends unknown[], Return>(
 
   // `deps` comes from the caller, so it cannot be the array literal the
   // compiler rules expect.
-  // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/use-memo
+  // oxlint-disable-next-line react-hooks/exhaustive-deps, react/use-memo
   return useCallback((...args: Args) => callbackRef.current?.(...args), deps)
 }

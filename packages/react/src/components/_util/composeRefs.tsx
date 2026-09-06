@@ -58,7 +58,7 @@ function composeRefs<T>(...refs: PossibleRef<T>[]): React.RefCallback<T> {
 function useComposedRefs<T>(...refs: PossibleRef<T>[]): React.RefCallback<T> {
   // The ref list is variadic, so neither the callback nor its dependencies can
   // be written as the literals the compiler rules expect.
-  // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/use-memo
+  // oxlint-disable-next-line react-hooks/exhaustive-deps, react/use-memo
   return useCallback(composeRefs(...refs), refs)
 }
 

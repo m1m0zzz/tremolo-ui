@@ -1,13 +1,11 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
+import remarkNpm2Yarn from '@docusaurus/remark-plugin-npm2yarn'
+import twemoji from '@twemoji/api'
 import { themes as prismThemes } from 'prism-react-renderer'
+
+import rehypeTwemoj from './src/rehype/twemoji'
 
 import type * as Preset from '@docusaurus/preset-classic'
 import type { Config } from '@docusaurus/types'
-import remarkNpm2Yarn from '@docusaurus/remark-plugin-npm2yarn'
-
-import twemoji from '@twemoji/api'
-
-import rehypeTwemoj from './src/rehype/twemoji'
 
 const emojiBaseUrl = 'https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets'
 

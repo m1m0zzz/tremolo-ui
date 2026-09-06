@@ -16,6 +16,6 @@ export function useAnimationFrame(
 
     reqIdRef.current = requestAnimationFrame(loop)
     return () => cancelAnimationFrame(reqIdRef.current)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [callback, ...deps])
 }

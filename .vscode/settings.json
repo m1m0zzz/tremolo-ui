@@ -1,8 +1,11 @@
 {
-  "editor.formatOnSave": true,
+  // oxc の拡張（oxc.oxc-vscode）が oxlint と oxfmt の両方を受け持つ。
+  // formatOnSave ではなく code action で走らせているのは、oxfmt →
+  // oxlint --fix の順序を確定させるため（拡張の README の推奨）。
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "eslint.format.enable": false
+    "source.format.oxc": "always",
+    "source.fixAll.oxc": "always"
+  }
 }

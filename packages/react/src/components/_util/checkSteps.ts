@@ -164,6 +164,6 @@ export function useCheckSteps({
     // `range` and `format` are rebuilt on most renders, so the effect is keyed
     // on what actually decides the outcome. `format` is left out on purpose:
     // an inline arrow function would make this run every render.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [where, min, max, step, scale, keyboard, wheel])
 }

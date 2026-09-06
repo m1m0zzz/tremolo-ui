@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
+/* oxlint-disable typescript/no-require-imports */
 import Translate from '@docusaurus/Translate'
 import Heading from '@theme/Heading'
 import clsx from 'clsx'

@@ -24,8 +24,8 @@ npm run test -w packages/dom
 npm run test -w packages/react
 npm run build:package         # 全ワークスペース（tsc --emitDeclarationOnly + tsdown）
 npm run build:sb              # 全パッケージをビルドしてから Storybook をビルド
-npm run lint                  # eslint .（自動修正は lint:fix）
-npm run format                # prettier . --write
+npm run lint                  # oxlint（自動修正は lint:fix）
+npm run format                # oxfmt（差分だけ見るなら format:check）
 npm run sb -w packages/react  # Storybook 開発サーバ（:6006）
 npm run typecheck -w packages/react
 npm run changeset             # リリースに含める変更に changeset を追加
@@ -60,12 +60,13 @@ npm run build:docs
 
 ```bash
 npm run lint
+npm run format:check
 npm run test
 npm run build:sb      # build:package + Storybook
 npm run build:docs    # ドキュメントサイト（typedoc の生成が走る。en / ja 両方）
 ```
 
-GitHub Actions（`build.yml`）も `build:package` / `test` / Storybook / ドキュメントサイトを全て回すが、**手元で通してから push すること。** CI は 1 つの job を直列に流すので、docs のビルド失敗に気づくまで数分かかる。
+GitHub Actions（`build.yml`）も `lint` / `format:check` / `build:package` / `test` / Storybook / ドキュメントサイトを全て回すが、**手元で通してから push すること。** CI は 1 つの job を直列に流すので、docs のビルド失敗に気づくまで数分かかる。
 
 `build.yml` には `paths` フィルタが入っていて、**site の外の `.md` のみの変更（`README.md` / `plans/` / `.changeset/`）では実行されない。** ビルドにもテストにも影響しないため。`site/` 配下は `.md` も含めて対象（最後の `site/**` が除外から戻している）。**changeset だけを足した PR は CI 信号がゼロになる**点は知っておくこと。
 
@@ -137,8 +138,9 @@ Controls に出る型は `.storybook/propTypes.ts` が補っている。react-do
 
 ## 規約
 
-- ESLint が `import/order` を強制する。グループごとにアルファベット順、グループ間は空行。`@tremolo-ui/**` は external グループ扱い、CSS の import は最後。`no-unused-vars` は先頭 `_` を許容。
-- husky + lint-staged により、コミットごとに Prettier と eslint --fix が走る。
+- **import の並び順は lint ではなく formatter が持つ。** oxlint に `import/order` が無いため、`.oxfmtrc.json` の `sortImports` が並べ替える。グループごとにアルファベット順、グループ間は空行、`@tremolo-ui/**` は external の直後、`import type` と CSS は最後。**`partitionByComment: true` にしてあるので、import の間にあるコメントを越えて並べ替えない**（`site/examples/*` の `// expand begin` / `// expand end` はドキュメントの折りたたみ範囲を決めているので、越えられると表示が変わる）。
+- `no-unused-vars` は先頭 `_` を許容。ルールは `.oxlintrc.json`（JSON だがコメントを書ける）。**oxlint は `eslint-disable` コメントも読むが、リポジトリでは `oxlint-disable` に統一している。** ルール名の名前空間が違う（`@typescript-eslint/x` → `typescript/x`）ので、揃えておかないと後でルールを有効にしたときに黙って効かなくなる。
+- husky + lint-staged により、コミットごとに `oxlint --fix` と `oxfmt` が走る（**どちらも `--no-error-on-unmatched-pattern` 付き**。渡されたパスが全て ignore に当たると「対象が無い」で非ゼロ終了するので、付けないと `.md` だけのコミットが落ちる）。CI も `lint` と `format:check` を回す。
 - `.cspell.json` を使用しているため、新しいドメイン用語は追加が必要になる場合がある。
 
 ## リリース

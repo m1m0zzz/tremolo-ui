@@ -55,6 +55,15 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
+    # oxlint と oxfmt は合わせて 1 秒かからないので、重いビルドの前に置く。
+    # import の並び順を持っているのは linter ではなく formatter の側なので、
+    # format:check まで回して初めて今までと同じところを見ていることになる。
+    - name: Lint
+      run: npm run lint
+
+    - name: Check formatting
+      run: npm run format:check
+
     # packages/react のテストは workspace symlink 越しに他パッケージの dist を
     # 解決するため、テストより先にビルドする必要がある。site と Storybook も
     # 同じ symlink 越しに dist を見るので、この 1 回で全部が揃う。

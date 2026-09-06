@@ -1,0 +1,58 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  // `oxfmt --migrate=prettier` が .prettierrc.json / .prettierignore から
+  // 起こしたもの。整形結果が prettier と食い違ったのは 217 ファイル中 2 つ
+  // だけで、どちらも union 型を先頭 `|` で縦に割るかどうかだった。
+  "tabWidth": 2,
+  "semi": false,
+  "singleQuote": true,
+  "printWidth": 80,
+  // prettier はキーを並べ替えなかった。有効にすると全 package.json が書き
+  // 換わるので、移行の差分に混ぜない。
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "**/.git",
+    "**/.svn",
+    "**/.hg",
+    "**/node_modules",
+    "*.json",
+    "*.yml",
+    "*.md",
+    "*.mdx",
+    "*.sh",
+    "LICENSE",
+    "**/build/",
+    "docs/api",
+    ".*",
+    "!.storybook"
+  ],
+  // oxlint に import/order が無いので、import の並び順はここが持つ。
+  // eslint-plugin-import の設定と同じ並びになるようにしてある。
+  "sortImports": {
+    "groups": [
+      "builtin",
+      "external",
+      // `@tremolo-ui/**` は external の直後。customGroups は predefined より
+      // 優先されるので、`import type` でもこちらに入る（eslint の pathGroups
+      // も同じ挙動だった）。
+      "tremolo",
+      "internal",
+      "parent",
+      "sibling",
+      "index",
+      "unknown",
+      "type",
+      // CSS は最後。`import './x.css'` は side_effect_style、
+      // `import styles from './x.module.css'` は style で、両方ここに来る。
+      ["style", "side_effect_style"]
+    ],
+    "customGroups": [
+      { "groupName": "tremolo", "elementNamePattern": ["@tremolo-ui/**"] }
+    ],
+    // import の間にコメントがあったら、そこを越えて動かさない。既定の false
+    // だと site/examples/*.tsx の `// expand begin` / `// expand end`（ドキュ
+    // メントの折りたたみ範囲）の外へ import が飛び出し、表示が変わる。
+    // .storybook/preview.tsx の CSS の塊も同じ理由で崩れる。
+    "partitionByComment": true
+  }
+}

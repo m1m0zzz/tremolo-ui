@@ -47,7 +47,6 @@ export function StepperButton({
   })
 
   return (
-    // eslint-disable-next-line jsx-a11y/role-supports-aria-props
     <div
       className={cx(`tremolo-number-input-${variant}-stepper`, className)}
       role="button"
@@ -56,6 +55,10 @@ export function StepperButton({
       // caller may need it in their own language.
       aria-label={direction > 0 ? 'Increment' : 'Decrement'}
       aria-disabled={direction > 0 ? atMax : atMin}
+      // `role="button"` does not take aria-readonly, but the attribute is also
+      // the documented styling hook for the state, and a read-only stepper has
+      // to look like one.
+      // oxlint-disable-next-line jsx-a11y/role-supports-aria-props
       aria-readonly={readonly}
       style={style}
       onPointerDown={(event) => {

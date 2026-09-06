@@ -345,7 +345,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
 
     return (
       <XYPadProvider value={context}>
-        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+        {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions */}
         <div
           className={cx('tremolo-xy-pad', className)}
           ref={rootRefCallback}

@@ -1,18 +1,14 @@
-import React, { useCallback, useState, type ReactNode } from 'react'
-import clsx from 'clsx'
-import useIsBrowser from '@docusaurus/useIsBrowser'
-import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live'
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import BrowserOnly from '@docusaurus/BrowserOnly'
+import ErrorBoundary from '@docusaurus/ErrorBoundary'
 import {
   ErrorBoundaryErrorMessageFallback,
   usePrismTheme,
 } from '@docusaurus/theme-common'
-import ErrorBoundary from '@docusaurus/ErrorBoundary'
-
-import type { Props } from '@theme/Playground'
-import type { ThemeConfig } from '@docusaurus/theme-live-codeblock'
-
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
+import useIsBrowser from '@docusaurus/useIsBrowser'
+import clsx from 'clsx'
+import React, { useCallback, useState, type ReactNode } from 'react'
+import { FiCodesandbox, FiGithub } from 'react-icons/fi'
 import {
   RiCodeSSlashLine,
   RiCodeSLine,
@@ -20,12 +16,16 @@ import {
   RiCheckLine,
   RiCodepenLine,
 } from 'react-icons/ri'
-import { FiCodesandbox, FiGithub } from 'react-icons/fi'
 import { SiStackblitz } from 'react-icons/si'
-import { parse } from './parser'
-import { generateCodeSandboxUrl } from './external/codesandbox'
+import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live'
+
 import { CodePenForm } from './external/codepen'
+import { generateCodeSandboxUrl } from './external/codesandbox'
 import { openStackblitz } from './external/stackblitz'
+import { parse } from './parser'
+
+import type { ThemeConfig } from '@docusaurus/theme-live-codeblock'
+import type { Props } from '@theme/Playground'
 
 import styles from './styles.module.css'
 
