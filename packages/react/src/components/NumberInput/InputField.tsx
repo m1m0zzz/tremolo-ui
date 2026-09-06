@@ -1,5 +1,11 @@
 import clsx from 'clsx'
-import { ComponentPropsWithoutRef, CSSProperties, Ref } from 'react'
+import {
+  ComponentPropsWithoutRef,
+  CSSProperties,
+  Ref,
+  useEffect,
+  useState,
+} from 'react'
 
 import { useComposedRefs } from '../_util/composeRefs'
 
@@ -12,6 +18,19 @@ export interface NumberInputFieldProps {
    * @default 'none'
    */
   selectOnFocus?: 'all' | 'number' | 'none'
+  /**
+   * Show the plain value while the input has focus, dropping whatever `format`
+   * put around it: an input reading `1.23kHz` shows `1230` to be typed over.
+   *
+   * The number shown is the value itself, not the number inside the formatted
+   * text. Those differ whenever the format scales — `1.23` out of `1.23kHz`
+   * would read back as 1.23 and lose a factor of a thousand — and it is also
+   * why a rounded display no longer becomes the value: `1.6` shown as `2Hz`
+   * offers `1.6` for editing, not `2`.
+   *
+   * @default false
+   */
+  unformatOnFocus?: boolean
   /**
    * Commit and leave the input when Enter is pressed. Enter commits either way.
    * @default true
@@ -34,6 +53,7 @@ const NUMBER_PREFIX = /^\s*-?[\d.,]*/
  */
 export function InputField({
   selectOnFocus = 'none',
+  unformatOnFocus = false,
   blurOnEnter = true,
   className,
   style,
@@ -56,12 +76,38 @@ export function InputField({
     readonly,
     keyboard,
     text,
+    editing,
     outOfRange,
     setDraft,
     commitDraft,
     nudge,
     inputRef,
   } = useNumberInputContext()
+
+  const [focused, setFocused] = useState(false)
+
+  // Only until the first keystroke: from then on the draft is the user's own
+  // text and stands on its own, formatted or not.
+  const shown = unformatOnFocus && focused && !editing ? String(value) : text
+
+  // Selecting has to wait for that swap. Called from the focus handler it
+  // would run against the formatted text still in the input and cover the
+  // wrong characters.
+  useEffect(() => {
+    if (!focused || selectOnFocus === 'none') return
+    const input = inputRef.current
+    if (!input) return
+    if (selectOnFocus === 'all') {
+      input.setSelectionRange(0, input.value.length)
+    } else {
+      input.setSelectionRange(
+        0,
+        input.value.match(NUMBER_PREFIX)?.[0].length ?? 0,
+      )
+    }
+    // Deliberately not re-run as the text changes: that would drag the
+    // selection back over what the user is typing.
+  }, [focused, selectOnFocus, inputRef])
 
   const composedRef = useComposedRefs<HTMLInputElement>(ref, inputRef)
 
@@ -74,31 +120,28 @@ export function InputField({
       type="text"
       inputMode="decimal"
       role="spinbutton"
-      value={text}
+      value={shown}
       readOnly={readonly}
       aria-disabled={disabled}
       aria-readonly={readonly}
       aria-valuenow={value}
       aria-valuemin={min}
       aria-valuemax={max}
+      // The formatted text, even while the field shows the plain number: it is
+      // the one that says what the value means.
       aria-valuetext={text}
       step={step}
       data-out-of-range={outOfRange}
       style={style}
       onChange={(event) => setDraft(event.currentTarget.value)}
       onFocus={(event) => {
-        const input = event.currentTarget
-        if (selectOnFocus === 'all') {
-          input.setSelectionRange(0, input.value.length)
-        } else if (selectOnFocus === 'number') {
-          input.setSelectionRange(
-            0,
-            input.value.match(NUMBER_PREFIX)?.[0].length ?? 0,
-          )
-        }
+        setFocused(true)
         onFocus?.(event)
       }}
       onBlur={(event) => {
+        setFocused(false)
+        // Nothing was typed, so there is no draft and this returns at once —
+        // taking focus and leaving again never commits anything.
         commitDraft()
         onBlur?.(event)
       }}

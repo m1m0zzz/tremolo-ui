@@ -62,3 +62,37 @@ Two options cover the cases where that is not what you want.
 is written by hand. `parse` should return `NaN` for text it cannot read &mdash;
 the input then keeps the value it had, rather than committing a number nobody
 typed.
+
+### Editing a formatted value
+
+`format` runs on every render, so a field showing `1.23kHz` still says
+`1.23kHz` once you click into it. Editing that means either replacing the whole
+thing or putting the caret inside a unit string.
+
+`unformatOnFocus` on `NumberInput.InputField` drops the format while the field
+has focus and shows the plain value instead.
+
+```tsx
+<NumberInput.Root {...unitFormat('Hz', { digits: 2 })} value={1230} …>
+  <NumberInput.InputField unformatOnFocus />
+</NumberInput.Root>
+```
+
+```
+not focused   1.23kHz
+focused       1230
+```
+
+**The number shown is the value, not the number inside the formatted text.**
+Those differ whenever the format scales: offering `1.23` for editing would read
+back as 1.23 and lose a factor of a thousand.
+
+It is also why a rounded display stops leaking into the value. A field with
+`digits: 0` shows `2Hz` for a value of 1.6; focusing it offers `1.6`, so editing
+and committing no longer rounds the value to 2.
+
+`selectOnFocus` still applies, and the selection is measured against the text
+that ends up on screen. With the format dropped, `'number'` and `'all'` come to
+the same thing, since the whole text is the number.
+
+Both props default to off, so nothing changes until you ask for it.
