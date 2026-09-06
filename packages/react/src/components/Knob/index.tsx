@@ -22,6 +22,7 @@ import {
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
+import { useCheckSteps } from '../_util/checkSteps'
 import { useComposedRefs } from '../_util/composeRefs'
 import { cx } from '../_util/cx'
 import {
@@ -197,6 +198,8 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
       () => ({ min, max, step, scale }),
       [min, max, step, scale],
     )
+
+    useCheckSteps({ component: 'Knob', range, keyboard, wheel })
 
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLOrSVGElement>) => {

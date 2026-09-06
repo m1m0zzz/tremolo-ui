@@ -58,6 +58,28 @@ Two options cover the cases where that is not what you want.
   milliseconds is `unitFormat('s', { base: 'm' })`: 1500 displays as `1.5s`,
   and `parse` gives 1500 back.
 
+#### What the display can show
+
+A rounded display and a fine `step` are each fine on their own, and neither is
+checked against the other. `format` may round as much as it likes &mdash; the
+value keeps its own precision, and `unformatOnFocus` puts the plain number in
+the field when you click into it.
+
+What is worth avoiding is a display so coarse that a key press cannot be seen
+at all: two decimals of a value in seconds cannot show a step of one
+millisecond, and the input sits there looking broken. A development build says so
+when it happens:
+
+```
+[tremolo-ui] NumberInput: `keyboard` moves the value, but `format` shows the
+same text before and after, everywhere in the range. The display is too coarse
+for it to be seen.
+```
+
+The same warning covers a `keyboard` or `wheel` amount finer than `step`, which
+rounds every press straight back to where it started. Production builds carry
+neither the check nor the message.
+
 `format` and `parse` are ordinary props, so a unit that does not fit this shape
 is written by hand. `parse` should return `NaN` for text it cannot read &mdash;
 the input then keeps the value it had, rather than committing a number nobody

@@ -22,6 +22,7 @@ import {
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
+import { useCheckSteps } from '../_util/checkSteps'
 import { useComposedRefs } from '../_util/composeRefs'
 import { cx } from '../_util/cx'
 import {
@@ -187,6 +188,8 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
       () => ({ min, max, step, scale, reverse: displayReversed }),
       [min, max, step, scale, displayReversed],
     )
+
+    useCheckSteps({ component: 'Slider', range: axis, keyboard, wheel })
 
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {

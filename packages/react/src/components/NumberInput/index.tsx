@@ -21,6 +21,7 @@ import {
 } from '@tremolo-ui/functions'
 
 import { useWheel } from '../../hooks/useWheel'
+import { useCheckSteps } from '../_util/checkSteps'
 import { cx } from '../_util/cx'
 import {
   DEFAULT_KEYBOARD_OPTIONS,
@@ -199,6 +200,25 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
       }),
       [clampValue, min, max, step, scale],
     )
+
+    // The pipeline range stands in the safe-integer range when an end is
+    // open, and there is no travel to sample across that. Probing is skipped
+    // rather than run against a range nobody set.
+    const probeRange = useMemo(
+      () =>
+        min !== undefined && max !== undefined && min < max
+          ? { min, max, step, scale }
+          : null,
+      [min, max, step, scale],
+    )
+
+    useCheckSteps({
+      component: 'NumberInput',
+      range: probeRange,
+      keyboard,
+      wheel,
+      format,
+    })
 
     const text = draft ?? format(value)
     const editing = draft !== null
