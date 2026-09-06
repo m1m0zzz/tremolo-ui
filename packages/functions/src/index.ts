@@ -9,8 +9,10 @@ export {
   normalizeValue,
   radian,
   rawValue,
+  SIGNIFICANT_DIGITS,
   stepValue,
   toFixed,
+  toPrecision,
 } from './math'
 export {
   type Scale,

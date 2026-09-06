@@ -115,4 +115,32 @@ describe('applyDelta() with modifiers', () => {
     }
     expect(applyDelta(5, 1, options, range, held('shiftKey'))).toBeCloseTo(5.1)
   })
+
+  test('a modifier entry does not accumulate error', () => {
+    // The modifier carve-out takes `step` out of the pipeline, so nothing
+    // rounded the artefact back and it built up press by press: this run used
+    // to reach 5.699999999999998.
+    let value = 5
+    const pressed = [value]
+    for (let i = 0; i < 12; i++) {
+      value = applyDelta(value, 1, options, range, held('shiftKey'))
+      pressed.push(value)
+    }
+    expect(pressed).toStrictEqual([
+      5, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6, 6.1, 6.2,
+    ])
+  })
+
+  test('normalized mode does not accumulate either', () => {
+    // Goes to a position and back, so the error arrives by a different route.
+    const options: InputEventOptions = {
+      default: ['normalized', 0.1],
+      shift: ['normalized', 0.01],
+    }
+    let value = 5
+    for (let i = 0; i < 12; i++) {
+      value = applyDelta(value, 1, options, range, held('shiftKey'))
+    }
+    expect(value).toBe(6.2)
+  })
 })

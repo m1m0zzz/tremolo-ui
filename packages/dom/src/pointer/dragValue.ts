@@ -3,6 +3,7 @@ import {
   linearScale,
   normalizeValue,
   stepValue,
+  toPrecision,
   type ValueRange,
 } from '@tremolo-ui/functions'
 
@@ -213,8 +214,9 @@ export function createDragValue(
       const scale = axis.scale ?? linearScale
       const value = scale.denormalize(p, axis.min, axis.max)
       const stepped = axis.step ? stepValue(value, axis.step) : value
-      // Rounding to the step can leave the range.
-      return clamp(stepped, axis.min, axis.max)
+      // Rounding to the step can leave the range, and so can dropping the
+      // binary artefact, so the clamp comes last.
+      return clamp(toPrecision(stepped), axis.min, axis.max)
     }) as XY<number>
   }
 
