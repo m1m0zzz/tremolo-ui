@@ -52,6 +52,7 @@ selector away.
 | `[data-active="true"]` | `Piano` keys | the note is sounding |
 | `[data-out-of-range="true"]` | `NumberInput.InputField` | the value is outside `min`/`max` |
 | `[data-fill="true"]` | `Piano` | `fill` is set |
+| `[data-selected="true"]` | `PointsEditor.Point` | the point is in the selection |
 
 ```css
 .tremolo-slider[aria-disabled='true'] {
@@ -98,6 +99,7 @@ as-is, so `'3rem'`, `'100%'` and `'auto'` all work.
 | `XYPad.Thumb` | `--thumb-size` (on `XYPad`), `--color` |
 | `PointsEditor` | `--width`, `--height` |
 | `PointsEditor.Point` | `--width`, `--height`, `--color` |
+| `PointsEditor` marquee | `--color` on `.tremolo-points-editor-marquee` |
 | `Piano` | `--height`, and the per-key colours in the theme below |
 
 ### `--percent`, and drawing the fill yourself

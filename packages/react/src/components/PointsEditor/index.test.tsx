@@ -109,9 +109,13 @@ function setup(props: SubjectProps = {}) {
   return { container, onChange, point: screen.getByTestId('point') }
 }
 
-function drag(point: Element, to: { clientX: number; clientY: number }) {
+function drag(
+  point: Element,
+  to: { clientX: number; clientY: number },
+  from: { clientX: number; clientY: number } = { clientX: 0, clientY: 0 },
+) {
   act(() => {
-    point.dispatchEvent(pointerEvent('pointerdown', { clientX: 0, clientY: 0 }))
+    point.dispatchEvent(pointerEvent('pointerdown', from))
   })
   act(() => {
     point.dispatchEvent(pointerEvent('pointermove', to))
@@ -152,12 +156,15 @@ describe('PointsEditor', () => {
     expect(point.getAttribute('style')).toContain('top: 75%')
   })
 
-  test('a drag reports the position pointed at, not the distance moved', () => {
+  test('a drag moves the point by the distance dragged', () => {
     const { point, onChange } = setup()
 
+    // Grabbed at the top left corner and moved a quarter of the way in on
+    // both axes: the point keeps the offset it was grabbed at rather than
+    // jumping under the pointer.
     drag(point, { clientX: 50, clientY: 25 })
 
-    expect(onChange).toHaveBeenLastCalledWith({ x: 0.25, y: 0.25 })
+    expect(onChange).toHaveBeenLastCalledWith({ x: 0.75, y: 0.75 })
   })
 
   test('min and max clamp what a drag reports', () => {
@@ -165,7 +172,9 @@ describe('PointsEditor', () => {
       point: { min: { x: 0.4 }, max: { y: 0.6 } },
     })
 
-    drag(point, { clientX: 0, clientY: 100 })
+    // Grabbed at the point itself, then dragged to the bottom left corner:
+    // both limits are in the way.
+    drag(point, { clientX: 0, clientY: 100 }, { clientX: 100, clientY: 50 })
 
     expect(onChange).toHaveBeenLastCalledWith({ x: 0.4, y: 0.6 })
   })

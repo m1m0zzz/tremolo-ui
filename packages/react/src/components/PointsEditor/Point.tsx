@@ -2,6 +2,9 @@ import {
   ComponentPropsWithoutRef,
   CSSProperties,
   useCallback,
+  useEffect,
+  useId,
+  useRef,
   useState,
 } from 'react'
 
@@ -21,7 +24,7 @@ import { cssLength } from '../_util/cssLength'
 import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/placement'
 
-import { usePointsEditorContext } from './context'
+import { type PointRegistration, usePointsEditorContext } from './context'
 
 export type PointBaseType = { x: number; y: number }
 
@@ -38,6 +41,12 @@ export function clampPoint(
 
 export interface PointProps<T extends PointBaseType> {
   value: T
+  /**
+   * How the selection refers to this point. One is generated when it is left
+   * out, which lasts as long as the point is mounted — give your own if the
+   * selection has to survive a remount, or be recognised in your own state.
+   */
+  id?: string
   min?: Partial<PointBaseType>
   max?: Partial<PointBaseType>
 
@@ -73,6 +82,7 @@ const AXIS = { min: 0, max: 1 }
 
 export function Point<T extends PointBaseType>({
   value,
+  id: idProp,
   min,
   max,
   size,
@@ -103,7 +113,16 @@ export function Point<T extends PointBaseType>({
     wheel: rootWheel,
     keyboard: rootKeyboard,
     dragSensitivity,
+    selection,
+    registerPoint,
+    beginPointDrag,
+    movePointDrag,
+    nudgeSelection,
   } = usePointsEditorContext()
+
+  const generatedId = useId()
+  const id = idProp ?? generatedId
+  const selected = selection.includes(id)
 
   const disabled = _disabled ?? rootDisabled
   const readonly = _readonly ?? rootReadonly
@@ -117,6 +136,25 @@ export function Point<T extends PointBaseType>({
   // Compared against the focus below, so the point needs its own element.
   const [element, setElement] = useState<HTMLDivElement | null>(null)
 
+  // What the editor needs to move this point along with the rest of a
+  // selection. Rewritten after every render rather than kept in the registry
+  // itself: the value changes on every frame of a drag.
+  const registration = useRef<PointRegistration>({
+    value,
+    min,
+    max,
+    readonly,
+    onChange,
+  })
+  useEffect(() => {
+    registration.current = { value, min, max, readonly, onChange }
+  })
+
+  useEffect(() => registerPoint(id, registration), [id, registerPoint])
+
+  /** Where the pointer was when the drag started, to measure the move from. */
+  const pointerOrigin = useRef<PointBaseType | null>(null)
+
   // The value is the position itself: no scaling, and no rounding to a step.
   const { refCallback: dragRefCallback, dragging } =
     useDragValue<HTMLDivElement>({
@@ -125,22 +163,33 @@ export function Point<T extends PointBaseType>({
       sensitivity: (state) =>
         selectModifier(dragSensitivity, state.event).value,
       cursor: readonly ? undefined : externalStyles.cursor,
+      // The value is a move rather than a position: the point keeps the offset
+      // it was grabbed at, and everything else selected moves with it by the
+      // same amount.
       onChange: ([x, y]) => {
-        if (readonly) return
-
-        onChange?.(clampPoint({ x, y }, min, max))
+        const origin = pointerOrigin.current
+        if (!origin) return
+        movePointDrag({ x: x - origin.x, y: y - origin.y })
       },
-      onDragStart: ([x, y]) => {
+      onDragStart: ([x, y], state) => {
+        // The press decides the selection before the snapshot is taken, so it
+        // happens here rather than in an onPointerDown: a native listener on
+        // the element runs before React's, and the two would disagree.
+        beginPointDrag(id, state.event)
+        pointerOrigin.current = { x, y }
+
         if (readonly) return
         if (externalStyles.userSelectNone) addUserSelectNone()
 
-        onDragStart?.(clampPoint({ x, y }, min, max))
+        onDragStart?.(clampPoint(value, min, max))
       },
-      onDragEnd: ([x, y]) => {
+      onDragEnd: () => {
+        pointerOrigin.current = null
+
         if (readonly) return
         if (externalStyles.userSelectNone) removeUserSelectNone()
 
-        onDragEnd?.(clampPoint({ x, y }, min, max))
+        onDragEnd?.(clampPoint(value, min, max))
       },
     })
 
@@ -152,9 +201,14 @@ export function Point<T extends PointBaseType>({
       modifiers: ModifierState,
     ) => {
       const next = applyDelta(value[axis], direction, option, AXIS, modifiers)
-      onChange?.(clampPoint({ ...value, [axis]: next }, min, max))
+      // As a move, so that the rest of the selection comes along and the whole
+      // group stops together at the edge.
+      nudgeSelection(id, {
+        x: axis === 'x' ? next - value.x : 0,
+        y: axis === 'y' ? next - value.y : 0,
+      })
     },
-    [value, min, max, onChange],
+    [value, id, nudgeSelection],
   )
 
   // The listener sits on the container rather than on the point: a wheel event
@@ -213,6 +267,7 @@ export function Point<T extends PointBaseType>({
       aria-disabled={disabled}
       aria-readonly={readonly}
       data-dragging={dragging}
+      data-selected={selected}
       style={
         {
           '--color': color,
