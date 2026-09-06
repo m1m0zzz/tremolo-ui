@@ -17,10 +17,19 @@
   --color: oklch(95% 0 0);
   --width: 120px;
   --height: 120px;
+  /* Room for the thumb to travel. The area only holds its size while
+     `--width` and `--height` are lengths of their own: give it a percentage,
+     or put the pad in a flex row that overrides the automatic minimum size,
+     and it shrinks with whatever is around it — down to nothing, with the
+     thumb left sitting on a line. */
+  --min-width: calc(var(--thumb-size) * 2);
+  --min-height: calc(var(--thumb-size) * 2);
 
   position: relative;
   width: var(--width);
   height: var(--height);
+  min-width: var(--min-width);
+  min-height: var(--min-height);
   background-color: var(--color);
 }
 
