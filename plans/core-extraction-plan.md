@@ -1190,16 +1190,46 @@ DAW のノブやフェーダーは、shift で細かく、alt（option）で既�
 - [ ] **ドラッグ中に修飾キーを押した/離した場合をどうするか。** ポインタが動かない限り `pointermove` は来ないので、押した瞬間には反映されない。`keydown` / `keyup` も見るか、次の移動から効けばよしとするか
 - [ ] 全コンポーネント（Slider / Knob / XYPad / NumberInput / PointsEditor）で規約を揃える。片方だけ対応すると余計に分かりにくい
 
-### 5.12 Knob が場所不足で潰れる
+### 5.12 Knob が場所不足で潰れる — **完了**
 
-`.tremolo-knob` は `display: inline-block` に `width: var(--knob-size); height: var(--knob-size)`（既定 50px）だけを指定している。**縦横比を保つ指定が無い。**
+`.tremolo-knob` は `display: inline-block` に `width: var(--knob-size); height: var(--knob-size)`（既定 50px）だけを指定していた。**`width` と `height` が独立した 2 つの宣言で、両者を結ぶものが無い。**
 
-flex / grid コンテナの中で幅が足りないと、`flex-shrink` の既定値が 1 なので `width` が縮む。一方 `height` は縮まないため、**中の SVG が引き伸ばされて円が楕円になる。** `viewBox="0 0 100 100"` の SVG が `preserveAspectRatio` の既定でボックスに合わせるので、潰れ方がそのまま見える。
+flex コンテナの中で幅が足りないと、`flex-shrink` の既定値が 1 なので**主軸（width）だけ**が縮む。`height` は交差軸の確定値なので `align-items: stretch` の対象にもならず 50px のまま残り、ボックスが `50×50` から `32×50` のようになる。
 
-- [ ] `aspect-ratio: 1` を入れて、片方だけ縮んでも比率を保つ
-- [ ] `flex-shrink: 0` を入れるか、`min-width` / `min-height` を置くかを決める。**縮ませない**のと**比率を保ったまま縮む**のとで挙動が違うので、どちらが望ましいか決める
-- [ ] `size` prop を渡したときと `--knob-size` を書き換えたときで同じ結果になることを確認する。現在 `size` は `style` の `width` / `height` に直接入るので、CSS 変数を経由しない
-- [x] 5.1 との関係は決着した。**パッケージは CSS を配らなくなったので、この修正は `site/src/css/tremolo/Knob.css`（デモのテーマ）に入る。** 潰れるかどうかは利用者の CSS 次第になるが、`aspect-ratio` を知らずに書くと必ず踏むので、テーマ側で示しておく価値はある。`size` prop が `style` の `width` / `height` に直接入る点だけはコンポーネント側の話として残る
+#### 当初の説明は間違っていた
+
+> 中の SVG が引き伸ばされて円が楕円になる。`viewBox="0 0 100 100"` の SVG が `preserveAspectRatio` の既定でボックスに合わせるので、潰れ方がそのまま見える
+
+**円は楕円にならない。** `preserveAspectRatio` の既定は `xMidYMid meet` で、これは縦横比を保ったまま収める。引き伸ばすのは `none` を明示したときだけで、`packages/react/src` に `preserveAspectRatio` は 1 箇所も無い。
+
+実際に起きることはこう。`<svg>` は width / height 属性を持たず `display: block`、`viewBox` から 1:1 の内在比を持つ。`width: auto` は親の内容幅（32px）に伸び、`height: auto` は比から 32px になる。つまり **`32×50` のボックスの中に `32×32` のノブが乗り、下に 18px の死んだ空間が残る。** 症状は「円が歪む」ではなく「ノブが想定より小さくなり、隣に並ぶものとの縦位置がずれる」。
+
+#### `aspect-ratio` は使えない
+
+`height` を `aspect-ratio: 1` に置き換えれば「比率を保ったまま縮む」ようにできそうに見えるが、2 つ問題がある。
+
+1. **`width` と `height` が両方確定値なら `aspect-ratio` は無視される。** 自動サイズを求めるときにしか使われないため、今の CSS に 1 行足すだけでは何も起きない。`height` を消す必要がある
+2. **`height` を消すと `align-items: stretch` に伸ばされる。** flex の交差サイズが `auto` の item は行の高さまで伸びる。`aspect-ratio` はこれを止めない（flex 行の中で `<img>` が伸びるのと同じ現象）。結果、行が高いと今度は縦に間延びして、同じ「死んだ空間」が逆向きに出る
+
+止めるには `align-self: start` などで stretch から降りる必要があるが、それは**利用者が書いた `align-items` を上書きする**ことになる。テーマの既定として押し付けるものではない。
+
+#### 採った修正
+
+```css
+.tremolo-knob {
+  width: var(--knob-size);
+  height: var(--knob-size);
+  flex-shrink: 0;
+}
+```
+
+**「縮ませない」方を採った。** ノブはボタンやアイコンと同じ固定サイズのコントロールで、はみ出すのは目に見えて利用者が直せるが、黙って正方形でなくなるのは気づけない。`height` が確定値のまま残るので stretch にも伸ばされない。
+
+- [x] `flex-shrink: 0` を入れる。`aspect-ratio` は上記の理由で使わない
+- [x] `size` prop と `--knob-size` の関係はそのままでよい。`size` は `style` の `width` / `height` の両方に入るが、`flex-shrink: 0` は縮小を止めるだけで両者の関係を変えないため、どちらの指定方法でも同じ結果になる
+- [x] 5.1 との関係。**パッケージは CSS を配らなくなったので、この修正は `site/src/css/tremolo/Knob.css`（デモのテーマ）に入る。** 潰れるかどうかは最終的に利用者の CSS 次第だが、`flex-shrink` を知らずに書くと必ず踏むので、テーマ側で示しておく価値がある
+
+**ブラウザでの実測はしていない。** stretch と `aspect-ratio` の関係は仕様（Flexbox §9.4 の「computed cross size property is `auto`」）と、flex 行の中で `<img>` が伸びるという広く知られた挙動から判断した。採った修正の側は `height` を確定値のまま残すので、この不確実性に触れない。
 
 ### 5.13 NumberInput の上下キーでカーソル位置を保つ
 
