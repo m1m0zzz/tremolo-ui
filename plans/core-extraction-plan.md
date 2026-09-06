@@ -1172,23 +1172,62 @@ ESLint に `eqeqeq` を設定しておらず、`==` / `!=` がリポジトリ全
 
 `site/src/theme` は `eslint.config.js` の `ignores` に入っているので対象外。`Playground/parser.ts` にコメントアウトされた `magicComment == 'expand alt'` が残っているが、これも触っていない。
 
-### 5.11 修飾キー（shift / alt）の同時押しに対応する — drag / wheel / keyboard
+### 5.11 修飾キー（shift / alt）の同時押しに対応する — wheel / keyboard は **完了**
 
-DAW のノブやフェーダーは、shift で細かく、alt（option）で既定値に戻す、といった修飾キーの規約を持っている。tremolo-ui には**その仕組みが無い**。
+DAW のノブやフェーダーは、shift で細かく、alt（option）で既定値に戻す、といった修飾キーの規約を持っている。tremolo-ui には**その仕組みが無かった**。
 
-現状で修飾キーを見ているのは 2 箇所だけで、しかも用途が違う。
+**ドラッグは切り出して 5.18 にした**（下記「なぜドラッグを分けたか」）。
 
-- `XYPad/index.tsx` の wheel: `event.shiftKey` で x 軸を選ぶ
-- `PointsEditor/Point.tsx` の wheel: 同上
+- [x] **何を割り当てるか。** shift = 微調整（10 分の 1）を `keyboard` の既定にした。**alt = 既定値へ戻すは入れない。** 入れると `defaultValue` を Slider / XYPad / NumberInput / PointsEditor に足すことになり（今は Knob だけ）、API が 4 つ増える割に `enableDoubleClickDefault` と役割が重なる
+- [x] **XYPad / PointsEditor の shift = 軸切り替えとの衝突。** wheel には修飾キーの既定を入れないことで回避した。そもそもブラウザが shift + ホイールを横スクロールに変換するので、wheel の shift は我々のものではない
+- [x] **`InputEventOption` の形。** `InputEventOptions` という union を足した。旧来のタプルと `{ default, shift?, alt?, ctrl?, meta? }` の両方を受けるので破壊的変更にならない
+- [x] **どの層で扱うか。** wheel / keyboard は React 側のハンドラで完結する。`applyDelta` が 5 つ目の引数にイベントを取り、`selectInputEvent` が解決する。どちらも `@tremolo-ui/functions` にあるので Vue / Svelte でも使える
+- [x] 全コンポーネントで規約を揃えた
+- [ ] ~~ドラッグ中に修飾キーを押した/離した場合~~ → 5.18
 
-どちらも「軸の切り替え」であって「感度の切り替え」ではない。ドラッグとキーボードには修飾キーの経路そのものが無い。
+#### 決めたこと
 
-- [ ] **何を割り当てるか決める。** よくある規約は shift = 微調整（fine）、alt/option = 既定値へリセット、ctrl/cmd = ステップ無視。既に `Knob` はダブルクリックで既定値に戻す（`enableDoubleClickDefault`）ので、alt との役割分担を決める必要がある
-- [ ] **XYPad / PointsEditor の shift = 軸切り替えとぶつかる。** 2 次元のコンポーネントでは shift の意味が既に埋まっている。軸切り替えを別のキーに移すか、2 次元だけ規約を変えるかを決める
-- [ ] **`InputEventOption` の形を見直す。** 現在 `['normalized' | 'raw', number]` の 1 組しか持てないので、修飾キーごとに別の量を渡せない。`{ default: [...], shift: [...], alt: 'reset' }` のような形にするか、感度の倍率だけ別 prop にするか
-- [ ] **どの層で扱うか決める。** キーボードと wheel は React 側のハンドラで `event.shiftKey` を読めるが、**ドラッグは `@tremolo-ui/dom` の `createDragValue` が値を計算している**ので、`DragState` に修飾キーの状態を載せるか、`createDragValue` 自体が感度を切り替えるかを決める必要がある。`DragState.event` に `PointerEvent` は入っているので読めなくはないが、`onChange` は既に計算後の値しか渡さない
-- [ ] **ドラッグ中に修飾キーを押した/離した場合をどうするか。** ポインタが動かない限り `pointermove` は来ないので、押した瞬間には反映されない。`keydown` / `keyup` も見るか、次の移動から効けばよしとするか
-- [ ] 全コンポーネント（Slider / Knob / XYPad / NumberInput / PointsEditor）で規約を揃える。片方だけ対応すると余計に分かりにくい
+**同時押しは `meta → ctrl → alt → shift` の固定順**で、押されていてかつ設定されている最初のものを採る。順序を決めておかないと 2 つ同時に押したときの挙動がブラウザ差になる。`ctrl` と `meta` は 1 つの「コマンドキー」にまとめない。デスクトップのホストを模した UI では、プラットフォームの慣習より物理キーの一致が優先されることが多いため。
+
+**修飾キーのエントリには `step` の丸めをかけない。** ここが要。全コンポーネントの `step` の既定は 1 なので、`shift: ['raw', 0.1]` を設定しても `stepValue(3 + 0.1, 1)` が 3 に戻し、**何も起こらない**。修飾キーを設定している時点でグリッドから外れて動かす意思表示なので、そこだけ外す。
+
+```
+step = 1、値 3
+shift + ↑  → 3.1   （グリッドを外れる）
+       ↑   → 4     （グリッドに戻る）
+```
+
+「fine で外して通常操作で戻る」という DAW と同じ感覚になる。丸めを外す範囲を「量が `step` より細かいとき」まで広げる案もあったが、暗黙的すぎるので採らなかった。
+
+**既定を入れるか opt-in かでは、既定を入れる方を採った。** ただし wheel は除く。
+
+#### 見つけた実バグ: XYPad / PointsEditor の shift + ホイール
+
+```ts
+const i: 0 | 1 = event.shiftKey ? 0 : 1
+let direction = 1
+if (event.deltaY < 0) direction *= -1
+```
+
+shift を押すとブラウザが `deltaY` を 0 にして `deltaX` に載せ替えるので、この条件が成立しない。**`direction` が常に +1 になり、shift + ホイールでは x が増える方向にしか動かなかった。** 動いた方の軸を読む形にして直した。
+
+副産物として、トラックパッドの横スクロールが修飾キー無しで x を動かすようになった。
+
+#### なぜドラッグを分けたか
+
+`useDragValue` が使う mapping はコンポーネントによって違う。
+
+| | mapping | 意味 |
+| --- | --- | --- |
+| Knob | `relativeMapping({ pixelRange })` | 移動量 → 値。感度の概念がある |
+| NumberInput（Stepper） | `drag`（1 step あたりのピクセル） | 同上 |
+| Slider / XYPad / PointsEditor | `elementMapping(ref)` | **ポインタ位置そのものが値** |
+
+後者 3 つは thumb がポインタに完全追従するので、「微調整」は感度を掛けるのでは足りず、**絶対マッピングから相対マッピングへの切り替え**になる。しかも `mapping` は `createDragValue` のインスタンス生存期間で固定（`update()` が明示的に無視する）なので、dom 側の構造変更が要る。
+
+さらに `relativeMapping` は origin と総移動量から値を出すので、**ドラッグ中に感度を変えると travel 全体が再スケールされて値が飛ぶ**（5.8 で直したのと同じ種類の問題）。修飾キーの変化時に origin を取り直す必要がある。
+
+wheel / keyboard の 10 倍の作業量になるので、別項目にした。
 
 ### 5.12 Knob が場所不足で潰れる — **完了**
 
@@ -1424,6 +1463,16 @@ const shown = unformatOnFocus && focused && !editing ? String(value) : text
 #### 残ったもの
 
 `__stories__/styles/PointsEditor.module.css` は `PointsEditor.stories.tsx` 専用になったが、「story 用のスタイルは `__stories__/styles/` に残す」に従って置いたままなので、import が `../../../__stories__/styles/...` になっている。**`styles/Slider.module.css` の方は `combined/VolumeFader` が使っている**ので残るのが正しく、1 ファイルだけ移すかどうかは別途。
+
+### 5.18 ドラッグの修飾キー — 5.11 から分離
+
+5.11 の「なぜドラッグを分けたか」を参照。wheel / keyboard は完了し、ドラッグだけが残っている。
+
+- [ ] **Slider / XYPad / PointsEditor をどうするか決める。** `elementMapping` のままでは微調整が表現できない。修飾キーを押している間だけ相対マッピングに切り替えるのか、それとも 2 次元・絶対追従のコントロールでは微調整を諦めるのか
+- [ ] **`mapping` を差し替えられるようにするか決める。** 現在は `createDragValue` のインスタンス生存期間で固定で、`update()` が明示的に無視している。切り替えるならこの前提を崩すことになる
+- [ ] **`relativeMapping` の origin 取り直し。** 感度が変わった時点で新しいドラッグが始まったことにしないと値が飛ぶ。これは切り替え方式を問わず必要
+- [ ] **ドラッグ中に押した/離したときの反映。** ポインタが動かない限り `pointermove` は来ないので、押した瞬間には反映されない。`keydown` / `keyup` も見るか、次の移動から効けばよしとするか
+- [ ] **どの層に置くか。** ドラッグは `@tremolo-ui/dom` が値を計算しているので、Vue / Svelte のためにもコアが正しい。`DragValueOptions` に `sensitivity?: (state: DragState) => number` を足すのが最小だが、上記の origin 取り直しと組み合わせる必要がある。`DragState.event` に `PointerEvent` が入っているので修飾キーは dom 側でも読める
 
 ## 6. 既存コードで見つかった問題
 

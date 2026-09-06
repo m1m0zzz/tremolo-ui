@@ -15,6 +15,37 @@ All three packages are released together and always share a version.
 
 ## Unreleased
 
+### Shift is the fine-adjustment key
+
+Holding shift with an arrow key now moves the value by a tenth of a step, on
+every component. Nothing had to be written to get it, and nothing breaks if you
+were not expecting it — a plain press behaves exactly as before, and the next
+one snaps back onto the grid.
+
+`wheel` and `keyboard` take a map if you want something else. A plain tuple,
+which is what they took before, opts out of modifiers entirely.
+
+```jsx
+keyboard={{ default: ['raw', 1], alt: ['raw', 0.5] }}
+keyboard={['raw', 1]}
+```
+
+**A modifier entry is not snapped to `step`.** Naming one says you want to move
+off the grid, and without that a finer amount would round straight back to
+where it started.
+
+Nothing is bound on the wheel. Browsers turn shift+wheel into horizontal
+scrolling, so shift is not available there.
+
+### Shift and the wheel move `XYPad` and `PointsEditor` both ways
+
+Shift+wheel could only ever raise the x value. The direction came from
+`deltaY`, which browsers empty once they move the scroll onto `deltaX`. Both
+components now read whichever axis moved, so scrolling back lowers the value.
+
+A trackpad's own horizontal gesture moves x as well now, with no modifier held.
+
+
 ### The package ships no CSS
 
 `@tremolo-ui/react/styles/index.css` and every other `./styles/*.css` export
