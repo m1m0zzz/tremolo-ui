@@ -1,6 +1,7 @@
 import CodeBlock from '@theme/CodeBlock'
 import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/components/number-input/basic'
+import unit from '!!raw-loader!@site/examples/components/number-input/unit'
 
 # NumberInput
 
@@ -29,3 +30,35 @@ import { NumberInput } from '@tremolo-ui/react'
   showCode
   sourcePath='examples/components/number-input/basic.tsx'
 >{basic}</CodeBlock>
+
+### Units
+
+The input shows `format(value)` and reads it back with `parse`. They have to
+agree, so `unitFormat` builds both at once and spreads in as a pair.
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/number-input/unit.tsx'
+>{unit}</CodeBlock>
+
+`unitFormat` picks an SI prefix from the magnitude of the value: `1234` reads
+as `1.23kHz`, `0.0005` as `500µHz`, and `0` stays in the base unit. It
+reads `µ`, `μ` and `u` back as micro, since only the last of those can be
+typed.
+
+Two options cover the cases where that is not what you want.
+
+- `prefixes: false` leaves the number alone and appends the symbol as written.
+  Use it for anything that is not an SI quantity &mdash; dB, %, cents,
+  semitones. Prefixing dB is not merely unusual but wrong: `d` is deci, so
+  `-6dB` would read as -0.6B.
+- `base` says which prefix the stored value is already in. A control that keeps
+  milliseconds is `unitFormat('s', { base: 'm' })`: 1500 displays as `1.5s`,
+  and `parse` gives 1500 back.
+
+`format` and `parse` are ordinary props, so a unit that does not fit this shape
+is written by hand. `parse` should return `NaN` for text it cannot read &mdash;
+the input then keeps the value it had, rather than committing a number nobody
+typed.
