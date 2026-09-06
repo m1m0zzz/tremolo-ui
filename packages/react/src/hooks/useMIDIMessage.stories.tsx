@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 
-import { useMIDIAccess } from '../src/hooks/useMIDIAccess'
-import { useMIDIMessage } from '../src/hooks/useMIDIMessage'
+import { useMIDIAccess } from './useMIDIAccess'
+import { useMIDIMessage } from './useMIDIMessage'
 
 export default {
   title: 'Hooks/useMIDIMessage',

@@ -3,9 +3,10 @@ import * as Tone from 'tone'
 
 import { noteName, noteNumber } from '@tremolo-ui/functions'
 
-import { Piano, PianoMethods } from '../src/components/Piano'
-import { useMIDIAccess } from '../src/hooks/useMIDIAccess'
-import { PITCH_BEND_CENTER, useMIDIInput } from '../src/hooks/useMIDIInput'
+import { Piano, PianoMethods } from '../components/Piano'
+
+import { useMIDIAccess } from './useMIDIAccess'
+import { PITCH_BEND_CENTER, useMIDIInput } from './useMIDIInput'
 
 export default {
   title: 'Hooks/useMIDIInput',

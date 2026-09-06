@@ -3,8 +3,9 @@ import { useState } from 'react'
 
 import { curveScale, curveWithCenterValue } from '@tremolo-ui/functions'
 
-import { NumberInput } from '../src/components/NumberInput'
-import { Slider } from '../src/components/Slider'
+import { NumberInput } from '../NumberInput'
+
+import { Slider } from '.'
 
 export default {
   title: 'Components/Slider/Root',

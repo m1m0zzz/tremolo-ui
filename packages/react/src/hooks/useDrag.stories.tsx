@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { useDrag } from '../src/hooks/useDrag'
+import { useDrag } from './useDrag'
 
 export default {
   title: 'Hooks/useDrag',

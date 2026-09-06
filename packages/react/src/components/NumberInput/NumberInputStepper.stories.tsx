@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 import { unitFormat } from '@tremolo-ui/functions'
 
-import { NumberInput } from '../../src/components/NumberInput'
+import { NumberInput } from '.'
 
 export default {
   title: 'Components/NumberInput/Stepper',

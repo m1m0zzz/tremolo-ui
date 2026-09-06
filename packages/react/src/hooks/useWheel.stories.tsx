@@ -2,8 +2,9 @@ import { useState } from 'react'
 
 import { toFixed } from '@tremolo-ui/functions'
 
-import { NumberInput } from '../src/components/NumberInput'
-import { useWheel } from '../src/hooks/useWheel'
+import { NumberInput } from '../components/NumberInput'
+
+import { useWheel } from './useWheel'
 
 export default {
   title: 'Hooks/useWheel',
