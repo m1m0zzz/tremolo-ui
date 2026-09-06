@@ -18,7 +18,7 @@ npm workspaces のモノレポ。`packages/functions`, `packages/react`, `site` 
 
 - math: `clamp` / `normalizeValue` / `rawValue` / `skewWithCenterValue` / `stepValue` / `mapValue` / `toFixed` / `integerPart` / `decimalPart` / `radian` / `degree` / `dbToGain` / `gainToDb`
 - midi: `noteKey` / `noteKeys` / `noteName` / `noteNumber` / `noteToFrequency` / `parseNoteName` / `isBlackKey` / `isWhiteKey` / `whiteKeys` / 型 `NoteKey` `WhiteKey`
-- util: `isEmpty` / `mod` / `styleHelper` / `xor`、型 `InputEventOption`
+- util: `isEmpty` / `mod` / `xor`、型 `InputEventOption`
 
 `@tremolo-ui/react` の依存:
 
@@ -1677,7 +1677,7 @@ prop / スタイルシート / インラインの 3 つが同じことを言う�
 
 #### 副産物
 
-`styleHelper`（`thickness / 2` の border-radius 計算に使っていた）は**リポジトリ内での用途が無くなった**。CSS の `calc()` がやる。公開 API なので今回は残したが、削除の候補。
+`styleHelper`（`thickness / 2` の border-radius 計算に使っていた）は**リポジトリ内での用途が無くなった**。CSS の `calc()` がやる。**別 PR で削除した。**
 
 #### テスト
 

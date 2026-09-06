@@ -70,4 +70,4 @@ export {
   type UnitFormatter,
   unitFormat,
 } from './unit'
-export { isEmpty, mod, styleHelper, xor } from './util'
+export { isEmpty, mod, xor } from './util'

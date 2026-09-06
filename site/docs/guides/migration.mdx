@@ -15,6 +15,26 @@ All three packages are released together and always share a version.
 
 ## Unreleased
 
+### `styleHelper` is gone
+
+It turned a number into a pixel length, with an optional bit of arithmetic:
+
+```js
+styleHelper(10) // '10px'
+styleHelper(10, '/', 2) // '5px'
+```
+
+Nothing in the package uses it any more. Its one caller was the border radius
+of `Slider.Track`, which is `calc(var(--thickness) / 2)` in CSS now that the
+track no longer paints itself.
+
+Write the two cases directly:
+
+```js
+typeof value === 'number' ? `${value}px` : value
+`calc(${value} / 2)`
+```
+
 ### `PointsEditor` selects points
 
 Points can be selected, and a selection moves as one. **Turn it on with
