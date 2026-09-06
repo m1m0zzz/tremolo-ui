@@ -71,7 +71,7 @@ export function calcAngles({
   return { p, r1, r2, r3, r4 }
 }
 
-const KnobContext = createContext<KnobContextValue | null>(null)
+const KnobContext = /* @__PURE__ */ createContext<KnobContextValue | null>(null)
 
 export const KnobProvider = KnobContext.Provider
 

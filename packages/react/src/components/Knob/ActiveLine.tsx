@@ -1,6 +1,6 @@
-import clsx from 'clsx'
 import { SVGProps } from 'react'
 
+import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/placement'
 
 import { arcRadius, pointOnArc, useKnobContext } from './context'
@@ -22,7 +22,7 @@ export function ActiveLine({
 
   return (
     <path
-      className={clsx('tremolo-knob-active-line', className)}
+      className={cx('tremolo-knob-active-line', className)}
       d={`M ${start.x} ${start.y} A ${radius} ${radius} -135 ${r3 - r2 > 180 ? 1 : 0} 1 ${end.x} ${end.y}`}
       fill="none"
       stroke={stroke}

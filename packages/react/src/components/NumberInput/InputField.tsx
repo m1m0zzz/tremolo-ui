@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import {
   ComponentPropsWithoutRef,
   CSSProperties,
@@ -10,6 +9,7 @@ import {
 } from 'react'
 
 import { useComposedRefs } from '../_util/composeRefs'
+import { cx } from '../_util/cx'
 
 import { useNumberInputContext } from './context'
 
@@ -174,7 +174,7 @@ export function InputField({
   return (
     <input
       ref={composedRef}
-      className={clsx('tremolo-number-input-field', className)}
+      className={cx('tremolo-number-input-field', className)}
       // Not type="number": that brings native spinners and a value the browser
       // parses itself, neither of which survives a unit suffix.
       type="text"

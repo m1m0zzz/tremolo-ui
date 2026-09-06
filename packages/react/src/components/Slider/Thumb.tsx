@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import {
   CSSProperties,
   ReactNode,
@@ -7,6 +6,7 @@ import {
   useRef,
 } from 'react'
 
+import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/placement'
 
 import { useSliderContext } from './context'
@@ -70,7 +70,7 @@ export function Thumb({
         // default slider thumb
         <div
           ref={elementRef}
-          className={clsx('tremolo-slider-thumb', className)}
+          className={cx('tremolo-slider-thumb', className)}
           // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
           tabIndex={0}
           aria-disabled={disabled}

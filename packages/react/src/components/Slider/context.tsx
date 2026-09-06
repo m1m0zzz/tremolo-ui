@@ -28,7 +28,9 @@ export type SliderContextValue = {
   thumbRef: RefObject<SliderThumbMethods | null>
 }
 
-const SliderContext = createContext<SliderContextValue | null>(null)
+const SliderContext = /* @__PURE__ */ createContext<SliderContextValue | null>(
+  null,
+)
 
 export const SliderProvider = SliderContext.Provider
 

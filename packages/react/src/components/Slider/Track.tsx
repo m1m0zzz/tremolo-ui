@@ -1,9 +1,9 @@
-import clsx from 'clsx'
 import { ComponentPropsWithoutRef, CSSProperties, ReactNode, Ref } from 'react'
 
 import { styleHelper, xor } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../_util/composeRefs'
+import { cx } from '../_util/cx'
 import { Placement } from '../_util/placement'
 
 import { useSliderContext } from './context'
@@ -55,7 +55,7 @@ export function Track({
   return (
     <div
       ref={composedRef}
-      className={clsx('tremolo-slider-track', className)}
+      className={cx('tremolo-slider-track', className)}
       aria-disabled={disabled}
       data-vertical={vertical}
       style={

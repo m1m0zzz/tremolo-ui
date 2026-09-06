@@ -1,8 +1,8 @@
-import clsx from 'clsx'
 import { ComponentPropsWithoutRef, ReactNode } from 'react'
 
 import { xor } from '@tremolo-ui/functions'
 
+import { cx } from '../_util/cx'
 import { Placement } from '../_util/placement'
 
 import { useSliderContext } from './context'
@@ -36,7 +36,7 @@ export function Marks({
 
   return (
     <div
-      className={clsx('tremolo-slider-marks', className)}
+      className={cx('tremolo-slider-marks', className)}
       style={{
         marginLeft: vertical ? gap : undefined,
         marginTop: !vertical ? gap : undefined,

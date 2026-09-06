@@ -29,7 +29,9 @@ export type XYPadContextValue = {
   thumbRef: RefObject<XYPadThumbMethods | null>
 }
 
-const XYPadContext = createContext<XYPadContextValue | null>(null)
+const XYPadContext = /* @__PURE__ */ createContext<XYPadContextValue | null>(
+  null,
+)
 
 export const XYPadProvider = XYPadContext.Provider
 

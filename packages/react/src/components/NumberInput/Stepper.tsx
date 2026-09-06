@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import {
   ComponentPropsWithoutRef,
   CSSProperties,
@@ -12,6 +11,7 @@ import { applyDelta } from '@tremolo-ui/functions'
 
 import { useDrag } from '../../hooks/useDrag'
 import { useComposedRefs } from '../_util/composeRefs'
+import { cx } from '../_util/cx'
 
 import { StepperProvider, useNumberInputContext } from './context'
 
@@ -92,7 +92,7 @@ export function Stepper({
     <StepperProvider value={context}>
       <div
         ref={composedRef}
-        className={clsx('tremolo-number-input-stepper', className)}
+        className={cx('tremolo-number-input-stepper', className)}
         style={style}
         {...props}
       >

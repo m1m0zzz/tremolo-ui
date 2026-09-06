@@ -1,7 +1,7 @@
-import clsx from 'clsx'
 import { ComponentPropsWithoutRef, CSSProperties, ReactNode, Ref } from 'react'
 
 import { useComposedRefs } from '../_util/composeRefs'
+import { cx } from '../_util/cx'
 import { Placement } from '../_util/placement'
 
 import { useXYPadContext } from './context'
@@ -37,7 +37,7 @@ export function Area({
   return (
     <div
       ref={composedRef}
-      className={clsx('tremolo-xy-pad-area', className)}
+      className={cx('tremolo-xy-pad-area', className)}
       style={{
         ...{ '--color': color },
         width: width,

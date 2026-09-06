@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import {
   ComponentPropsWithoutRef,
   CSSProperties,
@@ -24,6 +23,7 @@ import {
 } from '@tremolo-ui/functions'
 
 import { useEventListener } from '../../hooks/useEventListener'
+import { cx } from '../_util/cx'
 
 import { KeyboardShortcuts } from './keyboardShortcuts'
 
@@ -139,191 +139,206 @@ export interface PianoMethods {
 type Props = PianoProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof PianoProps>
 
-export const Root = forwardRef<PianoMethods, Props>(function Root(
-  {
-    noteRange,
-    glissando = true,
-    midiMax = 127,
-    keyboardShortcuts,
-    fill = false,
-    whiteKeyWidth = 40,
-    keyGap = 1,
-    blackKeyWidthRatio = 0.65,
-    blackKeyHeightRatio = 0.6,
-    height = fill ? '100%' : 160,
-    style,
-    className,
-    label,
-    keyProps,
-    onPlayNote,
-    onStopNote,
-    ...props
-  },
-  forwardedRef,
-) {
-  // See useDrag for why the node is held in state rather than a ref: an inline
-  // ref would be re-attached on every render and tear the instance down.
-  const [node, setNode] = useState<HTMLDivElement | null>(null)
-  const [activeNotes, setActiveNotes] = useState<number[]>([])
-  /** Set while `fill` is on, measured from the parent. */
-  const [filledKeyWidth, setFilledKeyWidth] = useState(whiteKeyWidth)
-
-  const notes = useMemo(() => getNoteRangeArray(noteRange), [noteRange])
-  const whiteKeyCount = useMemo(() => notes.filter(isWhiteKey).length, [notes])
-
-  const layout: PianoLayout = useMemo(
-    () => ({
+export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
+  function Root(
+    {
       noteRange,
-      whiteKeyWidth: fill ? filledKeyWidth : whiteKeyWidth,
-      keyGap,
-      blackKeyWidthRatio,
-      blackKeyHeightRatio,
-    }),
-    [
-      noteRange,
-      fill,
-      filledKeyWidth,
-      whiteKeyWidth,
-      keyGap,
-      blackKeyWidthRatio,
-      blackKeyHeightRatio,
-    ],
-  )
-
-  // Read when the instance is created. The effect below keeps it current, and
-  // runs right after, so a stale handler is replaced within the same commit.
-  const latest = useRef({ layout, glissando, midiMax, onPlayNote, onStopNote })
-  const instanceRef = useRef<PianoInputInstance | null>(null)
-
-  useEffect(() => {
-    if (!node) return
-
-    const instance = createPianoInput(node, {
-      layout: latest.current.layout,
-      glissando: latest.current.glissando,
-      midiMax: latest.current.midiMax,
-      onPlayNote: (note, velocity) =>
-        latest.current.onPlayNote?.(note, velocity),
-      onStopNote: (note) => latest.current.onStopNote?.(note),
-      onActiveNotesChange: setActiveNotes,
-    })
-    instanceRef.current = instance
-
-    return () => {
-      instanceRef.current = null
-      instance.destroy()
-    }
-    // Only the element decides how the instance is wired. Everything else is
-    // pushed with update() below, so that changing the layout mid-drag — the
-    // parent being resized under `fill`, say — does not abort the drag.
-  }, [node])
-
-  // Runs after every render.
-  useEffect(() => {
-    latest.current = { layout, glissando, midiMax, onPlayNote, onStopNote }
-    instanceRef.current?.update({ layout, glissando, midiMax })
-  })
-
-  useEffect(() => {
-    if (!fill || !node) return
-    const parent = node.parentElement
-    if (!parent) throw new Error("doesn't have a parent element.")
-
-    const resizeObserver = new ResizeObserver(() => {
-      setFilledKeyWidth(node.clientWidth / whiteKeyCount - keyGap)
-    })
-    resizeObserver.observe(parent)
-    return () => resizeObserver.disconnect()
-  }, [fill, node, whiteKeyCount, keyGap])
-
-  /** The note a shortcut key plays, or null when it has none. */
-  function shortcutNote(key: string) {
-    if (!keyboardShortcuts || key === '') return null
-    const index = keyboardShortcuts.keys.indexOf(key)
-    return index === -1 ? null : noteRange.first + index
-  }
-
-  useEventListener(globalThis.window, 'keydown', (e) => {
-    if (e.repeat) return
-    const note = shortcutNote(e.key)
-    if (note !== null) instanceRef.current?.noteOn(note, { source: 'keyboard' })
-  })
-
-  useEventListener(globalThis.window, 'keyup', (e) => {
-    const note = shortcutNote(e.key)
-    if (note !== null)
-      instanceRef.current?.noteOff(note, { source: 'keyboard' })
-  })
-
-  useImperativeHandle(
+      glissando = true,
+      midiMax = 127,
+      keyboardShortcuts,
+      fill = false,
+      whiteKeyWidth = 40,
+      keyGap = 1,
+      blackKeyWidthRatio = 0.65,
+      blackKeyHeightRatio = 0.6,
+      height = fill ? '100%' : 160,
+      style,
+      className,
+      label,
+      keyProps,
+      onPlayNote,
+      onStopNote,
+      ...props
+    },
     forwardedRef,
-    () => ({
-      playNote: (note, velocity) =>
-        instanceRef.current?.noteOn(note, { source: 'api', velocity }),
-      stopNote: (note) => instanceRef.current?.noteOff(note, { source: 'api' }),
-    }),
-    [],
-  )
+  ) {
+    // See useDrag for why the node is held in state rather than a ref: an inline
+    // ref would be re-attached on every render and tear the instance down.
+    const [node, setNode] = useState<HTMLDivElement | null>(null)
+    const [activeNotes, setActiveNotes] = useState<number[]>([])
+    /** Set while `fill` is on, measured from the parent. */
+    const [filledKeyWidth, setFilledKeyWidth] = useState(whiteKeyWidth)
 
-  return (
-    <div
-      ref={setNode}
-      className={clsx('tremolo-piano', className)}
-      style={{
-        width: fill ? '100%' : pianoWidth(layout),
-        height,
-        ...style,
-      }}
-      {...props}
-    >
-      {notes.map((note, index) => {
-        const keyType = isWhiteKey(note) ? 'white' : 'black'
-        const state: KeyState = {
-          index,
-          keyType,
-          active: activeNotes.includes(note),
-          disabled: note > midiMax,
-        }
+    const notes = useMemo(() => getNoteRangeArray(noteRange), [noteRange])
+    const whiteKeyCount = useMemo(
+      () => notes.filter(isWhiteKey).length,
+      [notes],
+    )
 
-        const {
-          className: keyClassName,
-          style: keyStyle,
-          ...rest
-        } = keyProps?.(note, state) ?? {}
+    const layout: PianoLayout = useMemo(
+      () => ({
+        noteRange,
+        whiteKeyWidth: fill ? filledKeyWidth : whiteKeyWidth,
+        keyGap,
+        blackKeyWidthRatio,
+        blackKeyHeightRatio,
+      }),
+      [
+        noteRange,
+        fill,
+        filledKeyWidth,
+        whiteKeyWidth,
+        keyGap,
+        blackKeyWidthRatio,
+        blackKeyHeightRatio,
+      ],
+    )
 
-        const content = label?.(note, state)
+    // Read when the instance is created. The effect below keeps it current, and
+    // runs right after, so a stale handler is replaced within the same commit.
+    const latest = useRef({
+      layout,
+      glissando,
+      midiMax,
+      onPlayNote,
+      onStopNote,
+    })
+    const instanceRef = useRef<PianoInputInstance | null>(null)
 
-        return (
-          <div
-            key={note}
-            className={clsx(`tremolo-piano-${keyType}-key`, keyClassName)}
-            data-note={note}
-            data-note-key={noteKey(note)}
-            data-active={state.active}
-            aria-disabled={state.disabled}
-            {...rest}
-            style={{
-              ...keyStyle,
-              left: notePosition(note, layout),
-              width:
-                keyType === 'white'
-                  ? layout.whiteKeyWidth
-                  : blackKeyWidth(layout),
-              height:
-                keyType === 'white' ? '100%' : `${blackKeyHeightRatio * 100}%`,
-            }}
-          >
-            {content !== '' && content !== null && content !== undefined && (
-              <div className="tremolo-piano-key-label-wrapper">
-                <div className="tremolo-piano-key-label">{content}</div>
-              </div>
-            )}
-          </div>
-        )
-      })}
-    </div>
-  )
-})
+    useEffect(() => {
+      if (!node) return
+
+      const instance = createPianoInput(node, {
+        layout: latest.current.layout,
+        glissando: latest.current.glissando,
+        midiMax: latest.current.midiMax,
+        onPlayNote: (note, velocity) =>
+          latest.current.onPlayNote?.(note, velocity),
+        onStopNote: (note) => latest.current.onStopNote?.(note),
+        onActiveNotesChange: setActiveNotes,
+      })
+      instanceRef.current = instance
+
+      return () => {
+        instanceRef.current = null
+        instance.destroy()
+      }
+      // Only the element decides how the instance is wired. Everything else is
+      // pushed with update() below, so that changing the layout mid-drag — the
+      // parent being resized under `fill`, say — does not abort the drag.
+    }, [node])
+
+    // Runs after every render.
+    useEffect(() => {
+      latest.current = { layout, glissando, midiMax, onPlayNote, onStopNote }
+      instanceRef.current?.update({ layout, glissando, midiMax })
+    })
+
+    useEffect(() => {
+      if (!fill || !node) return
+      const parent = node.parentElement
+      if (!parent) throw new Error("doesn't have a parent element.")
+
+      const resizeObserver = new ResizeObserver(() => {
+        setFilledKeyWidth(node.clientWidth / whiteKeyCount - keyGap)
+      })
+      resizeObserver.observe(parent)
+      return () => resizeObserver.disconnect()
+    }, [fill, node, whiteKeyCount, keyGap])
+
+    /** The note a shortcut key plays, or null when it has none. */
+    function shortcutNote(key: string) {
+      if (!keyboardShortcuts || key === '') return null
+      const index = keyboardShortcuts.keys.indexOf(key)
+      return index === -1 ? null : noteRange.first + index
+    }
+
+    useEventListener(globalThis.window, 'keydown', (e) => {
+      if (e.repeat) return
+      const note = shortcutNote(e.key)
+      if (note !== null)
+        instanceRef.current?.noteOn(note, { source: 'keyboard' })
+    })
+
+    useEventListener(globalThis.window, 'keyup', (e) => {
+      const note = shortcutNote(e.key)
+      if (note !== null)
+        instanceRef.current?.noteOff(note, { source: 'keyboard' })
+    })
+
+    useImperativeHandle(
+      forwardedRef,
+      () => ({
+        playNote: (note, velocity) =>
+          instanceRef.current?.noteOn(note, { source: 'api', velocity }),
+        stopNote: (note) =>
+          instanceRef.current?.noteOff(note, { source: 'api' }),
+      }),
+      [],
+    )
+
+    return (
+      <div
+        ref={setNode}
+        className={cx('tremolo-piano', className)}
+        style={{
+          width: fill ? '100%' : pianoWidth(layout),
+          height,
+          ...style,
+        }}
+        {...props}
+      >
+        {notes.map((note, index) => {
+          const keyType = isWhiteKey(note) ? 'white' : 'black'
+          const state: KeyState = {
+            index,
+            keyType,
+            active: activeNotes.includes(note),
+            disabled: note > midiMax,
+          }
+
+          const {
+            className: keyClassName,
+            style: keyStyle,
+            ...rest
+          } = keyProps?.(note, state) ?? {}
+
+          const content = label?.(note, state)
+
+          return (
+            <div
+              key={note}
+              className={cx(`tremolo-piano-${keyType}-key`, keyClassName)}
+              data-note={note}
+              data-note-key={noteKey(note)}
+              data-active={state.active}
+              aria-disabled={state.disabled}
+              {...rest}
+              style={{
+                ...keyStyle,
+                left: notePosition(note, layout),
+                width:
+                  keyType === 'white'
+                    ? layout.whiteKeyWidth
+                    : blackKeyWidth(layout),
+                height:
+                  keyType === 'white'
+                    ? '100%'
+                    : `${blackKeyHeightRatio * 100}%`,
+              }}
+            >
+              {content !== '' && content !== null && content !== undefined && (
+                <div className="tremolo-piano-key-label-wrapper">
+                  <div className="tremolo-piano-key-label">{content}</div>
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    )
+  },
+)
 
 /**
  * Customizable piano component.

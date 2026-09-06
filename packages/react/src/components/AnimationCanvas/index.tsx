@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import {
   ComponentPropsWithoutRef,
   ReactElement,
@@ -12,6 +11,8 @@ import {
   type AnimationCanvasInstance,
   type AnimationFrame,
 } from '@tremolo-ui/dom'
+
+import { cx } from '../_util/cx'
 
 export type InitFunction = (
   context: CanvasRenderingContext2D,
@@ -162,7 +163,7 @@ export function AnimationCanvas({
 
   return (
     <canvas
-      className={clsx('tremolo-animation-canvas', className)}
+      className={cx('tremolo-animation-canvas', className)}
       ref={setNode}
       onContextMenu={onContextMenu}
       {...props}
