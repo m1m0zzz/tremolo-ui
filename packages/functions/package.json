@@ -8,7 +8,8 @@
   "module": "dist/index.js",
   "types": "dist/index.d.cts",
   "scripts": {
-    "test": "jest",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "build:package": "tsc && tsdown",
     "watch:package": "tsdown --watch",

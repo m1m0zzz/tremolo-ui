@@ -33,7 +33,7 @@ function Subject({
 
 describe('useComposedRefs', () => {
   test('attaches once and survives re-renders', () => {
-    const onAttach = jest.fn()
+    const onAttach = vi.fn()
     const { getByTestId, rerender } = render(<Subject onAttach={onAttach} />)
 
     expect(onAttach).toHaveBeenCalledTimes(1)
@@ -55,7 +55,7 @@ describe('useComposedRefs', () => {
   })
 
   test('detaches on unmount', () => {
-    const onAttach = jest.fn()
+    const onAttach = vi.fn()
     const { unmount } = render(<Subject onAttach={onAttach} />)
     unmount()
     expect(onAttach).toHaveBeenLastCalledWith(null)

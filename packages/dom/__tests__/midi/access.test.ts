@@ -79,7 +79,7 @@ describe('createMIDIAccess', () => {
     const { access } = fakeAccess(a)
     mockRequestMIDIAccess(() => Promise.resolve(access))
     const instance = createMIDIAccess()
-    const listener = jest.fn()
+    const listener = vi.fn()
     instance.subscribe(listener)
 
     instance.request()
@@ -94,7 +94,7 @@ describe('createMIDIAccess', () => {
   })
 
   test('sysex is off unless asked for', async () => {
-    const request = jest.fn(() => Promise.resolve(fakeAccess().access))
+    const request = vi.fn(() => Promise.resolve(fakeAccess().access))
     mockRequestMIDIAccess(request)
 
     createMIDIAccess().request()
@@ -111,7 +111,7 @@ describe('createMIDIAccess', () => {
     instance.request()
     await Promise.resolve()
 
-    const listener = jest.fn()
+    const listener = vi.fn()
     instance.subscribe(listener)
     const later = input('later')
     harness.connect(later)
@@ -159,7 +159,7 @@ describe('createMIDIAccess', () => {
   test('unsubscribe stops notifications', () => {
     mockRequestMIDIAccess(undefined)
     const instance = createMIDIAccess()
-    const listener = jest.fn()
+    const listener = vi.fn()
     const unsubscribe = instance.subscribe(listener)
 
     unsubscribe()
@@ -171,7 +171,7 @@ describe('createMIDIAccess', () => {
   test('destroy stops request from changing the state', async () => {
     mockRequestMIDIAccess(() => Promise.resolve(fakeAccess().access))
     const instance = createMIDIAccess()
-    const listener = jest.fn()
+    const listener = vi.fn()
     instance.subscribe(listener)
 
     instance.destroy()

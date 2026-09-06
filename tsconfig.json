@@ -12,7 +12,12 @@
 
     /* Language and Environment */
     "target": "ES2016",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-    "lib": ["ESNext", "DOM"],                                        /* Specify a set of bundled library declaration files that describe the target runtime environment. */
+    /* DOM.Iterable is what makes a NodeList spreadable and gives MIDIInputMap
+       its values(). Until now it arrived by accident, through the @types/jsdom
+       that jest-environment-jsdom pulled in — every @types package under
+       node_modules is loaded when "types" is unset, and that one references the
+       lib. vitest brings jsdom without the types, so it is asked for here. */
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],            /* Specify a set of bundled library declaration files that describe the target runtime environment. */
     // "jsx": "react-jsx",                                /* Specify what JSX code is generated. */
     // "experimentalDecorators": true,                   /* Enable experimental support for legacy experimental decorators. */
     // "emitDecoratorMetadata": true,                    /* Emit design-type metadata for decorated declarations in source files. */

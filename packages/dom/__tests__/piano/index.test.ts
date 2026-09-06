@@ -27,9 +27,9 @@ function setup(options: Partial<Parameters<typeof createPianoInput>[1]> = {}) {
   element.getBoundingClientRect = () =>
     ({ left: 0, top: 0, width: 14 * slot, height }) as DOMRect
 
-  const onPlayNote = jest.fn()
-  const onStopNote = jest.fn()
-  const onActiveNotesChange = jest.fn()
+  const onPlayNote = vi.fn()
+  const onStopNote = vi.fn()
+  const onActiveNotesChange = vi.fn()
 
   const instance = createPianoInput(element, {
     layout,

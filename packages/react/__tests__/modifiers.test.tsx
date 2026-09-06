@@ -41,7 +41,7 @@ const slider = () => screen.getByRole('slider')
 
 describe('shift as the fine-adjustment key', () => {
   test('is bound on the keyboard by default', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     render(<SliderSubject onChange={onChange} />)
 
     fireEvent.keyDown(slider(), { key: 'ArrowUp', shiftKey: true })
@@ -50,7 +50,7 @@ describe('shift as the fine-adjustment key', () => {
   })
 
   test('a plain press still moves by one step', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     render(<SliderSubject onChange={onChange} />)
 
     fireEvent.keyDown(slider(), { key: 'ArrowUp' })
@@ -59,7 +59,7 @@ describe('shift as the fine-adjustment key', () => {
   })
 
   test('a plain press brings an off-grid value back to the grid', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     render(<SliderSubject initial={5} onChange={onChange} />)
 
     fireEvent.keyDown(slider(), { key: 'ArrowUp', shiftKey: true })
@@ -70,7 +70,7 @@ describe('shift as the fine-adjustment key', () => {
   })
 
   test('is not bound on the wheel, where the browser takes shift', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     const { container } = render(<SliderSubject onChange={onChange} />)
 
     // The wheel listener sits on the root and only acts while the focus is
@@ -86,7 +86,7 @@ describe('shift as the fine-adjustment key', () => {
   })
 
   test('a caller can rebind it, or turn it off', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     render(
       <SliderSubject
         keyboard={{ default: ['raw', 1], alt: ['raw', 0.5] }}
@@ -103,7 +103,7 @@ describe('shift as the fine-adjustment key', () => {
   })
 
   test('a bare tuple opts out of modifiers entirely', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     render(<SliderSubject keyboard={['raw', 1]} onChange={onChange} />)
 
     fireEvent.keyDown(slider(), { key: 'ArrowUp', shiftKey: true })
@@ -114,7 +114,7 @@ describe('shift as the fine-adjustment key', () => {
 
 describe('the same default reaches the other components', () => {
   test('Knob', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     const Subject = () => {
       const [value, setValue] = useState(5)
       return (
@@ -178,7 +178,7 @@ describe('the wheel on a two-dimensional control', () => {
   test('shift moves x, and the direction still follows the scroll', () => {
     // Browsers empty deltaY and fill deltaX for shift+wheel. Reading deltaY
     // alone left the direction stuck at +1, so shift could only ever raise x.
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     const { container } = render(<XYSubject onChange={onChange} />)
 
     fire(container, { deltaX: 1, deltaY: 0, shiftKey: true })
@@ -189,7 +189,7 @@ describe('the wheel on a two-dimensional control', () => {
   })
 
   test('a horizontal gesture moves x without any modifier', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     const { container } = render(<XYSubject onChange={onChange} />)
 
     fire(container, { deltaX: 1, deltaY: 0 })
@@ -198,7 +198,7 @@ describe('the wheel on a two-dimensional control', () => {
   })
 
   test('a vertical wheel still moves y', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     const { container } = render(<XYSubject onChange={onChange} />)
 
     fire(container, { deltaX: 0, deltaY: 1 })
@@ -264,7 +264,7 @@ describe('shift while dragging a Knob', () => {
   }
 
   test('a plain drag covers the whole range in 100px', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     const { container } = render(<KnobSubject onChange={onChange} />)
     const knob = container.querySelector('.tremolo-knob')!
 
@@ -275,7 +275,7 @@ describe('shift while dragging a Knob', () => {
   })
 
   test('shift makes the same movement count a tenth', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     const { container } = render(<KnobSubject onChange={onChange} />)
     const knob = container.querySelector('.tremolo-knob')!
 
@@ -289,7 +289,7 @@ describe('shift while dragging a Knob', () => {
   })
 
   test('pressing shift mid-drag does not move the value', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     const { container } = render(<KnobSubject onChange={onChange} />)
     const knob = container.querySelector('.tremolo-knob')!
 
@@ -344,7 +344,7 @@ describe('shift while dragging a Slider', () => {
 
   /** jsdom lays nothing out, so the track is given a rect of 100px. */
   function setup(props?: Partial<React.ComponentProps<typeof Slider.Root>>) {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     const { container } = render(
       <SliderSubject initial={0} max={100} onChange={onChange} {...props} />,
     )
@@ -461,7 +461,7 @@ describe('shift while dragging a NumberInput Stepper', () => {
   function setup(
     props?: Partial<React.ComponentProps<typeof NumberInput.Root>>,
   ) {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     const { container } = render(<Subject onChange={onChange} {...props} />)
     return {
       onChange,

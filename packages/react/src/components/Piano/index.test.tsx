@@ -31,8 +31,8 @@ function pointerEvent(
 }
 
 function setup(props: Partial<PianoProps> = {}) {
-  const onPlayNote = jest.fn()
-  const onStopNote = jest.fn()
+  const onPlayNote = vi.fn()
+  const onStopNote = vi.fn()
   const ref = createRef<PianoMethods>()
 
   const { container } = render(

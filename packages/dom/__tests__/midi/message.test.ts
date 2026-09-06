@@ -1,8 +1,10 @@
 import { createMIDIMessage } from '../../src/midi/message'
 
+import type { Mock } from 'vitest'
+
 type FakeInput = {
-  addEventListener: jest.Mock
-  removeEventListener: jest.Mock
+  addEventListener: Mock
+  removeEventListener: Mock
   /** Dispatches to whatever `midimessage` listener is attached. */
   send: (event: unknown) => void
 }
@@ -10,14 +12,12 @@ type FakeInput = {
 function fakeInput(): FakeInput {
   const listeners = new Set<(event: unknown) => void>()
   return {
-    addEventListener: jest.fn((type: string, fn: (event: unknown) => void) => {
+    addEventListener: vi.fn((type: string, fn: (event: unknown) => void) => {
       if (type === 'midimessage') listeners.add(fn)
     }),
-    removeEventListener: jest.fn(
-      (type: string, fn: (event: unknown) => void) => {
-        if (type === 'midimessage') listeners.delete(fn)
-      },
-    ),
+    removeEventListener: vi.fn((type: string, fn: (event: unknown) => void) => {
+      if (type === 'midimessage') listeners.delete(fn)
+    }),
     send: (event) => {
       for (const listener of [...listeners]) listener(event)
     },
@@ -57,7 +57,7 @@ describe('createMIDIMessage', () => {
     const b = fakeInput()
     const { access } = fakeAccess(a, b)
 
-    const instance = createMIDIMessage(access, jest.fn())
+    const instance = createMIDIMessage(access, vi.fn())
 
     expect(a.addEventListener).toHaveBeenCalledWith(
       'midimessage',
@@ -84,7 +84,7 @@ describe('createMIDIMessage', () => {
     const a = fakeInput()
     const later = fakeInput()
     const harness = fakeAccess(a)
-    const onMIDIMessage = jest.fn()
+    const onMIDIMessage = vi.fn()
 
     createMIDIMessage(harness.access, onMIDIMessage)
     harness.connect(later)
@@ -97,7 +97,7 @@ describe('createMIDIMessage', () => {
     const a = fakeInput()
     const harness = fakeAccess(a)
 
-    createMIDIMessage(harness.access, jest.fn())
+    createMIDIMessage(harness.access, vi.fn())
     harness.connect(fakeInput())
     harness.connect(fakeInput())
 
@@ -108,7 +108,7 @@ describe('createMIDIMessage', () => {
     const a = fakeInput()
     const harness = fakeAccess(a)
 
-    createMIDIMessage(harness.access, jest.fn())
+    createMIDIMessage(harness.access, vi.fn())
     harness.disconnect('0')
 
     expect(a.removeEventListener).toHaveBeenCalledWith(
@@ -119,7 +119,7 @@ describe('createMIDIMessage', () => {
 
   test('destroy stops following the device list', () => {
     const harness = fakeAccess(fakeInput())
-    const instance = createMIDIMessage(harness.access, jest.fn())
+    const instance = createMIDIMessage(harness.access, vi.fn())
 
     instance.destroy()
 
@@ -129,8 +129,8 @@ describe('createMIDIMessage', () => {
   test('update swaps the handler without touching the listeners', () => {
     const a = fakeInput()
     const harness = fakeAccess(a)
-    const first = jest.fn()
-    const second = jest.fn()
+    const first = vi.fn()
+    const second = vi.fn()
 
     const instance = createMIDIMessage(harness.access, first)
     instance.update(second)
@@ -142,8 +142,8 @@ describe('createMIDIMessage', () => {
   })
 
   test('a null access is a no-op', () => {
-    const instance = createMIDIMessage(null, jest.fn())
-    expect(() => instance.update(jest.fn())).not.toThrow()
+    const instance = createMIDIMessage(null, vi.fn())
+    expect(() => instance.update(vi.fn())).not.toThrow()
     expect(() => instance.destroy()).not.toThrow()
   })
 })

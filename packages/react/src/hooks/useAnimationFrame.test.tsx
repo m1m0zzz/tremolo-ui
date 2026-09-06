@@ -36,7 +36,7 @@ function Host({ callback, dep }: { callback: () => void; dep?: number }) {
 
 describe('useAnimationFrame', () => {
   test('keeps requesting the next frame', () => {
-    const callback = jest.fn()
+    const callback = vi.fn()
     render(<Host callback={callback} />)
 
     act(() => flush())
@@ -49,7 +49,7 @@ describe('useAnimationFrame', () => {
   })
 
   test('cancels the pending frame on unmount', () => {
-    const callback = jest.fn()
+    const callback = vi.fn()
     const { unmount } = render(<Host callback={callback} />)
 
     act(() => flush())
@@ -61,8 +61,8 @@ describe('useAnimationFrame', () => {
   })
 
   test('a dependency change swaps the callback without doubling the loop', () => {
-    const first = jest.fn()
-    const second = jest.fn()
+    const first = vi.fn()
+    const second = vi.fn()
 
     const { rerender } = render(<Host callback={first} dep={0} />)
     act(() => flush())

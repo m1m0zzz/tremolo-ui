@@ -10,9 +10,9 @@ function stubCanvas() {
     let context = contexts.get(this)
     if (!context) {
       context = {
-        setTransform: jest.fn(),
-        scale: jest.fn(),
-        drawImage: jest.fn(),
+        setTransform: vi.fn(),
+        scale: vi.fn(),
+        drawImage: vi.fn(),
       } as unknown as CanvasRenderingContext2D
       contexts.set(this, context)
     }
@@ -53,7 +53,7 @@ describe('AnimationCanvas', () => {
     // canvas down and restarted the loop, resetting the frame count and
     // running init again.
     const counts: number[] = []
-    const init = jest.fn()
+    const init = vi.fn()
 
     function Host() {
       const [, setTick] = useState(0)
@@ -154,7 +154,7 @@ describe('AnimationCanvas', () => {
   })
 
   test('an inline options object does not rebuild the canvas', () => {
-    const init = jest.fn()
+    const init = vi.fn()
 
     function Host() {
       const [, setTick] = useState(0)
@@ -181,7 +181,7 @@ describe('AnimationCanvas', () => {
   })
 
   test('unmounting cancels the loop', () => {
-    const draw = jest.fn()
+    const draw = vi.fn()
     const { unmount } = render(
       <AnimationCanvas width={10} height={10} draw={draw} />,
     )

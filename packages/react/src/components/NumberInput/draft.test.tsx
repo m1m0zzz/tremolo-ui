@@ -47,7 +47,7 @@ describe('the editing draft', () => {
   })
 
   test('leaves the typed text alone instead of reformatting it', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     render(<Subject initial={1234} {...hz1} onChange={onChange} />)
 
     fireEvent.change(input(), { target: { value: '15' } })
@@ -67,7 +67,7 @@ describe('the editing draft', () => {
   })
 
   test('typing is not clamped, so a long value can be entered digit by digit', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     render(<Subject initial={0} min={0} max={100} onChange={onChange} />)
 
     fireEvent.change(input(), { target: { value: '1' } })
@@ -79,7 +79,7 @@ describe('the editing draft', () => {
   })
 
   test('blur commits, clamps and reformats', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     render(
       <Subject initial={0} min={0} max={100} {...hz} onChange={onChange} />,
     )
@@ -92,7 +92,7 @@ describe('the editing draft', () => {
   })
 
   test('Enter commits without waiting for blur', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     render(<Subject initial={0} min={0} max={100} onChange={onChange} />)
 
     fireEvent.change(input(), { target: { value: '150' } })
@@ -103,7 +103,7 @@ describe('the editing draft', () => {
   })
 
   test('clampValue={false} keeps a value outside the range', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     render(
       <Subject
         initial={0}
@@ -123,7 +123,7 @@ describe('the editing draft', () => {
   })
 
   test('text with no number in it leaves the value alone', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     render(<Subject initial={5} onChange={onChange} />)
 
     fireEvent.change(input(), { target: { value: 'abc' } })
@@ -135,7 +135,7 @@ describe('the editing draft', () => {
   })
 
   test('clearing the input and leaving restores what was there', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     render(<Subject initial={5} onChange={onChange} />)
 
     fireEvent.change(input(), { target: { value: '' } })
@@ -189,7 +189,7 @@ describe('value changes', () => {
   })
 
   test('readonly blocks every path', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     render(
       <Subject initial={5} min={0} max={10} readonly onChange={onChange} />,
     )

@@ -7,10 +7,12 @@ import { NumberInput } from '../../src/components/NumberInput'
 import { Slider } from '../../src/components/Slider'
 import { XYPad } from '../../src/components/XYPad'
 
-let warn: jest.SpyInstance
+import type { MockInstance } from 'vitest'
+
+let warn: MockInstance
 
 beforeEach(() => {
-  warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+  warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
 })
 
 afterEach(() => {

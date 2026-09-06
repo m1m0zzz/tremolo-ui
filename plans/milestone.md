@@ -100,7 +100,13 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 いずれも「可能であれば」。**移行そのものが目的ではないので、詰まったら現状維持でよい。**
 
-- [ ] **jest → vitest。** 現在は ts-jest preset + jsdom。ESM の扱いと速度が動機。`@tremolo-ui/*` の workspace 解決と `jsdom` 環境の指定が移行時の焦点
+- [x] **jest → vitest。** `packages/*/vitest.config.ts` に `globals: true` と `environment` だけを置いた。`testMatch` の指定は不要（vitest の既定の `include` が `*.test.*` のみを拾うので、`__tests__` のヘルパーを掴まない）。`@tremolo-ui/*` の解決は vite が workspace の symlink 越しに `dist` を見るだけで、設定は要らなかった
+  - `functions` は `environment: 'node'`。DOM を一切触らないので jsdom を作る必要がない
+  - jest / ts-jest / jest-environment-jsdom / `@types/jest` が消えて **`node_modules` のパッケージが 2252 → 1908（-344）**
+  - **速くはならなかった。** 全 502 件のルートからの実測で jest 6.4s / vitest 6.6s。実利は速度ではなく、ts-jest の transform 設定が消えること・ESM をそのまま扱えること・Storybook と同じ vite の設定を共有できること・watch がある（`test:watch`）ことの 4 つ
+  - `react` は所要 4.3s のうち **63% が jsdom の生成**（1 ファイルにつき 1 つ、27 回）。vitest は `isolate: false` を勧めてくるが、**入れると 1 件落ちる**（`<body>` のインラインスタイルなど、ファイルをまたいで残るグローバルがある）ので既定のまま
+  - `@types/jest` を落とすと `jest.Mock` / `jest.SpyInstance` の代わりが要る。`vi.fn` / `vi.spyOn` はグローバルだが型はグローバルではないので、`import type { Mock, MockInstance } from 'vitest'` を 8 ファイルに足した
+  - **`jest-environment-jsdom` が連れてきていた `@types/jsdom` が `DOM.Iterable` を有効にしていた。** 外すと `tsc` が落ちるので、ルートの `tsconfig.json` の `lib` に明示した
 - [ ] **eslint / prettier → oxlint / oxfmt。** `import/order` を今と同じ規則で表現できるかが最大の争点（グループごとにアルファベット順、`@tremolo-ui/**` を external 扱い、CSS の import は最後）。husky + lint-staged の呼び出しも差し替えになる
 
 ## 1.0 の基準

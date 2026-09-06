@@ -36,22 +36,22 @@ function setup(handlers: MIDIInputHandlers) {
 
 describe('createMIDIInput', () => {
   test('note on', () => {
-    const onNoteOnEvent = jest.fn()
+    const onNoteOnEvent = vi.fn()
     const { send } = setup({ onNoteOnEvent })
     send(0x90, 60, 100)
     expect(onNoteOnEvent).toHaveBeenCalledWith(60, 100, 0)
   })
 
   test('note off', () => {
-    const onNoteOffEvent = jest.fn()
+    const onNoteOffEvent = vi.fn()
     const { send } = setup({ onNoteOffEvent })
     send(0x80, 60, 0)
     expect(onNoteOffEvent).toHaveBeenCalledWith(60, 0)
   })
 
   test('note on with velocity 0 is treated as note off', () => {
-    const onNoteOnEvent = jest.fn()
-    const onNoteOffEvent = jest.fn()
+    const onNoteOnEvent = vi.fn()
+    const onNoteOffEvent = vi.fn()
     const { send } = setup({ onNoteOnEvent, onNoteOffEvent })
     send(0x90, 60, 0)
     expect(onNoteOffEvent).toHaveBeenCalledWith(60, 0)
@@ -59,7 +59,7 @@ describe('createMIDIInput', () => {
   })
 
   test('the channel nibble is reported, not discarded', () => {
-    const onNoteOnEvent = jest.fn()
+    const onNoteOnEvent = vi.fn()
     const { send } = setup({ onNoteOnEvent })
     send(0x9f, 60, 100)
     // 0x9f is note on, channel 16 as printed on hardware.
@@ -67,7 +67,7 @@ describe('createMIDIInput', () => {
   })
 
   test('pitch bend is one 14-bit value, low byte first', () => {
-    const onPitchBendEvent = jest.fn()
+    const onPitchBendEvent = vi.fn()
     const { send } = setup({ onPitchBendEvent })
 
     // The wheel at rest.
@@ -86,28 +86,28 @@ describe('createMIDIInput', () => {
   })
 
   test('control change', () => {
-    const onControlChangeEvent = jest.fn()
+    const onControlChangeEvent = vi.fn()
     const { send } = setup({ onControlChangeEvent })
     send(0xb2, 7, 100)
     expect(onControlChangeEvent).toHaveBeenCalledWith(7, 100, 2)
   })
 
   test('program change carries one data byte', () => {
-    const onProgramChangeEvent = jest.fn()
+    const onProgramChangeEvent = vi.fn()
     const { send } = setup({ onProgramChangeEvent })
     send(0xc0, 42)
     expect(onProgramChangeEvent).toHaveBeenCalledWith(42, 0)
   })
 
   test('polyphonic aftertouch', () => {
-    const onAftertouchEvent = jest.fn()
+    const onAftertouchEvent = vi.fn()
     const { send } = setup({ onAftertouchEvent })
     send(0xa0, 60, 80)
     expect(onAftertouchEvent).toHaveBeenCalledWith(60, 80, 0)
   })
 
   test('channel pressure', () => {
-    const onChannelPressureEvent = jest.fn()
+    const onChannelPressureEvent = vi.fn()
     const { send } = setup({ onChannelPressureEvent })
     send(0xd0, 90)
     expect(onChannelPressureEvent).toHaveBeenCalledWith(90, 0)
@@ -115,13 +115,13 @@ describe('createMIDIInput', () => {
 
   test('system messages carry no channel and are left alone', () => {
     const handlers = {
-      onNoteOnEvent: jest.fn(),
-      onNoteOffEvent: jest.fn(),
-      onControlChangeEvent: jest.fn(),
-      onProgramChangeEvent: jest.fn(),
-      onChannelPressureEvent: jest.fn(),
-      onPitchBendEvent: jest.fn(),
-      onAftertouchEvent: jest.fn(),
+      onNoteOnEvent: vi.fn(),
+      onNoteOffEvent: vi.fn(),
+      onControlChangeEvent: vi.fn(),
+      onProgramChangeEvent: vi.fn(),
+      onChannelPressureEvent: vi.fn(),
+      onPitchBendEvent: vi.fn(),
+      onAftertouchEvent: vi.fn(),
     }
     const { send } = setup(handlers)
 
@@ -135,15 +135,15 @@ describe('createMIDIInput', () => {
   })
 
   test('an empty message is ignored', () => {
-    const onNoteOnEvent = jest.fn()
+    const onNoteOnEvent = vi.fn()
     const { send } = setup({ onNoteOnEvent })
     expect(() => send()).not.toThrow()
     expect(onNoteOnEvent).not.toHaveBeenCalled()
   })
 
   test('update replaces the handlers', () => {
-    const first = jest.fn()
-    const second = jest.fn()
+    const first = vi.fn()
+    const second = vi.fn()
     const { instance, send } = setup({ onNoteOnEvent: first })
 
     instance.update({ onNoteOnEvent: second })
@@ -154,7 +154,7 @@ describe('createMIDIInput', () => {
   })
 
   test('a null access is a no-op', () => {
-    const instance = createMIDIInput(null, { onNoteOnEvent: jest.fn() })
+    const instance = createMIDIInput(null, { onNoteOnEvent: vi.fn() })
     expect(() => instance.destroy()).not.toThrow()
   })
 })

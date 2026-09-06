@@ -68,7 +68,7 @@ describe('unformatOnFocus', () => {
   })
 
   test('taking focus and leaving again commits nothing', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     render(
       <Subject
         initial={1230}
@@ -86,7 +86,7 @@ describe('unformatOnFocus', () => {
 
   test('a rounded display does not become the value', () => {
     // 1.6 shows as '2Hz'. Editing that text used to commit 2.
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     render(
       <Subject
         initial={1.6}
