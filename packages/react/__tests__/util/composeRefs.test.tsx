@@ -15,7 +15,10 @@ function Subject({
 }) {
   const [, setTick] = useState(0)
   const objectRef = useRef<HTMLDivElement>(null)
-  const callbackRef = useCallback(onAttach, [onAttach])
+  const callbackRef = useCallback(
+    (node: HTMLDivElement | null) => onAttach(node),
+    [onAttach],
+  )
 
   const ref = useComposedRefs<HTMLDivElement>(objectRef, callbackRef)
 

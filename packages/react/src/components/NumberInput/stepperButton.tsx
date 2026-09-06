@@ -1,10 +1,5 @@
 import clsx from 'clsx'
-import {
-  ComponentPropsWithoutRef,
-  CSSProperties,
-  ReactNode,
-  useCallback,
-} from 'react'
+import { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react'
 
 import { useLongPress } from '../../hooks/useLongPress'
 
@@ -41,14 +36,15 @@ export function StepperButton({
   const { step, readonly, atMin, atMax, nudge } = useNumberInputContext()
   const stepper = useStepperContext()
 
-  const press = useLongPress(
-    useCallback(() => {
-      // Once the pointer has actually travelled, the drag on `Stepper` owns the
-      // value; repeating on top of it would move it twice.
-      if (stepper?.draggingRef.current) return
-      nudge(direction, ['raw', step])
-    }, [stepper, nudge, direction, step]),
-  )
+  // Not memoized: the callback reads `draggingRef.current`, which the compiler
+  // cannot line up with a manual dependency list. `useLongPress` only ever
+  // calls it through a ref, so a fresh identity per render costs nothing.
+  const press = useLongPress(() => {
+    // Once the pointer has actually travelled, the drag on `Stepper` owns the
+    // value; repeating on top of it would move it twice.
+    if (stepper?.draggingRef.current) return
+    nudge(direction, ['raw', step])
+  })
 
   return (
     // eslint-disable-next-line jsx-a11y/role-supports-aria-props
