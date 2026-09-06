@@ -9,6 +9,7 @@ export function pointerEvent(
     screenY?: number
     clientX?: number
     clientY?: number
+    shiftKey?: boolean
   } = {},
 ) {
   const { pointerId = 1, ...coords } = init

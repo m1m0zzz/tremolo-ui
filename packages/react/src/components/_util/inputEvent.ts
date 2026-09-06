@@ -1,4 +1,4 @@
-import type { InputEventOptions } from '@tremolo-ui/functions'
+import type { InputEventOptions, ModifierValue } from '@tremolo-ui/functions'
 
 /**
  * The keyboard amount every component starts with: one `step` per press, and
@@ -25,3 +25,14 @@ export const DEFAULT_KEYBOARD_OPTIONS: InputEventOptions = {
  * modifier on the wheel can still name one.
  */
 export const DEFAULT_WHEEL_OPTIONS: InputEventOptions = ['raw', 1]
+
+/**
+ * How much a drag counts, per modifier. `1` is the normal travel; `0.1` makes
+ * the same movement cover a tenth of the range.
+ *
+ * Shift is bound to match the arrow keys, where it also moves a tenth.
+ */
+export const DEFAULT_DRAG_SENSITIVITY: ModifierValue<number> = {
+  default: 1,
+  shift: 0.1,
+}

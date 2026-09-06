@@ -169,6 +169,63 @@ describe('relativeMapping', () => {
     expect(lastValue(onChange)[0]).toBeCloseTo(70)
   })
 
+  test('sensitivity scales the travel, read on every move', () => {
+    const { element, onChange } = setup({
+      mapping: relativeMapping({
+        sensitivity: (state) => (state.event.shiftKey ? 0.1 : 1),
+      }),
+      getValue: () => [0, 0],
+      axis: { min: 0, max: 100 },
+    })
+
+    // Held before the pointer goes down, so it applies from the first pixel.
+    element.dispatchEvent(
+      pointerEvent('pointerdown', { screenX: 0, screenY: 0, shiftKey: true }),
+    )
+    element.dispatchEvent(
+      pointerEvent('pointermove', { screenX: 50, shiftKey: true }),
+    )
+
+    // 50px of a 100px range, at a tenth: 5 rather than 50.
+    expect(lastValue(onChange)[0]).toBeCloseTo(5)
+  })
+
+  test('a change of sensitivity mid-drag does not move the value', () => {
+    const { element, onChange } = setup({
+      mapping: relativeMapping({
+        sensitivity: (state) => (state.event.shiftKey ? 0.1 : 1),
+      }),
+      getValue: () => [0, 0],
+      axis: { min: 0, max: 100 },
+    })
+
+    element.dispatchEvent(
+      pointerEvent('pointerdown', { screenX: 0, screenY: 0 }),
+    )
+    element.dispatchEvent(pointerEvent('pointermove', { screenX: 30 }))
+    expect(lastValue(onChange)[0]).toBeCloseTo(30)
+
+    // Shift goes down without the pointer moving. Rescaling the whole travel
+    // would drop the value to 3; the travel so far has to be kept.
+    element.dispatchEvent(
+      pointerEvent('pointermove', { screenX: 30, shiftKey: true }),
+    )
+    expect(lastValue(onChange)[0]).toBeCloseTo(30)
+
+    // From here the same movement counts a tenth.
+    element.dispatchEvent(
+      pointerEvent('pointermove', { screenX: 40, shiftKey: true }),
+    )
+    expect(lastValue(onChange)[0]).toBeCloseTo(31)
+
+    // And releasing it goes back to normal, again without a jump.
+    element.dispatchEvent(pointerEvent('pointermove', { screenX: 40 }))
+    expect(lastValue(onChange)[0]).toBeCloseTo(31)
+
+    element.dispatchEvent(pointerEvent('pointermove', { screenX: 50 }))
+    expect(lastValue(onChange)[0]).toBeCloseTo(41)
+  })
+
   test('scales the travel with pixelRange', () => {
     const { element, onChange } = setup({
       mapping: relativeMapping({ pixelRange: [200, 50] }),

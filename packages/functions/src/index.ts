@@ -54,9 +54,12 @@ export {
   type InputEventOption,
   type InputEventOptions,
   type Modifier,
+  type ModifierMap,
   type ModifierState,
+  type ModifierValue,
   type SelectedInputEvent,
   selectInputEvent,
+  selectModifier,
 } from './types'
 export {
   type SIPrefix,

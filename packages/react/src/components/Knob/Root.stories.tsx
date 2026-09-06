@@ -46,6 +46,40 @@ export const Basic: Story = {
   },
 }
 
+/**
+ * Holding shift makes a drag count a tenth as much, so the value can be placed
+ * exactly. Pressing or releasing it partway through does not disturb the
+ * value: the travel so far is kept and the new sensitivity applies from the
+ * next movement.
+ *
+ * Shift does the same on the arrow keys. `dragSensitivity` rebinds it.
+ */
+export const FineAdjustment: Story = {
+  args: {
+    min: 0,
+    max: 100,
+    step: 0.01,
+    size: 50,
+  },
+  render: (args) => {
+    const [value, setValue] = useState(50)
+
+    return (
+      <>
+        <Knob.Root {...args} value={value} onChange={(v) => setValue(v)}>
+          <Knob.SVGRoot>
+            <Knob.InactiveLine />
+            <Knob.ActiveLine />
+            <Knob.Thumb />
+          </Knob.SVGRoot>
+        </Knob.Root>
+        <p>value: {value.toFixed(2)}</p>
+        <p>Drag with and without shift, and try pressing it mid-drag.</p>
+      </>
+    )
+  },
+}
+
 export const Logarithmic: Story = {
   args: {
     min: 20,

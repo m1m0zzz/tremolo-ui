@@ -1464,15 +1464,26 @@ const shown = unformatOnFocus && focused && !editing ? String(value) : text
 
 `__stories__/styles/PointsEditor.module.css` は `PointsEditor.stories.tsx` 専用になったが、「story 用のスタイルは `__stories__/styles/` に残す」に従って置いたままなので、import が `../../../__stories__/styles/...` になっている。**`styles/Slider.module.css` の方は `combined/VolumeFader` が使っている**ので残るのが正しく、1 ファイルだけ移すかどうかは別途。
 
-### 5.18 ドラッグの修飾キー — 5.11 から分離
+### 5.18 ドラッグの修飾キー — Knob は **完了**
 
-5.11 の「なぜドラッグを分けたか」を参照。wheel / keyboard は完了し、ドラッグだけが残っている。
+5.11 の「なぜドラッグを分けたか」を参照。**`relativeMapping` を使う Knob だけ対応した。** `elementMapping` の 3 つが残っている。
 
-- [ ] **Slider / XYPad / PointsEditor をどうするか決める。** `elementMapping` のままでは微調整が表現できない。修飾キーを押している間だけ相対マッピングに切り替えるのか、それとも 2 次元・絶対追従のコントロールでは微調整を諦めるのか
-- [ ] **`mapping` を差し替えられるようにするか決める。** 現在は `createDragValue` のインスタンス生存期間で固定で、`update()` が明示的に無視している。切り替えるならこの前提を崩すことになる
-- [ ] **`relativeMapping` の origin 取り直し。** 感度が変わった時点で新しいドラッグが始まったことにしないと値が飛ぶ。これは切り替え方式を問わず必要
-- [ ] **ドラッグ中に押した/離したときの反映。** ポインタが動かない限り `pointermove` は来ないので、押した瞬間には反映されない。`keydown` / `keyup` も見るか、次の移動から効けばよしとするか
-- [ ] **どの層に置くか。** ドラッグは `@tremolo-ui/dom` が値を計算しているので、Vue / Svelte のためにもコアが正しい。`DragValueOptions` に `sensitivity?: (state: DragState) => number` を足すのが最小だが、上記の origin 取り直しと組み合わせる必要がある。`DragState.event` に `PointerEvent` が入っているので修飾キーは dom 側でも読める
+- [x] **`relativeMapping` に `sensitivity` を足した。** `(state: DragState) => number` を毎 move 読む。`1` が `pixelRange` そのまま、`0.1` で同じ移動が範囲の 10 分の 1 を覆う
+- [x] **origin の取り直し。** 感度が変わった時点で、それまでの travel を origin に畳み込んで測り直す。畳み込まないと新しい感度が drag 全体に掛かり、キーを押した瞬間に値が飛ぶ
+- [x] **押した/離したときの反映。** キー単体では pointer イベントが出ないので、変化に気づけるのは次の move。**その move の移動分は新しい感度で数える**（origin の畳み込みを 1 つ前のイベント位置に遡らせる）。押したまま掴んだ場合は `start` でも `sensitivity` を読むので 1px 目から効く
+- [x] Knob に `dragSensitivity` を足した。既定は `{ default: 1, shift: 0.1 }` で、arrow キーの shift と揃えてある
+- [ ] **Slider / XYPad / PointsEditor。** `elementMapping` はポインタ位置がそのまま値なので、感度を掛けるのでは足りず絶対マッピングから相対への切り替えになる。`mapping` は `createDragValue` のインスタンス生存期間で固定（`update()` が明示的に無視）なので、そこから崩す必要がある
+- [ ] **NumberInput の Stepper。** `drag`（1 step あたりのピクセル）を持つので `relativeMapping` と同じ形に乗せられるはずだが、未確認
+
+#### 誤差について
+
+`relativeMapping` は「anchor からの絶対距離」で位置を出しており、イベントごとの差分を足し込まない。**anchor が動くのは感度が変わったときだけ**（1 ドラッグに数回）なので、5.19 の蓄積誤差はここには乗らない。
+
+#### `selectModifier` を一般化した
+
+5.11 で入れた `selectInputEvent` は `InputEventOption` 専用だったが、ドラッグの感度は数値なので同じ解決規則を使い回せるように `selectModifier<T>` を切り出した。`selectInputEvent` はその薄いラッパー。解決順（`meta → ctrl → alt → shift`）が 1 箇所になる。
+
+あわせて、値の有無の判定を truthy から `!== undefined` に変えた。`T` が数値のとき **`0` が正当な設定**なので、truthy 判定では飛ばされてしまう。
 
 ### 5.19 二進浮動小数の誤差に方針が無い
 
