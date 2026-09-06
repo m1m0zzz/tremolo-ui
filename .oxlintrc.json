@@ -1,0 +1,118 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  // typescript / unicorn / oxc are on by default; the rest replace the eslint
+  // plugins the flat config used to load.
+  "plugins": [
+    "typescript",
+    "unicorn",
+    "oxc",
+    "import",
+    "jsx-a11y",
+    "react",
+    "vitest"
+  ],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    // Loose equality hides intent: `x == null` meaning "null or undefined"
+    // reads the same as `key == 'Enter'`, where both sides are strings and
+    // nothing is being coerced. Say which one is meant.
+    "eqeqeq": ["error", "always"],
+    // oxlint has one rule for both JS and TS, so there is no
+    // `typescript/no-unused-vars` to configure separately.
+    "no-unused-vars": [
+      "error",
+      {
+        "args": "all",
+        "argsIgnorePattern": "^_",
+        "caughtErrors": "all",
+        "caughtErrorsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }
+    ],
+    "react/exhaustive-deps": "error",
+    // https://github.com/facebook/react/issues/31687
+    "react/rules-of-hooks": "off",
+    // This library is headless: `role="slider"` on a div is the point, since
+    // an `<input type="range">` cannot carry the parts a caller composes.
+    "jsx-a11y/prefer-tag-over-role": "off",
+    // Every remaining spread here is deliberate. Two shapes of it:
+    // `for (const x of [...set])` iterates a copy because the body deletes
+    // from the set, and `style={{ ...{ '--color': color }, ...style }}` is how
+    // a custom property gets past the excess property check on CSSProperties.
+    "unicorn/no-useless-spread": "off",
+    // Resolution is TypeScript's job here, and it already runs over the same
+    // files (`npm run typecheck`).
+    // Typing every `vi.fn()` would be 108 call sites, and the handler types
+    // they stand in for are already checked where the mock is passed in.
+    "vitest/require-mock-type-parameters": "off",
+    "import/named": "off",
+    "import/no-named-as-default": "off"
+  },
+  "overrides": [
+    {
+      // Stories and tests are not shipped components. They reach outside
+      // render on purpose — to observe what a ref received, or to drive a Web
+      // Audio node from a handler — which is exactly what these three rules
+      // are there to stop in a component. The eslint config did the same by
+      // ignoring `**/*.stories.tsx` in the react-hooks block.
+      "files": ["**/*.stories.tsx", "**/*.test.ts", "**/*.test.tsx"],
+      "rules": {
+        "react/refs": "off",
+        "react/globals": "off",
+        "react/immutability": "off",
+        "react/exhaustive-deps": "off"
+      }
+    },
+    {
+      // eslint-plugin-storybook の代わり。`flat/recommended` の 11 ルールの
+      // うち oxlint で表現できるのはこの 3 つだけ（`no-renderer-packages` /
+      // `use-storybook-testing-library` / `use-storybook-expect`）。
+      //
+      // renderer（`@storybook/react`）ではなく framework（`@storybook/react-vite`）
+      // から import する、というのが効く方。Vue / Svelte を足すと
+      // `@storybook/vue3` と `@storybook/vue3-vite` を取り違える余地が実際に
+      // 生まれる。glob は前方一致ではないので `@storybook/react-vite` は通る。
+      "files": ["**/*.stories.ts", "**/*.stories.tsx"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "@storybook/react",
+                  "@storybook/vue3",
+                  "@storybook/svelte",
+                  "@storybook/html",
+                  "@storybook/preact",
+                  "@storybook/web-components",
+                  "@storybook/server"
+                ],
+                "message": "Import the framework package (@storybook/react-vite and the like), not the renderer."
+              },
+              {
+                "group": ["@testing-library/*"],
+                "message": "A story runs in the browser: use storybook/test."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "**/build",
+    "**/dist",
+    "**/storybook-static",
+    "**/.docusaurus",
+    "**/*.cache",
+    "**/*.config.*",
+    "site/docs/api",
+    "site/examples",
+    "site/src/theme"
+  ]
+}

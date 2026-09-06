@@ -38,9 +38,7 @@ describe('unit', () => {
   })
 
   test('stepValue()', () => {
-    expect(() => {
-      expect(stepValue(3.14, 0))
-    }).toThrow(RangeError)
+    expect(() => stepValue(3.14, 0)).toThrow(RangeError)
     expect(stepValue(3.14, 1)).toBe(3)
     expect(stepValue(3.14, 10)).toBe(0)
     expect(stepValue(3.14, 0.1)).toBe(3.1)

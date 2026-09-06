@@ -57,7 +57,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 - [ ] ローカル publish には npm へのログインが必要（普段の publish は CI の OIDC 経由なので、ローカルの authToken が失効していることがある。scoped パッケージでは未認証でも 401 ではなく E404 が返るため `npm whoami` で切り分ける）
 - [ ] `.changeset/config.json` の `fixed` は `[["@tremolo-ui/*"]]` のグロブなので**変更不要**
-- [ ] `packages/<name>/LICENSE` を置く場合、`.prettierignore` に `LICENSE` があること（追加済み）
+- [ ] `packages/<name>/LICENSE` を置く場合、`.oxfmtrc.json` の `ignorePatterns` に `LICENSE` があること（`.prettierignore` から移行済み。oxfmt は知らない拡張子を黙って飛ばすので、prettier のときのように pre-commit が落ちることは無いはず）
 - [ ] Vercel の Storybook プロジェクトのビルドコマンドは `npm run build:sb`（全ワークスペースをビルドしてから Storybook をビルドする）であること
 - [x] CSS の配布方法は決着した。**パッケージは CSS を配らない**ので、各パッケージで重複させるかという問題自体が無くなった（core-extraction-plan.md 5.1）。デモのテーマは `site/src/css/tremolo/` にあり、Vue / Svelte を足してもクラス名と状態属性さえ揃っていれば同じものが使える
 
@@ -107,7 +107,20 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - `react` は所要 4.3s のうち **63% が jsdom の生成**（1 ファイルにつき 1 つ、27 回）。vitest は `isolate: false` を勧めてくるが、**入れると 1 件落ちる**（`<body>` のインラインスタイルなど、ファイルをまたいで残るグローバルがある）ので既定のまま
   - `@types/jest` を落とすと `jest.Mock` / `jest.SpyInstance` の代わりが要る。`vi.fn` / `vi.spyOn` はグローバルだが型はグローバルではないので、`import type { Mock, MockInstance } from 'vitest'` を 8 ファイルに足した
   - **`jest-environment-jsdom` が連れてきていた `@types/jsdom` が `DOM.Iterable` を有効にしていた。** 外すと `tsc` が落ちるので、ルートの `tsconfig.json` の `lib` に明示した
-- [ ] **eslint / prettier → oxlint / oxfmt。** `import/order` を今と同じ規則で表現できるかが最大の争点（グループごとにアルファベット順、`@tremolo-ui/**` を external 扱い、CSS の import は最後）。husky + lint-staged の呼び出しも差し替えになる
+- [x] **eslint / prettier → oxlint / oxfmt。** `.oxlintrc.json` と `.oxfmtrc.json` の 2 つになり（devDependency も oxlint / oxfmt の 2 つ）、`eslint.config.js` / `.prettierrc.json` / `.prettierignore` と devDependency 10 個（eslint 本体 + プラグイン 5 + typescript-eslint + prettier + 型 2）が消えた。**lint が 9.2s → 0.33s、format は 2.5s → 15ms**（リポジトリ全体、手元での実測）。`node_modules` のパッケージは 1908 → 1774（-134）で、vitest 分と合わせて main から **-478**
+  - **争点だった `import/order` は oxlint に無い。** 代わりに **oxfmt の `sortImports`** が持つ（eslint-plugin-perfectionist と同じアルゴリズム）。`@tremolo-ui/**` は `customGroups` で external の直後に置き、`type` と `style` を最後にすれば今までと同じ並びになる。`packages/*/src` で動いたのは、CSS module の import が最後に来ていなかった `PointsEditor.stories.tsx` の 1 ファイルだけ（eslint は見落としていた）。あとは eslint が `ignores` に入れていた `site/examples` と `site/src/theme`
+  - **`partitionByComment: true` が要る。** 既定では import の間のコメントを越えて並べ替えるので、`site/examples/*` の `// expand begin` / `// expand end`（ドキュメントの折りたたみ範囲）の外に import が飛び出す。`.storybook/preview.tsx` の CSS の塊も同じ理由で崩れた
+  - `--migrate=prettier` で `.prettierrc.json` と `.prettierignore` をそのまま移せる。**整形結果の非互換はリポジトリ全体で 2 ファイルだけ**で、どちらも union 型の改行（`A | B | C` を先頭 `|` で縦に割る）
+  - **`eslint-plugin-storybook` に相当するものは oxlint に無い。** 実際に `flat/recommended` を全 21 story + `main.ts` に当てて（warn の 3 つも error に上げて）測ったところ**指摘は 0 件**で、内訳は以下
+    - **3 つは `no-restricted-imports` で取り戻した。** `no-renderer-packages` / `use-storybook-testing-library` / `use-storybook-expect`。glob は前方一致ではないので `@storybook/react` は落ちて `@storybook/react-vite` は通る。**Vue / Svelte を足すと `@storybook/vue3` と `@storybook/vue3-vite` を取り違える余地が実際に生まれる**ので、ここが実質の本命
+    - **1 つは最初から適用されていなかった。** `no-uninstalled-addons` は `files` が `.storybook/main.@(js|cjs|mjs|ts)` とルート直下にアンカーされていて、`packages/react/.storybook/main.ts` にマッチしない。`**/` を足すと存在しないアドオン名をちゃんと error で捕まえるので、**モノレポでは黙って無効になるルール**。失ったのではなく元から無かった
+    - **2 つは不発。** `await-interactions` / `context-in-play-function` は **play 関数が 1 つも無い**ので判定対象が存在しない（取り戻した 3 つのうち storybook/test 系の 2 つも、今は同じ理由で不発）
+    - **代替が無いのは残り 5 つ。** `default-exports` / `story-exports` / `hierarchy-separator` / `no-redundant-story-name` / `prefer-pascal-case` で、いずれも CSF の書き方の統一
+    - 代わりに vitest プラグインが入り、`test.only` の消し忘れなどを見るようになった
+  - oxlint 固有の指摘は 23 件。実バグが 1 件（`expect(() => { expect(...) })` と入れ子になっていて内側に matcher が無い）、残りは `unicorn/no-useless-spread` と React Compiler 系の 3 ルールで、いずれも意図的な書き方だったので設定で切った
+  - **oxlint は `eslint-disable` コメントも読む**が、名前空間が違う（`@typescript-eslint/x` → `typescript/x`）ので `oxlint-disable` に書き換えた。書き換えないと、後でそのルールを有効にしたときに黙って効かなくなる
+  - **lint-staged には `--no-error-on-unmatched-pattern` が要る。** oxlint も oxfmt も、渡されたパスが全て ignore に当たると「対象が無い」で非ゼロ終了する（oxlint 1 / oxfmt 2）。`.md` だけのコミットが pre-commit で落ちるので、両方に付ける
+  - ついでに CI に `lint` と `format:check` を足した。**今まで CI は lint を一度も回していなかった**（pre-commit の lint-staged だけ）。import の並び順が formatter 側に移ったので、`format:check` まで無いと同じところを見ていることにならない
 
 ## 1.0 の基準
 

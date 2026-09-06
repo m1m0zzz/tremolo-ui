@@ -7,7 +7,9 @@ export const UNAVAILABLE = 'UNAVAILABLE'
 
 /** @private */
 export type MIDIAccessError =
-  typeof PERMISSION_DENIED | typeof NOT_SUPPORTED | typeof UNAVAILABLE
+  | typeof PERMISSION_DENIED
+  | typeof NOT_SUPPORTED
+  | typeof UNAVAILABLE
 
 export type MIDIAccessOptions = {
   /**

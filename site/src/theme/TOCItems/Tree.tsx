@@ -1,8 +1,8 @@
-import React, { type ReactNode } from 'react'
 import Link from '@docusaurus/Link'
-import type { Props } from '@theme/TOCItems/Tree'
-
 import { regex, resolveOptions, toUrl } from '@site/src/rehype/twemoji'
+import React, { type ReactNode } from 'react'
+
+import type { Props } from '@theme/TOCItems/Tree'
 
 // Recursive component rendering the toc tree
 function TOCItemTree({

@@ -1,5 +1,6 @@
 // expand begin
 import { useState } from 'react'
+
 import { AnimationCanvas, Slider } from '@tremolo-ui/react'
 
 // expand end

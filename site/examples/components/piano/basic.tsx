@@ -1,7 +1,8 @@
 // expand begin
+import * as Tone from 'tone'
+
 import { noteName, noteNumber } from '@tremolo-ui/functions'
 import { Piano, SHORTCUTS } from '@tremolo-ui/react'
-import * as Tone from 'tone'
 
 // expand end
 

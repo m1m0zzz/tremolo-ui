@@ -258,11 +258,11 @@ export function Point<T extends PointBaseType>({
   return (
     // The point is a drag handle rather than a control of a known kind: it has
     // no single value to announce, so there is no role that fits it.
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+    // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
       ref={refCallback}
       className={cx('tremolo-points-editor-point', className)}
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
       tabIndex={0}
       aria-disabled={disabled}
       aria-readonly={readonly}
