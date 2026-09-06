@@ -9,6 +9,8 @@ export function pointerEvent(
     screenY?: number
     clientX?: number
     clientY?: number
+    movementX?: number
+    movementY?: number
     shiftKey?: boolean
   } = {},
 ) {
@@ -32,4 +34,38 @@ export function withPointerCapture(element: Element) {
     hasPointerCapture: (id: number) => captured.has(id),
   })
   return captured
+}
+
+/**
+ * jsdom has no Pointer Lock API, so it is faked: the element takes the lock
+ * when asked and gives it back on exit, firing `pointerlockchange` both ways
+ * as a browser would.
+ *
+ * @returns how many times the lock was asked for, and a way to drop it from
+ * outside the drag — Esc, a tab switch, leaving fullscreen.
+ */
+export function withPointerLock(element: Element) {
+  const state = { requests: 0 }
+
+  const set = (value: Element | null) => {
+    Object.defineProperty(document, 'pointerLockElement', {
+      value,
+      configurable: true,
+    })
+    document.dispatchEvent(new Event('pointerlockchange'))
+  }
+
+  Object.assign(element, {
+    requestPointerLock: () => {
+      state.requests += 1
+      set(element)
+    },
+  })
+  Object.assign(document, { exitPointerLock: () => set(null) })
+
+  return {
+    state,
+    /** The lock going away without the drag asking, as Esc does. */
+    lose: () => set(null),
+  }
 }

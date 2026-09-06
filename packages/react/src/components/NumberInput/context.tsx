@@ -37,6 +37,8 @@ export type NumberInputContextValue = {
   drag: number | null
   /** How much a `Stepper` drag counts, per modifier key. */
   dragSensitivity: ModifierValue<number>
+  /** Whether a `Stepper` drag hides the pointer and reads its movement. */
+  pointerLock: boolean
 
   /** What the input shows: the draft while editing, the formatted value otherwise. */
   text: string

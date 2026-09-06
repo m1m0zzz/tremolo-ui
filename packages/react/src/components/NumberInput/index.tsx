@@ -116,6 +116,22 @@ export interface NumberInputProps {
   dragSensitivity?: ModifierValue<number>
 
   /**
+   * Hide the cursor while dragging a `Stepper` and read the pointer movement
+   * directly, rather than letting it wander off across the screen.
+   *
+   * The drag is already relative, so the pointer position carries nothing —
+   * but it still runs into the edge of the screen, where the operating system
+   * pins it and the coordinates stop changing.
+   *
+   * Off by default: the browser shows its own notice, Esc takes the lock back,
+   * and the request can be refused. A refused request is not an error, and the
+   * drag carries on as an ordinary one.
+   *
+   * @default false
+   */
+  pointerLock?: boolean
+
+  /**
    * Only the appearance will change.
    * Please consider using with readonly.
    * aria-disabled property is also applied.
@@ -184,6 +200,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
       keyboard = DEFAULT_KEYBOARD_OPTIONS,
       drag = 1,
       dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
+      pointerLock = false,
       disabled = false,
       readonly = false,
       className,
@@ -316,6 +333,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         editing,
         outOfRange,
         dragSensitivity,
+        pointerLock,
         atMin: clampValue && min !== undefined && value <= min,
         atMax: clampValue && max !== undefined && value >= max,
         drag,
@@ -343,6 +361,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         outOfRange,
         drag,
         dragSensitivity,
+        pointerLock,
         format,
         parse,
         handleDraft,

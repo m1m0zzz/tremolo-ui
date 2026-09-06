@@ -57,6 +57,15 @@ export interface UseDragValueOptions {
   threshold?: number
   /** CSS cursor to show while dragging. Applied to the element itself. */
   cursor?: string
+  /**
+   * Hide the pointer and read its movement directly, instead of following it
+   * around the screen. Only with `getValue`: there is no pointer position to
+   * normalize against a `baseElementRef` while the pointer is locked.
+   *
+   * @see DragOptions.pointerLock
+   * @default false
+   */
+  pointerLock?: boolean
 
   onChange?: (value: XY<number>) => void
   onDragStart?: (value: XY<number>) => void
@@ -78,6 +87,7 @@ export function useDragValue<T extends Element>(
     updateOnPointerDown,
     threshold,
     cursor,
+    pointerLock,
   } = options
 
   if (!baseElementRef && !options.getValue) {
@@ -127,6 +137,7 @@ export function useDragValue<T extends Element>(
       updateOnPointerDown: latest.current.updateOnPointerDown,
       threshold: latest.current.threshold,
       cursor: latest.current.cursor,
+      pointerLock: latest.current.pointerLock,
       onChange: (value) => changeHandler(value),
       onDragStart: (value) => {
         setDragging(true)
@@ -163,6 +174,7 @@ export function useDragValue<T extends Element>(
       updateOnPointerDown,
       threshold,
       cursor,
+      pointerLock,
     })
   })
 

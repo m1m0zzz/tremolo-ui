@@ -77,6 +77,30 @@ instead of a whole one.
 <NumberInput.Root dragSensitivity={{ default: 1, shift: 0.1 }} … />
 ```
 
+### `pointerLock` hides the cursor while dragging
+
+`Knob` and `NumberInput.Stepper` take `pointerLock`. With it on, the cursor
+disappears for the length of the drag and the pointer movement is read
+directly.
+
+```jsx
+<Knob.Root pointerLock … />
+```
+
+The reason is not tidiness. A relative drag does not care where the pointer
+is, but it still **stops at the edge of the screen**: the operating system pins
+the pointer there and the coordinates stop changing, so the value stops moving
+however far you keep dragging. A fine drag — shift held, or a low
+`dragSensitivity` — reaches that edge quickly.
+
+It is off by default. The browser shows a notice of its own, Esc takes the lock
+back, and the request can be refused; a refused request is not an error, and
+the drag carries on as an ordinary one. Losing the lock ends the drag, since no
+pointerup is coming.
+
+Not available on `Slider`, `XYPad` or `PointsEditor`: their value is the
+position pointed at, and there is no position while the pointer is locked.
+
 ### Shift and the wheel move `XYPad` and `PointsEditor` both ways
 
 Shift+wheel could only ever raise the x value. The direction came from

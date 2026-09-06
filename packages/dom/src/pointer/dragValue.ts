@@ -240,6 +240,14 @@ export interface DragValueOptions {
   threshold?: number
   /** @see DragOptions.cursor */
   cursor?: string
+  /**
+   * @see DragOptions.pointerLock
+   *
+   * Only for a mapping that moves the value relative to where it stood, such
+   * as {@link relativeMapping}. {@link elementMapping} reads the pointer
+   * position, and there is none while it is locked.
+   */
+  pointerLock?: boolean
 
   onChange?: (value: XY<number>, state: DragState) => void
   onDragStart?: (value: XY<number>, state: DragState) => void
@@ -306,6 +314,7 @@ export function createDragValue(
   const drag = createDrag(element, {
     threshold: opts.threshold,
     cursor: opts.cursor,
+    pointerLock: opts.pointerLock,
     onDragStart: (state) => {
       const position = opts.mapping.start(state, context)
       if (position) {
@@ -328,7 +337,11 @@ export function createDragValue(
   return {
     update: (next) => {
       opts = { ...opts, ...next, mapping: opts.mapping }
-      drag.update({ threshold: opts.threshold, cursor: opts.cursor })
+      drag.update({
+        threshold: opts.threshold,
+        cursor: opts.cursor,
+        pointerLock: opts.pointerLock,
+      })
     },
     destroy: () => drag.destroy(),
   }

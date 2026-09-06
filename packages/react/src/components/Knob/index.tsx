@@ -111,6 +111,25 @@ export interface KnobProps {
   dragSensitivity?: ModifierValue<number>
 
   /**
+   * Hide the cursor while dragging and read the pointer movement directly,
+   * rather than letting it wander off across the screen.
+   *
+   * A knob does not care where the pointer is, only how far it moved, and
+   * letting it wander costs twice: the cursor ends up far from the knob it is
+   * holding, and **the drag stops at the edge of the screen**, where the
+   * operating system pins the pointer and the coordinates stop changing. A
+   * `dragSensitivity` below 1 reaches that edge quickly.
+   *
+   * Off by default because it is not free: the browser shows its own notice,
+   * Esc takes the lock back, and the request needs a user gesture and can be
+   * refused. A refused request is not an error — the drag simply carries on as
+   * an ordinary one.
+   *
+   * @default false
+   */
+  pointerLock?: boolean
+
+  /**
    * How much one arrow key press moves the value.
    *
    * Shift moves a tenth of a step by default. Name a modifier to change that,
@@ -174,6 +193,7 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
       wheel = DEFAULT_WHEEL_OPTIONS,
       keyboard = DEFAULT_KEYBOARD_OPTIONS,
       dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
+      pointerLock = false,
       enableDoubleClickDefault = true,
       disabled = false,
       readonly = false,
@@ -233,6 +253,7 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
         selectModifier(dragSensitivity, state.event).value,
       threshold: 1,
       cursor: readonly ? undefined : externalStyles.cursor,
+      pointerLock: readonly ? false : pointerLock,
       onChange: (v) => {
         if (readonly) return
         onChange?.(v[1])
