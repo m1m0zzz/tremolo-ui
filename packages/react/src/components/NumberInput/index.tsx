@@ -82,7 +82,12 @@ export interface NumberInputProps {
    */
   wheel?: InputEventOptions | null
   /**
-   * keyboard control option
+   * How much one arrow key press moves the value.
+   *
+   * Shift moves a tenth of a step by default. Name a modifier to change that,
+   * or pass a bare `['raw', 1]` to use no modifier at all. A modifier amount
+   * is not snapped to `step`.
+   *
    * If null, no event will be triggered
    */
   keyboard?: InputEventOptions | null

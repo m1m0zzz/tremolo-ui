@@ -62,16 +62,20 @@ export interface PointsEditorProps {
   }
 
   /**
-   * wheel control option for every `Point`. Shift selects the x axis.
+   * wheel control option for every `Point`. Scrolling sideways moves x,
+   * which is what a browser turns shift+wheel into.
    * If null, no event will be triggered
    *
    * A `Point` can override it with a `wheel` of its own.
    */
   wheel?: InputEventOptions | null
   /**
-   * keyboard control option for every `Point`, on the arrow keys.
-   * If null, no event will be triggered
+   * How much one arrow key press moves a `Point`.
    *
+   * Shift moves a tenth of the default amount. Name a modifier to change that,
+   * or pass a bare tuple to use no modifier at all.
+   *
+   * If null, no event will be triggered.
    * A `Point` can override it with a `keyboard` of its own.
    */
   keyboard?: InputEventOptions | null
