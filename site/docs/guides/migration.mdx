@@ -15,6 +15,39 @@ All three packages are released together and always share a version.
 
 ## Unreleased
 
+### `PointsEditor` selects points
+
+Points can be selected, and a selection moves as one.
+
+- a press selects the point it landed on
+- **ctrl or ⌘ adds to the selection** — not shift, which is the
+  fine-adjustment key on every control here and cannot be both
+- a drag on empty space draws a rubber band and selects what it covers; hold
+  ctrl or ⌘ to add to what is already selected
+- dragging or arrow-keying one selected point moves the whole selection
+
+The editor keeps the selection itself unless you take it over with
+`selection` / `onSelectionChange`. Points are named by their `id` prop, or by
+one generated to last as long as the point is mounted.
+
+```jsx
+<PointsEditor.Root selection={selected} onSelectionChange={setSelected}>
+```
+
+A selected point carries `data-selected="true"`, and the rubber band is
+`.tremolo-points-editor-marquee`. Both are in the theme in
+[Styling](/docs/tutorials/styling).
+
+**A drag now moves a point rather than putting it under the pointer.** Grabbing
+a point at its edge used to shift it under the cursor on the first movement;
+it keeps the offset it was grabbed at now, which is what makes moving several
+at once mean anything. `min` and `max` still hold, and a selection stops as a
+whole when any one of its points reaches a limit — clamping each on its own
+would pull the selection out of shape.
+
+Deleting and duplicating are not here: the points are yours, and only you know
+what the array behind them is.
+
 ### Appearance props write custom properties
 
 Every prop that decides what a component looks like now sets a custom property

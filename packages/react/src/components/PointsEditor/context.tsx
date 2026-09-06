@@ -1,8 +1,37 @@
 import { createContext, RefObject, useContext } from 'react'
 
-import type { InputEventOptions, ModifierValue } from '@tremolo-ui/functions'
+import type {
+  InputEventOptions,
+  ModifierState,
+  ModifierValue,
+} from '@tremolo-ui/functions'
 
 import { Cursor } from '../_util'
+
+import type { PointBaseType } from './Point'
+
+/**
+ * What a `Point` tells the editor about itself, so that a selection can be
+ * moved without the editor knowing how the points are stored.
+ *
+ * Held behind a ref and rewritten on every render: the value changes on every
+ * frame of a drag, and a registry keyed on it would be rebuilt just as often.
+ */
+export interface PointRegistration {
+  value: PointBaseType
+  min?: Partial<PointBaseType>
+  max?: Partial<PointBaseType>
+  readonly: boolean
+  onChange?: (value: PointBaseType) => void
+}
+
+/** The rubber band while it is being dragged, in the 0..1 space of a point. */
+export interface Marquee {
+  x: number
+  y: number
+  width: number
+  height: number
+}
 
 export type PointsEditorContextValue = {
   disabled: boolean
@@ -23,6 +52,29 @@ export type PointsEditorContextValue = {
    * against it, so a point is placed by its position within the container.
    */
   containerRef: RefObject<HTMLDivElement | null>
+
+  /** Ids of the points currently selected. */
+  selection: readonly string[]
+  /** Register a point so that a selection can move it with the rest. */
+  registerPoint: (id: string, entry: RefObject<PointRegistration>) => () => void
+  /**
+   * A pointer went down on a point: works out the new selection and takes the
+   * snapshot the move will be measured against.
+   */
+  beginPointDrag: (id: string, modifiers: ModifierState) => void
+  /** Move everything the drag picked up, by one amount, clamped as one. */
+  movePointDrag: (delta: PointBaseType) => void
+  /**
+   * Move the selection by an amount that did not come from a drag — an arrow
+   * key or a wheel notch. The current values are the starting point.
+   */
+  nudgeSelection: (id: string, delta: PointBaseType) => void
+
+  /** The rubber band, while one is being dragged. */
+  marquee: Marquee | null
+  beginMarquee: (at: PointBaseType, modifiers: ModifierState) => void
+  moveMarquee: (to: PointBaseType) => void
+  endMarquee: () => void
 }
 
 const PointsEditorContext =
@@ -31,8 +83,9 @@ const PointsEditorContext =
 export const PointsEditorProvider = PointsEditorContext.Provider
 
 /**
- * The settings `Root` was given, for the subcomponents to read. There is no
- * state to keep in sync: a point's value belongs to the `Point` that draws it.
+ * The settings `Root` was given, for the subcomponents to read. A point's
+ * value still belongs to the `Point` that draws it; what the root keeps is
+ * which points are selected, and a registry of who they are.
  */
 export function usePointsEditorContext(): PointsEditorContextValue
 export function usePointsEditorContext<T>(

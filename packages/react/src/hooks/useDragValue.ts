@@ -66,10 +66,21 @@ export interface UseDragValueOptions {
    * @default false
    */
   pointerLock?: boolean
+  /**
+   * Decide whether a pointerdown starts a drag at all, before the pointer is
+   * captured.
+   *
+   * @see DragOptions.shouldStart
+   */
+  shouldStart?: (event: PointerEvent) => boolean
 
-  onChange?: (value: XY<number>) => void
-  onDragStart?: (value: XY<number>) => void
-  onDragEnd?: (value: XY<number>) => void
+  /**
+   * @param state the whole drag, for anything the value leaves out — the
+   * pointer event and its modifier keys, most of all.
+   */
+  onChange?: (value: XY<number>, state: DragState) => void
+  onDragStart?: (value: XY<number>, state: DragState) => void
+  onDragEnd?: (value: XY<number>, state: DragState) => void
 }
 
 /**
@@ -138,14 +149,15 @@ export function useDragValue<T extends Element>(
       threshold: latest.current.threshold,
       cursor: latest.current.cursor,
       pointerLock: latest.current.pointerLock,
-      onChange: (value) => changeHandler(value),
-      onDragStart: (value) => {
+      shouldStart: (event) => latest.current.shouldStart?.(event) ?? true,
+      onChange: (value, state) => changeHandler(value, state),
+      onDragStart: (value, state) => {
         setDragging(true)
-        dragStartHandler(value)
+        dragStartHandler(value, state)
       },
-      onDragEnd: (value) => {
+      onDragEnd: (value, state) => {
         setDragging(false)
-        dragEndHandler(value)
+        dragEndHandler(value, state)
       },
     })
     instanceRef.current = instance

@@ -248,6 +248,8 @@ export interface DragValueOptions {
    * position, and there is none while it is locked.
    */
   pointerLock?: boolean
+  /** @see DragOptions.shouldStart */
+  shouldStart?: (event: PointerEvent) => boolean
 
   onChange?: (value: XY<number>, state: DragState) => void
   onDragStart?: (value: XY<number>, state: DragState) => void
@@ -315,6 +317,7 @@ export function createDragValue(
     threshold: opts.threshold,
     cursor: opts.cursor,
     pointerLock: opts.pointerLock,
+    shouldStart: (event) => opts.shouldStart?.(event) ?? true,
     onDragStart: (state) => {
       const position = opts.mapping.start(state, context)
       if (position) {

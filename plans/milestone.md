@@ -21,7 +21,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 | Phase 3: `createDragValue` | 完了 |
 | Phase 4: Piano / AnimationCanvas / NumberInput | 完了（NumberInput [4.1](./core-extraction-plan.md) / AnimationCanvas [4.2](./core-extraction-plan.md) / Piano [4.3](./core-extraction-plan.md)） |
 | Phase 5: zustand 除去 | 完了（`zustand` を dependencies から削除済み。`useSyncExternalStore` は使わずに済んだ） |
-| 5 章: CSS ヘッドレス化・修飾キー・単位の扱い など | 5.1 / 5.2（CSS ヘッドレス化）、5.12（Knob が潰れる）、5.14（`format` 一本化）、5.17（テストと story の配置）が完了。5.16（フォーカス時に書式を外す）と 5.11 の wheel / keyboard も完了。5.13（上下キーでキャレット位置を保つ）、5.15（表示桁と `step`）、5.18（ドラッグの修飾キー）、5.19（浮動小数の誤差）、5.20（ドラッグ中のポインタ固定）、5.22（見た目に関わる props）、5.23（`clsx` 除去と tree shaking）も完了。残りは 5.21（PointsEditor の複数選択） |
+| 5 章: CSS ヘッドレス化・修飾キー・単位の扱い など | 5.1 / 5.2（CSS ヘッドレス化）、5.12（Knob が潰れる）、5.14（`format` 一本化）、5.17（テストと story の配置）が完了。5.16（フォーカス時に書式を外す）と 5.11 の wheel / keyboard も完了。5.13（上下キーでキャレット位置を保つ）、5.15（表示桁と `step`）、5.18（ドラッグの修飾キー）、5.19（浮動小数の誤差）、5.20（ドラッグ中のポインタ固定）、5.21（PointsEditor の複数選択）、5.22（見た目に関わる props）、5.23（`clsx` 除去と tree shaking）も完了。**5 章は全て完了。** 残るのは `PointsEditor` のドキュメントページ（5.21）だけ |
 
 着手前に決める必要がある未確定事項（同ドキュメント 2 章）:
 
@@ -69,6 +69,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
   あわせて `packages/dom/src/piano/input.ts` を `piano/index.ts` に改名した（`dom` の公開 API は `exports` が `.` だけなので影響なし）。
 - [x] **CSS のデモを公開する形に作り替えた。** `site/docs/tutorials/styling.mdx` を書き直し、`site/src/css/tremolo/` の 6 ファイルを `raw-loader` で全文タブ表示している。コピー元と、サイト / Storybook が実際に読み込むファイルは同一（core-extraction-plan.md 5.1）
+- [ ] **`PointsEditor` のドキュメントページを書く。** `site/docs/components/` に存在しない唯一のコンポーネント。複数選択（core-extraction-plan.md 5.21）で書くことが増えた
 - [ ] **hooks のドキュメントを充実させる。** 現在 `site/docs/hooks/` には `web-midi-api` しかない。`useDrag` / `useWheel` / `useDragValue` は typedoc の自動生成のみ
 - [ ] **Vue / Svelte を足したときのドキュメント構成を決める。** 現在の `site/docs/components/<Name>/index.mdx` は React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）。フレームワークごとにタブを分けるのか、サイト自体を分けるのか
 - [x] **移行ガイドを書く。** `site/docs/guides/migration.mdx`。新しいものから順に、変更前後のコードを並べて書く。CSS の配布方法変更（5.1）も Unreleased に載せたので、「Still to come」に残っている項目は無い

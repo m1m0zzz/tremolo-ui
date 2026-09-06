@@ -39,6 +39,20 @@ export type DragOptions = {
   cursor?: string
 
   /**
+   * Decide whether a pointerdown starts a drag at all.
+   *
+   * Checked before anything else — **before the pointer is captured** — so
+   * declining here leaves the whole gesture to whatever else is listening.
+   * Deciding later would be too late: the capture has already been taken from
+   * the element that was going to handle it.
+   *
+   * The use for it is a drag on a container that also holds draggable things
+   * of its own, such as a rubber-band selection that must not begin on top of
+   * one of the objects it would select.
+   */
+  shouldStart?: (event: PointerEvent) => boolean
+
+  /**
    * Hide the pointer and read its movement directly, instead of following it
    * around the screen.
    *
@@ -235,6 +249,8 @@ export function createDrag(
     // Without multiPointer only one pointer drives the drag; ignore the rest.
     if (pointers.has(pointerId)) return
     if (!multiPointer && pointers.size > 0) return
+
+    if (opts.shouldStart && !opts.shouldStart(pointerEvent)) return
 
     const isFirst = pointers.size === 0
     if (isFirst && opts.cursor && style) {
