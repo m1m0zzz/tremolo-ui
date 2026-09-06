@@ -13,6 +13,8 @@ import {
   type ResizeObserverControl,
 } from './helpers'
 
+import type { Mock } from 'vitest'
+
 const instances: { destroy: () => void }[] = []
 
 let frames: AnimationFrameControl
@@ -32,8 +34,8 @@ function setup(
   }
   const context = withContext2D(canvas) as FakeContext
 
-  const draw = jest.fn()
-  const init = jest.fn()
+  const draw = vi.fn()
+  const init = vi.fn()
 
   const instance = createAnimationCanvas(canvas, {
     draw,
@@ -46,7 +48,7 @@ function setup(
 }
 
 /** The frame passed to the last call of a draw handler. */
-function lastFrame(draw: jest.Mock): AnimationFrame {
+function lastFrame(draw: Mock): AnimationFrame {
   return draw.mock.calls[draw.mock.calls.length - 1][1]
 }
 
@@ -130,7 +132,7 @@ describe('update', () => {
     frames.flush()
     expect(lastFrame(draw).count).toBe(1)
 
-    const next = jest.fn()
+    const next = vi.fn()
     instance.update({ draw: next })
     frames.flush()
 
@@ -143,7 +145,7 @@ describe('update', () => {
     const { instance, init } = setup()
 
     frames.flush()
-    instance.update({ draw: jest.fn() })
+    instance.update({ draw: vi.fn() })
     frames.flush()
 
     expect(init).toHaveBeenCalledTimes(1)
@@ -155,7 +157,7 @@ describe('update', () => {
     frames.flush()
     const before = lastFrame(draw).elapsedTime
 
-    const next = jest.fn()
+    const next = vi.fn()
     instance.update({ draw: next })
     frames.flush()
 
@@ -226,7 +228,7 @@ describe('animate: false', () => {
 
     expect(draw).toHaveBeenCalledTimes(1)
 
-    const next = jest.fn()
+    const next = vi.fn()
     instance.update({ draw: next })
 
     expect(next).toHaveBeenCalledTimes(1)
@@ -359,7 +361,7 @@ describe('relativeSize', () => {
     withContext2D(canvas)
 
     expect(() =>
-      createAnimationCanvas(canvas, { draw: jest.fn(), relativeSize: true }),
+      createAnimationCanvas(canvas, { draw: vi.fn(), relativeSize: true }),
     ).toThrow(/parent element/)
   })
 })

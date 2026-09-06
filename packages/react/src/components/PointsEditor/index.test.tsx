@@ -3,6 +3,8 @@ import { createRef, useState } from 'react'
 
 import { PointBaseType, PointsEditor, PointProps } from '.'
 
+import type { Mock } from 'vitest'
+
 // jsdom has no PointerEvent and no pointer capture, so both are faked here.
 function pointerEvent(
   type: string,
@@ -74,7 +76,7 @@ function Subject({
 }
 
 /** Two points, to pin down which one an event reaches. */
-function TwoPoints({ onA, onB }: { onA: jest.Mock; onB: jest.Mock }) {
+function TwoPoints({ onA, onB }: { onA: Mock; onB: Mock }) {
   const [a, setA] = useState<PointBaseType>({ x: 0.25, y: 0.5 })
   const [b, setB] = useState<PointBaseType>({ x: 0.75, y: 0.5 })
 
@@ -103,7 +105,7 @@ function TwoPoints({ onA, onB }: { onA: jest.Mock; onB: jest.Mock }) {
 }
 
 function setup(props: SubjectProps = {}) {
-  const onChange = jest.fn()
+  const onChange = vi.fn()
   const { container } = render(<Subject onChange={onChange} {...props} />)
   fakeLayout(container)
   return { container, onChange, point: screen.getByTestId('point') }
@@ -279,8 +281,8 @@ describe('PointsEditor', () => {
   })
 
   test('the wheel moves the focused point, not the one under the cursor', () => {
-    const onA = jest.fn()
-    const onB = jest.fn()
+    const onA = vi.fn()
+    const onB = vi.fn()
     render(<TwoPoints onA={onA} onB={onB} />)
 
     act(() => (screen.getByTestId('a') as HTMLElement).focus())
@@ -291,8 +293,8 @@ describe('PointsEditor', () => {
   })
 
   test('only one point acts, however many are mounted', () => {
-    const onA = jest.fn()
-    const onB = jest.fn()
+    const onA = vi.fn()
+    const onB = vi.fn()
     render(<TwoPoints onA={onA} onB={onB} />)
 
     act(() => (screen.getByTestId('a') as HTMLElement).focus())
@@ -358,7 +360,7 @@ describe('PointsEditor', () => {
 
   test('a subcomponent outside Root says so', () => {
     // The error is expected; keep it out of the test output.
-    const spy = jest.spyOn(console, 'error').mockImplementation(() => {})
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
     expect(() => render(<PointsEditor.Container />)).toThrow(
       'Missing PointsEditorContext.Provider in the tree',

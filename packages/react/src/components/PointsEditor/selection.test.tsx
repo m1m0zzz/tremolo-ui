@@ -150,7 +150,7 @@ describe('selecting points', () => {
   })
 
   test('ctrl on a selected point takes it out again', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     setup({ onChange })
 
     click(point('a'))
@@ -163,7 +163,7 @@ describe('selecting points', () => {
   })
 
   test('the selection is reported, and can be held by the caller', () => {
-    const onSelectionChange = jest.fn()
+    const onSelectionChange = vi.fn()
     setup({ selection: ['c'], onSelectionChange })
 
     // Controlled: the prop decides, and a press only asks.
@@ -178,7 +178,7 @@ describe('selecting points', () => {
 
 describe('moving a selection', () => {
   test('dragging one point moves everything selected by the same amount', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     setup({ onChange })
 
     click(point('a'))
@@ -206,7 +206,7 @@ describe('moving a selection', () => {
   })
 
   test('the whole selection stops when one of them reaches its limit', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     setup({ onChange, limits: { b: { max: { x: 0.5 } } } })
 
     click(point('a'))
@@ -222,7 +222,7 @@ describe('moving a selection', () => {
   })
 
   test('an arrow key moves the selection too', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     setup({ onChange })
 
     click(point('a'))
@@ -293,7 +293,7 @@ describe('with selection turned off', () => {
   })
 
   test('a drag still moves the point it started on', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     setup({ selectable: false, onChange })
 
     press(point('a'))

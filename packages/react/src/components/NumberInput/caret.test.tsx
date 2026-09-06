@@ -157,7 +157,7 @@ describe('keepCaretOnStep', () => {
   })
 
   test('an IME conversion is left to the IME', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     render(
       <Subject
         initial={5}

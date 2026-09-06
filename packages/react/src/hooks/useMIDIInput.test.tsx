@@ -3,23 +3,23 @@ import { useState } from 'react'
 
 import { useMIDIInput } from './useMIDIInput'
 
+import type { Mock } from 'vitest'
+
 type FakeInput = {
-  addEventListener: jest.Mock
-  removeEventListener: jest.Mock
+  addEventListener: Mock
+  removeEventListener: Mock
   send: (data: number[]) => void
 }
 
 function fakeInput(): FakeInput {
   const listeners = new Set<(event: unknown) => void>()
   return {
-    addEventListener: jest.fn((type: string, fn: (event: unknown) => void) => {
+    addEventListener: vi.fn((type: string, fn: (event: unknown) => void) => {
       if (type === 'midimessage') listeners.add(fn)
     }),
-    removeEventListener: jest.fn(
-      (type: string, fn: (event: unknown) => void) => {
-        if (type === 'midimessage') listeners.delete(fn)
-      },
-    ),
+    removeEventListener: vi.fn((type: string, fn: (event: unknown) => void) => {
+      if (type === 'midimessage') listeners.delete(fn)
+    }),
     send: (data) => {
       for (const listener of [...listeners]) {
         listener({ data: new Uint8Array(data) })

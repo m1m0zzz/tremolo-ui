@@ -10,9 +10,9 @@ function setup(options: Parameters<typeof createDrag>[1] = {}) {
   document.body.appendChild(element)
   withPointerCapture(element)
 
-  const onDragStart = jest.fn()
-  const onDrag = jest.fn()
-  const onDragEnd = jest.fn()
+  const onDragStart = vi.fn<(state: DragState) => void>()
+  const onDrag = vi.fn<(state: DragState) => void>()
+  const onDragEnd = vi.fn<(state: DragState) => void>()
 
   const instance = createDrag(element, {
     onDragStart,
@@ -216,7 +216,7 @@ describe('createDrag', () => {
     element.dispatchEvent(
       pointerEvent('pointermove', { screenX: 10, clientX: 13, clientY: 14 }),
     )
-    const s: DragState = onDrag.mock.calls[0][0]
+    const s = onDrag.mock.calls[0][0]
     expect(s.clientX).toBe(13)
     expect(s.clientY).toBe(14)
   })
@@ -321,7 +321,7 @@ describe('createDrag', () => {
   test('falls back to the window when pointer capture is unavailable', () => {
     const element = document.createElement('div')
     document.body.appendChild(element)
-    const onDrag = jest.fn()
+    const onDrag = vi.fn()
     createDrag(element, { onDrag })
 
     element.dispatchEvent(
@@ -355,9 +355,7 @@ describe('createDrag', () => {
       )
 
       // Each total is measured from where that pointer went down.
-      expect(
-        onDrag.mock.calls.map(([s]: [DragState]) => [s.pointerId, s.x]),
-      ).toEqual([
+      expect(onDrag.mock.calls.map(([s]) => [s.pointerId, s.x])).toEqual([
         [1, 10],
         [2, 30],
       ])
@@ -503,7 +501,7 @@ describe('pointer lock', () => {
     )
 
     expect(onDrag).toHaveBeenCalledTimes(2)
-    expect((onDrag.mock.calls[1][0] as DragState).x).toBe(20)
+    expect(onDrag.mock.calls[1][0].x).toBe(20)
   })
 
   test('keeps the travel measured before the lock took effect', () => {
@@ -512,7 +510,7 @@ describe('pointer lock', () => {
 
     element.dispatchEvent(pointerEvent('pointerdown', { screenX: 0 }))
     element.dispatchEvent(pointerEvent('pointermove', { screenX: 30 }))
-    expect((onDrag.mock.calls[0][0] as DragState).x).toBe(30)
+    expect(onDrag.mock.calls[0][0].x).toBe(30)
 
     // Granted only now.
     const lock = withPointerLock(element)
@@ -525,7 +523,7 @@ describe('pointer lock', () => {
     )
 
     // 30 the ordinary way, then 5 of movement: no jump either way.
-    expect((onDrag.mock.calls[1][0] as DragState).x).toBe(35)
+    expect(onDrag.mock.calls[1][0].x).toBe(35)
     expect(lock.state.requests).toBe(1)
   })
 
@@ -542,7 +540,7 @@ describe('pointer lock', () => {
     lock.lose()
 
     expect(onDragEnd).toHaveBeenCalledTimes(1)
-    expect((onDragEnd.mock.calls[0][0] as DragState).x).toBe(10)
+    expect(onDragEnd.mock.calls[0][0].x).toBe(10)
 
     // And the drag really is over.
     element.dispatchEvent(
@@ -569,6 +567,6 @@ describe('pointer lock', () => {
     element.dispatchEvent(pointerEvent('pointerdown', { screenX: 0 }))
     element.dispatchEvent(pointerEvent('pointermove', { screenX: 25 }))
 
-    expect((onDrag.mock.calls[0][0] as DragState).x).toBe(25)
+    expect(onDrag.mock.calls[0][0].x).toBe(25)
   })
 })

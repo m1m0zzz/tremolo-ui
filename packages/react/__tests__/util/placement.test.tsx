@@ -5,14 +5,16 @@ import { PointsEditor } from '../../src/components/PointsEditor'
 import { Slider } from '../../src/components/Slider'
 import { XYPad } from '../../src/components/XYPad'
 
-let warn: jest.SpyInstance
-let error: jest.SpyInstance
+import type { MockInstance } from 'vitest'
+
+let warn: MockInstance
+let error: MockInstance
 
 beforeEach(() => {
-  warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+  warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
   // React complains about `<path>` outside an `<svg>`, which is the very thing
   // the Knob case is about. Kept out of the test output, and asserted on there.
-  error = jest.spyOn(console, 'error').mockImplementation(() => {})
+  error = vi.spyOn(console, 'error').mockImplementation(() => {})
 })
 
 afterEach(() => {

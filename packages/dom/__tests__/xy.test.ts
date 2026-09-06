@@ -3,8 +3,8 @@ import { toXY, type XY, type XYInput } from '../src/xy'
 type Axis = { min: number; max: number }
 
 describe('XYInput', () => {
-  // These only have to compile. jest does not type check, so what holds them
-  // is `npm run typecheck`, which covers __tests__ too.
+  // These only have to compile. vitest does not type check, so what holds
+  // them is `npm run typecheck`, which covers __tests__ too.
   test('takes one value for both axes, or a pair', () => {
     const single: XYInput<number> = 1
     const pair: XYInput<number> = [1, 2]

@@ -137,7 +137,7 @@ describe('useDragValue', () => {
   })
 
   test('keeps tracking across the re-renders each new value causes', () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     const { getByTestId } = render(<Absolute onChange={onChange} />)
     const root = getByTestId('root')
 

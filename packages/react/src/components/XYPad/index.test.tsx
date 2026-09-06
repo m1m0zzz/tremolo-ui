@@ -75,7 +75,7 @@ function Subject({
 }
 
 function setup(props: SubjectProps & { ref?: React.Ref<XYPadMethods> } = {}) {
-  const onChange = jest.fn()
+  const onChange = vi.fn()
   const { container } = render(<Subject onChange={onChange} {...props} />)
   fakeLayout(container)
   return { container, onChange, root: screen.getByTestId('root') }

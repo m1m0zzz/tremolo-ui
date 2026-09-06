@@ -2,11 +2,13 @@
  * jsdom has neither a 2D context nor a ResizeObserver, so both are faked here.
  */
 
+import type { Mock } from 'vitest'
+
 /** The calls a test needs to see; everything else is a no-op spy. */
 export type FakeContext = CanvasRenderingContext2D & {
-  setTransform: jest.Mock
-  scale: jest.Mock
-  drawImage: jest.Mock
+  setTransform: Mock
+  scale: Mock
+  drawImage: Mock
 }
 
 /**
@@ -30,9 +32,9 @@ export function withContext2D(canvas?: HTMLCanvasElement): FakeContext {
 
 function createFakeContext(): FakeContext {
   return {
-    setTransform: jest.fn(),
-    scale: jest.fn(),
-    drawImage: jest.fn(),
+    setTransform: vi.fn(),
+    scale: vi.fn(),
+    drawImage: vi.fn(),
     // The drawing state the resize path copies back and forth.
     strokeStyle: '#000000',
     fillStyle: '#000000',

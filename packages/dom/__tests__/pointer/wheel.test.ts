@@ -15,7 +15,7 @@ describe('createWheel', () => {
   test('forwards wheel events', () => {
     const element = document.createElement('div')
     document.body.appendChild(element)
-    const onWheel = jest.fn()
+    const onWheel = vi.fn()
     createWheel(element, onWheel)
 
     element.dispatchEvent(wheelEvent(120))
@@ -38,7 +38,7 @@ describe('createWheel', () => {
   test('destroy removes the listener', () => {
     const element = document.createElement('div')
     document.body.appendChild(element)
-    const onWheel = jest.fn()
+    const onWheel = vi.fn()
     const instance = createWheel(element, onWheel)
 
     instance.destroy()
@@ -53,7 +53,7 @@ describe('createWheel', () => {
       const child = document.createElement('input')
       element.appendChild(child)
       document.body.appendChild(element)
-      const onWheel = jest.fn()
+      const onWheel = vi.fn()
       const instance = createWheel(element, onWheel, { requireFocus: true })
       return { element, child, onWheel, instance }
     }

@@ -49,7 +49,7 @@ function Subject({ onDrag }: { onDrag: (x: number, y: number) => void }) {
 
 describe('useDrag', () => {
   test('keeps tracking across re-renders caused by an inline ref callback', () => {
-    const onDrag = jest.fn()
+    const onDrag = vi.fn()
     const { getByTestId } = render(<Subject onDrag={onDrag} />)
     const target = getByTestId('target')
 
@@ -71,7 +71,7 @@ describe('useDrag', () => {
   })
 
   test('stops tracking when the element unmounts', () => {
-    const onDrag = jest.fn()
+    const onDrag = vi.fn()
     const { getByTestId, unmount } = render(<Subject onDrag={onDrag} />)
     const target = getByTestId('target')
 

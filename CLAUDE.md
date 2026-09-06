@@ -31,13 +31,16 @@ npm run typecheck -w packages/react
 npm run changeset             # リリースに含める変更に changeset を追加
 ```
 
-単一テストファイルの実行（jest / ts-jest preset / jsdom）:
+単一テストファイルの実行（vitest。`packages/*/vitest.config.ts`）:
 
 ```bash
 npm run test -w packages/functions -- __tests__/math.test.ts
 npm run test -w packages/dom -- __tests__/pointer/drag.test.ts
 npm run test -w packages/react -- src/components/Slider/type.test.ts
+npm run test:watch -w packages/react   # ウォッチ
 ```
+
+**vitest は `globals: true` で走らせている。** `describe` / `test` / `expect` / `vi` を import 無しで使えるようにするためだが、それ以上に **Testing Library の自動 cleanup がグローバルの `afterEach` の有無で自分を仕込むかどうかを決める**ため。型は各パッケージの `vitest.d.ts` が `/// <reference types="vitest/globals" />` で入れている（`compilerOptions.types` に書くと、他の `@types` の自動読み込みが止まる）。
 
 ドキュメントサイト:
 
@@ -75,6 +78,7 @@ Vercel は無料プランでビルド回数の上限があり、**24 時間の r
 - `packages/*/src` にファイルを足す・移すと、`site/docusaurus.config.ts` の typedoc の `entryPoints` が拾って API ページを生成する。Docusaurus は `_` で始まるパスを docs から除外するため、`_util` や `_internal` を `exclude` に入れておかないと「存在しない doc id を指すサイドバー」になってビルドが落ちる
 - パッケージを追加したとき、Vercel の Storybook プロジェクトのビルドコマンドが個別指定だと新しい `dist` が無くて落ちる（`plans/core-extraction-plan.md` Phase 1）
 - **typedoc のサイドバーは 1 つ（`typedocSidebar`）で、Docusaurus の翻訳キーはラベルから作られる。** typedoc はページのラベルにモジュールパスの**最後のセグメントだけ**を使うので、`midi/input.ts` と `piano/input.ts` のように名前が被るとキーが衝突してビルドが落ちる。パッケージをまたいでも起きる（`dom/piano` と `functions/piano`）。`site/sidebars.ts` の `withKeys()` が doc id を `key` に入れて回避しているので、typedoc plugin を足すときは必ずそれを通すこと
+- **`tsconfig.json` の `lib` に `DOM.Iterable` が要る。** `compilerOptions.types` を書いていないので、TypeScript は `node_modules/@types/*` を全て読み込む。`DOM.Iterable`（NodeList の spread、`MIDIInputMap.values()`）は `jest-environment-jsdom` 経由で入っていた `@types/jsdom` がたまたま `/// <reference lib="dom.iterable" />` を持っていたから通っていただけだった。依存を 1 つ外すと `tsc` が落ちる、という形で出る
 
 ## アーキテクチャ
 

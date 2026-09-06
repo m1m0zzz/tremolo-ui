@@ -10,6 +10,7 @@ import {
 import { pointerEvent, withPointerCapture } from './helpers'
 
 import type { XY } from '../../src/xy'
+import type { Mock } from 'vitest'
 
 /** Instances created by setup(), destroyed after each test. */
 const instances: { destroy: () => void }[] = []
@@ -36,9 +37,9 @@ function setup(options: Partial<DragValueOptions> = {}) {
   document.body.appendChild(base)
   withRect(base, { left: 0, top: 0, right: 100, bottom: 100 })
 
-  const onChange = jest.fn()
-  const onDragStart = jest.fn()
-  const onDragEnd = jest.fn()
+  const onChange = vi.fn()
+  const onDragStart = vi.fn()
+  const onDragEnd = vi.fn()
 
   const instance = createDragValue(element, {
     axis: { min: 0, max: 100 },
@@ -55,7 +56,7 @@ function setup(options: Partial<DragValueOptions> = {}) {
 }
 
 /** The value of the last call to a handler. */
-function lastValue(handler: jest.Mock): XY<number> {
+function lastValue(handler: Mock): XY<number> {
   return handler.mock.calls[handler.mock.calls.length - 1][0]
 }
 
