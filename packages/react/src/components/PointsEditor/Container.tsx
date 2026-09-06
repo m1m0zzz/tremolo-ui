@@ -1,6 +1,7 @@
 import { ComponentPropsWithoutRef, ReactNode, Ref } from 'react'
 
 import { useDragValue } from '../../hooks/useDragValue'
+import { addUserSelectNone, removeUserSelectNone } from '../_util'
 import { useComposedRefs } from '../_util/composeRefs'
 import { cx } from '../_util/cx'
 import { Placement } from '../_util/placement'
@@ -23,8 +24,14 @@ export function Container({
   ...props
 }: PointsEditorContainerProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorContainerProps>) {
-  const { containerRef, marquee, beginMarquee, moveMarquee, endMarquee } =
-    usePointsEditorContext()
+  const {
+    containerRef,
+    externalStyles,
+    marquee,
+    beginMarquee,
+    moveMarquee,
+    endMarquee,
+  } = usePointsEditorContext()
 
   const { refCallback: dragRefCallback } = useDragValue<HTMLDivElement>({
     axis: AXIS,
@@ -36,9 +43,17 @@ export function Container({
       !(event.target as Element | null)?.closest?.(
         '.tremolo-points-editor-point',
       ),
-    onDragStart: ([x, y], state) => beginMarquee({ x, y }, state.event),
+    onDragStart: ([x, y], state) => {
+      // The band is dragged over whatever the editor sits next to, so the
+      // page-wide guard applies here as it does to a point.
+      if (externalStyles.userSelectNone) addUserSelectNone()
+      beginMarquee({ x, y }, state.event)
+    },
     onChange: ([x, y]) => moveMarquee({ x, y }),
-    onDragEnd: () => endMarquee(),
+    onDragEnd: () => {
+      if (externalStyles.userSelectNone) removeUserSelectNone()
+      endMarquee()
+    },
   })
 
   // The container is what the pointer position is normalized against, so the

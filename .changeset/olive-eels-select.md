@@ -38,3 +38,9 @@ object that was going to handle it.
 
 `useDragValue`'s handlers receive the `DragState` as a second argument, the
 way `useDrag`'s do.
+
+One thing to know: the rubber band puts a drag on
+`PointsEditor.Container`, and a drag sets `touch-action: none` on what it is
+attached to. **Dragging a finger across the editor no longer scrolls the
+page** — it draws a selection. That was already true over a point; it is now
+true over the whole surface.
