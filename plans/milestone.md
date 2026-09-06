@@ -21,7 +21,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 | Phase 3: `createDragValue` | 完了 |
 | Phase 4: Piano / AnimationCanvas / NumberInput | 完了（NumberInput [4.1](./core-extraction-plan.md) / AnimationCanvas [4.2](./core-extraction-plan.md) / Piano [4.3](./core-extraction-plan.md)） |
 | Phase 5: zustand 除去 | 完了（`zustand` を dependencies から削除済み。`useSyncExternalStore` は使わずに済んだ） |
-| 5 章: CSS ヘッドレス化・修飾キー・単位の扱い など | 5.1 / 5.2（CSS ヘッドレス化）、5.12（Knob が潰れる）、5.14（`format` 一本化）、5.17（テストと story の配置）が完了。5.16（フォーカス時に書式を外す）と 5.11 の wheel / keyboard も完了。5.13（上下キーでキャレット位置を保つ）も完了。残りは 5.15（表示桁と `step`）、5.18（ドラッグの修飾キー。Knob は完了、`elementMapping` の 3 つが残り）、5.19（二進浮動小数の誤差の方針） |
+| 5 章: CSS ヘッドレス化・修飾キー・単位の扱い など | 5.1 / 5.2（CSS ヘッドレス化）、5.12（Knob が潰れる）、5.14（`format` 一本化）、5.17（テストと story の配置）が完了。5.16（フォーカス時に書式を外す）と 5.11 の wheel / keyboard も完了。5.13（上下キーでキャレット位置を保つ）も完了。残りは 5.15（表示桁と `step`）、5.18（ドラッグの修飾キー。Knob は完了、`elementMapping` の 3 つが残り）、5.19（二進浮動小数の誤差の方針）、5.20（ドラッグ中のポインタ固定）、5.21（PointsEditor の複数選択）、5.22（見た目に関わる props）、5.23（`clsx` と tree shaking） |
 
 着手前に決める必要がある未確定事項（同ドキュメント 2 章）:
 
@@ -80,7 +80,27 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 - [x] `site/docs/support/CHANGELOG.md` の二重管理をやめた。中身は「TODO: record from version 1.0.0」のスタブのままだったので、各パッケージの `CHANGELOG.md` と GitHub リリース、移行ガイドへのリンクに置き換えた
 - [x] `format` に一本化するときに、`units` / `digit` を使っている example / story / ドキュメントを全部書き換えた（core-extraction-plan.md 5.14）
+- [ ] **テンプレートをモノレポに移す。** 現在は別リポジトリ（`m1m0zzz/tremolo-ui-example-next-ts` / `m1m0zzz/tremolo-ui-example-vite-react-ts`）にある。破壊的変更のたびに追随を忘れる場所が増えるので、`templates/` としてこのリポジトリに入れ、**ドキュメントでは `degit` などで取り出す形をアナウンスする**（`npx degit m1m0zzz/tremolo-ui/templates/vite-react-ts`）。CI で少なくともビルドは通しておくと、破壊的変更の当たり判定になる
 - [ ] 1.0 時点で `README.md` の「*tremolo-ui is now WIP*」と「An unstable version (0.x) has been released.」を更新する
+
+## 5. 開発基盤とホスティング
+
+**いずれも 1.0 の必須ではない。** リリースを止める理由にはしないが、置き場所としてここに残す。
+
+### デプロイ先を Cloudflare Workers / `mimoz.dev` へ移す
+
+- [ ] `mimoz.dev/tremolo-ui/` にドキュメントサイト、`mimoz.dev/tremolo-ui/i/storybook-react` に Storybook
+- [ ] Vercel はリダイレクトとして残す
+- [ ] preview は Cloudflare Access で保護する
+- [ ] **Vercel のビルド回数制限（24 時間の rate limit）から抜けられるのが実利。** stacked PR で 3 レイヤ同時に上げると 6 デプロイが走って制限に当たり、プレビュー URL が出なくなっていた
+- [ ] サブパス配信になるので、Docusaurus の `baseUrl` と Storybook の base path を確認する。i18n（`/ja/`）との組み合わせも
+
+### ツールチェーンの見直し
+
+いずれも「可能であれば」。**移行そのものが目的ではないので、詰まったら現状維持でよい。**
+
+- [ ] **jest → vitest。** 現在は ts-jest preset + jsdom。ESM の扱いと速度が動機。`@tremolo-ui/*` の workspace 解決と `jsdom` 環境の指定が移行時の焦点
+- [ ] **eslint / prettier → oxlint / oxfmt。** `import/order` を今と同じ規則で表現できるかが最大の争点（グループごとにアルファベット順、`@tremolo-ui/**` を external 扱い、CSS の import は最後）。husky + lint-staged の呼び出しも差し替えになる
 
 ## 1.0 の基準
 
