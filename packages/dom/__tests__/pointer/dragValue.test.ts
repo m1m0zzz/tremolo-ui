@@ -119,6 +119,125 @@ describe('elementMapping', () => {
 
     expect(onChange).not.toHaveBeenCalled()
   })
+
+  test('sensitivity turns it relative, and a plain drag is untouched', () => {
+    const { element, base, onChange } = setup({
+      mapping: elementMapping(() => base, {
+        sensitivity: (state) => (state.event.shiftKey ? 0.1 : 1),
+      }),
+    })
+
+    // No modifier: the value is still the position pointed at.
+    element.dispatchEvent(
+      pointerEvent('pointerdown', { clientX: 20, clientY: 20 }),
+    )
+    element.dispatchEvent(
+      pointerEvent('pointermove', { clientX: 60, clientY: 60, screenX: 40 }),
+    )
+    expect(lastValue(onChange)).toEqual([60, 60])
+  })
+
+  test('sensitivity held from the start applies from the first pixel', () => {
+    const { element, base, onChange } = setup({
+      mapping: elementMapping(() => base, {
+        sensitivity: (state) => (state.event.shiftKey ? 0.1 : 1),
+      }),
+    })
+
+    // The press itself still lands where it was aimed: a click sets the value.
+    element.dispatchEvent(
+      pointerEvent('pointerdown', { clientX: 20, clientY: 20, shiftKey: true }),
+    )
+    element.dispatchEvent(
+      pointerEvent('pointermove', {
+        clientX: 60,
+        clientY: 20,
+        screenX: 40,
+        shiftKey: true,
+      }),
+    )
+
+    // 40% of the element covered at a tenth: 20 + 4.
+    expect(lastValue(onChange)[0]).toBeCloseTo(24)
+  })
+
+  test('a change of sensitivity mid-drag does not move the value', () => {
+    const { element, base, onChange } = setup({
+      mapping: elementMapping(() => base, {
+        sensitivity: (state) => (state.event.shiftKey ? 0.1 : 1),
+      }),
+    })
+
+    element.dispatchEvent(
+      pointerEvent('pointerdown', { clientX: 20, clientY: 20 }),
+    )
+    element.dispatchEvent(
+      pointerEvent('pointermove', { clientX: 50, clientY: 20, screenX: 30 }),
+    )
+    expect(lastValue(onChange)[0]).toBeCloseTo(50)
+
+    // Shift goes down without the pointer moving.
+    element.dispatchEvent(
+      pointerEvent('pointermove', {
+        clientX: 50,
+        clientY: 20,
+        screenX: 30,
+        shiftKey: true,
+      }),
+    )
+    expect(lastValue(onChange)[0]).toBeCloseTo(50)
+
+    // From here the same movement counts a tenth.
+    element.dispatchEvent(
+      pointerEvent('pointermove', {
+        clientX: 60,
+        clientY: 20,
+        screenX: 40,
+        shiftKey: true,
+      }),
+    )
+    expect(lastValue(onChange)[0]).toBeCloseTo(51)
+  })
+
+  test('the pointer and the value stay apart once the key is released', () => {
+    const { element, base, onChange } = setup({
+      mapping: elementMapping(() => base, {
+        sensitivity: (state) => (state.event.shiftKey ? 0.1 : 1),
+      }),
+    })
+
+    element.dispatchEvent(
+      pointerEvent('pointerdown', { clientX: 20, clientY: 20 }),
+    )
+    element.dispatchEvent(
+      pointerEvent('pointermove', {
+        clientX: 20,
+        clientY: 20,
+        shiftKey: true,
+      }),
+    )
+    element.dispatchEvent(
+      pointerEvent('pointermove', {
+        clientX: 60,
+        clientY: 20,
+        screenX: 40,
+        shiftKey: true,
+      }),
+    )
+    expect(lastValue(onChange)[0]).toBeCloseTo(24)
+
+    // Released. Snapping the value back under the pointer would jump it from
+    // 24 to 60, which is a move nobody asked for, so the gap is kept.
+    element.dispatchEvent(
+      pointerEvent('pointermove', { clientX: 60, clientY: 20, screenX: 40 }),
+    )
+    expect(lastValue(onChange)[0]).toBeCloseTo(24)
+
+    element.dispatchEvent(
+      pointerEvent('pointermove', { clientX: 70, clientY: 20, screenX: 50 }),
+    )
+    expect(lastValue(onChange)[0]).toBeCloseTo(34)
+  })
 })
 
 describe('relativeMapping', () => {

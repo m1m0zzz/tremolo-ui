@@ -1513,7 +1513,19 @@ const shown = unformatOnFocus && focused && !editing ? String(value) : text
 - [x] **origin の取り直し。** 感度が変わった時点で、それまでの travel を origin に畳み込んで測り直す。畳み込まないと新しい感度が drag 全体に掛かり、キーを押した瞬間に値が飛ぶ
 - [x] **押した/離したときの反映。** キー単体では pointer イベントが出ないので、変化に気づけるのは次の move。**その move の移動分は新しい感度で数える**（origin の畳み込みを 1 つ前のイベント位置に遡らせる）。押したまま掴んだ場合は `start` でも `sensitivity` を読むので 1px 目から効く
 - [x] Knob に `dragSensitivity` を足した。既定は `{ default: 1, shift: 0.1 }` で、arrow キーの shift と揃えてある
-- [ ] **Slider / XYPad / PointsEditor。** `elementMapping` はポインタ位置がそのまま値なので、感度を掛けるのでは足りず絶対マッピングから相対への切り替えになる。`mapping` は `createDragValue` のインスタンス生存期間で固定（`update()` が明示的に無視）なので、そこから崩す必要がある
+- [x] **Slider / XYPad / PointsEditor。** `elementMapping` にも `sensitivity` を足した。**`mapping` の差し替えは要らなかった。**
+
+  「絶対マッピングから相対への切り替え」を `mapping` の入れ替えでやろうとすると、生存期間で固定という制約に当たる。**切り替えを 1 つの mapping の中に持たせれば済む**（`relativeMapping` と同じ形）。
+
+  ```
+  報告する位置 = origin + (要素内の生の位置 - anchor) * factor
+  ```
+
+  `factor` が 1 のままなら `origin === anchor` なので**生の位置そのもの**で、今までと 1 バイトも変わらない。感度が変わった時点で `origin` に travel を畳み込み、`anchor` をその時の生の位置にする。
+
+  **`relativeMapping` より誤差に強い。** あちらは移動量の積算だが、こちらは要素内の絶対位置が毎回取れるので、anchor からの差分 1 回で済む
+- [x] **キーを離しても値はポインタに戻さない。** 戻すと、離した瞬間に「ずれていた分」だけ値が飛ぶ。DAW も戻さない。掴み直せば揃う
+- [x] **押した瞬間は今まで通りポインタ位置に飛ぶ。** `start` で `origin = anchor = 生の位置` にするので、`updateOnPointerDown` のクリック 1 発は変わらない
 - [ ] **NumberInput の Stepper。** `drag`（1 step あたりのピクセル）を持つので `relativeMapping` と同じ形に乗せられるはずだが、未確認
 
 #### 誤差について

@@ -6,10 +6,11 @@ import {
   useRef,
 } from 'react'
 
-import { InputEventOptions } from '@tremolo-ui/functions'
+import { InputEventOptions, type ModifierValue } from '@tremolo-ui/functions'
 
 import { Cursor } from '../_util'
 import { cx } from '../_util/cx'
+import { DEFAULT_DRAG_SENSITIVITY } from '../_util/inputEvent'
 
 import { Background } from './Background'
 import { Container } from './Container'
@@ -81,6 +82,24 @@ export interface PointsEditorProps {
   keyboard?: InputEventOptions | null
 
   /**
+   * How much a drag moves a `Point`, per modifier key.
+   *
+   * `1` is the pointer position itself, which is what dragging a point
+   * normally is. **Anything else turns the drag relative**: `0.1` makes the
+   * same movement cover a tenth of the editor, so the point stops following
+   * the pointer and starts moving a tenth as fast. Shift is bound to `0.1` by
+   * default, to match what it does on the arrow keys.
+   *
+   * Pressing or releasing the key mid-drag does not disturb the point: the
+   * travel so far is kept and the new sensitivity applies from there. **The
+   * pointer and the point stay apart for the rest of the drag** — snapping
+   * them back together on release would move the point nobody asked to move.
+   *
+   * @default { default: 1, shift: 0.1 }
+   */
+  dragSensitivity?: ModifierValue<number>
+
+  /**
    * The editor renders exactly what you compose here; there is no default
    * markup to fall back to.
    *
@@ -111,6 +130,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       readonly = false,
       wheel = DEFAULT_WHEEL,
       keyboard = DEFAULT_KEYBOARD,
+      dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
       externalStyles,
       style,
       className,
@@ -131,10 +151,19 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         readonly,
         wheel,
         keyboard,
+        dragSensitivity,
         externalStyles: { userSelectNone, cursor },
         containerRef,
       }),
-      [disabled, readonly, wheel, keyboard, userSelectNone, cursor],
+      [
+        disabled,
+        readonly,
+        wheel,
+        keyboard,
+        dragSensitivity,
+        userSelectNone,
+        cursor,
+      ],
     )
 
     return (

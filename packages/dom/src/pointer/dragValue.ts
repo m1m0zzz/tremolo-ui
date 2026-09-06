@@ -60,7 +60,32 @@ export interface DragValueMapping {
  */
 export function elementMapping(
   getElement: () => Element | null | undefined,
+  {
+    sensitivity,
+  }: {
+    /**
+     * How much the movement counts, read on every move. `1` is the pointer
+     * position itself; `0.1` makes the same movement cover a tenth of the
+     * travel, which is what a fine-adjustment modifier wants.
+     *
+     * Anything but `1` turns the mapping relative: the value stops being the
+     * position pointed at and starts being where it stood when the sensitivity
+     * changed, plus the movement since. **The pointer and the value stay apart
+     * for the rest of the drag** rather than snapping back together when the
+     * key is released, since snapping would move the value nobody asked to
+     * move.
+     */
+    sensitivity?: (state: DragState) => number
+  } = {},
 ): DragValueMapping {
+  /** The reported position when the sensitivity last changed. */
+  let origin: XY<number> = [0, 0]
+  /** The raw position at that same moment. */
+  let anchor: XY<number> = [0, 0]
+  /** The previous event, so a sensitivity change can be dated back to it. */
+  let previous: XY<number> = [0, 0]
+  let factor = 1
+
   function positionIn(state: DragState): XY<number> | null {
     const element = getElement()
     if (!element) return null
@@ -73,7 +98,48 @@ export function elementMapping(
     ]
   }
 
-  return { start: positionIn, move: positionIn }
+  const reported = (raw: XY<number>, at: number): XY<number> => [
+    origin[0] + (raw[0] - anchor[0]) * at,
+    origin[1] + (raw[1] - anchor[1]) * at,
+  ]
+
+  return {
+    start: (state) => {
+      const raw = positionIn(state)
+      if (!raw) return null
+      // origin and anchor together, so the value is the position pointed at:
+      // a plain click still lands where it was aimed.
+      origin = raw
+      anchor = raw
+      previous = raw
+      // Read here too, so a modifier already held when the pointer went down
+      // applies from the first pixel rather than from the first change.
+      factor = sensitivity ? sensitivity(state) : 1
+      return raw
+    },
+    move: (state) => {
+      const raw = positionIn(state)
+      if (!raw) return null
+
+      const next = sensitivity ? sensitivity(state) : 1
+      if (next !== factor) {
+        // Fold the travel so far into the origin, or the new sensitivity would
+        // apply to the whole drag and the value would jump.
+        //
+        // Dated to the previous event rather than this one: a key produces no
+        // pointer event of its own, so the change is only seen on the next
+        // move, and that move's own distance belongs to the new sensitivity.
+        origin = reported(previous, factor)
+        anchor = previous
+        factor = next
+      }
+      previous = raw
+
+      // With no sensitivity given, origin and anchor never move apart and this
+      // is the raw position, exactly as before.
+      return reported(raw, factor)
+    },
+  }
 }
 
 /**

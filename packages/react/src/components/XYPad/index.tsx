@@ -16,6 +16,8 @@ import {
   toFixed,
   InputEventOptions,
   ModifierState,
+  type ModifierValue,
+  selectModifier,
   type Scale,
 } from '@tremolo-ui/functions'
 
@@ -26,6 +28,7 @@ import { useCheckSteps } from '../_util/checkSteps'
 import { useComposedRefs } from '../_util/composeRefs'
 import { cx } from '../_util/cx'
 import {
+  DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
 } from '../_util/inputEvent'
@@ -69,6 +72,24 @@ export interface XYPadProps {
    * If null, no event will be triggered
    */
   wheel?: InputEventOptions | null
+  /**
+   * How much a drag moves the value, per modifier key.
+   *
+   * `1` is the pointer position itself, which is what a drag normally is here.
+   * **Anything else turns the drag relative**: `0.1` makes the same movement
+   * cover a tenth of the travel, so the value stops following the pointer and
+   * starts moving a tenth as fast. Shift is bound to `0.1` by default, to
+   * match what it does on the arrow keys.
+   *
+   * Pressing or releasing the key mid-drag does not disturb the value: the
+   * travel so far is kept and the new sensitivity applies from there. **The
+   * pointer and the value stay apart for the rest of the drag** — snapping
+   * them back together on release would move the value nobody asked to move.
+   *
+   * @default { default: 1, shift: 0.1 }
+   */
+  dragSensitivity?: ModifierValue<number>
+
   /**
    * How much one arrow key press moves the value.
    *
@@ -132,6 +153,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
       reverse: _reverse = false,
       wheel = DEFAULT_WHEEL_OPTIONS,
       keyboard = DEFAULT_KEYBOARD_OPTIONS,
+      dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
       className,
       style,
       externalStyles: _externalStyles,
@@ -246,6 +268,8 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
     const { refCallback: dragRefCallback } = useDragValue<HTMLDivElement>({
       axis,
       baseElementRef: areaRef,
+      sensitivity: (state) =>
+        selectModifier(dragSensitivity, state.event).value,
       updateOnPointerDown: true,
       cursor: readonly ? undefined : externalStyles.cursor,
       onChange: (v) => {

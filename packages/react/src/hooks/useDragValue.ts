@@ -38,10 +38,16 @@ export interface UseDragValueOptions {
    */
   pixelRange?: XYInput<number>
   /**
-   * How much the movement counts, read on every move, with `getValue`.
-   * `0.1` makes the same movement cover a tenth of the range.
+   * How much the movement counts, read on every move. `0.1` makes the same
+   * movement cover a tenth of the range, which is what a fine-adjustment
+   * modifier wants.
+   *
+   * With `baseElementRef` the value is normally the position pointed at, so
+   * anything but `1` turns the mapping relative and leaves the pointer and the
+   * value apart for the rest of the drag.
    *
    * @see relativeMapping
+   * @see elementMapping
    */
   sensitivity?: (state: DragState) => number
 
@@ -106,7 +112,11 @@ export function useDragValue<T extends Element>(
     const instance = createDragValue(node, {
       axis: latest.current.axis,
       mapping: baseElementRef
-        ? elementMapping(() => baseElementRef.current)
+        ? elementMapping(() => baseElementRef.current, {
+            // Read through the ref so that a changed setting reaches a drag
+            // already in progress.
+            sensitivity: (state) => latest.current.sensitivity?.(state) ?? 1,
+          })
         : relativeMapping({
             pixelRange: [pixelRangeX ?? 100, pixelRangeY ?? 100],
             // Read through the ref so that a changed setting reaches a drag

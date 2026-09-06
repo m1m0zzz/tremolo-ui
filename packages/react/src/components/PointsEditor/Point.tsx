@@ -5,6 +5,7 @@ import {
   clamp,
   type InputEventOptions,
   type ModifierState,
+  selectModifier,
 } from '@tremolo-ui/functions'
 
 import { useDragValue } from '../../hooks/useDragValue'
@@ -91,6 +92,7 @@ export function Point<T extends PointBaseType>({
     readonly: rootReadonly,
     wheel: rootWheel,
     keyboard: rootKeyboard,
+    dragSensitivity,
   } = usePointsEditorContext()
 
   const disabled = _disabled ?? rootDisabled
@@ -110,6 +112,8 @@ export function Point<T extends PointBaseType>({
     useDragValue<HTMLDivElement>({
       axis: AXIS,
       baseElementRef: containerRef,
+      sensitivity: (state) =>
+        selectModifier(dragSensitivity, state.event).value,
       cursor: readonly ? undefined : externalStyles.cursor,
       onChange: ([x, y]) => {
         if (readonly) return

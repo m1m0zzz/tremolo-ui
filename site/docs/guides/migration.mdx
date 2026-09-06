@@ -47,22 +47,27 @@ where it started.
 Nothing is bound on the wheel. Browsers turn shift+wheel into horizontal
 scrolling, so shift is not available there.
 
-### Shift makes a `Knob` drag fine
+### Shift makes a drag fine
 
-Holding shift while dragging a `Knob` now moves the value a tenth as far, the
-same as it does on the arrow keys. Pressing or releasing it partway through
-does not disturb the value.
+Holding shift while dragging now moves the value a tenth as far, the same as it
+does on the arrow keys, on `Knob`, `Slider`, `XYPad` and `PointsEditor`.
+Pressing or releasing it partway through does not disturb the value.
 
 `dragSensitivity` rebinds it, and a bare number uses no modifier at all.
 
 ```jsx
-<Knob.Root dragSensitivity={{ default: 1, alt: 0.25 }} … />
-<Knob.Root dragSensitivity={1} … />
+<Slider.Root dragSensitivity={{ default: 1, alt: 0.25 }} … />
+<Slider.Root dragSensitivity={1} … />
 ```
 
-Only `Knob` for now. `Slider`, `XYPad` and `PointsEditor` follow the pointer
-exactly, so a fine drag there is a larger change than a sensitivity — see
-`plans/core-extraction-plan.md` 5.18.
+**On `Slider`, `XYPad` and `PointsEditor` this changes what a drag is.** Their
+value is normally the position pointed at, so a fine drag cannot stay under the
+pointer — it moves a tenth as fast, and the two drift apart. They stay apart
+when the key is released: pulling the value back under the pointer would move
+it by however far the two had drifted, which is a jump nobody asked for. Let go
+and grab again to line them up.
+
+`Knob` is unaffected by that: it was already relative.
 
 ### Shift and the wheel move `XYPad` and `PointsEditor` both ways
 

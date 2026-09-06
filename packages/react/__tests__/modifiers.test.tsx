@@ -304,3 +304,95 @@ describe('shift while dragging a Knob', () => {
     expect(onChange).toHaveBeenLastCalledWith(71)
   })
 })
+
+describe('shift while dragging a Slider', () => {
+  /** jsdom has no PointerEvent and no pointer capture, so both are faked. */
+  const pointerEvent = (
+    type: string,
+    init: { clientX?: number; shiftKey?: boolean } = {},
+  ) => {
+    const event = new MouseEvent(type, { bubbles: true })
+    Object.defineProperty(event, 'pointerId', { value: 1 })
+    // MouseEventInit coerces coordinates to integers, so they are defined
+    // directly. `screenX` follows `clientX`: only the mapping reads the latter.
+    Object.defineProperty(event, 'clientX', { value: init.clientX ?? 0 })
+    Object.defineProperty(event, 'screenX', { value: init.clientX ?? 0 })
+    Object.defineProperty(event, 'shiftKey', { value: init.shiftKey ?? false })
+    return event
+  }
+
+  /** The first point is the pointer going down, the rest are moves. */
+  const drag = (
+    element: Element,
+    points: { clientX: number; shiftKey?: boolean }[],
+  ) => {
+    Object.assign(element, {
+      setPointerCapture: () => {},
+      releasePointerCapture: () => {},
+      hasPointerCapture: () => true,
+    })
+    act(() => {
+      element.dispatchEvent(pointerEvent('pointerdown', points[0]))
+    })
+    for (const point of points.slice(1)) {
+      act(() => {
+        element.dispatchEvent(pointerEvent('pointermove', point))
+      })
+    }
+  }
+
+  /** jsdom lays nothing out, so the track is given a rect of 100px. */
+  function setup(props?: Partial<React.ComponentProps<typeof Slider.Root>>) {
+    const onChange = jest.fn()
+    const { container } = render(
+      <SliderSubject initial={0} max={100} onChange={onChange} {...props} />,
+    )
+    const track = container.querySelector('.tremolo-slider-track')!
+    track.getBoundingClientRect = () =>
+      ({ left: 0, top: 0, right: 100, bottom: 10 }) as DOMRect
+    return { onChange, root: container.querySelector('.tremolo-slider')! }
+  }
+
+  test('a plain drag puts the value under the pointer', () => {
+    const { onChange, root } = setup()
+
+    drag(root, [{ clientX: 20 }, { clientX: 60 }])
+
+    expect(onChange).toHaveBeenLastCalledWith(60)
+  })
+
+  test('shift makes the same movement count a tenth', () => {
+    const { onChange, root } = setup()
+
+    // Pressed without the key, then held without moving, then moved.
+    drag(root, [
+      { clientX: 20 },
+      { clientX: 20, shiftKey: true },
+      { clientX: 60, shiftKey: true },
+    ])
+
+    expect(onChange).toHaveBeenLastCalledWith(24)
+  })
+
+  test('pressing the key does not move the value on its own', () => {
+    const { onChange, root } = setup()
+
+    drag(root, [{ clientX: 20 }, { clientX: 50 }])
+    expect(onChange).toHaveBeenLastCalledWith(50)
+
+    drag(root, [{ clientX: 50 }, { clientX: 50, shiftKey: true }])
+    expect(onChange).toHaveBeenLastCalledWith(50)
+  })
+
+  test('a bare number opts out of modifiers', () => {
+    const { onChange, root } = setup({ dragSensitivity: 1 })
+
+    drag(root, [
+      { clientX: 20 },
+      { clientX: 20, shiftKey: true },
+      { clientX: 60, shiftKey: true },
+    ])
+
+    expect(onChange).toHaveBeenLastCalledWith(60)
+  })
+})
