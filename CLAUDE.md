@@ -103,11 +103,13 @@ Slider / Knob / XYPad は children をそのまま描画し、`children` は型�
 
 ### スタイリング
 
-プレーンな CSS。コンポーネントごとに `index.css` を 1 つ持ち、クラス名は `tremolo-` プレフィックス。状態は ARIA 属性をセレクタとして表現する（`&[aria-disabled='true']`、`&[aria-readonly='true']`）ため、コンポーネント側で該当属性を必ず設定すること。
+**パッケージは CSS を配らない。** コンポーネントが持つのはマークアップと、`tremolo-` プレフィックスのクラス名と、状態を表す属性だけ。`packages/react` に `.css` は 1 つも無く、`dist/index.css` も生成されない（`plans/core-extraction-plan.md` 5.1）。
 
-ドラッグ中のスタイルは 2 系統ある。`touch-action` / `user-select` / `cursor` は `createDrag` が**対象要素に直接**適用し `destroy()` で戻す（pointer capture により、ポインタが要素外へ出ても維持される）。ページ全体へ掛ける `tremolo-user-select-none` は `src/styles/global.css` にあり `src/components/_util/index.ts` が付け外しする。同ファイルの `setCursorStyle` / `resetCursorStyle` と `.tremolo-cursor-*` は**現在どこからも使われていない**（削除は CSS ヘッドレス化の判断とセットで保留中。`plans/core-extraction-plan.md` 5.2）。
+**状態は ARIA / `data-*` 属性で表す。** `[aria-disabled]` `[aria-readonly]` `[data-dragging]` `[data-vertical]` `[data-active]` `[data-out-of-range]`。これが利用者にとって唯一のスタイリングの取っ掛かりなので、**新しい状態を足したら必ず属性として出すこと。** クラスを足して表現してはいけない。
 
-コンポーネントの CSS を追加するときは 3 箇所の編集が必要: `src/index.ts` での import（バンドル版 `styles/index.css` 用）、`packages/react/package.json` の `exports` への `./styles/<Name>.css` 追加、`.storybook/preview.ts` での import。
+**デモのテーマは `site/src/css/tremolo/<Name>.css` にある。** ドキュメントサイトが `docusaurus.config.ts` の `customCss` で、Storybook が `.storybook/preview.tsx` から相対パスで、同じファイルを読む。コピー元として公開する場所と実際に使う場所を 1 つにしてあるので、**コンポーネントに新しいパートを足したらここに書く**（`site/docs/tutorials/styling.mdx` がタブで全文を載せているため、追記は自動で反映される）。
+
+ドラッグ中のスタイルは 2 系統ある。`touch-action` / `user-select` / `cursor` は `createDrag` が**対象要素に直接**適用し `destroy()` で戻す（pointer capture により、ポインタが要素外へ出ても維持される）。ページ全体へ掛ける `user-select: none` は `src/components/_util/index.ts` が `<body>` のインラインスタイルとして付け外しする。**カウンタを持っている**のは、2 本指で 2 つのコンポーネントを同時にドラッグしたとき、先に離した方が復元してしまうのを防ぐため。
 
 ### stories とテスト
 

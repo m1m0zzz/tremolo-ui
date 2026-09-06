@@ -796,18 +796,28 @@ Slider / XYPad と違い、PointsEditor には**動かせる点が複数ある**
 
 Phase の順序に組み込みきれないが、1.0 までに決着させる項目。
 
-### 5.1 CSS の完全ヘッドレス化 — Phase 3 と Phase 5 の間
+### 5.1 CSS の完全ヘッドレス化 — **完了**
 
 Radix UI / Base UI と同じ方針にする。パッケージはスタイルを配らず、**ドキュメント上でデモの CSS を公開**して、利用者が Tailwind / CSS Modules / plain CSS を自由に選べる形にする。
 
-- [ ] `packages/react` から `index.css` 群を外す方針を決める（完全に消すか、opt-in の「デフォルトテーマ」として別 export に残すか）
-- [ ] `package.json` の `exports` から `./styles/*.css` を整理（Phase 6 の「CSS の配布方法を再検討」はこの項目に統合）
-- [ ] 状態を表す ARIA 属性 / `data-*` 属性が、利用者側から十分にスタイリングできるか確認する。現状は `[aria-disabled]` `[aria-readonly]` `[data-dragging]` を使っている
-- [ ] ドキュメントサイトに、デモで使っている CSS をコピーできる形で載せる
+- [x] **完全に消す方を採った。** opt-in の「デフォルトテーマ」として別 export に残す案は採らない。残すと「配らない」と言いながら実質デフォルトのままになり、クラス名と CSS の両方を我々が持ち続けることになる
+- [x] `package.json` の `exports` から `./styles/*.css` を全て削除した。`src/index.ts` の import も外したので `dist/index.css` は生成されなくなった（Phase 6 の「CSS の配布方法を再検討」はこの項目に統合）
+- [x] **状態を表す属性は足りていた。** `[aria-disabled]` `[aria-readonly]` `[data-dragging]` に加えて `[data-vertical]` `[data-active]` `[data-out-of-range]` があり、移した CSS 自身がこの 6 つだけで状態を表現できていたことが確認になっている。`styling.mdx` に一覧を載せた
+- [x] ドキュメントサイトに、デモで使っている CSS をコピーできる形で載せた
 
-**これは破壊的変更であり、既存利用者は `@tremolo-ui/react/styles/index.css` を import しているため、移行手順を用意する必要がある。**
+#### 置き場
 
-### 5.2 `tremolo-user-select-none` / `tremolo-cursor-*` をどうするか — 5.1 とセット
+`site/src/css/tremolo/<Name>.css`。**コピー元として公開する場所と、実際に読み込む場所を 1 つにした。** ドキュメントサイトは `docusaurus.config.ts` の `customCss` で、Storybook は `.storybook/preview.tsx` から相対パスで、同じファイルを読む。2 箇所に置くと必ずずれる。
+
+`styling.mdx` は `raw-loader` で 6 ファイルの全文をタブに出しているので、CSS を書き足せばドキュメントにも自動で載る。
+
+#### 書き直したドキュメント
+
+`styling.mdx` は「デフォルトのスタイルを適用する」→「dist/index.css をコピーして上書きする」という構成だったので、丸ごと入れ替えた（en / ja）。クラス名の付き方、状態属性の一覧、テーマ全文、CSS Modules の例。`getting-started.mdx` の手順 3 も同様。
+
+**破壊的変更なので移行ガイドに載せた。**
+
+### 5.2 `tremolo-user-select-none` / `tremolo-cursor-*` をどうするか — **完了**
 
 ドラッグ中に body へクラスを付け外しする仕組み（`src/styles/global.css` + `src/components/_util/index.ts`）。Knob / Slider / XYPad / PointsEditor の 4 コンポーネントが `externalStyles` prop 経由で使っている。**CSS をヘッドレス化すると、このグローバル CSS だけがパッケージに残ることになるため、5.1 と同時に決める。**
 
@@ -818,6 +828,16 @@ Radix UI / Base UI と同じ方針にする。パッケージはスタイルを�
 3. 現状維持（グローバル CSS だけは配り続ける）
 
 `createDrag` は既に `touch-action` / `user-select` / `-webkit-user-select` / `-webkit-touch-callout` を要素に直接適用し、ドラッグ中は `selectstart` をキャンセルしているので、1 と整合性が取りやすい。
+
+#### 対応した内容
+
+**1 を採った。** ただし今回動かしたのは React 側の `_util` で、`document.body.style` に直接 `user-select` / `-webkit-user-select` を当てる形にした。**`@tremolo-ui/dom` へ移すのは Phase 6 に回す。** Vue / Svelte を作るときに同じものが要るので置き場はコアが正しいが、今それをやると `createDrag` の API を広げる判断（ドラッグ中にページ全体へ何かを当てる責務をコアが持つか）が要り、5.1 のブロッカーではない。
+
+- [x] `.tremolo-cursor-*` と `setCursorStyle` / `resetCursorStyle` を削除した。ドラッグ中の cursor は `createDrag` の `cursor` オプションが要素へ直接当てるので、body を触る必要が無かった。`Cursor` 型は `externalStyles.cursor` が使うので残してある
+- [x] `.tremolo-user-select-none` をインラインスタイルに置き換え、`src/styles/global.css` ごと削除した
+- [x] **カウンタを持たせた。** クラスの付け外しは冪等だが、インラインスタイルの保存・復元はそうではない。2 本指で 2 つのコンポーネントを同時にドラッグしたとき、先に離した方が復元してしまうと、残っている方がテキストを選択し始める。`__tests__/util/userSelect.test.ts` で固定した
+
+`-webkit-user-select` はテストで表明していない。jsdom の `CSSStyleDeclaration` は知らないプロパティを落とすので `setProperty` が無言で効かないため。
 
 **`tremolo-cursor-*` は Phase 2 で不要になった。** ドラッグ中の cursor は `createDrag` の `cursor` オプションが要素へ直接適用する形に変えた（pointer capture により、ポインタが要素の外へ出てもその cursor が維持されるため、body を触る必要がない）。`_util` の `setCursorStyle` / `resetCursorStyle` と `global.css` の `.tremolo-cursor-*` は**現在どこからも使われていない**ので削除できる。
 
@@ -1179,7 +1199,7 @@ flex / grid コンテナの中で幅が足りないと、`flex-shrink` の既定
 - [ ] `aspect-ratio: 1` を入れて、片方だけ縮んでも比率を保つ
 - [ ] `flex-shrink: 0` を入れるか、`min-width` / `min-height` を置くかを決める。**縮ませない**のと**比率を保ったまま縮む**のとで挙動が違うので、どちらが望ましいか決める
 - [ ] `size` prop を渡したときと `--knob-size` を書き換えたときで同じ結果になることを確認する。現在 `size` は `style` の `width` / `height` に直接入るので、CSS 変数を経由しない
-- [ ] 5.1 の CSS ヘッドレス化と衝突しないか確認する。パッケージがスタイルを配らなくなると、この修正も利用者側の CSS に移る可能性がある
+- [x] 5.1 との関係は決着した。**パッケージは CSS を配らなくなったので、この修正は `site/src/css/tremolo/Knob.css`（デモのテーマ）に入る。** 潰れるかどうかは利用者の CSS 次第になるが、`aspect-ratio` を知らずに書くと必ず踏むので、テーマ側で示しておく価値はある。`size` prop が `style` の `width` / `height` に直接入る点だけはコンポーネント側の話として残る
 
 ### 5.13 NumberInput の上下キーでカーソル位置を保つ
 

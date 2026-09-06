@@ -21,7 +21,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 | Phase 3: `createDragValue` | 完了 |
 | Phase 4: Piano / AnimationCanvas / NumberInput | 完了（NumberInput [4.1](./core-extraction-plan.md) / AnimationCanvas [4.2](./core-extraction-plan.md) / Piano [4.3](./core-extraction-plan.md)） |
 | Phase 5: zustand 除去 | 完了（`zustand` を dependencies から削除済み。`useSyncExternalStore` は使わずに済んだ） |
-| 5 章: CSS ヘッドレス化・修飾キー・単位の扱い など | 残り 5.1 / 5.2（CSS ヘッドレス化）、5.11（修飾キー）、5.12（Knob が潰れる）、5.13〜5.16（NumberInput）、5.17（テストと story の配置） |
+| 5 章: CSS ヘッドレス化・修飾キー・単位の扱い など | 5.1 / 5.2（CSS ヘッドレス化）、5.14（`format` 一本化）、5.17（テストと story の配置）が完了。残り 5.11（修飾キー）、5.12（Knob が潰れる）、5.13 / 5.15 / 5.16（NumberInput） |
 
 着手前に決める必要がある未確定事項（同ドキュメント 2 章）:
 
@@ -34,7 +34,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 ## 2. テスト整備
 
 - [x] **dom 移行前からテストが無い部分にテストを足す。** 全コンポーネントに専用のテストが揃った（Piano は 4.3、PointsEditor は Phase 5、XYPad は 5.7 と同時に追加）。`__tests__/drag.test.tsx` と `__tests__/Slider/compose.test.tsx` は複数コンポーネントにまたがるものとしてそのまま残す
-- [ ] **テストと story を実装コードと同じディレクトリに置く。** → [core-extraction-plan.md 5.17](./core-extraction-plan.md) に移動
+- [x] **テストと story を実装コードと同じディレクトリに置く。** → [core-extraction-plan.md 5.17](./core-extraction-plan.md) で完了
 
 ## 3. Vue / Svelte
 
@@ -59,7 +59,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 - [ ] `.changeset/config.json` の `fixed` は `[["@tremolo-ui/*"]]` のグロブなので**変更不要**
 - [ ] `packages/<name>/LICENSE` を置く場合、`.prettierignore` に `LICENSE` があること（追加済み）
 - [ ] Vercel の Storybook プロジェクトのビルドコマンドは `npm run build:sb`（全ワークスペースをビルドしてから Storybook をビルドする）であること
-- [ ] CSS の配布方法を決めてから着手する（各パッケージで重複させるか、共通パッケージにするか）。core-extraction-plan.md 5.1 と一体
+- [x] CSS の配布方法は決着した。**パッケージは CSS を配らない**ので、各パッケージで重複させるかという問題自体が無くなった（core-extraction-plan.md 5.1）。デモのテーマは `site/src/css/tremolo/` にあり、Vue / Svelte を足してもクラス名と状態属性さえ揃っていれば同じものが使える
 
 ## 4. ドキュメント整備
 
@@ -68,10 +68,10 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   **サイドバーの翻訳キーはラベルから作られ、それが 1 つのサイドバー内で衝突するとビルドが落ちる。** typedoc はページのラベルにモジュールパスの**最後のセグメントだけ**を使うので、`dom` を足した時点で `midi/input` と `piano/input` が両方 `input` になり、さらに `dom/piano` と `functions/piano` が衝突した。`sidebars.ts` の `withKeys()` で doc id（既に一意）を `key` に入れて解決している。パッケージが増えるたびに起きるので、新しい typedoc plugin を足すときはこれを通すこと。
 
   あわせて `packages/dom/src/piano/input.ts` を `piano/index.ts` に改名した（`dom` の公開 API は `exports` が `.` だけなので影響なし）。
-- [ ] **CSS のデモを公開する形に作り替える。** Radix UI / Base UI と同じく、パッケージはスタイルを配らず、ドキュメント上でデモの CSS をコピーできるようにする（core-extraction-plan.md 5.1）
+- [x] **CSS のデモを公開する形に作り替えた。** `site/docs/tutorials/styling.mdx` を書き直し、`site/src/css/tremolo/` の 6 ファイルを `raw-loader` で全文タブ表示している。コピー元と、サイト / Storybook が実際に読み込むファイルは同一（core-extraction-plan.md 5.1）
 - [ ] **hooks のドキュメントを充実させる。** 現在 `site/docs/hooks/` には `web-midi-api` しかない。`useDrag` / `useWheel` / `useDragValue` は typedoc の自動生成のみ
 - [ ] **Vue / Svelte を足したときのドキュメント構成を決める。** 現在の `site/docs/components/<Name>/index.mdx` は React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）。フレームワークごとにタブを分けるのか、サイト自体を分けるのか
-- [x] **移行ガイドを書く。** `site/docs/guides/migration.mdx`。新しいものから順に、変更前後のコードを並べて書く。**CSS の配布方法変更（5.1）だけは未着手**なので「Still to come」として残してある
+- [x] **移行ガイドを書く。** `site/docs/guides/migration.mdx`。新しいものから順に、変更前後のコードを並べて書く。CSS の配布方法変更（5.1）も Unreleased に載せたので、「Still to come」に残っている項目は無い
 - [x] **`site/i18n` の typedoc サイドバー翻訳キーを掃除した。** `sidebar.typedocSidebar.*` を en / ja とも**全て削除**した（114 キー → 7 キー）。
 
   残骸を選り分けるつもりで調べたところ、**107 キーのうち翻訳されているものが 1 つも無かった**（`message` が全てラベルと同一）。しかも typedoc のラベルはモジュールパスとシンボル名（`math`、`useDrag`、`components/Slider`）で、**そもそも翻訳する対象ではない**。消してもラベルにフォールバックするだけなので表示は変わらず、ja の翻訳ファイルには「実際に翻訳が要る 7 個」だけが残る。
@@ -79,7 +79,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   `docusaurus write-translations` を走らせると再び追加されるが、それは翻訳が要るという意味ではない。API リファレンスのラベルは触らない方針。
 
 - [x] `site/docs/support/CHANGELOG.md` の二重管理をやめた。中身は「TODO: record from version 1.0.0」のスタブのままだったので、各パッケージの `CHANGELOG.md` と GitHub リリース、移行ガイドへのリンクに置き換えた
-- [ ] `format` に一本化するときに、`units` / `digit` を使っている example / story / ドキュメントを全部書き換える（core-extraction-plan.md 5.14）
+- [x] `format` に一本化するときに、`units` / `digit` を使っている example / story / ドキュメントを全部書き換えた（core-extraction-plan.md 5.14）
 - [ ] 1.0 時点で `README.md` の「*tremolo-ui is now WIP*」と「An unstable version (0.x) has been released.」を更新する
 
 ## 1.0 の基準
@@ -88,5 +88,5 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 - [x] コア切り出しが Phase 5 まで完了し、`@tremolo-ui/react` が薄いラッパーになっている
 - [ ] Vue / Svelte のいずれかが公開されている（コアが framework-agnostic であることの実証）
-- [ ] CSS の配布方法が確定し、移行ガイドがある
+- [x] CSS の配布方法が確定し、移行ガイドがある（5.1 / 5.2。パッケージは CSS を配らず、テーマはドキュメントで公開する）
 - [ ] 公開 API が安定し、以降の破壊的変更に `major` を使う運用へ切り替えられる
