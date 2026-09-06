@@ -164,7 +164,14 @@ const config: Config = {
         theme: {
           customCss: [
             './src/css/custom.css',
-            '../packages/react/dist/index.css',
+            // The demo theme. The package ships no CSS, so the examples on
+            // this site are styled by the same files it publishes for copying.
+            './src/css/tremolo/Knob.css',
+            './src/css/tremolo/NumberInput.css',
+            './src/css/tremolo/Piano.css',
+            './src/css/tremolo/PointsEditor.css',
+            './src/css/tremolo/Slider.css',
+            './src/css/tremolo/XYPad.css',
           ],
         },
         sitemap: {

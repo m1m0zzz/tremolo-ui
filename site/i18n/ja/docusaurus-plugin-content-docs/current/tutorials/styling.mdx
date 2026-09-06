@@ -1,6 +1,6 @@
 ---
 sidebar_position: 3
-title: スタイリング
+title: Styling
 ---
 
 import Tabs from '@theme/Tabs'
@@ -10,38 +10,89 @@ import CodeBlock from '@theme/CodeBlock'
 import cssModule from '!!raw-loader!@site/examples/tutorials/styling/css-module'
 import myKnobCss from '!!raw-loader!@site/examples/tutorials/styling/my-knob.module.css'
 
-tremolo-ui はヘッドレスなライブラリであるため Vanilla CSS, CSS in JS, Tailwind CSS など好きな方法でスタイルを当てることができます。  
-ここでは、コンポーネントの見た目を変更する方法を幾つかご紹介します。
+import knobCss from '!!raw-loader!@site/src/css/tremolo/Knob.css'
+import numberInputCss from '!!raw-loader!@site/src/css/tremolo/NumberInput.css'
+import pianoCss from '!!raw-loader!@site/src/css/tremolo/Piano.css'
+import pointsEditorCss from '!!raw-loader!@site/src/css/tremolo/PointsEditor.css'
+import sliderCss from '!!raw-loader!@site/src/css/tremolo/Slider.css'
+import xyPadCss from '!!raw-loader!@site/src/css/tremolo/XYPad.css'
 
-## ✨デフォルトのスタイルを適用する
+**tremolo-ui は CSS を配りません。** コンポーネントが受け持つのはマークアップの描画と、
+値の管理と、ポインタ・キーボード・ホイールの処理までで、見た目は利用者のものです。
+素の CSS でも CSS Modules でも Tailwind でも CSS-in-JS でも、アプリの他の部分で
+使っているやり方をそのまま使えます。
 
-バンドルされたCSSをインポートする：
+## 🎨クラス名
 
-Vite なら、`src/main.tsx`、Next.js なら、`app/layout.tsx` に以下を適用します。
+すべての要素に `tremolo-` で始まるクラスが付いているので、自前のラッパーを
+挟まなくても素の CSS で届きます。
 
-```tsx title="main.tsx"
-import '@tremolo-ui/react/styles/index.css'
+```css
+.tremolo-knob-active-line {
+  color: rebeccapurple;
+}
 ```
 
-コンポーネント単位でインポートする：
+名前はコンポーネントとパートに対応します。`tremolo-slider`、
+`tremolo-slider-track`、`tremolo-slider-thumb`、`tremolo-slider-marks` のように。
+すべては下のテーマに載っています。
 
-コンポーネントのファイルに対応するCSSをインポートします。
+## 🚦状態
 
-```tsx title="MyKnob.tsx"
-import '@tremolo-ui/react/styles/Knob.css'
-import { Knob } from '@tremolo-ui/react'
+状態はクラスを足す形ではなく、要素の属性として乗っています。セレクタ 1 つで届きます。
 
-export function MyKnob() {
-  // ...
+| 属性 | 対象 | 意味 |
+| --- | --- | --- |
+| `[aria-disabled="true"]` | 全コンポーネント | `disabled` が指定されている |
+| `[aria-readonly="true"]` | 全コンポーネント | `readonly` が指定されている |
+| `[data-dragging="true"]` | `Knob` / `PointsEditor.Point` | ドラッグ中 |
+| `[data-vertical="true"]` | `Slider` / `Slider.Track` / `Slider.MarksOption` | 縦向きのスライダー |
+| `[data-active="true"]` | `Piano` の鍵盤 | その音が鳴っている |
+| `[data-out-of-range="true"]` | `NumberInput.InputField` | 値が `min` / `max` の外にある |
+
+```css
+.tremolo-slider[aria-disabled='true'] {
+  opacity: 0.5;
+}
 ```
 
-この方法を使うことで、未使用のCSSがバンドルされるのを防ぐことができます。
+フォーカスを受けるのは実際の要素なので、`:focus` / `:hover` / `:focus-within` も
+どこでもと同じように使えます。
 
-## 👾見た目をカスタマイズする
+## 📋このサイトで使っているテーマ
 
-### 🧩コンポーネント単位のスタイリング
+ドキュメント中の例はすべて以下のファイルでスタイルを当てています。依存先ではなく
+出発点なので、必要なものをプロジェクトにコピーして書き換えてください。
 
-ここでは一例として、CSS Modulesを使用する方法を紹介します。
+いずれもビルド不要の素の CSS で、カスタムプロパティ（`--knob-size`、
+`--thumb-size`、`--active-color` など）を使っているため、よくある変更は
+1 行の上書きで済みます。
+
+<Tabs>
+  <TabItem value="Knob.css" default>
+    <CodeBlock language='css' title='Knob.css'>{knobCss}</CodeBlock>
+  </TabItem>
+  <TabItem value="Slider.css">
+    <CodeBlock language='css' title='Slider.css'>{sliderCss}</CodeBlock>
+  </TabItem>
+  <TabItem value="XYPad.css">
+    <CodeBlock language='css' title='XYPad.css'>{xyPadCss}</CodeBlock>
+  </TabItem>
+  <TabItem value="NumberInput.css">
+    <CodeBlock language='css' title='NumberInput.css'>{numberInputCss}</CodeBlock>
+  </TabItem>
+  <TabItem value="Piano.css">
+    <CodeBlock language='css' title='Piano.css'>{pianoCss}</CodeBlock>
+  </TabItem>
+  <TabItem value="PointsEditor.css">
+    <CodeBlock language='css' title='PointsEditor.css'>{pointsEditorCss}</CodeBlock>
+  </TabItem>
+</Tabs>
+
+## 🧩コンポーネント単位のスタイリング
+
+スタイルをグローバルに置く必要はありません。同じノブを CSS Modules で書き、
+クラスを対象のパートに渡す例です。
 
 <Tabs>
   <TabItem value="index.tsx" default>
@@ -50,39 +101,15 @@ export function MyKnob() {
       live
       expand
       showCode
-      sourcePath="examples/tutorials/styling/global.tsx"
+      sourcePath="examples/tutorials/styling/css-module.tsx"
     >{cssModule}</CodeBlock>
   </TabItem>
-  <TabItem value="my-knob.module.css" default>
-    <CodeBlock language='css'
-    >{myKnobCss}</CodeBlock>
+  <TabItem value="my-knob.module.css">
+    <CodeBlock language='css'>{myKnobCss}</CodeBlock>
   </TabItem>
 </Tabs>
 
-### 🌎グローバル・スタイリング
-
-デフォルトのCSSを上書きし、グローバルなCSSとして読み込む方法をご紹介します。  
-まず、`dist/index.css` をコピーし、`custom.css` という名前で、新たなcssファイルを作成します。
-
-```bash
-cp node_modules/@tremolo-ui/react/dist/index.css custom.css
-```
-
-```css title="custom.css"
-.tremolo-any-component {
-  /* customize style here */
-}
-```
-
-次に、変更したいコンポーネントのcssを上書きします。  
-tremolo-uiで提供されるすべてのコンポーネントは、`tremolo-` の接頭辞の後に、コンポーネント名が付いたものになります。
-
-```tsx title="main.tsx"
-import './custom.css'
-```
-
-
 ## 🧭次のステップ
 
-tremolo-uiが提供するコンポーネントを見てみましょう。  
+tremolo-ui が提供するコンポーネントを見てみましょう。  
 [Components - Knob](/docs/components/Knob/)

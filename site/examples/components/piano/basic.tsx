@@ -3,7 +3,6 @@ import { noteName, noteNumber } from '@tremolo-ui/functions'
 import { Piano, SHORTCUTS } from '@tremolo-ui/react'
 import * as Tone from 'tone'
 
-import '@tremolo-ui/react/styles/index.css'
 // expand end
 
 function App() {
