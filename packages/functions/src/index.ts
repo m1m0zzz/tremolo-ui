@@ -60,6 +60,7 @@ export {
   type ModifierState,
   type ModifierValue,
   type SelectedInputEvent,
+  mapModifier,
   selectInputEvent,
   selectModifier,
 } from './types'

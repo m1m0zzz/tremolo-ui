@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { createDrag } from '@tremolo-ui/dom'
+import { createDrag, type DragState } from '@tremolo-ui/dom'
 
 import { useCallbackRef } from './_internal/useCallbackRef'
 
@@ -14,9 +14,19 @@ interface UseDragProps {
   /** CSS cursor to show while dragging. Applied to the element itself. */
   cursor?: string
 
-  onDrag?: (x: number, y: number, deltaX: number, deltaY: number) => void
-  onDragStart?: () => void
-  onDragEnd?: () => void
+  /**
+   * @param state the whole drag, for anything the four numbers leave out —
+   * the pointer event and its modifier keys, most of all.
+   */
+  onDrag?: (
+    x: number,
+    y: number,
+    deltaX: number,
+    deltaY: number,
+    state: DragState,
+  ) => void
+  onDragStart?: (state: DragState) => void
+  onDragEnd?: (state: DragState) => void
 }
 
 /**
@@ -46,9 +56,10 @@ export function useDrag<T extends Element>({
     const instance = createDrag(node, {
       threshold,
       cursor,
-      onDragStart: () => dragStartHandler(),
-      onDrag: ({ x, y, deltaX, deltaY }) => dragHandler(x, y, deltaX, deltaY),
-      onDragEnd: () => dragEndHandler(),
+      onDragStart: (state) => dragStartHandler(state),
+      onDrag: (state) =>
+        dragHandler(state.x, state.y, state.deltaX, state.deltaY, state),
+      onDragEnd: (state) => dragEndHandler(state),
     })
 
     return () => instance.destroy()

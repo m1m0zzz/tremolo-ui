@@ -3,6 +3,7 @@ import { createContext, RefObject, useContext } from 'react'
 import type {
   InputEventOptions,
   ModifierState,
+  ModifierValue,
   Scale,
   ValueRange,
 } from '@tremolo-ui/functions'
@@ -34,6 +35,8 @@ export type NumberInputContextValue = {
   keyboard: InputEventOptions | null
   /** Pixels of vertical drag on `Stepper` that move the value by one `step`. */
   drag: number | null
+  /** How much a `Stepper` drag counts, per modifier key. */
+  dragSensitivity: ModifierValue<number>
 
   /** What the input shows: the draft while editing, the formatted value otherwise. */
   text: string

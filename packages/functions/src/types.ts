@@ -100,6 +100,33 @@ export function selectModifier<T>(
 }
 
 /**
+ * Turn every entry of a setting into another kind of setting, keeping which
+ * modifier each belongs to.
+ *
+ * A drag sensitivity is a number and a keyboard amount is a tuple, but the two
+ * describe the same thing from the caller's side. This carries one over to the
+ * other so that a component can hand a sensitivity to {@link applyDelta}
+ * without unpicking the modifier map itself — which matters, since naming a
+ * modifier is also what takes `step` out of the pipeline.
+ *
+ * @example
+ * mapModifier({ default: 1, shift: 0.1 }, (f) => ['raw', step * f])
+ * // { default: ['raw', 1], shift: ['raw', 0.1] }
+ */
+export function mapModifier<T, U>(
+  options: ModifierValue<T>,
+  fn: (value: T) => U,
+): ModifierValue<U> {
+  if (!isModifierMap(options)) return fn(options as T)
+  const mapped = { default: fn(options.default) } as ModifierMap<U>
+  for (const modifier of MODIFIER_ORDER) {
+    const value = options[modifier]
+    if (value !== undefined) mapped[modifier] = fn(value)
+  }
+  return mapped
+}
+
+/**
  * Pick the amount that applies, given the modifier keys being held.
  *
  * @example

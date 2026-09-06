@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react'
 import { useState } from 'react'
 
 import { Knob } from '../src/components/Knob'
+import { NumberInput } from '../src/components/NumberInput'
 import { Slider } from '../src/components/Slider'
 import { XYPad } from '../src/components/XYPad'
 
@@ -394,5 +395,116 @@ describe('shift while dragging a Slider', () => {
     ])
 
     expect(onChange).toHaveBeenLastCalledWith(60)
+  })
+})
+
+describe('shift while dragging a NumberInput Stepper', () => {
+  function Subject({
+    onChange,
+    ...props
+  }: { onChange: (v: number) => void } & Partial<
+    React.ComponentProps<typeof NumberInput.Root>
+  >) {
+    const [value, setValue] = useState(5)
+    return (
+      <NumberInput.Root
+        min={0}
+        max={100}
+        {...props}
+        value={value}
+        onChange={(v) => {
+          setValue(v)
+          onChange(v)
+        }}
+      >
+        <NumberInput.InputField />
+        <NumberInput.Stepper>
+          <NumberInput.IncrementStepper />
+          <NumberInput.DecrementStepper />
+        </NumberInput.Stepper>
+      </NumberInput.Root>
+    )
+  }
+
+  /** jsdom has no PointerEvent and no pointer capture, so both are faked. */
+  const pointerEvent = (
+    type: string,
+    init: { screenY?: number; shiftKey?: boolean } = {},
+  ) => {
+    const event = new MouseEvent(type, { bubbles: true })
+    Object.defineProperty(event, 'pointerId', { value: 1 })
+    Object.defineProperty(event, 'screenX', { value: 0 })
+    Object.defineProperty(event, 'screenY', { value: init.screenY ?? 0 })
+    Object.defineProperty(event, 'shiftKey', { value: init.shiftKey ?? false })
+    return event
+  }
+
+  const drag = (
+    element: Element,
+    points: { screenY: number; shiftKey?: boolean }[],
+  ) => {
+    Object.assign(element, {
+      setPointerCapture: () => {},
+      releasePointerCapture: () => {},
+      hasPointerCapture: () => true,
+    })
+    act(() => {
+      element.dispatchEvent(pointerEvent('pointerdown', points[0]))
+    })
+    for (const point of points.slice(1)) {
+      act(() => {
+        element.dispatchEvent(pointerEvent('pointermove', point))
+      })
+    }
+  }
+
+  function setup(
+    props?: Partial<React.ComponentProps<typeof NumberInput.Root>>,
+  ) {
+    const onChange = jest.fn()
+    const { container } = render(<Subject onChange={onChange} {...props} />)
+    return {
+      onChange,
+      stepper: container.querySelector('.tremolo-number-input-stepper')!,
+    }
+  }
+
+  test('a plain drag moves one step per pixel', () => {
+    const { onChange, stepper } = setup()
+
+    // The first move takes the origin; the second one acts. Dragging up raises
+    // the value, as on a knob.
+    drag(stepper, [{ screenY: 0 }, { screenY: -1 }, { screenY: -11 }])
+
+    expect(onChange).toHaveBeenLastCalledWith(15)
+  })
+
+  test('shift makes the same movement count a tenth', () => {
+    const { onChange, stepper } = setup()
+
+    drag(stepper, [
+      { screenY: 0 },
+      { screenY: -1, shiftKey: true },
+      { screenY: -11, shiftKey: true },
+    ])
+
+    // Ten pixels at a tenth of a step, and not snapped back onto the grid.
+    expect(onChange).toHaveBeenLastCalledWith(6)
+  })
+
+  test('pressing the key mid-drag does not move the value', () => {
+    const { onChange, stepper } = setup()
+
+    drag(stepper, [{ screenY: 0 }, { screenY: -1 }, { screenY: -11 }])
+    expect(onChange).toHaveBeenLastCalledWith(15)
+
+    // Held without the pointer moving. Re-scaling the whole drag would drop
+    // the value; the travel so far has to be kept.
+    act(() => {
+      stepper.dispatchEvent(
+        pointerEvent('pointermove', { screenY: -12, shiftKey: true }),
+      )
+    })
+    expect(onChange).toHaveBeenLastCalledWith(15.1)
   })
 })

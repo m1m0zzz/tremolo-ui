@@ -69,6 +69,14 @@ and grab again to line them up.
 
 `Knob` is unaffected by that: it was already relative.
 
+`NumberInput.Stepper` takes it too. There a drag is already relative, so the
+sensitivity simply divides the amount: `drag` pixels move a tenth of a `step`
+instead of a whole one.
+
+```jsx
+<NumberInput.Root dragSensitivity={{ default: 1, shift: 0.1 }} … />
+```
+
 ### Shift and the wheel move `XYPad` and `PointsEditor` both ways
 
 Shift+wheel could only ever raise the x value. The direction came from

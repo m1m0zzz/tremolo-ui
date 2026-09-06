@@ -7,7 +7,12 @@ import {
   useRef,
 } from 'react'
 
-import { applyDelta } from '@tremolo-ui/functions'
+import {
+  applyDelta,
+  mapModifier,
+  selectModifier,
+  type InputEventOption,
+} from '@tremolo-ui/functions'
 
 import { useDrag } from '../../hooks/useDrag'
 import { useComposedRefs } from '../_util/composeRefs'
@@ -37,8 +42,24 @@ export function Stepper({
   ref,
   ...props
 }: StepperProps & Omit<ComponentPropsWithoutRef<'div'>, keyof StepperProps>) {
-  const { value, step, readonly, drag, range, changeValue } =
+  const { value, step, readonly, drag, dragSensitivity, range, changeValue } =
     useNumberInputContext()
+
+  /**
+   * The sensitivity as an amount per `drag` pixels, so that the drag goes
+   * through the same `applyDelta` the wheel and the arrow keys do. Carrying
+   * the modifier map over rather than resolving it here is what keeps `step`
+   * out of the pipeline for a modifier entry — naming one is a request to move
+   * off the grid.
+   */
+  const dragOptions = useMemo(
+    () =>
+      mapModifier(dragSensitivity, (factor): InputEventOption => [
+        'raw',
+        step * factor,
+      ]),
+    [dragSensitivity, step],
+  )
 
   /**
    * Set once the drag has actually moved the value, so that the press-and-hold
@@ -52,20 +73,41 @@ export function Stepper({
    * have been nudged once, and the drag should carry on from there.
    */
   const originRef = useRef<{ y: number; value: number } | null>(null)
+  /**
+   * Which modifier the drag is currently counting at, and where the previous
+   * event was — a key produces no pointer event of its own, so a change is
+   * only seen on the next move and has to be dated back to the one before it.
+   */
+  const factorRef = useRef<number>(1)
+  const previousYRef = useRef(0)
 
   const dragRefCallback = useDrag<HTMLDivElement>({
     threshold: 1,
     cursor: readonly ? undefined : 'ns-resize',
-    onDragStart: () => {
+    onDragStart: (state) => {
       originRef.current = null
       draggingRef.current = false
+      factorRef.current = selectModifier(dragSensitivity, state.event).value
     },
-    onDrag: (_x, y) => {
+    onDrag: (_x, y, _dx, _dy, state) => {
       if (readonly || drag === null) return
       if (!originRef.current) {
         originRef.current = { y, value }
+        previousYRef.current = y
         return
       }
+
+      // Pressing or releasing the key mid-drag must not move the value, so the
+      // travel so far is folded into the origin and measuring starts again
+      // from the previous event: that event's own distance belongs to the new
+      // sensitivity.
+      const factor = selectModifier(dragSensitivity, state.event).value
+      if (factor !== factorRef.current) {
+        originRef.current = { y: previousYRef.current, value }
+        factorRef.current = factor
+      }
+      previousYRef.current = y
+
       // Dragging up raises the value, as on a knob.
       const steps = Math.round(-(y - originRef.current.y) / drag)
       if (steps === 0) return
@@ -73,7 +115,13 @@ export function Stepper({
       // The same pipeline the wheel and the arrow keys use. Counting from where
       // the drag started keeps it from accumulating a rounding error.
       changeValue(
-        applyDelta(originRef.current.value, steps, ['raw', step], range),
+        applyDelta(
+          originRef.current.value,
+          steps,
+          dragOptions,
+          range,
+          state.event,
+        ),
       )
     },
     onDragEnd: () => {
