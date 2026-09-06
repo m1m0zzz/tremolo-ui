@@ -42,10 +42,12 @@ function Subject({
   onChange,
   onSelectionChange,
   selection,
+  selectable = true,
   limits,
 }: Handlers & {
   onSelectionChange?: (ids: string[]) => void
   selection?: string[]
+  selectable?: boolean
   limits?: Partial<Record<'a' | 'b', { max?: Partial<PointBaseType> }>>
 }) {
   const [values, setValues] = useState<Record<string, PointBaseType>>({
@@ -56,6 +58,7 @@ function Subject({
 
   return (
     <PointsEditor.Root
+      selectable={selectable}
       selection={selection}
       onSelectionChange={onSelectionChange}
     >
@@ -68,6 +71,9 @@ function Subject({
             value={values[id]}
             max={limits?.[id as 'a' | 'b']?.max}
             onChange={(v) => {
+              // From the previous state: a selection moves several points in
+              // the same tick, and a value captured in the render would throw
+              // all but the last one away.
               setValues((all) => ({ ...all, [id]: v }))
               onChange?.(id, v)
             }}
@@ -185,6 +191,20 @@ describe('moving a selection', () => {
     expect(onChange).toHaveBeenCalledWith('b', { x: 0.5, y: 0.5 })
   })
 
+  test('both points actually end up where they were moved to', () => {
+    // The callbacks firing is not enough: they land in the same tick, so a
+    // handler that rebuilt its state from a value captured in the render
+    // would keep only the last one and one point would appear stuck.
+    setup()
+
+    click(point('a'))
+    press(point('b'), { ctrlKey: true })
+    move(point('b'), { clientX: 10, clientY: 10 })
+
+    expect((point('a') as HTMLElement).style.left).toBe('30%')
+    expect((point('b') as HTMLElement).style.left).toBe('50%')
+  })
+
   test('the whole selection stops when one of them reaches its limit', () => {
     const onChange = jest.fn()
     setup({ onChange, limits: { b: { max: { x: 0.5 } } } })
@@ -260,5 +280,37 @@ describe('the rubber band', () => {
     // pointer capture away from the point.
     expect(container.querySelector('.tremolo-points-editor-marquee')).toBeNull()
     expect(selected('a')).toBe('true')
+  })
+})
+
+describe('with selection turned off', () => {
+  test('a press selects nothing', () => {
+    setup({ selectable: false })
+
+    click(point('a'))
+
+    expect(selected('a')).toBe('false')
+  })
+
+  test('a drag still moves the point it started on', () => {
+    const onChange = jest.fn()
+    setup({ selectable: false, onChange })
+
+    press(point('a'))
+    move(point('a'), { clientX: 10, clientY: 10 })
+
+    expect(onChange).toHaveBeenCalledTimes(1)
+    expect(onChange).toHaveBeenCalledWith('a', { x: 0.3, y: 0.3 })
+  })
+
+  test('a drag on empty space draws no rubber band', () => {
+    const { container } = setup({ selectable: false })
+    const area = screen.getByTestId('container')
+
+    press(area, { clientX: 0, clientY: 0 })
+    move(area, { clientX: 50, clientY: 50 })
+
+    expect(container.querySelector('.tremolo-points-editor-marquee')).toBeNull()
+    expect(selected('a')).toBe('false')
   })
 })

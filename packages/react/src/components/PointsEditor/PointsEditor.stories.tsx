@@ -24,7 +24,7 @@ type Story = StoryObj<typeof PointsEditor.Root>
 const themeColor = '#34c2ed'
 
 export const Basic: Story = {
-  args: {},
+  args: { selectable: true },
   render: (args) => {
     const initialPoints: Record<string, PointBaseType> = {
       'p-0': { x: 0, y: 0.5 },
@@ -71,7 +71,11 @@ export const Basic: Story = {
                 value={point}
                 color={themeColor}
                 onChange={({ x, y }) => {
-                  setPoints({ ...points, [id]: { x, y } })
+                  // From the previous state rather than from `points`: a
+                  // selection moves several points in the same tick, and a
+                  // value captured in the render would throw all but the
+                  // last one away.
+                  setPoints((prev) => ({ ...prev, [id]: { x, y } }))
                 }}
               />
             ))}

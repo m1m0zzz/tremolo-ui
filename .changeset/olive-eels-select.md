@@ -3,7 +3,12 @@
 '@tremolo-ui/react': minor
 ---
 
-**`PointsEditor` selects points, and a selection moves as one.**
+**`PointsEditor` selects points, and a selection moves as one**, with
+`selectable`.
+
+It is off by default. Selection changes what a press and a drag mean, and an
+editor whose points each mean something different — the four handles of an
+ADSR envelope, say — has nothing to gain from moving them together.
 
 - a press selects the point it landed on
 - **ctrl or ⌘ adds to the selection** — not shift, which is the
@@ -39,8 +44,22 @@ object that was going to handle it.
 `useDragValue`'s handlers receive the `DragState` as a second argument, the
 way `useDrag`'s do.
 
-One thing to know: the rubber band puts a drag on
-`PointsEditor.Container`, and a drag sets `touch-action: none` on what it is
-attached to. **Dragging a finger across the editor no longer scrolls the
-page** — it draws a selection. That was already true over a point; it is now
-true over the whole surface.
+Two things to know when you turn it on.
+
+**Update each point from the previous state.** A selection calls `onChange` on
+several points in the same tick, so a handler that rebuilds its state from a
+value captured in the render keeps only the last one, and every point but one
+appears stuck:
+
+```jsx
+// good
+onChange={(v) => setPoints((prev) => ({ ...prev, [id]: v }))}
+// throws away every call but the last
+onChange={(v) => setPoints({ ...points, [id]: v })}
+```
+
+**The rubber band puts a drag on `PointsEditor.Container`**, and a drag sets
+`touch-action: none` on what it holds, so dragging a finger across the editor
+draws a selection rather than scrolling the page. That was already true over a
+point; with `selectable` it is true over the whole surface. Without it the
+container takes no drag at all.

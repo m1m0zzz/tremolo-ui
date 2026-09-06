@@ -42,8 +42,12 @@
     cursor: default;
   }
 
+  /* An outline rather than a box-shadow: focus is usually drawn with a
+     shadow, and a selection that looks the same is a selection nobody can
+     tell from focus. */
   &[data-selected='true'] {
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color) 35%, transparent);
+    outline: 2px solid var(--color);
+    outline-offset: 2px;
   }
 }
 

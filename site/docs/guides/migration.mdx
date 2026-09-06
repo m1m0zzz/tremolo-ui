@@ -17,7 +17,15 @@ All three packages are released together and always share a version.
 
 ### `PointsEditor` selects points
 
-Points can be selected, and a selection moves as one.
+Points can be selected, and a selection moves as one. **Turn it on with
+`selectable`** — it is off by default, since it changes what a press and a
+drag mean, and an editor whose points each mean something different (the four
+handles of an ADSR envelope, say) has nothing to gain from moving them
+together.
+
+```jsx
+<PointsEditor.Root selectable>
+```
 
 - a press selects the point it landed on
 - **ctrl or ⌘ adds to the selection** — not shift, which is the
@@ -31,7 +39,19 @@ The editor keeps the selection itself unless you take it over with
 one generated to last as long as the point is mounted.
 
 ```jsx
-<PointsEditor.Root selection={selected} onSelectionChange={setSelected}>
+<PointsEditor.Root selectable selection={selected} onSelectionChange={setSelected}>
+```
+
+**Update each point from the previous state.** A selection calls `onChange` on
+several points in the same tick, so a handler that rebuilds its state from a
+value captured in the render keeps only the last one, and every point but one
+appears stuck:
+
+```jsx
+// good
+onChange={(v) => setPoints((prev) => ({ ...prev, [id]: v }))}
+// throws away every call but the last
+onChange={(v) => setPoints({ ...points, [id]: v })}
 ```
 
 A selected point carries `data-selected="true"`, and the rubber band is

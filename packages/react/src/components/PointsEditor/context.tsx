@@ -53,7 +53,9 @@ export type PointsEditorContextValue = {
    */
   containerRef: RefObject<HTMLDivElement | null>
 
-  /** Ids of the points currently selected. */
+  /** Whether points can be selected at all. See `PointsEditorProps.selectable`. */
+  selectable: boolean
+  /** Ids of the points currently selected. Always empty while `selectable` is off. */
   selection: readonly string[]
   /** Register a point so that a selection can move it with the rest. */
   registerPoint: (id: string, entry: RefObject<PointRegistration>) => () => void

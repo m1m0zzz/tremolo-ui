@@ -27,6 +27,7 @@ export function Container({
   const {
     containerRef,
     externalStyles,
+    selectable,
     marquee,
     beginMarquee,
     moveMarquee,
@@ -58,10 +59,13 @@ export function Container({
 
   // The container is what the pointer position is normalized against, so the
   // context ref is composed with any ref the caller passed.
+  // Only attached when there is a selection to draw: `createDrag` puts
+  // `touch-action: none` on whatever it holds, and an editor that cannot
+  // select has no reason to stop the page scrolling under a finger.
   const composedRef = useComposedRefs<HTMLDivElement>(
     ref,
     containerRef,
-    dragRefCallback,
+    selectable ? dragRefCallback : undefined,
   )
 
   return (

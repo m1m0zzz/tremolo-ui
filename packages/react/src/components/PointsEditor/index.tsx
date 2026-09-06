@@ -33,6 +33,9 @@ import {
 } from './context'
 import { Point, type PointBaseType } from './Point'
 
+/** One array for every editor with selection turned off, so memos hold still. */
+const EMPTY: readonly string[] = []
+
 /**
  * How far a point may move before something in the selection leaves its range.
  *
@@ -146,6 +149,30 @@ export interface PointsEditorProps {
   dragSensitivity?: ModifierValue<number>
 
   /**
+   * Let points be selected, and a selection be moved as one.
+   *
+   * Off by default, because it changes what a press and a drag mean: a press
+   * on empty space starts a rubber band rather than doing nothing, and a drag
+   * on a point moves everything else that is selected. An editor whose points
+   * each mean something different — the four handles of an ADSR envelope, say
+   * — has nothing to gain from moving them together.
+   *
+   * **A selection calls `onChange` on several points in the same tick**, so
+   * each of them has to update from the previous state rather than from a
+   * value captured in the render:
+   *
+   * ```jsx
+   * onChange={(v) => setPoints((prev) => ({ ...prev, [id]: v }))}
+   * ```
+   *
+   * Written the other way round — `setPoints({ ...points, [id]: v })` — every
+   * call but the last is thrown away, and only one point appears to move.
+   *
+   * @default false
+   */
+  selectable?: boolean
+
+  /**
    * Ids of the selected points, to hold the selection yourself. Leave it out
    * and the editor keeps its own.
    *
@@ -190,6 +217,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       wheel = DEFAULT_WHEEL,
       keyboard = DEFAULT_KEYBOARD,
       dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
+      selectable = false,
       selection: selectionProp,
       defaultSelection,
       onSelectionChange,
@@ -212,7 +240,9 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
     const [ownSelection, setOwnSelection] = useState<string[]>(
       defaultSelection ?? [],
     )
-    const selection = selectionProp ?? ownSelection
+    // Nothing is selected while selection is off, so a drag picks up only the
+    // point it started on and `data-selected` never turns on.
+    const selection = selectable ? (selectionProp ?? ownSelection) : EMPTY
 
     // Drags read the selection from a native event handler, which runs after
     // the commit, so a ref is current by the time it matters.
@@ -285,6 +315,10 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
 
     const beginPointDrag = useCallback(
       (id: string, modifiers: ModifierState) => {
+        if (!selectable) {
+          dragRef.current = snapshot([id])
+          return
+        }
         const current = selectionRef.current
         // Ctrl / meta rather than shift: shift is the fine-adjustment key on
         // every control here, and it cannot be both.
@@ -305,7 +339,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         // the start of a move, so there is nothing to drag.
         dragRef.current = next.includes(id) ? snapshot(next) : []
       },
-      [changeSelection, snapshot],
+      [selectable, changeSelection, snapshot],
     )
 
     const movePointDrag = useCallback(
@@ -361,6 +395,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
 
     const beginMarquee = useCallback(
       (at: PointBaseType, modifiers: ModifierState) => {
+        if (!selectable) return
         const additive = modifiers.ctrlKey || modifiers.metaKey
         marqueeRef.current = {
           from: at,
@@ -370,7 +405,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         setMarquee(marqueeOf(at, at))
         if (!additive) changeSelection([])
       },
-      [changeSelection],
+      [selectable, changeSelection],
     )
 
     const moveMarquee = useCallback(
@@ -399,6 +434,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         dragSensitivity,
         externalStyles: { userSelectNone, cursor },
         containerRef,
+        selectable,
         selection,
         registerPoint,
         beginPointDrag,
@@ -417,6 +453,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         dragSensitivity,
         userSelectNone,
         cursor,
+        selectable,
         selection,
         registerPoint,
         beginPointDrag,
