@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-import { Knob } from '../../src/components/Knob'
+import { Knob } from '.'
 
 export default {
-  title: 'Components/Knob/InactiveLine',
-  component: Knob.InactiveLine,
+  title: 'Components/Knob/ActiveLine',
+  component: Knob.ActiveLine,
   argTypes: {
     stroke: {
       control: 'color',
@@ -14,9 +14,9 @@ export default {
       type: 'number',
     },
   },
-} satisfies Meta<typeof Knob.InactiveLine>
+} satisfies Meta<typeof Knob.ActiveLine>
 
-type Story = StoryObj<typeof Knob.InactiveLine>
+type Story = StoryObj<typeof Knob.ActiveLine>
 
 export const Basic: Story = {
   args: {},
@@ -33,8 +33,8 @@ export const Basic: Story = {
           onChange={(v) => setValue(v)}
         >
           <Knob.SVGRoot>
-            <Knob.ActiveLine />
-            <Knob.InactiveLine {...args} />
+            <Knob.ActiveLine {...args} />
+            <Knob.InactiveLine />
             <Knob.Thumb />
           </Knob.SVGRoot>
         </Knob.Root>

@@ -45,6 +45,9 @@ function propTypesPlugin() {
 
 const config: StorybookConfig = {
   stories: [
+    // A component's own stories sit next to it. What is left in __stories__
+    // spans several components, or is shared by them.
+    '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
     '../**/__stories__/**/*.mdx',
     '../**/__stories__/**/*.stories.@(js|jsx|mjs|ts|tsx)',
   ],

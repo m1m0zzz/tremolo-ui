@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-import { Knob } from '../../src/components/Knob'
+import { Knob } from '.'
 
 export default {
   title: 'Components/Knob/Thumb',

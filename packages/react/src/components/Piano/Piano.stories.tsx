@@ -10,10 +10,11 @@ import {
   type ScaleName,
 } from '@tremolo-ui/functions'
 
-import { NumberInput } from '../src/components/NumberInput'
-import { Piano, PianoMethods, SHORTCUTS } from '../src/components/Piano'
-import { useMIDIAccess } from '../src/hooks/useMIDIAccess'
-import { useMIDIInput } from '../src/hooks/useMIDIInput'
+import { useMIDIAccess } from '../../hooks/useMIDIAccess'
+import { useMIDIInput } from '../../hooks/useMIDIInput'
+import { NumberInput } from '../NumberInput'
+
+import { Piano, PianoMethods, SHORTCUTS } from '.'
 
 export default {
   title: 'Components/Piano/Root',

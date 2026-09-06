@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 import { exponentialScale, linearScale } from '@tremolo-ui/functions'
 
-import { Knob } from '../../src/components/Knob'
+import { Knob } from '.'
 
 export default {
   title: 'Components/Knob/Root',

@@ -3,11 +3,11 @@ import { useState } from 'react'
 
 import { mapValue, unitFormat } from '@tremolo-ui/functions'
 
-import { AnimationCanvas } from '../src/components/AnimationCanvas'
-import { NumberInput } from '../src/components/NumberInput'
-import { PointBaseType, PointsEditor } from '../src/components/PointsEditor'
+import styles from '../../../__stories__/styles/PointsEditor.module.css'
+import { AnimationCanvas } from '../AnimationCanvas'
+import { NumberInput } from '../NumberInput'
 
-import styles from './styles/PointsEditor.module.css'
+import { PointBaseType, PointsEditor } from '.'
 
 export default {
   title: 'Components/PointsEditor/Root',

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { useMIDIAccess } from '../src/hooks/useMIDIAccess'
+import { useMIDIAccess } from './useMIDIAccess'
 
 export default {
   title: 'Hooks/useMIDIAccess',

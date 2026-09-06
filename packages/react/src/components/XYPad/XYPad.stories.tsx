@@ -8,8 +8,9 @@ import {
   toFixed,
 } from '@tremolo-ui/functions'
 
-import { AnimationCanvas } from '../src/components/AnimationCanvas'
-import { XYPad } from '../src/components/XYPad'
+import { AnimationCanvas } from '../AnimationCanvas'
+
+import { XYPad } from '.'
 
 export default {
   title: 'Components/XYPad/Root',

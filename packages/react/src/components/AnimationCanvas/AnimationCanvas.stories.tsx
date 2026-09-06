@@ -1,11 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-import {
-  AnimationCanvas,
-  AnimationCanvasProps,
-} from '../src/components/AnimationCanvas'
-import { Slider } from '../src/components/Slider'
+import { Slider } from '../Slider'
+
+import { AnimationCanvas, AnimationCanvasProps } from '.'
 
 export default {
   title: 'Components/AnimationCanvas',

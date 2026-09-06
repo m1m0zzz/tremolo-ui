@@ -3,8 +3,9 @@ import { useState } from 'react'
 
 import { unitFormat } from '@tremolo-ui/functions'
 
-import { Knob } from '../../src/components/Knob'
-import { NumberInput } from '../../src/components/NumberInput'
+import { Knob } from '../Knob'
+
+import { NumberInput } from '.'
 
 export default {
   title: 'Components/NumberInput/Root',
