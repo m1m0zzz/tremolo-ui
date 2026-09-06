@@ -96,7 +96,11 @@ export const WaveSelector = ({
             margin: 0,
           }}
         >
-          <Slider.Track defaultStyle={false} style={{ height: 170 }}>
+          <Slider.Track
+            length={170}
+            thickness="auto"
+            style={{ background: 'none' }}
+          >
             <AnimationCanvas
               width={180}
               height={170}

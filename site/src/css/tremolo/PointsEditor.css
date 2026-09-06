@@ -1,5 +1,10 @@
 .tremolo-points-editor {
+  --width: 200px;
+  --height: 100px;
+
   position: relative;
+  width: var(--width);
+  height: var(--height);
 }
 
 .tremolo-points-editor-background {
@@ -16,8 +21,12 @@
 
 .tremolo-points-editor-point {
   --color: oklch(59.5% 0.17548 266.373);
+  --width: 16px;
+  --height: 16px;
 
   position: absolute;
+  width: var(--width);
+  height: var(--height);
   border-radius: 50%;
   outline: none;
   cursor: grab;

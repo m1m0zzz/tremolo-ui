@@ -48,14 +48,41 @@
 .tremolo-slider-track {
   --active: oklch(69.212% 0.12903 267.633);
   --inactive: oklch(95% 0 0);
+  --length: 140px;
+  --thickness: 10px;
+  /* Which way the fill runs. `--percent` is where the thumb sits on screen,
+     so a flipped slider only swaps which side of it is the filled one. */
+  --axis: to right;
 
   position: relative;
+  width: var(--length);
+  height: var(--thickness);
+  border-radius: calc(var(--thickness) / 2);
+  /* The component sets `--percent` and paints nothing itself, so the fill is
+     yours to change: a second colour stop, a gradient, an image. */
+  background: linear-gradient(
+    var(--axis),
+    var(--active) var(--percent),
+    var(--inactive) var(--percent)
+  );
+
+  &[data-flipped='true'] {
+    background: linear-gradient(
+      var(--axis),
+      var(--inactive) var(--percent),
+      var(--active) var(--percent)
+    );
+  }
 
   &[data-vertical='false'] {
     min-width: 50px;
   }
 
   &[data-vertical='true'] {
+    --axis: to bottom;
+
+    width: var(--thickness);
+    height: var(--length);
     min-height: 50px;
   }
 
@@ -71,11 +98,26 @@
 }
 
 .tremolo-slider-marks {
+  /* Space between the marks and the track. */
+  --gap: 6px;
+
   display: block;
   position: relative;
+  margin-top: var(--gap);
+
+  &[data-vertical='true'] {
+    margin-top: 0;
+    margin-left: var(--gap);
+  }
 }
 
 .tremolo-slider-marks-option {
+  /* Read by the mark and the label below, which is why they are set here. */
+  --thickness: 1px;
+  --length: 0.5rem;
+  --gap: 2px;
+  --label-width: auto;
+
   display: flex;
   color: oklch(25.197% 0.00003 271.152);
   flex-direction: column;
@@ -93,10 +135,21 @@
 
 .tremolo-slider-marks-option-mark {
   background-color: currentColor;
+  width: var(--thickness);
+  height: var(--length);
+  margin-bottom: var(--gap);
+
+  &[data-vertical='true'] {
+    width: var(--length);
+    height: var(--thickness);
+    margin-bottom: 0;
+    margin-right: var(--gap);
+  }
 }
 
 .tremolo-slider-marks-option-label {
   text-align: right;
+  width: var(--label-width);
 }
 
 :where(.dark, [data-theme='dark']) {

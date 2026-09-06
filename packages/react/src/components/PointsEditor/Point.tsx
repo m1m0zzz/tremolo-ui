@@ -1,4 +1,9 @@
-import { ComponentPropsWithoutRef, useCallback, useState } from 'react'
+import {
+  ComponentPropsWithoutRef,
+  CSSProperties,
+  useCallback,
+  useState,
+} from 'react'
 
 import {
   applyDelta,
@@ -12,6 +17,7 @@ import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, removeUserSelectNone } from '../_util'
 import { useComposedRefs } from '../_util/composeRefs'
+import { cssLength } from '../_util/cssLength'
 import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/placement'
 
@@ -35,9 +41,13 @@ export interface PointProps<T extends PointBaseType> {
   min?: Partial<PointBaseType>
   max?: Partial<PointBaseType>
 
+  /** Width and height at once. Sets both `--width` and `--height`. */
   size?: number | string
+  /** Sets `--width`; the size the theme gives it stands when omitted. */
   width?: number | string
+  /** Sets `--height`. */
   height?: number | string
+  /** Sets `--color`. */
   color?: string
 
   /** Overrides the `disabled` of `PointsEditor.Root`. */
@@ -66,8 +76,8 @@ export function Point<T extends PointBaseType>({
   min,
   max,
   size,
-  width = 16,
-  height = 16,
+  width,
+  height,
   color,
 
   disabled: _disabled,
@@ -191,10 +201,6 @@ export function Point<T extends PointBaseType>({
     }
   }
 
-  const colors: Record<string, string | undefined> = {
-    '--color': color,
-  }
-
   return (
     // The point is a drag handle rather than a control of a known kind: it has
     // no single value to announce, so there is no role that fits it.
@@ -207,14 +213,17 @@ export function Point<T extends PointBaseType>({
       aria-disabled={disabled}
       aria-readonly={readonly}
       data-dragging={dragging}
-      style={{
-        ...colors,
-        width: size ?? width,
-        height: size ?? height,
-        left: `${value.x * 100}%`,
-        top: `${value.y * 100}%`,
-        ...style,
-      }}
+      style={
+        {
+          '--color': color,
+          '--width': cssLength(size ?? width),
+          '--height': cssLength(size ?? height),
+          // Where the point is: the value, not a style.
+          left: `${value.x * 100}%`,
+          top: `${value.y * 100}%`,
+          ...style,
+        } as CSSProperties
+      }
       onPointerDown={onPointerDown}
       onKeyDown={(event) => {
         handleKeyDown(event)

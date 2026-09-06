@@ -47,9 +47,11 @@ selector away.
 | `[aria-disabled="true"]` | every component | `disabled` is set |
 | `[aria-readonly="true"]` | every component | `readonly` is set |
 | `[data-dragging="true"]` | `Knob`, `PointsEditor.Point` | a drag is in progress |
-| `[data-vertical="true"]` | `Slider`, `Slider.Track`, `Slider.MarksOption` | the slider runs vertically |
+| `[data-vertical="true"]` | `Slider`, `Slider.Track`, `Slider.Marks`, `Slider.MarksOption` | the slider runs vertically |
+| `[data-flipped="true"]` | `Slider.Track` | the value grows from the far end (`vertical` or `reverse`, not both) |
 | `[data-active="true"]` | `Piano` keys | the note is sounding |
 | `[data-out-of-range="true"]` | `NumberInput.InputField` | the value is outside `min`/`max` |
+| `[data-fill="true"]` | `Piano` | `fill` is set |
 
 ```css
 .tremolo-slider[aria-disabled='true'] {
@@ -59,6 +61,64 @@ selector away.
 
 `:focus`, `:hover` and `:focus-within` work as they would anywhere, since the
 focusable element is a real one.
+
+## 📐Custom properties
+
+Anything about a component that is a matter of appearance is a custom property,
+and the prop that goes with it does nothing but write that property.
+
+```jsx
+<Slider.Track thickness={16} />
+// is exactly
+<Slider.Track style={{ '--thickness': '16px' }} />
+```
+
+So the prop, a stylesheet and an inline style are three ways to say one thing,
+and the usual cascade decides between them. **The default is in the CSS, not in
+the component**, so a rule of yours is enough to change it everywhere — you do
+not have to pass a prop to every instance.
+
+```css
+.tremolo-slider-track {
+  --thickness: 16px;
+}
+```
+
+A number passed as a prop is taken as pixels; anything else is written through
+as-is, so `'3rem'`, `'100%'` and `'auto'` all work.
+
+| Component | Properties |
+| --- | --- |
+| `Knob` | `--knob-size` |
+| `Slider.Track` | `--length`, `--thickness`, `--active`, `--inactive` |
+| `Slider.Thumb` | `--thumb-size` (on `Slider`), `--color` |
+| `Slider.Marks` | `--gap` |
+| `Slider.MarksOption` | `--thickness`, `--length`, `--gap`, `--label-width` |
+| `XYPad.Area` | `--width`, `--height`, `--color` |
+| `XYPad.Thumb` | `--thumb-size` (on `XYPad`), `--color` |
+| `PointsEditor` | `--width`, `--height` |
+| `PointsEditor.Point` | `--width`, `--height`, `--color` |
+| `Piano` | `--height`, and the per-key colours in the theme below |
+
+### `--percent`, and drawing the fill yourself
+
+`Slider.Track` also publishes `--percent`, where the value currently sits. It
+is the one number CSS cannot work out on its own, and it is why the component
+draws nothing: the fill is a rule in the theme rather than something the
+package paints for you.
+
+```css
+.tremolo-slider-track {
+  background: linear-gradient(
+    var(--axis),
+    var(--active) var(--percent),
+    var(--inactive) var(--percent)
+  );
+}
+```
+
+Replace that rule and the track can be anything — a second colour stop, an
+image, a dotted scale that fills in.
 
 ## 📋The theme used on this site
 

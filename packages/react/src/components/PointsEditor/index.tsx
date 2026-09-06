@@ -1,5 +1,6 @@
 import {
   ComponentPropsWithoutRef,
+  CSSProperties,
   forwardRef,
   ReactNode,
   useMemo,
@@ -9,6 +10,7 @@ import {
 import { InputEventOptions, type ModifierValue } from '@tremolo-ui/functions'
 
 import { Cursor } from '../_util'
+import { cssLength } from '../_util/cssLength'
 import { cx } from '../_util/cx'
 import { DEFAULT_DRAG_SENSITIVITY } from '../_util/inputEvent'
 
@@ -42,7 +44,9 @@ const DEFAULT_KEYBOARD: InputEventOptions = {
 }
 
 export interface PointsEditorProps {
+  /** Sets `--width`; the size the theme gives it stands when omitted. */
   width?: number | string
+  /** Sets `--height`. */
   height?: number | string
 
   /**
@@ -124,8 +128,8 @@ type Props = PointsEditorProps &
 export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   (
     {
-      width = 200,
-      height = 100,
+      width,
+      height,
       disabled = false,
       readonly = false,
       wheel = DEFAULT_WHEEL,
@@ -173,11 +177,13 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
           className={cx('tremolo-points-editor', className)}
           aria-disabled={disabled}
           aria-readonly={readonly}
-          style={{
-            width,
-            height,
-            ...style,
-          }}
+          style={
+            {
+              '--width': cssLength(width),
+              '--height': cssLength(height),
+              ...style,
+            } as CSSProperties
+          }
           {...props}
         >
           {children}

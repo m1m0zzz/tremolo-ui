@@ -1,24 +1,27 @@
 import { ComponentPropsWithoutRef, CSSProperties, ReactNode, Ref } from 'react'
 
-import { styleHelper, xor } from '@tremolo-ui/functions'
+import { xor } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../_util/composeRefs'
+import { cssLength } from '../_util/cssLength'
 import { cx } from '../_util/cx'
 import { Placement } from '../_util/placement'
 
 import { useSliderContext } from './context'
 
-export const defaultLength = 140
-export const defaultThickness = 10
-
 export interface SliderTrackProps {
+  /**
+   * How long the track is along the axis the slider runs. Sets `--length`;
+   * the size the theme gives it stands when this is omitted.
+   */
   length?: number | string
+  /** How thick the track is across that axis. Sets `--thickness`. */
   thickness?: number | string
 
+  /** Colour of the part below the value. Sets `--active`. */
   active?: string
+  /** Colour of the part above it. Sets `--inactive`. */
   inactive?: string
-
-  defaultStyle?: boolean
 
   className?: string
   style?: CSSProperties
@@ -28,14 +31,13 @@ export interface SliderTrackProps {
 }
 
 export function Track({
-  length = defaultLength,
-  thickness = defaultThickness,
+  length,
+  thickness,
   active,
   inactive,
   children,
   className,
   style,
-  defaultStyle = true,
   ref,
   ...props
 }: SliderTrackProps &
@@ -46,31 +48,27 @@ export function Track({
   // context ref is composed with any ref the caller passed.
   const composedRef = useComposedRefs<HTMLDivElement>(ref, trackRef)
 
-  const direction = vertical ? 'bottom' : 'right'
-  const colors = {
-    '--active': active,
-    '--inactive': inactive,
-  }
-
   return (
     <div
       ref={composedRef}
       className={cx('tremolo-slider-track', className)}
       aria-disabled={disabled}
       data-vertical={vertical}
+      // Which end the value grows from. `percent` is already the position on
+      // screen, so this only says which side of it is the filled one.
+      data-flipped={xor(vertical, reverse)}
       style={
-        !defaultStyle
-          ? style
-          : {
-              ...colors,
-              background: xor(vertical, reverse)
-                ? `linear-gradient(to ${direction}, var(--inactive) ${percent}%, var(--active) ${percent}%)`
-                : `linear-gradient(to ${direction}, var(--active) ${percent}%, var(--inactive) ${percent}%)`,
-              borderRadius: styleHelper(thickness!, '/', 2),
-              width: !vertical ? length : thickness,
-              height: vertical ? length : thickness,
-              ...style,
-            }
+        {
+          '--active': active,
+          '--inactive': inactive,
+          '--length': cssLength(length),
+          '--thickness': cssLength(thickness),
+          // Where the value sits, for the theme to paint the fill with. The
+          // component draws nothing itself: this is the one number CSS cannot
+          // work out on its own.
+          '--percent': `${percent}%`,
+          ...style,
+        } as CSSProperties
       }
       {...props}
     >

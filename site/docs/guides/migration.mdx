@@ -15,6 +15,57 @@ All three packages are released together and always share a version.
 
 ## Unreleased
 
+### Appearance props write custom properties
+
+Every prop that decides what a component looks like now sets a custom property
+and nothing else. The default moved with it, from the component into the CSS.
+
+```jsx
+<Slider.Track thickness={16} />
+// is exactly
+<Slider.Track style={{ '--thickness': '16px' }} />
+```
+
+**What changes for you.** These props used to be written into the element as
+inline styles, which a stylesheet could not override without `!important`.
+Now they are the same cascade as everything else, and a rule of yours is enough
+to change the default everywhere:
+
+```css
+.tremolo-slider-track {
+  --thickness: 16px;
+}
+```
+
+The properties are listed in [Styling](/docs/tutorials/styling). A number is
+taken as pixels; a string is written through, so `'3rem'` and `'auto'` work.
+
+**`Slider.Track` no longer paints itself, and `defaultStyle` is gone.** The
+track publishes `--percent` — where the value sits, the one number CSS cannot
+work out — and the fill is a rule in the theme:
+
+```css
+.tremolo-slider-track {
+  background: linear-gradient(
+    var(--axis),
+    var(--active) var(--percent),
+    var(--inactive) var(--percent)
+  );
+}
+```
+
+That is what `defaultStyle={false}` was for, and there is nothing left to turn
+off: to draw the track yourself, write the rule you want instead of ours. The
+`Slider.css` in [Styling](/docs/tutorials/styling) is the starting point.
+
+**If you were not using our CSS at all**, `Slider.Track`, `XYPad.Area`,
+`PointsEditor`, `PointsEditor.Point` and `Piano` no longer carry a size of
+their own, so give them one — either in your CSS or through the props, which
+now feed it.
+
+Two new state attributes come with it: `data-flipped` on `Slider.Track`, for a
+value that grows from the far end, and `data-fill` on `Piano`.
+
 ### Arrow keys leave an IME alone
 
 An arrow key no longer steps the value of a `NumberInput` while an IME is
