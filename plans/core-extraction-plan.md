@@ -1084,13 +1084,13 @@ export interface Scale {
 
 `packages/react/package.json` の `exports` は**変更不要**だった。`./styles/Slider.css` はコンポーネント単位の指定で、CSS ファイル自体は移動していないため（変わったのはクラス名だけ）。`site/docs` にも `Slider.Scale` の記述は無く、i18n に残る `ScaleProps` / `ScaleOptionProps` は typedoc の生成物なので `docs:wtr` で再生成される。
 
-### 5.9 wheel はフォーカス時のみ発火させる — 全コンポーネント
+### 5.9 wheel はフォーカス時のみ発火させる — 全コンポーネント — **完了**
 
 現在 wheel を持つのは Slider / Knob / XYPad / PointsEditor / NumberInput の 5 つで、**いずれもホバーしているだけで発火し、`event.preventDefault()` でページスクロールを奪う。** 長いフォームやドキュメントの上をスクロールしていて、たまたま通過したコントロールの値が変わる事故が起きる。Base UI / Chakra v3 も NumberField は「フォーカス時のみ」にしている。
 
 - [x] `createWheel` に「要素の中にフォーカスがあるときだけ発火する」オプションを足す（`requireFocus`。あわせて `update()` も追加）
 - [x] Slider / Knob / XYPad / NumberInput をそれに切り替える（**PointsEditor は対象外**。`wheel` / `keyboard` prop を宣言しているだけで、どこからも使っていない。下記参照）
-- [ ] 移行ガイドに載せる（挙動の破壊的変更）
+- [x] 移行ガイドに載せる（挙動の破壊的変更）→ `site/docs/guides/migration.mdx` の 0.5.0 に *The wheel only acts while the focus is inside* として載っている
 
 #### 判定は `activeElement` そのものではなく `contains` で行う
 
@@ -1307,7 +1307,7 @@ flex / grid コンテナの中で幅が足りないと、`flex-shrink` の既定
 - [ ] **draft の扱い。** フォーカス時に「素の値」を draft として立てるのか、表示だけ差し替えて draft は null のままにするのかを決める。draft を立てると、**何も編集せずに blur しただけで `commitDraft` が走る**（現在は `draft === null` で早期 return している）
 - [ ] IME 変換中にフォーカスが移る場合を壊さない
 
-### 5.17 テストと story を実装コードと同じディレクトリに置く
+### 5.17 テストと story を実装コードと同じディレクトリに置く — **完了**
 
 `plans/milestone.md` の「2. テスト整備」から移動。全コンポーネントに専用テストが揃った（Piano は 4.3、PointsEditor は Phase 5、XYPad は 5.7 と同時）ので、残るのは配置の話。
 
@@ -1317,14 +1317,19 @@ flex / grid コンテナの中で幅が足りないと、`flex-shrink` の既定
 
 移すときに必要な作業:
 
-- [ ] **`package.json` の `files` から test と story を除く。** `files` に `src` を入れているので、そのままだと publish されてしまう。`!` の否定パターンとブレース展開が使える（`npm pack --dry-run` で確認済み）
+- [x] **`package.json` の `files` から test と story を除いた。** `files` に `src` を入れているので、そのままだと publish されてしまう。`!` の否定パターンとブレース展開が使える
   ```jsonc
   "files": ["dist", "src", "!src/**/*.test.{ts,tsx}", "!src/**/*.stories.{ts,tsx}"]
   ```
-- [ ] **`.storybook/main.ts` の `stories` に `src/` 配下を足す。** 現在は `../**/__stories__/**/*.stories.*` のみ
-- [ ] **`site/docusaurus.config.ts` の typedoc の `exclude` に足す。** `entryPoints` が `src/components/**/index.{ts,tsx}` と `src/hooks/**/*.{ts,tsx}` なので、そのままだと test / story の API ページが生成される（`_internal` / `_util` で踏んだのと同じ）
-- [ ] **jest の `testMatch` / `roots` を確認する。** `__tests__/` 前提の設定になっていないか
-- [ ] **typedoc のサイドバー翻訳キーが衝突しないか確認する。** ラベルはモジュールパスの最後のセグメントなので、`Slider/index.test.tsx` のようなファイルが拾われると `index` が量産される（`docs/dom` を足したときに踏んだのと同じ問題）
+  `npm pack --dry-run` で tarball に `.test.` / `.stories.` が 1 つも入らないことを確認した
+- [x] **`.storybook/main.ts` の `stories` に `../src/**/*.stories.*` を足した。** 全 story が明示的な `title` を持っているのでサイドバーの並びは変わらない。ビルドした `index.json` で 23 タイトル 63 エントリが揃っていること（56 が `src/` 由来、7 が `__stories__/` 由来）を確認した
+- [x] **`site/docusaurus.config.ts` の typedoc の `exclude` に足した。** `src/**/*.test.{ts,tsx}` と `src/**/*.stories.{ts,tsx}` の 2 行。**効くのは hooks 側だけ**で、`entryPoints` が `src/hooks/**/*.{ts,tsx}` と全ファイルを取るため。components 側は `index.{ts,tsx}` しか拾わないので元から影響しないが、`entryPoints` が後で変わったときのために同じ 1 行で両方を除いてある
+- [x] **jest は変更不要だった。** `testMatch` が `**/*.test.[jt]s?(x)` で場所を問わず、`roots` は既定（`rootDir`）なので `src/` も走査する
+- [x] **サイドバーの翻訳キーは衝突しなかった。** `exclude` で test / story のページ自体が生成されないため。`build:docs` を en / ja 両方で通してある
+
+#### 残ったもの
+
+`__stories__/styles/PointsEditor.module.css` は `PointsEditor.stories.tsx` 専用になったが、「story 用のスタイルは `__stories__/styles/` に残す」に従って置いたままなので、import が `../../../__stories__/styles/...` になっている。**`styles/Slider.module.css` の方は `combined/VolumeFader` が使っている**ので残るのが正しく、1 ファイルだけ移すかどうかは別途。
 
 ## 6. 既存コードで見つかった問題
 

@@ -36,7 +36,7 @@ npm run changeset             # リリースに含める変更に changeset を�
 ```bash
 npm run test -w packages/functions -- __tests__/math.test.ts
 npm run test -w packages/dom -- __tests__/pointer/drag.test.ts
-npm run test -w packages/react -- __tests__/Slider/type.test.ts
+npm run test -w packages/react -- src/components/Slider/type.test.ts
 ```
 
 ドキュメントサイト:
@@ -111,7 +111,15 @@ Slider / Knob / XYPad は children をそのまま描画し、`children` は型�
 
 ### stories とテスト
 
-Storybook の stories は `packages/react/__stories__/`、テストは `packages/react/__tests__/` に置く（`src/` の外、コンポーネント名に対応する構成）。
+**1 つのコンポーネント / hook に対応する story とテストは、実装の隣に置く。** `src/components/<Name>/Slider.stories.tsx`、`src/components/<Name>/draft.test.tsx`、`src/hooks/useDrag.test.tsx` のように。
+
+**複数のコンポーネントにまたがるものだけ `packages/react/__tests__/` / `__stories__/` に残す。** `__tests__/drag.test.tsx`、`__tests__/Slider/compose.test.tsx`、`__tests__/util/`、`__tests__/storybook/`、`__stories__/combined/`、それに story 用のヘルパーとスタイル（`__stories__/lib/`、`__stories__/styles/`、`public/`、`intro.mdx`）。
+
+`src/` の中に置くので、**新しい種類のファイルを足すときは 3 箇所が publish と typedoc に効く**。
+
+- `packages/react/package.json` の `files` は `src` を丸ごと含むので、`!src/**/*.test.{ts,tsx}` のような否定パターンで除く（`npm pack --dry-run` で確認できる）
+- `site/docusaurus.config.ts` の typedoc の `exclude`。react の `entryPoints` は `src/hooks/**/*.{ts,tsx}` と hooks だけ全ファイルを取るので、除外しないと API ページが生成される
+- `.storybook/main.ts` の `stories` グロブ
 
 Controls に出る型は `.storybook/propTypes.ts` が補っている。react-docgen は型をソースに書かれたまま記録するため、エイリアスやジェネリックは名前しか出ない。ビルド時に TypeScript の checker で prop ごとの型を解決し、**コンポーネントそのものをキーにした Map**（`virtual:tremolo-prop-types`）として preview に渡している。名前をキーにしないのは、`Root` だけではどのコンポーネントのものか分からないため。
 
