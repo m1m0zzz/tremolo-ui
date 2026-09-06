@@ -3,6 +3,7 @@ import {
   normalizeValue,
   rawValue,
   stepValue,
+  toPrecision,
   decimalPart,
   integerPart,
 } from '../src/math'
@@ -72,5 +73,36 @@ describe('unit', () => {
     expect(integerPart(NaN)).toBe(undefined)
     expect(integerPart(Infinity)).toBe('Infinity')
     expect(integerPart(-Infinity)).toBe('-Infinity')
+  })
+
+  test('toPrecision', () => {
+    expect(toPrecision(5.1 + 0.1)).toBe(5.2)
+    expect(toPrecision(0.1 + 0.2)).toBe(0.3)
+    expect(toPrecision(0.0005 / 1e-6)).toBe(500)
+    // A value that is already clean comes back untouched.
+    expect(toPrecision(5.2)).toBe(5.2)
+    expect(toPrecision(1 / 3)).toBe(0.333333333333333)
+    expect(toPrecision(-5.699999999999998)).toBe(-5.7)
+  })
+
+  test('toPrecision leaves what it has no answer for', () => {
+    expect(toPrecision(0)).toBe(0)
+    expect(Object.is(toPrecision(-0), -0)).toBe(true)
+    expect(toPrecision(NaN)).toBe(NaN)
+    expect(toPrecision(Infinity)).toBe(Infinity)
+    // Rounding the top of the range up would overflow to Infinity, which is
+    // a worse answer than the artefact.
+    expect(toPrecision(Number.MAX_VALUE)).toBe(Number.MAX_VALUE)
+  })
+
+  test('toPrecision does not accumulate', () => {
+    let raw = 0
+    let clean = 0
+    for (let i = 0; i < 1000; i++) {
+      raw = raw + 0.1
+      clean = toPrecision(clean + 0.1)
+    }
+    expect(raw).not.toBe(100)
+    expect(clean).toBe(100)
   })
 })

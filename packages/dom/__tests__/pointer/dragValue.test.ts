@@ -261,6 +261,23 @@ describe('axis scaling', () => {
     expect(lastValue(onChange)).toEqual([10, 4])
   })
 
+  test('drops the binary artefact from the value', () => {
+    const { element, onChange } = setup({
+      axis: { min: 0, max: 0.7 },
+    })
+
+    element.dispatchEvent(
+      pointerEvent('pointerdown', { clientX: 0, clientY: 0 }),
+    )
+    element.dispatchEvent(
+      pointerEvent('pointermove', { clientX: 10, clientY: 10, screenX: 10 }),
+    )
+
+    // A tenth of the way along a range of 0.7 is 0.07000000000000001 in
+    // binary, and that is what the caller used to be handed.
+    expect(lastValue(onChange)).toEqual([0.07, 0.07])
+  })
+
   test('applies the scale', () => {
     const { element, onChange } = setup({
       axis: { min: 0, max: 100, scale: skewScale(0.5), step: undefined },

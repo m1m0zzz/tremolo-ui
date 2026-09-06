@@ -39,6 +39,43 @@ export function toFixed(x: number, fractionDigits?: number) {
   return Number(x.toFixed(fractionDigits))
 }
 
+/**
+ * The significant decimal digits a double actually carries. A double holds a
+ * little under 16, so anything past this is the binary representation showing
+ * through rather than information.
+ */
+export const SIGNIFICANT_DIGITS = 15
+
+/**
+ * Drop the binary artefact from a computed value.
+ *
+ * Arithmetic on doubles leaves debris in the last couple of digits, and it
+ * accumulates: adding 0.1 to 5 twelve times gives 5.699999999999998 rather
+ * than 5.7, and the display of a control shows exactly that. Rounding to the
+ * digits a double can carry removes it, and adds nothing back — the value was
+ * already the result of a calculation whose own error is that size or larger.
+ *
+ * This is not the same as rounding to a `step`. {@link stepValue} puts a value
+ * on a grid the caller asked for and is a decision about the value; this only
+ * removes what was never in the value to begin with.
+ *
+ * @param significantDigits how many digits to keep. The default is the only
+ * one that is purely artefact removal; a smaller number starts discarding real
+ * precision.
+ *
+ * @example
+ * toPrecision(5.1 + 0.1) // 5.2, rather than 5.199999999999999
+ */
+export function toPrecision(x: number, significantDigits = SIGNIFICANT_DIGITS) {
+  // Zero has no significant digits to round to, and a non-finite value has no
+  // decimal form to parse back.
+  if (x === 0 || !Number.isFinite(x)) return x
+  const rounded = Number(x.toPrecision(significantDigits))
+  // Rounding up at the very top of the range overflows to Infinity, which is
+  // a worse answer than the artefact.
+  return Number.isFinite(rounded) ? rounded : x
+}
+
 export function integerPart(x: number | string): string | undefined {
   if (Number.isNaN(x)) {
     return undefined

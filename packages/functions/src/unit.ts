@@ -1,3 +1,5 @@
+import { toPrecision } from './math'
+
 /**
  * The SI prefixes {@link unitFormat} chooses between.
  *
@@ -70,11 +72,10 @@ export interface UnitFormatter {
  * Divide by a prefix scale without showing the result of doing so in binary.
  *
  * `0.0005 / 1e-6` is 500.00000000000006, and with no `digits` to round it that
- * lands in the input as written. A double carries about 15 significant digits
- * of real information, so anything past that is the artefact and can go.
+ * lands in the input as written.
  */
 function scaleBy(value: number, scale: number): number {
-  return Number((value / scale).toPrecision(15))
+  return toPrecision(value / scale)
 }
 
 /** A number, then whatever followed it. */

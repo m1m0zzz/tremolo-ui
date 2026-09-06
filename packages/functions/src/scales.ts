@@ -1,4 +1,4 @@
-import { clamp, normalizeValue, rawValue, stepValue } from './math'
+import { clamp, normalizeValue, rawValue, stepValue, toPrecision } from './math'
 import {
   type InputEventOptions,
   type ModifierState,
@@ -301,5 +301,11 @@ export function applyDelta(
   // does not apply to it. Without this a finer amount would round straight
   // back to where it started: `stepValue(3 + 0.1, 1)` is 3.
   const quantum = modifier === null ? step : undefined
-  return clamp(quantum ? stepValue(next, quantum) : next, min, max)
+  const stepped = quantum ? stepValue(next, quantum) : next
+
+  // Rounded before the clamp, so that `min` and `max` still have the last
+  // word and the value can land on them exactly. Without this the artefact
+  // accumulates: with no `step` to round it back, twelve presses of a 0.1
+  // modifier amount reach 5.699999999999998 rather than 5.7.
+  return clamp(toPrecision(stepped), min, max)
 }
