@@ -6,6 +6,13 @@
   display: inline-block;
   width: var(--knob-size);
   height: var(--knob-size);
+  /* A knob is a fixed-size control, like a button. Without this a flex row
+     that runs short shrinks the width and leaves the height alone, so the box
+     stops being square and the knob sits in it with dead space below.
+     `aspect-ratio` is not the answer: it is ignored while both width and
+     height are definite, and dropping the height to free it up lets
+     `align-items: stretch` pull the box the other way. */
+  flex-shrink: 0;
   cursor: grab;
   outline: 0;
 
