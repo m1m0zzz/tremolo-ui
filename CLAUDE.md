@@ -54,9 +54,9 @@ npm run build:docs
 
 **site と Storybook は workspace の symlink 経由でパッケージのビルド済み `dist/` を参照している。** `packages/*/src` を変更したら、site（やドキュメントの example）に反映する前に `npm run build:package` が必要。`react` から `dom` / `functions` の新しいコードを使う場合も同様。
 
-**`site/docs` には生成されるファイルが 2 種類ある。** typedoc の `docs/api/` と、`site/scripts/changelog.mjs` が `packages/*/CHANGELOG.md` から作る `docs/support/changelog-*.md`。どちらも `site/.gitignore` に入っていてコミットしない。changelog の生成は `site/package.json` の `start` / `start:fast` / `build` の頭に `npm run changelog` として書いてある（npm の `pre*` に頼ると、`start:fast` のようにスクリプトが増えたときに付け忘れる）。
+**`site/docs` には生成されるファイルが 2 種類ある。** typedoc の `docs/api/` と、`site/scripts/changelog.mjs` が `packages/*/CHANGELOG.md` から作る `docs/changelog/<pkg>.md`。どちらも `site/.gitignore` に入っていてコミットしない（`docs/changelog/index.md` だけは手書きなので `!` で除外を戻している）。changelog の生成は `site/package.json` の `start` / `start:fast` / `build` の頭に `npm run changelog` として書いてある（npm の `pre*` に頼ると、`start:fast` のようにスクリプトが増えたときに付け忘れる）。
 
-生成した changelog には **`format: md` を front matter に入れている**。changesets が書く文章は MDX として読ませる前提が無く、リリースノートに `<` や `{` が 1 つ紛れ込むだけでビルドが落ちるため。
+生成した changelog には **`format: md` を front matter に入れている**。changesets が書く文章は MDX として読ませる前提が無く、リリースノートに `<` や `{` が 1 つ紛れ込むだけでビルドが落ちるため。あわせて `custom_edit_url: null` も入れている（生成物なので GitHub 上に編集先が無い。`docs/api/` の方は同じ理由で edit リンクが 404 のままになっている）。
 
 ### PR を作る前に
 
