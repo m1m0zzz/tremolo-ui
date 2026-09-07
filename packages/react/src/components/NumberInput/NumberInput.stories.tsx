@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { useState } from 'react'
+import { ComponentProps, useState } from 'react'
 
 import { unitFormat } from '@tremolo-ui/functions'
 
@@ -18,20 +18,49 @@ export default {
       control: false,
     },
   },
-} satisfies Meta<typeof NumberInput.Root>
+} satisfies Meta<Args>
 
-type Story = StoryObj<typeof NumberInput.Root>
+/**
+ * An arg that is not a prop: whether the `Stepper` is mounted. Storybook shows
+ * anything in `args`, so a story can put its own switches in Controls as long
+ * as `render` takes them out before spreading the rest onto the component.
+ */
+type Parts = {
+  stepper: boolean
+}
+
+type Args = ComponentProps<typeof NumberInput.Root> & Parts
+
+type Story = StoryObj<Args>
+
+/** Declared on the story, so it only shows where it means something. */
+const partsArgTypes = {
+  stepper: {
+    control: 'boolean',
+    table: { category: 'Parts' },
+  },
+} as const
 
 /** `format` and `parse` come as a pair, so they spread in together. */
 const hz = unitFormat('Hz')
 
 export const Basic: Story = {
-  render: (args) => {
+  argTypes: partsArgTypes,
+  args: {
+    stepper: false,
+  },
+  render: ({ stepper, ...args }) => {
     const [value, setValue] = useState(32)
 
     return (
       <NumberInput.Root {...args} value={value} onChange={(v) => setValue(v)}>
         <NumberInput.InputField />
+        {stepper && (
+          <NumberInput.Stepper>
+            <NumberInput.IncrementStepper />
+            <NumberInput.DecrementStepper />
+          </NumberInput.Stepper>
+        )}
       </NumberInput.Root>
     )
   },
@@ -116,8 +145,8 @@ export const WithAnotherComponents: Story = {
         >
           <Knob.Root
             value={value}
-            min={args.min ?? Number.MIN_SAFE_INTEGER}
-            max={args.max ?? Number.MAX_SAFE_INTEGER}
+            min={args.min ?? 0}
+            max={args.max ?? 100}
             onChange={(v) => setValue(v)}
           >
             <Knob.SVGRoot>
@@ -141,142 +170,30 @@ export const WithAnotherComponents: Story = {
 }
 
 /**
- * Typing is never clamped, so a value can be entered digit by digit. With
- * `clampValue` on, the entry is brought back into range once it is committed.
+ * Typing is never clamped, so a value can be entered digit by digit. It is
+ * `clampValue` that says what happens once the entry is committed: on, it is
+ * brought back into the range; off — as it starts here — it is kept as typed.
  */
-export const ClampValue = () => {
-  const [clamped, setClamped] = useState(50)
-  const [unclamped, setUnclamped] = useState(50)
+export const ClampValue: Story = {
+  args: {
+    min: 0,
+    max: 100,
+    clampValue: false,
+  },
+  render: (args) => {
+    const [value, setValue] = useState(50)
 
-  return (
-    <div>
-      <section style={{ marginBottom: '2rem' }}>
-        <p>clampValue (default), min=0 max=100</p>
-        <NumberInput.Root
-          value={clamped}
-          min={0}
-          max={100}
-          onChange={setClamped}
-        >
+    return (
+      <div>
+        <NumberInput.Root {...args} value={value} onChange={setValue}>
           <NumberInput.InputField />
           <NumberInput.Stepper>
             <NumberInput.IncrementStepper />
             <NumberInput.DecrementStepper />
           </NumberInput.Stepper>
         </NumberInput.Root>
-        <p>value: {clamped}</p>
-      </section>
-      <section>
-        <p>clampValue={'{false}'}, min=0 max=100 — out of range is kept</p>
-        <NumberInput.Root
-          value={unclamped}
-          min={0}
-          max={100}
-          clampValue={false}
-          onChange={setUnclamped}
-        >
-          <NumberInput.InputField />
-          <NumberInput.Stepper>
-            <NumberInput.IncrementStepper />
-            <NumberInput.DecrementStepper />
-          </NumberInput.Stepper>
-        </NumberInput.Root>
-        <p>value: {unclamped}</p>
-      </section>
-    </div>
-  )
-}
-
-/**
- * With `unformatOnFocus`, focusing the input drops whatever `format` put
- * around the value and shows the number itself, ready to be typed over.
- * Both fields hold the same value; only the left one keeps its format while
- * you are in it.
- */
-export const UnformatOnFocus = () => {
-  const [left, setLeft] = useState(1230)
-  const [right, setRight] = useState(1230)
-
-  return (
-    <div style={{ display: 'flex', gap: '2rem' }}>
-      <section>
-        <p>default</p>
-        <NumberInput.Root value={left} {...hz} onChange={setLeft}>
-          <NumberInput.InputField />
-        </NumberInput.Root>
-      </section>
-      <section>
-        <p>unformatOnFocus</p>
-        <NumberInput.Root value={right} {...hz} onChange={setRight}>
-          <NumberInput.InputField unformatOnFocus />
-        </NumberInput.Root>
-      </section>
-    </div>
-  )
-}
-
-/**
- * `keepCaretOnStep` puts the caret back where it was after an arrow key steps
- * the value, so a column can be held while stepping. Click into the middle of
- * a number and hold the up arrow on each field to compare.
- */
-export const KeepCaretOnStep = () => {
-  const [left, setLeft] = useState(1234.5)
-  const [right, setRight] = useState(1234.5)
-
-  return (
-    <div style={{ display: 'flex', gap: '2rem' }}>
-      <section>
-        <p>default</p>
-        <NumberInput.Root
-          value={left}
-          step={0.1}
-          keyboard={['raw', 0.1]}
-          onChange={setLeft}
-        >
-          <NumberInput.InputField />
-        </NumberInput.Root>
-      </section>
-      <section>
-        <p>keepCaretOnStep</p>
-        <NumberInput.Root
-          value={right}
-          step={0.1}
-          keyboard={['raw', 0.1]}
-          onChange={setRight}
-        >
-          <NumberInput.InputField keepCaretOnStep />
-        </NumberInput.Root>
-      </section>
-    </div>
-  )
-}
-
-export const SelectOnFocus = () => {
-  const [value1, setValue1] = useState(32)
-  const [value2, setValue2] = useState(32)
-  const [value3, setValue3] = useState(32)
-
-  const data: {
-    selectOnFocus: 'none' | 'all' | 'number'
-    v: number
-    setter: (v: number) => void
-  }[] = [
-    { selectOnFocus: 'none', v: value1, setter: setValue1 },
-    { selectOnFocus: 'all', v: value2, setter: setValue2 },
-    { selectOnFocus: 'number', v: value3, setter: setValue3 },
-  ]
-
-  return (
-    <div>
-      {data.map(({ selectOnFocus, v, setter }) => (
-        <section key={selectOnFocus} style={{ marginBottom: '2rem' }}>
-          <p>selectOnFocus=&apos;{selectOnFocus}&apos;</p>
-          <NumberInput.Root value={v} {...hz} onChange={setter}>
-            <NumberInput.InputField selectOnFocus={selectOnFocus} />
-          </NumberInput.Root>
-        </section>
-      ))}
-    </div>
-  )
+        <p>value: {value}</p>
+      </div>
+    )
+  },
 }
