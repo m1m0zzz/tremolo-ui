@@ -24,7 +24,7 @@ tremolo-uiは、オーディオアプリ向けのUIライブラリです。
 
 UIカタログとドキュメントを Storybook上で確認できます。
 
-- [React Storybook](https://tremolo-ui-sb-react.vercel.app/)
+- [React Storybook](https://tremolo-ui.mimoz.dev/i/storybook-react/)
 
 ## API
 

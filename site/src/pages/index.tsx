@@ -35,7 +35,7 @@ function HomepageHeader() {
           </Link>
           <Link
             className="button button--secondary button--lg"
-            to="https://tremolo-ui-sb-react.vercel.app/"
+            to="https://tremolo-ui.mimoz.dev/i/storybook-react/"
             style={{
               maxWidth: 240,
               flex: '1 1 0px',

@@ -1,0 +1,61 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - '**'
+      - '!**.md'
+      - 'site/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+
+    # Ensure npm 11.10. or later for min-release-age support
+    - run: npm install -g npm@latest
+
+    - name: Install dependencies
+      run: npm ci
+
+    - run: npm run lint
+    - run: npm run format:check
+
+    # packages/react のテストは workspace symlink 越しに他パッケージの dist を
+    # 解決するため、テストより先にビルドする必要がある。site と Storybook も
+    # 同じ symlink 越しに dist を見るので、この 1 回で全部が揃う。
+    - name: Build packages
+      run: npm run build:package
+
+    - name: Test
+      run: npm run test
+
+    - name: Build Storybook
+      run: npm run build:sb -w packages/react
+
+    - name: Build docs site
+      run: npm run build -w site
+
+    # docs が先。tremolo-ui.mimoz.dev の Custom Domain が proxied な DNS
+    # レコードを作り、Storybook 側の route はそれが無いとデプロイに失敗する。
+    - name: Deploy
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      run: |
+        npx wrangler deploy --config site/wrangler.jsonc
+        npx wrangler deploy --config packages/react/wrangler.jsonc

@@ -1,0 +1,13 @@
+# Workers Static Assets の既定は全ファイル `public, max-age=0, must-revalidate`
+# + ETag。304 で済むとはいえ毎回リクエストが飛ぶので、内容ハッシュが入っていて
+# 中身が変わり得ないものだけ immutable にする。
+#
+# 対象は vite が出す assets/ だけ。sb-manager/ や sb-addons/ は固定ファイル名で
+# ハッシュが無いため、既定のままにしておかないと更新が反映されなくなる。
+#
+# _headers はアセットのルート（storybook-static/）に無ければならないが、ビルド
+# 出力は storybook-static/i/storybook-react/ に入る。そのため build:sb が
+# ここから storybook-static/_headers へコピーしている。
+
+/i/storybook-react/assets/*
+  Cache-Control: public, max-age=31536000, immutable

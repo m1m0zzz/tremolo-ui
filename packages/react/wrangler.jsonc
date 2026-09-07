@@ -1,0 +1,32 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "tremolo-ui-sb-react",
+  "compatibility_date": "2026-09-07",
+
+  // Assets only, for the same reason as site/wrangler.jsonc.
+  "assets": {
+    // `build:sb` writes to storybook-static/i/storybook-react so that the file
+    // paths match the request paths this Worker answers. The preview URL then
+    // serves the same paths as production.
+    "directory": "./storybook-static",
+    // Storybook loads iframe.html with the extension, which force-trailing-slash
+    // would redirect on every story change. Splitting the two sites across two
+    // Workers is what lets each keep the handling it wants — the setting is
+    // per-Worker.
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none",
+  },
+
+  // A route beats a Custom Domain on the same hostname, so this wins over
+  // tremolo-ui-docs for its prefix. The trailing `*` covers both
+  // /i/storybook-react and everything under it.
+  "routes": [
+    {
+      "pattern": "tremolo-ui.mimoz.dev/i/storybook-react*",
+      "zone_name": "mimoz.dev",
+    },
+  ],
+
+  "workers_dev": true,
+  "preview_urls": true,
+}

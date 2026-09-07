@@ -97,13 +97,43 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 **いずれも 1.0 の必須ではない。** リリースを止める理由にはしないが、置き場所としてここに残す。
 
-### デプロイ先を Cloudflare Workers / `mimoz.dev` へ移す
+### デプロイ先を Cloudflare Workers / `tremolo-ui.mimoz.dev` へ移す
 
-- [ ] `mimoz.dev/tremolo-ui/` にドキュメントサイト、`mimoz.dev/tremolo-ui/i/storybook-react` に Storybook
-- [ ] Vercel はリダイレクトとして残す
-- [ ] preview は Cloudflare Access で保護する
-- [ ] **Vercel のビルド回数制限（24 時間の rate limit）から抜けられるのが実利。** stacked PR で 3 レイヤ同時に上げると 6 デプロイが走って制限に当たり、プレビュー URL が出なくなっていた
-- [ ] サブパス配信になるので、Docusaurus の `baseUrl` と Storybook の base path を確認する。i18n（`/ja/`）との組み合わせも
+**構成は調査のうえ確定した。** 静的アセットだけを配る Worker を 2 つ立て、GitHub Actions からデプロイする。
+
+```
+本番     tremolo-ui.mimoz.dev/                    -> tremolo-ui-docs      (Custom Domain)
+         tremolo-ui.mimoz.dev/i/storybook-react*  -> tremolo-ui-sb-react  (Route)
+preview  <branch>-tremolo-ui-docs.<sub>.workers.dev
+         <branch>-tremolo-ui-sb-react.<sub>.workers.dev   ... 両方 Access で保護
+CI       ci.yml (push) / pull-request.yml (PR)。PR は versions upload --preview-alias
+```
+
+**なぜこの形か**（いずれも無料プランの制約から来ている）:
+
+- **ルーティング用の Worker スクリプトを書かない。** 静的アセットへのリクエストは無料かつ無制限だが、スクリプトが起動した分は 100,000 req/day にカウントされ、**無料プランは超過時に静的アセットへフォールバックせず 429 を返す**。1 つのホスト名に 2 つのサイトを載せるのに自前のルータを挟むと、この制限をまともに受ける
+- **Worker を 2 つに分けるのは `html_handling` が Worker 単位の設定だから。** docs は `trailingSlash: true` なので `force-trailing-slash` が要る一方、Storybook は `iframe.html` を拡張子付きで直接読む。同居させるとストーリー表示のたびに 307 を踏む
+- **同一ホスト名で Route は Custom Domain より優先される**ので、上の 2 段構成が成立する。Route には proxied な DNS レコードが必須だが、**docs 側の Custom Domain がそれを自動で作る**ので追加作業は無い
+- **Workers Builds ではなく GitHub Actions を使う。** Workers Builds だと Worker 2 つ × push ごとにモノレポ全体を 2 回ビルドし、無料枠（3,000 分/月・同時 1）を食う。ワークフローは既に全部ビルドしているので、`wrangler` を足すだけでよい
+- **preview は `--preview-alias` の workers.dev URL をそのまま使う。** preview URL は workers.dev 専用で、`preview.tremolo-ui.mimoz.dev` のような独自サブドメインには**現状できない**。自作するとルータ Worker が 1 つ増えるうえ、元の workers.dev URL も別途 Access で塞ぐ必要があり、得られるのは URL の見た目だけ
+
+**実測（origin/main 時点）**: docs 296 ファイル / 14 MB、Storybook 93 ファイル / 9 MB。無料プランの上限 20,000 ファイル・1 ファイル 25 MiB に対して余裕がある。
+
+- [ ] `site` / Storybook それぞれに wrangler の設定を置く（`assets` のみ、`main` 無し）。docs は `force-trailing-slash`、Storybook は既定のまま
+- [ ] Storybook は `viteFinal` で vite の `base` を `/i/storybook-react/` にし、成果物も `i/storybook-react/` 配下に出す。**本番ビルドのみ**（dev に掛けるとローカルの URL が変わる）。この配置なら preview URL でも本番と同じパスになり、base path 起因の差異が出ない
+- [ ] `docusaurus.config.ts` は `url` を差し替えるだけ。**サブドメイン直下なので `baseUrl: '/'` のままでよく、i18n（`/ja/`）との組み合わせも変わらない**
+- [ ] ワークフローを trigger ごとに分ける。`pull-request.yml` は `wrangler versions upload --preview-alias <branch>`、`ci.yml`（main への push）は `wrangler deploy`
+  - alias は**小文字・数字・ハイフンのみ、先頭は小文字**。ブランチ名の `/` はサニタイズが要る。さらに `alias + Worker 名` が **63 文字以内**（DNS 制約）
+  - **fork からの PR には secrets が渡らないので preview は出ない。** Access を掛ける以上どのみち外部の人は見られないので実害は無い（`pull_request_target` は使わない）
+  - preview URL は `marocchino/sticky-pull-request-comment`（`header: preview`）で PR に貼る。job に `pull-requests: write` が要る
+  - API token は Account -> Workers Scripts:Edit と、Zone -> Workers Routes:Edit（`mimoz.dev`）
+- [ ] preview を Cloudflare Access で保護する。**Zero Trust の無料プランで 50 シートまで**。Worker の Access タブから「preview URL のみ」を選べる
+  - preview URL は **`workers_dev` が有効なときだけ出る**（無効にすると preview も消える）ので、`workers_dev = true` のまま Access で塞ぐ
+  - Worker レベルの Access は WebSocket 非対応だが、静的サイトなので影響しない
+- [ ] `mimoz.dev` は既に Cloudflare の zone（`ignat` / `june` の NS）。`tremolo-ui.mimoz.dev` のレコードは未作成
+- [ ] リンクの書き換え: `README.md`（4 箇所。うち 2 つは `deploy-badge.vercel.app` のバッジで、**Cloudflare 版の同等品が無い**ので素のリンクか shields.io に置き換える）、`SECURITY.md`、`CONTRIBUTING.md`、`site/README.md`、`docusaurus.config.ts` の navbar / footer、`site/i18n/*/docusaurus-theme-classic/footer.json`
+- [ ] Vercel はリダイレクトとして残す。**`*.vercel.app` はデプロイが存在しないとリダイレクトを返せない**ので、プロジェクト自体は維持したうえで push ごとの再ビルドを Ignored Build Step で止める
+- [ ] **Vercel のビルド回数制限（24 時間の rate limit）から抜けられるのが実利。** stacked PR で 3 レイヤ同時に上げると 6 デプロイが走って制限に当たり、プレビュー URL が出なくなっていた。Cloudflare 側は rate limit ではなくキューイングなので、この症状は起きない
 
 ### ツールチェーンの見直し
 
