@@ -287,7 +287,7 @@ const config: Config = {
             },
             {
               label: 'Changelog',
-              to: '/docs/support/CHANGELOG/',
+              to: '/docs/changelog/',
             },
           ],
         },

@@ -19,9 +19,9 @@
     "message": "Guides",
     "description": "The label for category 'Guides' in sidebar 'tutorialSidebar'"
   },
-  "sidebar.tutorialSidebar.category.Support": {
-    "message": "Support",
-    "description": "The label for category 'Support' in sidebar 'tutorialSidebar'"
+  "sidebar.tutorialSidebar.category.Changelog": {
+    "message": "Changelog",
+    "description": "The label for category 'Changelog' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.Components.link.generated-index.title": {
     "message": "Components",

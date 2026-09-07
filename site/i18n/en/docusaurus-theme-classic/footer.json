@@ -37,7 +37,7 @@
   },
   "link.item.label.Changelog": {
     "message": "Changelog",
-    "description": "The label of footer link with label=Changelog linking to /docs/support/CHANGELOG/"
+    "description": "The label of footer link with label=Changelog linking to /docs/changelog/"
   },
   "link.item.label.GitHub": {
     "message": "GitHub",

@@ -4,16 +4,17 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "docusaurus start",
-    "start:fast": "SKIP_API=true docusaurus start",
-    "build": "docusaurus build",
+    "changelog": "node scripts/changelog.mjs",
+    "start": "npm run changelog && docusaurus start",
+    "start:fast": "npm run changelog && SKIP_API=true docusaurus start",
+    "build": "npm run changelog && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
-    "write-translations": "docusaurus write-translations",
+    "write-translations": "npm run changelog && docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "i18n:ja": "docusaurus write-translations --locale ja",
+    "i18n:ja": "npm run changelog && docusaurus write-translations --locale ja",
     "tsc": "tsc"
   },
   "dependencies": {
