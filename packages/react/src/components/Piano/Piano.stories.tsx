@@ -12,7 +12,6 @@ import {
 
 import { useMIDIAccess } from '../../hooks/useMIDIAccess'
 import { useMIDIInput } from '../../hooks/useMIDIInput'
-import { NumberInput } from '../NumberInput'
 
 import { Piano, PianoMethods, SHORTCUTS } from '.'
 
@@ -237,39 +236,6 @@ export const NaturalShortcuts = () => {
         SHORTCUTS.HOME_ROW_NATURAL.keys[index]?.toUpperCase()
       }
     />
-  )
-}
-
-export const OneOctave = () => {
-  const [octave, setOctave] = useState(3)
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
-      }}
-    >
-      <NumberInput.Root
-        value={octave}
-        min={-1}
-        max={9}
-        onChange={(v) => setOctave(v)}
-      >
-        <NumberInput.InputField />
-        <NumberInput.Stepper>
-          <NumberInput.IncrementStepper />
-          <NumberInput.DecrementStepper />
-        </NumberInput.Stepper>
-      </NumberInput.Root>
-      <Piano.Root
-        noteRange={{
-          first: noteNumber(`C${octave}`),
-          last: noteNumber(`B${octave}`),
-        }}
-        label={(note) => noteName(note)}
-      />
-    </div>
   )
 }
 
