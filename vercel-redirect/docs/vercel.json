@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "",
+  "installCommand": "",
+  "outputDirectory": ".",
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://tremolo-ui.mimoz.dev/$1",
+      "permanent": true
+    }
+  ]
+}
