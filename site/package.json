@@ -12,9 +12,9 @@
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
-    "write-translations": "docusaurus write-translations",
+    "write-translations": "npm run changelog && docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "i18n:ja": "docusaurus write-translations --locale ja",
+    "i18n:ja": "npm run changelog && docusaurus write-translations --locale ja",
     "tsc": "tsc"
   },
   "dependencies": {
