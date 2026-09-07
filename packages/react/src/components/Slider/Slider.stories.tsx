@@ -61,7 +61,10 @@ export const Basic: Story = {
           onDragEnd={(v) => console.log('drag end: ', v)}
         >
           <Slider.Track>{thumb && <Slider.Thumb />}</Slider.Track>
-          {marks && <Slider.Marks options={['step', 'number']} />}
+          {/* A fixed interval, not `'step'`: over 0-100 with the default
+              step of 1 that is 101 marks, and Controls can make `step`
+              smaller still. */}
+          {marks && <Slider.Marks options={[25, 'mark-number']} />}
         </Slider.Root>
         <p>value: {value}</p>
       </>
