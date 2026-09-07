@@ -176,7 +176,17 @@ Controls に出る型は `.storybook/propTypes.ts` が補っている。react-do
 - Workers Builds（Cloudflare 側のリポジトリ連携）は使わない。Worker 2 つ × push ごとにモノレポ全体を 2 回ビルドすることになり、無料枠（3,000 分/月・同時 1）を食う。**CI が既に全部ビルドしている**
 - **preview URL は `marocchino/sticky-pull-request-comment` で PR に貼る**（`header: preview`）。コメントを更新するために **`pull-request.yml` の job に `pull-requests: write` が要る**。既定に任せるとリポジトリ設定次第で read-only になり 403 で落ちる
   - コメントのステップは `always()` 付き。upload が落ちた PR にも「失敗した」ことを貼るため。`continue-on-error` は付けていないので job は red のまま
-- 必要な secrets / variables: `CLOUDFLARE_API_TOKEN`（Account -> Workers Scripts:Edit、Zone -> Workers Routes:Edit）、`CLOUDFLARE_ACCOUNT_ID`、`vars.CLOUDFLARE_WORKERS_SUBDOMAIN`（preview URL の組み立てにのみ使う）
+- 必要な secrets / variables: `CLOUDFLARE_API_TOKEN`（Account -> Workers Scripts:Edit、Zone -> Workers Routes:Edit、Zone -> Zone:Read）、`CLOUDFLARE_ACCOUNT_ID`、`vars.CLOUDFLARE_WORKERS_SUBDOMAIN`（preview URL の組み立てにのみ使う）
+
+### キャッシュと minify
+
+**Workers Static Assets の既定は、全ファイルが `Cache-Control: public, max-age=0, must-revalidate` + ETag。** 304 で済むとはいえ毎回リクエストが飛ぶ。Vercel はハッシュ付きアセットに `immutable` を自動で付けていたので、**そのまま移すと退行する。** `_headers` で戻している。
+
+- docs は `site/static/_headers`。`static/` の中身が `build/` 直下へコピーされるので、この位置でアセットのルートに置かれる
+- Storybook は `.storybook/_headers` を **`build:sb` が `storybook-static/_headers` へコピーしている。** `_headers` はアセットのルートに無ければならないが、ビルド出力は `storybook-static/i/storybook-react/` の下に入るため
+- **`immutable` にしてよいのは内容ハッシュが入っているものだけ**（docs の `assets/`、Storybook の `i/storybook-react/assets/`）。HTML・`img/`・`sb-manager/`・`sb-addons/` はファイル名が固定なので、既定のままにしないと更新が反映されなくなる
+
+**minify はビルド側で済んでいる**（Docusaurus の webpack + terser、Storybook の rolldown。どちらも production ビルドの既定）。wrangler の `minify` は `main` のスクリプトに掛けるオプションなので、アセットだけの Worker には効かない。Cloudflare の Auto Minify も 2024-08 に廃止済み。gzip / brotli はエッジが自動で掛けるので設定不要。
 
 ## リリース
 

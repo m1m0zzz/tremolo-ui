@@ -10,7 +10,7 @@
   "scripts": {
     "sb": "storybook dev -p 6006",
     "typecheck": "tsc",
-    "build:sb": "storybook build -o storybook-static/i/storybook-react",
+    "build:sb": "storybook build -o storybook-static/i/storybook-react && cp .storybook/_headers storybook-static/_headers",
     "serve": "http-server ./storybook-static",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "format": "prettier --write .",
