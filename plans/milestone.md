@@ -161,6 +161,33 @@ CI       ci.yml (push) / pull-request.yml (PR)。PR は versions upload --previe
   - **lint-staged には `--no-error-on-unmatched-pattern` が要る。** oxlint も oxfmt も、渡されたパスが全て ignore に当たると「対象が無い」で非ゼロ終了する（oxlint 1 / oxfmt 2）。`.md` だけのコミットが pre-commit で落ちるので、両方に付ける
   - ついでに CI に `lint` と `format:check` を足した。**今まで CI は lint を一度も回していなかった**（pre-commit の lint-staged だけ）。import の並び順が formatter 側に移ったので、`format:check` まで無いと同じところを見ていることにならない
 
+## 6. 公開 API の整理
+
+- [x] **story を args で操作できる形に揃えた。** 素の関数のまま export していた story（`AnimationCanvas` 3 / `Piano` 6 / `PointsEditor` 2 / `Slider` 3 / `XYPad` 1 / `NumberInput` 3）を Story オブジェクトにして、直書きしていた prop を args へ移した。`value` は state のまま
+  - `{...args}` を撒いてある story は、args に書いていない prop も docgen 経由で Controls に出る。足りていなかったのは「素の関数で args が届いていなかったもの」だけ
+  - 複数のインスタンスを並べている story は共通のものだけを args にした（`Slider` の `Flex` の `vertical`、`ConfigScale` の 3 段目の `min` / `max` / `step` は主題なので残す）
+  - `src/hooks/*.stories.tsx` の 5 つは meta に `component` が無く、args を束ねる相手がいないので素の関数のまま
+  - ビルドした Storybook を Playwright で全 48 story 開いて、描画されること・Storybook のエラーパネルが出ないこと・console error と pageerror が 0 件であることを確認した
+
+- [ ] **`NumberInput` の `InputField` の props を `Root` に集める。** 破壊的変更。
+
+  現状は非対称になっている。**`Stepper` の設定（`drag` / `dragSensitivity` / `pointerLock`）は `Root` にあるのに、`InputField` の設定（`selectOnFocus` / `unformatOnFocus` / `keepCaretOnStep` / `blurOnEnter`）だけ `InputField` にある。** `Stepper` 自身が持つのは `className` / `style` / `children` / `ref` だけで、振る舞いは 1 つも無い。
+
+  **story を書いていて表に出た。** `Stepper` の story は主題の `drag` が `StoryObj<typeof NumberInput.Stepper>` に無いので Controls に出せず、`Root` に対して型付けして回避した。`InputField` の story は逆に `InputField` に対して型付けしないと `keepCaretOnStep` を args に書けない。**同じ「自分のコンポーネント名で型付けすると主題の prop が出ない」問題を、2 つのサブコンポーネントが逆向きに抱えている。**
+
+  `Root` に寄せる根拠:
+
+  - **`Root` は context に `inputRef` を 1 つしか持たない。** `InputField` は自分の ref をそこへ合成するので、1 つの `Root` に `InputField` を 2 つ置くと後から mount した方で上書きされ、`NumberInputMethods.focus()` の行き先も変わる。実質「`Root` ごとに field は 1 つ」であり、field の設定を `Root` に置いても表現力は落ちない
+  - 下書きの状態（`text` / `editing` / `setDraft` / `commitDraft`）は既に `Root` の context にある。`InputField` は表示と入力を受けているだけ
+  - 他のコンポーネントの形とも揃う。`Slider.Track` / `Knob.Thumb` などのサブコンポーネントは見た目のパートで、振る舞いの設定は `Root` にある
+
+  代償と決めること:
+
+  - 移行ガイドに載せる。`<NumberInput.InputField unformatOnFocus />` → `<NumberInput.Root unformatOnFocus>`
+  - `NumberInputProps` が 18 → 22 になる。`Root` が「値の設定」と「各パートの設定」の両方を持つことになるので、**JSDoc でどのパートに効くのかを書く**（`drag` は既にそうなっている）
+  - `className` / `style` / `ref` はパートごとの話なのでサブコンポーネントに残す
+  - 逆向き（`drag` 系を `Stepper` へ移す）も一応ある。ただし `Stepper` が無ければドラッグ自体が存在しないので、**`Stepper` を置くかどうかと `drag` をいくつにするかが別の場所に散る**。`Root` に集約する方を採る
+
 ## 1.0 の基準
 
 以下が揃った時点で 1.0 とする。
