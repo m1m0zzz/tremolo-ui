@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { useState } from 'react'
+import { ComponentProps, useState } from 'react'
 
 import { mapValue, unitFormat } from '@tremolo-ui/functions'
 
@@ -18,15 +18,33 @@ export default {
       control: false,
     },
   },
-} satisfies Meta<typeof PointsEditor.Root>
+} satisfies Meta<Args>
 
-type Story = StoryObj<typeof PointsEditor.Root>
+/**
+ * An arg that is not a prop: whether the `Background` is mounted. Storybook
+ * shows anything in `args`, so a story can put its own switches in Controls as
+ * long as `render` takes them out before spreading the rest onto the
+ * component.
+ */
+type Parts = {
+  background: boolean
+}
+
+type Args = ComponentProps<typeof PointsEditor.Root> & Parts
+
+type Story = StoryObj<Args>
+
+/** Declared on the story, so it only shows where it means something. */
+const partsArgTypes = {
+  background: { control: 'boolean', table: { category: 'Parts' } },
+} as const
 
 const themeColor = '#34c2ed'
 
 export const Basic: Story = {
-  args: { selectable: true },
-  render: (args) => {
+  argTypes: partsArgTypes,
+  args: { selectable: true, background: true },
+  render: ({ background, ...args }) => {
     const initialPoints: Record<string, PointBaseType> = {
       'p-0': { x: 0, y: 0.5 },
       'p-1': { x: 0.25, y: 0 },
@@ -54,16 +72,18 @@ export const Basic: Story = {
         }}
       >
         <PointsEditor.Root {...args}>
-          <PointsEditor.Background>
-            <svg
-              viewBox={`0 0 ${w} ${h}`}
-              xmlns="http://www.w3.org/2000/svg"
-              stroke={themeColor}
-              style={{ overflow: 'visible' }}
-            >
-              <path fill="none" d={svgPath} />
-            </svg>
-          </PointsEditor.Background>
+          {background && (
+            <PointsEditor.Background>
+              <svg
+                viewBox={`0 0 ${w} ${h}`}
+                xmlns="http://www.w3.org/2000/svg"
+                stroke={themeColor}
+                style={{ overflow: 'visible' }}
+              >
+                <path fill="none" d={svgPath} />
+              </svg>
+            </PointsEditor.Background>
+          )}
           <PointsEditor.Container>
             {Object.entries(points).map(([id, point]) => (
               <PointsEditor.Point

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { CSSProperties, useState } from 'react'
+import { ComponentProps, CSSProperties, useState } from 'react'
 
 import {
   integerPart,
@@ -23,16 +23,35 @@ export default {
       control: false,
     },
   },
-} satisfies Meta<typeof XYPad.Root>
+} satisfies Meta<Args>
 
-type Story = StoryObj<typeof XYPad.Root>
+/**
+ * An arg that is not a prop: whether `Area` is given a `Thumb`. Storybook
+ * shows anything in `args`, so a story can put its own switches in Controls as
+ * long as `render` takes them out before spreading the rest onto the
+ * component.
+ */
+type Parts = {
+  thumb: boolean
+}
+
+type Args = ComponentProps<typeof XYPad.Root> & Parts
+
+type Story = StoryObj<Args>
+
+/** Declared on the story, so it only shows where it means something. */
+const partsArgTypes = {
+  thumb: { control: 'boolean', table: { category: 'Parts' } },
+} as const
 
 export const Basic: Story = {
+  argTypes: partsArgTypes,
   args: {
     min: 0,
     max: 100,
+    thumb: true,
   },
-  render: (args) => {
+  render: ({ thumb, ...args }) => {
     const [valueX, setValueX] = useState(32)
     const [valueY, setValueY] = useState(56)
 
@@ -48,9 +67,7 @@ export const Basic: Story = {
           onDragStart={([x, y]) => console.log(`drag start: x=${x}, y=${y}`)}
           onDragEnd={([x, y]) => console.log(`drag end: x=${x}, y=${y}`)}
         >
-          <XYPad.Area>
-            <XYPad.Thumb />
-          </XYPad.Area>
+          <XYPad.Area>{thumb && <XYPad.Thumb />}</XYPad.Area>
         </XYPad.Root>
         <p>x: {valueX}</p>
         <p>y: {valueY}</p>

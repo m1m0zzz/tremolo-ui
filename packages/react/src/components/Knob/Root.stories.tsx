@@ -1,9 +1,27 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { useState } from 'react'
+import { ComponentProps, useState } from 'react'
 
 import { exponentialScale, linearScale } from '@tremolo-ui/functions'
 
 import { Knob } from '.'
+
+/**
+ * Args that are not props: which parts `SVGRoot` is given. Storybook shows
+ * anything in `args`, so a story can put its own switches in Controls as long
+ * as `render` takes them out before spreading the rest onto the component.
+ */
+type Parts = {
+  inactiveLine: boolean
+  activeLine: boolean
+  thumb: boolean
+}
+
+type Args = ComponentProps<typeof Knob.Root> & Parts
+
+const partControl = {
+  control: 'boolean',
+  table: { category: 'Parts' },
+} as const
 
 export default {
   title: 'Components/Knob/Root',
@@ -16,28 +34,46 @@ export default {
       control: false,
     },
   },
-} satisfies Meta<typeof Knob.Root>
+} satisfies Meta<Args>
 
-type Story = StoryObj<typeof Knob.Root>
+type Story = StoryObj<Args>
+
+/**
+ * Declared on the story rather than the meta, so the switches only show up on
+ * the story that is about composing the knob.
+ */
+const partsArgTypes = {
+  inactiveLine: partControl,
+  activeLine: partControl,
+  thumb: partControl,
+}
+
+const allParts: Parts = {
+  inactiveLine: true,
+  activeLine: true,
+  thumb: true,
+}
 
 export const Basic: Story = {
+  argTypes: partsArgTypes,
   args: {
     min: 0,
     max: 100,
     size: 50,
     wheel: ['normalized', 0.05],
     keyboard: ['normalized', 0.05],
+    ...allParts,
   },
-  render: (args) => {
+  render: ({ inactiveLine, activeLine, thumb, ...args }) => {
     const [value, setValue] = useState(10)
 
     return (
       <>
         <Knob.Root {...args} value={value} onChange={(v) => setValue(v)}>
           <Knob.SVGRoot>
-            <Knob.InactiveLine />
-            <Knob.ActiveLine />
-            <Knob.Thumb />
+            {inactiveLine && <Knob.InactiveLine />}
+            {activeLine && <Knob.ActiveLine />}
+            {thumb && <Knob.Thumb />}
           </Knob.SVGRoot>
         </Knob.Root>
         <p>value: {value}</p>

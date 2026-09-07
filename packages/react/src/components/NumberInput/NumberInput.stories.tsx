@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { useState } from 'react'
+import { ComponentProps, useState } from 'react'
 
 import { unitFormat } from '@tremolo-ui/functions'
 
@@ -18,20 +18,49 @@ export default {
       control: false,
     },
   },
-} satisfies Meta<typeof NumberInput.Root>
+} satisfies Meta<Args>
 
-type Story = StoryObj<typeof NumberInput.Root>
+/**
+ * An arg that is not a prop: whether the `Stepper` is mounted. Storybook shows
+ * anything in `args`, so a story can put its own switches in Controls as long
+ * as `render` takes them out before spreading the rest onto the component.
+ */
+type Parts = {
+  stepper: boolean
+}
+
+type Args = ComponentProps<typeof NumberInput.Root> & Parts
+
+type Story = StoryObj<Args>
+
+/** Declared on the story, so it only shows where it means something. */
+const partsArgTypes = {
+  stepper: {
+    control: 'boolean',
+    table: { category: 'Parts' },
+  },
+} as const
 
 /** `format` and `parse` come as a pair, so they spread in together. */
 const hz = unitFormat('Hz')
 
 export const Basic: Story = {
-  render: (args) => {
+  argTypes: partsArgTypes,
+  args: {
+    stepper: false,
+  },
+  render: ({ stepper, ...args }) => {
     const [value, setValue] = useState(32)
 
     return (
       <NumberInput.Root {...args} value={value} onChange={(v) => setValue(v)}>
         <NumberInput.InputField />
+        {stepper && (
+          <NumberInput.Stepper>
+            <NumberInput.IncrementStepper />
+            <NumberInput.DecrementStepper />
+          </NumberInput.Stepper>
+        )}
       </NumberInput.Root>
     )
   },

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { useState } from 'react'
+import { ComponentProps, useState } from 'react'
 
 import { curveScale, curveWithCenterValue } from '@tremolo-ui/functions'
 
@@ -18,16 +18,37 @@ export default {
       control: false,
     },
   },
-} satisfies Meta<typeof Slider.Root>
+} satisfies Meta<Args>
 
-type Story = StoryObj<typeof Slider.Root>
+/**
+ * Args that are not props: which parts are mounted. Storybook shows anything
+ * in `args`, so a story can put its own switches in Controls as long as
+ * `render` takes them out before spreading the rest onto the component.
+ */
+type Parts = {
+  thumb: boolean
+  marks: boolean
+}
+
+type Args = ComponentProps<typeof Slider.Root> & Parts
+
+type Story = StoryObj<Args>
+
+/** Declared on the story, so it only shows where it means something. */
+const partsArgTypes = {
+  thumb: { control: 'boolean', table: { category: 'Parts' } },
+  marks: { control: 'boolean', table: { category: 'Parts' } },
+} as const
 
 export const Basic: Story = {
+  argTypes: partsArgTypes,
   args: {
     min: 0,
     max: 100,
+    thumb: true,
+    marks: false,
   },
-  render: (args) => {
+  render: ({ thumb, marks, ...args }) => {
     const [value, setValue] = useState(0)
 
     return (
@@ -39,9 +60,8 @@ export const Basic: Story = {
           onDragStart={(v) => console.log('drag start: ', v)}
           onDragEnd={(v) => console.log('drag end: ', v)}
         >
-          <Slider.Track>
-            <Slider.Thumb />
-          </Slider.Track>
+          <Slider.Track>{thumb && <Slider.Thumb />}</Slider.Track>
+          {marks && <Slider.Marks options={['step', 'number']} />}
         </Slider.Root>
         <p>value: {value}</p>
       </>
