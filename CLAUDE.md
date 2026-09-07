@@ -192,6 +192,10 @@ Controls に出る型は `.storybook/propTypes.ts` が補っている。react-do
 
 **minify はビルド側で済んでいる**（Docusaurus の webpack + terser、Storybook の rolldown。どちらも production ビルドの既定）。wrangler の `minify` は `main` のスクリプトに掛けるオプションなので、アセットだけの Worker には効かない。Cloudflare の Auto Minify も 2024-08 に廃止済み。gzip / brotli はエッジが自動で掛けるので設定不要。
 
+### 旧 URL のリダイレクト
+
+**Vercel 時代の URL は消せない**（publish 済みの 0.x の README に焼き付いているため）。`vercel-redirect/` の設定で新しいドメインへ 308 で飛ばしている。**触るときは `vercel-redirect/README.md` を読むこと。**
+
 ## リリース
 
 changesets を使う。リリースに含めたい変更には `npm run changeset` で `.changeset/*.md` を追加し、変更と一緒にコミットする。

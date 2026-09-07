@@ -1,0 +1,19 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "",
+  "installCommand": "",
+  "outputDirectory": ".",
+  "redirects": [
+    {
+      "source": "/i/storybook-react/(.*)",
+      "destination": "https://tremolo-ui.mimoz.dev/i/storybook-react/$1",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "destination": "https://tremolo-ui.mimoz.dev/i/storybook-react/$1",
+      "permanent": true
+    }
+  ]
+}
