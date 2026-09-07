@@ -80,6 +80,11 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   `docusaurus write-translations` を走らせると再び追加されるが、それは翻訳が要るという意味ではない。API リファレンスのラベルは触らない方針。
 
 - [x] `site/docs/support/CHANGELOG.md` の二重管理をやめた。中身は「TODO: record from version 1.0.0」のスタブのままだったので、各パッケージの `CHANGELOG.md` と GitHub リリース、移行ガイドへのリンクに置き換えた
+- [x] **その GitHub へのリンクをやめ、リリースノートをサイトに載せた。** `site/scripts/changelog.mjs` が `packages/*/CHANGELOG.md` を front matter 付きで `site/docs/support/changelog-*.md` に写す。typedoc の `docs/api/` と同じ扱いで、生成物はコミットしない（`site/.gitignore`）
+  - **`format: md` を front matter に入れるのが要点。** Docusaurus 3 の既定は `.md` も MDX として読むので、changesets が書いた文章に `<` や `{` が 1 つ紛れ込むだけでビルドが落ちる。生成物にだけ効かせられるので、サイト全体の `markdown.format` は触っていない
+  - 生成は `site/package.json` の `start` / `start:fast` / `build` の頭に `npm run changelog` として書いた。npm の `pre*` に頼ると、`start:fast` のようにスクリプトが増えたときに付け忘れる
+  - ja ロケールは翻訳が無いので既定ロケール（en）にフォールバックする。changesets が書くのは英語なので、そのままでよい
+  - パッケージごとに 1 ページ。バージョンは 3 つとも揃うので**バージョン単位で 1 ページにまとめる**手もあるが、`Updated dependencies` の行を落とす前処理が要る割にサイトの体験は大きく変わらないので見送った
 - [x] `format` に一本化するときに、`units` / `digit` を使っている example / story / ドキュメントを全部書き換えた（core-extraction-plan.md 5.14）
 - [ ] **テンプレートをモノレポに移す。** 現在は別リポジトリ（`m1m0zzz/tremolo-ui-example-next-ts` / `m1m0zzz/tremolo-ui-example-vite-react-ts`）にある。破壊的変更のたびに追随を忘れる場所が増えるので、`templates/` としてこのリポジトリに入れ、**ドキュメントでは `degit` などで取り出す形をアナウンスする**（`npx degit m1m0zzz/tremolo-ui/templates/vite-react-ts`）。CI で少なくともビルドは通しておくと、破壊的変更の当たり判定になる
 - [ ] 1.0 時点で `README.md` の「*tremolo-ui is now WIP*」と「An unstable version (0.x) has been released.」を更新する

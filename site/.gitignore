@@ -1,4 +1,5 @@
 docs/api
+docs/support/changelog-*.md
 
 # Dependencies
 /node_modules

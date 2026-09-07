@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "docusaurus start",
-    "start:fast": "SKIP_API=true docusaurus start",
-    "build": "docusaurus build",
+    "changelog": "node scripts/changelog.mjs",
+    "start": "npm run changelog && docusaurus start",
+    "start:fast": "npm run changelog && SKIP_API=true docusaurus start",
+    "build": "npm run changelog && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
