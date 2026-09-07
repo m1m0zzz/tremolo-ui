@@ -130,93 +130,98 @@ function ThumbAnimation() {
   )
 }
 
-export const AdvancedFilterPad = () => {
-  const [frequency, setFrequency] = useState(2000)
-  const [q, setQ] = useState(0.79)
+export const AdvancedFilterPad: Story = {
+  args: {
+    min: [20, 0.01],
+    max: [20_000, 2],
+    step: [0.1, 0.01],
+    scale: [exponentialScale, linearScale],
+    reverse: [false, true],
+    wheel: ['normalized', 0.05],
+    keyboard: ['normalized', 0.05],
+  },
+  render: (args) => {
+    const [frequency, setFrequency] = useState(2000)
+    const [q, setQ] = useState(0.79)
 
-  const fmt = (freq: number) => {
-    if (freq < 100) {
-      return `${freq}Hz`
-    } else if (freq < 1000) {
-      return `${toFixed(freq)}Hz`
-    } else {
-      return `${toFixed(freq / 1000, 3 - (integerPart(freq / 1000)?.length ?? 0))}kHz`
+    const fmt = (freq: number) => {
+      if (freq < 100) {
+        return `${freq}Hz`
+      } else if (freq < 1000) {
+        return `${toFixed(freq)}Hz`
+      } else {
+        return `${toFixed(freq / 1000, 3 - (integerPart(freq / 1000)?.length ?? 0))}kHz`
+      }
     }
-  }
 
-  return (
-    <div
-      style={{
-        width: 'fit-content',
-        color: '#222',
-      }}
-    >
+    return (
       <div
         style={{
-          display: 'inline-block',
-          borderRadius: 8,
-          background: 'rgb(207, 182, 240)',
-          border: 'solid rgb(178, 150, 215) 2px',
-        }}
-      >
-        <XYPad.Root
-          value={[frequency, q]}
-          min={[20, 0.01]}
-          max={[20_000, 2]}
-          step={[0.1, 0.01]}
-          scale={[exponentialScale, linearScale]}
-          reverse={[false, true]}
-          wheel={['normalized', 0.05]}
-          keyboard={['normalized', 0.05]}
-          style={{ '--thumb-size': '40px' } as CSSProperties}
-          onChange={([x, y]) => {
-            setFrequency(x)
-            setQ(y)
-          }}
-        >
-          <XYPad.Area width={200} color="transparent">
-            <XYPad.Thumb>
-              <ThumbAnimation />
-            </XYPad.Thumb>
-          </XYPad.Area>
-        </XYPad.Root>
-      </div>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1px 1fr',
-          marginTop: 6,
-          alignItems: 'center',
+          width: 'fit-content',
+          color: '#222',
         }}
       >
         <div
           style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: '0 4px',
+            display: 'inline-block',
+            borderRadius: 8,
+            background: 'rgb(207, 182, 240)',
+            border: 'solid rgb(178, 150, 215) 2px',
           }}
         >
-          <div>freq</div>
-          <div>{fmt(frequency)}</div>
+          <XYPad.Root
+            {...args}
+            value={[frequency, q]}
+            style={{ '--thumb-size': '40px' } as CSSProperties}
+            onChange={([x, y]) => {
+              setFrequency(x)
+              setQ(y)
+            }}
+          >
+            <XYPad.Area width={200} color="transparent">
+              <XYPad.Thumb>
+                <ThumbAnimation />
+              </XYPad.Thumb>
+            </XYPad.Area>
+          </XYPad.Root>
         </div>
         <div
           style={{
-            width: 1,
-            height: '80%',
-            background: '#666',
-          }}
-        ></div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: '0 4px',
+            display: 'grid',
+            gridTemplateColumns: '1fr 1px 1fr',
+            marginTop: 6,
+            alignItems: 'center',
           }}
         >
-          <div>Q</div>
-          <div>{q}</div>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              padding: '0 4px',
+            }}
+          >
+            <div>freq</div>
+            <div>{fmt(frequency)}</div>
+          </div>
+          <div
+            style={{
+              width: 1,
+              height: '80%',
+              background: '#666',
+            }}
+          ></div>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              padding: '0 4px',
+            }}
+          >
+            <div>Q</div>
+            <div>{q}</div>
+          </div>
         </div>
       </div>
-    </div>
-  )
+    )
+  },
 }
