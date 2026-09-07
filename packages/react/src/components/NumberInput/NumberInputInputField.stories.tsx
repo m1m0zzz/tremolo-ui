@@ -17,34 +17,27 @@ const hz = unitFormat('Hz')
 
 /**
  * With `unformatOnFocus`, focusing the input drops whatever `format` put
- * around the value and shows the number itself, ready to be typed over.
- * Both fields hold the same value; only the left one keeps its format while
- * you are in it.
+ * around the value and shows the number itself, ready to be typed over. Turn
+ * it off in Controls to see the formatted text stay while you are in the
+ * field.
  */
-export const UnformatOnFocus = () => {
-  const [left, setLeft] = useState(1230)
-  const [right, setRight] = useState(1230)
+export const UnformatOnFocus: Story = {
+  args: {
+    unformatOnFocus: true,
+  },
+  render: (args) => {
+    const [value, setValue] = useState(1230)
 
-  return (
-    <div style={{ display: 'flex', gap: '2rem' }}>
-      <section>
-        <p>default</p>
-        <NumberInput.Root value={left} {...hz} onChange={setLeft}>
-          <NumberInput.InputField />
-        </NumberInput.Root>
-      </section>
-      <section>
-        <p>unformatOnFocus</p>
-        <NumberInput.Root value={right} {...hz} onChange={setRight}>
-          <NumberInput.InputField unformatOnFocus />
-          <NumberInput.Stepper>
-            <NumberInput.IncrementStepper />
-            <NumberInput.DecrementStepper />
-          </NumberInput.Stepper>
-        </NumberInput.Root>
-      </section>
-    </div>
-  )
+    return (
+      <NumberInput.Root value={value} {...hz} onChange={setValue}>
+        <NumberInput.InputField {...args} />
+        <NumberInput.Stepper>
+          <NumberInput.IncrementStepper />
+          <NumberInput.DecrementStepper />
+        </NumberInput.Stepper>
+      </NumberInput.Root>
+    )
+  },
 }
 
 /**
@@ -111,31 +104,22 @@ export const KeepCaretOnStep: Story = {
   },
 }
 
-export const SelectOnFocus = () => {
-  const [value1, setValue1] = useState(32)
-  const [value2, setValue2] = useState(32)
-  const [value3, setValue3] = useState(32)
+/**
+ * What gets selected when the input takes focus. `'number'` covers the leading
+ * number and leaves whatever the format appended to it, so a unit is not typed
+ * over by accident.
+ */
+export const SelectOnFocus: Story = {
+  args: {
+    selectOnFocus: 'all',
+  },
+  render: (args) => {
+    const [value, setValue] = useState(32)
 
-  const data: {
-    selectOnFocus: 'none' | 'all' | 'number'
-    v: number
-    setter: (v: number) => void
-  }[] = [
-    { selectOnFocus: 'none', v: value1, setter: setValue1 },
-    { selectOnFocus: 'all', v: value2, setter: setValue2 },
-    { selectOnFocus: 'number', v: value3, setter: setValue3 },
-  ]
-
-  return (
-    <div>
-      {data.map(({ selectOnFocus, v, setter }) => (
-        <section key={selectOnFocus} style={{ marginBottom: '2rem' }}>
-          <p>selectOnFocus=&apos;{selectOnFocus}&apos;</p>
-          <NumberInput.Root value={v} {...hz} onChange={setter}>
-            <NumberInput.InputField selectOnFocus={selectOnFocus} />
-          </NumberInput.Root>
-        </section>
-      ))}
-    </div>
-  )
+    return (
+      <NumberInput.Root value={value} {...hz} onChange={setValue}>
+        <NumberInput.InputField {...args} />
+      </NumberInput.Root>
+    )
+  },
 }
