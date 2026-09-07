@@ -42,7 +42,7 @@
   ],
   "devDependencies": {
     "@arethetypeswrong/core": "0.18.5",
-    "@changesets/changelog-github": "1.0.0",
+    "@changesets/changelog-github": "1.0.1",
     "@changesets/cli": "3.0.1",
     "@tsdown/css": "0.22.14",
     "husky": "9.1.7",
