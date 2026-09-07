@@ -9,7 +9,7 @@ now fails to resolve.
 Components still render the same `tremolo-` class names and the same
 `aria-*` / `data-*` state attributes, so the appearance is a stylesheet away —
 it just has to be yours. The theme the documentation uses is published at
-[Styling](https://tremolo-ui.vercel.app/docs/tutorials/styling) as six plain
+[Styling](https://tremolo-ui.mimoz.dev/docs/tutorials/styling) as six plain
 CSS files to copy from.
 
 ```diff

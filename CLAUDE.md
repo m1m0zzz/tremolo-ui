@@ -66,18 +66,31 @@ npm run build:sb      # build:package + Storybook
 npm run build:docs    # ドキュメントサイト（typedoc の生成が走る。en / ja 両方）
 ```
 
-GitHub Actions（`build.yml`）も `lint` / `format:check` / `build:package` / `test` / Storybook / ドキュメントサイトを全て回すが、**手元で通してから push すること。** CI は 1 つの job を直列に流すので、docs のビルド失敗に気づくまで数分かかる。
+GitHub Actions も `lint` / `format:check` / `build:package` / `test` / Storybook / ドキュメントサイトを全て回すが、**手元で通してから push すること。** CI は 1 つの job を直列に流すので、docs のビルド失敗に気づくまで数分かかる。
 
-`build.yml` には `paths` フィルタが入っていて、**site の外の `.md` のみの変更（`README.md` / `plans/` / `.changeset/`）では実行されない。** ビルドにもテストにも影響しないため。`site/` 配下は `.md` も含めて対象（最後の `site/**` が除外から戻している）。**changeset だけを足した PR は CI 信号がゼロになる**点は知っておくこと。
+**ワークフローは trigger ごとに 2 つに分けてある。**
 
-**`pull_request` に `branches` を書いていないのは stacked PR のため。** 中段の PR は base が main ではないので、`branches: [main]` を書くと取りこぼすことがある（GitHub はスタック認識後のイベントなら base をスタックの base として扱うが、`gh stack submit` は PR を作ってからスタックにまとめるので `opened` の時点では効かない）。`concurrency` で同じ PR の古い実行は打ち切るが、**main への push は打ち切らない**（どのコミットで main が通ったかの記録が欠けるため）。
+| ファイル | trigger | すること |
+| --- | --- | --- |
+| `ci.yml` | `push`（main） | lint / test / ビルド → `wrangler deploy`（本番） |
+| `pull-request.yml` | `pull_request` | lint / test / ビルド → `wrangler versions upload` → PR にコメント |
 
-Vercel は無料プランでビルド回数の上限があり、**24 時間の rate limit に当たるとプレビューが作られない。** stacked PR で 3 レイヤ同時に上げると 6 デプロイが走って当たる。CI 側でビルドしているので検証は済んでいるが、プレビュー URL は出ない。
+**ビルドまでの手順は 2 ファイルで同じものが重複している。** 分けたのは trigger 単位で読めるようにするためなので、**片方にステップを足したらもう片方にも足すこと。** `paths` フィルタも同様（YAML のアンカーはファイルをまたげない）。
+
+- 分かれるのは末尾だけ。`ci.yml` は `Deploy` の 1 ステップ、`pull-request.yml` は alias の算出 / `Upload preview` / ステータス算出 / sticky comment の 4 ステップ
+- `permissions` は job に書く。`pull-requests: write` が要るのは `pull-request.yml` だけ
+- **どちらも job 名が `build` なので、必須チェックの表示名が同じになる。** branch protection で選ぶときはワークフロー名（`Build and Test` / `Pull Request`）で見分けること
+
+`paths` フィルタにより、**site の外の `.md` のみの変更（`README.md` / `plans/` / `.changeset/`）では実行されない。** ビルドにもテストにも影響しないため。`site/` 配下は `.md` も含めて対象（最後の `site/**` が除外から戻している）。**changeset だけを足した PR は CI 信号がゼロになる**点は知っておくこと。
+
+**`pull-request.yml` の `pull_request` に `branches` を書いていないのは stacked PR のため。** 中段の PR は base が main ではないので、`branches: [main]` を書くと取りこぼすことがある（GitHub はスタック認識後のイベントなら base をスタックの base として扱うが、`gh stack submit` は PR を作ってからスタックにまとめるので `opened` の時点では効かない）。`concurrency` で同じ PR の古い実行は打ち切るが、**main への push は打ち切らない**（どのコミットで main が通ったかの記録が欠けるため）。
+
+**ビルドの後にデプロイまでやる**（`## デプロイ`）。PR では preview を上げるだけで本番は動かない。
 
 過去に踏んだもの:
 
 - `packages/*/src` にファイルを足す・移すと、`site/docusaurus.config.ts` の typedoc の `entryPoints` が拾って API ページを生成する。Docusaurus は `_` で始まるパスを docs から除外するため、`_util` や `_internal` を `exclude` に入れておかないと「存在しない doc id を指すサイドバー」になってビルドが落ちる
-- パッケージを追加したとき、Vercel の Storybook プロジェクトのビルドコマンドが個別指定だと新しい `dist` が無くて落ちる（`plans/core-extraction-plan.md` Phase 1）
+- パッケージを追加したとき、Storybook のビルドコマンドが個別指定だと新しい `dist` が無くて落ちる（`plans/core-extraction-plan.md` Phase 1。Vercel 時代の話だが、`build:sb` が `build:package` を含んでいる理由がこれ）
 - **typedoc のサイドバーは 1 つ（`typedocSidebar`）で、Docusaurus の翻訳キーはラベルから作られる。** typedoc はページのラベルにモジュールパスの**最後のセグメントだけ**を使うので、`midi/input.ts` と `piano/input.ts` のように名前が被るとキーが衝突してビルドが落ちる。パッケージをまたいでも起きる（`dom/piano` と `functions/piano`）。`site/sidebars.ts` の `withKeys()` が doc id を `key` に入れて回避しているので、typedoc plugin を足すときは必ずそれを通すこと
 - **`tsconfig.json` の `lib` に `DOM.Iterable` が要る。** `compilerOptions.types` を書いていないので、TypeScript は `node_modules/@types/*` を全て読み込む。`DOM.Iterable`（NodeList の spread、`MIDIInputMap.values()`）は `jest-environment-jsdom` 経由で入っていた `@types/jsdom` がたまたま `/// <reference lib="dom.iterable" />` を持っていたから通っていただけだった。依存を 1 つ外すと `tsc` が落ちる、という形で出る
 
@@ -142,6 +155,28 @@ Controls に出る型は `.storybook/propTypes.ts` が補っている。react-do
 - `no-unused-vars` は先頭 `_` を許容。ルールは `.oxlintrc.json`（JSON だがコメントを書ける）。**oxlint は `eslint-disable` コメントも読むが、リポジトリでは `oxlint-disable` に統一している。** ルール名の名前空間が違う（`@typescript-eslint/x` → `typescript/x`）ので、揃えておかないと後でルールを有効にしたときに黙って効かなくなる。
 - husky + lint-staged により、コミットごとに `oxlint --fix` と `oxfmt` が走る（**どちらも `--no-error-on-unmatched-pattern` 付き**。渡されたパスが全て ignore に当たると「対象が無い」で非ゼロ終了するので、付けないと `.md` だけのコミットが落ちる）。CI も `lint` と `format:check` を回す。
 - `.cspell.json` を使用しているため、新しいドメイン用語は追加が必要になる場合がある。
+
+## デプロイ
+
+**ホスティングは Cloudflare Workers（`tremolo-ui.mimoz.dev`）で、デプロイも CI（`ci.yml` / `pull-request.yml`）の中でやる。**
+
+| | Worker | 設定 | 配信先 |
+| --- | --- | --- | --- |
+| ドキュメントサイト | `tremolo-ui-docs` | `site/wrangler.jsonc` | `tremolo-ui.mimoz.dev/`（Custom Domain） |
+| Storybook | `tremolo-ui-sb-react` | `packages/react/wrangler.jsonc` | `tremolo-ui.mimoz.dev/i/storybook-react`（Route） |
+
+- **どちらも `main` を持たない静的アセットだけの Worker。** 静的アセットへのリクエストは無料かつ無制限だが、スクリプトが起動した分は 100,000 req/day にカウントされ、**無料プランは超過時にアセットへフォールバックせず 429 を返す**。1 つのホスト名に 2 サイトを載せるのに自前のルータ Worker を挟んではいけない
+- **Worker を 2 つに分けているのは `html_handling` が Worker 単位の設定だから。** docs は `trailingSlash: true` なので `force-trailing-slash`、Storybook は `iframe.html` を拡張子付きで読むので `auto-trailing-slash`。同居させるとストーリーを切り替えるたびに 307 を踏む
+- **同一ホスト名では Route が Custom Domain より優先される**ので、この 2 段が成立する。Route には proxied な DNS レコードが必須で、それを作るのは docs 側の Custom Domain なので、**デプロイは必ず docs が先**
+- **Storybook はサブパス配信なので `base` が要る。** `.storybook/main.ts` の `STORYBOOK_BASE` を `viteFinal` が **`configType === 'PRODUCTION'` のときだけ**入れる（dev に掛けると `localhost:6006` のローカル URL まで変わる）。あわせて `build:sb` は `-o storybook-static/i/storybook-react` に出す。**Workers Static Assets はリクエストパスをファイルパスに突き合わせる**ので、配信するプレフィックスと同じ形でファイルを置く必要がある
+  - このため `__stories__/public` のファイルを参照する story は `import.meta.env.BASE_URL` を前置きすること（`Slider.stories.tsx`）。ルート絶対パスで書くとサブパス配信で 404 になる
+- **preview は `wrangler versions upload --preview-alias <branch>`。** `versions upload` はルートに適用しないので本番は動かない。preview URL は `<alias>-<worker>.<subdomain>.workers.dev` で、**workers.dev 以外のサブドメインには現状置けない**。alias は小文字・数字・ハイフンのみで先頭は小文字、`alias + Worker 名` で 63 文字以内（DNS の制約）
+  - **preview URL は `workers_dev` が有効なときだけ出る。** 無効にすると preview も消えるので、両方 true のままにして Cloudflare Access（Zero Trust の無料枠は 50 シート）で塞ぐ
+  - **fork からの PR には secrets が渡らないのでデプロイ系のステップは落ちる。** Access を掛ける以上どのみち外部の人は見られないので、`pull_request_target` は使わない
+- Workers Builds（Cloudflare 側のリポジトリ連携）は使わない。Worker 2 つ × push ごとにモノレポ全体を 2 回ビルドすることになり、無料枠（3,000 分/月・同時 1）を食う。**CI が既に全部ビルドしている**
+- **preview URL は `marocchino/sticky-pull-request-comment` で PR に貼る**（`header: preview`）。コメントを更新するために **`pull-request.yml` の job に `pull-requests: write` が要る**。既定に任せるとリポジトリ設定次第で read-only になり 403 で落ちる
+  - コメントのステップは `always()` 付き。upload が落ちた PR にも「失敗した」ことを貼るため。`continue-on-error` は付けていないので job は red のまま
+- 必要な secrets / variables: `CLOUDFLARE_API_TOKEN`（Account -> Workers Scripts:Edit、Zone -> Workers Routes:Edit）、`CLOUDFLARE_ACCOUNT_ID`、`vars.CLOUDFLARE_WORKERS_SUBDOMAIN`（preview URL の組み立てにのみ使う）
 
 ## リリース
 

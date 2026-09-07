@@ -36,5 +36,6 @@ This command generates static content into the `build` directory and can be serv
 
 ### Deployment
 
-Deploy to Vercel  
--> https://tremolo-ui.vercel.app/
+Deployed to Cloudflare Workers from `.github/workflows/ci.yml` — see
+`wrangler.jsonc`.
+-> https://tremolo-ui.mimoz.dev/

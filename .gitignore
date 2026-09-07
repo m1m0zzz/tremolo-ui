@@ -1,6 +1,9 @@
 .rollup.cache/
 storybook-static/
 
+# wrangler dev の local state
+.wrangler/
+
 # Logs
 logs
 *.log

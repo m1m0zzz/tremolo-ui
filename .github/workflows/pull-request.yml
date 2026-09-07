@@ -1,0 +1,115 @@
+name: Pull Request
+
+on:
+  pull_request:
+    # base を絞らないのは stacked PR のため。中段の PR は base が main では
+    # ないので、branches: [main] を書くと拾えないことがある
+    paths:
+      - '**'
+      - '!**.md'
+      - 'site/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      # preview URL の sticky comment を貼るため
+      pull-requests: write
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+
+    # Ensure npm 11.10. or later for min-release-age support
+    - run: npm install -g npm@latest
+
+    - run: npm ci
+
+    - run: npm run lint
+    - run: npm run format:check
+
+    # packages/react のテストは workspace symlink 越しに他パッケージの dist を
+    # 解決するため、テストより先にビルドする必要がある。site と Storybook も
+    # 同じ symlink 越しに dist を見るので、この 1 回で全部が揃う。
+    - run: npm run build:package
+
+    - run: npm run test
+
+    - run: npm run build:sb -w packages/react
+
+    - run: npm run build -w site
+
+    # fork からの PR には secrets が渡らないので丸ごと落ちる。
+    # preview は Cloudflare Access で塞ぐ方針なのでどのみち外部の人は見られず、
+    # そのために pull_request_target を使うことはしない。
+    - name: Compute preview alias
+      id: preview
+      if: ${{ !github.event.pull_request.head.repo.fork }}
+      env:
+        BRANCH: ${{ github.head_ref }}
+      run: |
+        # alias に使えるのは小文字・数字・ハイフンのみで、先頭は小文字。
+        # さらに alias + Worker 名が 63 文字以内（DNS の制約）。長い方の
+        # tremolo-ui-sb-react が 19 文字 + ハイフンなので 43 文字で切る。
+        alias=$(printf '%s' "$BRANCH" \
+          | tr '[:upper:]' '[:lower:]' \
+          | tr -cs 'a-z0-9' '-' \
+          | cut -c1-43 \
+          | sed 's/^-*//; s/-*$//')
+        case "$alias" in
+          [a-z]*) ;;
+          *) alias="pr-${{ github.event.number }}" ;;
+        esac
+        echo "alias=$alias" >> "$GITHUB_OUTPUT"
+
+    - name: Upload preview
+      id: upload
+      if: ${{ !github.event.pull_request.head.repo.fork }}
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        ALIAS: ${{ steps.preview.outputs.alias }}
+      run: |
+        npx wrangler versions upload --config site/wrangler.jsonc --preview-alias "$ALIAS"
+        npx wrangler versions upload --config packages/react/wrangler.jsonc --preview-alias "$ALIAS"
+
+    - name: ステータスとタイムスタンプを算出
+      if: always()
+      id: status
+      shell: bash
+      run: |
+        case "${{ steps.upload.outcome }}" in
+          success)   STATUS="✅ Success"   ;;
+          cancelled) STATUS="⚠️ Cancelled" ;;
+          *)         STATUS="❌ Failed"    ;;
+        esac
+        TIMESTAMP=$(TZ=Asia/Tokyo date '+%Y/%m/%d %H:%M')
+        RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        {
+          echo "text=${STATUS}"
+          echo "timestamp=${TIMESTAMP}"
+          echo "run_url=${RUN_URL}"
+        } >> "$GITHUB_OUTPUT"
+
+    - name: Comment preview URLs
+      if: ${{ always() && !github.event.pull_request.head.repo.fork }}
+      uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
+      with:
+        header: preview
+        skip_unchanged: true
+        message: |
+          | Preview URL | Status | Timestamp (JST) |
+          |---|---|---|
+          | ${{ steps.upload.outcome == 'success' && format('[Docs](https://{0}-tremolo-ui-docs.{1}.workers.dev/)', steps.preview.outputs.alias, vars.CLOUDFLARE_WORKERS_SUBDOMAIN) || 'Docs' }} | [${{ steps.status.outputs.text }}](${{ steps.status.outputs.run_url }}) | ${{ steps.status.outputs.timestamp }} |
+          | ${{ steps.upload.outcome == 'success' && format('[Storybook](https://{0}-tremolo-ui-sb-react.{1}.workers.dev/i/storybook-react/)', steps.preview.outputs.alias, vars.CLOUDFLARE_WORKERS_SUBDOMAIN) || 'Storybook' }} | [${{ steps.status.outputs.text }}](${{ steps.status.outputs.run_url }}) | ${{ steps.status.outputs.timestamp }} |
+
+          *このコメントは新しいコミットごとに更新されます。*

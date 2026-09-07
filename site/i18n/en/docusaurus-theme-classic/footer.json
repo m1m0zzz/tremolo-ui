@@ -45,7 +45,7 @@
   },
   "link.item.label.Storybook React": {
     "message": "Storybook React",
-    "description": "The label of footer link with label=Storybook React linking to https://tremolo-ui-sb-react.vercel.app/"
+    "description": "The label of footer link with label=Storybook React linking to https://tremolo-ui.mimoz.dev/i/storybook-react/"
   },
   "link.item.label.npm": {
     "message": "npm",
@@ -57,6 +57,6 @@
   },
   "link.item.label.Storybook": {
     "message": "Storybook",
-    "description": "The label of footer link with label=Storybook linking to https://tremolo-ui-sb-react.vercel.app/"
+    "description": "The label of footer link with label=Storybook linking to https://tremolo-ui.mimoz.dev/i/storybook-react/"
   }
 }

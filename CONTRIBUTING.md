@@ -1,3 +1,3 @@
 # Contribution Guide
 
-https://tremolo-ui.vercel.app/docs/guides/CONTRIBUTING
+https://tremolo-ui.mimoz.dev/docs/guides/CONTRIBUTING

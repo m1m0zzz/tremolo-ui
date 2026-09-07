@@ -123,7 +123,9 @@ export const CustomImage = () => {
         >
           <Slider.Thumb>
             <img
-              src={'/tremolo-slider-thumb.png'}
+              // staticDirs land at the root of the build, which is not the root
+              // of the site once Storybook is served from /i/storybook-react/.
+              src={import.meta.env.BASE_URL + 'tremolo-slider-thumb.png'}
               alt="slider thumb"
               draggable={false}
               style={{ display: 'block' }} // remove bottom gap

@@ -11,6 +11,14 @@ import type { StorybookConfig } from '@storybook/react-vite'
 const require = createRequire(import.meta.url)
 
 /**
+ * Where the built Storybook is served from. The Worker holding it answers the
+ * route tremolo-ui.mimoz.dev/i/storybook-react*, and Workers Static Assets match
+ * a request path against a file path, so the output has to sit under the same
+ * prefix — see `build:sb` in package.json.
+ */
+export const STORYBOOK_BASE = '/i/storybook-react/'
+
+/**
  * This function is used to resolve the absolute path of a package.
  * It is needed in projects that use Yarn PnP or are set up within a monorepo.
  */
@@ -61,11 +69,15 @@ const config: StorybookConfig = {
     name: getAbsolutePath('@storybook/react-vite'),
     options: {},
   },
-  async viteFinal(config) {
+  async viteFinal(config, { configType }) {
     // Merge custom configuration into the default config
     const { mergeConfig } = await import('vite')
 
     return mergeConfig<InlineConfig, UserConfig>(config, {
+      // In production the build is served from a sub-path of the docs domain
+      // (tremolo-ui.mimoz.dev/i/storybook-react). Only the build gets the base:
+      // setting it in dev would move the local URL off of localhost:6006/ too.
+      ...(configType === 'PRODUCTION' && { base: STORYBOOK_BASE }),
       plugins: [propTypesPlugin()],
       server: {
         allowedHosts: ['.ngrok-free.dev'],

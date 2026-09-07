@@ -1,0 +1,28 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "tremolo-ui-docs",
+  "compatibility_date": "2026-09-07",
+
+  // No `main`: this Worker only serves the Docusaurus build. Requests to static
+  // assets are free and unlimited, while anything that starts a Worker script
+  // counts against the free plan's 100,000 requests/day — and the free plan
+  // answers 429 past that instead of falling back to the assets.
+  "assets": {
+    "directory": "./build",
+    // docusaurus.config.ts sets `trailingSlash: true`, so /docs/foo/ is the
+    // canonical form. The default (auto-trailing-slash) would decide per file
+    // instead.
+    "html_handling": "force-trailing-slash",
+    "not_found_handling": "404-page",
+  },
+
+  // Takes the whole hostname, and creates the proxied DNS record that the
+  // Storybook Worker's route needs (packages/react/wrangler.jsonc). Deploy this
+  // one first.
+  "routes": [{ "pattern": "tremolo-ui.mimoz.dev", "custom_domain": true }],
+
+  // Preview URLs live on workers.dev and are disabled along with it, so both
+  // stay on and Cloudflare Access is what keeps previews private.
+  "workers_dev": true,
+  "preview_urls": true,
+}
