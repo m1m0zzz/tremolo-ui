@@ -9,7 +9,6 @@
     "start:fast": "npm run changelog && SKIP_API=true docusaurus start",
     "build": "npm run changelog && docusaurus build",
     "swizzle": "docusaurus swizzle",
-    "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
     "write-translations": "npm run changelog && docusaurus write-translations",

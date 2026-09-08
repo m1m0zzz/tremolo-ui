@@ -8,7 +8,7 @@
   "module": "dist/index.js",
   "types": "dist/index.d.cts",
   "scripts": {
-    "sb": "storybook dev -p 6006",
+    "sb": "storybook dev",
     "typecheck": "tsc",
     "build:sb": "storybook build -o storybook-static/i/storybook-react && cp .storybook/_headers storybook-static/_headers",
     "serve": "http-server ./storybook-static",

@@ -76,11 +76,10 @@ const config: StorybookConfig = {
     return mergeConfig<InlineConfig, UserConfig>(config, {
       // In production the build is served from a sub-path of the docs domain
       // (tremolo-ui.mimoz.dev/i/storybook-react). Only the build gets the base:
-      // setting it in dev would move the local URL off of localhost:6006/ too.
+      // setting it in dev would move the local URL off of / too.
       ...(configType === 'PRODUCTION' && { base: STORYBOOK_BASE }),
       plugins: [propTypesPlugin()],
       server: {
-        allowedHosts: ['.ngrok-free.dev'],
         hmr: {
           clientPort: process.env.CODESPACES ? 443 : undefined,
         },

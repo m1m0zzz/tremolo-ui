@@ -23,7 +23,7 @@ npm run build:package         # src を変えたら必要。site / Storybook は
 npm run build:sb              # 全パッケージをビルドしてから Storybook をビルド
 npm run lint                  # oxlint（自動修正は lint:fix）
 npm run format                # oxfmt（差分だけ見るなら format:check）
-npm run sb -w packages/react  # Storybook 開発サーバ（:6006）
+npm run sb -w packages/react  # Storybook 開発サーバ
 npm run typecheck -w packages/react
 npm run docs                  # docusaurus start（typedoc の API 生成が走るので遅い）
 npm run docs:fast             # SKIP_API=true で typedoc をスキップ
