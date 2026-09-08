@@ -49,6 +49,19 @@ describe('unit', () => {
     expect(stepValue(5.9, 4)).toBe(4)
     expect(stepValue(6, 4)).toBe(8)
     expect(stepValue(-2.3675323105127717, 0.1)).toBe(-2.4)
+
+    // A half step goes up, whichever side the division error falls on.
+    expect(stepValue(0.15, 0.1)).toBe(0.2)
+    expect(stepValue(0.25, 0.1)).toBe(0.3)
+    expect(stepValue(0.35, 0.1)).toBe(0.4)
+    expect(stepValue(-0.15, 0.1)).toBe(-0.1)
+
+    // A step small enough to print in exponential notation has no decimal
+    // part to read digits from, which used to leave the result rounded to a
+    // whole number — every value under half a step collapsed to 0.
+    expect(stepValue(1.2e-7, 1e-7)).toBe(1e-7)
+    expect(stepValue(1.6e-7, 1e-7)).toBe(2e-7)
+    expect(stepValue(2.5e-7, 1e-7)).toBe(3e-7)
   })
 
   test('decimalPart', () => {
