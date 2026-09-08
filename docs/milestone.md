@@ -186,17 +186,43 @@ CI       ci.yml (push) / pull-request.yml (PR)。PR は versions upload --previe
   - React 19 の callback ref cleanup の分岐がテストされていない（`docs/reviews/` の 06 P3）
   - Radix から持ち込んだコードの保守が要らなくなる
 
-- [ ] **render props を置き換える。** 破壊的変更。
+- [ ] **render props に置き換える。** 破壊的変更。
 
-  render props と呼べるのは Piano の 2 つだけ。`label?: (note, state) => ReactNode` が ReactNode を返し、`keyProps?: (note, state) => KeyAttributes` が属性を返す。`NumberInput` の `format` / `parse` も関数を取るが、これは値の変換なので対象外。
+  パートの中身を差し替える手段を `children` から `render` prop へ移し、状態を関数の引数として渡す。
 
-  **[4.3 / 5.5](./core-extraction-plan.md) で「Piano はサブコンポーネントを持たず、per-key のカスタマイズはコールバックで受ける」と決めた形の再検討。**
+  **今できないこと。** #204 で各パートを 1 要素にし、`children` は「その要素の中身」になった。そのため**要素そのものを差し替える手段が無い**。`Slider.Thumb` に `<img>` を入れると、ライブラリの `div` の中に入る。Radix の `asChild` はこれを解決するが、children を `cloneElement` する必要があり、この方向は採らないと決めている。
 
-  **置き換え先が未決。** 5.5 は children による合成へ戻すことを明確に否定している（鍵盤は `Root` が描く）ので、`Piano.Key` を復活させる以外の形を決める必要がある。決めるときに考えること:
+  **Base UI の `render` prop が、clone せずに同じことをする形。** 関数形式なら、props を渡すのはライブラリ、要素に撒くのは利用者になる。
 
-  - 鍵盤は 1 オクターブで 12 個、範囲によっては 88 個になる。要素ごとにコンポーネントを挟むと、その数だけ context の購読が増える
-  - `keyProps` が返しているのは `className` / `style` / `data-*` で、**状態は既に `data-note` / `data-active` / `aria-disabled` として出ている**。CSS だけで済む用途がどれだけあるかを先に見ると、必要な API が絞れる
-  - `label` は ReactNode を返すため CSS では代替できない
+  ```tsx
+  <Slider.Thumb render={(props, state) => (
+    <img {...props} src={state.dragging ? 'grabbing.png' : 'thumb.png'} />
+  )} />
+  ```
+
+  **前提が揃ったのは #204 の後。** Base UI は「1 コンポーネント 1 DOM ノードへ移したことで render props が現実的になった。複数スロットのときに問題だった可読性の懸念が消えた」として、`asChild` ではなくこちらを採った（[RFC](https://github.com/mui/base-ui/discussions/157)）。**このリポジトリが #204 で到達したのが、まさにその状態。**
+
+  同時に、**状態の露出**も render props で置き換えられる。現在サブコンポーネントは `useSliderContext()` で context を読んでおり、利用者が状態に応じて描き分けるにはこの hook を import する必要がある。React Aria Components は `children` / `className` / `style` が状態を受け取る関数を取れる形にしている。
+
+  ```tsx
+  <Slider.Thumb className={({ dragging }) => dragging ? 'thumb dragging' : 'thumb'} />
+  ```
+
+  **Piano の `label` / `keyProps` は既にこの形。** 4.3 / 5.5 で「per-key のカスタマイズはコールバックで受ける」と決めたものが、他のコンポーネントにも広がることになる。Piano が例外なのではなく、先行していたと位置づけ直す。
+
+  決めること:
+
+  - **どのパートに `render` を持たせるか。** 全パートか、`Root` を除くか
+  - **要素形式（`render={<div />}`）も受けるか。** 受けると props のマージが必要になり、clone を避けた意味が薄れる。**関数形式だけにするのが筋**
+  - **`children` / `className` / `style` も関数を取れるようにするか。** `render` と役割が重なるので、両方を入れるなら「`render` は要素の差し替え、`className` は状態に応じた分岐」と線を引く必要がある
+  - **props のマージ規則。** Base UI はイベントハンドラを合成し、`className` と `style` を連結し、それ以外は外側で上書きする。同じ規則にするなら文書化が要る
+  - 状態は既に `data-*` / ARIA 属性として出ている。`render` に渡す `state` とこの属性を**同じ 1 つの定義から出す**こと。二重管理になると片方だけ更新されて食い違う
+
+  分かっている代償（[RFC](https://github.com/mui/base-ui/discussions/157) で挙がっているもの）:
+
+  - render 関数の中で hook を呼ばれると壊れる
+  - `asChild` より記述が長い。単純な差し替えでもコールバックを書くことになる
+  - 一方で、props を明示的に撒くぶん型の上では安全になる
 
 - [ ] **`functions` を汎用な関数だけにする。** 破壊的変更。詳細: **[functions-scope.md](./functions-scope.md)**
 
