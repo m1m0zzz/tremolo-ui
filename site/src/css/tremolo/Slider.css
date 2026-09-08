@@ -19,14 +19,13 @@
   }
 }
 
-.tremolo-slider-thumb-wrapper {
+.tremolo-slider-thumb {
+  --color: oklch(59.5% 0.17548 266.373);
+
+  /* The component writes top / left as a percentage of the track. */
   position: absolute;
   translate: -50% -50%;
   z-index: 100;
-}
-
-.tremolo-slider-thumb {
-  --color: oklch(59.5% 0.17548 266.373);
 
   width: var(--thumb-size);
   height: var(--thumb-size);

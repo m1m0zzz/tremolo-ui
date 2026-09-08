@@ -143,9 +143,8 @@ export const WaveSelector = ({
               }}
             />
 
-            <Slider.Thumb>
-              <></>
-            </Slider.Thumb>
+            {/* This one shows no thumb at all. */}
+            <Slider.Thumb style={{ display: 'none' }} />
           </Slider.Track>
         </Slider.Root>
         <div
@@ -210,17 +209,15 @@ export const WaveSelector = ({
           }}
         >
           <Slider.Track thickness={6} length="100%" active={themeColor}>
-            <Slider.Thumb>
-              <div
-                style={{
-                  border: `solid 4px ${themeColor}`,
-                  background: 'white',
-                  borderRadius: '50%',
-                  width: 12,
-                  height: 12,
-                }}
-              ></div>
-            </Slider.Thumb>
+            <Slider.Thumb
+              style={{
+                border: `solid 4px ${themeColor}`,
+                background: 'white',
+                borderRadius: '50%',
+                width: 12,
+                height: 12,
+              }}
+            />
           </Slider.Track>
         </Slider.Root>
         <NumberInput.Root

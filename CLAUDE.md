@@ -52,7 +52,7 @@ npm run test:watch -w packages/react
 ### コンポーネント
 
 - 各コンポーネントのディレクトリは、単一のコンポーネントではなく `Root` などをまとめたプレーンなオブジェクトを export する
-- **children はそのまま描画し、既定の描画へフォールバックしない。** `children` は型で必須
+- **children はそのまま描画し、既定の描画へフォールバックしない。** `Root` の `children` は型で必須。サブコンポーネントの `children` はその要素の中身として描かれるだけで、要素そのものを差し替えることはない（`children` の有無で描き分けると、`className` / `style` / ref の行き先が変わって黙って落ちる）
 - **Piano だけはサブコンポーネントを持たない。** 鍵盤は `Root` が描き、per-key のカスタマイズはコールバックで受ける（判断の経緯は `docs/core-extraction-plan.md` 5.5）。children による合成に戻さないこと
 - サブコンポーネントは props のバケツリレーではなく `context.tsx` から読む。**中身は素の React context だけで、外部ストアも同期する state も置かない。** `useEffect(..., [props])` で流し込む形は、値が変わったフレームで古い値を返す不具合を生んで除去した経緯がある（同 Phase 5）
 
