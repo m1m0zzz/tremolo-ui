@@ -12,8 +12,8 @@
 | 状況 | 件数 |
 | --- | --- |
 | 対応済み | 1 |
-| 対応する（未対応） | 10 |
-| 要判断 | 4 |
+| 対応する（未対応） | 11 |
+| 要判断 | 3 |
 | 対応しない | 0 |
 | 未判断 | 5 |
 
@@ -397,7 +397,7 @@ useEventListener(globalThis.window, 'keydown', (e) => {
 
 ### [P2] React 18 ではサブコンポーネントの `ref` API が機能しない — packages/react/src/components/NumberInput/InputField.tsx:60
 
-> **状況: 要判断** — peerDependencies が `^18 || ^19` のまま React 19 の ref-as-prop に依存している。18 を切るか、サブコンポーネントを forwardRef に戻すかの方針決定が要る。
+> **状況: 対応する（未対応）** — **`forwardRef` に戻すと決定**（React 18 のサポートを維持する）。peerDependencies が `^18 || ^19` のまま React 19 の ref-as-prop に依存しており、18 ではサブコンポーネントの `ref` が届かない。
 
 **何が問題か**
 
