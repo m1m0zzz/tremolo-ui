@@ -12,11 +12,12 @@
 | 状況 | 件数 |
 | --- | --- |
 | 対応済み | 0 |
-| 対応する（未対応） | 1 |
+| 対応する（未対応） | 10 |
+| 要判断 | 0 |
 | 対応しない | 0 |
-| 未判断 | 15 |
+| 未判断 | 6 |
 
-P1 は全件を検証済み（再現の有無まで確認）。P2 / P3 は未判断。
+P1 と P2 は全件を判定済み（P1 は再現の有無まで確認）。P3 は未判断。
 
 ---
 
@@ -70,7 +71,7 @@ target.addEventListener('pointercancel', handlePointerUp)
 
 ### [P2] `shouldStart` の拒否経路と「capture より先」という契約が未検証 — packages/dom/src/pointer/drag.ts:246
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -99,7 +100,7 @@ capture.setPointerCapture?.(pointerId)
 
 ### [P2] window fallback のテストがインスタンスを破棄せず、後続テストへグローバルリスナーを漏らす — packages/dom/__tests__/pointer/drag.test.ts:321
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — テスト間でグローバルリスナーが漏れるのは、他のテストの結果を汚す。
 
 **何が問題か**
 
@@ -133,7 +134,7 @@ for (const instance of instances.splice(0)) instance.destroy()
 
 ### [P2] mapping が `null` を返したイベントでも lifecycle callback が発火することを見逃している — packages/dom/__tests__/pointer/dragValue.test.ts:109
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 03 の実装側の指摘と同件。
 
 **何が問題か**
 
@@ -174,7 +175,7 @@ expect(onChange).not.toHaveBeenCalled()
 
 ### [P2] `request()` を複数回成功させた場合の古い MIDIAccess リスナーが未検証 — packages/dom/src/midi/access.ts:107
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 03 の実装側の指摘と同件。
 
 **何が問題か**
 
@@ -206,7 +207,7 @@ A、B の順で二度成功すると A にリスナーが残ります。A の `s
 
 ### [P2] 「pending request 後の destroy」を検証するはずのテストが request 前に destroy している — packages/dom/__tests__/midi/access.test.ts:171
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — テストが意図した状況を作れていない。
 
 **何が問題か**
 
@@ -250,7 +251,7 @@ function request(options: MIDIAccessOptions = {}) {
 
 ### [P2] MIDI input の解除テストが callback の同一性を検証していない — packages/dom/__tests__/midi/message.test.ts:55
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -279,7 +280,7 @@ disconnect と destroy の後に `a.send(...)` し、handler が呼ばれない�
 
 ### [P2] Canvas snapshot テストは元画像のコピーが消えても通る — packages/dom/__tests__/canvas/animation.test.ts:296
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -310,7 +311,7 @@ expect(context.drawImage).toHaveBeenCalled()
 
 ### [P2] Canvas の描画状態リセットを偽 context が再現せず、`context.ts` の回帰を検出できない — packages/dom/__tests__/canvas/helpers.ts:21
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -350,7 +351,7 @@ canvas の width/height 設定時に context を初期値へ戻す偽装を追�
 
 ### [P2] `destroy()` が空状態でも変更通知する契約違反をテストが見逃している — packages/dom/__tests__/piano/index.test.ts:334
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 

@@ -12,11 +12,12 @@
 | 状況 | 件数 |
 | --- | --- |
 | 対応済み | 1 |
-| 対応する（未対応） | 1 |
+| 対応する（未対応） | 9 |
+| 要判断 | 0 |
 | 対応しない | 0 |
-| 未判断 | 11 |
+| 未判断 | 3 |
 
-P1 は全件を検証済み（再現の有無まで確認）。P2 / P3 は未判断。
+P1 と P2 は全件を判定済み（P1 は再現の有無まで確認）。P3 は未判断。
 
 ---
 
@@ -138,7 +139,7 @@ fixture に明示的な child を与え、次の契約テストを追加して�
 
 ### [P2] `readonly` の Knob がダブルクリックで値を変更できる — packages/react/src/components/Knob/index.tsx:321
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 05 の実装側の指摘と同件。修正時にテストを追加する。
 
 **何が問題か**
 
@@ -170,7 +171,7 @@ Knob のテストはサイズ、ドラッグ、Shift キー操作だけで、`de
 
 ### [P2] `Knob.Thumb` の `className` が捨てられているがテストされていない — packages/react/src/components/Knob/Thumb.tsx:28
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — #204 で Slider / XYPad の Thumb は直したが、Knob は手つかず。同じ形に揃える。
 
 **何が問題か**
 
@@ -200,7 +201,7 @@ export function Thumb({
 
 ### [P2] Piano の `fill` 分岐と白鍵ゼロの境界値が未テスト — packages/react/src/components/Piano/index.tsx:176
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -236,7 +237,7 @@ ResizeObserver を制御できる fake を用意し、以下を検証してく�
 
 ### [P2] Storybook の namespace component 収集経路が fixture から抜けている — packages/react/__tests__/storybook/propTypes.test.ts:7
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -281,7 +282,7 @@ fixture に `Root` とサブコンポーネントを持つ namespace オブジ�
 
 ### [P2] React 19 callback-ref cleanup の専用分岐が未テスト — packages/react/__tests__/util/composeRefs.test.tsx:51
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -322,7 +323,7 @@ callback ref が disposer を返す Host を作り、アンマウント時に di
 
 ### [P2] NumberInput の「長押しで繰り返す」契約が一度も検証されていない — packages/react/src/components/NumberInput/stepperButton.tsx:42
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 05 の `useLongPress`（P1）の修正とあわせて追加する。
 
 **何が問題か**
 
@@ -368,7 +369,7 @@ fake timer を使い、即時一回、499 ms では追加なし、500 ms で一�
 
 ### [P2] MIDI の React bridge 二つにテストがない — packages/react/src/hooks/useMIDIAccess.ts:23
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -408,7 +409,7 @@ DOM 内部の MIDI デコードを再テストせず、fake instance で React b
 
 ### [P2] AnimationCanvas の relative sizing 切替経路が未テスト — packages/react/src/components/AnimationCanvas/index.tsx:112
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 

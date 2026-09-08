@@ -12,17 +12,18 @@
 | 状況 | 件数 |
 | --- | --- |
 | 対応済み | 0 |
-| 対応する（未対応） | 0 |
+| 対応する（未対応） | 10 |
+| 要判断 | 0 |
 | 対応しない | 0 |
-| 未判断 | 18 |
+| 未判断 | 8 |
 
-P1 は全件を検証済み（再現の有無まで確認）。P2 / P3 は未判断。
+P1 と P2 は全件を判定済み（P1 は再現の有無まで確認）。P3 は未判断。
 
 ---
 
 ### [P2] 遅れて成立した pointer lock が `pointerup` / `destroy()` 後に残る — packages/dom/src/pointer/drag.ts:287
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -60,7 +61,7 @@ if (document?.pointerLockElement === element) document.exitPointerLock?.()
 
 ### [P2] `lostpointercapture` を監視せずドラッグが終了不能になる — packages/dom/src/pointer/drag.ts:224
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 04 の P1 と同件。実装・テストとも `lostpointercapture` が存在しないことを確認済み。
 
 **何が問題か**
 
@@ -91,7 +92,7 @@ capture 成立時は `lostpointercapture` も監視し、追跡中の pointer �
 
 ### [P2] 右クリックや補助ボタンでもドラッグを開始する — packages/dom/src/pointer/drag.ts:246
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — `createDrag` にボタン種別の判定が無く、`shouldStart` を渡さない限り右クリックでも開始することを確認した。React 側は誰も渡していない。
 
 **何が問題か**
 
@@ -115,7 +116,7 @@ opts.onDragStart?.(state(pointerEvent, pointer, 0, 0))
 
 ### [P2] `pointerup` に含まれる最後の移動を値へ反映しない — packages/dom/src/pointer/dragValue.ts:329
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — `onDragEnd` は `lastValue` を返し、コードのコメントも「pointerup までに動いていない」と仮定している。実際には pointerup が座標を持つため、最後の移動が落ちる。
 
 **何が問題か**
 
@@ -150,7 +151,7 @@ const finalState = state(pointerEvent, pointer, deltaX, deltaY)
 
 ### [P2] mapping が `null` を返しても偽の drag lifecycle を通知する — packages/dom/src/pointer/dragValue.ts:321
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 04 のテスト側の指摘と同件。
 
 **何が問題か**
 
@@ -181,7 +182,7 @@ opts.onDragStart?.(lastValue, state)
 
 ### [P2] MIDI の多重 request が競合し、古い結果とリスナが残る — packages/dom/src/midi/access.ts:107
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 04 のテスト側の指摘と同件。
 
 **何が問題か**
 
@@ -218,7 +219,7 @@ request ID をインクリメントし、最新 request の結果だけを採用
 
 ### [P2] `midiMax` を下げても既に鳴っているノートを停止しない — packages/dom/src/piano/index.ts:167
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 05 の Piano の発音残り（P1）と同じ「鳴っているノートを追跡していない」問題。まとめて直す。
 
 **何が問題か**
 
@@ -244,7 +245,7 @@ update: (next) => {
 
 ### [P2] canvas の描画状態保持が `reduceFlickering` に依存し、保持対象も不足している — packages/dom/src/canvas/animation.ts:149
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -290,7 +291,7 @@ export const drawingState = [
 
 ### [P2] snapshot を利用者の合成・透明度・shadow 設定で描き戻している — packages/dom/src/canvas/animation.ts:174
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — snapshot の描き戻しは利用者の `globalAlpha` などの影響を受けない状態で行うべき。
 
 **何が問題か**
 
@@ -311,7 +312,7 @@ DPR transform だけを設定した中立状態で snapshot を先に描画し�
 
 ### [P2] CSS サイズが同じだと devicePixelRatio の変化を検出しない — packages/dom/src/canvas/animation.ts:279
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 

@@ -12,11 +12,12 @@
 | 状況 | 件数 |
 | --- | --- |
 | 対応済み | 1 |
-| 対応する（未対応） | 0 |
+| 対応する（未対応） | 5 |
+| 要判断 | 1 |
 | 対応しない | 0 |
-| 未判断 | 9 |
+| 未判断 | 3 |
 
-P1 は全件を検証済み（再現の有無まで確認）。P2 / P3 は未判断。
+P1 と P2 は全件を判定済み（P1 は再現の有無まで確認）。P3 は未判断。
 
 ---
 
@@ -44,7 +45,7 @@ return Math.abs(value - v) < Math.abs(value - next) ? v : next
 
 ### [P2] 黒鍵が範囲端にあると `pianoWidth`・描画位置・当たり判定が食い違う — packages/functions/src/piano.ts:88
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — `pianoWidth` が白鍵数だけで幅を出しているのを確認した。02 の「端が黒鍵のレイアウト」と同件。
 
 **何が問題か。** 幅は白鍵数だけから計算しますが、黒鍵は境界を中心に左右へ張り出します。
 
@@ -72,7 +73,7 @@ return isBlackKey(note)
 
 ### [P2] `ModifierValue<T>` は `default` プロパティを持つ通常オブジェクトを安全に扱えない — packages/functions/src/types.ts:65
 
-> **状況: 未判断**
+> **状況: 要判断** — `default` を持つ値オブジェクトを modifier マップと区別する方法は型設計の判断が要る。判別キーを変える／専用の生成関数を通す／現状のまま制約として文書化する、のいずれか。
 
 **何が問題か。** `T` は無制約のジェネリックですが、オブジェクトに `default` があるだけで修飾キー用 map と判定しています。
 
@@ -104,7 +105,7 @@ selectModifier<Config>(config).value
 
 ### [P2] skew 系 API が自身の `Scale` 契約を満たさない係数を生成する — packages/functions/src/scales.ts:61
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 公開 helper が契約を破る係数を返すのは入力検証の欠落。
 
 **何が問題か。** `skewScale` と `symmetricSkewScale` は `skew` の正値・有限性を検査しません。また、`skewWithCenterValue` は端点を center として明示的に許可しています。
 
@@ -135,7 +136,7 @@ return Math.log(0.5) / Math.log((centerValue - min) / (max - min))
 
 ### [P2] 非線形スケールが、文書化された条件を満たす有限入力でも overflow する — packages/functions/src/scales.ts:109
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か。** `exponentialScale` は先に `max / min` を計算し、`curveScale` は先に `Math.exp(curve)` を計算しています。
 
@@ -153,7 +154,7 @@ const grow = Math.exp(curve)
 
 ### [P2] `unitFormat` は空の unit と非空の base で format/parse が一致しない — packages/functions/src/unit.ts:164
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — format と parse は往復するのが前提なので、片方向でしか成立しない組み合わせは直す。
 
 **何が問題か。** formatter は選んだ prefix が空なら数値だけを出力しますが、parser は suffix のない数値を「保存値の単位」と解釈します。
 
@@ -180,7 +181,7 @@ formatter.parse(formatter.format(1000)) // 1
 
 ### [P2] MIDI の整数制約がなく、宣言された戻り値と実行時値が一致しない — packages/functions/src/midi.ts:51
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か。** `number` をそのまま配列添字へ使っています。
 

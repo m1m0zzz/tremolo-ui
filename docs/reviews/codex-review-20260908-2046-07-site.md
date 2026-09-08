@@ -12,11 +12,12 @@
 | 状況 | 件数 |
 | --- | --- |
 | 対応済み | 0 |
-| 対応する（未対応） | 2 |
+| 対応する（未対応） | 9 |
+| 要判断 | 1 |
 | 対応しない | 0 |
-| 未判断 | 14 |
+| 未判断 | 6 |
 
-P1 は全件を検証済み（再現の有無まで確認）。P2 / P3 は未判断。
+P1 と P2 は全件を判定済み（P1 は再現の有無まで確認）。P3 は未判断。
 
 ---
 
@@ -96,7 +97,7 @@ Playground にコードだけでなく付随ファイル一覧を渡せるよう
 
 ### [P2] `start:fast` はクリーン checkout では API sidebar を import できない — site/package.json:9
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — `sidebars.ts` が gitignore 対象の `docs/api/*/typedoc-sidebar.cjs` を静的 import していることを確認した。
 
 **何が問題か**
 
@@ -126,7 +127,7 @@ import typedocSidebarReact from './docs/api/react/typedoc-sidebar.cjs'
 
 ### [P2] 5 つのコンポーネントページの Style リンクが存在しないファイルを指す — site/docs/components/Knob/index.mdx:12
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — `StyleGitHubLink` が `packages/react/src/components/*/index.css` を指しているが、パッケージから CSS を無くした時点で存在しないファイルになっている。
 
 **何が問題か**
 
@@ -150,7 +151,7 @@ Knob ページは次のリンクを生成します。
 
 ### [P2] migration の末尾が同じページの現行説明と正反対 — site/docs/guides/migration.mdx:482
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -175,7 +176,7 @@ you are expected to import them.
 
 ### [P2] 日本語の Styling が英語版の現在の CSS 契約に追随していない — site/i18n/ja/docusaurus-plugin-content-docs/current/tutorials/styling.mdx:40
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -199,7 +200,7 @@ you are expected to import them.
 
 ### [P2] Playground のキーボードフォーカスが視覚的に消える — site/src/theme/Playground/styles.module.css:40
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -229,7 +230,7 @@ Tab キーで StackBlitz、CodeSandbox、GitHub、コピー、コード表示ボ
 
 ### [P2] ライブ例の slider/spinbutton にアクセシブルネームがない — site/examples/components/knob/basic.tsx:19
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -257,7 +258,7 @@ Knob の例は値と範囲だけを渡しています。
 
 ### [P2] Tone を全ライブ例の scope に載せ、Piano は render ごとに音源を生成する — site/src/theme/ReactLiveScope/index.tsx:2
 
-> **状況: 未判断**
+> **状況: 要判断** — render ごとに音源を生成する部分は明確なバグだが、Tone をライブ例の scope に常時載せるかどうかはサイトの設計判断。
 
 **何が問題か**
 
@@ -291,7 +292,7 @@ Tone は Piano 例を開いたときだけ動的にロードしてください�
 
 ### [P2] “Headless UI” の紹介が「rich default UI」を提供すると説明している — site/src/components/HomepageFeatures/index.tsx:29
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — title が Headless UI で説明が「rich default UI を提供する」になっている。パッケージは CSS を配らないので説明が誤り。
 
 **何が問題か**
 

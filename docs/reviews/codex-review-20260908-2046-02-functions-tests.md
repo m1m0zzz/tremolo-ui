@@ -12,11 +12,12 @@
 | 状況 | 件数 |
 | --- | --- |
 | 対応済み | 1 |
-| 対応する（未対応） | 0 |
+| 対応する（未対応） | 7 |
+| 要判断 | 0 |
 | 対応しない | 0 |
-| 未判断 | 11 |
+| 未判断 | 4 |
 
-P1 は全件を検証済み（再現の有無まで確認）。P2 / P3 は未判断。
+P1 と P2 は全件を判定済み（P1 は再現の有無まで確認）。P3 は未判断。
 
 ---
 
@@ -52,7 +53,7 @@ expect(
 
 ### [P2] 端が黒鍵のレイアウトを使わないため、幅と当たり判定の不整合を検出できない — packages/functions/__tests__/piano.test.ts:112
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 01 の `pianoWidth` の修正とあわせて追加する。
 
 **何が問題か。** `pianoWidth` は白鍵数だけで幅を計算しますが、黒鍵は白鍵境界から左右へ張り出します。また、`noteAt` には `x < pianoWidth(layout)` の事前判定がありません。
 
@@ -80,7 +81,7 @@ expect(noteAt(pianoWidth(layout), 80, height, layout)).toBe(null)
 
 ### [P2] `unitFormat` の往復テストが既定オプションだけで、対応していない組み合わせを見逃す — packages/functions/__tests__/unit.test.ts:79
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か。** `format` と `parse` の往復テストは `unitFormat('Hz')` だけです。
 
@@ -121,7 +122,7 @@ f.parse(f.format(1000)) // 1
 
 ### [P2] skew の端点・ゼロ・非有限係数がテストされていない — packages/functions/__tests__/scales.test.ts:73
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か。** テスト対象は `skew` が `0.5`、`1`、`2` の場合だけで、helper のエラーテストも範囲外の一例だけです。
 
@@ -148,7 +149,7 @@ return Math.log(0.5) / Math.log((centerValue - min) / (max - min))
 
 ### [P2] 非線形スケールの有限な極値入力で起きる overflow が未テスト — packages/functions/__tests__/scales.test.ts:12
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か。** 共通テストの範囲は常に `20..22000`、curve も `±4` に限定されています。
 
@@ -177,7 +178,7 @@ const grow = Math.exp(curve)
 
 ### [P2] `mapModifier` と generic な `selectModifier` の契約がテスト対象外 — packages/functions/__tests__/modifiers.test.ts:1
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か。** テストが import するのは `selectInputEvent` だけで、公開されている `mapModifier` と `selectModifier<T>` は直接検証されていません。
 
@@ -216,7 +217,7 @@ value !== null &&
 
 ### [P2] `applyDelta` の不正 range／step に対するモード間の差が未テスト — packages/functions/__tests__/applyDelta.test.ts:26
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か。** テストする range はすべて `min < max` で、step は正数か省略だけです。
 
@@ -245,7 +246,7 @@ const stepped = quantum ? stepValue(next, quantum) : next
 
 ### [P2] MIDI API の非整数・非有限入力と parse のエラー経路が未テスト — packages/functions/__tests__/midi.test.ts:11
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か。** `noteName`、`noteNumber`、`scaleNotes` のテスト入力は有効な整数・文字列だけです。公開されている `parseNoteName` の失敗経路も直接テストされていません。
 

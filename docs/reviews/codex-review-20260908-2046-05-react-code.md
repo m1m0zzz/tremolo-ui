@@ -11,12 +11,13 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 0 |
-| 対応する（未対応） | 4 |
+| 対応済み | 1 |
+| 対応する（未対応） | 10 |
+| 要判断 | 4 |
 | 対応しない | 0 |
-| 未判断 | 16 |
+| 未判断 | 5 |
 
-P1 は全件を検証済み（再現の有無まで確認）。P2 / P3 は未判断。
+P1 と P2 は全件を判定済み（P1 は再現の有無まで確認）。P3 は未判断。
 
 ---
 
@@ -167,7 +168,7 @@ useEventListener(globalThis.window, 'pointerup', () => {
 
 ### [P2] `disabled` と宣言したコントロールが操作可能なまま — packages/react/src/components/Knob/index.tsx:225
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — Knob の `disabled` は `aria-disabled` に出るだけで、キーボード・ポインタ・ホイールのいずれも止めていないことを確認した。支援技術への通知と実挙動が食い違う。
 
 **何が問題か**
 
@@ -194,7 +195,7 @@ Slider、XYPad、NumberInput、PointsEditor にも同じ設計があります。
 
 ### [P2] `readonly` の Knob がダブルクリックで変更される — packages/react/src/components/Knob/index.tsx:321
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — ダブルクリックの既定値復元だけ `readonly` を見ていないことを確認した。06 と同件。
 
 **何が問題か**
 
@@ -219,7 +220,7 @@ onDoubleClick={(event) => {
 
 ### [P2] `clampValue={false}` や未指定範囲でも安全整数へクランプされる — packages/react/src/components/NumberInput/index.tsx:226
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — `range` が `MIN_SAFE_INTEGER` / `MAX_SAFE_INTEGER` で埋められ、commit 時のクランプに同じ範囲を使っていることを確認した。
 
 **何が問題か**
 
@@ -251,7 +252,7 @@ changeValue(clamp(parsed, range.min, range.max))
 
 ### [P2] 横向き Slider の `reverse` がホイール方向へ反映されない — packages/react/src/components/Slider/index.tsx:260
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 反転条件が `vertical && reverse` に限定されていることを確認した。
 
 **何が問題か**
 
@@ -279,7 +280,7 @@ if (vertical && reverse) direction *= -1
 
 ### [P2] Slider の `role="slider"` と実際のフォーカス位置が分離している — packages/react/src/components/Slider/index.tsx:321
 
-> **状況: 未判断**
+> **状況: 要判断** — フォーカスと role をどちらの要素に持たせるかは a11y の構造そのものの決定で、公開マークアップが変わる。なお指摘中の「children を渡すと focus が no-op」は #204 で解消済み。
 
 **何が問題か**
 
@@ -317,7 +318,7 @@ ARIA slider と `tabIndex` を同じ DOM 要素に置いてください。構成
 
 ### [P2] XYPad と Point のキーボード操作がアクセシビリティツリーに表現されない — packages/react/src/components/XYPad/Thumb.tsx:76
 
-> **状況: 未判断**
+> **状況: 要判断** — 2 軸の値を支援技術へどう表現するか（x/y を 2 つの slider にする等）は設計の決定が要る。
 
 **何が問題か**
 
@@ -354,7 +355,7 @@ PointsEditor.Point も role のない `div` を `tabIndex={0}` にしていま�
 
 ### [P2] Piano のショートカットがページ全体を奪い、表示範囲外のノートも鳴らす — packages/react/src/components/Piano/index.tsx:253
 
-> **状況: 未判断**
+> **状況: 要判断** — 「範囲外のノートを鳴らす」は明確なバグだが、ショートカットをフォーカス配下に限定するかどうかは UX の決定。
 
 **何が問題か**
 
@@ -396,7 +397,7 @@ useEventListener(globalThis.window, 'keydown', (e) => {
 
 ### [P2] React 18 ではサブコンポーネントの `ref` API が機能しない — packages/react/src/components/NumberInput/InputField.tsx:60
 
-> **状況: 未判断**
+> **状況: 要判断** — peerDependencies が `^18 || ^19` のまま React 19 の ref-as-prop に依存している。18 を切るか、サブコンポーネントを forwardRef に戻すかの方針決定が要る。
 
 **何が問題か**
 
@@ -426,7 +427,7 @@ React 18 をサポートする間は `forwardRef` を使用してください。
 
 ### [P2] 既定描画と children の扱いがリポジトリの構成規約に反する — packages/react/src/components/Slider/Thumb.tsx:67
 
-> **状況: 未判断**
+> **状況: 対応済み** — #204 で `Slider.Thumb` / `XYPad.Thumb` を 1 要素にし、既定描画のフォールバックを無くした。
 
 **何が問題か**
 
@@ -458,7 +459,7 @@ Piano.Root は `ComponentPropsWithoutRef<'div'>` 経由で children を受け取
 
 ### [P2] `useEventListener` の手動 disposer が登録時とは別の target を解除する — packages/react/src/hooks/useEventListener.ts:34
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 戻り値の disposer は呼び出し時に target を再評価するため、登録時と別の要素を解除しうる。現在この戻り値を使っている箇所は無いので、直すか戻り値ごと無くすかは実装時に決める。
 
 **何が問題か**
 
@@ -490,7 +491,7 @@ return () => {
 
 ### [P2] `angleRange=360` で Knob の円弧が端点で消える — packages/react/src/components/Knob/context.tsx:63
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
