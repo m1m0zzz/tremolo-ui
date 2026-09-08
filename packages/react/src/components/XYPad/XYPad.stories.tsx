@@ -196,7 +196,9 @@ export const AdvancedFilterPad: Story = {
             }}
           >
             <XYPad.Area width={200} color="transparent">
-              <XYPad.Thumb>
+              <XYPad.Thumb
+                style={{ background: 'none', width: 'auto', height: 'auto' }}
+              >
                 <ThumbAnimation />
               </XYPad.Thumb>
             </XYPad.Area>

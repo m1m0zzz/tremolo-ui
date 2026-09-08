@@ -19,9 +19,13 @@ export interface XYPadThumbProps {
    */
   color?: string
 
-  wrapperClassName?: string
-  wrapperStyle?: CSSProperties
-
+  className?: string
+  style?: CSSProperties
+  /**
+   * Rendered inside the thumb. The thumb is one element either way, so what
+   * is passed here is decoration on top of it rather than a replacement for
+   * it — `className` and `style` are how its own appearance is changed.
+   */
   children?: ReactNode
   ref?: Ref<XYPadThumbMethods>
 }
@@ -37,8 +41,6 @@ type Props = XYPadThumbProps &
 export function Thumb({
   color,
   children,
-  wrapperClassName,
-  wrapperStyle,
   className,
   style,
   ref,
@@ -47,7 +49,7 @@ export function Thumb({
   const elementRef = useRef<HTMLDivElement>(null)
   const { disabled, readonly, percent, thumbRef } = useXYPadContext()
 
-  // The wrapper is positioned against the area.
+  // The thumb is positioned against the area.
   useCheckPlacement('XYPad.Thumb', 'XYPad.Area')
 
   const methods = () => ({
@@ -65,31 +67,24 @@ export function Thumb({
 
   return (
     <div
-      className={cx('tremolo-xy-pad-thumb-wrapper', wrapperClassName)}
+      ref={elementRef}
+      className={cx('tremolo-xy-pad-thumb', className)}
+      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+      tabIndex={0}
+      aria-disabled={disabled}
+      aria-readonly={readonly}
+      {...props}
       style={{
+        ...{ '--color': color },
+        ...style,
+        // Where the thumb sits is the component's decision, not a style: a
+        // `left` from the caller would take it off the area, so it is written
+        // after theirs.
         left: `${percent[0]}%`,
         top: `${percent[1]}%`,
-        ...wrapperStyle,
       }}
-      {...props}
     >
-      {children ? (
-        children
-      ) : (
-        // default thumb
-        <div
-          ref={elementRef}
-          className={cx('tremolo-xy-pad-thumb', className)}
-          // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-          tabIndex={0}
-          aria-disabled={disabled}
-          aria-readonly={readonly}
-          style={{
-            ...{ '--color': color },
-            ...style,
-          }}
-        ></div>
-      )}
+      {children}
     </div>
   )
 }

@@ -97,16 +97,12 @@ const wheel = (root: Element, init: { deltaY: number; shiftKey?: boolean }) =>
     root.dispatchEvent(new WheelEvent('wheel', { bubbles: true, ...init }))
   })
 
-/** The wrapper carries the position, as a percentage of the area. */
+/** The thumb carries its position, as a percentage of the area. */
 const thumbPosition = () =>
   screen.getByTestId('thumb').getAttribute('style') ?? ''
 
-/**
- * The focusable element is the default thumb the wrapper renders, not the
- * wrapper itself, so a test that focuses has to reach past the test id.
- */
-const thumbElement = () =>
-  document.querySelector<HTMLElement>('.tremolo-xy-pad-thumb')!
+/** The thumb is a single element, and it is the one that takes focus. */
+const thumbElement = () => screen.getByTestId('thumb')
 
 describe('XYPad', () => {
   test('places the thumb from the value of each axis', () => {

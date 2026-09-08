@@ -1,4 +1,5 @@
 import {
+  ComponentPropsWithoutRef,
   CSSProperties,
   ReactNode,
   Ref,
@@ -20,6 +21,11 @@ export interface SliderThumbProps {
 
   className?: string
   style?: CSSProperties
+  /**
+   * Rendered inside the thumb. The thumb is one element either way, so what
+   * is passed here is decoration on top of it rather than a replacement for
+   * it — `className` and `style` are how its own appearance is changed.
+   */
   children?: ReactNode
   ref?: Ref<SliderThumbMethods>
 }
@@ -29,17 +35,21 @@ export interface SliderThumbMethods {
   blur: () => void
 }
 
+type Props = SliderThumbProps &
+  Omit<ComponentPropsWithoutRef<'div'>, keyof SliderThumbProps>
+
 export function Thumb({
   color,
   children,
   className,
   style,
   ref,
-}: SliderThumbProps) {
+  ...props
+}: Props) {
   const elementRef = useRef<HTMLDivElement>(null)
   const { vertical, disabled, readonly, percent, thumbRef } = useSliderContext()
 
-  // The wrapper is positioned against the track.
+  // The thumb is positioned against the track.
   useCheckPlacement('Slider.Thumb', 'Slider.Track')
 
   const methods = () => ({
@@ -53,34 +63,28 @@ export function Thumb({
 
   useImperativeHandle(ref, methods, [])
   // Root focuses the thumb when a drag starts, wherever the user placed it.
-
   useImperativeHandle(thumbRef, methods, [])
 
   return (
     <div
-      className="tremolo-slider-thumb-wrapper"
+      ref={elementRef}
+      className={cx('tremolo-slider-thumb', className)}
+      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+      tabIndex={0}
+      aria-disabled={disabled}
+      aria-readonly={readonly}
+      {...props}
       style={{
+        ...{ '--color': color },
+        ...style,
+        // Where the thumb sits is the component's decision, not a style: a
+        // `left` from the caller would take it off the track, so it is
+        // written after theirs.
         top: vertical ? `${percent}%` : '50%',
         left: !vertical ? `${percent}%` : '50%',
       }}
     >
-      {children ? (
-        children
-      ) : (
-        // default slider thumb
-        <div
-          ref={elementRef}
-          className={cx('tremolo-slider-thumb', className)}
-          // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-          tabIndex={0}
-          aria-disabled={disabled}
-          aria-readonly={readonly}
-          style={{
-            ...{ '--color': color },
-            ...style,
-          }}
-        ></div>
-      )}
+      {children}
     </div>
   )
 }

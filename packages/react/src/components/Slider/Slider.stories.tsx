@@ -148,7 +148,11 @@ export const CustomImage: Story = {
               borderRadius: 0,
             }}
           >
-            <Slider.Thumb>
+            {/* The thumb is one element: its own look is turned off so that
+                only the image shows. */}
+            <Slider.Thumb
+              style={{ background: 'none', width: 'auto', height: 'auto' }}
+            >
               <img
                 // staticDirs land at the root of the build, which is not the
                 // root of the site once Storybook is served from
