@@ -12,12 +12,12 @@
 | 状況 | 件数 |
 | --- | --- |
 | 対応済み | 0 |
-| 対応する（未対応） | 10 |
+| 対応する（未対応） | 17 |
 | 要判断 | 0 |
-| 対応しない | 0 |
-| 未判断 | 8 |
+| 対応しない | 1 |
+| 未判断 | 0 |
 
-P1 と P2 は全件を判定済み（P1 は再現の有無まで確認）。P3 は未判断。
+全 P1 / P2 / P3 を判定済み。P1 は再現の有無まで確認した。
 
 ---
 
@@ -344,7 +344,7 @@ Linux 上でブラウザの zoom を変更したり、異なるスケーリン�
 
 ### [P3] 要素の owner document/window ではなくグローバル realm を使う — packages/dom/src/pointer/drag.ts:264
 
-> **状況: 未判断**
+> **状況: 対応しない** — 別ウィンドウへ portal したときだけ問題になる。iframe 内で完結する描画（Storybook など）は `globalThis` が正しい realm なので影響しない。要望が出た時点で再検討する。
 
 **何が問題か**
 
@@ -374,7 +374,7 @@ globalThis.document?.addEventListener(
 
 ### [P3] `pixelRange` が 0 の軸で `NaN` / `Infinity` を生成する — packages/dom/src/pointer/dragValue.ts:177
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — `travelled()` が `/ baseX` で割っており、0 を渡すと `Infinity` / `NaN` になることを確認した。
 
 **何が問題か**
 
@@ -397,7 +397,7 @@ const travelled = (to: XY<number>, at: number): XY<number> => [
 
 ### [P3] Piano の命令 API が MIDI 範囲外・非整数値を受理する — packages/dom/src/piano/index.ts:102
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -417,7 +417,7 @@ if (note > (opts.midiMax ?? 127)) return
 
 ### [P3] active drag の `destroy()` が lifecycle を閉じない — packages/dom/src/pointer/drag.ts:411
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 05 / 06 の `user-select` 残留（P1）と同じ原因。まとめて直す。
 
 **何が問題か**
 
@@ -447,7 +447,7 @@ destroy: () => drag.destroy()
 
 ### [P3] managed style を完全には復元できない — packages/dom/src/pointer/drag.ts:172
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -476,7 +476,7 @@ style.setProperty(property, previous)
 
 ### [P3] Wheel だけ callback を `update()` で差し替えられない — packages/dom/src/pointer/wheel.ts:49
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 他のコア API と揃っていない。
 
 **何が問題か**
 
@@ -505,7 +505,7 @@ framework 非依存の利用者が handler を差し替えるには instance を
 
 ### [P3] subscriber の例外を MIDI request の失敗として処理する — packages/dom/src/midi/access.ts:113
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -539,7 +539,7 @@ for (const listener of listeners) listener()
 
 ### [P3] MIDI output の変化でも購読者を再描画させる — packages/dom/src/midi/access.ts:102
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 公開しているのは inputs だけなので、output の変化で再描画する必要がない。
 
 **何が問題か**
 

@@ -12,12 +12,12 @@
 | 状況 | 件数 |
 | --- | --- |
 | 対応済み | 1 |
-| 対応する（未対応） | 6 |
+| 対応する（未対応） | 9 |
 | 要判断 | 0 |
 | 対応しない | 0 |
-| 未判断 | 3 |
+| 未判断 | 0 |
 
-P1 と P2 は全件を判定済み（P1 は再現の有無まで確認）。P3 は未判断。
+全 P1 / P2 / P3 を判定済み。P1 は再現の有無まで確認した。
 
 ---
 
@@ -218,7 +218,7 @@ return Array.from({ length: octaves }, (_, octave) =>
 
 ### [P3] 読み取り専用 tuple を `InputEventOption` として渡せない — packages/functions/src/types.ts:4
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — `as const` で書いた設定を渡せないのは素直に不便。`readonly` を受ける形にする。
 
 **何が問題か。** 設定値を変更するコードはないのに、tuple が mutable として宣言されています。
 
@@ -239,7 +239,7 @@ applyDelta(value, 1, keyboard, range)
 
 ### [P3] `applyDelta` の range 検証が入力モードによって変わる — packages/functions/src/scales.ts:295
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か。** normalized mode では scale が `min < max` を検証しますが、raw mode は検証を通らず最後の `clamp` まで進みます。
 
@@ -258,7 +258,7 @@ return clamp(toPrecision(stepped), min, max)
 
 ### [P3] `isEmpty` の引数型が実際に判定する「空」の範囲より広い — packages/functions/src/util.ts:1
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か。** 引数は任意の `object` ですが、判定対象は enumerable な own string key だけです。
 

@@ -12,12 +12,12 @@
 | 状況 | 件数 |
 | --- | --- |
 | 対応済み | 0 |
-| 対応する（未対応） | 10 |
+| 対応する（未対応） | 15 |
 | 要判断 | 0 |
-| 対応しない | 0 |
-| 未判断 | 6 |
+| 対応しない | 1 |
+| 未判断 | 0 |
 
-P1 と P2 は全件を判定済み（P1 は再現の有無まで確認）。P3 は未判断。
+全 P1 / P2 / P3 を判定済み。P1 は再現の有無まで確認した。
 
 ---
 
@@ -385,7 +385,7 @@ opts.onActiveNotesChange?.([])
 
 ### [P3] animation frame の時間値が実質未検証 — packages/dom/__tests__/canvas/animation.test.ts:154
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -417,7 +417,7 @@ fps: 1000 / deltaTime,
 
 ### [P3] pointer lock の拒否テストが同期 throw と Promise rejection を通っていない — packages/dom/__tests__/pointer/drag.test.ts:563
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -453,7 +453,7 @@ request?.catch?.(() => {})
 
 ### [P3] 2D context 取得失敗の公開エラー経路が未検証 — packages/dom/src/canvas/animation.ts:116
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -476,7 +476,7 @@ if (!context2d) {
 
 ### [P3] `getValue` 必須エラーが未検証 — packages/dom/src/pointer/dragValue.ts:299
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -501,7 +501,7 @@ if (!getValue) {
 
 ### [P3] `TypeError` のエラー分類だけテーブルから抜けている — packages/dom/__tests__/midi/access.test.ts:116
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -532,7 +532,7 @@ if (name === 'NotSupportedError' || name === 'TypeError') {
 
 ### [P3] exponentialScale と relativeMapping の同じ不変条件を二箇所で検証している — packages/dom/__tests__/pointer/scaleJump.test.ts:100
 
-> **状況: 未判断**
+> **状況: 対応しない** — 検証対象が別（スケールとマッピング）で、片方が壊れたときに両方落ちること自体は問題ではない。
 
 **何が問題か**
 

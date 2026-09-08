@@ -12,12 +12,12 @@
 | 状況 | 件数 |
 | --- | --- |
 | 対応済み | 0 |
-| 対応する（未対応） | 10 |
+| 対応する（未対応） | 16 |
 | 要判断 | 0 |
 | 対応しない | 0 |
-| 未判断 | 6 |
+| 未判断 | 0 |
 
-P1 と P2 は全件を判定済み（P1 は再現の有無まで確認）。P3 は未判断。
+全 P1 / P2 / P3 を判定済み。P1 は再現の有無まで確認した。
 
 ---
 
@@ -319,7 +319,7 @@ Tone は Piano 例を開いたときだけ動的にロードしてください�
 
 ### [P3] `AnimationCanvasProps` のリンク先が別 interface — site/docs/components/AnimationCanvas/index.mdx:32
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -339,7 +339,7 @@ ref: [AnimationCanvasProps](/docs/api/react/components/AnimationCanvas/#absolute
 
 ### [P3] 外部 Playground の依存バージョンが再現不能な `latest` — site/src/theme/Playground/external/stackblitz/files.ts:97
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — `latest` だと、後から開いたときに再現しない。
 
 **何が問題か**
 
@@ -364,7 +364,7 @@ CodeSandbox 側も `@tremolo-ui/react` と `react-scripts-ts` を `latest` に�
 
 ### [P3] トップページの依存関係説明が現行 package と一致しない — site/docs/index.md:15
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 「minimal dependences (clsx, zustand)」と書いてあるが、どちらも既に依存していないことを確認した。
 
 **何が問題か**
 
@@ -386,7 +386,7 @@ CodeSandbox 側も `@tremolo-ui/react` と `react-scripts-ts` を `latest` に�
 
 ### [P3] トップの API/コンポーネント導線が公開面を網羅していない — site/docs/index.md:29
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -409,7 +409,7 @@ API 一覧と footer に DOM を追加し、PointsEditor に他コンポーネ�
 
 ### [P3] トップページの SVG が装飾か情報画像か判別できず、ロゴの代替文も不正確 — site/src/components/HomepageFeatures/index.tsx:39
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -440,7 +440,7 @@ feature 画像が装飾なら `aria-hidden="true"` と `focusable="false"` を�
 
 ### [P3] favicon helper が複合 emoji のコードポイントを切り捨てる — site/docusaurus.config.ts:12
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — `codePoint.split("-")[0]` で先頭のコードポイントだけを使っているため、複合 emoji では別の画像になることを確認した。
 
 **何が問題か**
 

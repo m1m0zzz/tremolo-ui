@@ -12,12 +12,12 @@
 | 状況 | 件数 |
 | --- | --- |
 | 対応済み | 1 |
-| 対応する（未対応） | 9 |
+| 対応する（未対応） | 12 |
 | 要判断 | 0 |
 | 対応しない | 0 |
-| 未判断 | 3 |
+| 未判断 | 0 |
 
-P1 と P2 は全件を判定済み（P1 は再現の有無まで確認）。P3 は未判断。
+全 P1 / P2 / P3 を判定済み。P1 は再現の有無まで確認した。
 
 ---
 
@@ -438,7 +438,7 @@ ResizeObserver の fake を使い、絶対→相対および相対→絶対の r
 
 ### [P3] 実在しない `KeyboardEvent.key === ''` で黒鍵ショートカットを検証している — packages/react/src/components/Piano/index.test.tsx:153
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — テストが実際には起こらない入力を前提にしている。
 
 **何が問題か**
 
@@ -471,7 +471,7 @@ if (!keyboardShortcuts || key === '') return null
 
 ### [P3] XYPad の垂直ホイール操作が二重に検証されている — packages/react/__tests__/modifiers.test.tsx:200
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 1 つのコンポーネントで代表させられる挙動を `__tests__/` に置かない方針（CLAUDE.md）に照らして、重複している側を削る。
 
 **何が問題か**
 
@@ -501,7 +501,7 @@ expect(onChange).toHaveBeenLastCalledWith([50, 49])
 
 ### [P3] `useDragValue` の必須 mapping エラー経路が未テスト — packages/react/src/hooks/useDragValue.ts:104
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 

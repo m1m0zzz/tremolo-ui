@@ -12,12 +12,12 @@
 | 状況 | 件数 |
 | --- | --- |
 | 対応済み | 1 |
-| 対応する（未対応） | 7 |
+| 対応する（未対応） | 10 |
 | 要判断 | 0 |
-| 対応しない | 0 |
-| 未判断 | 4 |
+| 対応しない | 1 |
+| 未判断 | 0 |
 
-P1 と P2 は全件を判定済み（P1 は再現の有無まで確認）。P3 は未判断。
+全 P1 / P2 / P3 を判定済み。P1 は再現の有無まで確認した。
 
 ---
 
@@ -273,7 +273,7 @@ return `${noteKeys[noteIndex]}${octave}`
 
 ### [P3] 多くのテストが公開 entry point を迂回している — packages/functions/__tests__/math.test.ts:1
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — 実装の隣のテストが対象モジュールを直接 import すること自体は方針どおり。ただし re-export の書き忘れを誰も検出しないので、`src/index.ts` の公開面を確かめるテストを 1 つ足す形にする。
 
 **何が問題か。** `math`、`midi`、`piano`、`unit` のテストは個別モジュールを直接 import しています。
 
@@ -299,7 +299,7 @@ export { ... } from './unit'
 
 ### [P3] modifier の fallback／優先順位テストが戻り値の半分しか検証していない — packages/functions/__tests__/modifiers.test.ts:50
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — `modifier` の側を検証していない。
 
 **何が問題か。** fallback と複数 modifier のケースでは `modifier` だけを検証し、実際に選ばれた `option` を確認していません。
 
@@ -319,7 +319,7 @@ expect(
 
 ### [P3] 公開されている算術・utility helper に契約テストがない — packages/functions/__tests__/math.test.ts:1
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か。** `math.test.ts` の import 対象は次だけです。
 
@@ -352,7 +352,7 @@ export function gainToDb(...)
 
 ### [P3] `min: 0` の回帰ケースが既存ケースと重複している — packages/functions/__tests__/applyDelta.test.ts:20
 
-> **状況: 未判断**
+> **状況: 対応しない** — 回帰ケースの重複は害がない。消すと、そのケースが何の再発防止だったかが失われる。
 
 **何が問題か。** 専用テストは次の二ケースです。
 

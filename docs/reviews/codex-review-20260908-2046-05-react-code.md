@@ -12,12 +12,12 @@
 | 状況 | 件数 |
 | --- | --- |
 | 対応済み | 1 |
-| 対応する（未対応） | 14 |
+| 対応する（未対応） | 19 |
 | 要判断 | 0 |
 | 対応しない | 0 |
-| 未判断 | 5 |
+| 未判断 | 0 |
 
-P1 と P2 は全件を判定済み（P1 は再現の有無まで確認）。P3 は未判断。
+全 P1 / P2 / P3 を判定済み。P1 は再現の有無まで確認した。
 
 ---
 
@@ -520,7 +520,7 @@ d={`M ${start.x} ${start.y} A ${radius} ${radius} -135 ${
 
 ### [P3] context hooks と関連型の root export がコンポーネント間で揃っていない — packages/react/src/index.ts:10
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — `src/index.ts` が `useSliderContext` / `useNumberInputContext` / `usePointsEditorContext` だけを公開し、`useKnobContext` と `useXYPadContext` が漏れていることを確認した。
 
 **何が問題か**
 
@@ -550,7 +550,7 @@ context hooks と関連型を全コンポーネントで export するか、す�
 
 ### [P3] `Knob.Thumb` の `className` が無視される — packages/react/src/components/Knob/Thumb.tsx:28
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — `className` を受け取りながら描画側では `classes?.thumb` しか使っておらず、捨てられていることを確認した。#204 で Slider / XYPad を直したのと同じ形に揃える。
 
 **何が問題か**
 
@@ -579,7 +579,7 @@ SVG の class へ `className` を含めてください。`classes.thumb` と役�
 
 ### [P3] 空文字の mark label を指定できない — packages/react/src/components/Slider/MarksOption.tsx:96
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — #204 で直した `children` の truthy 判定と同種の問題。
 
 **何が問題か**
 
@@ -603,7 +603,7 @@ SVG の class へ `className` を含めてください。`classes.thumb` と役�
 
 ### [P3] PointsEditor は Point 数だけ同じ wheel listener を登録する — packages/react/src/components/PointsEditor/Point.tsx:214
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -630,7 +630,7 @@ Container に1つだけ listener を置き、現在フォーカス中の point I
 
 ### [P3] `useAnimationFrame` が inline callback のレンダーごとにループを作り直す — packages/react/src/hooks/useAnimationFrame.ts:9
 
-> **状況: 未判断**
+> **状況: 対応する（未対応）** — effect の依存に `callback` が入っており、インラインで渡すと毎レンダーで rAF ループを張り直すことを確認した。他の hook と同じく `useCallbackRef` を通す。
 
 **何が問題か**
 
