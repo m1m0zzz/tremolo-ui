@@ -172,6 +172,32 @@ CI       ci.yml (push) / pull-request.yml (PR)。PR は versions upload --previe
   - 入れたのは各コンポーネントの `Basic` だけ（`Knob` の 3 パート、`NumberInput` の `Stepper`、`Slider` の `Thumb` / `Marks`、`XYPad` の `Thumb`、`PointsEditor` の `Background`）。**argTypes を meta ではなく story 側に書いた**ので、主題が別にある story の Controls は汚れない
   - **`Slider.Marks` の `options` に `'step'` を渡してはいけない場面がある。** 目盛りは `max / per - min / per + 1` 本作られるので、`['step', …]` は `step` に比例して増える。0-100 で既定の `step` = 1 なら 101 本、Controls で `step` を 0.1 にされたら 1001 本。`Basic` では固定間隔（`[25, 'mark-number']`）にした
 
+- [ ] **`composeRefs` をやめる。**
+
+  現在 9 箇所で「利用者から渡された `ref`」と「context が持つ内部 `ref`」を `useComposedRefs` で合成している（`Slider.Track` / `XYPad.Area` / `NumberInput.InputField` / `NumberInput.Stepper` / `PointsEditor.Point` / `PointsEditor.Container` と、Slider / Knob / XYPad の `Root`）。実装は Radix からの持ち込みで、リポジトリが自前で保守している。
+
+  **[5.3](./core-extraction-plan.md) でいったん「削除せず使う」と決めた項目の再検討。** 当時の理由は「インライン ref は毎レンダー新しい関数になり React が ref を付け直す（`node → null → node`）ので、memo 化した合成でまとめれば付け直しが無くなる」だった。**合成そのものを無くせば、避けようとしていた問題も一緒に消える。**
+
+  やめるには、**context が `RefObject` を配って各パートがそこへ自分を合成する形をやめる**必要がある。パート側が「自分の要素を context へ登録する」形にすれば、利用者の `ref` はそのまま要素へ渡せて合成が要らなくなる。ドラッグ系の hook が既に「node を state で持つ」形をとっているので、同じ考え方を context にも適用することになる。
+
+  一緒に片付くもの:
+
+  - `useComposedRefs` は `useCallback(composeRefs(...refs), refs)` の形で可変長の ref 配列を依存に撒いており、そのために lint を 2 つ無効化している
+  - React 19 の callback ref cleanup の分岐がテストされていない（`docs/reviews/` の 06 P3）
+  - Radix から持ち込んだコードの保守が要らなくなる
+
+- [ ] **render props を置き換える。** 破壊的変更。
+
+  render props と呼べるのは Piano の 2 つだけ。`label?: (note, state) => ReactNode` が ReactNode を返し、`keyProps?: (note, state) => KeyAttributes` が属性を返す。`NumberInput` の `format` / `parse` も関数を取るが、これは値の変換なので対象外。
+
+  **[4.3 / 5.5](./core-extraction-plan.md) で「Piano はサブコンポーネントを持たず、per-key のカスタマイズはコールバックで受ける」と決めた形の再検討。**
+
+  **置き換え先が未決。** 5.5 は children による合成へ戻すことを明確に否定している（鍵盤は `Root` が描く）ので、`Piano.Key` を復活させる以外の形を決める必要がある。決めるときに考えること:
+
+  - 鍵盤は 1 オクターブで 12 個、範囲によっては 88 個になる。要素ごとにコンポーネントを挟むと、その数だけ context の購読が増える
+  - `keyProps` が返しているのは `className` / `style` / `data-*` で、**状態は既に `data-note` / `data-active` / `aria-disabled` として出ている**。CSS だけで済む用途がどれだけあるかを先に見ると、必要な API が絞れる
+  - `label` は ReactNode を返すため CSS では代替できない
+
 - [ ] **`functions` を汎用な関数だけにする。** 破壊的変更。詳細: **[functions-scope.md](./functions-scope.md)**
 
   全 63 export を「このライブラリを使わない人が使うか」で見直したところ、**入力イベントの解釈**（modifier 一式 + `applyDelta`）と**描画された鍵盤の幾何**（`piano.ts`）という汎用でない 2 つの塊が入っていた。どちらも `dom` へ移す。あわせて使用箇所ゼロの `isEmpty` / `mod` など 6 つの公開をやめる。
