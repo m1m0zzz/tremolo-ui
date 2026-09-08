@@ -790,7 +790,7 @@ Slider / XYPad と違い、PointsEditor には**動かせる点が複数ある**
 
 ### Phase 6: Vue / Svelte
 
-`plans/milestone.md` へ移動。1.0 に向けたマイルストーンとして管理する。
+`docs/milestone.md` へ移動。1.0 に向けたマイルストーンとして管理する。
 
 ## 5. コア化と並行して片付けるもの
 
@@ -1483,7 +1483,7 @@ const shown = unformatOnFocus && focused && !editing ? String(value) : text
 
 ### 5.17 テストと story を実装コードと同じディレクトリに置く — **完了**
 
-`plans/milestone.md` の「2. テスト整備」から移動。全コンポーネントに専用テストが揃った（Piano は 4.3、PointsEditor は Phase 5、XYPad は 5.7 と同時）ので、残るのは配置の話。
+`docs/milestone.md` の「2. テスト整備」から移動。全コンポーネントに専用テストが揃った（Piano は 4.3、PointsEditor は Phase 5、XYPad は 5.7 と同時）ので、残るのは配置の話。
 
 現在は `src/` の外に `__tests__/` と `__stories__/` を並べる構成になっている。1 つのコンポーネントに対応するものは `src/components/<Name>/` へ移す。
 

@@ -53,12 +53,12 @@ npm run test:watch -w packages/react
 
 - 各コンポーネントのディレクトリは、単一のコンポーネントではなく `Root` などをまとめたプレーンなオブジェクトを export する
 - **children はそのまま描画し、既定の描画へフォールバックしない。** `children` は型で必須
-- **Piano だけはサブコンポーネントを持たない。** 鍵盤は `Root` が描き、per-key のカスタマイズはコールバックで受ける（判断の経緯は `plans/core-extraction-plan.md` 5.5）。children による合成に戻さないこと
+- **Piano だけはサブコンポーネントを持たない。** 鍵盤は `Root` が描き、per-key のカスタマイズはコールバックで受ける（判断の経緯は `docs/core-extraction-plan.md` 5.5）。children による合成に戻さないこと
 - サブコンポーネントは props のバケツリレーではなく `context.tsx` から読む。**中身は素の React context だけで、外部ストアも同期する state も置かない。** `useEffect(..., [props])` で流し込む形は、値が変わったフレームで古い値を返す不具合を生んで除去した経緯がある（同 Phase 5）
 
 ### インタラクション用 hooks
 
-ポインタ / ホイール / MIDI の実体は `@tremolo-ui/dom` にあり、`packages/react/src/hooks/` はそれを React に橋渡しするだけ。**新しいインタラクションもまずコアに書く**（設計の意図は `plans/core-extraction-plan.md` Phase 3）。React の外から非同期に変わる状態を購読しているのは `useMIDIAccess` だけ。
+ポインタ / ホイール / MIDI の実体は `@tremolo-ui/dom` にあり、`packages/react/src/hooks/` はそれを React に橋渡しするだけ。**新しいインタラクションもまずコアに書く**（設計の意図は `docs/core-extraction-plan.md` Phase 3）。React の外から非同期に変わる状態を購読しているのは `useMIDIAccess` だけ。
 
 内部専用の hook は `src/hooks/_internal/` に置く。**直下に置くと typedoc が API ページを生成する**ので、公開するつもりのないものを置かないこと。
 
