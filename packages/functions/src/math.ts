@@ -26,13 +26,24 @@ export function rawValue(normalizedValue: number, min: number, max: number) {
   return min + clamp(normalizedValue, 0, 1) * (max - min)
 }
 
+/**
+ * Put a value on the grid the caller asked for, rounding a half step upwards.
+ *
+ * The rounding is done on the quotient rather than by comparing the distance
+ * to the two neighbours, because both of those carry error of their own. The
+ * quotient is cleared of its artefact first: `0.15 / 0.1` is 1.4999999999999998,
+ * and a value sitting exactly on a half step would otherwise fall to whichever
+ * side the last bit happened to land on — 0.25 rounded up while 0.15 and 0.35
+ * rounded down.
+ */
 export function stepValue(value: number, step: number) {
   if (step <= 0) throw new RangeError('requirements: step > 0')
-  const quotient = Math.floor(value / step)
-  const decimalDigits = decimalPart(step)?.length
-  const v = toFixed(quotient * step, decimalDigits)
-  const next = toFixed((quotient + 1) * step, decimalDigits)
-  return Math.abs(value - v) < Math.abs(value - next) ? v : next
+  const quotient = Math.round(toPrecision(value / step))
+  // The product has its own debris to drop: 3141593 * 1e-6 is not 3.141593.
+  const stepped = toPrecision(quotient * step)
+  // Math.round answers -0 for anything in [-0.5, 0), and that reaches the
+  // caller's onChange as a value that prints as 0 but is not it.
+  return stepped === 0 ? 0 : stepped
 }
 
 export function toFixed(x: number, fractionDigits?: number) {
