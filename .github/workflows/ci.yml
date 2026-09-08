@@ -29,8 +29,9 @@ jobs:
         node-version-file: '.nvmrc'
         cache: 'npm'
 
-    # Ensure npm 11.10. or later for min-release-age support
-    - run: npm install -g npm@latest
+    # npm 12 を同梱する Node はまだ無い。.npmrc の設定が npm 11.16 以降でしか
+    # 効かないため engines.npm で弾いており、入れ忘れると npm ci が EBADENGINE で落ちる
+    - run: npm install -g npm@12
 
     - name: Install dependencies
       run: npm ci

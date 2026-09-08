@@ -24,9 +24,9 @@ jobs:
         cache: 'npm'
         registry-url: 'https://registry.npmjs.org'
 
-    # Ensure npm 11.5.1 or later for trusted publishing
-    # (11.5.1 未満だと OIDC 失敗時に E404 という紛らわしいエラーになる)
-    - run: npm install -g npm@latest
+    # 他のワークフローと同じ理由（engines.npm）。trusted publishing にも
+    # 11.5.1 以降が要る（未満だと OIDC 失敗時に E404 という紛らわしいエラーになる）
+    - run: npm install -g npm@12
 
     - name: Install dependencies
       run: npm ci
