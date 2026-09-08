@@ -7,7 +7,22 @@
 
 ---
 
+## 対応状況
+
+| 状況 | 件数 |
+| --- | --- |
+| 対応済み | 1 |
+| 対応する（未対応） | 1 |
+| 対応しない | 0 |
+| 未判断 | 11 |
+
+P1 は全件を検証済み（再現の有無まで確認）。P2 / P3 は未判断。
+
+---
+
 ### [P1] ドラッグ中のアンマウントでページ全体の `user-select` が復元されない — packages/react/__tests__/drag.test.tsx:51
+
+> **状況: 対応する（未対応）** — 同じ原因の 05 の指摘とあわせて直す。修正時にアンマウントと `readonly` 化のテストを追加する。
 
 **何が問題か**
 
@@ -70,6 +85,8 @@ return () => {
 
 ### [P1] テストが禁止されている既定描画フォールバックを前提化している — packages/react/src/components/XYPad/index.test.tsx:104
 
+> **状況: 対応済み** — `Slider.Thumb` / `XYPad.Thumb` を 1 要素にし、既定描画のフォールバックそのものを無くした。契約テストは `Slider/Thumb.test.tsx` に追加（XYPad は同一構造のため代表させている）。
+
 **何が問題か**
 
 テストは既定 Thumb が生成されることを明示的に前提としています。
@@ -121,6 +138,8 @@ fixture に明示的な child を与え、次の契約テストを追加して�
 
 ### [P2] `readonly` の Knob がダブルクリックで値を変更できる — packages/react/src/components/Knob/index.tsx:321
 
+> **状況: 未判断**
+
 **何が問題か**
 
 キーボード、ホイール、ドラッグには `readonly` guard がありますが、ダブルクリックの既定値復元にはありません。
@@ -151,6 +170,8 @@ Knob のテストはサイズ、ドラッグ、Shift キー操作だけで、`de
 
 ### [P2] `Knob.Thumb` の `className` が捨てられているがテストされていない — packages/react/src/components/Knob/Thumb.tsx:28
 
+> **状況: 未判断**
+
 **何が問題か**
 
 `className` を destructure した後、描画では使用していません。
@@ -178,6 +199,8 @@ export function Thumb({
 `cx('tremolo-knob-thumb', classes?.thumb, className)` のように反映し、`className`、`data-*`、イベント handler など代表的な SVG props の転送テストを追加してください。
 
 ### [P2] Piano の `fill` 分岐と白鍵ゼロの境界値が未テスト — packages/react/src/components/Piano/index.tsx:176
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -212,6 +235,8 @@ ResizeObserver を制御できる fake を用意し、以下を検証してく�
 - 白鍵ゼロを拒否するか、有限値へフォールバックするという明示的な仕様
 
 ### [P2] Storybook の namespace component 収集経路が fixture から抜けている — packages/react/__tests__/storybook/propTypes.test.ts:7
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -256,6 +281,8 @@ fixture に `Root` とサブコンポーネントを持つ namespace オブジ�
 
 ### [P2] React 19 callback-ref cleanup の専用分岐が未テスト — packages/react/__tests__/util/composeRefs.test.tsx:51
 
+> **状況: 未判断**
+
 **何が問題か**
 
 実装は callback ref が cleanup 関数を返す React 19 の経路を明示的に扱っています。
@@ -294,6 +321,8 @@ cleanup 関数が呼ばれない、cleanup 対象へ誤って `null` callback �
 callback ref が disposer を返す Host を作り、アンマウント時に disposer が一度だけ呼ばれること、callback に `null` が送られないこと、併設した object ref が `null` へ戻ることをそれぞれ検証してください。
 
 ### [P2] NumberInput の「長押しで繰り返す」契約が一度も検証されていない — packages/react/src/components/NumberInput/stepperButton.tsx:42
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -339,6 +368,8 @@ fake timer を使い、即時一回、499 ms では追加なし、500 ms で一�
 
 ### [P2] MIDI の React bridge 二つにテストがない — packages/react/src/hooks/useMIDIAccess.ts:23
 
+> **状況: 未判断**
+
 **何が問題か**
 
 `useMIDIAccess` には mount 時 request の条件と store 購読、destroy があります。
@@ -377,6 +408,8 @@ DOM 内部の MIDI デコードを再テストせず、fake instance で React b
 
 ### [P2] AnimationCanvas の relative sizing 切替経路が未テスト — packages/react/src/components/AnimationCanvas/index.tsx:112
 
+> **状況: 未判断**
+
 **何が問題か**
 
 `relativeSize` は instance を作り直す唯一の prop です。
@@ -403,6 +436,8 @@ const instance = createAnimationCanvas(node, {
 ResizeObserver の fake を使い、絶対→相対および相対→絶対の rerender、旧 observer/loop の破棄、親サイズ反映、`reduceFlickering` 更新を検証してください。
 
 ### [P3] 実在しない `KeyboardEvent.key === ''` で黒鍵ショートカットを検証している — packages/react/src/components/Piano/index.test.tsx:153
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -435,6 +470,8 @@ if (!keyboardShortcuts || key === '') return null
 
 ### [P3] XYPad の垂直ホイール操作が二重に検証されている — packages/react/__tests__/modifiers.test.tsx:200
 
+> **状況: 未判断**
+
 **何が問題か**
 
 横方向や Shift の `deltaX` ケースには追加価値がありますが、次のテストは、
@@ -462,6 +499,8 @@ expect(onChange).toHaveBeenLastCalledWith([50, 49])
 基本的な垂直 wheel はコンポーネント固有テストへ集約し、`modifiers.test.tsx` には `deltaX` の正負、Shift による軸選択など、複数コンポーネントを横断する配線だけを残してください。
 
 ### [P3] `useDragValue` の必須 mapping エラー経路が未テスト — packages/react/src/hooks/useDragValue.ts:104
+
+> **状況: 未判断**
 
 **何が問題か**
 

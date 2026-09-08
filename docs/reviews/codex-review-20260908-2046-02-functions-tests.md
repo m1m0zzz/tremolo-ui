@@ -7,7 +7,22 @@
 
 ---
 
+## 対応状況
+
+| 状況 | 件数 |
+| --- | --- |
+| 対応済み | 1 |
+| 対応する（未対応） | 0 |
+| 対応しない | 0 |
+| 未判断 | 11 |
+
+P1 は全件を検証済み（再現の有無まで確認）。P2 / P3 は未判断。
+
+---
+
 ### [P1] `stepValue` の指数表記と小数の中間値がテストされていない — packages/functions/__tests__/math.test.ts:40
+
+> **状況: 対応済み** — #203 で `0.15 / 0.1`、`0.35 / 0.1`、負の中間値、`1.2e-7`〜`2.5e-7` の 7 ケースを追加した。
 
 **何が問題か。** 実装は `step` の文字列表現から小数桁数を求め、丸めた二候補との距離を比較しています。
 
@@ -37,6 +52,8 @@ expect(
 
 ### [P2] 端が黒鍵のレイアウトを使わないため、幅と当たり判定の不整合を検出できない — packages/functions/__tests__/piano.test.ts:112
 
+> **状況: 未判断**
+
 **何が問題か。** `pianoWidth` は白鍵数だけで幅を計算しますが、黒鍵は白鍵境界から左右へ張り出します。また、`noteAt` には `x < pianoWidth(layout)` の事前判定がありません。
 
 ```ts
@@ -62,6 +79,8 @@ expect(noteAt(pianoWidth(layout), 80, height, layout)).toBe(null)
 **対応案。** 先頭・末尾が黒鍵、および黒鍵一つだけの範囲について、位置・幅・`noteAt` を一組で検証してください。実装側では全鍵の最小 left／最大 right から原点と幅を共通に算出するか、APIとして範囲端を白鍵に限定する必要があります。
 
 ### [P2] `unitFormat` の往復テストが既定オプションだけで、対応していない組み合わせを見逃す — packages/functions/__tests__/unit.test.ts:79
+
+> **状況: 未判断**
 
 **何が問題か。** `format` と `parse` の往復テストは `unitFormat('Hz')` だけです。
 
@@ -102,6 +121,8 @@ f.parse(f.format(1000)) // 1
 
 ### [P2] skew の端点・ゼロ・非有限係数がテストされていない — packages/functions/__tests__/scales.test.ts:73
 
+> **状況: 未判断**
+
 **何が問題か。** テスト対象は `skew` が `0.5`、`1`、`2` の場合だけで、helper のエラーテストも範囲外の一例だけです。
 
 ```ts
@@ -126,6 +147,8 @@ return Math.log(0.5) / Math.log((centerValue - min) / (max - min))
 **対応案。** helper の `centerValue === min/max`、factory の `0`、負数、`NaN`、`Infinity` を追加してください。両 factory は有限の正数だけを許可し、center は開区間に限定するのが一貫しています。
 
 ### [P2] 非線形スケールの有限な極値入力で起きる overflow が未テスト — packages/functions/__tests__/scales.test.ts:12
+
+> **状況: 未判断**
 
 **何が問題か。** 共通テストの範囲は常に `20..22000`、curve も `±4` に限定されています。
 
@@ -153,6 +176,8 @@ const grow = Math.exp(curve)
 **対応案。** 数値限界付近の有限入力をテストへ追加してください。実装は比を直接作らない対数補間や `expm1`／`log1p` を利用するか、安定して扱える係数範囲を検証して例外にする必要があります。
 
 ### [P2] `mapModifier` と generic な `selectModifier` の契約がテスト対象外 — packages/functions/__tests__/modifiers.test.ts:1
+
+> **状況: 未判断**
 
 **何が問題か。** テストが import するのは `selectInputEvent` だけで、公開されている `mapModifier` と `selectModifier<T>` は直接検証されていません。
 
@@ -191,6 +216,8 @@ value !== null &&
 
 ### [P2] `applyDelta` の不正 range／step に対するモード間の差が未テスト — packages/functions/__tests__/applyDelta.test.ts:26
 
+> **状況: 未判断**
+
 **何が問題か。** テストする range はすべて `min < max` で、step は正数か省略だけです。
 
 ```ts
@@ -218,6 +245,8 @@ const stepped = quantum ? stepValue(next, quantum) : next
 
 ### [P2] MIDI API の非整数・非有限入力と parse のエラー経路が未テスト — packages/functions/__tests__/midi.test.ts:11
 
+> **状況: 未判断**
+
 **何が問題か。** `noteName`、`noteNumber`、`scaleNotes` のテスト入力は有効な整数・文字列だけです。公開されている `parseNoteName` の失敗経路も直接テストされていません。
 
 ```ts
@@ -243,6 +272,8 @@ return `${noteKeys[noteIndex]}${octave}`
 
 ### [P3] 多くのテストが公開 entry point を迂回している — packages/functions/__tests__/math.test.ts:1
 
+> **状況: 未判断**
+
 **何が問題か。** `math`、`midi`、`piano`、`unit` のテストは個別モジュールを直接 import しています。
 
 ```ts
@@ -267,6 +298,8 @@ export { ... } from './unit'
 
 ### [P3] modifier の fallback／優先順位テストが戻り値の半分しか検証していない — packages/functions/__tests__/modifiers.test.ts:50
 
+> **状況: 未判断**
+
 **何が問題か。** fallback と複数 modifier のケースでは `modifier` だけを検証し、実際に選ばれた `option` を確認していません。
 
 ```ts
@@ -284,6 +317,8 @@ expect(
 **対応案。** すべて `{ option, modifier }` を `toStrictEqual` で検証してください。特に複数同時押しは、選択名と選択値の組を確認する必要があります。
 
 ### [P3] 公開されている算術・utility helper に契約テストがない — packages/functions/__tests__/math.test.ts:1
+
+> **状況: 未判断**
 
 **何が問題か。** `math.test.ts` の import 対象は次だけです。
 
@@ -315,6 +350,8 @@ export function gainToDb(...)
 **対応案。** 変換関数は既知値と往復、`xor` は全四組、`mod` は負の非倍数、`isEmpty` は enumerable own property の有無をテーブルテストしてください。
 
 ### [P3] `min: 0` の回帰ケースが既存ケースと重複している — packages/functions/__tests__/applyDelta.test.ts:20
+
+> **状況: 未判断**
 
 **何が問題か。** 専用テストは次の二ケースです。
 

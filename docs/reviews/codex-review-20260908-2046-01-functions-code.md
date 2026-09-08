@@ -7,7 +7,22 @@
 
 ---
 
+## 対応状況
+
+| 状況 | 件数 |
+| --- | --- |
+| 対応済み | 1 |
+| 対応する（未対応） | 0 |
+| 対応しない | 0 |
+| 未判断 | 9 |
+
+P1 は全件を検証済み（再現の有無まで確認）。P2 / P3 は未判断。
+
+---
+
 ### [P1] `stepValue` が小数の中間値と指数表記の step を誤って丸める — packages/functions/src/math.ts:29
+
+> **状況: 対応済み** — #203 で修正。距離比較をやめて商を丸める実装に変え、指数表記の step と半 step の回帰テストを追加した。`Math.round` が返す `-0` の正規化も入れている。
 
 **何が問題か。** 小数桁数を `String(step).split('.')` から求め、丸め前の `value` と候補値の距離をそのまま比較しています。
 
@@ -28,6 +43,8 @@ return Math.abs(value - v) < Math.abs(value - next) ? v : next
 **対応案。** `value / step` を `toPrecision` などで正規化してから `Math.round` し、最後に積を再度正規化してください。指数表記から小数桁数を推定しない実装にし、`0.15 / 0.1`、`1e-7`、負数の中間値をテストへ追加する必要があります。
 
 ### [P2] 黒鍵が範囲端にあると `pianoWidth`・描画位置・当たり判定が食い違う — packages/functions/src/piano.ts:88
+
+> **状況: 未判断**
 
 **何が問題か。** 幅は白鍵数だけから計算しますが、黒鍵は境界を中心に左右へ張り出します。
 
@@ -54,6 +71,8 @@ return isBlackKey(note)
 **対応案。** 範囲内の全鍵について最小 left と最大 right を求め、共通の原点オフセットと幅を導出してください。そのオフセットを `notePosition` と `noteAt` の両方に適用し、`noteAt` は算出幅の外を必ず `null` にします。代替として端を白鍵に制限できますが、現在の `NoteRange` API より制約が強くなります。
 
 ### [P2] `ModifierValue<T>` は `default` プロパティを持つ通常オブジェクトを安全に扱えない — packages/functions/src/types.ts:65
+
+> **状況: 未判断**
 
 **何が問題か。** `T` は無制約のジェネリックですが、オブジェクトに `default` があるだけで修飾キー用 map と判定しています。
 
@@ -85,6 +104,8 @@ selectModifier<Config>(config).value
 
 ### [P2] skew 系 API が自身の `Scale` 契約を満たさない係数を生成する — packages/functions/src/scales.ts:61
 
+> **状況: 未判断**
+
 **何が問題か。** `skewScale` と `symmetricSkewScale` は `skew` の正値・有限性を検査しません。また、`skewWithCenterValue` は端点を center として明示的に許可しています。
 
 ```ts
@@ -114,6 +135,8 @@ return Math.log(0.5) / Math.log((centerValue - min) / (max - min))
 
 ### [P2] 非線形スケールが、文書化された条件を満たす有限入力でも overflow する — packages/functions/src/scales.ts:109
 
+> **状況: 未判断**
+
 **何が問題か。** `exponentialScale` は先に `max / min` を計算し、`curveScale` は先に `Math.exp(curve)` を計算しています。
 
 ```ts
@@ -129,6 +152,8 @@ const grow = Math.exp(curve)
 **対応案。** exponential scale は絶対値の対数を補間して比そのものを作らない実装にしてください。curve scale は `expm1` / `log1p` を使った安定形へ変形するか、安定して扱える `curve` の範囲を検証して例外にしてください。
 
 ### [P2] `unitFormat` は空の unit と非空の base で format/parse が一致しない — packages/functions/src/unit.ts:164
+
+> **状況: 未判断**
 
 **何が問題か。** formatter は選んだ prefix が空なら数値だけを出力しますが、parser は suffix のない数値を「保存値の単位」と解釈します。
 
@@ -154,6 +179,8 @@ formatter.parse(formatter.format(1000)) // 1
 **対応案。** 空 unit をサポートするなら、選択 prefix が空かつ base が非空のときは保存値と同じ base prefixで表現し、裸の数値を生成しないようにしてください。サポートしないなら、`unit === ''` を入口で拒否して型・JSDocにも制約を明記します。
 
 ### [P2] MIDI の整数制約がなく、宣言された戻り値と実行時値が一致しない — packages/functions/src/midi.ts:51
+
+> **状況: 未判断**
 
 **何が問題か。** `number` をそのまま配列添字へ使っています。
 
@@ -188,6 +215,8 @@ return Array.from({ length: octaves }, (_, octave) =>
 
 ### [P3] 読み取り専用 tuple を `InputEventOption` として渡せない — packages/functions/src/types.ts:4
 
+> **状況: 未判断**
+
 **何が問題か。** 設定値を変更するコードはないのに、tuple が mutable として宣言されています。
 
 ```ts
@@ -207,6 +236,8 @@ applyDelta(value, 1, keyboard, range)
 
 ### [P3] `applyDelta` の range 検証が入力モードによって変わる — packages/functions/src/scales.ts:295
 
+> **状況: 未判断**
+
 **何が問題か。** normalized mode では scale が `min < max` を検証しますが、raw mode は検証を通らず最後の `clamp` まで進みます。
 
 ```ts
@@ -223,6 +254,8 @@ return clamp(toPrecision(stepped), min, max)
 **対応案。** `applyDelta` の入口で `min < max` を共通検証してください。`step` の有効範囲もここで検証すると、値パイプライン間の挙動を揃えられます。
 
 ### [P3] `isEmpty` の引数型が実際に判定する「空」の範囲より広い — packages/functions/src/util.ts:1
+
+> **状況: 未判断**
 
 **何が問題か。** 引数は任意の `object` ですが、判定対象は enumerable な own string key だけです。
 

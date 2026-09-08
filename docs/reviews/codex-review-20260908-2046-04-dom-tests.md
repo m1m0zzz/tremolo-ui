@@ -7,7 +7,22 @@
 
 ---
 
+## 対応状況
+
+| 状況 | 件数 |
+| --- | --- |
+| 対応済み | 0 |
+| 対応する（未対応） | 1 |
+| 対応しない | 0 |
+| 未判断 | 15 |
+
+P1 は全件を検証済み（再現の有無まで確認）。P2 / P3 は未判断。
+
+---
+
 ### [P1] pointer capture 消失を偽装せず、ドラッグが終了しない経路を見逃している — packages/dom/__tests__/pointer/helpers.ts:28
+
+> **状況: 対応する（未対応）** — `lostpointercapture` は実装にもテストにも存在しないことを確認した。capture が外れるとドラッグが終了しない経路が実在する。
 
 **何が問題か**
 
@@ -55,6 +70,8 @@ target.addEventListener('pointercancel', handlePointerUp)
 
 ### [P2] `shouldStart` の拒否経路と「capture より先」という契約が未検証 — packages/dom/src/pointer/drag.ts:246
 
+> **状況: 未判断**
+
 **何が問題か**
 
 この条件は実装上明確な分岐ですが、`packages/dom/__tests__` に `shouldStart` のテストがありません。
@@ -81,6 +98,8 @@ capture.setPointerCapture?.(pointerId)
 イベント偽装に上記 PointerEvent 属性を追加し、`shouldStart` が false のときに全 callback が未発火、capture が未取得、cursor が未変更であることを検証してください。`update()` 後の新しい predicate も確認対象です。
 
 ### [P2] window fallback のテストがインスタンスを破棄せず、後続テストへグローバルリスナーを漏らす — packages/dom/__tests__/pointer/drag.test.ts:321
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -113,6 +132,8 @@ for (const instance of instances.splice(0)) instance.destroy()
 戻り値を `instances` に追加するか、`try/finally` で必ず `destroy()` してください。テスト末尾に `pointerup` を送るだけでなく、インスタンス破棄まで確認する方が確実です。
 
 ### [P2] mapping が `null` を返したイベントでも lifecycle callback が発火することを見逃している — packages/dom/__tests__/pointer/dragValue.test.ts:109
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -153,6 +174,8 @@ expect(onChange).not.toHaveBeenCalled()
 
 ### [P2] `request()` を複数回成功させた場合の古い MIDIAccess リスナーが未検証 — packages/dom/src/midi/access.ts:107
 
+> **状況: 未判断**
+
 **何が問題か**
 
 成功のたびに新しい access へリスナーを追加しますが、以前の access からは削除しません。
@@ -182,6 +205,8 @@ A、B の順で二度成功すると A にリスナーが残ります。A の `s
 新しい grant を採用する前に旧 access からリスナーを外してください。世代番号または request token を用い、「最後に開始した request だけが state を更新する」ことを deferred Promise で検証してください。
 
 ### [P2] 「pending request 後の destroy」を検証するはずのテストが request 前に destroy している — packages/dom/__tests__/midi/access.test.ts:171
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -225,6 +250,8 @@ function request(options: MIDIAccessOptions = {}) {
 
 ### [P2] MIDI input の解除テストが callback の同一性を検証していない — packages/dom/__tests__/midi/message.test.ts:55
 
+> **状況: 未判断**
+
 **何が問題か**
 
 解除の検証が `expect.any(Function)` に留まっています。
@@ -251,6 +278,8 @@ input.removeEventListener('midimessage', () => listener)
 disconnect と destroy の後に `a.send(...)` し、handler が呼ばれないことを検証してください。必要なら `addEventListener` と `removeEventListener` の第2引数が `toBe` で同一であることも確認します。
 
 ### [P2] Canvas snapshot テストは元画像のコピーが消えても通る — packages/dom/__tests__/canvas/animation.test.ts:296
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -280,6 +309,8 @@ expect(context.drawImage).toHaveBeenCalled()
 `withContext2D` から canvas ごとの context を取得できるようにし、memo context に `drawImage(canvas, 0, 0)`、本体 context に `drawImage(memo, 0, 0, oldWidth, oldHeight)` がそれぞれ一度呼ばれたことを検証してください。
 
 ### [P2] Canvas の描画状態リセットを偽 context が再現せず、`context.ts` の回帰を検出できない — packages/dom/__tests__/canvas/helpers.ts:21
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -319,6 +350,8 @@ canvas の width/height 設定時に context を初期値へ戻す偽装を追�
 
 ### [P2] `destroy()` が空状態でも変更通知する契約違反をテストが見逃している — packages/dom/__tests__/piano/index.test.ts:334
 
+> **状況: 未判断**
+
 **何が問題か**
 
 callback の説明は「activeNotes が変わるとき」です。
@@ -351,6 +384,8 @@ opts.onActiveNotesChange?.([])
 
 ### [P3] animation frame の時間値が実質未検証 — packages/dom/__tests__/canvas/animation.test.ts:154
 
+> **状況: 未判断**
+
 **何が問題か**
 
 現在の時間 assertion は等値を許すため、常に 0 でも通ります。
@@ -380,6 +415,8 @@ fps: 1000 / deltaTime,
 `performance.now()` を 1000、1016、1048…のように制御し、`deltaTime`、`elapsedTime`、`fps` を具体値で検証してください。停止・再開時の最初の delta の扱いも固定すると安全です。
 
 ### [P3] pointer lock の拒否テストが同期 throw と Promise rejection を通っていない — packages/dom/__tests__/pointer/drag.test.ts:563
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -415,6 +452,8 @@ request?.catch?.(() => {})
 
 ### [P3] 2D context 取得失敗の公開エラー経路が未検証 — packages/dom/src/canvas/animation.ts:116
 
+> **状況: 未判断**
+
 **何が問題か**
 
 明示的なエラー分岐がありますが、テスト helper は常に context を返します。
@@ -435,6 +474,8 @@ if (!context2d) {
 `getContext` が null を返す canvas を使い、同期的に意図したエラーを投げることを検証してください。併せて `contextAttributes` が初回だけ渡され、`update()` では変更されない契約も確認できます。
 
 ### [P3] `getValue` 必須エラーが未検証 — packages/dom/src/pointer/dragValue.ts:299
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -458,6 +499,8 @@ if (!getValue) {
 `MappingContext.position()` を要求する mapping と `getValue` なしの組み合わせをテストし、エラー内容を固定してください。DOM event listener 内の例外は `dispatchEvent()` から直接再throwされない環境があるため、window の `error` 捕捉などテスト方法を明示する必要があります。
 
 ### [P3] `TypeError` のエラー分類だけテーブルから抜けている — packages/dom/__tests__/midi/access.test.ts:116
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -487,6 +530,8 @@ if (name === 'NotSupportedError' || name === 'TypeError') {
 `['TypeError', NOT_SUPPORTED]` と、文字列・null rejection が `UNAVAILABLE` になるケースをテーブルへ追加してください。
 
 ### [P3] exponentialScale と relativeMapping の同じ不変条件を二箇所で検証している — packages/dom/__tests__/pointer/scaleJump.test.ts:100
+
+> **状況: 未判断**
 
 **何が問題か**
 

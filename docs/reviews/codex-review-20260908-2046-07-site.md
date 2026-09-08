@@ -7,7 +7,22 @@
 
 ---
 
+## 対応状況
+
+| 状況 | 件数 |
+| --- | --- |
+| 対応済み | 0 |
+| 対応する（未対応） | 2 |
+| 対応しない | 0 |
+| 未判断 | 14 |
+
+P1 は全件を検証済み（再現の有無まで確認）。P2 / P3 は未判断。
+
+---
+
 ### [P1] TypeDoc が公開エントリポイントではなく内部モジュールを API として公開している — site/docusaurus.config.ts:48
+
+> **状況: 対応する（未対応）** — `readDrawingState` などが公開 barrel に無いまま API ページに出ていることを確認した。ただし `entryPoints` を `src/index.ts` に変えると API ページの構成が変わるため、分類方法を決めてから着手する。
 
 **何が問題か**
 
@@ -45,6 +60,8 @@ TypeDoc の `entryPoints` を各パッケージの `src/index.ts` に変更し�
 
 ### [P1] 外部 Playground が例に必要な CSS と関連ファイルを渡していない — site/src/theme/Playground/external/stackblitz/files.ts:191
 
+> **状況: 対応する（未対応）** — StackBlitz / CodeSandbox のどちらにもテーマ CSS を渡していないことを確認した。`site/examples/tutorials/styling/css-module.tsx` は `my-knob.module.css` を import しており、外部では解決できずビルドが落ちる。
+
 **何が問題か**
 
 StackBlitz に渡す固定ファイルは次だけで、サイトが例に適用しているテーマ CSS を含みません。
@@ -79,6 +96,8 @@ Playground にコードだけでなく付随ファイル一覧を渡せるよう
 
 ### [P2] `start:fast` はクリーン checkout では API sidebar を import できない — site/package.json:9
 
+> **状況: 未判断**
+
 **何が問題か**
 
 高速起動は TypeDoc を無効化します。
@@ -107,6 +126,8 @@ import typedocSidebarReact from './docs/api/react/typedoc-sidebar.cjs'
 
 ### [P2] 5 つのコンポーネントページの Style リンクが存在しないファイルを指す — site/docs/components/Knob/index.mdx:12
 
+> **状況: 未判断**
+
 **何が問題か**
 
 Knob ページは次のリンクを生成します。
@@ -128,6 +149,8 @@ Knob ページは次のリンクを生成します。
 リンク先を `site/src/css/tremolo/Knob.css` などへ変更してください。共通 helper でコンポーネント名からテーマのパスを生成すると再発を防げます。
 
 ### [P2] migration の末尾が同じページの現行説明と正反対 — site/docs/guides/migration.mdx:482
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -152,6 +175,8 @@ you are expected to import them.
 
 ### [P2] 日本語の Styling が英語版の現在の CSS 契約に追随していない — site/i18n/ja/docusaurus-plugin-content-docs/current/tutorials/styling.mdx:40
 
+> **状況: 未判断**
+
 **何が問題か**
 
 日本語版の状態表は `data-flipped`、`data-fill`、`data-selected`、`Slider.Marks` の `data-vertical` を含みません。
@@ -173,6 +198,8 @@ you are expected to import them.
 英語版の見出し・表・コードブロックを基準に日本語版を同期してください。翻訳 CI で見出し構造やコードブロック数の差を検査すると、今後の取りこぼしを検出できます。
 
 ### [P2] Playground のキーボードフォーカスが視覚的に消える — site/src/theme/Playground/styles.module.css:40
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -202,6 +229,8 @@ Tab キーで StackBlitz、CodeSandbox、GitHub、コピー、コード表示ボ
 
 ### [P2] ライブ例の slider/spinbutton にアクセシブルネームがない — site/examples/components/knob/basic.tsx:19
 
+> **状況: 未判断**
+
 **何が問題か**
 
 Knob の例は値と範囲だけを渡しています。
@@ -227,6 +256,8 @@ Knob の例は値と範囲だけを渡しています。
 例ごとに意味のある名前を追加してください。例えば `<Knob.Root aria-label="Gain">`、`<Slider.Root aria-label="Hue">`、`<NumberInput.InputField aria-label="Frequency">` とします。
 
 ### [P2] Tone を全ライブ例の scope に載せ、Piano は render ごとに音源を生成する — site/src/theme/ReactLiveScope/index.tsx:2
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -260,6 +291,8 @@ Tone は Piano 例を開いたときだけ動的にロードしてください�
 
 ### [P2] “Headless UI” の紹介が「rich default UI」を提供すると説明している — site/src/components/HomepageFeatures/index.tsx:29
 
+> **状況: 未判断**
+
 **何が問題か**
 
 トップページは次の説明を表示します。
@@ -285,6 +318,8 @@ Tone は Piano 例を開いたときだけ動的にロードしてください�
 
 ### [P3] `AnimationCanvasProps` のリンク先が別 interface — site/docs/components/AnimationCanvas/index.mdx:32
 
+> **状況: 未判断**
+
 **何が問題か**
 
 ラベルは `AnimationCanvasProps` ですが、リンクは `AbsoluteSizingProps` のアンカーです。
@@ -302,6 +337,8 @@ ref: [AnimationCanvasProps](/docs/api/react/components/AnimationCanvas/#absolute
 リンク先を `#animationcanvasprops` に変更してください。
 
 ### [P3] 外部 Playground の依存バージョンが再現不能な `latest` — site/src/theme/Playground/external/stackblitz/files.ts:97
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -326,6 +363,8 @@ CodeSandbox 側も `@tremolo-ui/react` と `react-scripts-ts` を `latest` に�
 
 ### [P3] トップページの依存関係説明が現行 package と一致しない — site/docs/index.md:15
 
+> **状況: 未判断**
+
 **何が問題か**
 
 英語・日本語とも次の説明が残っています。
@@ -345,6 +384,8 @@ CodeSandbox 側も `@tremolo-ui/react` と `react-scripts-ts` を `latest` に�
 依存名の列挙を更新するか、「外部 runtime dependency を持たず、内部の dom/functions パッケージだけに依存する」など、package manifest と一致する説明にしてください。`dependences` は `dependencies` に直します。
 
 ### [P3] トップの API/コンポーネント導線が公開面を網羅していない — site/docs/index.md:29
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -366,6 +407,8 @@ API 一覧には functions と react しかありません。
 API 一覧と footer に DOM を追加し、PointsEditor に他コンポーネントと同形式の概要・import・ライブ例ページを追加してください。
 
 ### [P3] トップページの SVG が装飾か情報画像か判別できず、ロゴの代替文も不正確 — site/src/components/HomepageFeatures/index.tsx:39
+
+> **状況: 未判断**
 
 **何が問題か**
 
@@ -395,6 +438,8 @@ logo: {
 feature 画像が装飾なら `aria-hidden="true"` と `focusable="false"` を指定してください。情報を持たせるなら翻訳可能な `aria-label` / `<title>` を付けます。navbar alt は `tremolo-ui` などへ変更します。
 
 ### [P3] favicon helper が複合 emoji のコードポイントを切り捨てる — site/docusaurus.config.ts:12
+
+> **状況: 未判断**
 
 **何が問題か**
 
