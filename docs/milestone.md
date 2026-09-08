@@ -172,6 +172,12 @@ CI       ci.yml (push) / pull-request.yml (PR)。PR は versions upload --previe
   - 入れたのは各コンポーネントの `Basic` だけ（`Knob` の 3 パート、`NumberInput` の `Stepper`、`Slider` の `Thumb` / `Marks`、`XYPad` の `Thumb`、`PointsEditor` の `Background`）。**argTypes を meta ではなく story 側に書いた**ので、主題が別にある story の Controls は汚れない
   - **`Slider.Marks` の `options` に `'step'` を渡してはいけない場面がある。** 目盛りは `max / per - min / per + 1` 本作られるので、`['step', …]` は `step` に比例して増える。0-100 で既定の `step` = 1 なら 101 本、Controls で `step` を 0.1 にされたら 1001 本。`Basic` では固定間隔（`[25, 'mark-number']`）にした
 
+- [ ] **`functions` を汎用な関数だけにする。** 破壊的変更。詳細: **[functions-scope.md](./functions-scope.md)**
+
+  全 63 export を「このライブラリを使わない人が使うか」で見直したところ、**入力イベントの解釈**（modifier 一式 + `applyDelta`）と**描画された鍵盤の幾何**（`piano.ts`）という汎用でない 2 つの塊が入っていた。どちらも `dom` へ移す。あわせて使用箇所ゼロの `isEmpty` / `mod` など 6 つの公開をやめる。
+
+  移動後、`functions` は 値の分布 / 数値変換 / 音楽理論 / 表示 の 4 本になる。
+
 - [ ] **`NumberInput` の `InputField` の props を `Root` に集める。** 破壊的変更。
 
   現状は非対称になっている。**`Stepper` の設定（`drag` / `dragSensitivity` / `pointerLock`）は `Root` にあるのに、`InputField` の設定（`selectOnFocus` / `unformatOnFocus` / `keepCaretOnStep` / `blurOnEnter`）だけ `InputField` にある。** `Stepper` 自身が持つのは `className` / `style` / `children` / `ref` だけで、振る舞いは 1 つも無い。
