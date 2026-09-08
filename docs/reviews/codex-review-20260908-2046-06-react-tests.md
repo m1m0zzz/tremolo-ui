@@ -85,7 +85,7 @@ return () => {
 
 ### [P1] テストが禁止されている既定描画フォールバックを前提化している — packages/react/src/components/XYPad/index.test.tsx:104
 
-> **状況: 対応済み** — `Slider.Thumb` / `XYPad.Thumb` を 1 要素にし、既定描画のフォールバックそのものを無くした。契約テストは `Slider/Thumb.test.tsx` に追加（XYPad は同一構造のため代表させている）。
+> **状況: 対応済み** — #204 で `Slider.Thumb` / `XYPad.Thumb` を 1 要素にし、既定描画のフォールバックそのものを無くした。契約テストは `Slider/Thumb.test.tsx` に追加（XYPad は同一構造のため代表させている）。
 
 **何が問題か**
 
