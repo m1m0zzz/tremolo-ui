@@ -7,7 +7,23 @@
 
 ---
 
+## 対応状況
+
+| 状況 | 件数 |
+| --- | --- |
+| 対応済み | 1 |
+| 対応する（未対応） | 19 |
+| 要判断 | 0 |
+| 対応しない | 0 |
+| 未判断 | 0 |
+
+全 P1 / P2 / P3 を判定済み。P1 は再現の有無まで確認した。
+
+---
+
 ### [P1] `useMIDIAccess` が Strict Mode の effect 再実行後に停止する — packages/react/src/hooks/useMIDIAccess.ts:23
+
+> **状況: 対応する（未対応）** — 再現確認済み。StrictMode で `requestMIDIAccess` は 1 回呼ばれるが、cleanup で破棄済みのインスタンスに対する再 `request()` が無視され、`midiAccess` が null のままになる。
 
 **何が問題か**
 
@@ -36,6 +52,8 @@ React Strict Mode の開発環境では effect が `setup → cleanup → setup`
 effect の各ライフサイクルで再生成できる構造にするか、`destroy()` と再接続可能な `activate()` / `deactivate()` を分けてください。少なくとも、一度破棄したインスタンスを Strict Mode の再 setup で再利用してはいけません。
 
 ### [P1] ドラッグ中の破棄や `readonly` 変更で body の `user-select: none` が残る — packages/react/src/components/Slider/index.tsx:244
+
+> **状況: 対応する（未対応）** — 再現確認済み。ドラッグ中のアンマウントで `body` の `user-select: none` が残る。`readonly` を途中で true にした場合も同様（`onDragEnd` の早期 return が解除より前）。カウンタが残るため以後のドラッグでも復元されない。
 
 **何が問題か**
 
@@ -82,6 +100,8 @@ return () => {
 
 ### [P1] Piano のキー割り当て変更で発音中ノートが停止されない — packages/react/src/components/Piano/index.tsx:253
 
+> **状況: 対応する（未対応）** — 再現確認済み。指摘より悪く、`noteOff` が発音していないノートに対する呼び出しになるため `onStopNote` が 1 度も呼ばれず、元のノートが鳴り続ける。
+
 **何が問題か**
 
 `keyup` 時に、`keydown` 時のノートではなく現在の props からノートを再計算しています。
@@ -117,6 +137,8 @@ keydown 時に `Map<key, note>` へ実際に開始したノートを記録し、
 
 ### [P1] `useLongPress` が `pointercancel` 後も値を変更し続ける — packages/react/src/hooks/useLongPress.ts:14
 
+> **状況: 対応する（未対応）** — 再現確認済み。`pointercancel` 後も 400ms で 10 回 callback が呼ばれ続けた。
+
 **何が問題か**
 
 反復を止めるイベントが `pointerup` しかありません。
@@ -146,6 +168,8 @@ useEventListener(globalThis.window, 'pointerup', () => {
 
 ### [P2] `disabled` と宣言したコントロールが操作可能なまま — packages/react/src/components/Knob/index.tsx:225
 
+> **状況: 対応する（未対応）** — Knob の `disabled` は `aria-disabled` に出るだけで、キーボード・ポインタ・ホイールのいずれも止めていないことを確認した。支援技術への通知と実挙動が食い違う。
+
 **何が問題か**
 
 入力処理は `readonly` しか確認していませんが、DOM には `aria-disabled` を設定しています。
@@ -171,6 +195,8 @@ Slider、XYPad、NumberInput、PointsEditor にも同じ設計があります。
 
 ### [P2] `readonly` の Knob がダブルクリックで変更される — packages/react/src/components/Knob/index.tsx:321
 
+> **状況: 対応する（未対応）** — ダブルクリックの既定値復元だけ `readonly` を見ていないことを確認した。06 と同件。
+
 **何が問題か**
 
 ダブルクリックの既定値復元だけは `readonly` を確認していません。
@@ -193,6 +219,8 @@ onDoubleClick={(event) => {
 既定値への変更条件へ `!readonly` を追加してください。`disabled` を実際の無効状態に直す場合は、そちらも同時に確認します。
 
 ### [P2] `clampValue={false}` や未指定範囲でも安全整数へクランプされる — packages/react/src/components/NumberInput/index.tsx:226
+
+> **状況: 対応する（未対応）** — `range` が `MIN_SAFE_INTEGER` / `MAX_SAFE_INTEGER` で埋められ、commit 時のクランプに同じ範囲を使っていることを確認した。
 
 **何が問題か**
 
@@ -224,6 +252,8 @@ changeValue(clamp(parsed, range.min, range.max))
 
 ### [P2] 横向き Slider の `reverse` がホイール方向へ反映されない — packages/react/src/components/Slider/index.tsx:260
 
+> **状況: 対応する（未対応）** — 反転条件が `vertical && reverse` に限定されていることを確認した。
+
 **何が問題か**
 
 ホイール方向を反転する条件が `vertical && reverse` に限定されています。
@@ -249,6 +279,8 @@ if (vertical && reverse) direction *= -1
 物理的なホイール方向を決定した後、orientation に関係なく `reverse` を一度適用してください。
 
 ### [P2] Slider の `role="slider"` と実際のフォーカス位置が分離している — packages/react/src/components/Slider/index.tsx:321
+
+> **状況: 対応する（未対応）** — **視覚的に隠した `<input type="range">` を Thumb の中に描画する方式で対応すると決定**（React Aria / MUI と同じ方針。ARIA slider パターンはタッチ + 支援技術で既知の問題があるため）。現状は `role="slider"` と `aria-value*` を持つ `Root` が `tabIndex={-1}` で、フォーカスされる `Thumb` には role も値も無い。なお指摘中の「children を渡すと focus が no-op」は #204 で解消済み。
 
 **何が問題か**
 
@@ -286,6 +318,8 @@ ARIA slider と `tabIndex` を同じ DOM 要素に置いてください。構成
 
 ### [P2] XYPad と Point のキーボード操作がアクセシビリティツリーに表現されない — packages/react/src/components/XYPad/Thumb.tsx:76
 
+> **状況: 対応する（未対応）** — **軸ごとに視覚的に隠した `<input type="range">` を 1 つずつ置く方式で対応すると決定**（React Aria の `useColorArea` と同じ形。APG に 2 次元コントロールのパターンは無く、これが実在する唯一の確立した実装）。Slider 側と実装を共有できるため、Slider を先に片付けてから着手する。PointsEditor の Point も同じ構造。
+
 **何が問題か**
 
 XYPad の既定 Thumb はフォーカス可能ですが、role、現在値、範囲、操作説明がありません。
@@ -320,6 +354,8 @@ PointsEditor.Point も role のない `div` を `tabIndex={0}` にしていま�
 2軸値を表現するアクセシブルな構造を定義してください。例えば x/y の2つの slider semantics を提供し、視覚 Thumb と同期させます。Point にも名前と両軸の値を公開できる API が必要です。
 
 ### [P2] Piano のショートカットがページ全体を奪い、表示範囲外のノートも鳴らす — packages/react/src/components/Piano/index.tsx:253
+
+> **状況: 対応する（未対応）** — **prop で切り替えられるようにし、既定はフォーカス配下と決定。** 範囲外のノートが鳴る点（`noteRange.last` と比較していない）と、テキスト入力中に発音する点は、スコープに関わらず直す。
 
 **何が問題か**
 
@@ -361,6 +397,8 @@ useEventListener(globalThis.window, 'keydown', (e) => {
 
 ### [P2] React 18 ではサブコンポーネントの `ref` API が機能しない — packages/react/src/components/NumberInput/InputField.tsx:60
 
+> **状況: 対応する（未対応）** — **`forwardRef` に戻すと決定**（React 18 のサポートを維持する）。peerDependencies が `^18 || ^19` のまま React 19 の ref-as-prop に依存しており、18 ではサブコンポーネントの `ref` が届かない。
+
 **何が問題か**
 
 React 19 の「ref as a prop」に依存した通常の関数コンポーネントです。
@@ -388,6 +426,8 @@ React 18 で `<NumberInput.InputField ref={inputRef} />` としても `ref` は�
 React 18 をサポートする間は `forwardRef` を使用してください。React 19 専用へ変更するなら、peer dependency と破壊的変更として明示する必要があります。
 
 ### [P2] 既定描画と children の扱いがリポジトリの構成規約に反する — packages/react/src/components/Slider/Thumb.tsx:67
+
+> **状況: 対応済み** — #204 で `Slider.Thumb` / `XYPad.Thumb` を 1 要素にし、既定描画のフォールバックを無くした。
 
 **何が問題か**
 
@@ -419,6 +459,8 @@ Piano.Root は `ComponentPropsWithoutRef<'div'>` 経由で children を受け取
 
 ### [P2] `useEventListener` の手動 disposer が登録時とは別の target を解除する — packages/react/src/hooks/useEventListener.ts:34
 
+> **状況: 対応する（未対応）** — 戻り値の disposer は呼び出し時に target を再評価するため、登録時と別の要素を解除しうる。現在この戻り値を使っている箇所は無いので、直すか戻り値ごと無くすかは実装時に決める。
+
 **何が問題か**
 
 effect では登録時の `node` を閉じ込めていますが、返却する disposer は target 関数を再評価します。
@@ -449,6 +491,8 @@ return () => {
 
 ### [P2] `angleRange=360` で Knob の円弧が端点で消える — packages/react/src/components/Knob/context.tsx:63
 
+> **状況: 対応する（未対応）**
+
 **何が問題か**
 
 `angleRange` に制約がなく、1本の SVG arc で全範囲を描画しています。
@@ -475,6 +519,8 @@ d={`M ${start.x} ${start.y} A ${radius} ${radius} -135 ${
 公開 API を `0 < angleRange < 360` に制限して開発時に検証するか、360度以上を許すなら円弧を複数セグメントへ分割してください。
 
 ### [P3] context hooks と関連型の root export がコンポーネント間で揃っていない — packages/react/src/index.ts:10
+
+> **状況: 対応する（未対応）** — `src/index.ts` が `useSliderContext` / `useNumberInputContext` / `usePointsEditorContext` だけを公開し、`useKnobContext` と `useXYPadContext` が漏れていることを確認した。
 
 **何が問題か**
 
@@ -504,6 +550,8 @@ context hooks と関連型を全コンポーネントで export するか、す�
 
 ### [P3] `Knob.Thumb` の `className` が無視される — packages/react/src/components/Knob/Thumb.tsx:28
 
+> **状況: 対応する（未対応）** — `className` を受け取りながら描画側では `classes?.thumb` しか使っておらず、捨てられていることを確認した。#204 で Slider / XYPad を直したのと同じ形に揃える。
+
 **何が問題か**
 
 `className` を props から取り出していますが、SVG には `classes?.thumb` しか渡していません。
@@ -531,6 +579,8 @@ SVG の class へ `className` を含めてください。`classes.thumb` と役�
 
 ### [P3] 空文字の mark label を指定できない — packages/react/src/components/Slider/MarksOption.tsx:96
 
+> **状況: 対応する（未対応）** — #204 で直した `children` の truthy 判定と同種の問題。
+
 **何が問題か**
 
 ラベルのフォールバックに論理 OR を使っています。
@@ -552,6 +602,8 @@ SVG の class へ `className` を含めてください。`classes.thumb` と役�
 未指定だけを判定する `label ?? value` を使用してください。
 
 ### [P3] PointsEditor は Point 数だけ同じ wheel listener を登録する — packages/react/src/components/PointsEditor/Point.tsx:214
+
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -577,6 +629,8 @@ useWheel(
 Container に1つだけ listener を置き、現在フォーカス中の point ID と registration を context/ref 経由で参照してください。
 
 ### [P3] `useAnimationFrame` が inline callback のレンダーごとにループを作り直す — packages/react/src/hooks/useAnimationFrame.ts:9
+
+> **状況: 対応する（未対応）** — effect の依存に `callback` が入っており、インラインで渡すと毎レンダーで rAF ループを張り直すことを確認した。他の hook と同じく `useCallbackRef` を通す。
 
 **何が問題か**
 

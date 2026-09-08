@@ -7,7 +7,23 @@
 
 ---
 
+## 対応状況
+
+| 状況 | 件数 |
+| --- | --- |
+| 対応済み | 0 |
+| 対応する（未対応） | 17 |
+| 要判断 | 0 |
+| 対応しない | 1 |
+| 未判断 | 0 |
+
+全 P1 / P2 / P3 を判定済み。P1 は再現の有無まで確認した。
+
+---
+
 ### [P2] 遅れて成立した pointer lock が `pointerup` / `destroy()` 後に残る — packages/dom/src/pointer/drag.ts:287
+
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -45,6 +61,8 @@ if (document?.pointerLockElement === element) document.exitPointerLock?.()
 
 ### [P2] `lostpointercapture` を監視せずドラッグが終了不能になる — packages/dom/src/pointer/drag.ts:224
 
+> **状況: 対応する（未対応）** — 04 の P1 と同件。実装・テストとも `lostpointercapture` が存在しないことを確認済み。
+
 **何が問題か**
 
 追跡対象には `pointermove`、`pointerup`、`pointercancel` しか登録していません。
@@ -74,6 +92,8 @@ capture 成立時は `lostpointercapture` も監視し、追跡中の pointer �
 
 ### [P2] 右クリックや補助ボタンでもドラッグを開始する — packages/dom/src/pointer/drag.ts:246
 
+> **状況: 対応する（未対応）** — `createDrag` にボタン種別の判定が無く、`shouldStart` を渡さない限り右クリックでも開始することを確認した。React 側は誰も渡していない。
+
 **何が問題か**
 
 `pointerdown` の `button` を検査せず、そのまま capture と開始コールバックへ進みます。
@@ -95,6 +115,8 @@ opts.onDragStart?.(state(pointerEvent, pointer, 0, 0))
 既定では `pointerEvent.button !== 0` を拒否してください。補助ボタンを利用したい用途があるなら、明示的な opt-in オプションを追加する方が安全です。
 
 ### [P2] `pointerup` に含まれる最後の移動を値へ反映しない — packages/dom/src/pointer/dragValue.ts:329
+
+> **状況: 対応する（未対応）** — `onDragEnd` は `lastValue` を返し、コードのコメントも「pointerup までに動いていない」と仮定している。実際には pointerup が座標を持つため、最後の移動が落ちる。
 
 **何が問題か**
 
@@ -129,6 +151,8 @@ const finalState = state(pointerEvent, pointer, deltaX, deltaY)
 
 ### [P2] mapping が `null` を返しても偽の drag lifecycle を通知する — packages/dom/src/pointer/dragValue.ts:321
 
+> **状況: 対応する（未対応）** — 04 のテスト側の指摘と同件。
+
 **何が問題か**
 
 型のコメントでは `null` のイベントを無視するとしています。
@@ -157,6 +181,8 @@ opts.onDragStart?.(lastValue, state)
 開始時に `null` ならその gesture を無効として記録し、`onDragStart`、後続 move、`onDragEnd` を通知しないでください。あるいは `createDrag` に開始キャンセル可能な契約を設けます。
 
 ### [P2] MIDI の多重 request が競合し、古い結果とリスナが残る — packages/dom/src/midi/access.ts:107
+
+> **状況: 対応する（未対応）** — 04 のテスト側の指摘と同件。
 
 **何が問題か**
 
@@ -193,6 +219,8 @@ request ID をインクリメントし、最新 request の結果だけを採用
 
 ### [P2] `midiMax` を下げても既に鳴っているノートを停止しない — packages/dom/src/piano/index.ts:167
 
+> **状況: 対応する（未対応）** — 05 の Piano の発音残り（P1）と同じ「鳴っているノートを追跡していない」問題。まとめて直す。
+
 **何が問題か**
 
 `midiMax` は `noteOn()` 時にしか検査されず、`update()` は単に設定を置き換えます。
@@ -216,6 +244,8 @@ update: (next) => {
 上限が下がった場合、上限超過ノートの全 source を解放して `onStopNote` と `onActiveNotesChange` を通知し、該当する `pointerNotes` も削除してください。既存音には適用しない仕様なら、現在の「Highest note that can sound」という説明を限定する必要があります。
 
 ### [P2] canvas の描画状態保持が `reduceFlickering` に依存し、保持対象も不足している — packages/dom/src/canvas/animation.ts:149
+
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -261,6 +291,8 @@ export const drawingState = [
 
 ### [P2] snapshot を利用者の合成・透明度・shadow 設定で描き戻している — packages/dom/src/canvas/animation.ts:174
 
+> **状況: 対応する（未対応）** — snapshot の描き戻しは利用者の `globalAlpha` などの影響を受けない状態で行うべき。
+
 **何が問題か**
 
 利用者の描画状態を復元してから snapshot を `drawImage()` しています。
@@ -279,6 +311,8 @@ resize 前の `globalAlpha` が `0.5` なら snapshot 全体が半透明にな�
 DPR transform だけを設定した中立状態で snapshot を先に描画し、その後で利用者の描画状態を復元してください。`save()` / `restore()` を使う場合も、resize 後の初期状態から snapshot を描く順序にします。
 
 ### [P2] CSS サイズが同じだと devicePixelRatio の変化を検出しない — packages/dom/src/canvas/animation.ts:279
+
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -310,6 +344,8 @@ Linux 上でブラウザの zoom を変更したり、異なるスケーリン�
 
 ### [P3] 要素の owner document/window ではなくグローバル realm を使う — packages/dom/src/pointer/drag.ts:264
 
+> **状況: 対応しない** — 別ウィンドウへ portal したときだけ問題になる。iframe 内で完結する描画（Storybook など）は `globalThis` が正しい realm なので影響しない。要望が出た時点で再検討する。
+
 **何が問題か**
 
 fallback、選択抑止、pointer lock のすべてが `globalThis` を参照します。
@@ -338,6 +374,8 @@ globalThis.document?.addEventListener(
 
 ### [P3] `pixelRange` が 0 の軸で `NaN` / `Infinity` を生成する — packages/dom/src/pointer/dragValue.ts:177
 
+> **状況: 対応する（未対応）** — `travelled()` が `/ baseX` で割っており、0 を渡すと `Infinity` / `NaN` になることを確認した。
+
 **何が問題か**
 
 入力制約を設けずに `pixelRange` で除算しています。
@@ -359,6 +397,8 @@ const travelled = (to: XY<number>, at: number): XY<number> => [
 
 ### [P3] Piano の命令 API が MIDI 範囲外・非整数値を受理する — packages/dom/src/piano/index.ts:102
 
+> **状況: 対応する（未対応）**
+
 **何が問題か**
 
 上限との比較しかありません。
@@ -376,6 +416,8 @@ if (note > (opts.midiMax ?? 127)) return
 `Number.isInteger(note) && note >= 0 && note <= Math.min(midiMax, 127)` を検証してください。127 超を独自拡張として許すなら、少なくとも有限整数・非負は保証すべきです。
 
 ### [P3] active drag の `destroy()` が lifecycle を閉じない — packages/dom/src/pointer/drag.ts:411
+
+> **状況: 対応する（未対応）** — 05 / 06 の `user-select` 残留（P1）と同じ原因。まとめて直す。
 
 **何が問題か**
 
@@ -405,6 +447,8 @@ destroy: () => drag.destroy()
 
 ### [P3] managed style を完全には復元できない — packages/dom/src/pointer/drag.ts:172
 
+> **状況: 対応する（未対応）**
+
 **何が問題か**
 
 元の値だけを保存し、CSS priority を保存していません。
@@ -432,6 +476,8 @@ style.setProperty(property, previous)
 
 ### [P3] Wheel だけ callback を `update()` で差し替えられない — packages/dom/src/pointer/wheel.ts:49
 
+> **状況: 対応する（未対応）** — 他のコア API と揃っていない。
+
 **何が問題か**
 
 `update()` が変更できるのは options だけで、生成時の `onWheel` は固定です。
@@ -458,6 +504,8 @@ framework 非依存の利用者が handler を差し替えるには instance を
 `onWheel` を `WheelOptions` に含めて `Partial<WheelOptions>` で更新するか、`update(onWheel, options)` の形に統一してください。
 
 ### [P3] subscriber の例外を MIDI request の失敗として処理する — packages/dom/src/midi/access.ts:113
+
+> **状況: 対応する（未対応）**
 
 **何が問題か**
 
@@ -490,6 +538,8 @@ for (const listener of listeners) listener()
 `then(success, failure)` の rejection handler で `requestMIDIAccess()` 自体の失敗だけを処理してください。subscriber 通知も snapshot 化し、必要なら例外の扱いを独立させます。
 
 ### [P3] MIDI output の変化でも購読者を再描画させる — packages/dom/src/midi/access.ts:102
+
+> **状況: 対応する（未対応）** — 公開しているのは inputs だけなので、output の変化で再描画する必要がない。
 
 **何が問題か**
 

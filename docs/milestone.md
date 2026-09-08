@@ -172,6 +172,44 @@ CI       ci.yml (push) / pull-request.yml (PR)。PR は versions upload --previe
   - 入れたのは各コンポーネントの `Basic` だけ（`Knob` の 3 パート、`NumberInput` の `Stepper`、`Slider` の `Thumb` / `Marks`、`XYPad` の `Thumb`、`PointsEditor` の `Background`）。**argTypes を meta ではなく story 側に書いた**ので、主題が別にある story の Controls は汚れない
   - **`Slider.Marks` の `options` に `'step'` を渡してはいけない場面がある。** 目盛りは `max / per - min / per + 1` 本作られるので、`['step', …]` は `step` に比例して増える。0-100 で既定の `step` = 1 なら 101 本、Controls で `step` を 0.1 にされたら 1001 本。`Basic` では固定間隔（`[25, 'mark-number']`）にした
 
+- [ ] **`composeRefs` をやめる。**
+
+  現在 9 箇所で「利用者から渡された `ref`」と「context が持つ内部 `ref`」を `useComposedRefs` で合成している（`Slider.Track` / `XYPad.Area` / `NumberInput.InputField` / `NumberInput.Stepper` / `PointsEditor.Point` / `PointsEditor.Container` と、Slider / Knob / XYPad の `Root`）。実装は Radix からの持ち込みで、リポジトリが自前で保守している。
+
+  **[5.3](./core-extraction-plan.md) でいったん「削除せず使う」と決めた項目の再検討。** 当時の理由は「インライン ref は毎レンダー新しい関数になり React が ref を付け直す（`node → null → node`）ので、memo 化した合成でまとめれば付け直しが無くなる」だった。
+
+  **測ったところ、この前提が成立するのは呼び出し側の ref が安定している場合だけだった。** 同じ要素に安定した内部 ref と不安定な外部 ref を渡し、3 回再レンダーしたときの付け外し:
+
+  ```
+  合成しない場合
+    内部（安定）  : attach
+    外部（不安定）: attach → detach → attach → detach → attach → detach → attach
+
+  合成した場合
+    内部（本来は安定）: attach → detach → attach → detach → attach → detach → attach
+    外部（不安定）    : attach → detach → attach → detach → attach → detach → attach
+  ```
+
+  **不安定さが伝染する。** 合成後のコールバックの同一性は最も不安定な入力に決まり、React は同一性が変われば必ず付け直す。`useComposedRefs` は `useCallback(composeRefs(...refs), refs)` で memo 化しているが、**依存に外部 ref が入っている以上、外部が毎レンダー新しければ memo は効かない。** `Slider.Track` にインラインの ref を渡した場合も同じ結果になった。
+
+  **ライブラリ側は外部 ref の同一性を制御できない。** `ref={(node) => ...}` と書くのは React の普通の書き方で、それを禁じることはできない。これは「2 つの利用者が 1 つの ref スロットを共有する」という構造から来るもので、`composeRefs` の実装を直しても消えない。
+
+  **現時点で壊れてはいない。** ドラッグ系の hook は node を state で持ち、生成・破棄を effect で行っているので、付け直しに耐える形になっている。ただし ref コールバックの中でリソースを確保する実装を将来書くと再発する（Phase 2 で一度出した不具合がこれ）。
+
+  やめるには、**context が `RefObject` を配って各パートがそこへ自分を合成する形をやめる**必要がある。パート側が「自分の要素を context へ登録する」形にすれば、利用者の `ref` はそのまま要素へ渡せて合成が要らなくなる。ドラッグ系の hook が既に「node を state で持つ」形をとっているので、同じ考え方を context にも適用することになる。
+
+  一緒に片付くもの:
+
+  - `useComposedRefs` は `useCallback(composeRefs(...refs), refs)` の形で可変長の ref 配列を依存に撒いており、そのために lint を 2 つ無効化している
+  - React 19 の callback ref cleanup の分岐がテストされていない（`docs/reviews/` の 06 P3）
+  - Radix から持ち込んだコードの保守が要らなくなる
+
+- [ ] **`functions` を汎用な関数だけにする。** 破壊的変更。詳細: **[functions-scope.md](./functions-scope.md)**
+
+  全 63 export を「このライブラリを使わない人が使うか」で見直したところ、**入力イベントの解釈**（modifier 一式 + `applyDelta`）と**描画された鍵盤の幾何**（`piano.ts`）という汎用でない 2 つの塊が入っていた。どちらも `dom` へ移す。あわせて使用箇所ゼロの `isEmpty` / `mod` など 6 つの公開をやめる。
+
+  移動後、`functions` は 値の分布 / 数値変換 / 音楽理論 / 表示 の 4 本になる。
+
 - [ ] **`NumberInput` の `InputField` の props を `Root` に集める。** 破壊的変更。
 
   現状は非対称になっている。**`Stepper` の設定（`drag` / `dragSensitivity` / `pointerLock`）は `Root` にあるのに、`InputField` の設定（`selectOnFocus` / `unformatOnFocus` / `keepCaretOnStep` / `blurOnEnter`）だけ `InputField` にある。** `Stepper` 自身が持つのは `className` / `style` / `children` / `ref` だけで、振る舞いは 1 つも無い。
