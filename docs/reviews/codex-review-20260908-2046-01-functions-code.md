@@ -12,8 +12,8 @@
 | 状況 | 件数 |
 | --- | --- |
 | 対応済み | 1 |
-| 対応する（未対応） | 5 |
-| 要判断 | 1 |
+| 対応する（未対応） | 6 |
+| 要判断 | 0 |
 | 対応しない | 0 |
 | 未判断 | 3 |
 
@@ -73,7 +73,9 @@ return isBlackKey(note)
 
 ### [P2] `ModifierValue<T>` は `default` プロパティを持つ通常オブジェクトを安全に扱えない — packages/functions/src/types.ts:65
 
-> **状況: 要判断** — `default` を持つ値オブジェクトを modifier マップと区別する方法は型設計の判断が要る。判別キーを変える／専用の生成関数を通す／現状のまま制約として文書化する、のいずれか。
+> **状況: 対応する（未対応）** — **`ModifierValue<T extends number | InputEventOption>` と制約すると決定。** `T` になりうる型のうちオブジェクトなのはタプルだけで、それは `Array.isArray` で弾けるため、判別が型の側から保証される（`'default' in value` は型を持たない JS からの呼び出しに備えて残す）。`{ default: 1, shift: 0.1 }` という記法は変わらない。
+>
+> あわせて `InputEventOptions`（= `ModifierValue<InputEventOption>`）のエイリアスを削除し、`ModifierValue<InputEventOption>` と書く。末尾の `s` だけで型が変わるうえ、その `s` は「複数の選択肢」ではなく「修飾キーごとに書ける」を意味していて名前から読めないため。`dragSensitivity?: ModifierValue<number>` と形が揃う。`ModifierValue` / `ModifierMap` は、生成される API ページに型名が出る以上、公開のまま維持する。
 
 **何が問題か。** `T` は無制約のジェネリックですが、オブジェクトに `default` があるだけで修飾キー用 map と判定しています。
 

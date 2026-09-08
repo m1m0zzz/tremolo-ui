@@ -12,8 +12,8 @@
 | 状況 | 件数 |
 | --- | --- |
 | 対応済み | 1 |
-| 対応する（未対応） | 11 |
-| 要判断 | 3 |
+| 対応する（未対応） | 14 |
+| 要判断 | 0 |
 | 対応しない | 0 |
 | 未判断 | 5 |
 
@@ -280,7 +280,7 @@ if (vertical && reverse) direction *= -1
 
 ### [P2] Slider の `role="slider"` と実際のフォーカス位置が分離している — packages/react/src/components/Slider/index.tsx:321
 
-> **状況: 要判断** — フォーカスと role をどちらの要素に持たせるかは a11y の構造そのものの決定で、公開マークアップが変わる。なお指摘中の「children を渡すと focus が no-op」は #204 で解消済み。
+> **状況: 対応する（未対応）** — **視覚的に隠した `<input type="range">` を Thumb の中に描画する方式で対応すると決定**（React Aria / MUI と同じ方針。ARIA slider パターンはタッチ + 支援技術で既知の問題があるため）。現状は `role="slider"` と `aria-value*` を持つ `Root` が `tabIndex={-1}` で、フォーカスされる `Thumb` には role も値も無い。なお指摘中の「children を渡すと focus が no-op」は #204 で解消済み。
 
 **何が問題か**
 
@@ -318,7 +318,7 @@ ARIA slider と `tabIndex` を同じ DOM 要素に置いてください。構成
 
 ### [P2] XYPad と Point のキーボード操作がアクセシビリティツリーに表現されない — packages/react/src/components/XYPad/Thumb.tsx:76
 
-> **状況: 要判断** — 2 軸の値を支援技術へどう表現するか（x/y を 2 つの slider にする等）は設計の決定が要る。
+> **状況: 対応する（未対応）** — **軸ごとに視覚的に隠した `<input type="range">` を 1 つずつ置く方式で対応すると決定**（React Aria の `useColorArea` と同じ形。APG に 2 次元コントロールのパターンは無く、これが実在する唯一の確立した実装）。Slider 側と実装を共有できるため、Slider を先に片付けてから着手する。PointsEditor の Point も同じ構造。
 
 **何が問題か**
 
@@ -355,7 +355,7 @@ PointsEditor.Point も role のない `div` を `tabIndex={0}` にしていま�
 
 ### [P2] Piano のショートカットがページ全体を奪い、表示範囲外のノートも鳴らす — packages/react/src/components/Piano/index.tsx:253
 
-> **状況: 要判断** — 「範囲外のノートを鳴らす」は明確なバグだが、ショートカットをフォーカス配下に限定するかどうかは UX の決定。
+> **状況: 対応する（未対応）** — **prop で切り替えられるようにし、既定はフォーカス配下と決定。** 範囲外のノートが鳴る点（`noteRange.last` と比較していない）と、テキスト入力中に発音する点は、スコープに関わらず直す。
 
 **何が問題か**
 
