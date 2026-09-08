@@ -176,7 +176,25 @@ CI       ci.yml (push) / pull-request.yml (PR)。PR は versions upload --previe
 
   現在 9 箇所で「利用者から渡された `ref`」と「context が持つ内部 `ref`」を `useComposedRefs` で合成している（`Slider.Track` / `XYPad.Area` / `NumberInput.InputField` / `NumberInput.Stepper` / `PointsEditor.Point` / `PointsEditor.Container` と、Slider / Knob / XYPad の `Root`）。実装は Radix からの持ち込みで、リポジトリが自前で保守している。
 
-  **[5.3](./core-extraction-plan.md) でいったん「削除せず使う」と決めた項目の再検討。** 当時の理由は「インライン ref は毎レンダー新しい関数になり React が ref を付け直す（`node → null → node`）ので、memo 化した合成でまとめれば付け直しが無くなる」だった。**合成そのものを無くせば、避けようとしていた問題も一緒に消える。**
+  **[5.3](./core-extraction-plan.md) でいったん「削除せず使う」と決めた項目の再検討。** 当時の理由は「インライン ref は毎レンダー新しい関数になり React が ref を付け直す（`node → null → node`）ので、memo 化した合成でまとめれば付け直しが無くなる」だった。
+
+  **測ったところ、この前提が成立するのは呼び出し側の ref が安定している場合だけだった。** 同じ要素に安定した内部 ref と不安定な外部 ref を渡し、3 回再レンダーしたときの付け外し:
+
+  ```
+  合成しない場合
+    内部（安定）  : attach
+    外部（不安定）: attach → detach → attach → detach → attach → detach → attach
+
+  合成した場合
+    内部（本来は安定）: attach → detach → attach → detach → attach → detach → attach
+    外部（不安定）    : attach → detach → attach → detach → attach → detach → attach
+  ```
+
+  **不安定さが伝染する。** 合成後のコールバックの同一性は最も不安定な入力に決まり、React は同一性が変われば必ず付け直す。`useComposedRefs` は `useCallback(composeRefs(...refs), refs)` で memo 化しているが、**依存に外部 ref が入っている以上、外部が毎レンダー新しければ memo は効かない。** `Slider.Track` にインラインの ref を渡した場合も同じ結果になった。
+
+  **ライブラリ側は外部 ref の同一性を制御できない。** `ref={(node) => ...}` と書くのは React の普通の書き方で、それを禁じることはできない。これは「2 つの利用者が 1 つの ref スロットを共有する」という構造から来るもので、`composeRefs` の実装を直しても消えない。
+
+  **現時点で壊れてはいない。** ドラッグ系の hook は node を state で持ち、生成・破棄を effect で行っているので、付け直しに耐える形になっている。ただし ref コールバックの中でリソースを確保する実装を将来書くと再発する（Phase 2 で一度出した不具合がこれ）。
 
   やめるには、**context が `RefObject` を配って各パートがそこへ自分を合成する形をやめる**必要がある。パート側が「自分の要素を context へ登録する」形にすれば、利用者の `ref` はそのまま要素へ渡せて合成が要らなくなる。ドラッグ系の hook が既に「node を state で持つ」形をとっているので、同じ考え方を context にも適用することになる。
 
@@ -185,44 +203,6 @@ CI       ci.yml (push) / pull-request.yml (PR)。PR は versions upload --previe
   - `useComposedRefs` は `useCallback(composeRefs(...refs), refs)` の形で可変長の ref 配列を依存に撒いており、そのために lint を 2 つ無効化している
   - React 19 の callback ref cleanup の分岐がテストされていない（`docs/reviews/` の 06 P3）
   - Radix から持ち込んだコードの保守が要らなくなる
-
-- [ ] **render props に置き換える。** 破壊的変更。
-
-  パートの中身を差し替える手段を `children` から `render` prop へ移し、状態を関数の引数として渡す。
-
-  **今できないこと。** #204 で各パートを 1 要素にし、`children` は「その要素の中身」になった。そのため**要素そのものを差し替える手段が無い**。`Slider.Thumb` に `<img>` を入れると、ライブラリの `div` の中に入る。Radix の `asChild` はこれを解決するが、children を `cloneElement` する必要があり、この方向は採らないと決めている。
-
-  **Base UI の `render` prop が、clone せずに同じことをする形。** 関数形式なら、props を渡すのはライブラリ、要素に撒くのは利用者になる。
-
-  ```tsx
-  <Slider.Thumb render={(props, state) => (
-    <img {...props} src={state.dragging ? 'grabbing.png' : 'thumb.png'} />
-  )} />
-  ```
-
-  **前提が揃ったのは #204 の後。** Base UI は「1 コンポーネント 1 DOM ノードへ移したことで render props が現実的になった。複数スロットのときに問題だった可読性の懸念が消えた」として、`asChild` ではなくこちらを採った（[RFC](https://github.com/mui/base-ui/discussions/157)）。**このリポジトリが #204 で到達したのが、まさにその状態。**
-
-  同時に、**状態の露出**も render props で置き換えられる。現在サブコンポーネントは `useSliderContext()` で context を読んでおり、利用者が状態に応じて描き分けるにはこの hook を import する必要がある。React Aria Components は `children` / `className` / `style` が状態を受け取る関数を取れる形にしている。
-
-  ```tsx
-  <Slider.Thumb className={({ dragging }) => dragging ? 'thumb dragging' : 'thumb'} />
-  ```
-
-  **Piano の `label` / `keyProps` は既にこの形。** 4.3 / 5.5 で「per-key のカスタマイズはコールバックで受ける」と決めたものが、他のコンポーネントにも広がることになる。Piano が例外なのではなく、先行していたと位置づけ直す。
-
-  決めること:
-
-  - **どのパートに `render` を持たせるか。** 全パートか、`Root` を除くか
-  - **要素形式（`render={<div />}`）も受けるか。** 受けると props のマージが必要になり、clone を避けた意味が薄れる。**関数形式だけにするのが筋**
-  - **`children` / `className` / `style` も関数を取れるようにするか。** `render` と役割が重なるので、両方を入れるなら「`render` は要素の差し替え、`className` は状態に応じた分岐」と線を引く必要がある
-  - **props のマージ規則。** Base UI はイベントハンドラを合成し、`className` と `style` を連結し、それ以外は外側で上書きする。同じ規則にするなら文書化が要る
-  - 状態は既に `data-*` / ARIA 属性として出ている。`render` に渡す `state` とこの属性を**同じ 1 つの定義から出す**こと。二重管理になると片方だけ更新されて食い違う
-
-  分かっている代償（[RFC](https://github.com/mui/base-ui/discussions/157) で挙がっているもの）:
-
-  - render 関数の中で hook を呼ばれると壊れる
-  - `asChild` より記述が長い。単純な差し替えでもコールバックを書くことになる
-  - 一方で、props を明示的に撒くぶん型の上では安全になる
 
 - [ ] **`functions` を汎用な関数だけにする。** 破壊的変更。詳細: **[functions-scope.md](./functions-scope.md)**
 
