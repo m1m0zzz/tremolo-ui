@@ -73,9 +73,10 @@ export const Basic: Story = {
 }
 
 /**
- * Manual browser check for drag selection suppression. Drag the slider across
- * the surrounding text with a mouse, and long-press then drag on a touch
- * device. No text should become selected in either case.
+ * Manual browser regression check for drag selection suppression. On iOS
+ * Safari, long-pressing an unfocused slider can select surrounding text; that
+ * also happens before the React body-style guard is removed. Compare this with
+ * `main` to make sure the change does not make that existing behavior worse.
  */
 export const SelectionSuppression: Story = {
   args: {
@@ -98,9 +99,8 @@ export const SelectionSuppression: Story = {
     return (
       <div style={{ maxWidth: 640, lineHeight: 1.6 }}>
         <p>
-          Drag the slider far into this text. On a touch device, long-press the
-          slider before dragging. Text around the control must remain unselected
-          throughout the gesture.
+          Drag the slider far into this text. With a mouse, text around the
+          control should remain unselected throughout the gesture.
         </p>
         <Slider.Root {...args} value={value} onChange={setValue}>
           <Slider.Track style={{ width: 240 }}>
@@ -109,7 +109,12 @@ export const SelectionSuppression: Story = {
         </Slider.Root>
         <p>
           Continue dragging across this sentence and release outside the slider.
-          This text must not receive a selection highlight either.
+          This text should not receive a selection highlight either.
+        </p>
+        <p>
+          Known behavior: on iOS Safari, long-pressing the slider while it is
+          unfocused can select surrounding text. The same behavior is present on
+          <code> main</code>; compare both versions to check for a regression.
         </p>
         <p aria-live="polite">
           Selected text: <strong>{selection || 'none'}</strong>
