@@ -99,6 +99,9 @@ export function createPianoInput(
       velocity,
     }: { source?: NoteSource; velocity?: number } = {},
   ) {
+    if (!Number.isInteger(note) || note < 0 || note > 127) {
+      throw new RangeError('note: requirements: an integer from 0 to 127')
+    }
     if (note > (opts.midiMax ?? 127)) return
 
     const sources = held.get(note)
@@ -117,6 +120,9 @@ export function createPianoInput(
     note: number,
     { source = DEFAULT_SOURCE }: { source?: NoteSource } = {},
   ) {
+    if (!Number.isInteger(note) || note < 0 || note > 127) {
+      throw new RangeError('note: requirements: an integer from 0 to 127')
+    }
     const sources = held.get(note)
     if (!sources) return
 
@@ -187,12 +193,13 @@ export function createPianoInput(
       drag.destroy()
       // Anything still held is released, so a caller that mirrors these
       // callbacks into a synth is not left with a stuck note.
-      for (const note of activeNotes()) {
+      const notes = activeNotes()
+      for (const note of notes) {
         held.delete(note)
         opts.onStopNote?.(note)
       }
       pointerNotes.clear()
-      opts.onActiveNotesChange?.([])
+      if (notes.length > 0) opts.onActiveNotesChange?.([])
     },
   }
 }

@@ -84,6 +84,7 @@ export function createMIDIAccess(): MIDIAccessInstance {
   let state = INITIAL_STATE
   let destroyed = false
   let access: MIDIAccess | null = null
+  let requestGeneration = 0
   const listeners = new Set<() => void>()
 
   function setState(next: MIDIAccessState) {
@@ -99,29 +100,32 @@ export function createMIDIAccess(): MIDIAccessInstance {
     return access ? [...access.inputs.values()] : []
   }
 
-  function handleStateChange() {
+  function handleStateChange(event?: Event) {
     if (destroyed || !access) return
+    if (event && (event as MIDIConnectionEvent).port?.type === 'output') return
     setState({ ...state, inputs: readInputs() })
   }
 
   function request(options: MIDIAccessOptions = {}) {
     if (destroyed) return
+    const generation = ++requestGeneration
     if (typeof navigator === 'undefined' || !navigator.requestMIDIAccess) {
       setState({ ...state, error: NOT_SUPPORTED })
       return
     }
-    navigator
-      .requestMIDIAccess({ sysex: options.sysex ?? false })
-      .then((granted) => {
-        if (destroyed) return
+    navigator.requestMIDIAccess({ sysex: options.sysex ?? false }).then(
+      (granted) => {
+        if (destroyed || generation !== requestGeneration) return
+        access?.removeEventListener('statechange', handleStateChange)
         access = granted
         granted.addEventListener('statechange', handleStateChange)
         setState({ midiAccess: granted, error: null, inputs: readInputs() })
-      })
-      .catch((reason: unknown) => {
-        if (destroyed) return
+      },
+      (reason: unknown) => {
+        if (destroyed || generation !== requestGeneration) return
         setState({ ...state, error: toError(reason) })
-      })
+      },
+    )
   }
 
   return {
@@ -136,6 +140,7 @@ export function createMIDIAccess(): MIDIAccessInstance {
     },
     destroy: () => {
       destroyed = true
+      requestGeneration += 1
       access?.removeEventListener('statechange', handleStateChange)
       access = null
       listeners.clear()

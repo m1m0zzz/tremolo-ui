@@ -387,4 +387,23 @@ describe('createPianoInput', () => {
     expect(onActiveNotesChange).toHaveBeenLastCalledWith([])
     expect(instance.activeNotes()).toEqual([])
   })
+
+  test('destroy does not report a change when no notes are held', () => {
+    const { instance, onActiveNotesChange } = setup()
+
+    instance.destroy()
+    instance.destroy()
+
+    expect(onActiveNotesChange).not.toHaveBeenCalled()
+  })
+
+  test.each([-1, 128, 60.5, Number.NaN])(
+    'imperative note methods reject invalid note %s',
+    (note) => {
+      const { instance } = setup()
+
+      expect(() => instance.noteOn(note)).toThrow(RangeError)
+      expect(() => instance.noteOff(note)).toThrow(RangeError)
+    },
+  )
 })
