@@ -12,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 1 |
-| 対応する（未対応） | 14 |
+| 対応済み | 6 |
+| 対応する（未対応） | 9 |
 | 要判断 | 0 |
 | 対応しない | 1 |
 | 未判断 | 0 |
@@ -72,7 +72,7 @@ target.addEventListener('pointercancel', handlePointerUp)
 
 ### [P2] `shouldStart` の拒否経路と「capture より先」という契約が未検証 — packages/dom/src/pointer/drag.ts:246
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — 拒否時に pointer capture を取得せず lifecycle も開始しないことを検証した。
 
 **何が問題か**
 
@@ -101,7 +101,7 @@ capture.setPointerCapture?.(pointerId)
 
 ### [P2] window fallback のテストがインスタンスを破棄せず、後続テストへグローバルリスナーを漏らす — packages/dom/__tests__/pointer/drag.test.ts:321
 
-> **状況: 対応する（未対応）** — テスト間でグローバルリスナーが漏れるのは、他のテストの結果を汚す。
+> **状況: 対応済み** — fallback instance も共通 cleanup の対象へ登録した。
 
 **何が問題か**
 
@@ -135,7 +135,7 @@ for (const instance of instances.splice(0)) instance.destroy()
 
 ### [P2] mapping が `null` を返したイベントでも lifecycle callback が発火することを見逃している — packages/dom/__tests__/pointer/dragValue.test.ts:109
 
-> **状況: 対応する（未対応）** — 03 の実装側の指摘と同件。
+> **状況: 対応済み** — null mapping で change / start / end の全 callback が発火しないことを検証した。
 
 **何が問題か**
 
@@ -418,7 +418,7 @@ fps: 1000 / deltaTime,
 
 ### [P3] pointer lock の拒否テストが同期 throw と Promise rejection を通っていない — packages/dom/__tests__/pointer/drag.test.ts:563
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — 同期 throw と Promise rejection の双方で通常 drag を継続できることを検証した。
 
 **何が問題か**
 
@@ -477,7 +477,7 @@ if (!context2d) {
 
 ### [P3] `getValue` 必須エラーが未検証 — packages/dom/src/pointer/dragValue.ts:299
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — relative mapping を公開 API 経由で開始し、明示的な error message を検証した。
 
 **何が問題か**
 

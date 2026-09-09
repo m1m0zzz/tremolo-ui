@@ -71,6 +71,25 @@ describe('createDrag', () => {
     expect(onDrag).not.toHaveBeenCalled()
   })
 
+  test('ignores non-primary mouse buttons', () => {
+    const { element, onDragStart } = setup()
+    element.dispatchEvent(pointerEvent('pointerdown', { button: 1 }))
+    element.dispatchEvent(pointerEvent('pointerdown', { button: 2 }))
+    expect(onDragStart).not.toHaveBeenCalled()
+  })
+
+  test('checks shouldStart before taking pointer capture', () => {
+    const shouldStart = vi.fn(() => false)
+    const { element, onDragStart } = setup({ shouldStart })
+    const setPointerCapture = vi.spyOn(element, 'setPointerCapture')
+
+    element.dispatchEvent(pointerEvent('pointerdown'))
+
+    expect(shouldStart).toHaveBeenCalledTimes(1)
+    expect(setPointerCapture).not.toHaveBeenCalled()
+    expect(onDragStart).not.toHaveBeenCalled()
+  })
+
   // Regression: the previous implementation used a truthy check on the stored
   // offset, so a drag starting at screen coordinate 0 produced a delta of 0 for
   // that axis forever, and onDrag never fired at all when both axes were 0.
@@ -337,6 +356,21 @@ describe('createDrag', () => {
     expect(element.style.getPropertyValue('user-select')).toBe('text')
   })
 
+  test('restores style priority after the last instance is destroyed', () => {
+    const element = document.createElement('div')
+    element.style.setProperty('user-select', 'text', 'important')
+    document.body.appendChild(element)
+    const first = createDrag(element)
+    const second = createDrag(element)
+
+    first.destroy()
+    expect(element.style.getPropertyValue('user-select')).toBe('none')
+    second.destroy()
+
+    expect(element.style.getPropertyValue('user-select')).toBe('text')
+    expect(element.style.getPropertyPriority('user-select')).toBe('important')
+  })
+
   test('destroy during a drag ends it and stops tracking', () => {
     const { element, instance, onDrag, onDragEnd } = setup()
     element.dispatchEvent(
@@ -358,7 +392,8 @@ describe('createDrag', () => {
     const element = document.createElement('div')
     document.body.appendChild(element)
     const onDrag = vi.fn()
-    createDrag(element, { onDrag })
+    const instance = createDrag(element, { onDrag })
+    instances.push(instance)
 
     element.dispatchEvent(
       pointerEvent('pointerdown', { screenX: 0, screenY: 0 }),
@@ -609,5 +644,57 @@ describe('pointer lock', () => {
     element.dispatchEvent(pointerEvent('pointermove', { screenX: 25 }))
 
     expect(onDrag.mock.calls[0][0].x).toBe(25)
+  })
+
+  test.each(['throw', 'reject'])(
+    '%s from pointer lock keeps an ordinary drag',
+    async (failure) => {
+      const { element, onDrag } = setup({ pointerLock: true })
+      Object.assign(element, {
+        requestPointerLock: () => {
+          if (failure === 'throw') throw new Error('refused')
+          return Promise.reject(new Error('refused'))
+        },
+      })
+
+      expect(() =>
+        element.dispatchEvent(pointerEvent('pointerdown')),
+      ).not.toThrow()
+      await Promise.resolve()
+      element.dispatchEvent(pointerEvent('pointermove', { screenX: 25 }))
+      expect(onDrag).toHaveBeenCalledTimes(1)
+    },
+  )
+
+  test('releases a lock granted after the drag ended', async () => {
+    const { element } = setup({ pointerLock: true })
+    let grant!: () => void
+    const exitPointerLock = vi.fn(() => {
+      Object.defineProperty(document, 'pointerLockElement', {
+        value: null,
+        configurable: true,
+      })
+    })
+    Object.assign(document, { exitPointerLock })
+    Object.assign(element, {
+      requestPointerLock: () =>
+        new Promise<void>((resolve) => {
+          grant = () => {
+            Object.defineProperty(document, 'pointerLockElement', {
+              value: element,
+              configurable: true,
+            })
+            resolve()
+          }
+        }),
+    })
+
+    element.dispatchEvent(pointerEvent('pointerdown'))
+    element.dispatchEvent(pointerEvent('pointerup'))
+    grant()
+    await Promise.resolve()
+
+    expect(exitPointerLock).toHaveBeenCalledTimes(1)
+    expect(document.pointerLockElement).toBe(null)
   })
 })

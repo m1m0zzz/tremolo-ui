@@ -122,6 +122,13 @@ const MANAGED_STYLES = [
   ['-webkit-touch-callout', 'none'],
 ] as const
 
+type ManagedStyleState = {
+  count: number
+  previous: Map<string, { value: string; priority: string }>
+}
+
+const managedStyleStates = new WeakMap<Element, ManagedStyleState>()
+
 type CaptureTarget = {
   requestPointerLock?: () => unknown
   setPointerCapture?: (pointerId: number) => void
@@ -174,11 +181,21 @@ export function createDrag(
   const capture = element as CaptureTarget
   const style = (element as Partial<HTMLElement>).style
 
-  const previousStyles = new Map<string, string>()
+  let managedStyles = managedStyleStates.get(element)
   if (style) {
-    for (const [property, value] of MANAGED_STYLES) {
-      previousStyles.set(property, style.getPropertyValue(property))
-      style.setProperty(property, value)
+    if (managedStyles) {
+      managedStyles.count += 1
+    } else {
+      const previous = new Map<string, { value: string; priority: string }>()
+      for (const [property, value] of MANAGED_STYLES) {
+        previous.set(property, {
+          value: style.getPropertyValue(property),
+          priority: style.getPropertyPriority(property),
+        })
+        style.setProperty(property, value)
+      }
+      managedStyles = { count: 1, previous }
+      managedStyleStates.set(element, managedStyles)
     }
   }
 
@@ -192,6 +209,7 @@ export function createDrag(
   let previousCursor: string | undefined
   /** The pointer that asked for the lock, while it is still down. */
   let lockedPointerId: number | null = null
+  let lockRequest = 0
   let destroyed = false
 
   function state(
@@ -257,6 +275,7 @@ export function createDrag(
 
   function handlePointerDown(event: Event) {
     const pointerEvent = event as PointerEvent
+    if (pointerEvent.button !== 0) return
     const pointerId = pointerEvent.pointerId
     // Without multiPointer only one pointer drives the drag; ignore the rest.
     if (pointers.has(pointerId)) return
@@ -297,6 +316,7 @@ export function createDrag(
 
     // One pointer can be locked, so the first one takes it.
     if (isFirst && opts.pointerLock) {
+      const requestId = ++lockRequest
       lockedPointerId = pointerId
       globalThis.document?.addEventListener(
         'pointerlockchange',
@@ -309,7 +329,18 @@ export function createDrag(
         const request = capture.requestPointerLock?.() as
           | Promise<void>
           | undefined
-        request?.catch?.(() => {})
+        request?.then?.(
+          () => {
+            if (
+              requestId === lockRequest &&
+              (!pointers.has(pointerId) || destroyed) &&
+              globalThis.document?.pointerLockElement === element
+            ) {
+              globalThis.document.exitPointerLock?.()
+            }
+          },
+          () => {},
+        )
       } catch {
         // requestPointerLock threw synchronously; same story.
       }
@@ -443,15 +474,16 @@ export function createDrag(
       destroyed = true
       element.removeEventListener('pointerdown', handlePointerDown)
       for (const pointerId of [...pointers.keys()]) finishDrag(pointerId)
-      if (style) {
+      if (style && managedStyles && --managedStyles.count === 0) {
         for (const [property] of MANAGED_STYLES) {
-          const previous = previousStyles.get(property)
-          if (previous) {
-            style.setProperty(property, previous)
+          const previous = managedStyles.previous.get(property)
+          if (previous?.value) {
+            style.setProperty(property, previous.value, previous.priority)
           } else {
             style.removeProperty(property)
           }
         }
+        managedStyleStates.delete(element)
       }
     },
   }

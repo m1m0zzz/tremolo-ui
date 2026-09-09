@@ -1,4 +1,6 @@
 export interface WheelOptions {
+  /** Replace the callback through {@link WheelInstance.update}. */
+  onWheel?: (event: WheelEvent) => void
   /**
    * Only report events while the focus is inside the element.
    *
@@ -32,7 +34,7 @@ export function createWheel(
   onWheel: (event: WheelEvent) => void,
   options: WheelOptions = {},
 ): WheelInstance {
-  let opts = options
+  let opts = { ...options, onWheel }
 
   function hasFocus() {
     const active = element.ownerDocument?.activeElement
@@ -41,7 +43,7 @@ export function createWheel(
 
   const handler = (event: Event) => {
     if (opts.requireFocus && !hasFocus()) return
-    onWheel(event as WheelEvent)
+    opts.onWheel?.(event as WheelEvent)
   }
 
   element.addEventListener('wheel', handler, { passive: false })

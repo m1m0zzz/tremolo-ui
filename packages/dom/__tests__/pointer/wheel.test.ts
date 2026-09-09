@@ -47,6 +47,20 @@ describe('createWheel', () => {
     expect(onWheel).not.toHaveBeenCalled()
   })
 
+  test('update replaces the callback without replacing the listener', () => {
+    const element = document.createElement('div')
+    document.body.appendChild(element)
+    const first = vi.fn()
+    const second = vi.fn()
+    const instance = createWheel(element, first)
+
+    instance.update({ onWheel: second })
+    element.dispatchEvent(wheelEvent(120))
+
+    expect(first).not.toHaveBeenCalled()
+    expect(second).toHaveBeenCalledTimes(1)
+  })
+
   describe('requireFocus', () => {
     function setup() {
       const element = document.createElement('div')
