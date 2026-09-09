@@ -55,6 +55,10 @@ function typedocPlugins() {
         parametersFormat: 'table',
         enumMembersFormat: 'table',
         useCodeBlocks: true,
+        // A module page and one of its symbols can have the same slug (for
+        // example, `xy` and `XY`). Preserve TypeDoc's link targets instead of
+        // relying on Docusaurus's deduplicated heading IDs.
+        useCustomAnchors: true,
         // for Vercel Deploy (npm run build:docs:production)
         ...(process.env.COMMIT_SHA && {
           sourceLinkTemplate:

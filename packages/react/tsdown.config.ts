@@ -20,9 +20,10 @@ export default defineConfig([
       level: 'error',
     },
     attw: {
-      level: 'warn',
-      // TODO: not woring
-      excludeEntrypoints: ['**/*.css'],
+      // Public subpaths rely on `exports`; legacy node10 module resolution is
+      // outside the supported consumer configurations.
+      profile: 'node16',
+      level: 'error',
     },
   },
 ])
