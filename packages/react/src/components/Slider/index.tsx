@@ -185,6 +185,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
     // -- state and ref ---
     const trackRef = useRef<HTMLDivElement>(null)
     const thumbRef = useRef<SliderThumbMethods>(null)
+    const hasUserSelectNone = useRef(false)
 
     // --- interpret props ---
     const externalStyles = { ...defaultExternalStyles, ..._externalStyles }
@@ -243,15 +244,20 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
       },
       onDragStart: (v) => {
         if (readonly) return
-        if (externalStyles.userSelectNone) addUserSelectNone()
+        if (externalStyles.userSelectNone) {
+          addUserSelectNone()
+          hasUserSelectNone.current = true
+        }
 
         thumbRef.current?.focus()
         onDragStart?.(valueOf(v))
       },
       onDragEnd: (v) => {
+        if (hasUserSelectNone.current) {
+          hasUserSelectNone.current = false
+          removeUserSelectNone()
+        }
         if (readonly) return
-
-        if (externalStyles.userSelectNone) removeUserSelectNone()
 
         onDragEnd?.(valueOf(v))
       },

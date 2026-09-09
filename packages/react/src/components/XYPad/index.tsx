@@ -265,6 +265,8 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
 
     // --- hooks ---
 
+    const hasUserSelectNone = useRef(false)
+
     const { refCallback: dragRefCallback } = useDragValue<HTMLDivElement>({
       axis,
       baseElementRef: areaRef,
@@ -278,13 +280,19 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
       },
       onDragStart: (v) => {
         if (readonly) return
-        if (externalStyles.userSelectNone) addUserSelectNone()
+        if (externalStyles.userSelectNone) {
+          addUserSelectNone()
+          hasUserSelectNone.current = true
+        }
         thumbRef.current?.focus()
         onDragStart?.(v)
       },
       onDragEnd: (v) => {
+        if (hasUserSelectNone.current) {
+          hasUserSelectNone.current = false
+          removeUserSelectNone()
+        }
         if (readonly) return
-        if (externalStyles.userSelectNone) removeUserSelectNone()
         onDragEnd?.(v)
       },
     })

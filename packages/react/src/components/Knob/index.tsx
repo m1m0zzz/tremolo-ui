@@ -245,6 +245,8 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
       [range],
     )
 
+    const hasUserSelectNone = useRef(false)
+
     const { refCallback: dragRefCallback, dragging } = useDragValue<
       HTMLElement | SVGElement
     >({
@@ -260,10 +262,17 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
         onChange?.(v[1])
       },
       onDragStart: () => {
-        if (externalStyles.userSelectNone) addUserSelectNone()
+        if (readonly) return
+        if (externalStyles.userSelectNone) {
+          addUserSelectNone()
+          hasUserSelectNone.current = true
+        }
       },
       onDragEnd: () => {
-        if (externalStyles.userSelectNone) removeUserSelectNone()
+        if (hasUserSelectNone.current) {
+          hasUserSelectNone.current = false
+          removeUserSelectNone()
+        }
       },
     })
 
