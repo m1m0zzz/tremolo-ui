@@ -26,12 +26,12 @@ import { useComposedRefs } from '../../compose-refs'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
-import { cx } from '../_util/cx'
 import {
   DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
-} from '../_util/inputEvent'
+} from '../../inputEvent'
+import { cx } from '../_util/cx'
 
 import { Area } from './Area'
 import { toXY, XY, XYInput, XYPadProvider } from './context'

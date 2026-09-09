@@ -19,9 +19,9 @@ import {
   toPrecision,
 } from '@tremolo-ui/functions'
 
+import { DEFAULT_DRAG_SENSITIVITY } from '../../inputEvent'
 import { cssLength } from '../_util/cssLength'
 import { cx } from '../_util/cx'
-import { DEFAULT_DRAG_SENSITIVITY } from '../_util/inputEvent'
 
 import { Background } from './Background'
 import { Container } from './Container'
