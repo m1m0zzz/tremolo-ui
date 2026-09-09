@@ -107,23 +107,28 @@ describe('createMIDIMessage', () => {
   test('an unplugged device is let go', () => {
     const a = fakeInput()
     const harness = fakeAccess(a)
+    const onMIDIMessage = vi.fn()
 
-    createMIDIMessage(harness.access, vi.fn())
+    createMIDIMessage(harness.access, onMIDIMessage)
+    const attached = a.addEventListener.mock.calls[0][1]
     harness.disconnect('0')
 
-    expect(a.removeEventListener).toHaveBeenCalledWith(
-      'midimessage',
-      expect.any(Function),
-    )
+    expect(a.removeEventListener).toHaveBeenCalledWith('midimessage', attached)
+    a.send({ data: new Uint8Array([0x90, 60, 100]) })
+    expect(onMIDIMessage).not.toHaveBeenCalled()
   })
 
   test('destroy stops following the device list', () => {
-    const harness = fakeAccess(fakeInput())
-    const instance = createMIDIMessage(harness.access, vi.fn())
+    const a = fakeInput()
+    const harness = fakeAccess(a)
+    const onMIDIMessage = vi.fn()
+    const instance = createMIDIMessage(harness.access, onMIDIMessage)
 
     instance.destroy()
 
     expect(harness.statechangeListeners.size).toBe(0)
+    a.send({ data: new Uint8Array([0x90, 60, 100]) })
+    expect(onMIDIMessage).not.toHaveBeenCalled()
   })
 
   test('update swaps the handler without touching the listeners', () => {

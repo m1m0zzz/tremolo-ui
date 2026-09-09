@@ -170,7 +170,7 @@ expect(onChange).not.toHaveBeenCalled()
 
 ### [P2] `request()` を複数回成功させた場合の古い MIDIAccess リスナーが未検証 — packages/dom/src/midi/access.ts:107
 
-> **状況: 対応する（未対応）** — 03 の実装側の指摘と同件。
+> **状況: 対応済み** — 新旧requestを逆順で解決し、最新accessだけがstateとlistenerを持つことを検証した。
 
 **何が問題か**
 
@@ -202,7 +202,7 @@ A、B の順で二度成功すると A にリスナーが残ります。A の `s
 
 ### [P2] 「pending request 後の destroy」を検証するはずのテストが request 前に destroy している — packages/dom/__tests__/midi/access.test.ts:171
 
-> **状況: 対応する（未対応）** — テストが意図した状況を作れていない。
+> **状況: 対応済み** — pending requestを作ってからdestroyし、その後の解決がstateとlistenerを変更しないことを検証した。
 
 **何が問題か**
 
@@ -246,7 +246,7 @@ function request(options: MIDIAccessOptions = {}) {
 
 ### [P2] MIDI input の解除テストが callback の同一性を検証していない — packages/dom/__tests__/midi/message.test.ts:55
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — add時と同一callbackをremoveへ渡し、解除後にmessageが届かないことも検証した。
 
 **何が問題か**
 
@@ -346,7 +346,7 @@ canvas の width/height 設定時に context を初期値へ戻す偽装を追�
 
 ### [P2] `destroy()` が空状態でも変更通知する契約違反をテストが見逃している — packages/dom/__tests__/piano/index.test.ts:334
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — 空状態のdestroyと二重destroyが変更通知しないことを検証した。
 
 **何が問題か**
 
@@ -496,7 +496,7 @@ if (!getValue) {
 
 ### [P3] `TypeError` のエラー分類だけテーブルから抜けている — packages/dom/__tests__/midi/access.test.ts:116
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — TypeErrorをNOT_SUPPORTEDとしてtable testへ追加した。
 
 **何が問題か**
 

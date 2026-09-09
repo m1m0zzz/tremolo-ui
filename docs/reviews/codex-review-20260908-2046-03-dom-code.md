@@ -177,7 +177,7 @@ opts.onDragStart?.(lastValue, state)
 
 ### [P2] MIDI の多重 request が競合し、古い結果とリスナが残る — packages/dom/src/midi/access.ts:107
 
-> **状況: 対応する（未対応）** — 04 のテスト側の指摘と同件。
+> **状況: 対応済み** — request generationで最新結果だけを採用し、古いaccessのlistenerを残さないようにした。
 
 **何が問題か**
 
@@ -392,7 +392,7 @@ const travelled = (to: XY<number>, at: number): XY<number> => [
 
 ### [P3] Piano の命令 API が MIDI 範囲外・非整数値を受理する — packages/dom/src/piano/index.ts:102
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — `noteOn` / `noteOff` で0〜127の整数を要求するようにした。
 
 **何が問題か**
 
@@ -500,7 +500,7 @@ framework 非依存の利用者が handler を差し替えるには instance を
 
 ### [P3] subscriber の例外を MIDI request の失敗として処理する — packages/dom/src/midi/access.ts:113
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — Promiseの成功・失敗handlerを分離し、成功通知中の例外をrequest失敗へ誤変換しないようにした。
 
 **何が問題か**
 
@@ -534,7 +534,7 @@ for (const listener of listeners) listener()
 
 ### [P3] MIDI output の変化でも購読者を再描画させる — packages/dom/src/midi/access.ts:102
 
-> **状況: 対応する（未対応）** — 公開しているのは inputs だけなので、output の変化で再描画する必要がない。
+> **状況: 対応済み** — output portだけのstatechangeではinputs stateを更新しないようにした。
 
 **何が問題か**
 
