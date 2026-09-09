@@ -11,12 +11,12 @@ Components library for Audio Applications.
 
 ## 🚩 Milestone (v1.0)
 
-- Package migration: `dom`, `react`
-- Added new support: `vue`, `svelte`
-- Completely headless CSS
-- Added some pre-built components
-- Full mobile device support
-- minimal dependences (clsx, zustand) → **No dependences**
+- [x] Package migration: `dom`, `react`
+- [ ] Added new support: `vue`, `svelte`
+- [x] Completely headless CSS
+- [ ] Added some pre-built components
+- [x] Full mobile device support
+- [x] minimal dependences (clsx, zustand) → **No dependences**
 
 ## ✨ Features
 
