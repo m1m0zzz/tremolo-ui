@@ -1,7 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-import { unitFormat, type InputEventOptions } from '@tremolo-ui/functions'
+import {
+  unitFormat,
+  type InputEventOption,
+  type ModifierValue,
+} from '@tremolo-ui/functions'
 
 import { NumberInput } from '.'
 
@@ -59,7 +63,10 @@ export const KeepCaretOnStep: Story = {
     // control that fits it. It is typed as JSON instead, and the last text
     // that parsed stands while the next one is half written.
     const [keyboardText, setKeyboardText] = useState('["raw", 0.1]')
-    const [keyboard, setKeyboard] = useState<InputEventOptions>(['raw', 0.1])
+    const [keyboard, setKeyboard] = useState<ModifierValue<InputEventOption>>([
+      'raw',
+      0.1,
+    ])
 
     return (
       <div>

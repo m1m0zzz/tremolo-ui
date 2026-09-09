@@ -12,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 1 |
-| 対応する（未対応） | 9 |
+| 対応済み | 10 |
+| 対応する（未対応） | 0 |
 | 要判断 | 0 |
 | 対応しない | 0 |
 | 未判断 | 0 |
@@ -46,7 +46,7 @@ return Math.abs(value - v) < Math.abs(value - next) ? v : next
 
 ### [P2] 黒鍵が範囲端にあると `pianoWidth`・描画位置・当たり判定が食い違う — packages/functions/src/piano.ts:88
 
-> **状況: 対応する（未対応）** — `pianoWidth` が白鍵数だけで幅を出しているのを確認した。02 の「端が黒鍵のレイアウト」と同件。
+> **状況: 対応済み** — 全鍵の左右端を共有 geometry から求め、幅・位置・当たり判定を一致させた。
 
 **何が問題か。** 幅は白鍵数だけから計算しますが、黒鍵は境界を中心に左右へ張り出します。
 
@@ -74,7 +74,7 @@ return isBlackKey(note)
 
 ### [P2] `ModifierValue<T>` は `default` プロパティを持つ通常オブジェクトを安全に扱えない — packages/functions/src/types.ts:65
 
-> **状況: 対応する（未対応）** — **`ModifierValue<T extends number | InputEventOption>` と制約すると決定。** `T` になりうる型のうちオブジェクトなのはタプルだけで、それは `Array.isArray` で弾けるため、判別が型の側から保証される（`'default' in value` は型を持たない JS からの呼び出しに備えて残す）。`{ default: 1, shift: 0.1 }` という記法は変わらない。
+> **状況: 対応済み** — `ModifierValue<T extends number | InputEventOption>` と制約し、通常オブジェクトの誤認を型で防いだ。
 >
 > あわせて `InputEventOptions`（= `ModifierValue<InputEventOption>`）のエイリアスを削除し、`ModifierValue<InputEventOption>` と書く。末尾の `s` だけで型が変わるうえ、その `s` は「複数の選択肢」ではなく「修飾キーごとに書ける」を意味していて名前から読めないため。`dragSensitivity?: ModifierValue<number>` と形が揃う。`ModifierValue` / `ModifierMap` は、生成される API ページに型名が出る以上、公開のまま維持する。
 
@@ -108,7 +108,7 @@ selectModifier<Config>(config).value
 
 ### [P2] skew 系 API が自身の `Scale` 契約を満たさない係数を生成する — packages/functions/src/scales.ts:61
 
-> **状況: 対応する（未対応）** — 公開 helper が契約を破る係数を返すのは入力検証の欠落。
+> **状況: 対応済み** — skew を正の有限値に限定し、center と range を開区間として検証した。
 
 **何が問題か。** `skewScale` と `symmetricSkewScale` は `skew` の正値・有限性を検査しません。また、`skewWithCenterValue` は端点を center として明示的に許可しています。
 
@@ -139,7 +139,7 @@ return Math.log(0.5) / Math.log((centerValue - min) / (max - min))
 
 ### [P2] 非線形スケールが、文書化された条件を満たす有限入力でも overflow する — packages/functions/src/scales.ts:109
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — exponential は対数補間へ変更し、curve は安定して逆変換できる有限範囲を検証した。
 
 **何が問題か。** `exponentialScale` は先に `max / min` を計算し、`curveScale` は先に `Math.exp(curve)` を計算しています。
 
@@ -157,7 +157,7 @@ const grow = Math.exp(curve)
 
 ### [P2] `unitFormat` は空の unit と非空の base で format/parse が一致しない — packages/functions/src/unit.ts:164
 
-> **状況: 対応する（未対応）** — format と parse は往復するのが前提なので、片方向でしか成立しない組み合わせは直す。
+> **状況: 対応済み** — separator を parse 時に除去し、空 unit と非空 base の組み合わせを入口で拒否した。
 
 **何が問題か。** formatter は選んだ prefix が空なら数値だけを出力しますが、parser は suffix のない数値を「保存値の単位」と解釈します。
 
@@ -184,7 +184,7 @@ formatter.parse(formatter.format(1000)) // 1
 
 ### [P2] MIDI の整数制約がなく、宣言された戻り値と実行時値が一致しない — packages/functions/src/midi.ts:51
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — note/root と octave の整数・有限性を共通 validator で検証した。
 
 **何が問題か。** `number` をそのまま配列添字へ使っています。
 
@@ -219,7 +219,7 @@ return Array.from({ length: octaves }, (_, octave) =>
 
 ### [P3] 読み取り専用 tuple を `InputEventOption` として渡せない — packages/functions/src/types.ts:4
 
-> **状況: 対応する（未対応）** — `as const` で書いた設定を渡せないのは素直に不便。`readonly` を受ける形にする。
+> **状況: 対応済み** — `InputEventOption` を readonly tuple に変更した。
 
 **何が問題か。** 設定値を変更するコードはないのに、tuple が mutable として宣言されています。
 
@@ -240,7 +240,7 @@ applyDelta(value, 1, keyboard, range)
 
 ### [P3] `applyDelta` の range 検証が入力モードによって変わる — packages/functions/src/scales.ts:295
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — raw / normalized 共通で range と step を入口検証するようにした。
 
 **何が問題か。** normalized mode では scale が `min < max` を検証しますが、raw mode は検証を通らず最後の `clamp` まで進みます。
 
@@ -259,7 +259,7 @@ return clamp(toPrecision(stepped), min, max)
 
 ### [P3] `isEmpty` の引数型が実際に判定する「空」の範囲より広い — packages/functions/src/util.ts:1
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — 引数型を実際の契約である `Record<string, unknown>` に限定した。
 
 **何が問題か。** 引数は任意の `object` ですが、判定対象は enumerable な own string key だけです。
 

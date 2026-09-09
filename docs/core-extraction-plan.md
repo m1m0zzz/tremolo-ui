@@ -1180,7 +1180,7 @@ DAW のノブやフェーダーは、shift で細かく、alt（option）で既�
 
 - [x] **何を割り当てるか。** shift = 微調整（10 分の 1）を `keyboard` の既定にした。**alt = 既定値へ戻すは入れない。** 入れると `defaultValue` を Slider / XYPad / NumberInput / PointsEditor に足すことになり（今は Knob だけ）、API が 4 つ増える割に `enableDoubleClickDefault` と役割が重なる
 - [x] **XYPad / PointsEditor の shift = 軸切り替えとの衝突。** wheel には修飾キーの既定を入れないことで回避した。そもそもブラウザが shift + ホイールを横スクロールに変換するので、wheel の shift は我々のものではない
-- [x] **`InputEventOption` の形。** `InputEventOptions` という union を足した。旧来のタプルと `{ default, shift?, alt?, ctrl?, meta? }` の両方を受けるので破壊的変更にならない
+- [x] **`InputEventOption` の形。** `ModifierValue<InputEventOption>` で、タプルと `{ default, shift?, alt?, ctrl?, meta? }` の両方を受ける
 - [x] **どの層で扱うか。** wheel / keyboard は React 側のハンドラで完結する。`applyDelta` が 5 つ目の引数にイベントを取り、`selectInputEvent` が解決する。どちらも `@tremolo-ui/functions` にあるので Vue / Svelte でも使える
 - [x] 全コンポーネントで規約を揃えた
 - [ ] ~~ドラッグ中に修飾キーを押した/離した場合~~ → 5.18
@@ -1278,7 +1278,7 @@ flex コンテナの中で幅が足りないと、`flex-shrink` の既定値が 
 
 - [x] **オプションとして足した。** `InputField` の `keepCaretOnStep`。既定は off で、既存利用者の見た目は変わらない
 - [x] **小数点からの相対位置で測る。** 端からのオフセットだと、数値の桁数が変わったときに別の桁へずれる。`9.9` → `10.0` は前に 1 文字増え、`10` → `9` は減るので、**まさにステップ操作が起こす変化で壊れる**。小数点が無いときは「あるとしたらそこ」（数値部分の末尾）を使う
-- [x] **「キャレットのある桁を動かす」には踏み込まない。** 位置を保つだけ。桁を見て刻み幅を変えると `keyboard` の `InputEventOptions` と競合し、5.11 で shift に与えた意味とも二重定義になる。刻み幅は `keyboard` が決める
+- [x] **「キャレットのある桁を動かす」には踏み込まない。** 位置を保つだけ。桁を見て刻み幅を変えると `keyboard` の `ModifierValue<InputEventOption>` と競合し、5.11 で shift に与えた意味とも二重定義になる。刻み幅は `keyboard` が決める
 - [x] IME 変換中は触らない
 
 #### 復元のタイミング

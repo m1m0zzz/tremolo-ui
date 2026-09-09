@@ -1,12 +1,19 @@
 import {
   clamp,
+  dbToGain,
+  decimalPart,
+  degree,
+  gainToDb,
+  integerPart,
+  mapValue,
   normalizeValue,
+  radian,
   rawValue,
   stepValue,
+  toFixed,
   toPrecision,
-  decimalPart,
-  integerPart,
 } from '../src/math'
+import { isEmpty, mod, xor } from '../src/util'
 
 describe('unit', () => {
   test('clamp()', () => {
@@ -115,5 +122,29 @@ describe('unit', () => {
     }
     expect(raw).not.toBe(100)
     expect(clean).toBe(100)
+  })
+
+  test('the public numeric conversions have known values and round-trip', () => {
+    expect(toFixed(Math.PI, 2)).toBe(3.14)
+    expect(radian(180)).toBeCloseTo(Math.PI)
+    expect(degree(Math.PI)).toBeCloseTo(180)
+    expect(degree(radian(37))).toBeCloseTo(37)
+    expect(mapValue(0.25, 0, 1, 100, 0)).toBe(75)
+    expect(dbToGain(0)).toBe(1)
+    expect(gainToDb(1)).toBe(0)
+    expect(gainToDb(dbToGain(-18))).toBeCloseTo(-18)
+  })
+
+  test('utility helpers keep their public contracts', () => {
+    expect(mod(-13, 12)).toBe(11)
+    expect(mod(-12, 12)).toBe(0)
+    expect(isEmpty({})).toBe(true)
+    expect(isEmpty({ inherited: undefined })).toBe(false)
+    expect([
+      xor(false, false),
+      xor(false, true),
+      xor(true, false),
+      xor(true, true),
+    ]).toEqual([false, true, true, false])
   })
 })

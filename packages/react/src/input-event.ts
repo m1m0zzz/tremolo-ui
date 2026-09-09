@@ -1,4 +1,4 @@
-import type { InputEventOptions, ModifierValue } from '@tremolo-ui/functions'
+import type { InputEventOption, ModifierValue } from '@tremolo-ui/functions'
 
 /**
  * The keyboard amount used by Knob, NumberInput, Slider, and XYPad by default:
@@ -7,7 +7,7 @@ import type { InputEventOptions, ModifierValue } from '@tremolo-ui/functions'
  * A modifier entry is not snapped to `step`, which is what lets the finer
  * amount move at all — see `applyDelta` in `@tremolo-ui/functions`.
  */
-export const DEFAULT_KEYBOARD_OPTIONS: InputEventOptions = {
+export const DEFAULT_KEYBOARD_OPTIONS: ModifierValue<InputEventOption> = {
   default: ['raw', 1],
   shift: ['raw', 0.1],
 }
@@ -18,7 +18,7 @@ export const DEFAULT_KEYBOARD_OPTIONS: InputEventOptions = {
  * Browsers turn shift+wheel into horizontal scrolling, which empties `deltaY`
  * and fills `deltaX`, so no modifier is bound here.
  */
-export const DEFAULT_WHEEL_OPTIONS: InputEventOptions = ['raw', 1]
+export const DEFAULT_WHEEL_OPTIONS: ModifierValue<InputEventOption> = ['raw', 1]
 
 /**
  * The drag sensitivity used by value controls by default. Shift makes the

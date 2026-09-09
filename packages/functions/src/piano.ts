@@ -84,13 +84,44 @@ export function blackKeyWidth(layout: PianoLayout): number {
   )
 }
 
+function rawNotePosition(note: number, layout: PianoLayout): number {
+  const slot = layout.whiteKeyWidth + (layout.keyGap ?? DEFAULT_KEY_GAP)
+  const target = noteKey(note)
+  const first = noteKey(layout.noteRange.first)
+
+  const octave = Math.floor((note - layout.noteRange.first) / 12)
+  const octaveOffset =
+    noteKeys.indexOf(first) > noteKeys.indexOf(target) ? 1 : 0
+  const whiteKeysIn =
+    whiteKeysBefore[target] -
+    whiteKeysBefore[first] +
+    (octave + octaveOffset) * 7
+
+  return isBlackKey(note)
+    ? whiteKeysIn * slot - blackKeyWidth(layout) / 2
+    : whiteKeysIn * slot
+}
+
+function pianoBounds(layout: PianoLayout) {
+  const notes = getNoteRangeArray(layout.noteRange)
+  if (notes.length === 0) return { left: 0, right: 0 }
+
+  let left = Infinity
+  let right = -Infinity
+  const whiteWidth = layout.whiteKeyWidth + (layout.keyGap ?? DEFAULT_KEY_GAP)
+  for (const note of notes) {
+    const noteLeft = rawNotePosition(note, layout)
+    const width = isBlackKey(note) ? blackKeyWidth(layout) : whiteWidth
+    left = Math.min(left, noteLeft)
+    right = Math.max(right, noteLeft + width)
+  }
+  return { left, right }
+}
+
 /** Width of the whole keyboard in pixels. */
 export function pianoWidth(layout: PianoLayout): number {
-  const whiteKeys = getNoteRangeArray(layout.noteRange).filter(isWhiteKey)
-  return (
-    (layout.whiteKeyWidth + (layout.keyGap ?? DEFAULT_KEY_GAP)) *
-    whiteKeys.length
-  )
+  const { left, right } = pianoBounds(layout)
+  return right - left
 }
 
 /**
@@ -101,24 +132,7 @@ export function pianoWidth(layout: PianoLayout): number {
  * `noteRange.first`.
  */
 export function notePosition(note: number, layout: PianoLayout): number {
-  const slot = layout.whiteKeyWidth + (layout.keyGap ?? DEFAULT_KEY_GAP)
-  const target = noteKey(note)
-  const first = noteKey(layout.noteRange.first)
-
-  const octave = Math.floor((note - layout.noteRange.first) / 12)
-  // A note whose pitch class comes before the first one belongs to the octave
-  // above the one the division above gives.
-  const octaveOffset =
-    noteKeys.indexOf(first) > noteKeys.indexOf(target) ? 1 : 0
-
-  const whiteKeysIn =
-    whiteKeysBefore[target] -
-    whiteKeysBefore[first] +
-    (octave + octaveOffset) * 7
-
-  return isBlackKey(note)
-    ? whiteKeysIn * slot - blackKeyWidth(layout) / 2
-    : whiteKeysIn * slot
+  return rawNotePosition(note, layout) - pianoBounds(layout).left
 }
 
 /**
@@ -138,7 +152,7 @@ export function noteAt(
   height: number,
   layout: PianoLayout,
 ): number | null {
-  if (y < 0 || y >= height) return null
+  if (x < 0 || x >= pianoWidth(layout) || y < 0 || y >= height) return null
 
   const notes = getNoteRangeArray(layout.noteRange)
   const blackHeight =

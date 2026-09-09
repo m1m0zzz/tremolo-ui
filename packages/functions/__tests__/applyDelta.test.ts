@@ -43,6 +43,24 @@ describe('applyDelta()', () => {
     expect(applyDelta(0.5, 1, ['raw', 0.03], { min: 0, max: 1 })).toBe(0.53)
   })
 
+  test.each([
+    ['empty', { min: 10, max: 10 }],
+    ['reversed', { min: 11, max: 10 }],
+  ])('rejects an %s range in every mode', (_name, invalidRange) => {
+    expect(() => applyDelta(10, 1, ['raw', 1], invalidRange)).toThrow(
+      RangeError,
+    )
+    expect(() => applyDelta(10, 1, ['normalized', 0.1], invalidRange)).toThrow(
+      RangeError,
+    )
+  })
+
+  test.each([0, -1, NaN, Infinity])('rejects step %s', (step) => {
+    expect(() =>
+      applyDelta(10, 1, ['raw', 1], { min: 0, max: 100, step }),
+    ).toThrow(RangeError)
+  })
+
   test('applies the scale in normalized mode', () => {
     const skewed = { min: 0, max: 100, scale: skewScale(2) }
     // normalizeValue(25, 0, 100, 2) === 0.0625, +0.1875 => 0.25 => rawValue 50

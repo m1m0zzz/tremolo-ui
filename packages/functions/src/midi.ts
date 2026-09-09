@@ -21,14 +21,22 @@ export const noteKeys = [
 
 export type NoteKey = (typeof noteKeys)[number]
 
+function assertSafeInteger(value: number, name: string) {
+  if (!Number.isSafeInteger(value)) {
+    throw new RangeError(`${name}: requirements: a safe integer`)
+  }
+}
+
 export function parseNoteName(noteName: string) {
   const m = noteName.match(/^([a-g])(#{0,2}|b{0,2})(-?\d+)$/i)
   if (!m) throw new Error('Invalid note name')
   const [, letter, accidental, octave] = m
+  const parsedOctave = Number(octave)
+  assertSafeInteger(parsedOctave, 'octave')
   return {
     letter: letter.toLocaleUpperCase() as WhiteKey,
     accidental: accidental as '#' | '##' | 'b' | 'bb' | '',
-    octave: Number(octave),
+    octave: parsedOctave,
   }
 }
 
@@ -39,7 +47,9 @@ export function noteNumber(noteName: string) {
   const { letter, accidental, octave } = parseNoteName(noteName)
   const noteIndex = noteKeys.indexOf(letter.toLocaleUpperCase() as NoteKey)
   const accidentalValue = (accidental[0] === 'b' ? -1 : 1) * accidental.length
-  return noteIndex + 12 * (Number(octave) + 1) + accidentalValue
+  const result = noteIndex + 12 * (octave + 1) + accidentalValue
+  assertSafeInteger(result, 'note number')
+  return result
 }
 
 /**
@@ -49,6 +59,7 @@ export function noteNumber(noteName: string) {
  * @param noteNumber noteNumber
  */
 export function noteName(noteNumber: number): `${NoteKey}${number}` {
+  assertSafeInteger(noteNumber, 'note number')
   const noteIndex = mod(noteNumber, 12)
   const octave = Math.floor(noteNumber / 12) - 1
   return `${noteKeys[noteIndex]}${octave}`
@@ -58,6 +69,7 @@ export function noteName(noteNumber: number): `${NoteKey}${number}` {
  * Convert noteNumber to noteKey
  */
 export function noteKey(noteNumber: number): NoteKey {
+  assertSafeInteger(noteNumber, 'note number')
   return noteKeys[mod(noteNumber, 12)]
 }
 
@@ -66,6 +78,7 @@ export function noteKey(noteNumber: number): NoteKey {
  */
 export function isWhiteKey(note: number | string) {
   const n = typeof note === 'string' ? noteNumber(note) : note
+  assertSafeInteger(n, 'note number')
   return (
     mod(n, 12) === 0 ||
     mod(n, 12) === 2 ||
@@ -92,6 +105,7 @@ export function isBlackKey(note: number | string) {
  */
 export function noteToFrequency(note: number | string, detune = 0, a4 = 440) {
   const n = typeof note === 'string' ? noteNumber(note) : note
+  assertSafeInteger(n, 'note number')
   return (a4 / 32) * 2 ** ((n - 9 + detune / 100) / 12)
 }
 
@@ -148,6 +162,8 @@ export function inScale(
 ): boolean {
   const n = typeof note === 'string' ? noteNumber(note) : note
   const r = typeof root === 'string' ? noteNumber(root) : root
+  assertSafeInteger(n, 'note number')
+  assertSafeInteger(r, 'root note number')
   return (scaleIntervals[name] as readonly number[]).includes(mod(n - r, 12))
 }
 
@@ -171,6 +187,10 @@ export function scaleNotes(
   octaves = 1,
 ): number[] {
   const r = typeof root === 'string' ? noteNumber(root) : root
+  assertSafeInteger(r, 'root note number')
+  if (!Number.isSafeInteger(octaves) || octaves < 0) {
+    throw new RangeError('octaves: requirements: a non-negative safe integer')
+  }
   const intervals = scaleIntervals[name] as readonly number[]
   return Array.from({ length: octaves }, (_, octave) =>
     intervals.map((interval) => r + octave * 12 + interval),

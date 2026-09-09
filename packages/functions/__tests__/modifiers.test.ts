@@ -1,5 +1,13 @@
 import { applyDelta } from '../src/scales'
-import { selectInputEvent, type InputEventOptions } from '../src/types'
+import {
+  mapModifier,
+  selectInputEvent,
+  selectModifier,
+  type InputEventOption,
+  type ModifierValue,
+} from '../src/types'
+
+type InputOptions = ModifierValue<InputEventOption>
 
 const NONE = {
   shiftKey: false,
@@ -21,7 +29,7 @@ describe('selectInputEvent()', () => {
   })
 
   test('falls back to default when nothing is held', () => {
-    const options: InputEventOptions = {
+    const options: InputOptions = {
       default: ['raw', 1],
       shift: ['raw', 0.1],
     }
@@ -32,7 +40,7 @@ describe('selectInputEvent()', () => {
   })
 
   test('picks the entry of the modifier being held', () => {
-    const options: InputEventOptions = {
+    const options: InputOptions = {
       default: ['raw', 1],
       shift: ['raw', 0.1],
       alt: ['normalized', 0.5],
@@ -48,25 +56,28 @@ describe('selectInputEvent()', () => {
   })
 
   test('a modifier with no entry falls through to default', () => {
-    const options: InputEventOptions = {
+    const options: InputOptions = {
       default: ['raw', 1],
       shift: ['raw', 0.1],
     }
-    expect(selectInputEvent(options, held('altKey')).modifier).toBeNull()
+    expect(selectInputEvent(options, held('altKey'))).toStrictEqual({
+      option: ['raw', 1],
+      modifier: null,
+    })
   })
 
   test('two at once resolve in a fixed order, meta first', () => {
-    const options: InputEventOptions = {
+    const options: InputOptions = {
       default: ['raw', 1],
       shift: ['raw', 0.1],
       ctrl: ['raw', 10],
       meta: ['raw', 100],
     }
     expect(
-      selectInputEvent(options, held('shiftKey', 'ctrlKey')).modifier,
-    ).toBe('ctrl')
-    expect(selectInputEvent(options, held('ctrlKey', 'metaKey')).modifier).toBe(
-      'meta',
+      selectInputEvent(options, held('shiftKey', 'ctrlKey')),
+    ).toStrictEqual({ option: ['raw', 10], modifier: 'ctrl' })
+    expect(selectInputEvent(options, held('ctrlKey', 'metaKey'))).toStrictEqual(
+      { option: ['raw', 100], modifier: 'meta' },
     )
   })
 
@@ -75,11 +86,33 @@ describe('selectInputEvent()', () => {
       selectInputEvent({ default: ['raw', 1], shift: ['raw', 0.1] }),
     ).toStrictEqual({ option: ['raw', 1], modifier: null })
   })
+
+  test('keeps zero-valued modifier entries', () => {
+    expect(
+      selectModifier({ default: 1, shift: 0 }, held('shiftKey')),
+    ).toStrictEqual({ value: 0, modifier: 'shift' })
+    expect(mapModifier({ default: 1, shift: 0 }, (value) => value * 2)).toEqual(
+      {
+        default: 2,
+        shift: 0,
+      },
+    )
+  })
+
+  test('maps bare values and every configured modifier', () => {
+    expect(mapModifier(2, (value) => ['raw', value] as const)).toEqual([
+      'raw',
+      2,
+    ])
+    expect(
+      mapModifier({ default: 1, alt: 2, meta: 3 }, (value) => value + 10),
+    ).toEqual({ default: 11, alt: 12, meta: 13 })
+  })
 })
 
 describe('applyDelta() with modifiers', () => {
   const range = { min: 0, max: 10, step: 1 }
-  const options: InputEventOptions = {
+  const options: InputOptions = {
     default: ['raw', 1],
     shift: ['raw', 0.1],
   }
@@ -109,7 +142,7 @@ describe('applyDelta() with modifiers', () => {
   })
 
   test('normalized mode goes off the grid too', () => {
-    const options: InputEventOptions = {
+    const options: InputOptions = {
       default: ['normalized', 0.1],
       shift: ['normalized', 0.01],
     }
@@ -133,7 +166,7 @@ describe('applyDelta() with modifiers', () => {
 
   test('normalized mode does not accumulate either', () => {
     // Goes to a position and back, so the error arrives by a different route.
-    const options: InputEventOptions = {
+    const options: InputOptions = {
       default: ['normalized', 0.1],
       shift: ['normalized', 0.01],
     }

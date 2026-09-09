@@ -39,6 +39,22 @@ describe('unit test', () => {
     )
   })
 
+  test.each([
+    ['black key at the end', 'C4', 'D#4', 95],
+    ['black key at the start', 'C#4', 'D4', 54],
+    ['one black key', 'C#4', 'C#4', 26],
+  ])('%s has one shared origin and width', (_name, first, last, width) => {
+    const edgeLayout: PianoLayout = {
+      ...layout,
+      noteRange: { first: noteNumber(first), last: noteNumber(last) },
+    }
+    expect(pianoWidth(edgeLayout)).toBe(width)
+    expect(notePosition(noteNumber(first), edgeLayout)).toBe(0)
+    expect(noteAt(0, 10, height, edgeLayout)).toBe(noteNumber(first))
+    expect(noteAt(width - 1, 10, height, edgeLayout)).toBe(noteNumber(last))
+    expect(noteAt(width, 10, height, edgeLayout)).toBe(null)
+  })
+
   test('notePosition() places white keys one slot apart', () => {
     const first = noteNumber('C3')
     expect(notePosition(first, layout)).toBe(0)

@@ -14,7 +14,7 @@ import {
   applyDelta,
   linearScale,
   toFixed,
-  InputEventOptions,
+  type InputEventOption,
   type ModifierValue,
   selectModifier,
   xor,
@@ -75,7 +75,7 @@ export interface SliderProps {
    * wheel control option
    * If null, no event will be triggered
    */
-  wheel?: InputEventOptions | null
+  wheel?: ModifierValue<InputEventOption> | null
   /**
    * How much a drag moves the value, per modifier key.
    *
@@ -103,7 +103,7 @@ export interface SliderProps {
    *
    * If null, no event will be triggered
    */
-  keyboard?: InputEventOptions | null
+  keyboard?: ModifierValue<InputEventOption> | null
 
   /**
    * Make the slider unchangeable and remove it from the tab order.

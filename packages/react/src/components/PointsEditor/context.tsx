@@ -1,7 +1,7 @@
 import { createContext, CSSProperties, RefObject, useContext } from 'react'
 
 import type {
-  InputEventOptions,
+  InputEventOption,
   ModifierState,
   ModifierValue,
 } from '@tremolo-ui/functions'
@@ -35,9 +35,9 @@ export type PointsEditorContextValue = {
   disabled: boolean
   readonly: boolean
   /** Inherited by every `Point`; `null` turns the wheel off. */
-  wheel: InputEventOptions | null
+  wheel: ModifierValue<InputEventOption> | null
   /** Inherited by every `Point`; `null` turns the keyboard off. */
-  keyboard: InputEventOptions | null
+  keyboard: ModifierValue<InputEventOption> | null
   /** Inherited by every `Point`. See `PointsEditorProps.dragSensitivity`. */
   dragSensitivity: ModifierValue<number>
   externalStyles: {

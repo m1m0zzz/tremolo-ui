@@ -1,8 +1,12 @@
 import {
   inScale,
-  noteNumber,
+  isBlackKey,
+  isWhiteKey,
+  noteKey,
   noteName,
+  noteNumber,
   noteToFrequency,
+  parseNoteName,
   scaleIntervals,
   scaleNotes,
 } from '../src/midi'
@@ -49,6 +53,28 @@ describe('unit test', () => {
     expect(noteName(12)).toBe('C0')
     expect(noteName(0)).toBe('C-1')
     expect(noteName(-12)).toBe('C-2')
+  })
+
+  test.each([60.5, NaN, Infinity, Number.MAX_VALUE])(
+    'rejects invalid numeric note %s',
+    (note) => {
+      expect(() => noteName(note)).toThrow(RangeError)
+      expect(() => noteKey(note)).toThrow(RangeError)
+      expect(() => isWhiteKey(note)).toThrow(RangeError)
+      expect(() => isBlackKey(note)).toThrow(RangeError)
+      expect(() => noteToFrequency(note)).toThrow(RangeError)
+    },
+  )
+
+  test('parseNoteName exposes its valid structure and rejects invalid text', () => {
+    expect(parseNoteName('cb-1')).toEqual({
+      letter: 'C',
+      accidental: 'b',
+      octave: -1,
+    })
+    for (const value of ['', 'H4', 'C###4', 'C4 trailing']) {
+      expect(() => parseNoteName(value)).toThrow('Invalid note name')
+    }
   })
 
   test('noteToFrequency()', () => {
@@ -125,4 +151,11 @@ describe('unit test', () => {
       expect(inScale(note, 'D3', 'blues')).toBe(true)
     }
   })
+
+  test.each([-1, 1.5, NaN, Infinity])(
+    'scaleNotes rejects invalid octave count %s',
+    (octaves) => {
+      expect(() => scaleNotes('C3', 'major', octaves)).toThrow(RangeError)
+    },
+  )
 })

@@ -12,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 1 |
-| 対応する（未対応） | 10 |
+| 対応済み | 11 |
+| 対応する（未対応） | 0 |
 | 要判断 | 0 |
 | 対応しない | 1 |
 | 未判断 | 0 |
@@ -54,7 +54,7 @@ expect(
 
 ### [P2] 端が黒鍵のレイアウトを使わないため、幅と当たり判定の不整合を検出できない — packages/functions/__tests__/piano.test.ts:112
 
-> **状況: 対応する（未対応）** — 01 の `pianoWidth` の修正とあわせて追加する。
+> **状況: 対応済み** — 先頭・末尾が黒鍵、および黒鍵一つだけの範囲を追加した。
 
 **何が問題か。** `pianoWidth` は白鍵数だけで幅を計算しますが、黒鍵は白鍵境界から左右へ張り出します。また、`noteAt` には `x < pianoWidth(layout)` の事前判定がありません。
 
@@ -82,7 +82,7 @@ expect(noteAt(pianoWidth(layout), 80, height, layout)).toBe(null)
 
 ### [P2] `unitFormat` の往復テストが既定オプションだけで、対応していない組み合わせを見逃す — packages/functions/__tests__/unit.test.ts:79
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — unit・base・separator・prefixes・digits の組み合わせで往復を検証した。
 
 **何が問題か。** `format` と `parse` の往復テストは `unitFormat('Hz')` だけです。
 
@@ -123,7 +123,7 @@ f.parse(f.format(1000)) // 1
 
 ### [P2] skew の端点・ゼロ・非有限係数がテストされていない — packages/functions/__tests__/scales.test.ts:73
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — 端点、0、負数、NaN、Infinity を追加した。
 
 **何が問題か。** テスト対象は `skew` が `0.5`、`1`、`2` の場合だけで、helper のエラーテストも範囲外の一例だけです。
 
@@ -150,7 +150,7 @@ return Math.log(0.5) / Math.log((centerValue - min) / (max - min))
 
 ### [P2] 非線形スケールの有限な極値入力で起きる overflow が未テスト — packages/functions/__tests__/scales.test.ts:12
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — exponential の数値限界付近と curve の許容境界を追加した。
 
 **何が問題か。** 共通テストの範囲は常に `20..22000`、curve も `±4` に限定されています。
 
@@ -179,7 +179,7 @@ const grow = Math.exp(curve)
 
 ### [P2] `mapModifier` と generic な `selectModifier` の契約がテスト対象外 — packages/functions/__tests__/modifiers.test.ts:1
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — 通常値・map・0・fallback・modifier 優先順位を直接検証した。
 
 **何が問題か。** テストが import するのは `selectInputEvent` だけで、公開されている `mapModifier` と `selectModifier<T>` は直接検証されていません。
 
@@ -218,7 +218,7 @@ value !== null &&
 
 ### [P2] `applyDelta` の不正 range／step に対するモード間の差が未テスト — packages/functions/__tests__/applyDelta.test.ts:26
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — 両モードで不正 range と 0・負数・NaN の step を追加した。
 
 **何が問題か。** テストする range はすべて `min < max` で、step は正数か省略だけです。
 
@@ -247,7 +247,7 @@ const stepped = quantum ? stepValue(next, quantum) : next
 
 ### [P2] MIDI API の非整数・非有限入力と parse のエラー経路が未テスト — packages/functions/__tests__/midi.test.ts:11
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — 非整数・非有限入力、octave、parse の失敗経路を追加した。
 
 **何が問題か。** `noteName`、`noteNumber`、`scaleNotes` のテスト入力は有効な整数・文字列だけです。公開されている `parseNoteName` の失敗経路も直接テストされていません。
 
@@ -274,7 +274,7 @@ return `${noteKeys[noteIndex]}${octave}`
 
 ### [P3] 多くのテストが公開 entry point を迂回している — packages/functions/__tests__/math.test.ts:1
 
-> **状況: 対応する（未対応）** — 実装の隣のテストが対象モジュールを直接 import すること自体は方針どおり。ただし re-export の書き忘れを誰も検出しないので、`src/index.ts` の公開面を確かめるテストを 1 つ足す形にする。
+> **状況: 対応済み** — `src/index.ts` の公開 export を確認する smoke test を追加した。
 
 **何が問題か。** `math`、`midi`、`piano`、`unit` のテストは個別モジュールを直接 import しています。
 
@@ -300,7 +300,7 @@ export { ... } from './unit'
 
 ### [P3] modifier の fallback／優先順位テストが戻り値の半分しか検証していない — packages/functions/__tests__/modifiers.test.ts:50
 
-> **状況: 対応する（未対応）** — `modifier` の側を検証していない。
+> **状況: 対応済み** — fallback と優先順位について `value` と `modifier` の双方を検証した。
 
 **何が問題か。** fallback と複数 modifier のケースでは `modifier` だけを検証し、実際に選ばれた `option` を確認していません。
 
@@ -320,7 +320,7 @@ expect(
 
 ### [P3] 公開されている算術・utility helper に契約テストがない — packages/functions/__tests__/math.test.ts:1
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — 公開 arithmetic / utility helper の正常系・境界・例外契約を追加した。
 
 **何が問題か。** `math.test.ts` の import 対象は次だけです。
 
