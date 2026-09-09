@@ -109,8 +109,7 @@ export interface SliderProps {
   keyboard?: InputEventOptions | null
 
   /**
-   * Only the appearance will change.
-   * Please consider using with readonly.
+   * Make the slider unchangeable and remove it from the tab order.
    * aria-disabled property is also applied.
    */
   disabled?: boolean
@@ -189,6 +188,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
 
     // --- interpret props ---
     const externalStyles = { ...defaultExternalStyles, ..._externalStyles }
+    const inactive = disabled || readonly
 
     const p = toFixed(scale.normalize(value, min, max) * 100)
     const rev = toFixed(100 - p)
@@ -216,7 +216,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
 
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
-        if (!keyboard || !onChange || readonly) return
+        if (!keyboard || !onChange || inactive) return
         const key = event.key
         if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
           event.preventDefault()
@@ -225,7 +225,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
           onChange(applyDelta(value, direction, keyboard, axis, event))
         }
       },
-      [keyboard, onChange, readonly, reverse, value, axis],
+      [keyboard, onChange, inactive, reverse, value, axis],
     )
 
     // --- hooks ---
@@ -234,16 +234,17 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
     const { refCallback: dragRefCallback } = useDragValue<HTMLDivElement>({
       axis,
       baseElementRef: trackRef,
-      cursor: readonly ? undefined : externalStyles.cursor,
+      cursor: inactive ? undefined : externalStyles.cursor,
+      shouldStart: () => !inactive,
       sensitivity: (state) =>
         selectModifier(dragSensitivity, state.event).value,
       updateOnPointerDown: true,
       onChange: (v) => {
-        if (readonly) return
+        if (inactive) return
         onChange?.(valueOf(v))
       },
       onDragStart: (v) => {
-        if (readonly) return
+        if (inactive) return
         if (externalStyles.userSelectNone) {
           addUserSelectNone()
           hasUserSelectNone.current = true
@@ -257,14 +258,14 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
           hasUserSelectNone.current = false
           removeUserSelectNone()
         }
-        if (readonly) return
+        if (inactive) return
 
         onDragEnd?.(valueOf(v))
       },
     })
 
     const wheelRefCallback = useWheel<HTMLDivElement>((event) => {
-      if (!wheel || !onChange || readonly) return
+      if (!wheel || !onChange || inactive) return
       event.preventDefault()
       let direction
       if (!vertical && event.deltaX !== 0) {
@@ -316,13 +317,13 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
     useImperativeHandle(forwardedRef, () => {
       return {
         focus() {
-          thumbRef.current?.focus()
+          if (!disabled) thumbRef.current?.focus()
         },
         blur() {
           thumbRef.current?.blur()
         },
       }
-    }, [])
+    }, [disabled])
 
     return (
       <SliderProvider value={context}>
@@ -345,7 +346,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
             onKeyDown?.(event)
           }}
           onFocus={(event) => {
-            thumbRef.current?.focus()
+            if (!disabled) thumbRef.current?.focus()
             onFocus?.(event)
           }}
           onBlur={(event) => {

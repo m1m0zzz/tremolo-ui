@@ -132,8 +132,7 @@ export interface NumberInputProps {
   pointerLock?: boolean
 
   /**
-   * Only the appearance will change.
-   * Please consider using with readonly.
+   * Make the input unchangeable and remove it from the tab order.
    * aria-disabled property is also applied.
    */
   disabled?: boolean
@@ -218,6 +217,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
      * but the half-finished entry that has no value to be derived from yet.
      */
     const [draft, setDraft] = useState<string | null>(null)
+    const inactive = disabled || readonly
 
     // --- interpret props ---
     const format = formatProp ?? defaultFormat
@@ -263,27 +263,27 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
     // --- internal functions ---
     const handleDraft = useCallback(
       (next: string) => {
-        if (readonly) return
+        if (inactive) return
         setDraft(next)
         // Deliberately unclamped: clamping here would make "1500" impossible
         // to type into an input whose max is 100.
         const parsed = parse(next)
         if (Number.isFinite(parsed)) onChange?.(parsed)
       },
-      [readonly, parse, onChange],
+      [inactive, parse, onChange],
     )
 
     const changeValue = useCallback(
       (next: number) => {
-        if (readonly) return
+        if (inactive) return
         setDraft(null)
         if (next !== value) onChange?.(next)
       },
-      [readonly, value, onChange],
+      [inactive, value, onChange],
     )
 
     const commitDraft = useCallback(() => {
-      if (draft === null || readonly) return
+      if (draft === null || inactive) return
       const parsed = parse(draft)
       // Text with no number in it is not a value. Dropping the draft puts the
       // input back to what it was showing, rather than committing a zero the
@@ -294,7 +294,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
       }
       // `range` is already the widest possible range when clampValue is off.
       changeValue(clamp(parsed, range.min, range.max))
-    }, [draft, readonly, parse, range, changeValue])
+    }, [draft, inactive, parse, range, changeValue])
 
     const nudge = useCallback(
       (
@@ -310,7 +310,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
     // --- hooks ---
     const wheelRefCallback = useWheel<HTMLDivElement>(
       (event) => {
-        if (!wheel || readonly || event.deltaY === 0) return
+        if (!wheel || inactive || event.deltaY === 0) return
         event.preventDefault()
         nudge(-Math.sign(event.deltaY), wheel, event)
       },
@@ -374,13 +374,13 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
     useImperativeHandle(forwardedRef, () => {
       return {
         focus() {
-          inputRef.current?.focus()
+          if (!disabled) inputRef.current?.focus()
         },
         blur() {
           inputRef.current?.blur()
         },
       }
-    }, [])
+    }, [disabled])
 
     return (
       <NumberInputProvider value={context}>

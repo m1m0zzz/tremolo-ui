@@ -95,8 +95,7 @@ export interface PointsEditorProps {
   height?: number | string
 
   /**
-   * Only the appearance will change.
-   * Please consider using with readonly.
+   * Make the points unchangeable and remove them from the tab order.
    * aria-disabled property is also applied.
    */
   disabled?: boolean

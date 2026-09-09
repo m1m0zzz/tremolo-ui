@@ -27,6 +27,7 @@ export function Container({
   const {
     containerRef,
     externalStyles,
+    disabled,
     selectable,
     marquee,
     beginMarquee,
@@ -42,6 +43,7 @@ export function Container({
     // rather than in onDragStart matters: by then the container would already
     // have taken the pointer capture away from the point.
     shouldStart: (event) =>
+      !disabled &&
       !(event.target as Element | null)?.closest?.(
         '.tremolo-points-editor-point',
       ),
@@ -72,7 +74,7 @@ export function Container({
   const composedRef = useComposedRefs<HTMLDivElement>(
     ref,
     containerRef,
-    selectable ? dragRefCallback : undefined,
+    selectable && !disabled ? dragRefCallback : undefined,
   )
 
   return (

@@ -106,7 +106,15 @@ export interface XYPadProps {
     cursor?: Cursor
   }
 
+  /**
+   * Make the pad unchangeable and remove its thumb from the tab order.
+   * aria-disabled property is also applied.
+   */
   disabled?: boolean
+  /**
+   * Make the pad unchangeable while leaving its thumb focusable.
+   * aria-readonly property is also applied.
+   */
   readonly?: boolean
 
   onChange?: (value: XY<number>) => void
@@ -178,6 +186,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
 
     // --- interpret props ---
     const externalStyles = { ...defaultExternalStyles, ..._externalStyles }
+    const inactive = disabled || readonly
 
     const min = useMemo(() => toXY(_min), [_min])
     const max = useMemo(() => toXY(_max), [_max])
@@ -249,7 +258,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
 
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
-        if (!onChange || readonly || !keyboard) return
+        if (!onChange || inactive || !keyboard) return
         const key = event.key
         if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
           const i: 0 | 1 = key === 'ArrowRight' || key === 'ArrowLeft' ? 0 : 1
@@ -260,7 +269,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
           onChange(nudge(i, direction, keyboard, event))
         }
       },
-      [onChange, readonly, keyboard, reverse, nudge],
+      [onChange, inactive, keyboard, reverse, nudge],
     )
 
     // --- hooks ---
@@ -273,13 +282,14 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
       sensitivity: (state) =>
         selectModifier(dragSensitivity, state.event).value,
       updateOnPointerDown: true,
-      cursor: readonly ? undefined : externalStyles.cursor,
+      cursor: inactive ? undefined : externalStyles.cursor,
+      shouldStart: () => !inactive,
       onChange: (v) => {
-        if (readonly) return
+        if (inactive) return
         onChange?.(v)
       },
       onDragStart: (v) => {
-        if (readonly) return
+        if (inactive) return
         if (externalStyles.userSelectNone) {
           addUserSelectNone()
           hasUserSelectNone.current = true
@@ -292,13 +302,13 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
           hasUserSelectNone.current = false
           removeUserSelectNone()
         }
-        if (readonly) return
+        if (inactive) return
         onDragEnd?.(v)
       },
     })
 
     const wheelRefCallback = useWheel<HTMLDivElement>((event) => {
-      if (!onChange || readonly || !wheel) return
+      if (!onChange || inactive || !wheel) return
       // Browsers turn shift+wheel into horizontal scrolling: `deltaY` comes
       // out empty and `deltaX` carries the movement. Reading whichever axis
       // moved keeps shift working as the x-axis modifier — and picks up a
@@ -342,14 +352,14 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
     useImperativeHandle(forwardedRef, () => {
       return {
         focus() {
-          thumbRef.current?.focus()
+          if (!disabled) thumbRef.current?.focus()
         },
         blur() {
           thumbRef.current?.blur()
         },
         original: rootRef,
       }
-    }, [])
+    }, [disabled])
 
     return (
       <XYPadProvider value={context}>
@@ -367,7 +377,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
             onKeyDown?.(event)
           }}
           onFocus={(event) => {
-            thumbRef.current?.focus()
+            if (!disabled) thumbRef.current?.focus()
             onFocus?.(event)
           }}
           onBlur={(event) => {

@@ -54,23 +54,23 @@ export function Thumb({
 
   const methods = () => ({
     focus() {
-      elementRef.current?.focus()
+      if (!disabled) elementRef.current?.focus()
     },
     blur() {
       elementRef.current?.blur()
     },
   })
 
-  useImperativeHandle(ref, methods, [])
+  useImperativeHandle(ref, methods, [disabled])
   // Root focuses the thumb when a drag starts, wherever the user placed it.
-  useImperativeHandle(thumbRef, methods, [])
+  useImperativeHandle(thumbRef, methods, [disabled])
 
   return (
     <div
       ref={elementRef}
       className={cx('tremolo-xy-pad-thumb', className)}
       // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-      tabIndex={0}
+      tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled}
       aria-readonly={readonly}
       {...props}

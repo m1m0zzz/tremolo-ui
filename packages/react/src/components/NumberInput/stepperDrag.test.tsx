@@ -135,6 +135,15 @@ describe('dragging the Stepper', () => {
     expect(input().value).toBe('0')
   })
 
+  test('disabled blocks the drag', () => {
+    const { container } = render(<Subject initial={0} disabled />)
+    fakePointerCapture(container)
+
+    dragY(screen.getByTestId('stepper'), [100, 99, 89])
+
+    expect(input().value).toBe('0')
+  })
+
   test('the press that starts the drag still counts as one nudge', () => {
     const { container } = render(<Subject initial={0} />)
     fakePointerCapture(container)

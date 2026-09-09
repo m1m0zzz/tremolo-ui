@@ -45,6 +45,7 @@ export function Stepper({
   const {
     value,
     step,
+    disabled,
     readonly,
     drag,
     dragSensitivity,
@@ -52,6 +53,7 @@ export function Stepper({
     range,
     changeValue,
   } = useNumberInputContext()
+  const inactive = disabled || readonly
 
   /**
    * The sensitivity as an amount per `drag` pixels, so that the drag goes
@@ -91,15 +93,15 @@ export function Stepper({
 
   const dragRefCallback = useDrag<HTMLDivElement>({
     threshold: 1,
-    cursor: readonly ? undefined : 'ns-resize',
-    pointerLock: readonly ? false : pointerLock,
+    cursor: inactive ? undefined : 'ns-resize',
+    pointerLock: inactive ? false : pointerLock,
     onDragStart: (state) => {
       originRef.current = null
       draggingRef.current = false
       factorRef.current = selectModifier(dragSensitivity, state.event).value
     },
     onDrag: (_x, y, _dx, _dy, state) => {
-      if (readonly || drag === null) return
+      if (inactive || drag === null) return
       if (!originRef.current) {
         originRef.current = { y, value }
         previousYRef.current = y
@@ -140,7 +142,7 @@ export function Stepper({
 
   const composedRef = useComposedRefs<HTMLDivElement>(
     ref,
-    drag !== null && !readonly ? dragRefCallback : undefined,
+    drag !== null && !inactive ? dragRefCallback : undefined,
   )
 
   const context = useMemo(() => ({ draggingRef }), [])

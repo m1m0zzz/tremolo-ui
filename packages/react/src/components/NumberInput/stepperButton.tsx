@@ -33,7 +33,8 @@ export function StepperButton({
   variant: 'increment' | 'decrement'
   icon: ReactNode
 }) {
-  const { step, readonly, atMin, atMax, nudge } = useNumberInputContext()
+  const { step, disabled, readonly, atMin, atMax, nudge } =
+    useNumberInputContext()
   const stepper = useStepperContext()
 
   // Not memoized: the callback reads `draggingRef.current`, which the compiler
@@ -54,7 +55,7 @@ export function StepperButton({
       // A bare arrow has no accessible name of its own. Overridable, since a
       // caller may need it in their own language.
       aria-label={direction > 0 ? 'Increment' : 'Decrement'}
-      aria-disabled={direction > 0 ? atMax : atMin}
+      aria-disabled={disabled || (direction > 0 ? atMax : atMin)}
       // `role="button"` does not take aria-readonly, but the attribute is also
       // the documented styling hook for the state, and a read-only stepper has
       // to look like one.
@@ -62,7 +63,7 @@ export function StepperButton({
       aria-readonly={readonly}
       style={style}
       onPointerDown={(event) => {
-        if (!readonly) press(event)
+        if (!disabled && !readonly) press(event)
         onPointerDown?.(event)
       }}
       {...props}
