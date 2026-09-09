@@ -29,16 +29,16 @@ import { AnimationCanvas } from '@tremolo-ui/react'
 
 ## API
 
-ref: [AnimationCanvasProps](/docs/api/react/components/AnimationCanvas/#absolutesizingprops)
+ref: [AnimationCanvasProps](/docs/api/react/types/AnimationCanvasProps/)
 
-### [Absolute Sizing](/docs/api/react/components/AnimationCanvas/#absolutesizingprops) vs [Relative Sizing](/docs/api/react/components/AnimationCanvas/#relativesizingprops)
+### [Absolute Sizing](/docs/api/react/interfaces/AbsoluteSizingProps/) vs [Relative Sizing](/docs/api/react/interfaces/RelativeSizingProps/)
 
 
 ### Reactive Canvas
 
 By default the canvas redraws on every animation frame. When the drawing is
 driven by state rather than by time, set
-[`animate={false}`](/docs/api/react/components/AnimationCanvas/#animate): the
+[`animate={false}`](/docs/api/react/interfaces/CommonProps/#animate): the
 canvas then draws only when it has a reason to — when it mounts, when it is
 resized, and **when the component re-renders**.
 

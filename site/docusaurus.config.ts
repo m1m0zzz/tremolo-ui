@@ -26,11 +26,11 @@ function typedocPlugins() {
       'docusaurus-plugin-typedoc',
       {
         id: 'functions',
-        entryPoints: ['../packages/functions/src/!(index).ts'],
+        entryPoints: ['../packages/functions/src/index.ts'],
         tsconfig: '../packages/functions/tsconfig.json',
         out: './docs/api/functions',
         readme: 'none',
-        router: 'module',
+        router: 'kind',
         parametersFormat: 'table',
         enumMembersFormat: 'table',
         useCodeBlocks: true,
@@ -46,12 +46,11 @@ function typedocPlugins() {
       'docusaurus-plugin-typedoc',
       {
         id: 'dom',
-        entryPoints: ['../packages/dom/src/**/*.ts'],
-        exclude: ['../packages/dom/src/index.ts'],
+        entryPoints: ['../packages/dom/src/index.ts'],
         tsconfig: '../packages/dom/tsconfig.json',
         out: './docs/api/dom',
         readme: 'none',
-        router: 'module',
+        router: 'kind',
         parametersFormat: 'table',
         enumMembersFormat: 'table',
         useCodeBlocks: true,
@@ -71,28 +70,11 @@ function typedocPlugins() {
       'docusaurus-plugin-typedoc',
       {
         id: 'react',
-        entryPoints: [
-          '../packages/react/src/components/**/index.{ts,tsx}',
-          '../packages/react/src/compose-refs/index.tsx',
-          '../packages/react/src/hooks/**/*.{ts,tsx}',
-          '../packages/react/src/input-event.ts',
-        ],
-        // Docusaurus skips underscore-prefixed paths, so a page generated
-        // for one would leave the sidebar pointing at a doc id that does not
-        // exist and fail the build.
-        exclude: [
-          '../packages/react/src/components/_util/**',
-          '../packages/react/src/hooks/_internal/**',
-          // Tests and stories sit next to the code they cover. The hooks
-          // entry point takes every file in the directory, so without these
-          // they would each get an API page.
-          '../packages/react/src/**/*.test.{ts,tsx}',
-          '../packages/react/src/**/*.stories.{ts,tsx}',
-        ],
+        entryPoints: ['../packages/react/src/index.ts'],
         tsconfig: '../packages/react/tsconfig.json',
         out: './docs/api/react',
         readme: 'none',
-        router: 'module',
+        router: 'kind',
         parametersFormat: 'table',
         enumMembersFormat: 'table',
         useCodeBlocks: true,
