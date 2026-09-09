@@ -2,7 +2,7 @@ import { ComponentPropsWithoutRef, CSSProperties, ReactNode, Ref } from 'react'
 
 import { xor } from '@tremolo-ui/functions'
 
-import { useComposedRefs } from '../_util/composeRefs'
+import { useComposedRefs } from '../../compose-refs'
 import { cssLength } from '../_util/cssLength'
 import { cx } from '../_util/cx'
 import { Placement } from '../_util/placement'

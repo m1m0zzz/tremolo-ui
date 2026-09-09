@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react'
 
-import { useComposedRefs } from '../_util/composeRefs'
+import { useComposedRefs } from '../../compose-refs'
 import { cx } from '../_util/cx'
 
 import { useNumberInputContext } from './context'

@@ -2,7 +2,10 @@ import { defineConfig } from 'tsdown'
 
 export default defineConfig([
   {
-    entry: ['./src/index.ts'],
+    entry: {
+      index: './src/index.ts',
+      'compose-refs': './src/compose-refs/index.tsx',
+    },
     format: ['esm', 'cjs'],
     platform: 'neutral',
     deps: {
@@ -17,9 +20,10 @@ export default defineConfig([
       level: 'error',
     },
     attw: {
-      level: 'warn',
-      // TODO: not woring
-      excludeEntrypoints: ['**/*.css'],
+      // Public subpaths rely on `exports`; legacy node10 module resolution is
+      // outside the supported consumer configurations.
+      profile: 'node16',
+      level: 'error',
     },
   },
 ])

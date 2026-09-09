@@ -14,8 +14,8 @@ import {
   type InputEventOption,
 } from '@tremolo-ui/functions'
 
+import { useComposedRefs } from '../../compose-refs'
 import { useDrag } from '../../hooks/useDrag'
-import { useComposedRefs } from '../_util/composeRefs'
 import { cx } from '../_util/cx'
 
 import { StepperProvider, useNumberInputContext } from './context'

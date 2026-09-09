@@ -16,10 +16,10 @@ import {
   selectModifier,
 } from '@tremolo-ui/functions'
 
+import { useComposedRefs } from '../../compose-refs'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, removeUserSelectNone } from '../_util'
-import { useComposedRefs } from '../_util/composeRefs'
 import { cssLength } from '../_util/cssLength'
 import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/placement'
