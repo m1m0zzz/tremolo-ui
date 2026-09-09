@@ -1,5 +1,6 @@
 import {
   ComponentPropsWithoutRef,
+  CSSProperties,
   forwardRef,
   ReactNode,
   Ref,
@@ -22,23 +23,21 @@ import {
 } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
+import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
-import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
-import { useCheckSteps } from '../_util/checkSteps'
-import { cx } from '../_util/cx'
 import {
   DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
-} from '../_util/inputEvent'
+} from '../../input-event'
+import { cx } from '../_util/cx'
 
 import { Area } from './Area'
 import { toXY, XY, XYInput, XYPadProvider } from './context'
 import { Thumb, XYPadThumbMethods } from './Thumb'
 
 const defaultExternalStyles: XYPadProps['externalStyles'] = {
-  userSelectNone: true,
   cursor: 'pointer',
 }
 
@@ -101,9 +100,9 @@ export interface XYPadProps {
    */
   keyboard?: InputEventOptions | null
 
+  /** CSS cursor applied while dragging. */
   externalStyles?: {
-    userSelectNone?: boolean
-    cursor?: Cursor
+    cursor?: CSSProperties['cursor']
   }
 
   /**
@@ -274,8 +273,6 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
 
     // --- hooks ---
 
-    const hasUserSelectNone = useRef(false)
-
     const { refCallback: dragRefCallback } = useDragValue<HTMLDivElement>({
       axis,
       baseElementRef: areaRef,
@@ -290,18 +287,10 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
       },
       onDragStart: (v) => {
         if (inactive) return
-        if (externalStyles.userSelectNone) {
-          addUserSelectNone()
-          hasUserSelectNone.current = true
-        }
         thumbRef.current?.focus()
         onDragStart?.(v)
       },
       onDragEnd: (v) => {
-        if (hasUserSelectNone.current) {
-          hasUserSelectNone.current = false
-          removeUserSelectNone()
-        }
         if (inactive) return
         onDragEnd?.(v)
       },

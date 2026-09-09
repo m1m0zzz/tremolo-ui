@@ -21,17 +21,16 @@ import {
 } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
+import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
-import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
-import { useCheckSteps } from '../_util/checkSteps'
-import { cssLength } from '../_util/cssLength'
-import { cx } from '../_util/cx'
 import {
   DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
-} from '../_util/inputEvent'
+} from '../../input-event'
+import { cssLength } from '../_util/css-length'
+import { cx } from '../_util/cx'
 
 import { ActiveLine } from './ActiveLine'
 import { calcAngles, KnobProvider } from './context'
@@ -40,7 +39,6 @@ import { SVGRoot } from './SVGRoot'
 import { Thumb } from './Thumb'
 
 const defaultExternalStyles: KnobProps['externalStyles'] = {
-  userSelectNone: true,
   cursor: 'grabbing',
 }
 
@@ -82,13 +80,9 @@ export interface KnobProps {
    */
   size?: number | string
 
-  /**
-   * Global style to apply when dragged
-   * @default defaultExternalStyles
-   */
+  /** CSS cursor applied while dragging. */
   externalStyles?: {
-    userSelectNone?: boolean
-    cursor?: Cursor
+    cursor?: CSSProperties['cursor']
   }
   /**
    * wheel control option
@@ -254,8 +248,6 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
       [range],
     )
 
-    const hasUserSelectNone = useRef(false)
-
     const { refCallback: dragRefCallback, dragging } = useDragValue<
       HTMLElement | SVGElement
     >({
@@ -270,19 +262,6 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
       onChange: (v) => {
         if (inactive) return
         onChange?.(v[1])
-      },
-      onDragStart: () => {
-        if (readonly) return
-        if (externalStyles.userSelectNone) {
-          addUserSelectNone()
-          hasUserSelectNone.current = true
-        }
-      },
-      onDragEnd: () => {
-        if (hasUserSelectNone.current) {
-          hasUserSelectNone.current = false
-          removeUserSelectNone()
-        }
       },
     })
 

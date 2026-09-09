@@ -51,7 +51,7 @@ export {
   type DragValueMapping,
   type DragValueOptions,
   type MappingContext,
-} from './pointer/dragValue'
+} from './pointer/drag-value'
 export {
   createWheel,
   type WheelInstance,

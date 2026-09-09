@@ -21,14 +21,14 @@ import {
   type ValueRange,
 } from '@tremolo-ui/functions'
 
+import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useWheel } from '../../hooks/useWheel'
-import { useCheckSteps } from '../_util/checkSteps'
-import { cx } from '../_util/cx'
 import {
   DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
-} from '../_util/inputEvent'
+} from '../../input-event'
+import { cx } from '../_util/cx'
 
 import { NumberInputProvider } from './context'
 import { DecrementStepper } from './DecrementStepper'

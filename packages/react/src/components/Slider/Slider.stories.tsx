@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { ComponentProps, useState } from 'react'
+import { ComponentProps, useEffect, useState } from 'react'
 
 import { curveScale, curveWithCenterValue } from '@tremolo-ui/functions'
 
@@ -68,6 +68,59 @@ export const Basic: Story = {
         </Slider.Root>
         <p>value: {value}</p>
       </>
+    )
+  },
+}
+
+/**
+ * Manual browser regression check for drag selection suppression. On iOS
+ * Safari, long-pressing an unfocused slider can select surrounding text; that
+ * also happens before the React body-style guard is removed. Compare this with
+ * `main` to make sure the change does not make that existing behavior worse.
+ */
+export const SelectionSuppression: Story = {
+  args: {
+    min: 0,
+    max: 100,
+  },
+  render: (args) => {
+    const [value, setValue] = useState(50)
+    const [selection, setSelection] = useState('')
+
+    useEffect(() => {
+      const updateSelection = () => {
+        setSelection(document.getSelection()?.toString() ?? '')
+      }
+      document.addEventListener('selectionchange', updateSelection)
+      return () =>
+        document.removeEventListener('selectionchange', updateSelection)
+    }, [])
+
+    return (
+      <div style={{ maxWidth: 640, lineHeight: 1.6 }}>
+        <p>
+          Drag the slider far into this text. With a mouse, text around the
+          control should remain unselected throughout the gesture.
+        </p>
+        <Slider.Root {...args} value={value} onChange={setValue}>
+          <Slider.Track style={{ width: 240 }}>
+            <Slider.Thumb />
+          </Slider.Track>
+        </Slider.Root>
+        <p>
+          Continue dragging across this sentence and release outside the slider.
+          This text should not receive a selection highlight either.
+        </p>
+        <p>
+          Known behavior: on iOS Safari, long-pressing the slider while it is
+          unfocused can select surrounding text. The same behavior is present on
+          <code> main</code>; compare both versions to check for a regression.
+        </p>
+        <p aria-live="polite">
+          Selected text: <strong>{selection || 'none'}</strong>
+        </p>
+        <p>Value: {value}</p>
+      </div>
     )
   },
 }

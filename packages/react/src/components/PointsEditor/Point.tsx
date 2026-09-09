@@ -19,8 +19,7 @@ import {
 import { useComposedRefs } from '../../compose-refs'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
-import { addUserSelectNone, removeUserSelectNone } from '../_util'
-import { cssLength } from '../_util/cssLength'
+import { cssLength } from '../_util/css-length'
 import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/placement'
 
@@ -155,7 +154,6 @@ export function Point<T extends PointBaseType>({
 
   /** Where the pointer was when the drag started, to measure the move from. */
   const pointerOrigin = useRef<PointBaseType | null>(null)
-  const hasUserSelectNone = useRef(false)
 
   // The value is the position itself: no scaling, and no rounding to a step.
   const { refCallback: dragRefCallback, dragging } =
@@ -182,22 +180,12 @@ export function Point<T extends PointBaseType>({
         pointerOrigin.current = { x, y }
 
         if (inactive) return
-        if (externalStyles.userSelectNone) {
-          addUserSelectNone()
-          hasUserSelectNone.current = true
-        }
-
         onDragStart?.(clampPoint(value, min, max))
       },
       onDragEnd: () => {
         pointerOrigin.current = null
 
-        if (hasUserSelectNone.current) {
-          hasUserSelectNone.current = false
-          removeUserSelectNone()
-        }
         if (inactive) return
-
         onDragEnd?.(clampPoint(value, min, max))
       },
     })

@@ -22,16 +22,15 @@ import {
 } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
+import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
-import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
-import { useCheckSteps } from '../_util/checkSteps'
-import { cx } from '../_util/cx'
 import {
   DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
-} from '../_util/inputEvent'
+} from '../../input-event'
+import { cx } from '../_util/cx'
 
 import { SliderProvider } from './context'
 import { Marks } from './Marks'
@@ -40,7 +39,6 @@ import { Thumb, SliderThumbMethods } from './Thumb'
 import { Track } from './Track'
 
 const defaultExternalStyles: SliderProps['externalStyles'] = {
-  userSelectNone: true,
   cursor: 'pointer',
 }
 
@@ -69,10 +67,9 @@ export interface SliderProps {
   vertical?: boolean
   reverse?: boolean
 
-  /** Global style to apply when dragged */
+  /** CSS cursor applied while dragging. */
   externalStyles?: {
-    userSelectNone?: boolean
-    cursor?: Cursor
+    cursor?: CSSProperties['cursor']
   }
   /**
    * wheel control option
@@ -184,8 +181,6 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
     // -- state and ref ---
     const trackRef = useRef<HTMLDivElement>(null)
     const thumbRef = useRef<SliderThumbMethods>(null)
-    const hasUserSelectNone = useRef(false)
-
     // --- interpret props ---
     const externalStyles = { ...defaultExternalStyles, ..._externalStyles }
     const inactive = disabled || readonly
@@ -245,21 +240,11 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
       },
       onDragStart: (v) => {
         if (inactive) return
-        if (externalStyles.userSelectNone) {
-          addUserSelectNone()
-          hasUserSelectNone.current = true
-        }
-
         thumbRef.current?.focus()
         onDragStart?.(valueOf(v))
       },
       onDragEnd: (v) => {
-        if (hasUserSelectNone.current) {
-          hasUserSelectNone.current = false
-          removeUserSelectNone()
-        }
         if (inactive) return
-
         onDragEnd?.(valueOf(v))
       },
     })

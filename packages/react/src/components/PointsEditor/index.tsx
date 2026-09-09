@@ -19,10 +19,9 @@ import {
   toPrecision,
 } from '@tremolo-ui/functions'
 
-import { Cursor } from '../_util'
-import { cssLength } from '../_util/cssLength'
+import { DEFAULT_DRAG_SENSITIVITY } from '../../input-event'
+import { cssLength } from '../_util/css-length'
 import { cx } from '../_util/cx'
-import { DEFAULT_DRAG_SENSITIVITY } from '../_util/inputEvent'
 
 import { Background } from './Background'
 import { Container } from './Container'
@@ -105,9 +104,9 @@ export interface PointsEditorProps {
    */
   readonly?: boolean
 
+  /** CSS cursor applied while dragging a point. */
   externalStyles?: {
-    userSelectNone?: boolean
-    cursor?: Cursor
+    cursor?: CSSProperties['cursor']
   }
 
   /**
@@ -232,7 +231,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
 
     // Picked apart so that the memo below depends on values rather than on the
     // object literal a caller writes inline, which is new on every render.
-    const { userSelectNone = true, cursor = 'grabbing' } = externalStyles ?? {}
+    const { cursor = 'grabbing' } = externalStyles ?? {}
 
     // --- selection ---
     const controlled = selectionProp !== undefined
@@ -431,7 +430,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         wheel,
         keyboard,
         dragSensitivity,
-        externalStyles: { userSelectNone, cursor },
+        externalStyles: { cursor },
         containerRef,
         selectable,
         selection,
@@ -450,7 +449,6 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         wheel,
         keyboard,
         dragSensitivity,
-        userSelectNone,
         cursor,
         selectable,
         selection,

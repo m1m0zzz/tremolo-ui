@@ -83,3 +83,9 @@ export {
 } from './hooks/useMIDIInput'
 export { useMIDIMessage } from './hooks/useMIDIMessage'
 export { useWheel, type UseWheelOptions } from './hooks/useWheel'
+
+export {
+  DEFAULT_DRAG_SENSITIVITY,
+  DEFAULT_KEYBOARD_OPTIONS,
+  DEFAULT_WHEEL_OPTIONS,
+} from './input-event'

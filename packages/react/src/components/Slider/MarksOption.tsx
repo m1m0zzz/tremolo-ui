@@ -2,7 +2,7 @@ import { ComponentPropsWithoutRef, CSSProperties, useCallback } from 'react'
 
 import { toFixed, xor } from '@tremolo-ui/functions'
 
-import { cssLength } from '../_util/cssLength'
+import { cssLength } from '../_util/css-length'
 import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/placement'
 

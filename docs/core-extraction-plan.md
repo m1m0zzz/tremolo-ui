@@ -456,7 +456,7 @@ createPianoInput(element, {
 - [x] `Piano.Root` を書き直した。`key.tsx` / `KeyLabel.tsx` / `context.tsx` / `usePianoDrag.ts` / `useRefCallbackEvent.ts` を削除（`useRefCallbackEvent` は `usePianoDrag` からしか使われていなかった）
 - [x] `keyProps` / `label(note, state)` / `data-note` / `data-note-key` を実装した。**`KeyAttributes` は `Record<`data-${string}`, ...>` との交差にする必要がある**（`data-*` は JSX 構文でだけ許され、オブジェクト型としては通らない。`keyProps` の主用途がこれなので必須）
 - [x] `index.css` は変更不要だった。DOM 構造（キー → ラベル wrapper → ラベル）とクラス名・`data-active` / `aria-disabled` を維持したため
-- [x] `keyboardShortcuts.ts` の `flags.naturalOnly`（宣言だけで未実装）を削除し、`SHORTCUTS.HOME_ROW_NATURAL` を足した
+- [x] `keyboard-shortcuts.ts` の `flags.naturalOnly`（宣言だけで未実装）を削除し、`SHORTCUTS.HOME_ROW_NATURAL` を足した
 - [x] `HOME_ROW_NATURAL` の story（`NaturalShortcuts`）を足した
 - [x] `Root` の label 描画で、`''` / `null` / `undefined` はラベルの枠ごと出さない（`0` はラベルとして残す）
 - [x] `__tests__/Piano/index.test.tsx` を新設した（14 件）
@@ -675,7 +675,7 @@ export function applyDelta(
 `dom` の `AxisOptions` は `ValueRange` を継承する形にする。ドラッグとキー / ホイールが同じ型・同じ順序を通ることが型に出る（`dom` は既に `functions` に依存しているので依存の向きも問題ない）。
 
 ```ts
-// packages/dom/src/pointer/dragValue.ts
+// packages/dom/src/pointer/drag-value.ts
 export interface AxisOptions extends ValueRange {
   reverse?: boolean
 }
@@ -691,7 +691,7 @@ NumberInput は `clampValue === false` のとき `min` / `max` に `MIN/MAX_SAFE
 - **`parseValue` を 2 つに割った。** 旧 `parseValue` は `{ rawValue, formatValue, unit }` を返す parse と format の合体で、draft 方式では両者を別々に呼ぶ必要がある。`formatValue(value, units?, digit?)` と `parseValue(text, units?)` にした
 - **`selectWithFocus='number'` の実装を変えた。** 旧実装は `formatValue.length - unit.length` で単位の長さを引いていたが、任意の `format` では単位の長さが分からない。表示テキストの先頭の数値部分を正規表現で取る形にしたので、どんな format でも動く
 - **`Increment` / `DecrementStepper` に `aria-label` を付けた。** `role="button"` で中身が矢印 SVG だけのため、アクセシブルな名前が無かった（旧実装からの問題）。`{...props}` が後なので利用者が上書きできる
-- **`stepperButton.tsx` に共通化した。** `IncrementStepper` と `DecrementStepper` は「どちらへ動かすか」と「どちらの矢印か」しか違わない。`components/**/index.{ts,tsx}` だけが typedoc の entryPoint なので、この分割は API ページに影響しない
+- **`StepperButton.tsx` に共通化した。** `IncrementStepper` と `DecrementStepper` は「どちらへ動かすか」と「どちらの矢印か」しか違わない。`components/**/index.{ts,tsx}` だけが typedoc の entryPoint なので、この分割は API ページに影響しない
 - **Stepper の増減も `applyDelta` を通るので step の倍数に丸まる。** 旧実装は `value + step` をそのまま使っていた。0.5 の状態で `step=1` の + を押すと 1.5 ではなく 2 になる。Slider / Knob と同じ規則になった
 
 ##### タスク
@@ -1672,7 +1672,7 @@ prop / スタイルシート / インラインの 3 つが同じことを言う�
 - [x] **`--percent` を出した。** `Slider.Track` が「値がどこにあるか」を publish し、塗りは theme のルールになった。**CSS が自力で知りようがない数字はこれだけ**で、あとは全部 CSS 側で書ける
 - [x] **`defaultStyle` を消した。** 上を通したら要らなくなった。「自分で描く」は**降りる**のではなく**ルールを書く**ことになる
 - [x] **残す基準は「JS 側の計算が要るか」。** 値から出る位置（`Slider.Thumb` の `left`、`PointsEditor.Point` の `left` / `top`、`Slider.MarksOption` の位置、Piano の鍵盤の `left` / `width`）と、`pianoWidth(layout)` から出る Piano の `width` はインラインのまま。**これらは見た目の選択ではなく値そのもの**
-- [x] **数値はピクセルとして書く。** React は自分が知っているプロパティにしか `px` を付けないので、`--size: 50` は無効な値になる。`_util/cssLength.ts` で変換する。文字列はそのまま通すので `'3rem'` / `'100%'` / `'auto'` が効く
+- [x] **数値はピクセルとして書く。** React は自分が知っているプロパティにしか `px` を付けないので、`--size: 50` は無効な値になる。`_util/css-length.ts` で変換する。文字列はそのまま通すので `'3rem'` / `'100%'` / `'auto'` が効く
 - [x] **状態属性を 2 つ足した。** `Slider.Track` の `data-flipped`（値が向こう端から伸びる）と `Piano` の `data-fill`。塗りと高さを CSS 側で書くのに要る。`Slider.Marks` にも `data-vertical` を足した
 
 #### 副産物

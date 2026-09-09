@@ -1,12 +1,10 @@
-import { createContext, RefObject, useContext } from 'react'
+import { createContext, CSSProperties, RefObject, useContext } from 'react'
 
 import type {
   InputEventOptions,
   ModifierState,
   ModifierValue,
 } from '@tremolo-ui/functions'
-
-import { Cursor } from '../_util'
 
 import type { PointBaseType } from './Point'
 
@@ -43,8 +41,7 @@ export type PointsEditorContextValue = {
   /** Inherited by every `Point`. See `PointsEditorProps.dragSensitivity`. */
   dragSensitivity: ModifierValue<number>
   externalStyles: {
-    userSelectNone?: boolean
-    cursor?: Cursor
+    cursor?: CSSProperties['cursor']
   }
 
   /**
