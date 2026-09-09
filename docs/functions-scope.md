@@ -52,7 +52,7 @@
 
 | export | 状況 |
 | --- | --- |
-| `isEmpty` | **使用箇所ゼロ。** 公開 API に紛れ込んだだけ |
+| `isEmpty` | **削除済み。** 使用箇所ゼロで、公開 API に紛れ込んだだけだった |
 | `mod` | **使用箇所ゼロ** |
 | `SIGNIFICANT_DIGITS` | `toPrecision` の既定値。外に出す必要がない |
 | `selectInputEvent` | `applyDelta` の内部からのみ |
@@ -81,6 +81,6 @@
 
 - `ModifierValue<T>` が `default` を持つ通常オブジェクトを誤判定する（01 P2）→ 手順 3 の制約で解消
 - [x] `InputEventOptions` のエイリアス削除（同上）
-- `isEmpty` の引数型が実際より広い（01 P3）→ 手順 1 で非公開化すれば公開 API の問題ではなくなる
+- [x] `isEmpty` の引数型が実際より広い（01 P3）→ 未使用の実装と公開 export を削除した
 - 黒鍵が範囲端にあるときの `pianoWidth` の不整合（01 P2）→ 手順 2 の移動先で直す
 - テストが公開 entry point を迂回している（02 P3）→ 手順 1 で公開面が縮むので、確認するテストを足しやすくなる

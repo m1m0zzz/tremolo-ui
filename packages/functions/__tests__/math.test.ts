@@ -13,7 +13,7 @@ import {
   toFixed,
   toPrecision,
 } from '../src/math'
-import { isEmpty, mod, xor } from '../src/util'
+import { mod, xor } from '../src/util'
 
 describe('unit', () => {
   test('clamp()', () => {
@@ -138,8 +138,6 @@ describe('unit', () => {
   test('utility helpers keep their public contracts', () => {
     expect(mod(-13, 12)).toBe(11)
     expect(mod(-12, 12)).toBe(0)
-    expect(isEmpty({})).toBe(true)
-    expect(isEmpty({ inherited: undefined })).toBe(false)
     expect([
       xor(false, false),
       xor(false, true),
