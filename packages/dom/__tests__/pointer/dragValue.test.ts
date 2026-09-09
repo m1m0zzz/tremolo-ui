@@ -107,7 +107,7 @@ describe('elementMapping', () => {
   })
 
   test('ignores the drag while the base element is missing', () => {
-    const { element, onChange } = setup({
+    const { element, onChange, onDragStart, onDragEnd } = setup({
       mapping: elementMapping(() => null),
     })
 
@@ -117,8 +117,29 @@ describe('elementMapping', () => {
     element.dispatchEvent(
       pointerEvent('pointermove', { clientX: 25, clientY: 25, screenX: 25 }),
     )
+    element.dispatchEvent(pointerEvent('pointerup'))
 
     expect(onChange).not.toHaveBeenCalled()
+    expect(onDragStart).not.toHaveBeenCalled()
+    expect(onDragEnd).not.toHaveBeenCalled()
+  })
+
+  test('applies movement reported only by pointerup', () => {
+    const { element, onChange, onDragEnd } = setup()
+    element.dispatchEvent(
+      pointerEvent('pointerdown', { clientX: 0, clientY: 0 }),
+    )
+    element.dispatchEvent(
+      pointerEvent('pointerup', {
+        clientX: 40,
+        clientY: 20,
+        screenX: 40,
+        screenY: 20,
+      }),
+    )
+
+    expect(lastValue(onChange)).toEqual([40, 20])
+    expect(lastValue(onDragEnd)).toEqual([40, 20])
   })
 
   test('sensitivity turns it relative, and a plain drag is untouched', () => {
@@ -242,6 +263,35 @@ describe('elementMapping', () => {
 })
 
 describe('relativeMapping', () => {
+  test('reports the missing getValue requirement through the public API', () => {
+    const { element } = setup({ mapping: relativeMapping() })
+    const errors: Error[] = []
+    const handleError = (event: ErrorEvent) => {
+      errors.push(event.error as Error)
+      event.preventDefault()
+    }
+    window.addEventListener('error', handleError)
+
+    element.dispatchEvent(pointerEvent('pointerdown'))
+
+    window.removeEventListener('error', handleError)
+    expect(errors[0]?.message).toBe(
+      'createDragValue: getValue is required by the given mapping',
+    )
+  })
+
+  test('a zero pixel range leaves that axis fixed', () => {
+    const { element, onChange } = setup({
+      getValue: () => [25, 50],
+      mapping: relativeMapping({ pixelRange: [0, 100] }),
+    })
+    element.dispatchEvent(pointerEvent('pointerdown'))
+    element.dispatchEvent(
+      pointerEvent('pointermove', { screenX: 20, screenY: 20 }),
+    )
+
+    expect(lastValue(onChange)).toEqual([25, 70])
+  })
   test('moves the value away from where the drag started', () => {
     const { element, onChange } = setup({
       mapping: relativeMapping(),

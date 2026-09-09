@@ -12,6 +12,7 @@ export function pointerEvent(
     movementX?: number
     movementY?: number
     shiftKey?: boolean
+    button?: number
   } = {},
 ) {
   const { pointerId = 1, ...coords } = init

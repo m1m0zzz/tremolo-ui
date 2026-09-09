@@ -10,13 +10,7 @@
 
 ## 対応状況
 
-| 状況 | 件数 |
-| --- | --- |
-| 対応済み | 3 |
-| 対応する（未対応） | 14 |
-| 要判断 | 0 |
-| 対応しない | 1 |
-| 未判断 | 0 |
+各指摘の最新状況は、本文の「状況」を参照する。
 
 全 P1 / P2 / P3 を判定済み。P1 は再現の有無まで確認した。
 
@@ -24,7 +18,7 @@
 
 ### [P2] 遅れて成立した pointer lock が `pointerup` / `destroy()` 後に残る — packages/dom/src/pointer/drag.ts:287
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — 非同期 request の完了後にも drag の生存を確認し、終了済みなら成立した lock を解放するようにした。
 
 **何が問題か**
 
@@ -93,7 +87,7 @@ capture 成立時は `lostpointercapture` も監視し、追跡中の pointer �
 
 ### [P2] 右クリックや補助ボタンでもドラッグを開始する — packages/dom/src/pointer/drag.ts:246
 
-> **状況: 対応する（未対応）** — `createDrag` にボタン種別の判定が無く、`shouldStart` を渡さない限り右クリックでも開始することを確認した。React 側は誰も渡していない。
+> **状況: 対応済み** — primary button 以外の pointerdown を無視するようにした。
 
 **何が問題か**
 
@@ -117,7 +111,7 @@ opts.onDragStart?.(state(pointerEvent, pointer, 0, 0))
 
 ### [P2] `pointerup` に含まれる最後の移動を値へ反映しない — packages/dom/src/pointer/dragValue.ts:329
 
-> **状況: 対応する（未対応）** — `onDragEnd` は `lastValue` を返し、コードのコメントも「pointerup までに動いていない」と仮定している。実際には pointerup が座標を持つため、最後の移動が落ちる。
+> **状況: 対応済み** — pointerup の最終座標を mapping と `onChange` に通してから終了通知するようにした。
 
 **何が問題か**
 
@@ -152,7 +146,7 @@ const finalState = state(pointerEvent, pointer, deltaX, deltaY)
 
 ### [P2] mapping が `null` を返しても偽の drag lifecycle を通知する — packages/dom/src/pointer/dragValue.ts:321
 
-> **状況: 対応する（未対応）** — 04 のテスト側の指摘と同件。
+> **状況: 対応済み** — mapping の start が null の drag は lifecycle callback を通知しないようにした。
 
 **何が問題か**
 
@@ -375,7 +369,7 @@ globalThis.document?.addEventListener(
 
 ### [P3] `pixelRange` が 0 の軸で `NaN` / `Infinity` を生成する — packages/dom/src/pointer/dragValue.ts:177
 
-> **状況: 対応する（未対応）** — `travelled()` が `/ baseX` で割っており、0 を渡すと `Infinity` / `NaN` になることを確認した。
+> **状況: 対応済み** — pixelRange が 0 の軸は開始値のまま固定するようにした。
 
 **何が問題か**
 
@@ -448,7 +442,7 @@ destroy: () => drag.destroy()
 
 ### [P3] managed style を完全には復元できない — packages/dom/src/pointer/drag.ts:172
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — managed style を参照カウントし、最後の instance 破棄時に値と priority を復元するようにした。
 
 **何が問題か**
 
@@ -477,7 +471,7 @@ style.setProperty(property, previous)
 
 ### [P3] Wheel だけ callback を `update()` で差し替えられない — packages/dom/src/pointer/wheel.ts:49
 
-> **状況: 対応する（未対応）** — 他のコア API と揃っていない。
+> **状況: 対応済み** — `WheelOptions.onWheel` を追加し、`update()` で callback を差し替えられるようにした。
 
 **何が問題か**
 

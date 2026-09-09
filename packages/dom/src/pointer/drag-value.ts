@@ -175,8 +175,8 @@ export function relativeMapping({
   let factor = 1
 
   const travelled = (to: XY<number>, at: number): XY<number> => [
-    origin[0] + ((to[0] - anchor[0]) * at) / baseX,
-    origin[1] + ((to[1] - anchor[1]) * at) / baseY,
+    baseX === 0 ? origin[0] : origin[0] + ((to[0] - anchor[0]) * at) / baseX,
+    baseY === 0 ? origin[1] : origin[1] + ((to[1] - anchor[1]) * at) / baseY,
   ]
 
   return {
@@ -280,6 +280,7 @@ export function createDragValue(
 ): DragValueInstance {
   let opts = options
   let lastValue: XY<number> = [0, 0]
+  let active = false
 
   const axes = () => toXY(opts.axis)
 
@@ -320,21 +321,34 @@ export function createDragValue(
     shouldStart: (event) => opts.shouldStart?.(event) ?? true,
     onDragStart: (state) => {
       const position = opts.mapping.start(state, context)
-      if (position) {
-        lastValue = valueOf(position)
-        if (opts.updateOnPointerDown) opts.onChange?.(lastValue, state)
-      }
+      if (!position) return
+      active = true
+      lastValue = valueOf(position)
+      if (opts.updateOnPointerDown) opts.onChange?.(lastValue, state)
       opts.onDragStart?.(lastValue, state)
     },
     onDrag: (state) => {
+      if (!active) return
       const position = opts.mapping.move(state, context)
       if (!position) return
       lastValue = valueOf(position)
       opts.onChange?.(lastValue, state)
     },
-    // The pointer has not moved since the last reported value, so `lastValue`
-    // is where the drag ended.
-    onDragEnd: (state) => opts.onDragEnd?.(lastValue, state),
+    onDragEnd: (state) => {
+      if (!active) return
+      if (
+        state.event.type === 'pointerup' &&
+        (state.deltaX !== 0 || state.deltaY !== 0)
+      ) {
+        const position = opts.mapping.move(state, context)
+        if (position) {
+          lastValue = valueOf(position)
+          opts.onChange?.(lastValue, state)
+        }
+      }
+      active = false
+      opts.onDragEnd?.(lastValue, state)
+    },
   })
 
   return {
