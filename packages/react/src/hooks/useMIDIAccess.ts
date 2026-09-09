@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useSyncExternalStore } from 'react'
 
-import { createMIDIAccess } from '@tremolo-ui/dom'
+import {
+  createMIDIAccess,
+  type MIDIAccessInstance,
+  type MIDIAccessOptions,
+  type MIDIAccessState,
+} from '@tremolo-ui/dom'
 
 export {
   NOT_SUPPORTED,
@@ -9,6 +14,62 @@ export {
   type MIDIAccessError,
   type MIDIAccessOptions,
 } from '@tremolo-ui/dom'
+
+const INITIAL_STATE: MIDIAccessState = {
+  midiAccess: null,
+  error: null,
+  inputs: [],
+}
+
+function createMIDIAccessStore() {
+  let instance: MIDIAccessInstance | null = null
+  let unsubscribe: VoidFunction | null = null
+  let state = INITIAL_STATE
+  const listeners = new Set<VoidFunction>()
+
+  function emit() {
+    for (const listener of listeners) listener()
+  }
+
+  function connect() {
+    const nextInstance = createMIDIAccess()
+    instance = nextInstance
+    state = nextInstance.getState()
+    unsubscribe = nextInstance.subscribe(() => {
+      state = nextInstance.getState()
+      emit()
+    })
+    emit()
+    return nextInstance
+  }
+
+  function disconnect(currentInstance: MIDIAccessInstance) {
+    if (instance !== currentInstance) return
+
+    unsubscribe?.()
+    unsubscribe = null
+    instance = null
+    state = INITIAL_STATE
+    currentInstance.destroy()
+    emit()
+  }
+
+  function request(options?: MIDIAccessOptions) {
+    instance?.request(options)
+  }
+
+  return {
+    connect,
+    disconnect,
+    request,
+    getState: () => state,
+    getServerState: () => INITIAL_STATE,
+    subscribe: (listener: VoidFunction) => {
+      listeners.add(listener)
+      return () => listeners.delete(listener)
+    },
+  }
+}
 
 /**
  * Hooks for requesting MIDI access in the browser. The first argument allows you to choose whether to request access on mount.
@@ -21,21 +82,22 @@ export {
  * ask for it only when it is actually used.
  */
 export function useMIDIAccess(requestOnMount = true) {
-  const instance = useMemo(() => createMIDIAccess(), [])
+  const store = useMemo(() => createMIDIAccessStore(), [])
 
   const { midiAccess, error, inputs } = useSyncExternalStore(
-    instance.subscribe,
-    instance.getState,
-    instance.getServerState,
+    store.subscribe,
+    store.getState,
+    store.getServerState,
   )
 
   useEffect(() => {
-    if (requestOnMount) instance.request()
-  }, [instance, requestOnMount])
+    const instance = store.connect()
+    return () => store.disconnect(instance)
+  }, [store])
 
   useEffect(() => {
-    return () => instance.destroy()
-  }, [instance])
+    if (requestOnMount) store.request()
+  }, [store, requestOnMount])
 
-  return { request: instance.request, midiAccess, error, inputs }
+  return { request: store.request, midiAccess, error, inputs }
 }

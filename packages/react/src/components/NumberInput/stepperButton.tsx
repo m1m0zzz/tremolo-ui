@@ -62,7 +62,7 @@ export function StepperButton({
       aria-readonly={readonly}
       style={style}
       onPointerDown={(event) => {
-        if (!readonly) press()
+        if (!readonly) press(event)
         onPointerDown?.(event)
       }}
       {...props}
