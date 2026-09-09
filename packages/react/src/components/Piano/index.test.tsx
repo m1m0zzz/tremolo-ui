@@ -1,5 +1,5 @@
 import { act, render, screen } from '@testing-library/react'
-import { createRef } from 'react'
+import { createRef, useState } from 'react'
 
 import { inScale, noteNumber } from '@tremolo-ui/functions'
 
@@ -35,7 +35,7 @@ function setup(props: Partial<PianoProps> = {}) {
   const onStopNote = vi.fn()
   const ref = createRef<PianoMethods>()
 
-  const { container } = render(
+  const rendered = render(
     <Piano.Root
       ref={ref}
       noteRange={range}
@@ -56,7 +56,20 @@ function setup(props: Partial<PianoProps> = {}) {
   piano.getBoundingClientRect = () =>
     ({ left: 0, top: 0, width: 14 * slot, height }) as DOMRect
 
-  return { container, piano, ref, onPlayNote, onStopNote }
+  const rerender = (nextProps: Partial<PianoProps>) =>
+    rendered.rerender(
+      <Piano.Root
+        ref={ref}
+        noteRange={range}
+        data-testid="piano"
+        onPlayNote={onPlayNote}
+        onStopNote={onStopNote}
+        {...props}
+        {...nextProps}
+      />,
+    )
+
+  return { ...rendered, piano, ref, onPlayNote, onStopNote, rerender }
 }
 
 const key = (note: number) =>
@@ -64,6 +77,14 @@ const key = (note: number) =>
 
 /** The x at the middle of the nth white key of the range. */
 const whiteAt = (n: number) => n * slot + 20
+
+function dispatchKey(
+  target: EventTarget,
+  type: 'keydown' | 'keyup',
+  key: string,
+) {
+  target.dispatchEvent(new KeyboardEvent(type, { bubbles: true, key }))
+}
 
 describe('Piano', () => {
   test('draws a key per note, with the data attributes to select on', () => {
@@ -134,29 +155,165 @@ describe('Piano', () => {
   })
 
   test('keyboard shortcuts play notes', () => {
-    const { onPlayNote, onStopNote } = setup({
+    const { piano, onPlayNote, onStopNote } = setup({
       keyboardShortcuts: SHORTCUTS.HOME_ROW,
     })
 
+    expect(piano).toHaveAttribute('role', 'group')
+    expect(piano).toHaveAttribute('tabindex', '0')
+
     act(() => {
-      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'a' }))
+      piano.focus()
+      dispatchKey(piano, 'keydown', 'a')
     })
     expect(onPlayNote).toHaveBeenCalledWith(noteNumber('C3'), undefined)
     expect(key(noteNumber('C3')).getAttribute('data-active')).toBe('true')
 
     act(() => {
-      window.dispatchEvent(new KeyboardEvent('keyup', { key: 'a' }))
+      dispatchKey(piano, 'keyup', 'a')
     })
     expect(onStopNote).toHaveBeenCalledWith(noteNumber('C3'))
   })
 
-  test('HOME_ROW_NATURAL leaves the black keys silent', () => {
+  test('stops the played note when noteRange changes while a key is down', () => {
+    const { piano, onStopNote, rerender } = setup({
+      keyboardShortcuts: SHORTCUTS.HOME_ROW,
+    })
+
+    act(() => {
+      piano.focus()
+      dispatchKey(piano, 'keydown', 'a')
+    })
+
+    rerender({
+      noteRange: { first: noteNumber('C4'), last: noteNumber('B5') },
+    })
+    expect(onStopNote).toHaveBeenCalledTimes(1)
+    expect(onStopNote).toHaveBeenCalledWith(noteNumber('C3'))
+
+    act(() => dispatchKey(piano, 'keyup', 'a'))
+    expect(onStopNote).toHaveBeenCalledTimes(1)
+  })
+
+  test('stops played notes when keyboardShortcuts is removed', () => {
+    const { piano, onStopNote, rerender } = setup({
+      keyboardShortcuts: SHORTCUTS.HOME_ROW,
+    })
+
+    act(() => {
+      piano.focus()
+      dispatchKey(piano, 'keydown', 'a')
+    })
+    rerender({ keyboardShortcuts: undefined })
+
+    expect(onStopNote).toHaveBeenCalledTimes(1)
+    expect(onStopNote).toHaveBeenCalledWith(noteNumber('C3'))
+  })
+
+  test('stops every shortcut note when the window loses focus', () => {
+    const { piano, onStopNote } = setup({
+      keyboardShortcuts: SHORTCUTS.HOME_ROW,
+    })
+
+    act(() => {
+      piano.focus()
+      dispatchKey(piano, 'keydown', 'a')
+      dispatchKey(piano, 'keydown', 's')
+      window.dispatchEvent(new Event('blur'))
+    })
+
+    expect(onStopNote.mock.calls.map(([note]) => note)).toEqual([
+      noteNumber('C3'),
+      noteNumber('D3'),
+    ])
+  })
+
+  test('stops every shortcut note when unmounted', () => {
+    const { piano, onStopNote, unmount } = setup({
+      keyboardShortcuts: SHORTCUTS.HOME_ROW,
+    })
+
+    act(() => {
+      piano.focus()
+      dispatchKey(piano, 'keydown', 'a')
+    })
+    unmount()
+
+    expect(onStopNote).toHaveBeenCalledTimes(1)
+    expect(onStopNote).toHaveBeenCalledWith(noteNumber('C3'))
+  })
+
+  test('does not play shortcuts beyond noteRange.last', () => {
+    const { piano, onPlayNote } = setup({
+      noteRange: { first: noteNumber('C3'), last: noteNumber('C3') },
+      keyboardShortcuts: SHORTCUTS.HOME_ROW,
+    })
+
+    act(() => {
+      piano.focus()
+      dispatchKey(piano, 'keydown', 'w')
+    })
+    expect(onPlayNote).not.toHaveBeenCalled()
+  })
+
+  test('does not play window shortcuts from an input', () => {
     const { onPlayNote } = setup({
+      keyboardShortcuts: SHORTCUTS.HOME_ROW,
+      keyboardShortcutsScope: 'window',
+    })
+    const input = document.createElement('input')
+    document.body.appendChild(input)
+
+    act(() => {
+      input.focus()
+      dispatchKey(input, 'keydown', 'a')
+    })
+    expect(onPlayNote).not.toHaveBeenCalled()
+  })
+
+  test('listens only within the focused root by default', () => {
+    const { piano, onPlayNote } = setup({
+      keyboardShortcuts: SHORTCUTS.HOME_ROW,
+    })
+    const outside = document.createElement('button')
+    document.body.appendChild(outside)
+
+    act(() => {
+      outside.focus()
+      dispatchKey(outside, 'keydown', 'a')
+    })
+    expect(onPlayNote).not.toHaveBeenCalled()
+
+    act(() => {
+      piano.focus()
+      dispatchKey(piano, 'keydown', 'a')
+    })
+    expect(onPlayNote).toHaveBeenCalledWith(noteNumber('C3'), undefined)
+  })
+
+  test('can listen for shortcuts on the window', () => {
+    const { onPlayNote } = setup({
+      keyboardShortcuts: SHORTCUTS.HOME_ROW,
+      keyboardShortcutsScope: 'window',
+    })
+    const outside = document.createElement('button')
+    document.body.appendChild(outside)
+
+    act(() => {
+      outside.focus()
+      dispatchKey(outside, 'keydown', 'a')
+    })
+    expect(onPlayNote).toHaveBeenCalledWith(noteNumber('C3'), undefined)
+  })
+
+  test('HOME_ROW_NATURAL leaves the black keys silent', () => {
+    const { piano, onPlayNote } = setup({
       keyboardShortcuts: SHORTCUTS.HOME_ROW_NATURAL,
     })
 
     act(() => {
-      window.dispatchEvent(new KeyboardEvent('keydown', { key: 's' }))
+      piano.focus()
+      dispatchKey(piano, 'keydown', 's')
     })
     expect(onPlayNote).toHaveBeenCalledWith(noteNumber('D3'), undefined)
 
@@ -164,7 +321,7 @@ describe('Piano', () => {
     // KeyboardEvent.key can be.
     onPlayNote.mockClear()
     act(() => {
-      window.dispatchEvent(new KeyboardEvent('keydown', { key: '' }))
+      dispatchKey(piano, 'keydown', '')
     })
     expect(onPlayNote).not.toHaveBeenCalled()
   })
@@ -291,5 +448,42 @@ describe('Piano', () => {
       )
     })
     expect(onPlayNote).toHaveBeenCalledWith(noteNumber('D3'), undefined)
+  })
+
+  test('keeps a held note when the caller passes the keys inline', () => {
+    const onPlayNote = vi.fn()
+    const onStopNote = vi.fn()
+
+    function Subject() {
+      const [count, setCount] = useState(0)
+      return (
+        <>
+          <button onClick={() => setCount((c) => c + 1)}>rerender</button>
+          <span>{count}</span>
+          {/* A literal hands over a new array on every render. */}
+          <Piano.Root
+            noteRange={{ first: 60, last: 72 }}
+            keyboardShortcuts={{ keys: ['a', 'w', 's'] }}
+            onPlayNote={onPlayNote}
+            onStopNote={onStopNote}
+            data-testid="inline-keys"
+          />
+        </>
+      )
+    }
+    render(<Subject />)
+    const root = screen.getByTestId('inline-keys')
+    act(() => root.focus())
+
+    act(() => {
+      root.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'a', bubbles: true }),
+      )
+    })
+    expect(onPlayNote).toHaveBeenCalledWith(60, undefined)
+
+    act(() => screen.getByText('rerender').click())
+
+    expect(onStopNote).not.toHaveBeenCalled()
   })
 })

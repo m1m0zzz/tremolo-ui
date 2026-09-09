@@ -315,6 +315,40 @@ describe('createPianoInput', () => {
     expect(instance.activeNotes()).toEqual([])
   })
 
+  test('lowering midiMax releases every source above it', () => {
+    const { element, instance, onPlayNote, onStopNote, onActiveNotesChange } =
+      setup()
+    const note = noteNumber('B4')
+
+    element.dispatchEvent(
+      pointerEvent('pointerdown', { clientX: whiteAt(13), clientY: WHITE }),
+    )
+    instance.noteOn(note, { source: 'midi' })
+    onStopNote.mockClear()
+    onActiveNotesChange.mockClear()
+
+    instance.update({ midiMax: noteNumber('C4') })
+
+    expect(onStopNote).toHaveBeenCalledTimes(1)
+    expect(onStopNote).toHaveBeenCalledWith(note)
+    expect(onActiveNotesChange).toHaveBeenCalledTimes(1)
+    expect(onActiveNotesChange).toHaveBeenCalledWith([])
+    expect(instance.activeNotes()).toEqual([])
+
+    instance.noteOff(note, { source: 'midi' })
+    expect(onStopNote).toHaveBeenCalledTimes(1)
+
+    element.dispatchEvent(
+      pointerEvent('pointermove', { clientX: whiteAt(13), clientY: WHITE }),
+    )
+    instance.update({ midiMax: 127 })
+    element.dispatchEvent(
+      pointerEvent('pointermove', { clientX: whiteAt(13), clientY: WHITE }),
+    )
+    expect(onPlayNote).toHaveBeenCalledTimes(2)
+    expect(onPlayNote).toHaveBeenLastCalledWith(note, undefined)
+  })
+
   test('update replaces the layout without ending a drag', () => {
     const { element, instance, onPlayNote } = setup()
 

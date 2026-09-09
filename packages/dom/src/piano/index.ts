@@ -142,7 +142,7 @@ export function createPianoInput(
 
     if (previous !== undefined) noteOff(previous, { source })
 
-    if (note === null) {
+    if (note === null || note > (opts.midiMax ?? 127)) {
       pointerNotes.delete(pointerId)
     } else {
       pointerNotes.set(pointerId, note)
@@ -166,6 +166,19 @@ export function createPianoInput(
   return {
     update: (next) => {
       opts = { ...opts, ...next }
+
+      const midiMax = opts.midiMax ?? 127
+      const stoppedNotes = activeNotes().filter((note) => note > midiMax)
+      if (stoppedNotes.length === 0) return
+
+      for (const note of stoppedNotes) {
+        held.delete(note)
+        opts.onStopNote?.(note)
+      }
+      for (const [pointerId, note] of pointerNotes) {
+        if (note > midiMax) pointerNotes.delete(pointerId)
+      }
+      opts.onActiveNotesChange?.(activeNotes())
     },
     noteOn,
     noteOff,
