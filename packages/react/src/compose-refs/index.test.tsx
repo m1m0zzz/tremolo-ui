@@ -1,7 +1,7 @@
 import { act, render } from '@testing-library/react'
 import { useCallback, useRef, useState } from 'react'
 
-import { useComposedRefs } from '../../src/components/_util/composeRefs'
+import { useComposedRefs } from '.'
 
 /**
  * A composed ref must stay identical across renders. React detaches and

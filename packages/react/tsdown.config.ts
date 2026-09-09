@@ -2,7 +2,10 @@ import { defineConfig } from 'tsdown'
 
 export default defineConfig([
   {
-    entry: ['./src/index.ts'],
+    entry: {
+      index: './src/index.ts',
+      'compose-refs': './src/compose-refs/index.tsx',
+    },
     format: ['esm', 'cjs'],
     platform: 'neutral',
     deps: {

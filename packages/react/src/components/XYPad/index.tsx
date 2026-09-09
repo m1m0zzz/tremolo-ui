@@ -21,11 +21,11 @@ import {
   type Scale,
 } from '@tremolo-ui/functions'
 
+import { useComposedRefs } from '../../compose-refs'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { addUserSelectNone, Cursor, removeUserSelectNone } from '../_util'
 import { useCheckSteps } from '../_util/checkSteps'
-import { useComposedRefs } from '../_util/composeRefs'
 import { cx } from '../_util/cx'
 import {
   DEFAULT_DRAG_SENSITIVITY,

@@ -81,6 +81,16 @@
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
       }
+    },
+    "./compose-refs": {
+      "require": {
+        "types": "./dist/compose-refs.d.cts",
+        "default": "./dist/compose-refs.cjs"
+      },
+      "import": {
+        "types": "./dist/compose-refs.d.ts",
+        "default": "./dist/compose-refs.js"
+      }
     }
   }
 }
