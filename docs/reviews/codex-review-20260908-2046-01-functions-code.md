@@ -259,7 +259,7 @@ return clamp(toPrecision(stepped), min, max)
 
 ### [P3] `isEmpty` の引数型が実際に判定する「空」の範囲より広い — packages/functions/src/util.ts:1
 
-> **状況: 対応済み** — 引数型を実際の契約である `Record<string, unknown>` に限定した。
+> **状況: 対応済み** — リポジトリ内に使用箇所がなく、公開 API に残す根拠もないため、実装と export を削除した。
 
 **何が問題か。** 引数は任意の `object` ですが、判定対象は enumerable な own string key だけです。
 

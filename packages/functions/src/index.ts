@@ -69,4 +69,4 @@ export {
   type UnitFormatter,
   unitFormat,
 } from './unit'
-export { isEmpty, mod, xor } from './util'
+export { mod, xor } from './util'
