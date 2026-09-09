@@ -11,8 +11,9 @@ import {
 import {
   applyDelta,
   clamp,
-  type InputEventOptions,
+  type InputEventOption,
   type ModifierState,
+  type ModifierValue,
   selectModifier,
 } from '@tremolo-ui/functions'
 
@@ -64,9 +65,9 @@ export interface PointProps<T extends PointBaseType> {
   readonly?: boolean
 
   /** Overrides the `wheel` of `PointsEditor.Root`. */
-  wheel?: InputEventOptions | null
+  wheel?: ModifierValue<InputEventOption> | null
   /** Overrides the `keyboard` of `PointsEditor.Root`. */
-  keyboard?: InputEventOptions | null
+  keyboard?: ModifierValue<InputEventOption> | null
 
   onChange?: (value: PointBaseType) => void
   onDragStart?: (value: PointBaseType) => void
@@ -194,7 +195,7 @@ export function Point<T extends PointBaseType>({
     (
       axis: 'x' | 'y',
       direction: number,
-      option: InputEventOptions,
+      option: ModifierValue<InputEventOption>,
       modifiers: ModifierState,
     ) => {
       const next = applyDelta(value[axis], direction, option, AXIS, modifiers)

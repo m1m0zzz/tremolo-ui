@@ -1,7 +1,8 @@
 import { clamp, normalizeValue, rawValue, stepValue, toPrecision } from './math'
 import {
-  type InputEventOptions,
+  type InputEventOption,
   type ModifierState,
+  type ModifierValue,
   selectInputEvent,
 } from './types'
 
@@ -29,6 +30,12 @@ export interface Scale {
 
 function assertRange(min: number, max: number) {
   if (min >= max) throw new RangeError('requirements: min < max')
+}
+
+function assertPositiveFinite(value: number, name: string) {
+  if (!Number.isFinite(value) || value <= 0) {
+    throw new RangeError(`${name}: requirements: finite and greater than 0`)
+  }
 }
 
 /**
@@ -59,6 +66,7 @@ export const linearScale: Scale = {
  * @param skew the JUCE skew factor
  */
 export function skewScale(skew: number): Scale {
+  assertPositiveFinite(skew, 'skewScale')
   return {
     // The two expressions JUCE uses, kept verbatim so the numbers agree with
     // a NormalisableRange: pow() one way, exp(log()) the other.
@@ -84,8 +92,9 @@ export function skewWithCenterValue(
   min: number,
   max: number,
 ) {
-  if (!(min <= centerValue && centerValue <= max))
-    throw new RangeError('requirements: min <= centerValue <= max')
+  assertRange(min, max)
+  if (!(min < centerValue && centerValue < max))
+    throw new RangeError('requirements: min < centerValue < max')
   return Math.log(0.5) / Math.log((centerValue - min) / (max - min))
 }
 
@@ -106,15 +115,20 @@ export const exponentialScale: Scale = {
     // The value is clamped before the logarithm, not after: outside the range
     // the ratio can be negative, and log() would give NaN rather than a
     // position to clamp.
+    const start = Math.log(Math.abs(min))
+    const end = Math.log(Math.abs(max))
     return clamp(
-      Math.log(clamp(value, min, max) / min) / Math.log(max / min),
+      (Math.log(Math.abs(clamp(value, min, max))) - start) / (end - start),
       0,
       1,
     )
   },
   denormalize: (position, min, max) => {
     assertExponentialRange(min, max)
-    return min * Math.pow(max / min, clamp(position, 0, 1))
+    const start = Math.log(Math.abs(min))
+    const end = Math.log(Math.abs(max))
+    const magnitude = Math.exp(start + (end - start) * clamp(position, 0, 1))
+    return Math.sign(min) * magnitude
   },
 }
 
@@ -149,31 +163,40 @@ function assertExponentialRange(min: number, max: number) {
  * @param curve how hard the curve bends, and in which direction
  */
 export function curveScale(curve: number): Scale {
+  // Beyond this the flatter half of the curve no longer has enough distinct
+  // double values for normalize and denormalize to remain inverses.
+  if (!Number.isFinite(curve) || Math.abs(curve) > 32) {
+    throw new RangeError(
+      'curveScale: requirements: finite curve from -32 to 32',
+    )
+  }
   // The two coefficients blow up as the curve flattens: `a` divides by
   // 1 - e^curve, which goes to 0.
   if (Math.abs(curve) < 0.001) return linearScale
 
-  const grow = Math.exp(curve)
-
-  // value(position) = b - a * e^(curve * position), fixed so that
-  // value(0) = min and value(1) = max.
-  const coefficients = (min: number, max: number) => {
-    const a = (max - min) / (1 - grow)
-    return { a, b: min + a }
-  }
-
   return {
     normalize: (value, min, max) => {
       assertRange(min, max)
-      const { a, b } = coefficients(min, max)
-      // Clamped before the logarithm: far outside the range `(b - value) / a`
-      // turns negative and log() would give NaN.
-      return clamp(Math.log((b - clamp(value, min, max)) / a) / curve, 0, 1)
+      const proportion = clamp((value - min) / (max - min), 0, 1)
+      if (proportion === 0 || proportion === 1) return proportion
+      if (curve > 0) {
+        return (
+          1 + Math.log(proportion + (1 - proportion) * Math.exp(-curve)) / curve
+        )
+      }
+      return Math.log1p(proportion * Math.expm1(curve)) / curve
     },
     denormalize: (position, min, max) => {
       assertRange(min, max)
-      const { a, b } = coefficients(min, max)
-      return b - a * Math.pow(grow, clamp(position, 0, 1))
+      const p = clamp(position, 0, 1)
+      if (p === 0) return min
+      if (p === 1) return max
+      const proportion =
+        curve > 0
+          ? (Math.exp(curve * (p - 1)) * (1 - Math.exp(-curve * p))) /
+            (1 - Math.exp(-curve))
+          : Math.expm1(curve * p) / Math.expm1(curve)
+      return min + (max - min) * proportion
     },
   }
 }
@@ -191,6 +214,7 @@ export function curveScale(curve: number): Scale {
  * @param skew the JUCE skew factor
  */
 export function symmetricSkewScale(skew: number): Scale {
+  assertPositiveFinite(skew, 'symmetricSkewScale')
   return {
     normalize: (value, min, max) => {
       assertRange(min, max)
@@ -282,10 +306,13 @@ export interface ValueRange {
 export function applyDelta(
   value: number,
   direction: number,
-  options: InputEventOptions,
+  options: ModifierValue<InputEventOption>,
   { min, max, step, scale = linearScale }: ValueRange,
   modifiers?: ModifierState,
 ): number {
+  assertRange(min, max)
+  if (step !== undefined) assertPositiveFinite(step, 'applyDelta step')
+
   const {
     option: [mode, amount],
     modifier,
@@ -301,7 +328,7 @@ export function applyDelta(
   // does not apply to it. Without this a finer amount would round straight
   // back to where it started: `stepValue(3 + 0.1, 1)` is 3.
   const quantum = modifier === null ? step : undefined
-  const stepped = quantum ? stepValue(next, quantum) : next
+  const stepped = quantum !== undefined ? stepValue(next, quantum) : next
 
   // Rounded before the clamp, so that `min` and `max` still have the last
   // word and the value can land on them exactly. Without this the artefact

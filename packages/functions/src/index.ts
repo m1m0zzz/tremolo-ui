@@ -54,7 +54,6 @@ export {
 } from './piano'
 export {
   type InputEventOption,
-  type InputEventOptions,
   type Modifier,
   type ModifierMap,
   type ModifierState,

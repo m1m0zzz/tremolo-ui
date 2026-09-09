@@ -1,7 +1,7 @@
 /**
  * Options for setting the amount of keyboard and mouse wheel changes.
  */
-export type InputEventOption = ['normalized' | 'raw', number]
+export type InputEventOption = readonly ['normalized' | 'raw', number]
 
 /**
  * A modifier key that can carry an amount of its own.
@@ -21,7 +21,11 @@ export interface ModifierState {
 }
 
 /** One setting per modifier key, with `default` for none of them. */
-export type ModifierMap<T> = { default: T } & Partial<Record<Modifier, T>>
+type ModifierSetting = number | InputEventOption
+
+export type ModifierMap<T extends ModifierSetting> = { default: T } & Partial<
+  Record<Modifier, T>
+>
 
 /**
  * A single setting, or one per modifier key.
@@ -30,13 +34,7 @@ export type ModifierMap<T> = { default: T } & Partial<Record<Modifier, T>>
  * ['raw', 1]
  * { default: ['raw', 1], shift: ['raw', 0.1] }
  */
-export type ModifierValue<T> = T | ModifierMap<T>
-
-/**
- * How much one wheel notch or key press moves the value: a single amount, or
- * one per modifier key.
- */
-export type InputEventOptions = ModifierValue<InputEventOption>
+export type ModifierValue<T extends ModifierSetting> = T | ModifierMap<T>
 
 export interface SelectedInputEvent {
   option: InputEventOption
@@ -62,7 +60,9 @@ const MODIFIER_FLAG = {
  * A map is the only form with a `default` key, which is what tells it apart
  * from a bare setting. Tuples are arrays, so they never match.
  */
-function isModifierMap<T>(value: ModifierValue<T>): value is ModifierMap<T> {
+function isModifierMap<T extends ModifierSetting>(
+  value: ModifierValue<T>,
+): value is ModifierMap<T> {
   return (
     typeof value === 'object' &&
     value !== null &&
@@ -77,7 +77,7 @@ function isModifierMap<T>(value: ModifierValue<T>): value is ModifierMap<T> {
  * @example
  * selectModifier({ default: 1, shift: 0.1 }, event)
  */
-export function selectModifier<T>(
+export function selectModifier<T extends ModifierSetting>(
   options: ModifierValue<T>,
   modifiers?: ModifierState,
 ): { value: T; modifier: Modifier | null } {
@@ -113,10 +113,10 @@ export function selectModifier<T>(
  * mapModifier({ default: 1, shift: 0.1 }, (f) => ['raw', step * f])
  * // { default: ['raw', 1], shift: ['raw', 0.1] }
  */
-export function mapModifier<T, U>(
-  options: ModifierValue<T>,
-  fn: (value: T) => U,
-): ModifierValue<U> {
+export function mapModifier<
+  T extends ModifierSetting,
+  U extends ModifierSetting,
+>(options: ModifierValue<T>, fn: (value: T) => U): ModifierValue<U> {
   if (!isModifierMap(options)) return fn(options as T)
   const mapped = { default: fn(options.default) } as ModifierMap<U>
   for (const modifier of MODIFIER_ORDER) {
@@ -133,7 +133,7 @@ export function mapModifier<T, U>(
  * selectInputEvent({ default: ['raw', 1], shift: ['raw', 0.1] }, event)
  */
 export function selectInputEvent(
-  options: InputEventOptions,
+  options: ModifierValue<InputEventOption>,
   modifiers?: ModifierState,
 ): SelectedInputEvent {
   const { value, modifier } = selectModifier(options, modifiers)

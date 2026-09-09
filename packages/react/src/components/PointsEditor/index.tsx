@@ -13,7 +13,7 @@ import {
 
 import {
   clamp,
-  InputEventOptions,
+  type InputEventOption,
   type ModifierState,
   type ModifierValue,
   toPrecision,
@@ -75,14 +75,14 @@ TODO:
  * A point moves over 0..1 in both axes, so a nudge of 0.01 crosses the editor
  * in a hundred steps whatever its pixel size.
  */
-const DEFAULT_WHEEL: InputEventOptions = ['normalized', 0.01]
+const DEFAULT_WHEEL: ModifierValue<InputEventOption> = ['normalized', 0.01]
 
 /**
  * Shift is the fine-adjustment key everywhere else, so it is bound here too
  * — but only on the keyboard. On the wheel it already means the x axis, and
  * browsers hand shift+wheel over as horizontal scrolling anyway.
  */
-const DEFAULT_KEYBOARD: InputEventOptions = {
+const DEFAULT_KEYBOARD: ModifierValue<InputEventOption> = {
   default: ['normalized', 0.01],
   shift: ['normalized', 0.001],
 }
@@ -116,7 +116,7 @@ export interface PointsEditorProps {
    *
    * A `Point` can override it with a `wheel` of its own.
    */
-  wheel?: InputEventOptions | null
+  wheel?: ModifierValue<InputEventOption> | null
   /**
    * How much one arrow key press moves a `Point`.
    *
@@ -126,7 +126,7 @@ export interface PointsEditorProps {
    * If null, no event will be triggered.
    * A `Point` can override it with a `keyboard` of its own.
    */
-  keyboard?: InputEventOptions | null
+  keyboard?: ModifierValue<InputEventOption> | null
 
   /**
    * How much a drag moves a `Point`, per modifier key.

@@ -103,6 +103,9 @@ export function unitFormat(
   options: UnitFormatOptions = {},
 ): UnitFormatter {
   const { base = '', prefixes = true, digits, separator = '' } = options
+  if (unit === '' && base !== '') {
+    throw new RangeError('unitFormat: base requires a non-empty unit')
+  }
   const baseScale = PREFIX_SCALE.get(base) ?? 1
 
   /**
@@ -170,7 +173,11 @@ export function unitFormat(
       const number = Number(match[1])
       if (!Number.isFinite(number)) return NaN
 
-      const suffix = match[2].trim()
+      let suffix = match[2].trim()
+      const separatorText = separator.trim()
+      if (separatorText !== '' && suffix.startsWith(separatorText)) {
+        suffix = suffix.slice(separatorText.length).trim()
+      }
       // A bare number is in the unit the value is stored in, which is what
       // the input shows once the format is stripped.
       if (suffix === '') return number

@@ -13,7 +13,7 @@ import {
 import {
   applyDelta,
   clamp,
-  InputEventOptions,
+  InputEventOption,
   ModifierState,
   type ModifierValue,
   linearScale,
@@ -83,7 +83,7 @@ export interface NumberInputProps {
    * scrolling past the input does not change it.
    * If null, no event will be triggered
    */
-  wheel?: InputEventOptions | null
+  wheel?: ModifierValue<InputEventOption> | null
   /**
    * How much one arrow key press moves the value.
    *
@@ -93,7 +93,7 @@ export interface NumberInputProps {
    *
    * If null, no event will be triggered
    */
-  keyboard?: InputEventOptions | null
+  keyboard?: ModifierValue<InputEventOption> | null
   /**
    * Pixels of vertical drag on `Stepper` that move the value by one `step`.
    * If null, no event will be triggered
@@ -299,7 +299,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
     const nudge = useCallback(
       (
         direction: number,
-        option: InputEventOptions,
+        option: ModifierValue<InputEventOption>,
         modifiers?: ModifierState,
       ) => {
         changeValue(applyDelta(value, direction, option, range, modifiers))

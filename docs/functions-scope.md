@@ -23,7 +23,7 @@
 
 ### 1. 入力イベントの解釈（`types.ts` 一式 + `applyDelta`）
 
-`Modifier` `ModifierState` `ModifierMap` `ModifierValue` `InputEventOption` `InputEventOptions` `SelectedInputEvent` `selectModifier` `mapModifier` `selectInputEvent` `applyDelta`
+`Modifier` `ModifierState` `ModifierMap` `ModifierValue` `InputEventOption` `SelectedInputEvent` `selectModifier` `mapModifier` `selectInputEvent` `applyDelta`
 
 `ModifierState` は DOM イベントの修飾キーフラグそのものの形をしており、`applyDelta` は「1 ノッチ / 1 キー押下で値がどれだけ動くか」を決める。**`createDragValue` がドラッグについてやっている仕事と同じもの**が、ホイールとキーボードについてだけ `functions` にある。
 
@@ -80,7 +80,7 @@
 `docs/reviews/` の指摘のうち、この作業で一緒に片付くもの。
 
 - `ModifierValue<T>` が `default` を持つ通常オブジェクトを誤判定する（01 P2）→ 手順 3 の制約で解消
-- `InputEventOptions` のエイリアス削除（同上）→ 手順 3
+- [x] `InputEventOptions` のエイリアス削除（同上）
 - `isEmpty` の引数型が実際より広い（01 P3）→ 手順 1 で非公開化すれば公開 API の問題ではなくなる
 - 黒鍵が範囲端にあるときの `pianoWidth` の不整合（01 P2）→ 手順 2 の移動先で直す
 - テストが公開 entry point を迂回している（02 P3）→ 手順 1 で公開面が縮むので、確認するテストを足しやすくなる

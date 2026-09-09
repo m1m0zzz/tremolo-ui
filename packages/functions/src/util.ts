@@ -1,4 +1,5 @@
-export function isEmpty(obj: object) {
+/** Whether a record has no enumerable own string-keyed properties. */
+export function isEmpty(obj: Record<string, unknown>) {
   return Object.keys(obj).length === 0
 }
 

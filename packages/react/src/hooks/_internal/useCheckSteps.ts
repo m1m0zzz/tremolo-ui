@@ -3,8 +3,9 @@ import { useEffect } from 'react'
 import {
   applyDelta,
   linearScale,
-  type InputEventOptions,
+  type InputEventOption,
   type ModifierState,
+  type ModifierValue,
   type ValueRange,
 } from '@tremolo-ui/functions'
 
@@ -26,9 +27,9 @@ const MODIFIER_STATE: Record<string, ModifierState> = {
   meta: { ...NONE, metaKey: true },
 }
 
-/** Each entry of an `InputEventOptions`, as a name and the keys to hold. */
+/** Each entry of a modifier-aware input option, as a name and held keys. */
 function entries(
-  options: InputEventOptions,
+  options: ModifierValue<InputEventOption>,
 ): { name: string; modifiers: ModifierState }[] {
   if (Array.isArray(options)) return [{ name: '', modifiers: NONE }]
   return Object.keys(options).map((key) => ({
@@ -53,7 +54,7 @@ interface Outcome {
  * the pipeline is the only thing that knows how.
  */
 function probe(
-  options: InputEventOptions,
+  options: ModifierValue<InputEventOption>,
   range: ValueRange,
   format?: (value: number) => string,
 ): Outcome {
@@ -86,8 +87,8 @@ export interface CheckStepsOptions {
    * not both there.
    */
   range: ValueRange | null
-  keyboard?: InputEventOptions | null
-  wheel?: InputEventOptions | null
+  keyboard?: ModifierValue<InputEventOption> | null
+  wheel?: ModifierValue<InputEventOption> | null
   /**
    * How the value is displayed, where the component shows one. Called with
    * probe values only, and only in development.

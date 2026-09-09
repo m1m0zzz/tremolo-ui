@@ -101,6 +101,14 @@ describe('skewScale', () => {
 
   test('skewWithCenterValue rejects a centre outside the range', () => {
     expect(() => skewWithCenterValue(2000, 20, 1000)).toThrow(RangeError)
+    expect(() => skewWithCenterValue(MIN, MIN, MAX)).toThrow(RangeError)
+    expect(() => skewWithCenterValue(MAX, MIN, MAX)).toThrow(RangeError)
+    expect(() => skewWithCenterValue(10, 10, 10)).toThrow(RangeError)
+  })
+
+  test.each([0, -1, NaN, Infinity])('rejects skew %s', (skew) => {
+    expect(() => skewScale(skew)).toThrow(RangeError)
+    expect(() => symmetricSkewScale(skew)).toThrow(RangeError)
   })
 
   test('skew < 1 gives the lower end more travel', () => {
@@ -128,6 +136,13 @@ describe('exponentialScale', () => {
 
   test('works on a wholly negative range', () => {
     expect(exponentialScale.denormalize(0.5, -100, -1)).toBeCloseTo(-10, 6)
+  })
+
+  test('stays finite across the full finite exponent range', () => {
+    const min = 1e-300
+    const max = 1e300
+    expect(exponentialScale.denormalize(0.5, min, max)).toBeCloseTo(1, 12)
+    expect(exponentialScale.normalize(1, min, max)).toBeCloseTo(0.5, 12)
   })
 
   test.each([
@@ -164,6 +179,22 @@ describe('curveScale', () => {
     expect(curveScale(0).denormalize(0.25, 0, 100)).toBeCloseTo(25)
     expect(curveScale(0.0001).denormalize(0.25, 0, 100)).toBeCloseTo(25)
   })
+
+  test.each([32, -32])('curve %s stays finite and invertible', (curve) => {
+    const scale = curveScale(curve)
+    const value = scale.denormalize(0.5, 0, 100)
+    expect(value).toBeGreaterThanOrEqual(0)
+    expect(value).toBeLessThanOrEqual(100)
+    expect(Number.isFinite(value)).toBe(true)
+    expect(scale.normalize(value, 0, 100)).toBeCloseTo(0.5, 6)
+  })
+
+  test.each([33, -33, 710, -710, NaN, Infinity, -Infinity])(
+    'rejects curve %s',
+    (curve) => {
+      expect(() => curveScale(curve)).toThrow(RangeError)
+    },
+  )
 
   test('curveWithCenterValue puts the centre at half the travel', () => {
     const scale = curveScale(curveWithCenterValue(-12, -60, 6))

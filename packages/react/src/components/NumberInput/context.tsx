@@ -1,7 +1,7 @@
 import { createContext, RefObject, useContext } from 'react'
 
 import type {
-  InputEventOptions,
+  InputEventOption,
   ModifierState,
   ModifierValue,
   Scale,
@@ -32,7 +32,7 @@ export type NumberInputContextValue = {
    */
   range: ValueRange
 
-  keyboard: InputEventOptions | null
+  keyboard: ModifierValue<InputEventOption> | null
   /** Pixels of vertical drag on `Stepper` that move the value by one `step`. */
   drag: number | null
   /** How much a `Stepper` drag counts, per modifier key. */
@@ -61,7 +61,7 @@ export type NumberInputContextValue = {
   /** Moves the value by one `option` in `direction`, normally +1 or -1. */
   nudge: (
     direction: number,
-    option: InputEventOptions,
+    option: ModifierValue<InputEventOption>,
     modifiers?: ModifierState,
   ) => void
 

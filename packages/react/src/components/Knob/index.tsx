@@ -12,7 +12,7 @@ import {
 import type { AxisOptions, XY } from '@tremolo-ui/dom'
 import {
   applyDelta,
-  InputEventOptions,
+  type InputEventOption,
   type ModifierValue,
   selectModifier,
   linearScale,
@@ -88,7 +88,7 @@ export interface KnobProps {
    * wheel control option
    * If null, no event will be triggered
    */
-  wheel?: InputEventOptions | null
+  wheel?: ModifierValue<InputEventOption> | null
   /**
    * How much a drag moves the value, per modifier key.
    *
@@ -133,7 +133,7 @@ export interface KnobProps {
    *
    * If null, no event will be triggered
    */
-  keyboard?: InputEventOptions | null
+  keyboard?: ModifierValue<InputEventOption> | null
   enableDoubleClickDefault?: boolean
 
   /**

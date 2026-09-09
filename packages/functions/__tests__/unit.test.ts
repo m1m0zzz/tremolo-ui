@@ -84,6 +84,21 @@ describe('unitFormat().parse', () => {
     }
   })
 
+  test.each([
+    ['Hz', {}, 1234],
+    ['Hz', { separator: ' / ' }, 1234],
+    ['s', { base: 'm' as const }, 1500],
+    ['dB', { prefixes: false, digits: 2 }, -6.25],
+    ['%', { prefixes: false, separator: ' ' }, 75],
+  ])('round-trips %j with %j', (unit, options, value) => {
+    const { format, parse } = unitFormat(unit, options)
+    expect(parse(format(value))).toBeCloseTo(value, 9)
+  })
+
+  test('rejects a base prefix without a unit', () => {
+    expect(() => unitFormat('', { base: 'm' })).toThrow(RangeError)
+  })
+
   test('a bare number is in the unit the value is stored in', () => {
     expect(unitFormat('Hz').parse('1230')).toBe(1230)
     // Stored in ms, so 1500 is 1500ms and not 1500s.

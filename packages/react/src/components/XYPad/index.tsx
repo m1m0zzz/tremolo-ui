@@ -15,7 +15,7 @@ import {
   applyDelta,
   linearScale,
   toFixed,
-  InputEventOptions,
+  InputEventOption,
   ModifierState,
   type ModifierValue,
   selectModifier,
@@ -70,7 +70,7 @@ export interface XYPadProps {
    * browser turns shift+wheel into.
    * If null, no event will be triggered
    */
-  wheel?: InputEventOptions | null
+  wheel?: ModifierValue<InputEventOption> | null
   /**
    * How much a drag moves the value, per modifier key.
    *
@@ -98,7 +98,7 @@ export interface XYPadProps {
    *
    * If null, no event will be triggered
    */
-  keyboard?: InputEventOptions | null
+  keyboard?: ModifierValue<InputEventOption> | null
 
   /** CSS cursor applied while dragging. */
   externalStyles?: {
@@ -245,7 +245,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
       (
         i: 0 | 1,
         direction: number,
-        option: InputEventOptions,
+        option: ModifierValue<InputEventOption>,
         modifiers: ModifierState,
       ): XY<number> =>
         withAxis(
