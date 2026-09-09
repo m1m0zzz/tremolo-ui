@@ -142,7 +142,15 @@ export interface KnobProps {
   keyboard?: InputEventOptions | null
   enableDoubleClickDefault?: boolean
 
+  /**
+   * Make the knob unchangeable and remove it from the tab order.
+   * aria-disabled property is also applied.
+   */
   disabled?: boolean
+  /**
+   * Make the knob unchangeable while leaving it focusable.
+   * aria-readonly property is also applied.
+   */
   readonly?: boolean
 
   /** angle range [degree] */
@@ -213,6 +221,7 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
     const elmRef = useRef<HTMLElement | SVGElement>(null)
 
     const externalStyles = { ...defaultExternalStyles, ..._externalStyles }
+    const inactive = disabled || readonly
 
     // --- internal functions ---
     const range: ValueRange = useMemo(
@@ -224,7 +233,7 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
 
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLOrSVGElement>) => {
-        if (!keyboard || !onChange || readonly) return
+        if (!keyboard || !onChange || inactive) return
         const key = event.key
         if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
           event.preventDefault()
@@ -232,7 +241,7 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
           onChange(applyDelta(value, direction, keyboard, range, event))
         }
       },
-      [keyboard, onChange, readonly, value, range],
+      [keyboard, onChange, inactive, value, range],
     )
 
     // --- hooks ---
@@ -255,10 +264,11 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
       sensitivity: (state) =>
         selectModifier(dragSensitivity, state.event).value,
       threshold: 1,
-      cursor: readonly ? undefined : externalStyles.cursor,
-      pointerLock: readonly ? false : pointerLock,
+      cursor: inactive ? undefined : externalStyles.cursor,
+      pointerLock: inactive ? false : pointerLock,
+      shouldStart: () => !inactive,
       onChange: (v) => {
-        if (readonly) return
+        if (inactive) return
         onChange?.(v[1])
       },
       onDragStart: () => {
@@ -277,7 +287,7 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
     })
 
     const wheelRefCallback = useWheel<HTMLElement>((event) => {
-      if (!wheel || readonly) return
+      if (!wheel || inactive) return
       event.preventDefault()
       if (!onChange || event.deltaY === 0) return
       onChange(applyDelta(value, -Math.sign(event.deltaY), wheel, range, event))
@@ -299,20 +309,20 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
     useImperativeHandle(forwardedRef, () => {
       return {
         focus() {
-          elmRef.current?.focus()
+          if (!disabled) elmRef.current?.focus()
         },
         blur() {
           elmRef.current?.blur()
         },
       }
-    }, [])
+    }, [disabled])
 
     return (
       <KnobProvider value={context}>
         <div
           ref={rootRefCallback}
           className={cx('tremolo-knob', className)}
-          tabIndex={0}
+          tabIndex={disabled ? -1 : 0}
           role="slider"
           aria-valuenow={value}
           aria-valuemin={min}
@@ -328,7 +338,7 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
           }
           onPointerDown={onPointerDown}
           onDoubleClick={(event) => {
-            if (enableDoubleClickDefault && onChange) {
+            if (!inactive && enableDoubleClickDefault && onChange) {
               onChange(defaultValue)
             }
             onDoubleClick?.(event)

@@ -220,15 +220,20 @@ describe('XYPad', () => {
 
     expect(onChange).not.toHaveBeenCalled()
     expect(root.getAttribute('aria-readonly')).toBe('true')
+    expect(thumbElement()).toHaveAttribute('tabindex', '0')
   })
 
-  test('disabled only changes the appearance', () => {
+  test('disabled leaves every input inert and removes the thumb from the tab order', () => {
     const { onChange, root } = setup({ disabled: true })
 
     drag(root, { clientX: 20, clientY: 40 })
+    keyDown(root, 'ArrowRight')
+    act(() => thumbElement().focus())
+    wheel(root, { deltaY: -1 })
 
     expect(root.getAttribute('aria-disabled')).toBe('true')
-    expect(onChange).toHaveBeenCalled()
+    expect(thumbElement()).toHaveAttribute('tabindex', '-1')
+    expect(onChange).not.toHaveBeenCalled()
   })
 
   test('wheel={null} and keyboard={null} turn those inputs off', () => {

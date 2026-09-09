@@ -181,6 +181,7 @@ export function InputField({
       inputMode="decimal"
       role="spinbutton"
       value={shown}
+      disabled={disabled}
       readOnly={readonly}
       aria-disabled={disabled}
       aria-readonly={readonly}
@@ -217,6 +218,7 @@ export function InputField({
           if (blurOnEnter) event.currentTarget.blur()
         } else if (
           keyboard &&
+          !disabled &&
           !readonly &&
           (key === 'ArrowUp' || key === 'ArrowDown') &&
           // Arrow keys pick a candidate while an IME is converting. Stepping

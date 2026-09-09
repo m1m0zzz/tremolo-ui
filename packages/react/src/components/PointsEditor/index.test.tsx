@@ -185,6 +185,7 @@ describe('PointsEditor', () => {
     const { point, onChange } = setup({ readonly: true })
 
     expect(point.getAttribute('aria-readonly')).toBe('true')
+    expect(point).toHaveAttribute('tabindex', '0')
     drag(point, { clientX: 50, clientY: 25 })
     expect(onChange).not.toHaveBeenCalled()
   })
@@ -200,10 +201,26 @@ describe('PointsEditor', () => {
     expect(onChange).toHaveBeenCalled()
   })
 
-  test('disabled reaches the points, and only changes the appearance', () => {
+  test('disabled reaches the points and leaves every input inert', () => {
     const { point, onChange } = setup({ disabled: true })
 
     expect(point.getAttribute('aria-disabled')).toBe('true')
+    drag(point, { clientX: 50, clientY: 25 })
+    keyDown(point, 'ArrowRight')
+    act(() => (point as HTMLElement).focus())
+    wheel(point, { deltaY: -1 })
+
+    expect(point).toHaveAttribute('tabindex', '-1')
+    expect(onChange).not.toHaveBeenCalled()
+  })
+
+  test('a point can override the disabled state of Root', () => {
+    const { point, onChange } = setup({
+      disabled: true,
+      point: { disabled: false },
+    })
+
+    expect(point.getAttribute('aria-disabled')).toBe('false')
     drag(point, { clientX: 50, clientY: 25 })
     expect(onChange).toHaveBeenCalled()
   })

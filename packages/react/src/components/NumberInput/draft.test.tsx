@@ -196,9 +196,41 @@ describe('value changes', () => {
 
     fireEvent.keyDown(input(), { key: 'ArrowUp' })
     fireEvent.change(input(), { target: { value: '9' } })
+    fireEvent.pointerDown(screen.getByRole('button', { name: 'Increment' }))
+    input().focus()
+    fireEvent.wheel(input().closest('.tremolo-number-input')!, { deltaY: -1 })
 
     expect(onChange).not.toHaveBeenCalled()
     expect(input().value).toBe('5')
+    expect(input()).not.toBeDisabled()
+  })
+
+  test('disabled blocks every path and disables the native input', () => {
+    const onChange = vi.fn()
+    render(
+      <Subject initial={5} min={0} max={10} disabled onChange={onChange} />,
+    )
+
+    fireEvent.keyDown(input(), { key: 'ArrowUp' })
+    fireEvent.change(input(), { target: { value: '9' } })
+    const increment = screen.getByRole('button', { name: 'Increment' })
+    fireEvent.pointerDown(increment)
+    increment.focus()
+    fireEvent.wheel(input().closest('.tremolo-number-input')!, { deltaY: -1 })
+
+    expect(onChange).not.toHaveBeenCalled()
+    expect(input().value).toBe('5')
+    expect(input()).toBeDisabled()
+    expect(increment).toHaveAttribute('aria-disabled', 'true')
+  })
+
+  test('the wheel steps an enabled, writable input', () => {
+    render(<Subject initial={5} min={0} max={10} />)
+
+    input().focus()
+    fireEvent.wheel(input().closest('.tremolo-number-input')!, { deltaY: -1 })
+
+    expect(input().value).toBe('6')
   })
 })
 

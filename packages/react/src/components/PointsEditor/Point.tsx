@@ -126,6 +126,7 @@ export function Point<T extends PointBaseType>({
 
   const disabled = _disabled ?? rootDisabled
   const readonly = _readonly ?? rootReadonly
+  const inactive = disabled || readonly
   // `null` means "no event" and has to survive the fallback, so `??` is not
   // enough: only an omitted prop inherits from the root.
   const wheel = _wheel === undefined ? rootWheel : _wheel
@@ -143,11 +144,11 @@ export function Point<T extends PointBaseType>({
     value,
     min,
     max,
-    readonly,
+    readonly: inactive,
     onChange,
   })
   useEffect(() => {
-    registration.current = { value, min, max, readonly, onChange }
+    registration.current = { value, min, max, readonly: inactive, onChange }
   })
 
   useEffect(() => registerPoint(id, registration), [id, registerPoint])
@@ -163,7 +164,8 @@ export function Point<T extends PointBaseType>({
       baseElementRef: containerRef,
       sensitivity: (state) =>
         selectModifier(dragSensitivity, state.event).value,
-      cursor: readonly ? undefined : externalStyles.cursor,
+      cursor: inactive ? undefined : externalStyles.cursor,
+      shouldStart: () => !disabled,
       // The value is a move rather than a position: the point keeps the offset
       // it was grabbed at, and everything else selected moves with it by the
       // same amount.
@@ -179,7 +181,7 @@ export function Point<T extends PointBaseType>({
         beginPointDrag(id, state.event)
         pointerOrigin.current = { x, y }
 
-        if (readonly) return
+        if (inactive) return
         if (externalStyles.userSelectNone) {
           addUserSelectNone()
           hasUserSelectNone.current = true
@@ -194,7 +196,7 @@ export function Point<T extends PointBaseType>({
           hasUserSelectNone.current = false
           removeUserSelectNone()
         }
-        if (readonly) return
+        if (inactive) return
 
         onDragEnd?.(clampPoint(value, min, max))
       },
@@ -227,7 +229,7 @@ export function Point<T extends PointBaseType>({
   // point would match the container's focus and they would all move at once.
   useWheel(
     (event) => {
-      if (!onChange || readonly || !wheel) return
+      if (!onChange || inactive || !wheel) return
       if (!element || element.ownerDocument.activeElement !== element) return
       event.preventDefault()
       // Scrolling up moves the point towards y = 0; shift switches to x.
@@ -251,7 +253,7 @@ export function Point<T extends PointBaseType>({
   )
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (!onChange || readonly || !keyboard) return
+    if (!onChange || inactive || !keyboard) return
     const key = event.key
     if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
       event.preventDefault()
@@ -270,7 +272,7 @@ export function Point<T extends PointBaseType>({
       ref={refCallback}
       className={cx('tremolo-points-editor-point', className)}
       // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-      tabIndex={0}
+      tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled}
       aria-readonly={readonly}
       data-dragging={dragging}
