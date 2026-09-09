@@ -57,6 +57,9 @@ function drag(
       root.dispatchEvent(pointerEvent('pointermove', point))
     })
   }
+  act(() => {
+    root.dispatchEvent(pointerEvent('pointerup', points.at(-1)))
+  })
 }
 
 function SliderSubject(props: { vertical?: boolean; reverse?: boolean }) {
@@ -166,12 +169,18 @@ describe('Knob', () => {
     fakeLayout(container)
     const root = getByTestId('root')
 
-    drag(root, [{ screenX: 0, screenY: 0 }, { screenY: -30 }])
+    act(() => {
+      root.dispatchEvent(
+        pointerEvent('pointerdown', { screenX: 0, screenY: 0 }),
+      )
+      root.dispatchEvent(pointerEvent('pointermove', { screenY: -30 }))
+    })
     expect(root.dataset.value).toBe('80')
 
     // The origin of the drag is kept, so coming back returns to the start.
     act(() => {
       root.dispatchEvent(pointerEvent('pointermove', { screenY: 0 }))
+      root.dispatchEvent(pointerEvent('pointerup', { screenY: 0 }))
     })
     expect(root.dataset.value).toBe('50')
   })

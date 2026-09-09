@@ -178,6 +178,37 @@ describe('createDrag', () => {
     expect(onDragEnd).toHaveBeenCalledTimes(1)
   })
 
+  test('losing pointer capture ends the drag exactly once', () => {
+    const { element, onDrag, onDragEnd } = setup({ cursor: 'grabbing' })
+    const releasePointerCapture = vi.spyOn(element, 'releasePointerCapture')
+
+    element.dispatchEvent(
+      pointerEvent('pointerdown', { screenX: 0, screenY: 0 }),
+    )
+    element.releasePointerCapture(1)
+    element.dispatchEvent(pointerEvent('lostpointercapture'))
+
+    expect(onDragEnd).toHaveBeenCalledTimes(1)
+    expect(releasePointerCapture).toHaveBeenCalledTimes(1)
+    expect(element.style.cursor).toBe('')
+
+    const select = new Event('selectstart', {
+      bubbles: true,
+      cancelable: true,
+    })
+    document.dispatchEvent(select)
+    expect(select.defaultPrevented).toBe(false)
+
+    element.dispatchEvent(
+      pointerEvent('pointerup', { screenX: 10, screenY: 0 }),
+    )
+    element.dispatchEvent(
+      pointerEvent('pointermove', { screenX: 10, screenY: 0 }),
+    )
+    expect(onDragEnd).toHaveBeenCalledTimes(1)
+    expect(onDrag).not.toHaveBeenCalled()
+  })
+
   test('onDragEnd does not fire without a preceding pointerdown', () => {
     const { element, onDragEnd } = setup()
     element.dispatchEvent(
@@ -306,16 +337,21 @@ describe('createDrag', () => {
     expect(element.style.getPropertyValue('user-select')).toBe('text')
   })
 
-  test('destroy during a drag stops tracking', () => {
-    const { element, instance, onDrag } = setup()
+  test('destroy during a drag ends it and stops tracking', () => {
+    const { element, instance, onDrag, onDragEnd } = setup()
     element.dispatchEvent(
       pointerEvent('pointerdown', { screenX: 0, screenY: 0 }),
     )
     instance.destroy()
+    expect(onDragEnd).toHaveBeenCalledTimes(1)
+
     element.dispatchEvent(
       pointerEvent('pointermove', { screenX: 50, screenY: 0 }),
     )
     expect(onDrag).not.toHaveBeenCalled()
+
+    instance.destroy()
+    expect(onDragEnd).toHaveBeenCalledTimes(1)
   })
 
   test('falls back to the window when pointer capture is unavailable', () => {
@@ -441,7 +477,9 @@ describe('createDrag', () => {
     })
 
     test('destroy ends every pointer', () => {
-      const { element, instance, onDrag } = setup({ multiPointer: true })
+      const { element, instance, onDrag, onDragEnd } = setup({
+        multiPointer: true,
+      })
 
       element.dispatchEvent(pointerEvent('pointerdown', { pointerId: 1 }))
       element.dispatchEvent(pointerEvent('pointerdown', { pointerId: 2 }))
@@ -454,6 +492,9 @@ describe('createDrag', () => {
         pointerEvent('pointermove', { pointerId: 2, screenX: 50 }),
       )
       expect(onDrag).not.toHaveBeenCalled()
+      expect(onDragEnd.mock.calls.map(([state]) => state.pointerId)).toEqual([
+        1, 2,
+      ])
     })
 
     test('update cannot switch multiPointer off', () => {

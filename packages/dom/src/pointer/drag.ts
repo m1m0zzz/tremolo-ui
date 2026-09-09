@@ -88,6 +88,10 @@ export type DragOptions = {
 
   onDragStart?: (state: DragState) => void
   onDrag?: (state: DragState) => void
+  /**
+   * Called exactly once for every drag that starts, whether tracking ends by
+   * pointer release, cancellation, capture or lock loss, or destruction.
+   */
   onDragEnd?: (state: DragState) => void
 }
 
@@ -100,6 +104,7 @@ export interface DragInstance {
    * here.
    */
   update: (options: DragOptions) => void
+  /** End any active drags before removing the instance. */
   destroy: () => void
 }
 
@@ -187,6 +192,7 @@ export function createDrag(
   let previousCursor: string | undefined
   /** The pointer that asked for the lock, while it is still down. */
   let lockedPointerId: number | null = null
+  let destroyed = false
 
   function state(
     event: PointerEvent,
@@ -227,6 +233,9 @@ export function createDrag(
       target.addEventListener('pointermove', handlePointerMove)
       target.addEventListener('pointerup', handlePointerUp)
       target.addEventListener('pointercancel', handlePointerUp)
+      if (target === element) {
+        target.addEventListener('lostpointercapture', handleLostPointerCapture)
+      }
     }
     targets.set(target, count + 1)
   }
@@ -240,6 +249,9 @@ export function createDrag(
     target.removeEventListener('pointermove', handlePointerMove)
     target.removeEventListener('pointerup', handlePointerUp)
     target.removeEventListener('pointercancel', handlePointerUp)
+    if (target === element) {
+      target.removeEventListener('lostpointercapture', handleLostPointerCapture)
+    }
     targets.delete(target)
   }
 
@@ -358,22 +370,33 @@ export function createDrag(
     // fullscreen. No pointerup is coming, so the drag ends here rather than
     // hanging on with a pointer nobody can see.
     if (pointer.lockBaseX === undefined) return
-    const finalState = state(pointer.lastEvent, pointer, 0, 0)
-    const pointerId = lockedPointerId
-    stopTracking(pointerId)
-    opts.onDragEnd?.(finalState)
+    finishDrag(lockedPointerId)
   }
 
   function handlePointerUp(event: Event) {
     const pointerEvent = event as PointerEvent
-    const pointer = pointers.get(pointerEvent.pointerId)
+    finishDrag(pointerEvent.pointerId, pointerEvent)
+  }
+
+  function handleLostPointerCapture(event: Event) {
+    const pointerEvent = event as PointerEvent
+    finishDrag(pointerEvent.pointerId)
+  }
+
+  function finishDrag(pointerId: number, event?: PointerEvent) {
+    const pointer = pointers.get(pointerId)
     if (!pointer) return
 
-    const deltaX = pointerEvent.screenX - pointer.lastX
-    const deltaY = pointerEvent.screenY - pointer.lastY
-    const finalState = state(pointerEvent, pointer, deltaX, deltaY)
+    const finalState = event
+      ? state(
+          event,
+          pointer,
+          event.screenX - pointer.lastX,
+          event.screenY - pointer.lastY,
+        )
+      : state(pointer.lastEvent, pointer, 0, 0)
 
-    stopTracking(pointerEvent.pointerId)
+    stopTracking(pointerId)
     opts.onDragEnd?.(finalState)
   }
 
@@ -381,9 +404,16 @@ export function createDrag(
     const pointer = pointers.get(pointerId)
     if (!pointer) return
 
-    capture.releasePointerCapture?.(pointerId)
-    releaseTarget(pointer.moveTarget)
     pointers.delete(pointerId)
+    releaseTarget(pointer.moveTarget)
+    try {
+      if (capture.hasPointerCapture?.(pointerId) === true) {
+        capture.releasePointerCapture?.(pointerId)
+      }
+    } catch {
+      // The capture may disappear between checking and releasing it. Tracking
+      // is already cleared, so the drag still ends normally.
+    }
 
     if (lockedPointerId === pointerId) {
       lockedPointerId = null
@@ -409,8 +439,10 @@ export function createDrag(
       opts = { ...opts, ...next, multiPointer }
     },
     destroy: () => {
-      for (const pointerId of [...pointers.keys()]) stopTracking(pointerId)
+      if (destroyed) return
+      destroyed = true
       element.removeEventListener('pointerdown', handlePointerDown)
+      for (const pointerId of [...pointers.keys()]) finishDrag(pointerId)
       if (style) {
         for (const [property] of MANAGED_STYLES) {
           const previous = previousStyles.get(property)

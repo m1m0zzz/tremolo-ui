@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef, ReactNode, Ref } from 'react'
+import { ComponentPropsWithoutRef, ReactNode, Ref, useRef } from 'react'
 
 import { useDragValue } from '../../hooks/useDragValue'
 import { addUserSelectNone, removeUserSelectNone } from '../_util'
@@ -33,6 +33,7 @@ export function Container({
     moveMarquee,
     endMarquee,
   } = usePointsEditorContext()
+  const hasUserSelectNone = useRef(false)
 
   const { refCallback: dragRefCallback } = useDragValue<HTMLDivElement>({
     axis: AXIS,
@@ -47,12 +48,18 @@ export function Container({
     onDragStart: ([x, y], state) => {
       // The band is dragged over whatever the editor sits next to, so the
       // page-wide guard applies here as it does to a point.
-      if (externalStyles.userSelectNone) addUserSelectNone()
+      if (externalStyles.userSelectNone) {
+        addUserSelectNone()
+        hasUserSelectNone.current = true
+      }
       beginMarquee({ x, y }, state.event)
     },
     onChange: ([x, y]) => moveMarquee({ x, y }),
     onDragEnd: () => {
-      if (externalStyles.userSelectNone) removeUserSelectNone()
+      if (hasUserSelectNone.current) {
+        hasUserSelectNone.current = false
+        removeUserSelectNone()
+      }
       endMarquee()
     },
   })

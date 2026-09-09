@@ -154,6 +154,7 @@ export function Point<T extends PointBaseType>({
 
   /** Where the pointer was when the drag started, to measure the move from. */
   const pointerOrigin = useRef<PointBaseType | null>(null)
+  const hasUserSelectNone = useRef(false)
 
   // The value is the position itself: no scaling, and no rounding to a step.
   const { refCallback: dragRefCallback, dragging } =
@@ -179,15 +180,21 @@ export function Point<T extends PointBaseType>({
         pointerOrigin.current = { x, y }
 
         if (readonly) return
-        if (externalStyles.userSelectNone) addUserSelectNone()
+        if (externalStyles.userSelectNone) {
+          addUserSelectNone()
+          hasUserSelectNone.current = true
+        }
 
         onDragStart?.(clampPoint(value, min, max))
       },
       onDragEnd: () => {
         pointerOrigin.current = null
 
+        if (hasUserSelectNone.current) {
+          hasUserSelectNone.current = false
+          removeUserSelectNone()
+        }
         if (readonly) return
-        if (externalStyles.userSelectNone) removeUserSelectNone()
 
         onDragEnd?.(clampPoint(value, min, max))
       },
