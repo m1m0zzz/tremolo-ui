@@ -21,8 +21,8 @@ import {
   type ValueRange,
 } from '@tremolo-ui/functions'
 
+import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useWheel } from '../../hooks/useWheel'
-import { useCheckSteps } from '../_util/checkSteps'
 import { cx } from '../_util/cx'
 import {
   DEFAULT_DRAG_SENSITIVITY,
