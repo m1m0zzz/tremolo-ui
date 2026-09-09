@@ -75,7 +75,7 @@ function typedocPlugins() {
           '../packages/react/src/components/**/index.{ts,tsx}',
           '../packages/react/src/compose-refs/index.tsx',
           '../packages/react/src/hooks/**/*.{ts,tsx}',
-          '../packages/react/src/inputEvent.ts',
+          '../packages/react/src/input-event.ts',
         ],
         // Docusaurus skips underscore-prefixed paths, so a page generated
         // for one would leave the sidebar pointing at a doc id that does not

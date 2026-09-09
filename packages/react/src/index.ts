@@ -88,4 +88,4 @@ export {
   DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
-} from './inputEvent'
+} from './input-event'

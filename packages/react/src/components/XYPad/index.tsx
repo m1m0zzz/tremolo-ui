@@ -30,7 +30,7 @@ import {
   DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
-} from '../../inputEvent'
+} from '../../input-event'
 import { cx } from '../_util/cx'
 
 import { Area } from './Area'

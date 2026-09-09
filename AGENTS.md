@@ -86,6 +86,7 @@ npm run test:watch -w packages/react
 
 ## 規約
 
+- **コンポーネントまたは hook を export しない TypeScript の実装ファイルは kebab-case にする。** コンポーネントの PascalCase と、hook の `use...` camelCase だけを例外とする
 - **import の並び順は lint ではなく formatter が持つ**（oxlint に `import/order` が無いため）。並びとその理由は `.oxfmtrc.json` のコメント
 - **`eslint-disable` ではなく `oxlint-disable` に統一する。** oxlint は両方読むが、ルール名の名前空間が違う（`@typescript-eslint/x` → `typescript/x`）ので、揃えておかないと後でルールを有効にしたときに黙って効かなくなる
 - **lint-staged の `--no-error-on-unmatched-pattern` を外さないこと。** 渡されたパスが全て ignore に当たると「対象が無い」で非ゼロ終了し、`.md` だけのコミットが落ちる
