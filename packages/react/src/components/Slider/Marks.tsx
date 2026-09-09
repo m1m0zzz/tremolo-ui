@@ -2,7 +2,7 @@ import { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react'
 
 import { xor } from '@tremolo-ui/functions'
 
-import { cssLength } from '../_util/cssLength'
+import { cssLength } from '../_util/css-length'
 import { cx } from '../_util/cx'
 import { Placement } from '../_util/placement'
 

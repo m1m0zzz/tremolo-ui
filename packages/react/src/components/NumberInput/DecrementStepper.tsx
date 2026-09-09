@@ -4,7 +4,7 @@ import {
   StepperArrow,
   StepperButton,
   StepperButtonProps,
-} from './stepperButton'
+} from './StepperButton'
 
 export type DecrementStepperProps = StepperButtonProps
 

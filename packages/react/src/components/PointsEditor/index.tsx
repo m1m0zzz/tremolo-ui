@@ -20,7 +20,7 @@ import {
 } from '@tremolo-ui/functions'
 
 import { DEFAULT_DRAG_SENSITIVITY } from '../../input-event'
-import { cssLength } from '../_util/cssLength'
+import { cssLength } from '../_util/css-length'
 import { cx } from '../_util/cx'
 
 import { Background } from './Background'

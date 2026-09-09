@@ -19,7 +19,7 @@ import {
 import { useComposedRefs } from '../../compose-refs'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
-import { cssLength } from '../_util/cssLength'
+import { cssLength } from '../_util/css-length'
 import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/placement'
 

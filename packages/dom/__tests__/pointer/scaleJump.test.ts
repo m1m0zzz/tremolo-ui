@@ -7,7 +7,7 @@ import {
   type Scale,
 } from '@tremolo-ui/functions'
 
-import { createDragValue, relativeMapping } from '../../src/pointer/dragValue'
+import { createDragValue, relativeMapping } from '../../src/pointer/drag-value'
 
 import { pointerEvent, withPointerCapture } from './helpers'
 

@@ -5,7 +5,7 @@ import {
   elementMapping,
   relativeMapping,
   type DragValueOptions,
-} from '../../src/pointer/dragValue'
+} from '../../src/pointer/drag-value'
 
 import { pointerEvent, withPointerCapture } from './helpers'
 

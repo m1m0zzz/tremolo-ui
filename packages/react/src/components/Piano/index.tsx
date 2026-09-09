@@ -24,10 +24,10 @@ import {
 } from '@tremolo-ui/functions'
 
 import { useEventListener } from '../../hooks/useEventListener'
-import { cssLength } from '../_util/cssLength'
+import { cssLength } from '../_util/css-length'
 import { cx } from '../_util/cx'
 
-import { KeyboardShortcuts } from './keyboardShortcuts'
+import { KeyboardShortcuts } from './keyboard-shortcuts'
 
 type KeyboardShortcutsScope = 'root' | 'window'
 
@@ -455,4 +455,4 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
  */
 export const Piano = { Root }
 
-export { type KeyboardShortcuts, SHORTCUTS } from './keyboardShortcuts'
+export { type KeyboardShortcuts, SHORTCUTS } from './keyboard-shortcuts'
