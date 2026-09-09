@@ -4,6 +4,7 @@
 - 対象: `packages/dom/src/`
 - コミット: `8cc8371`
 - 実行: `codex exec --sandbox read-only`（codex-cli 0.153.4）
+- 最終確認: 2026-09-10 (`8fd96fe`)
 
 ---
 
@@ -11,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 0 |
-| 対応する（未対応） | 17 |
+| 対応済み | 3 |
+| 対応する（未対応） | 14 |
 | 要判断 | 0 |
 | 対応しない | 1 |
 | 未判断 | 0 |
@@ -61,7 +62,7 @@ if (document?.pointerLockElement === element) document.exitPointerLock?.()
 
 ### [P2] `lostpointercapture` を監視せずドラッグが終了不能になる — packages/dom/src/pointer/drag.ts:224
 
-> **状況: 対応する（未対応）** — 04 の P1 と同件。実装・テストとも `lostpointercapture` が存在しないことを確認済み。
+> **状況: 対応済み** — #207 で `lostpointercapture` を監視し、ドラッグを `finishDrag()` で終了するようにした。二重終了を防ぐ回帰テストも追加済み。
 
 **何が問題か**
 
@@ -219,7 +220,7 @@ request ID をインクリメントし、最新 request の結果だけを採用
 
 ### [P2] `midiMax` を下げても既に鳴っているノートを停止しない — packages/dom/src/piano/index.ts:167
 
-> **状況: 対応する（未対応）** — 05 の Piano の発音残り（P1）と同じ「鳴っているノートを追跡していない」問題。まとめて直す。
+> **状況: 対応済み** — #208 で発音中のノートと保持元を追跡し、`midiMax` を下げた際に範囲外の全ノートを停止するようにした。回帰テストも追加済み。
 
 **何が問題か**
 
@@ -417,7 +418,7 @@ if (note > (opts.midiMax ?? 127)) return
 
 ### [P3] active drag の `destroy()` が lifecycle を閉じない — packages/dom/src/pointer/drag.ts:411
 
-> **状況: 対応する（未対応）** — 05 / 06 の `user-select` 残留（P1）と同じ原因。まとめて直す。
+> **状況: 対応済み** — #207 で active drag の `destroy()` が各 pointer を `finishDrag()` し、`onDragEnd` を一度だけ通知するようにした。複数 pointer と二重 `destroy()` のテストも追加済み。
 
 **何が問題か**
 

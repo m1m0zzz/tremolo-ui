@@ -4,6 +4,7 @@
 - 対象: `packages/dom/__tests__/`
 - コミット: `8cc8371`
 - 実行: `codex exec --sandbox read-only`（codex-cli 0.153.4）
+- 最終確認: 2026-09-10 (`8fd96fe`)
 
 ---
 
@@ -11,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 0 |
-| 対応する（未対応） | 15 |
+| 対応済み | 1 |
+| 対応する（未対応） | 14 |
 | 要判断 | 0 |
 | 対応しない | 1 |
 | 未判断 | 0 |
@@ -23,7 +24,7 @@
 
 ### [P1] pointer capture 消失を偽装せず、ドラッグが終了しない経路を見逃している — packages/dom/__tests__/pointer/helpers.ts:28
 
-> **状況: 対応する（未対応）** — `lostpointercapture` は実装にもテストにも存在しないことを確認した。capture が外れるとドラッグが終了しない経路が実在する。
+> **状況: 対応済み** — #207 で `lostpointercapture` による終了経路を実装し、capture 消失後の `onDragEnd`、listener、cursor、`selectstart` と二重終了を検証するテストを追加した。
 
 **何が問題か**
 

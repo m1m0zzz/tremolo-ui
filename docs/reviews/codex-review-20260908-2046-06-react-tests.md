@@ -4,6 +4,7 @@
 - 対象: `packages/react/src/**/*.test.tsx と packages/react/__tests__/`
 - コミット: `8cc8371`
 - 実行: `codex exec --sandbox read-only`（codex-cli 0.153.4）
+- 最終確認: 2026-09-10 (`8fd96fe`)
 
 ---
 
@@ -11,8 +12,9 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 1 |
-| 対応する（未対応） | 12 |
+| 対応済み | 3 |
+| 一部対応 | 2 |
+| 対応する（未対応） | 8 |
 | 要判断 | 0 |
 | 対応しない | 0 |
 | 未判断 | 0 |
@@ -23,7 +25,7 @@
 
 ### [P1] ドラッグ中のアンマウントでページ全体の `user-select` が復元されない — packages/react/__tests__/drag.test.tsx:51
 
-> **状況: 対応する（未対応）** — 同じ原因の 05 の指摘とあわせて直す。修正時にアンマウントと `readonly` 化のテストを追加する。
+> **状況: 対応済み** — #207 でアンマウント、`readonly` 化、XYPad、PointsEditor、2回目のドラッグを検証し、どの終了経路でもページ全体の選択抑止が復元されることを固定した。
 
 **何が問題か**
 
@@ -139,7 +141,7 @@ fixture に明示的な child を与え、次の契約テストを追加して�
 
 ### [P2] `readonly` の Knob がダブルクリックで値を変更できる — packages/react/src/components/Knob/index.tsx:321
 
-> **状況: 対応する（未対応）** — 05 の実装側の指摘と同件。修正時にテストを追加する。
+> **状況: 対応済み** — #210 で `readonly` の Knob に対するダブルクリックが `onChange` を呼ばず、フォーカス可能性は保つことを回帰テストで固定した。
 
 **何が問題か**
 
@@ -323,7 +325,7 @@ callback ref が disposer を返す Host を作り、アンマウント時に di
 
 ### [P2] NumberInput の「長押しで繰り返す」契約が一度も検証されていない — packages/react/src/components/NumberInput/stepperButton.tsx:42
 
-> **状況: 対応する（未対応）** — 05 の `useLongPress`（P1）の修正とあわせて追加する。
+> **状況: 一部対応** — #209 で `useLongPress` の即時実行、待機後の反復、`pointerup` / `pointercancel` / window blur での停止を fake timer で検証した。NumberInput の Stepper と結合した長押しテストはまだない。
 
 **何が問題か**
 
@@ -369,7 +371,7 @@ fake timer を使い、即時一回、499 ms では追加なし、500 ms で一�
 
 ### [P2] MIDI の React bridge 二つにテストがない — packages/react/src/hooks/useMIDIAccess.ts:23
 
-> **状況: 対応する（未対応）**
+> **状況: 一部対応** — #209 で `useMIDIAccess` の StrictMode 下の request、購読、unmount cleanup のテストを追加した。`requestOnMount={false}`、store の `inputs` / `error` 更新、`useMIDIMessage` の handler 更新・access 交換はまだ未検証。
 
 **何が問題か**
 

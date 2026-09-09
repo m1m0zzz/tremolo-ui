@@ -4,6 +4,7 @@
 - 対象: `packages/react/src/（テスト・story を除く）`
 - コミット: `8cc8371`
 - 実行: `codex exec --sandbox read-only`（codex-cli 0.153.4）
+- 最終確認: 2026-09-10 (`8fd96fe`)
 
 ---
 
@@ -11,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 1 |
-| 対応する（未対応） | 19 |
+| 対応済み | 8 |
+| 対応する（未対応） | 12 |
 | 要判断 | 0 |
 | 対応しない | 0 |
 | 未判断 | 0 |
@@ -23,7 +24,7 @@
 
 ### [P1] `useMIDIAccess` が Strict Mode の effect 再実行後に停止する — packages/react/src/hooks/useMIDIAccess.ts:23
 
-> **状況: 対応する（未対応）** — 再現確認済み。StrictMode で `requestMIDIAccess` は 1 回呼ばれるが、cleanup で破棄済みのインスタンスに対する再 `request()` が無視され、`midiAccess` が null のままになる。
+> **状況: 対応済み** — #209 で effect の setup ごとに MIDI access instance を作り、世代ごとに cleanup する store へ変更した。StrictMode での取得と unmount 時の破棄を回帰テストで確認済み。
 
 **何が問題か**
 
@@ -53,7 +54,7 @@ effect の各ライフサイクルで再生成できる構造にするか、`des
 
 ### [P1] ドラッグ中の破棄や `readonly` 変更で body の `user-select: none` が残る — packages/react/src/components/Slider/index.tsx:244
 
-> **状況: 対応する（未対応）** — 再現確認済み。ドラッグ中のアンマウントで `body` の `user-select: none` が残る。`readonly` を途中で true にした場合も同様（`onDragEnd` の早期 return が解除より前）。カウンタが残るため以後のドラッグでも復元されない。
+> **状況: 対応済み** — #207 でドラッグの全終了経路から `onDragEnd` を必ず一度通知し、早期 return より前に選択抑止を解除するようにした。#212 で選択抑止は DOM 層へ一本化済み。
 
 **何が問題か**
 
@@ -100,7 +101,7 @@ return () => {
 
 ### [P1] Piano のキー割り当て変更で発音中ノートが停止されない — packages/react/src/components/Piano/index.tsx:253
 
-> **状況: 対応する（未対応）** — 再現確認済み。指摘より悪く、`noteOff` が発音していないノートに対する呼び出しになるため `onStopNote` が 1 度も呼ばれず、元のノートが鳴り続ける。
+> **状況: 対応済み** — #208 で keydown 時のキーとノートの対応を記録し、割り当て変更、focusout、window blur、unmount で発音中のノートを解放するようにした。
 
 **何が問題か**
 
@@ -137,7 +138,7 @@ keydown 時に `Map<key, note>` へ実際に開始したノートを記録し、
 
 ### [P1] `useLongPress` が `pointercancel` 後も値を変更し続ける — packages/react/src/hooks/useLongPress.ts:14
 
-> **状況: 対応する（未対応）** — 再現確認済み。`pointercancel` 後も 400ms で 10 回 callback が呼ばれ続けた。
+> **状況: 対応済み** — #209 で `pointercancel` と window blur で反復を止め、active pointer 以外の終了イベントを無視するようにした。fake timer による回帰テストも追加済み。
 
 **何が問題か**
 
@@ -168,7 +169,7 @@ useEventListener(globalThis.window, 'pointerup', () => {
 
 ### [P2] `disabled` と宣言したコントロールが操作可能なまま — packages/react/src/components/Knob/index.tsx:225
 
-> **状況: 対応する（未対応）** — Knob の `disabled` は `aria-disabled` に出るだけで、キーボード・ポインタ・ホイールのいずれも止めていないことを確認した。支援技術への通知と実挙動が食い違う。
+> **状況: 対応済み** — #210 で `disabled || readonly` を入力ガードとし、Knob を含む5コンポーネントのキーボード、ドラッグ、ホイール、ダブルクリックを停止した。`disabled` は tab 順からも除外済み。
 
 **何が問題か**
 
@@ -195,7 +196,7 @@ Slider、XYPad、NumberInput、PointsEditor にも同じ設計があります。
 
 ### [P2] `readonly` の Knob がダブルクリックで変更される — packages/react/src/components/Knob/index.tsx:321
 
-> **状況: 対応する（未対応）** — ダブルクリックの既定値復元だけ `readonly` を見ていないことを確認した。06 と同件。
+> **状況: 対応済み** — #210 でダブルクリックの既定値復元も `disabled || readonly` で停止し、回帰テストを追加した。
 
 **何が問題か**
 
@@ -355,7 +356,7 @@ PointsEditor.Point も role のない `div` を `tabIndex={0}` にしていま�
 
 ### [P2] Piano のショートカットがページ全体を奪い、表示範囲外のノートも鳴らす — packages/react/src/components/Piano/index.tsx:253
 
-> **状況: 対応する（未対応）** — **prop で切り替えられるようにし、既定はフォーカス配下と決定。** 範囲外のノートが鳴る点（`noteRange.last` と比較していない）と、テキスト入力中に発音する点は、スコープに関わらず直す。
+> **状況: 対応済み** — #208 で `keyboardShortcutsScope` を追加し、既定をフォーカス配下の `root` にした。`noteRange.last` より外側とテキスト入力中のイベントも無視する。
 
 **何が問題か**
 
