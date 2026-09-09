@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { ComponentProps, useState } from 'react'
+import { ComponentProps, useEffect, useState } from 'react'
 
 import { curveScale, curveWithCenterValue } from '@tremolo-ui/functions'
 
@@ -68,6 +68,54 @@ export const Basic: Story = {
         </Slider.Root>
         <p>value: {value}</p>
       </>
+    )
+  },
+}
+
+/**
+ * Manual browser check for drag selection suppression. Drag the slider across
+ * the surrounding text with a mouse, and long-press then drag on a touch
+ * device. No text should become selected in either case.
+ */
+export const SelectionSuppression: Story = {
+  args: {
+    min: 0,
+    max: 100,
+  },
+  render: (args) => {
+    const [value, setValue] = useState(50)
+    const [selection, setSelection] = useState('')
+
+    useEffect(() => {
+      const updateSelection = () => {
+        setSelection(document.getSelection()?.toString() ?? '')
+      }
+      document.addEventListener('selectionchange', updateSelection)
+      return () =>
+        document.removeEventListener('selectionchange', updateSelection)
+    }, [])
+
+    return (
+      <div style={{ maxWidth: 640, lineHeight: 1.6 }}>
+        <p>
+          Drag the slider far into this text. On a touch device, long-press the
+          slider before dragging. Text around the control must remain unselected
+          throughout the gesture.
+        </p>
+        <Slider.Root {...args} value={value} onChange={setValue}>
+          <Slider.Track style={{ width: 240 }}>
+            <Slider.Thumb />
+          </Slider.Track>
+        </Slider.Root>
+        <p>
+          Continue dragging across this sentence and release outside the slider.
+          This text must not receive a selection highlight either.
+        </p>
+        <p aria-live="polite">
+          Selected text: <strong>{selection || 'none'}</strong>
+        </p>
+        <p>Value: {value}</p>
+      </div>
     )
   },
 }
