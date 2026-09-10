@@ -12,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 12 |
-| 対応する（未対応） | 8 |
+| 対応済み | 13 |
+| 対応する（未対応） | 7 |
 | 要判断 | 0 |
 | 対応しない | 0 |
 | 未判断 | 0 |
@@ -398,7 +398,7 @@ useEventListener(globalThis.window, 'keydown', (e) => {
 
 ### [P2] React 18 ではサブコンポーネントの `ref` API が機能しない — packages/react/src/components/NumberInput/InputField.tsx:60
 
-> **状況: 対応する（未対応）** — **`forwardRef` に戻すと決定**（React 18 のサポートを維持する）。peerDependencies が `^18 || ^19` のまま React 19 の ref-as-prop に依存しており、18 ではサブコンポーネントの `ref` が届かない。
+> **状況: 対応済み** — NumberInput.InputField / Stepper、PointsEditor.Container、Slider.Track / Thumb、XYPad.Area / Thumb を `forwardRef` に戻した。各exportがforward-ref componentであることも横断テストで固定した。
 
 **何が問題か**
 

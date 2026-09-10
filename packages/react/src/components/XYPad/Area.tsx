@@ -1,4 +1,9 @@
-import { ComponentPropsWithoutRef, CSSProperties, ReactNode, Ref } from 'react'
+import {
+  ComponentPropsWithoutRef,
+  CSSProperties,
+  forwardRef,
+  ReactNode,
+} from 'react'
 
 import { useComposedRefs } from '../../compose-refs'
 import { cssLength } from '../_util/css-length'
@@ -18,41 +23,38 @@ export interface XYPadAreaProps {
   style?: CSSProperties
   /** `<XYPad.Thumb />` goes here. */
   children?: ReactNode
-  ref?: Ref<HTMLDivElement>
 }
 
-export function Area({
-  width,
-  height,
-  color,
-  children,
-  className,
-  style,
-  ref,
-  ...props
-}: XYPadAreaProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadAreaProps>) {
-  const { areaRef } = useXYPadContext()
+type Props = XYPadAreaProps &
+  Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadAreaProps>
 
-  // The area is what the pointer position is normalized against, so the
-  // context ref is composed with any ref the caller passed.
-  const composedRef = useComposedRefs<HTMLDivElement>(ref, areaRef)
+export const Area = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
+  function Area(
+    { width, height, color, children, className, style, ...props },
+    forwardedRef,
+  ) {
+    const { areaRef } = useXYPadContext()
 
-  return (
-    <div
-      ref={composedRef}
-      className={cx('tremolo-xy-pad-area', className)}
-      style={
-        {
-          '--color': color,
-          '--width': cssLength(width),
-          '--height': cssLength(height),
-          ...style,
-        } as CSSProperties
-      }
-      {...props}
-    >
-      <Placement name="XYPad.Area">{children}</Placement>
-    </div>
-  )
-}
+    // The area is what the pointer position is normalized against, so the
+    // context ref is composed with any ref the caller passed.
+    const composedRef = useComposedRefs<HTMLDivElement>(forwardedRef, areaRef)
+
+    return (
+      <div
+        ref={composedRef}
+        className={cx('tremolo-xy-pad-area', className)}
+        style={
+          {
+            '--color': color,
+            '--width': cssLength(width),
+            '--height': cssLength(height),
+            ...style,
+          } as CSSProperties
+        }
+        {...props}
+      >
+        <Placement name="XYPad.Area">{children}</Placement>
+      </div>
+    )
+  },
+)

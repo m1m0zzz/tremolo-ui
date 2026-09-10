@@ -2,8 +2,8 @@ import {
   AriaAttributes,
   ComponentPropsWithoutRef,
   CSSProperties,
+  forwardRef,
   ReactNode,
-  Ref,
   useImperativeHandle,
   useRef,
 } from 'react'
@@ -29,7 +29,6 @@ export interface SliderThumbProps {
    * it — `className` and `style` are how its own appearance is changed.
    */
   children?: ReactNode
-  ref?: Ref<SliderThumbMethods>
   'aria-label'?: AriaAttributes['aria-label']
   'aria-labelledby'?: AriaAttributes['aria-labelledby']
   'aria-describedby'?: AriaAttributes['aria-describedby']
@@ -44,87 +43,91 @@ export interface SliderThumbMethods {
 type Props = SliderThumbProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof SliderThumbProps>
 
-export function Thumb({
-  color,
-  children,
-  className,
-  style,
-  ref,
-  'aria-label': ariaLabel,
-  'aria-labelledby': ariaLabelledby,
-  'aria-describedby': ariaDescribedby,
-  'aria-valuetext': ariaValuetext,
-  ...props
-}: Props) {
-  const inputRef = useRef<HTMLInputElement>(null)
-  const {
-    value,
-    min,
-    max,
-    step,
-    vertical,
-    disabled,
-    readonly,
-    onChange,
-    percent,
-    thumbRef,
-  } = useSliderContext()
-
-  // The thumb is positioned against the track.
-  useCheckPlacement('Slider.Thumb', 'Slider.Track')
-
-  const methods = () => ({
-    focus() {
-      if (!disabled) inputRef.current?.focus()
+export const Thumb = /* @__PURE__ */ forwardRef<SliderThumbMethods, Props>(
+  function Thumb(
+    {
+      color,
+      children,
+      className,
+      style,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledby,
+      'aria-describedby': ariaDescribedby,
+      'aria-valuetext': ariaValuetext,
+      ...props
     },
-    blur() {
-      inputRef.current?.blur()
-    },
-  })
+    forwardedRef,
+  ) {
+    const inputRef = useRef<HTMLInputElement>(null)
+    const {
+      value,
+      min,
+      max,
+      step,
+      vertical,
+      disabled,
+      readonly,
+      onChange,
+      percent,
+      thumbRef,
+    } = useSliderContext()
 
-  useImperativeHandle(ref, methods, [disabled])
-  // Root focuses the thumb when a drag starts, wherever the user placed it.
-  useImperativeHandle(thumbRef, methods, [disabled])
+    // The thumb is positioned against the track.
+    useCheckPlacement('Slider.Thumb', 'Slider.Track')
 
-  return (
-    <div
-      className={cx('tremolo-slider-thumb', className)}
-      aria-disabled={disabled}
-      aria-readonly={readonly}
-      {...props}
-      style={{
-        ...{ '--color': color },
-        ...style,
-        // Where the thumb sits is the component's decision, not a style: a
-        // `left` from the caller would take it off the track, so it is
-        // written after theirs.
-        top: vertical ? `${percent}%` : '50%',
-        left: !vertical ? `${percent}%` : '50%',
-      }}
-    >
-      <VisuallyHiddenRangeInput
-        ref={inputRef}
-        className="tremolo-slider-input"
-        value={value}
-        min={min}
-        max={max}
-        step={step}
-        disabled={disabled}
+    const methods = () => ({
+      focus() {
+        if (!disabled) inputRef.current?.focus()
+      },
+      blur() {
+        inputRef.current?.blur()
+      },
+    })
+
+    useImperativeHandle(forwardedRef, methods, [disabled])
+    // Root focuses the thumb when a drag starts, wherever the user placed it.
+    useImperativeHandle(thumbRef, methods, [disabled])
+
+    return (
+      <div
+        className={cx('tremolo-slider-thumb', className)}
+        aria-disabled={disabled}
         aria-readonly={readonly}
-        aria-orientation={vertical ? 'vertical' : 'horizontal'}
-        aria-label={ariaLabel}
-        aria-labelledby={ariaLabelledby}
-        aria-describedby={ariaDescribedby}
-        aria-valuetext={ariaValuetext}
-        onChange={(event) => {
-          if (readonly) {
-            event.currentTarget.value = String(value)
-            return
-          }
-          onChange?.(event.currentTarget.valueAsNumber)
+        {...props}
+        style={{
+          ...{ '--color': color },
+          ...style,
+          // Where the thumb sits is the component's decision, not a style: a
+          // `left` from the caller would take it off the track, so it is
+          // written after theirs.
+          top: vertical ? `${percent}%` : '50%',
+          left: !vertical ? `${percent}%` : '50%',
         }}
-      />
-      {children}
-    </div>
-  )
-}
+      >
+        <VisuallyHiddenRangeInput
+          ref={inputRef}
+          className="tremolo-slider-input"
+          value={value}
+          min={min}
+          max={max}
+          step={step}
+          disabled={disabled}
+          aria-readonly={readonly}
+          aria-orientation={vertical ? 'vertical' : 'horizontal'}
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledby}
+          aria-describedby={ariaDescribedby}
+          aria-valuetext={ariaValuetext}
+          onChange={(event) => {
+            if (readonly) {
+              event.currentTarget.value = String(value)
+              return
+            }
+            onChange?.(event.currentTarget.valueAsNumber)
+          }}
+        />
+        {children}
+      </div>
+    )
+  },
+)
