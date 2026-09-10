@@ -17,6 +17,7 @@ function App() {
       }}
     >
       <Knob.Root
+        aria-label="Level"
         value={value}
         min={0}
         max={100}

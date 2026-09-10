@@ -29,7 +29,7 @@ function App() {
         max={22000}
         onChange={setFrequency}
       >
-        <NumberInput.InputField />
+        <NumberInput.InputField aria-label="Frequency" />
       </NumberInput.Root>
       <NumberInput.Root
         {...dB}
@@ -39,7 +39,7 @@ function App() {
         step={0.1}
         onChange={setGain}
       >
-        <NumberInput.InputField />
+        <NumberInput.InputField aria-label="Gain" />
       </NumberInput.Root>
       <NumberInput.Root
         {...ms}
@@ -48,7 +48,7 @@ function App() {
         max={10000}
         onChange={setRelease}
       >
-        <NumberInput.InputField />
+        <NumberInput.InputField aria-label="Release time" />
       </NumberInput.Root>
     </div>
     // expand end

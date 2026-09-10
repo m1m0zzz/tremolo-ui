@@ -22,7 +22,7 @@ function App() {
         max={100}
         onChange={(v) => setValue(v)}
       >
-        <NumberInput.InputField />
+        <NumberInput.InputField aria-label="Value" />
         <NumberInput.Stepper>
           <NumberInput.IncrementStepper />
           <NumberInput.DecrementStepper />

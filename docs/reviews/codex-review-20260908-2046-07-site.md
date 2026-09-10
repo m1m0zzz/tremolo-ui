@@ -12,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 6 |
-| 対応する（未対応） | 9 |
+| 対応済み | 8 |
+| 対応する（未対応） | 7 |
 | 要判断 | 0 |
 | 対応しない | 1 |
 | 未判断 | 0 |
@@ -201,7 +201,7 @@ you are expected to import them.
 
 ### [P2] Playground のキーボードフォーカスが視覚的に消える — site/src/theme/Playground/styles.module.css:40
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — Playgroundのボタンとリンクへ、テーマのprimary colorを使った`:focus-visible` outlineを追加した。
 
 **何が問題か**
 
@@ -231,7 +231,7 @@ Tab キーで StackBlitz、CodeSandbox、GitHub、コピー、コード表示ボ
 
 ### [P2] ライブ例の slider/spinbutton にアクセシブルネームがない — site/examples/components/knob/basic.tsx:19
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — Knob、Slider、NumberInputの全ライブ例へ用途に応じたアクセシブルネームを追加し、XYPadの例にもx / yそれぞれの名前を指定した。
 
 **何が問題か**
 

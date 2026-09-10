@@ -31,7 +31,7 @@ function App() {
       />
       <Slider.Root value={hue} min={0} max={360} onChange={(v) => setHue(v)}>
         <Slider.Track>
-          <Slider.Thumb />
+          <Slider.Thumb aria-label="Hue" />
         </Slider.Track>
       </Slider.Root>
     </div>
