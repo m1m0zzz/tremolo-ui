@@ -4,7 +4,7 @@
 - 対象: `packages/functions/__tests__/`
 - コミット: `8cc8371`
 - 実行: `codex exec --sandbox read-only`（codex-cli 0.153.4）
-- 最終確認: 2026-09-10 (`8fd96fe`)
+- 最終確認: 2026-09-10 (`a93d98f`)
 
 ---
 
