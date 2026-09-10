@@ -79,6 +79,23 @@ describe('dragging the Stepper', () => {
     expect(input().value).toBe('500')
   })
 
+  test('does not clamp an unbounded value to a safe integer', () => {
+    const { container } = render(
+      <Subject
+        initial={1e20}
+        min={0}
+        max={100}
+        step={1e18}
+        clampValue={false}
+      />,
+    )
+    fakePointerCapture(container)
+
+    dragY(screen.getByTestId('stepper'), [100, 99, 98])
+
+    expect(input().value).toBe(String(1.01e20))
+  })
+
   test('`drag` sets the pixels one step takes', () => {
     const { container } = render(<Subject initial={0} drag={10} />)
     fakePointerCapture(container)

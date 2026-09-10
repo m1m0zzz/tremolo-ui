@@ -12,11 +12,11 @@ import {
 
 import {
   applyDelta,
-  clamp,
   InputEventOption,
   ModifierState,
   type ModifierValue,
   linearScale,
+  selectInputEvent,
   type Scale,
   type ValueRange,
 } from '@tremolo-ui/functions'
@@ -223,12 +223,26 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
     const format = formatProp ?? defaultFormat
     const parse = parseProp ?? defaultParse
 
-    // An unbounded end, and a range the caller opted out of enforcing, both
-    // become the widest range the value pipeline can express.
+    // Normalized input needs a finite span even when an end is unbounded or
+    // the caller opted out of clamping. Safe integers provide one without
+    // overflowing the span calculation used by a scale.
     const range: ValueRange = useMemo(
       () => ({
         min: (clampValue ? min : undefined) ?? Number.MIN_SAFE_INTEGER,
         max: (clampValue ? max : undefined) ?? Number.MAX_SAFE_INTEGER,
+        step,
+        scale,
+      }),
+      [clampValue, min, max, step, scale],
+    )
+
+    // Raw input does not need a finite span for normalization, so its open
+    // ends can cover every finite JavaScript number instead of stopping at the
+    // safe-integer range.
+    const rawRange: ValueRange = useMemo(
+      () => ({
+        min: (clampValue ? min : undefined) ?? -Number.MAX_VALUE,
+        max: (clampValue ? max : undefined) ?? Number.MAX_VALUE,
         step,
         scale,
       }),
@@ -292,9 +306,11 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         setDraft(null)
         return
       }
-      // `range` is already the widest possible range when clampValue is off.
-      changeValue(clamp(parsed, range.min, range.max))
-    }, [draft, inactive, parse, range, changeValue])
+      let committed = parsed
+      if (clampValue && min !== undefined) committed = Math.max(committed, min)
+      if (clampValue && max !== undefined) committed = Math.min(committed, max)
+      changeValue(committed)
+    }, [draft, inactive, parse, clampValue, min, max, changeValue])
 
     const nudge = useCallback(
       (
@@ -302,9 +318,18 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         option: ModifierValue<InputEventOption>,
         modifiers?: ModifierState,
       ) => {
-        changeValue(applyDelta(value, direction, option, range, modifiers))
+        const [mode] = selectInputEvent(option, modifiers).option
+        changeValue(
+          applyDelta(
+            value,
+            direction,
+            option,
+            mode === 'raw' ? rawRange : range,
+            modifiers,
+          ),
+        )
       },
-      [changeValue, value, range],
+      [changeValue, value, rawRange, range],
     )
 
     // --- hooks ---
@@ -328,6 +353,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         readonly,
         clampValue,
         range,
+        rawRange,
         keyboard,
         text,
         editing,
@@ -355,6 +381,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         readonly,
         clampValue,
         range,
+        rawRange,
         keyboard,
         text,
         editing,

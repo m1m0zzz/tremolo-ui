@@ -221,7 +221,7 @@ onDoubleClick={(event) => {
 
 ### [P2] `clampValue={false}` や未指定範囲でも安全整数へクランプされる — packages/react/src/components/NumberInput/index.tsx:226
 
-> **状況: 対応する（未対応）** — `range` が `MIN_SAFE_INTEGER` / `MAX_SAFE_INTEGER` で埋められ、commit 時のクランプに同じ範囲を使っていることを確認した。
+> **状況: 対応済み** — commit 時は `clampValue` と実際に指定された `min` / `max` だけを使い、`applyDelta` 用の内部範囲から分離した。raw 操作にも全有限値を覆う別の範囲を使い、安全整数を超える値、片側だけの範囲、Stepper drag を回帰テストに追加した。
 
 **何が問題か**
 

@@ -102,7 +102,7 @@ describe('the editing draft', () => {
     expect(input().value).toBe('100')
   })
 
-  test('clampValue={false} keeps a value outside the range', () => {
+  test('clampValue={false} keeps a value beyond the safe-integer range', () => {
     const onChange = vi.fn()
     render(
       <Subject
@@ -114,12 +114,36 @@ describe('the editing draft', () => {
       />,
     )
 
-    fireEvent.change(input(), { target: { value: '150' } })
+    fireEvent.change(input(), { target: { value: '1e20' } })
     fireEvent.blur(input())
 
-    expect(onChange).toHaveBeenLastCalledWith(150)
-    expect(input().value).toBe('150')
+    expect(onChange).toHaveBeenLastCalledWith(1e20)
+    expect(input().value).toBe(String(1e20))
     expect(input().getAttribute('data-out-of-range')).toBe('true')
+  })
+
+  test('an unbounded input keeps a value beyond the safe-integer range', () => {
+    const onChange = vi.fn()
+    render(<Subject initial={0} onChange={onChange} />)
+
+    fireEvent.change(input(), { target: { value: '1e20' } })
+    fireEvent.blur(input())
+
+    expect(onChange).toHaveBeenLastCalledWith(1e20)
+    expect(input().value).toBe(String(1e20))
+  })
+
+  test('a one-sided range only clamps its specified end', () => {
+    const { rerender } = render(<Subject initial={0} max={100} />)
+
+    fireEvent.change(input(), { target: { value: '-1e20' } })
+    fireEvent.blur(input())
+    expect(input().value).toBe(String(-1e20))
+
+    rerender(<Subject initial={0} min={-100} />)
+    fireEvent.change(input(), { target: { value: '1e20' } })
+    fireEvent.blur(input())
+    expect(input().value).toBe(String(1e20))
   })
 
   test('text with no number in it leaves the value alone', () => {
@@ -175,6 +199,22 @@ describe('value changes', () => {
     fireEvent.keyDown(input(), { key: 'ArrowUp' })
 
     expect(input().value).toBe('10')
+  })
+
+  test('raw steps do not clamp an unbounded value to a safe integer', () => {
+    render(
+      <Subject
+        initial={1e20}
+        min={0}
+        max={100}
+        clampValue={false}
+        keyboard={['raw', 1e18]}
+      />,
+    )
+
+    fireEvent.keyDown(input(), { key: 'ArrowUp' })
+
+    expect(input().value).toBe(String(1.01e20))
   })
 
   test('normalized mode works with a min of 0', () => {
