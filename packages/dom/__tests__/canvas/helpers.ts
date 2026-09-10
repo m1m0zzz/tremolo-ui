@@ -11,50 +11,149 @@ export type FakeContext = CanvasRenderingContext2D & {
   drawImage: Mock
 }
 
+export type Context2DControl = {
+  get: (canvas: HTMLCanvasElement) => FakeContext
+}
+
 /**
- * Give every canvas a 2D context. Returns the context of the canvas passed in,
- * and installs the stub on the prototype so canvases made later get one too.
+ * Give every canvas a 2D context and reset its state when its backing size is
+ * assigned, as a browser does.
  */
-export function withContext2D(canvas?: HTMLCanvasElement): FakeContext {
-  const contexts = new WeakMap<HTMLCanvasElement, FakeContext>()
+export function withContext2D(): Context2DControl {
+  const contexts = new WeakMap<HTMLCanvasElement, ResettableFakeContext>()
+  const instrumented = new WeakSet<HTMLCanvasElement>()
+  const width = Object.getOwnPropertyDescriptor(
+    HTMLCanvasElement.prototype,
+    'width',
+  )
+  const height = Object.getOwnPropertyDescriptor(
+    HTMLCanvasElement.prototype,
+    'height',
+  )
+
+  function instrumentSize(canvas: HTMLCanvasElement) {
+    if (instrumented.has(canvas)) return
+    instrumented.add(canvas)
+    for (const [property, descriptor] of [
+      ['width', width],
+      ['height', height],
+    ] as const) {
+      Object.defineProperty(canvas, property, {
+        configurable: true,
+        get: descriptor?.get,
+        set(value: number) {
+          descriptor?.set?.call(this, value)
+          contexts.get(this)?.reset()
+        },
+      })
+    }
+  }
 
   HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement) {
     let context = contexts.get(this)
     if (!context) {
       context = createFakeContext()
       contexts.set(this, context)
+      instrumentSize(this)
     }
     return context
   } as unknown as HTMLCanvasElement['getContext']
 
-  return canvas ? (canvas.getContext('2d') as FakeContext) : createFakeContext()
+  return {
+    get: (canvas) => canvas.getContext('2d') as FakeContext,
+  }
 }
 
-function createFakeContext(): FakeContext {
-  return {
-    setTransform: vi.fn(),
-    scale: vi.fn(),
+type ResettableFakeContext = FakeContext & { reset: () => void }
+
+function createFakeContext(): ResettableFakeContext {
+  let transform = { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }
+  let lineDash: number[] = []
+  let context: ResettableFakeContext
+
+  const reset = () => {
+    transform = { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }
+    lineDash = []
+    Object.assign(context, {
+      strokeStyle: '#000000',
+      fillStyle: '#000000',
+      globalAlpha: 1,
+      lineWidth: 1,
+      lineCap: 'butt',
+      lineJoin: 'miter',
+      miterLimit: 10,
+      lineDashOffset: 0,
+      shadowOffsetX: 0,
+      shadowOffsetY: 0,
+      shadowBlur: 0,
+      shadowColor: 'rgba(0, 0, 0, 0)',
+      globalCompositeOperation: 'source-over',
+      filter: 'none',
+      font: '10px sans-serif',
+      fontKerning: 'auto',
+      fontStretch: 'normal',
+      fontVariantCaps: 'normal',
+      textAlign: 'start',
+      textBaseline: 'alphabetic',
+      direction: 'inherit',
+      letterSpacing: '0px',
+      textRendering: 'auto',
+      wordSpacing: '0px',
+      imageSmoothingEnabled: true,
+      imageSmoothingQuality: 'low',
+    })
+  }
+
+  context = {
+    reset,
+    setTransform: vi.fn(
+      (
+        ...args:
+          | [DOMMatrix2DInit]
+          | [number, number, number, number, number, number]
+      ) => {
+        if (args.length === 1) {
+          const value = args[0]
+          transform = {
+            a: value.a ?? value.m11 ?? 1,
+            b: value.b ?? value.m12 ?? 0,
+            c: value.c ?? value.m21 ?? 0,
+            d: value.d ?? value.m22 ?? 1,
+            e: value.e ?? value.m41 ?? 0,
+            f: value.f ?? value.m42 ?? 0,
+          }
+        } else {
+          const [a, b, c, d, e, f] = args
+          transform = { a, b, c, d, e, f }
+        }
+      },
+    ),
+    getTransform: vi.fn(() => ({ ...transform }) as DOMMatrix),
+    scale: vi.fn((x: number, y: number) => {
+      transform = {
+        a: transform.a * x,
+        b: transform.b * x,
+        c: transform.c * y,
+        d: transform.d * y,
+        e: transform.e,
+        f: transform.f,
+      }
+    }),
+    translate: vi.fn((x: number, y: number) => {
+      transform = {
+        ...transform,
+        e: transform.a * x + transform.c * y + transform.e,
+        f: transform.b * x + transform.d * y + transform.f,
+      }
+    }),
+    setLineDash: vi.fn((segments: number[]) => {
+      lineDash = [...segments]
+    }),
+    getLineDash: vi.fn(() => [...lineDash]),
     drawImage: vi.fn(),
-    // The drawing state the resize path copies back and forth.
-    strokeStyle: '#000000',
-    fillStyle: '#000000',
-    globalAlpha: 1,
-    lineWidth: 1,
-    lineCap: 'butt',
-    lineJoin: 'miter',
-    miterLimit: 10,
-    lineDashOffset: 0,
-    shadowOffsetX: 0,
-    shadowOffsetY: 0,
-    shadowBlur: 0,
-    shadowColor: 'rgba(0, 0, 0, 0)',
-    globalCompositeOperation: 'source-over',
-    font: '10px sans-serif',
-    textAlign: 'start',
-    textBaseline: 'alphabetic',
-    direction: 'inherit',
-    imageSmoothingEnabled: true,
-  } as unknown as FakeContext
+  } as unknown as ResettableFakeContext
+  reset()
+  return context
 }
 
 export type ResizeObserverControl = {
@@ -108,7 +207,7 @@ export function withResizeObserver(): ResizeObserverControl {
 
 export type AnimationFrameControl = {
   /** Run everything queued now. Callbacks that re-queue land in the next flush. */
-  flush: () => void
+  flush: (timestamp?: DOMHighResTimeStamp) => void
   /** How many callbacks are waiting. */
   pending: () => number
 }
@@ -131,10 +230,10 @@ export function withAnimationFrame(): AnimationFrameControl {
   }
 
   return {
-    flush: () => {
+    flush: (timestamp = performance.now()) => {
       const callbacks = [...queued.values()]
       queued.clear()
-      for (const callback of callbacks) callback(performance.now())
+      for (const callback of callbacks) callback(timestamp)
     },
     pending: () => queued.size,
   }

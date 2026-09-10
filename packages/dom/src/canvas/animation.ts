@@ -17,7 +17,7 @@ export interface AnimationFrame {
   deltaTime: number
   /** Milliseconds since the instance was created. */
   elapsedTime: number
-  /** Frames per second implied by `deltaTime`. */
+  /** Frames per second implied by `deltaTime`, or 0 when no time elapsed. */
   fps: number
 }
 
@@ -127,6 +127,7 @@ export function createAnimationCanvas(
 
   let width = 0
   let height = 0
+  let appliedDpr = 0
   /** Whether a size has been applied, so a frame can be drawn. */
   let sized = false
   let initialized = false
@@ -146,21 +147,20 @@ export function createAnimationCanvas(
    * Assigning to `memo.width` resets the memo's transform to the identity, so
    * the copy neither scales nor resamples.
    */
-  function takeSnapshot(): DrawingContext | null {
-    if (!(opts.reduceFlickering ?? true)) return null
+  function takeSnapshot() {
+    if (!(opts.reduceFlickering ?? true)) return false
     if (!memo) {
       memo = globalThis.document?.createElement('canvas') ?? null
       memoContext = memo?.getContext('2d', opts.contextAttributes) ?? null
     }
-    if (!memo || !memoContext) return null
+    if (!memo || !memoContext) return false
 
-    const state = readDrawingState(context)
     memo.width = canvas.width
     memo.height = canvas.height
     if (canvas.width > 0 && canvas.height > 0) {
       memoContext.drawImage(canvas, 0, 0)
     }
-    return state
+    return true
   }
 
   /**
@@ -172,13 +172,12 @@ export function createAnimationCanvas(
    * snapshot is rescaled once, from its full resolution.
    */
   function restoreSnapshot(
-    state: DrawingContext | null,
+    hasSnapshot: boolean,
     previousWidth: number,
     previousHeight: number,
   ) {
-    if (!state || !memo || !memoContext) return
+    if (!hasSnapshot || !memo) return
     if (memo.width <= 0 || memo.height <= 0) return
-    writeDrawingState(context, state)
     context.drawImage(memo, 0, 0, previousWidth, previousHeight)
   }
 
@@ -186,39 +185,55 @@ export function createAnimationCanvas(
     const dpr = devicePixelRatio()
     const previousWidth = width
     const previousHeight = height
-    const state = takeSnapshot()
+    const previousDpr = appliedDpr
+    const state: DrawingContext | null = sized
+      ? readDrawingState(context)
+      : null
+    const hasSnapshot = sized && takeSnapshot()
     applyDevicePixelRatio(canvas, context, w, h, dpr)
     width = w
     height = h
+    appliedDpr = dpr
     sized = true
-    restoreSnapshot(state, previousWidth, previousHeight)
+    // Restore pixels while the reset context still has neutral alpha,
+    // compositing, filter, and shadow settings.
+    restoreSnapshot(hasSnapshot, previousWidth, previousHeight)
+    if (state) {
+      writeDrawingState(context, state, dpr / previousDpr)
+    }
   }
 
-  function drawFrame() {
+  function applyDevicePixelRatioIfNeeded() {
+    if (sized && devicePixelRatio() !== appliedDpr) {
+      applySize(width, height)
+    }
+  }
+
+  function drawFrame(timestamp = performance.now()) {
     if (!sized) return
+    applyDevicePixelRatioIfNeeded()
     if (!initialized) {
       initialized = true
       opts.init?.(context, { width, height })
     }
-    const now = performance.now()
-    const deltaTime = now - previousTime
-    previousTime = now
+    const deltaTime = timestamp - previousTime
+    previousTime = timestamp
     count += 1
     opts.draw(context, {
       width,
       height,
       count,
       deltaTime,
-      elapsedTime: now - startTime,
-      fps: 1000 / deltaTime,
+      elapsedTime: timestamp - startTime,
+      fps: deltaTime > 0 ? 1000 / deltaTime : 0,
     })
   }
 
-  function tick() {
+  function tick(timestamp: DOMHighResTimeStamp) {
     // Scheduled before drawing so that a slow frame does not delay the next
     // request, matching how requestAnimationFrame loops are usually written.
     frameId = requestAnimationFrame(tick)
-    drawFrame()
+    drawFrame(timestamp)
   }
 
   function startLoop() {
@@ -249,7 +264,9 @@ export function createAnimationCanvas(
     observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const { width: w, height: h } = entry.contentRect
-        applySize(w, h)
+        if (w !== width || h !== height || devicePixelRatio() !== appliedDpr) {
+          applySize(w, h)
+        }
         // With the loop running the next frame covers the new size already.
         if (!(opts.animate ?? true)) drawFrame()
       }
@@ -280,6 +297,7 @@ export function createAnimationCanvas(
         const { width: w = 100, height: h = 100 } = opts.size ?? {}
         if (w !== width || h !== height) applySize(w, h)
       }
+      applyDevicePixelRatioIfNeeded()
 
       const animating = opts.animate ?? true
       if (animating && !wasAnimating) startLoop()
