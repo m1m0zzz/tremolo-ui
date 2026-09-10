@@ -259,7 +259,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
         if (event.deltaY === 0) return
         direction = event.deltaY > 0 ? -1 : 1
       }
-      if (vertical && reverse) direction *= -1
+      if (reverse) direction *= -1
       onChange(applyDelta(value, direction, wheel, axis, event))
     }, WHEEL_OPTIONS)
 

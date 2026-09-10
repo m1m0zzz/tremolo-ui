@@ -253,7 +253,7 @@ changeValue(clamp(parsed, range.min, range.max))
 
 ### [P2] 横向き Slider の `reverse` がホイール方向へ反映されない — packages/react/src/components/Slider/index.tsx:260
 
-> **状況: 対応する（未対応）** — 反転条件が `vertical && reverse` に限定されていることを確認した。
+> **状況: 対応済み** — 物理ホイール方向の決定後に orientation にかかわらず `reverse` を適用し、横・縦と `deltaX` / `deltaY` の方向を回帰テストに追加した。
 
 **何が問題か**
 
