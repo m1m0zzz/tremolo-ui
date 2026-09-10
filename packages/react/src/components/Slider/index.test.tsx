@@ -114,3 +114,25 @@ describe('Slider input guards', () => {
     expect(subject.onChange).toHaveBeenCalled()
   })
 })
+
+describe('Slider wheel direction', () => {
+  test.each([
+    ['horizontal', {}, { deltaY: -1 }, 51],
+    ['reversed horizontal', { reverse: true }, { deltaY: -1 }, 49],
+    ['reversed horizontal deltaX', { reverse: true }, { deltaX: 1 }, 49],
+    ['vertical', { vertical: true }, { deltaY: -1 }, 51],
+    [
+      'reversed vertical',
+      { vertical: true, reverse: true },
+      { deltaY: -1 },
+      49,
+    ],
+  ])('%s slider follows its visual direction', (_name, props, delta, value) => {
+    const { root, thumb, onChange } = setup(props)
+    act(() => thumb.focus())
+
+    fireEvent.wheel(root, delta)
+
+    expect(onChange).toHaveBeenLastCalledWith(value)
+  })
+})
