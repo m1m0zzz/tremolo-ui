@@ -1,4 +1,5 @@
 import {
+  AriaAttributes,
   ComponentPropsWithoutRef,
   CSSProperties,
   ReactNode,
@@ -9,6 +10,7 @@ import {
 
 import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/placement'
+import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
 import { useSliderContext } from './context'
 
@@ -28,6 +30,10 @@ export interface SliderThumbProps {
    */
   children?: ReactNode
   ref?: Ref<SliderThumbMethods>
+  'aria-label'?: AriaAttributes['aria-label']
+  'aria-labelledby'?: AriaAttributes['aria-labelledby']
+  'aria-describedby'?: AriaAttributes['aria-describedby']
+  'aria-valuetext'?: AriaAttributes['aria-valuetext']
 }
 
 export interface SliderThumbMethods {
@@ -44,20 +50,35 @@ export function Thumb({
   className,
   style,
   ref,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledby,
+  'aria-describedby': ariaDescribedby,
+  'aria-valuetext': ariaValuetext,
   ...props
 }: Props) {
-  const elementRef = useRef<HTMLDivElement>(null)
-  const { vertical, disabled, readonly, percent, thumbRef } = useSliderContext()
+  const inputRef = useRef<HTMLInputElement>(null)
+  const {
+    value,
+    min,
+    max,
+    step,
+    vertical,
+    disabled,
+    readonly,
+    onChange,
+    percent,
+    thumbRef,
+  } = useSliderContext()
 
   // The thumb is positioned against the track.
   useCheckPlacement('Slider.Thumb', 'Slider.Track')
 
   const methods = () => ({
     focus() {
-      if (!disabled) elementRef.current?.focus()
+      if (!disabled) inputRef.current?.focus()
     },
     blur() {
-      elementRef.current?.blur()
+      inputRef.current?.blur()
     },
   })
 
@@ -67,10 +88,7 @@ export function Thumb({
 
   return (
     <div
-      ref={elementRef}
       className={cx('tremolo-slider-thumb', className)}
-      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-      tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled}
       aria-readonly={readonly}
       {...props}
@@ -84,6 +102,24 @@ export function Thumb({
         left: !vertical ? `${percent}%` : '50%',
       }}
     >
+      <VisuallyHiddenRangeInput
+        ref={inputRef}
+        className="tremolo-slider-input"
+        value={value}
+        min={min}
+        max={max}
+        step={step}
+        disabled={disabled}
+        aria-readonly={readonly}
+        aria-orientation={vertical ? 'vertical' : 'horizontal'}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledby}
+        aria-describedby={ariaDescribedby}
+        aria-valuetext={ariaValuetext}
+        onChange={(event) => {
+          if (!readonly) onChange?.(event.currentTarget.valueAsNumber)
+        }}
+      />
       {children}
     </div>
   )

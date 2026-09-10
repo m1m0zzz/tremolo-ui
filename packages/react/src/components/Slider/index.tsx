@@ -127,7 +127,7 @@ export interface SliderProps {
    * @example
    * <Slider.Root value={value} min={0} max={100} onChange={setValue}>
    *   <Slider.Track>
-   *     <Slider.Thumb />
+   *     <Slider.Thumb aria-label="Level" />
    *   </Slider.Track>
    * </Slider.Root>
    */
@@ -281,6 +281,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
         reverse,
         disabled,
         readonly,
+        onChange,
         percent,
         trackRef,
         thumbRef,
@@ -295,6 +296,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
         reverse,
         disabled,
         readonly,
+        onChange,
         percent,
       ],
     )
@@ -312,18 +314,14 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
 
     return (
       <SliderProvider value={context}>
+        {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- the group is the pointer and keyboard event area, while the nested range input carries its control semantics */}
         <div
           className={cx('tremolo-slider', className)}
           ref={rootRefCallback}
-          tabIndex={-1}
-          role="slider"
-          aria-valuenow={value}
-          aria-valuemin={min}
-          aria-valuemax={max}
-          aria-orientation={vertical ? 'vertical' : 'horizontal'}
-          aria-disabled={disabled}
-          aria-readonly={readonly}
+          role="group"
           data-vertical={vertical}
+          data-disabled={disabled}
+          data-readonly={readonly}
           style={style}
           onPointerDown={onPointerDown}
           onKeyDown={(event) => {

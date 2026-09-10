@@ -12,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 10 |
-| 対応する（未対応） | 10 |
+| 対応済み | 11 |
+| 対応する（未対応） | 9 |
 | 要判断 | 0 |
 | 対応しない | 0 |
 | 未判断 | 0 |
@@ -281,7 +281,7 @@ if (vertical && reverse) direction *= -1
 
 ### [P2] Slider の `role="slider"` と実際のフォーカス位置が分離している — packages/react/src/components/Slider/index.tsx:321
 
-> **状況: 対応する（未対応）** — **視覚的に隠した `<input type="range">` を Thumb の中に描画する方式で対応すると決定**（React Aria / MUI と同じ方針。ARIA slider パターンはタッチ + 支援技術で既知の問題があるため）。現状は `role="slider"` と `aria-value*` を持つ `Root` が `tabIndex={-1}` で、フォーカスされる `Thumb` には role も値も無い。なお指摘中の「children を渡すと focus が no-op」は #204 で解消済み。
+> **状況: 対応済み** — Thumb 内に視覚的に隠した `<input type="range">` を描画し、フォーカス、値、範囲、向き、状態、アクセシブルネームを同じ要素へ集約した。Root は将来の複数 Thumb に備えた group とし、各 input の ARIA 属性は対応する Thumb に直接指定する。支援技術からの change も `onChange` へ通知する。
 
 **何が問題か**
 

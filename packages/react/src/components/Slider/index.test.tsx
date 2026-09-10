@@ -55,6 +55,7 @@ function setup(props: Parameters<typeof Subject>[0] = {}) {
   return {
     root: screen.getByTestId('root'),
     thumb: screen.getByTestId('thumb'),
+    input: screen.getByRole('slider'),
     onChange,
   }
 }
@@ -68,28 +69,29 @@ function drag(root: Element) {
 
 describe('Slider input guards', () => {
   test('disabled blocks every input and removes the thumb from the tab order', () => {
-    const { root, thumb, onChange } = setup({ disabled: true })
+    const { root, input, onChange } = setup({ disabled: true })
 
     fireEvent.keyDown(root, { key: 'ArrowRight' })
     drag(root)
-    act(() => thumb.focus())
+    act(() => input.focus())
     fireEvent.wheel(root, { deltaY: -1 })
 
     expect(onChange).not.toHaveBeenCalled()
-    expect(root).toHaveAttribute('aria-disabled', 'true')
-    expect(thumb).toHaveAttribute('tabindex', '-1')
+    expect(root).toHaveAttribute('data-disabled', 'true')
+    expect(input).toBeDisabled()
   })
 
   test('readonly blocks every input while leaving the thumb focusable', () => {
-    const { root, thumb, onChange } = setup({ readonly: true })
+    const { root, input, onChange } = setup({ readonly: true })
 
     fireEvent.keyDown(root, { key: 'ArrowRight' })
     drag(root)
-    act(() => thumb.focus())
+    act(() => input.focus())
     fireEvent.wheel(root, { deltaY: -1 })
 
     expect(onChange).not.toHaveBeenCalled()
-    expect(thumb).toHaveAttribute('tabindex', '0')
+    expect(input).toHaveAttribute('aria-readonly', 'true')
+    expect(input).not.toBeDisabled()
   })
 
   test.each([
@@ -101,8 +103,8 @@ describe('Slider input guards', () => {
     ['pointer', ({ root }: ReturnType<typeof setup>) => drag(root)],
     [
       'wheel',
-      ({ root, thumb }: ReturnType<typeof setup>) => {
-        act(() => thumb.focus())
+      ({ root, input }: ReturnType<typeof setup>) => {
+        act(() => input.focus())
         fireEvent.wheel(root, { deltaY: -1 })
       },
     ],
@@ -128,11 +130,56 @@ describe('Slider wheel direction', () => {
       49,
     ],
   ])('%s slider follows its visual direction', (_name, props, delta, value) => {
-    const { root, thumb, onChange } = setup(props)
-    act(() => thumb.focus())
+    const { root, input, onChange } = setup(props)
+    act(() => input.focus())
 
     fireEvent.wheel(root, delta)
 
     expect(onChange).toHaveBeenLastCalledWith(value)
+  })
+})
+
+describe('Slider accessibility', () => {
+  test('puts slider semantics and focus on the range input inside the thumb', () => {
+    render(
+      <Slider.Root
+        value={50}
+        min={0}
+        max={100}
+        vertical
+        aria-label="Levels"
+        data-testid="root"
+      >
+        <Slider.Track>
+          <Slider.Thumb
+            aria-label="Level"
+            aria-valuetext="half"
+            data-testid="thumb"
+          />
+        </Slider.Track>
+      </Slider.Root>,
+    )
+    const root = screen.getByTestId('root')
+    const thumb = screen.getByTestId('thumb')
+    const input = screen.getByRole('slider')
+
+    expect(root).toHaveAttribute('role', 'group')
+    expect(root).toHaveAccessibleName('Levels')
+    expect(input).toHaveAttribute('type', 'range')
+    expect(input).toHaveAttribute('min', '0')
+    expect(input).toHaveAttribute('max', '100')
+    expect(input).toHaveValue('50')
+    expect(input).toHaveAttribute('aria-orientation', 'vertical')
+    expect(input).toHaveAccessibleName('Level')
+    expect(input).toHaveAttribute('aria-valuetext', 'half')
+    expect(thumb).toContainElement(input)
+  })
+
+  test('accepts value changes dispatched by assistive technology', () => {
+    const { input, onChange } = setup()
+
+    fireEvent.change(input, { target: { value: '75' } })
+
+    expect(onChange).toHaveBeenLastCalledWith(75)
   })
 })
