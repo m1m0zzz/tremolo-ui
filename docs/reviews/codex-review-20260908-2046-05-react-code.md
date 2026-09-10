@@ -12,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 11 |
-| 対応する（未対応） | 9 |
+| 対応済み | 12 |
+| 対応する（未対応） | 8 |
 | 要判断 | 0 |
 | 対応しない | 0 |
 | 未判断 | 0 |
@@ -319,7 +319,7 @@ ARIA slider と `tabIndex` を同じ DOM 要素に置いてください。構成
 
 ### [P2] XYPad と Point のキーボード操作がアクセシビリティツリーに表現されない — packages/react/src/components/XYPad/Thumb.tsx:76
 
-> **状況: 対応する（未対応）** — **軸ごとに視覚的に隠した `<input type="range">` を 1 つずつ置く方式で対応すると決定**（React Aria の `useColorArea` と同じ形。APG に 2 次元コントロールのパターンは無く、これが実在する唯一の確立した実装）。Slider 側と実装を共有できるため、Slider を先に片付けてから着手する。PointsEditor の Point も同じ構造。
+> **状況: 対応済み** — XYPad.Thumb と PointsEditor.Point の内部へ、x / y 軸ごとに視覚的に隠した `<input type="range">` を配置した。XYPad.Root は2軸をまとめる group とし、各inputが値、範囲、向き、状態、名前を持つ。支援技術からの値変更も既存の `onChange` と選択移動へ接続している。
 
 **何が問題か**
 

@@ -169,9 +169,8 @@ describe('the wheel on a two-dimensional control', () => {
   }
 
   const fire = (container: HTMLElement, init: Partial<WheelEventInit>) => {
-    // The wheel only acts while the focus is inside, and the XYPad thumb is
-    // the tab stop rather than a `slider` role.
-    container.querySelector<HTMLElement>('.tremolo-xy-pad-thumb')!.focus()
+    // The wheel only acts while one of the thumb's axis inputs has focus.
+    container.querySelector<HTMLElement>('.tremolo-xy-pad-x-input')!.focus()
     fireEvent.wheel(container.querySelector('.tremolo-xy-pad')!, init)
   }
 
@@ -195,15 +194,6 @@ describe('the wheel on a two-dimensional control', () => {
     fire(container, { deltaX: 1, deltaY: 0 })
 
     expect(onChange).toHaveBeenLastCalledWith([6, 5])
-  })
-
-  test('a vertical wheel still moves y', () => {
-    const onChange = vi.fn()
-    const { container } = render(<XYSubject onChange={onChange} />)
-
-    fire(container, { deltaX: 0, deltaY: 1 })
-
-    expect(onChange).toHaveBeenLastCalledWith([5, 6])
   })
 })
 

@@ -9,6 +9,7 @@ import {
 
 import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/placement'
+import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
 import { useXYPadContext } from './context'
 
@@ -46,18 +47,32 @@ export function Thumb({
   ref,
   ...props
 }: Props) {
-  const elementRef = useRef<HTMLDivElement>(null)
-  const { disabled, readonly, percent, thumbRef } = useXYPadContext()
+  const xInputRef = useRef<HTMLInputElement>(null)
+  const yInputRef = useRef<HTMLInputElement>(null)
+  const {
+    value,
+    min,
+    max,
+    step,
+    disabled,
+    readonly,
+    onChange,
+    ariaLabels,
+    ariaValueText,
+    percent,
+    thumbRef,
+  } = useXYPadContext()
 
   // The thumb is positioned against the area.
   useCheckPlacement('XYPad.Thumb', 'XYPad.Area')
 
   const methods = () => ({
     focus() {
-      if (!disabled) elementRef.current?.focus()
+      if (!disabled) xInputRef.current?.focus()
     },
     blur() {
-      elementRef.current?.blur()
+      xInputRef.current?.blur()
+      yInputRef.current?.blur()
     },
   })
 
@@ -67,10 +82,7 @@ export function Thumb({
 
   return (
     <div
-      ref={elementRef}
       className={cx('tremolo-xy-pad-thumb', className)}
-      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-      tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled}
       aria-readonly={readonly}
       {...props}
@@ -84,6 +96,32 @@ export function Thumb({
         top: `${percent[1]}%`,
       }}
     >
+      {([0, 1] as const).map((axis) => (
+        <VisuallyHiddenRangeInput
+          key={axis}
+          ref={axis === 0 ? xInputRef : yInputRef}
+          className={`tremolo-xy-pad-${axis === 0 ? 'x' : 'y'}-input`}
+          data-axis={axis}
+          value={value[axis]}
+          min={min[axis]}
+          max={max[axis]}
+          step={step[axis]}
+          disabled={disabled}
+          aria-readonly={readonly}
+          aria-orientation={axis === 0 ? 'horizontal' : 'vertical'}
+          aria-label={ariaLabels[axis]}
+          aria-valuetext={ariaValueText?.[axis]}
+          onChange={(event) => {
+            if (readonly) {
+              event.currentTarget.value = String(value[axis])
+              return
+            }
+            const next = [...value] as [number, number]
+            next[axis] = event.currentTarget.valueAsNumber
+            onChange?.(next)
+          }}
+        />
+      ))}
       {children}
     </div>
   )

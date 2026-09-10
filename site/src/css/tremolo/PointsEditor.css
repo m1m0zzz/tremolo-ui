@@ -49,6 +49,10 @@
     outline: 2px solid var(--color);
     outline-offset: 2px;
   }
+
+  &:focus-within {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color) 20%, transparent);
+  }
 }
 
 /*

@@ -211,14 +211,14 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
 
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
-        if (!keyboard || !onChange || inactive) return
         const key = event.key
-        if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
-          event.preventDefault()
-          let direction = key === 'ArrowRight' || key === 'ArrowUp' ? 1 : -1
-          if (reverse) direction *= -1
-          onChange(applyDelta(value, direction, keyboard, axis, event))
-        }
+        if (!['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key))
+          return
+        event.preventDefault()
+        if (!keyboard || !onChange || inactive) return
+        let direction = key === 'ArrowRight' || key === 'ArrowUp' ? 1 : -1
+        if (reverse) direction *= -1
+        onChange(applyDelta(value, direction, keyboard, axis, event))
       },
       [keyboard, onChange, inactive, reverse, value, axis],
     )
