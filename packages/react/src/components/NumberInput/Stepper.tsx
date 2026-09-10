@@ -50,7 +50,7 @@ export function Stepper({
     drag,
     dragSensitivity,
     pointerLock,
-    range,
+    rawRange,
     changeValue,
   } = useNumberInputContext()
   const inactive = disabled || readonly
@@ -130,7 +130,7 @@ export function Stepper({
           originRef.current.value,
           steps,
           dragOptions,
-          range,
+          rawRange,
           state.event,
         ),
       )

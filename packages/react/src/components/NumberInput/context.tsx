@@ -27,10 +27,12 @@ export type NumberInputContextValue = {
   clampValue: boolean
 
   /**
-   * The effective scaling for `applyDelta` and for clamping on commit, with the
-   * unbounded ends filled in. Ignores `min` / `max` when `clampValue` is off.
+   * The effective scaling for `applyDelta`, with unbounded ends filled in.
+   * Ignores `min` / `max` when `clampValue` is off.
    */
   range: ValueRange
+  /** The effective range for raw input, whose open ends cover finite numbers. */
+  rawRange: ValueRange
 
   keyboard: ModifierValue<InputEventOption> | null
   /** Pixels of vertical drag on `Stepper` that move the value by one `step`. */
@@ -54,7 +56,7 @@ export type NumberInputContextValue = {
 
   /** Typing. Replaces the draft and reports the parsed value, unclamped. */
   setDraft: (text: string) => void
-  /** Blur or Enter. Clamps the draft, reports it, and drops the draft. */
+  /** Blur or Enter. Optionally clamps the draft, reports it, and drops it. */
   commitDraft: () => void
   /** Drops the draft and replaces the value: steppers, wheel, keyboard, drag. */
   changeValue: (next: number) => void
