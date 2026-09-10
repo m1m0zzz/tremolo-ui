@@ -10,6 +10,12 @@ function stubCanvas() {
     let context = contexts.get(this)
     if (!context) {
       context = {
+        getLineDash: vi.fn(() => []),
+        getTransform: vi.fn(
+          () =>
+            ({ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }) as unknown as DOMMatrix,
+        ),
+        setLineDash: vi.fn(),
         setTransform: vi.fn(),
         scale: vi.fn(),
         drawImage: vi.fn(),

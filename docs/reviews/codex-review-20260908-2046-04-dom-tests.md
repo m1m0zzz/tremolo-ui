@@ -275,7 +275,7 @@ disconnect と destroy の後に `a.send(...)` し、handler が呼ばれない�
 
 ### [P2] Canvas snapshot テストは元画像のコピーが消えても通る — packages/dom/__tests__/canvas/animation.test.ts:296
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — canvas ごとの偽 context を参照できるようにし、memo context へのコピーと本体 context への復元を個別に検証した。
 
 **何が問題か**
 
@@ -306,7 +306,7 @@ expect(context.drawImage).toHaveBeenCalled()
 
 ### [P2] Canvas の描画状態リセットを偽 context が再現せず、`context.ts` の回帰を検出できない — packages/dom/__tests__/canvas/helpers.ts:21
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — backing size の代入時に偽 context の描画状態を初期化し、プロパティ、line dash、transform の復元と `isDrawingState()` を直接検証した。
 
 **何が問題か**
 
@@ -380,7 +380,7 @@ opts.onActiveNotesChange?.([])
 
 ### [P3] animation frame の時間値が実質未検証 — packages/dom/__tests__/canvas/animation.test.ts:154
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — rAF timestamp を明示して `deltaTime`、`elapsedTime`、`fps` の具体値と停止・再開後の delta を検証した。経過時間 0 の `fps` は 0 とする契約も追加した。
 
 **何が問題か**
 
@@ -448,7 +448,7 @@ request?.catch?.(() => {})
 
 ### [P3] 2D context 取得失敗の公開エラー経路が未検証 — packages/dom/src/canvas/animation.ts:116
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — `getContext()` が `null` の場合の明示的なエラーと、`contextAttributes` が作成時にだけ読まれることを検証した。
 
 **何が問題か**
 

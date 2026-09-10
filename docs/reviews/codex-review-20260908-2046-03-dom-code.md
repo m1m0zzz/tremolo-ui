@@ -240,7 +240,7 @@ update: (next) => {
 
 ### [P2] canvas の描画状態保持が `reduceFlickering` に依存し、保持対象も不足している — packages/dom/src/canvas/animation.ts:149
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — 描画状態の保存を snapshot から分離し、`reduceFlickering` にかかわらずプロパティ、line dash、transform を resize 後に復元するようにした。
 
 **何が問題か**
 
@@ -286,7 +286,7 @@ export const drawingState = [
 
 ### [P2] snapshot を利用者の合成・透明度・shadow 設定で描き戻している — packages/dom/src/canvas/animation.ts:174
 
-> **状況: 対応する（未対応）** — snapshot の描き戻しは利用者の `globalAlpha` などの影響を受けない状態で行うべき。
+> **状況: 対応済み** — resize 直後の中立な描画状態で snapshot を戻してから、利用者の描画状態を復元するようにした。
 
 **何が問題か**
 
@@ -307,7 +307,7 @@ DPR transform だけを設定した中立状態で snapshot を先に描画し�
 
 ### [P2] CSS サイズが同じだと devicePixelRatio の変化を検出しない — packages/dom/src/canvas/animation.ts:279
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — 最後に適用した DPR を保持し、animation frame、`redraw()`、`update()`、ResizeObserver の各経路で変化を検出して backing store を更新するようにした。
 
 **何が問題か**
 

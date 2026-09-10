@@ -1,7 +1,8 @@
 /**
- * The properties of a 2D context that survive `save()` / `restore()`, and so
- * are what has to be carried across a resize by hand: setting `canvas.width`
- * resets the context to its defaults.
+ * The assignable parts of a 2D context's drawing state. They have to be
+ * carried across a resize by hand because setting `canvas.width` resets the
+ * context to its defaults. The transform and line dash are handled separately
+ * by {@link DrawingContext} because they are exposed through methods.
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/save
  */
@@ -19,16 +20,29 @@ export const drawingState = [
   'shadowBlur',
   'shadowColor',
   'globalCompositeOperation',
+  'filter',
   'font',
+  'fontKerning',
+  'fontStretch',
+  'fontVariantCaps',
   'textAlign',
   'textBaseline',
   'direction',
+  'letterSpacing',
+  'textRendering',
+  'wordSpacing',
   'imageSmoothingEnabled',
+  'imageSmoothingQuality',
 ] as const
 
 export type DrawingState = (typeof drawingState)[number]
 export type DrawingStateValue = CanvasRenderingContext2D[DrawingState]
-export type DrawingContext = Pick<CanvasRenderingContext2D, DrawingState>
+export type DrawingContext = Pick<CanvasRenderingContext2D, DrawingState> & {
+  /** The current line dash sequence. */
+  lineDash: number[]
+  /** The current transformation matrix. */
+  transform: DOMMatrix
+}
 
 export function isDrawingState(value: unknown): value is DrawingState {
   const names: readonly string[] = drawingState
@@ -43,6 +57,8 @@ export function readDrawingState(
   for (const property of drawingState) {
     ;(state[property] as DrawingStateValue) = context[property]
   }
+  state.lineDash = context.getLineDash()
+  state.transform = context.getTransform()
   return state
 }
 
@@ -50,10 +66,21 @@ export function readDrawingState(
 export function writeDrawingState(
   context: CanvasRenderingContext2D,
   state: DrawingContext,
+  transformScale = 1,
 ) {
   for (const property of drawingState) {
     ;(context[property] as DrawingStateValue) = state[property]
   }
+  context.setLineDash(state.lineDash)
+  const { a, b, c, d, e, f } = state.transform
+  context.setTransform(
+    a * transformScale,
+    b * transformScale,
+    c * transformScale,
+    d * transformScale,
+    e * transformScale,
+    f * transformScale,
+  )
 }
 
 /**
