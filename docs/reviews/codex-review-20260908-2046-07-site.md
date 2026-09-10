@@ -12,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 1 |
-| 対応する（未対応） | 15 |
+| 対応済み | 3 |
+| 対応する（未対応） | 13 |
 | 要判断 | 0 |
 | 対応しない | 0 |
 | 未判断 | 0 |
@@ -24,7 +24,7 @@
 
 ### [P1] TypeDoc が公開エントリポイントではなく内部モジュールを API として公開している — site/docusaurus.config.ts:48
 
-> **状況: 対応する（未対応）** — `readDrawingState` などが公開 barrel に無いまま API ページに出ていることを確認した。ただし `entryPoints` を `src/index.ts` に変えると API ページの構成が変わるため、分類方法を決めてから着手する。
+> **状況: 対応済み** — 各パッケージの `src/index.ts` だけを entry point とし、公開 API を kind 別に分類するよう変更した。内部だけの symbol は生成対象から外れた。
 
 **何が問題か**
 
@@ -320,7 +320,7 @@ Tone は Piano 例を開いたときだけ動的にロードしてください�
 
 ### [P3] `AnimationCanvasProps` のリンク先が別 interface — site/docs/components/AnimationCanvas/index.mdx:32
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — kind 別に生成した `AnimationCanvasProps`、sizing interface、`CommonProps.animate` の各ページへリンクを更新した。
 
 **何が問題か**
 
