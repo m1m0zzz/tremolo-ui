@@ -1,7 +1,10 @@
+import { themeCss } from '../theme'
+
 const indexTs = `import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import App from './App';
+import './tremolo.css';
 
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
@@ -75,6 +78,9 @@ export const files = {
   },
   'src/index.tsx': {
     content: indexTs,
+  },
+  'src/tremolo.css': {
+    content: themeCss,
   },
   'package.json': {
     content: packageJSON,

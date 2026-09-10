@@ -52,6 +52,7 @@ function CopyButton({ copyCode }: { copyCode?: () => void }) {
 
 interface ControlsProps {
   code: string
+  externalFiles?: Record<string, string>
   githubPath?: string
   showCode?: boolean
   setShowCode?: (arg: boolean | (() => boolean)) => void
@@ -63,6 +64,7 @@ interface ControlsProps {
 
 function Controls({
   code,
+  externalFiles,
   githubPath,
   showCode,
   setShowCode,
@@ -84,14 +86,14 @@ function Controls({
         <button
           className={styles.iconButton}
           title="Open in Stackblitz"
-          onClick={() => openStackblitz(code)}
+          onClick={() => openStackblitz(code, externalFiles)}
         >
           <SiStackblitz />
         </button>
         <a
           className={styles.iconButton}
           title="Open in CodeSandbox"
-          href={generateCodeSandboxUrl(code)}
+          href={generateCodeSandboxUrl(code, externalFiles)}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -193,6 +195,8 @@ type customLiveCodeBlock = {
 
 interface ExtendProps {
   sourcePath?: string
+  /** Files required by the example in addition to its App.tsx source. */
+  externalFiles?: Record<string, string>
   showCode?: boolean
   expand?: boolean
 }
@@ -201,6 +205,7 @@ export default function Playground({
   children,
   transformCode,
   sourcePath = '',
+  externalFiles,
   showCode: _showCode = false,
   expand: _expand = false,
   ...props
@@ -235,6 +240,7 @@ export default function Playground({
         <Result />
         <Controls
           code={expand}
+          externalFiles={externalFiles}
           showCode={showCode}
           setShowCode={setShowCode}
           expanded={expanded}
