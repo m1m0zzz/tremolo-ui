@@ -51,6 +51,22 @@ export function arcRadius(strokeWidth: number | string | undefined) {
   return Number.isFinite(width) ? center - width / 2 : center
 }
 
+/** Build an SVG path for an arc, splitting full turns into drawable segments. */
+export function arcPath(startAngle: number, endAngle: number, radius: number) {
+  const start = pointOnArc(startAngle, radius)
+  const sweep = endAngle - startAngle
+  const segmentCount = Math.max(1, Math.ceil(Math.abs(sweep) / 180))
+  const segmentSweep = sweep / segmentCount
+  let path = `M ${start.x} ${start.y}`
+
+  for (let i = 1; i <= segmentCount; i += 1) {
+    const end = pointOnArc(startAngle + segmentSweep * i, radius)
+    path += ` A ${radius} ${radius} 0 0 ${segmentSweep >= 0 ? 1 : 0} ${end.x} ${end.y}`
+  }
+
+  return path
+}
+
 /** 設定から描画に必要な角度を導出する。レンダー中に呼ぶ。 */
 export function calcAngles({
   value,
