@@ -106,8 +106,26 @@ export function AnimationCanvas({
     options,
   })
   const instanceRef = useRef<AnimationCanvasInstance | null>(null)
-  /** Set while the instance below is newer than the effect that pushes into it. */
-  const justCreated = useRef(false)
+
+  // Runs before the creation effect below. This keeps a rebuilt instance on
+  // the current render's size and handlers while updating an existing one in
+  // place on ordinary renders.
+  useEffect(() => {
+    latest.current = {
+      draw,
+      init,
+      animate,
+      width,
+      height,
+      reduceFlickering,
+      options,
+    }
+    instanceRef.current?.update({
+      animate,
+      size: { width, height },
+      reduceFlickering,
+    })
+  })
 
   useEffect(() => {
     if (!node) return
@@ -123,7 +141,6 @@ export function AnimationCanvas({
       contextAttributes: current.options,
     })
     instanceRef.current = instance
-    justCreated.current = true
 
     return () => {
       instanceRef.current = null
@@ -134,32 +151,6 @@ export function AnimationCanvas({
     // than depended on: it is almost always written inline, and depending on
     // it would tear the canvas down on every render.
   }, [node, relativeSize])
-
-  // Runs after every render: the handlers come from props and are cheap to
-  // push, and updating in place keeps the frame count and elapsed time going.
-  useEffect(() => {
-    latest.current = {
-      draw,
-      init,
-      animate,
-      width,
-      height,
-      reduceFlickering,
-      options,
-    }
-    // The instance was built from `latest` a moment ago, so there is nothing
-    // to push yet. Skipping matters with `animate` off, where `update()` draws
-    // a frame and would otherwise paint the same one twice on mount.
-    if (justCreated.current) {
-      justCreated.current = false
-      return
-    }
-    instanceRef.current?.update({
-      animate,
-      size: { width, height },
-      reduceFlickering,
-    })
-  })
 
   return (
     <canvas

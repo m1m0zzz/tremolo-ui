@@ -12,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 15 |
-| 対応する（未対応） | 5 |
+| 対応済み | 16 |
+| 対応する（未対応） | 4 |
 | 要判断 | 0 |
 | 対応しない | 0 |
 | 未判断 | 0 |
@@ -551,7 +551,7 @@ context hooks と関連型を全コンポーネントで export するか、す�
 
 ### [P3] `Knob.Thumb` の `className` が無視される — packages/react/src/components/Knob/Thumb.tsx:28
 
-> **状況: 対応する（未対応）** — `className` を受け取りながら描画側では `classes?.thumb` しか使っておらず、捨てられていることを確認した。#204 で Slider / XYPad を直したのと同じ形に揃える。
+> **状況: 対応済み** — `className` を `classes?.thumb` とともに SVG へ結合し、代表的なホスト props の転送をテストした。
 
 **何が問題か**
 

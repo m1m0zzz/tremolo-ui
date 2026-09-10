@@ -27,6 +27,12 @@ function stubCanvas() {
 }
 
 let flush: () => void
+let queuedFrames: () => number
+let resizeObservers: Array<{
+  callback: ResizeObserverCallback
+  observe: ReturnType<typeof vi.fn>
+  disconnect: ReturnType<typeof vi.fn>
+}>
 
 function stubAnimationFrame() {
   let nextId = 1
@@ -44,13 +50,30 @@ function stubAnimationFrame() {
     queued.clear()
     for (const callback of callbacks) callback(performance.now())
   }
+  queuedFrames = () => queued.size
+}
+
+function stubResizeObserver() {
+  resizeObservers = []
+  class FakeResizeObserver {
+    observe = vi.fn()
+    disconnect = vi.fn()
+
+    constructor(readonly callback: ResizeObserverCallback) {
+      resizeObservers.push(this)
+    }
+  }
+  vi.stubGlobal('ResizeObserver', FakeResizeObserver)
 }
 
 beforeEach(() => {
   stubCanvas()
   stubAnimationFrame()
+  stubResizeObserver()
   globalThis.devicePixelRatio = 1
 })
+
+afterEach(() => vi.unstubAllGlobals())
 
 describe('AnimationCanvas', () => {
   test('a re-render does not restart the animation', () => {
@@ -129,6 +152,37 @@ describe('AnimationCanvas', () => {
 
     expect(canvas.width).toBe(80)
     expect(canvas.style.width).toBe('40px')
+  })
+
+  test('rebuilds when relativeSize changes and disconnects the old observer', () => {
+    const draw = vi.fn()
+    const { container, rerender } = render(
+      <AnimationCanvas width={10} height={20} draw={draw} />,
+    )
+    const canvas = container.querySelector('canvas') as HTMLCanvasElement
+    const parent = canvas.parentElement
+    expect(queuedFrames()).toBe(1)
+    expect(resizeObservers).toHaveLength(0)
+
+    rerender(<AnimationCanvas relativeSize draw={draw} />)
+    expect(queuedFrames()).toBe(1)
+    expect(resizeObservers).toHaveLength(1)
+    expect(resizeObservers[0].observe).toHaveBeenCalledWith(parent)
+
+    act(() => {
+      resizeObservers[0].callback(
+        [{ contentRect: { width: 80, height: 40 } } as ResizeObserverEntry],
+        resizeObservers[0] as unknown as ResizeObserver,
+      )
+    })
+    expect(canvas.width).toBe(80)
+    expect(canvas.height).toBe(40)
+
+    rerender(<AnimationCanvas width={30} height={15} draw={draw} />)
+    expect(resizeObservers[0].disconnect).toHaveBeenCalledTimes(1)
+    expect(queuedFrames()).toBe(1)
+    expect(canvas.width).toBe(30)
+    expect(canvas.height).toBe(15)
   })
 
   // The "Reactive Canvas" pattern the docs describe: useState + animate={false},

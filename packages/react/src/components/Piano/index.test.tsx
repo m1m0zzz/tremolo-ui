@@ -86,6 +86,28 @@ function dispatchKey(
   target.dispatchEvent(new KeyboardEvent(type, { bubbles: true, key }))
 }
 
+function stubResizeObserver() {
+  const observers: Array<{
+    callback: ResizeObserverCallback
+    observe: ReturnType<typeof vi.fn>
+    disconnect: ReturnType<typeof vi.fn>
+  }> = []
+
+  class FakeResizeObserver {
+    observe = vi.fn()
+    disconnect = vi.fn()
+
+    constructor(public callback: ResizeObserverCallback) {
+      observers.push(this)
+    }
+  }
+
+  vi.stubGlobal('ResizeObserver', FakeResizeObserver)
+  return observers
+}
+
+afterEach(() => vi.unstubAllGlobals())
+
 describe('Piano', () => {
   test('draws a key per note, with the data attributes to select on', () => {
     setup()
@@ -317,11 +339,11 @@ describe('Piano', () => {
     })
     expect(onPlayNote).toHaveBeenCalledWith(noteNumber('D3'), undefined)
 
-    // The entries the black keys would use are empty strings, which no
-    // KeyboardEvent.key can be.
+    // `w` is a real key, but HOME_ROW_NATURAL deliberately leaves it
+    // unassigned where the black key would otherwise be.
     onPlayNote.mockClear()
     act(() => {
-      dispatchKey(piano, 'keydown', '')
+      dispatchKey(piano, 'keydown', 'w')
     })
     expect(onPlayNote).not.toHaveBeenCalled()
   })
@@ -448,6 +470,48 @@ describe('Piano', () => {
       )
     })
     expect(onPlayNote).toHaveBeenCalledWith(noteNumber('D3'), undefined)
+  })
+
+  test('fill observes the parent and recalculates width when keyGap changes', () => {
+    const observers = stubResizeObserver()
+    const { piano, rerender, unmount } = setup({ fill: true, keyGap: 2 })
+    Object.defineProperty(piano, 'clientWidth', {
+      configurable: true,
+      value: 280,
+    })
+
+    act(() =>
+      observers[0].callback([], observers[0] as unknown as ResizeObserver),
+    )
+    expect(Number.parseFloat(key(noteNumber('C3')).style.width)).toBeCloseTo(18)
+
+    rerender({ fill: true, keyGap: 4 })
+    expect(observers[0].disconnect).toHaveBeenCalledTimes(1)
+    act(() =>
+      observers[1].callback([], observers[1] as unknown as ResizeObserver),
+    )
+    expect(Number.parseFloat(key(noteNumber('C3')).style.width)).toBeCloseTo(16)
+
+    unmount()
+    expect(observers[1].disconnect).toHaveBeenCalledTimes(1)
+  })
+
+  test('fill keeps a black-key-only range finite', () => {
+    const observers = stubResizeObserver()
+    const black = noteNumber('C#3')
+    const { piano } = setup({
+      fill: true,
+      noteRange: { first: black, last: black },
+    })
+    Object.defineProperty(piano, 'clientWidth', { value: 100 })
+
+    act(() =>
+      observers[0].callback([], observers[0] as unknown as ResizeObserver),
+    )
+
+    expect(Number.isFinite(Number.parseFloat(key(black).style.width))).toBe(
+      true,
+    )
   })
 
   test('keeps a held note when the caller passes the keys inline', () => {

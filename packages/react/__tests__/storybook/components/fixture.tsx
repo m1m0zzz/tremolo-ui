@@ -18,3 +18,21 @@ export interface FixtureProps {
 export function Fixture({ children }: FixtureProps) {
   return <>{children}</>
 }
+
+export interface RootProps {
+  value: number
+}
+
+export interface PartProps {
+  label?: string
+}
+
+export function Root({ value }: RootProps) {
+  return <>{value}</>
+}
+
+export function Part({ label }: PartProps) {
+  return <>{label}</>
+}
+
+export const Namespace = { Root, Part }

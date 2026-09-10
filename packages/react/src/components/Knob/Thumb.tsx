@@ -45,7 +45,10 @@ export function Thumb({
   const r1 = useKnobContext((s) => s.r1)
 
   return (
-    <svg className={cx('tremolo-knob-thumb', classes?.thumb)} {...props}>
+    <svg
+      className={cx('tremolo-knob-thumb', classes?.thumb, className)}
+      {...props}
+    >
       <circle cx="50%" cy="50%" r={`${thumbSize / 2}%`} fill={thumb} />
       <line
         className={cx('tremolo-knob-thumb-line', classes?.thumbLine)}
