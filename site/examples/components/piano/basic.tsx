@@ -1,4 +1,5 @@
 // expand begin
+import { useEffect, useRef } from 'react'
 import * as Tone from 'tone'
 
 import { noteName, noteNumber } from '@tremolo-ui/functions'
@@ -7,7 +8,18 @@ import { Piano, SHORTCUTS } from '@tremolo-ui/react'
 // expand end
 
 function App() {
-  const synth = new Tone.PolySynth({ volume: -6 }).toDestination()
+  const synthRef = useRef<Tone.PolySynth | null>(null)
+
+  useEffect(() => {
+    const synth = new Tone.PolySynth({ volume: -6 }).toDestination()
+    synthRef.current = synth
+
+    return () => {
+      synth.releaseAll()
+      synth.dispose()
+      if (synthRef.current === synth) synthRef.current = null
+    }
+  }, [])
 
   return (
     <div
@@ -21,10 +33,10 @@ function App() {
         noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}
         keyboardShortcuts={SHORTCUTS.HOME_ROW}
         onPlayNote={(noteNumber) => {
-          synth.triggerAttack(noteName(noteNumber))
+          synthRef.current?.triggerAttack(noteName(noteNumber))
         }}
         onStopNote={(noteNumber) => {
-          synth.triggerRelease(noteName(noteNumber))
+          synthRef.current?.triggerRelease(noteName(noteNumber))
         }}
         label={(_, { index }) => SHORTCUTS.HOME_ROW.keys[index]?.toUpperCase()}
       />
