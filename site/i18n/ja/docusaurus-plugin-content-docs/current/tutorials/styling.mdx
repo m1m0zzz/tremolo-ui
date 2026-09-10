@@ -46,18 +46,78 @@ import xyPadCss from '!!raw-loader!@site/src/css/tremolo/XYPad.css'
 | `[aria-disabled="true"]` | 全コンポーネント | `disabled` が指定されている |
 | `[aria-readonly="true"]` | 全コンポーネント | `readonly` が指定されている |
 | `[data-dragging="true"]` | `Knob` / `PointsEditor.Point` | ドラッグ中 |
-| `[data-vertical="true"]` | `Slider` / `Slider.Track` / `Slider.MarksOption` | 縦向きのスライダー |
+| `[data-vertical="true"]` | `Slider` / `Slider.Track` / `Slider.Marks` / `Slider.MarksOption` | 縦向きのスライダー |
+| `[data-flipped="true"]` | `Slider.Track` | 値が反対側から増える（`vertical` と `reverse` の一方だけが有効） |
 | `[data-active="true"]` | `Piano` の鍵盤 | その音が鳴っている |
 | `[data-out-of-range="true"]` | `NumberInput.InputField` | 値が `min` / `max` の外にある |
+| `[data-fill="true"]` | `Piano` | `fill` が指定されている |
+| `[data-selected="true"]` | `PointsEditor.Point` | 選択中のポイント |
 
 ```css
-.tremolo-slider[aria-disabled='true'] {
+.tremolo-slider[data-disabled='true'] {
   opacity: 0.5;
 }
 ```
 
 フォーカスを受けるのは実際の要素なので、`:focus` / `:hover` / `:focus-within` も
 どこでもと同じように使えます。
+
+## 📐カスタムプロパティ
+
+コンポーネントの見た目に関する値はカスタムプロパティで、対応する prop はその値を
+書き込むだけです。
+
+```jsx
+<Slider.Track thickness={16} />
+// 以下と同じ
+<Slider.Track style={{ '--thickness': '16px' }} />
+```
+
+prop、スタイルシート、inline style は同じ値を指定する3つの方法で、通常のcascadeで
+優先順位が決まります。**既定値はコンポーネントではなくCSSにあります。** そのため、
+すべてのinstanceへpropを渡さなくても、CSSルール1つでまとめて変更できます。
+
+```css
+.tremolo-slider-track {
+  --thickness: 16px;
+}
+```
+
+propへ渡した数値はpxとして扱われます。それ以外はそのまま書き込まれるため、
+`'3rem'`、`'100%'`、`'auto'` も使用できます。
+
+| コンポーネント | プロパティ |
+| --- | --- |
+| `Knob` | `--knob-size` |
+| `Slider.Track` | `--length`, `--thickness`, `--active`, `--inactive` |
+| `Slider.Thumb` | `--thumb-size`（`Slider`に指定）、`--color` |
+| `Slider.Marks` | `--gap` |
+| `Slider.MarksOption` | `--thickness`, `--length`, `--gap`, `--label-width` |
+| `XYPad.Area` | `--width`, `--height`, `--min-width`, `--min-height`, `--color` |
+| `XYPad.Thumb` | `--thumb-size`（`XYPad`に指定）、`--color` |
+| `PointsEditor` | `--width`, `--height` |
+| `PointsEditor.Point` | `--width`, `--height`, `--color` |
+| `PointsEditor` marquee | `.tremolo-points-editor-marquee`の`--color` |
+| `Piano` | `--height`と、下記テーマの鍵盤ごとの色 |
+
+### `--percent`とfillの描画
+
+`Slider.Track` は現在値の位置を`--percent`でも公開します。CSSだけでは算出できない
+唯一の値であり、コンポーネント自身がfillを描画しない理由でもあります。fillは
+パッケージが描く要素ではなく、テーマのルールです。
+
+```css
+.tremolo-slider-track {
+  background: linear-gradient(
+    var(--axis),
+    var(--active) var(--percent),
+    var(--inactive) var(--percent)
+  );
+}
+```
+
+このルールを置き換えれば、別の色、画像、値に応じて埋まる目盛りなど、任意のtrackを
+描画できます。
 
 ## 📋このサイトで使っているテーマ
 

@@ -12,10 +12,10 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 3 |
-| 対応する（未対応） | 13 |
+| 対応済み | 6 |
+| 対応する（未対応） | 9 |
 | 要判断 | 0 |
-| 対応しない | 0 |
+| 対応しない | 1 |
 | 未判断 | 0 |
 
 全 P1 / P2 / P3 を判定済み。P1 は再現の有無まで確認した。
@@ -98,7 +98,7 @@ Playground にコードだけでなく付随ファイル一覧を渡せるよう
 
 ### [P2] `start:fast` はクリーン checkout では API sidebar を import できない — site/package.json:9
 
-> **状況: 対応する（未対応）** — `sidebars.ts` が gitignore 対象の `docs/api/*/typedoc-sidebar.cjs` を静的 import していることを確認した。
+> **状況: 対応しない** — `start:fast` は、通常の `npm run docs` などで一度生成したAPIを更新せずに再利用するための開発用コマンドであり、クリーンcheckoutからの起動は契約に含めない。
 
 **何が問題か**
 
@@ -128,7 +128,7 @@ import typedocSidebarReact from './docs/api/react/typedoc-sidebar.cjs'
 
 ### [P2] 5 つのコンポーネントページの Style リンクが存在しないファイルを指す — site/docs/components/Knob/index.mdx:12
 
-> **状況: 対応する（未対応）** — `StyleGitHubLink` が `packages/react/src/components/*/index.css` を指しているが、パッケージから CSS を無くした時点で存在しないファイルになっている。
+> **状況: 対応済み** — Knob、NumberInput、Piano、Slider、XYPadのリンク先を、実際に共有テーマを置いている`site/src/css/tremolo/*.css`へ変更した。
 
 **何が問題か**
 
@@ -152,7 +152,7 @@ Knob ページは次のリンクを生成します。
 
 ### [P2] migration の末尾が同じページの現行説明と正反対 — site/docs/guides/migration.mdx:482
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — 現在と逆のCSS配布予定を記した`Still to come`節を削除した。
 
 **何が問題か**
 
@@ -177,7 +177,7 @@ you are expected to import them.
 
 ### [P2] 日本語の Styling が英語版の現在の CSS 契約に追随していない — site/i18n/ja/docusaurus-plugin-content-docs/current/tutorials/styling.mdx:40
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — 英語版にある状態属性、カスタムプロパティ一覧、`--percent`によるfill描画の説明を日本語版へ同期した。
 
 **何が問題か**
 
