@@ -12,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 0 |
-| 対応する（未対応） | 16 |
+| 対応済み | 1 |
+| 対応する（未対応） | 15 |
 | 要判断 | 0 |
 | 対応しない | 0 |
 | 未判断 | 0 |
@@ -62,7 +62,7 @@ TypeDoc の `entryPoints` を各パッケージの `src/index.ts` に変更し�
 
 ### [P1] 外部 Playground が例に必要な CSS と関連ファイルを渡していない — site/src/theme/Playground/external/stackblitz/files.ts:191
 
-> **状況: 対応する（未対応）** — StackBlitz / CodeSandbox のどちらにもテーマ CSS を渡していないことを確認した。`site/examples/tutorials/styling/css-module.tsx` は `my-knob.module.css` を import しており、外部では解決できずビルドが落ちる。
+> **状況: 対応済み** — 両方のプロジェクトへサイトのテーマ CSS と import を追加し、Playground が例固有の関連ファイルを渡せるようにした。CSS Modules 例は `my-knob.module.css` を同梱する。
 
 **何が問題か**
 

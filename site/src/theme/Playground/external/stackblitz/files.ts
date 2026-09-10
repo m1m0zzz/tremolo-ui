@@ -1,7 +1,10 @@
+import { themeCss } from '../theme'
+
 const main = `import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import App from './App.tsx';
+import './tremolo.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -190,6 +193,7 @@ export default defineConfig({
 
 export const files: { [path: string]: string } = {
   'src/main.tsx': main,
+  'src/tremolo.css': themeCss,
   'src/vite-env.d.ts': viteEnv,
   '.gitignore': gitIgnore,
   'eslint.config.js': eslintConfig,
