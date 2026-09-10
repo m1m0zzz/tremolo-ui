@@ -12,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 14 |
-| 対応する（未対応） | 6 |
+| 対応済み | 15 |
+| 対応する（未対応） | 5 |
 | 要判断 | 0 |
 | 対応しない | 0 |
 | 未判断 | 0 |
@@ -460,7 +460,7 @@ Piano.Root は `ComponentPropsWithoutRef<'div'>` 経由で children を受け取
 
 ### [P2] `useEventListener` の手動 disposer が登録時とは別の target を解除する — packages/react/src/hooks/useEventListener.ts:34
 
-> **状況: 対応する（未対応）** — 戻り値の disposer は呼び出し時に target を再評価するため、登録時と別の要素を解除しうる。現在この戻り値を使っている箇所は無いので、直すか戻り値ごと無くすかは実装時に決める。
+> **状況: 対応済み** — effectが登録時targetを閉じ込めたcleanupをrefへ保存し、安定したdisposerがそのcleanupを呼ぶようにした。target関数の返り値が変わった後でも元のlistenerを解除するテストを追加した。
 
 **何が問題か**
 

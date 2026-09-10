@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 import { useCallbackRef } from './_internal/useCallbackRef'
 
@@ -30,6 +30,7 @@ export function useEventListener(
   options?: Options,
 ) {
   const listener = useCallbackRef(handler)
+  const cleanupRef = useRef<VoidFunction>(() => {})
 
   useEffect(() => {
     const node = typeof target === 'function' ? target() : (target ?? document)
@@ -37,13 +38,16 @@ export function useEventListener(
     if (!node) return
 
     node.addEventListener(event, listener, options)
-    return () => {
+    const cleanup = () => {
       node.removeEventListener(event, listener, options)
+    }
+    cleanupRef.current = cleanup
+
+    return () => {
+      cleanup()
+      if (cleanupRef.current === cleanup) cleanupRef.current = () => {}
     }
   }, [event, target, options, listener])
 
-  return () => {
-    const node = typeof target === 'function' ? target() : (target ?? document)
-    node?.removeEventListener(event, listener, options)
-  }
+  return useCallback(() => cleanupRef.current(), [])
 }
