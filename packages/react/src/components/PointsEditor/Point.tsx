@@ -1,6 +1,7 @@
 import {
   ComponentPropsWithoutRef,
   CSSProperties,
+  ReactNode,
   useCallback,
   useEffect,
   useId,
@@ -41,6 +42,8 @@ export function clampPoint(
 
 export interface PointProps<T extends PointBaseType> {
   value: T
+  /** Drawn inside the point: the theme's own dot stands when it is left out. */
+  children?: ReactNode
   /**
    * How the selection refers to this point. One is generated when it is left
    * out, which lasts as long as the point is mounted — give your own if the
@@ -85,6 +88,7 @@ export const AXIS = { min: 0, max: 1 }
 
 export function Point<T extends PointBaseType>({
   value,
+  children,
   id: idProp,
   min,
   max,
@@ -311,6 +315,7 @@ export function Point<T extends PointBaseType>({
           }}
         />
       ))}
+      {children}
     </div>
   )
 }
