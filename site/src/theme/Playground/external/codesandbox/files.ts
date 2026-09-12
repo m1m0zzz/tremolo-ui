@@ -31,13 +31,13 @@ const indexHtml = `<!DOCTYPE html>
 </body>
 </html>
 `
-const packageJSON = `{
+const packageJSON = (tremoloUIVersion: string) => `{
   "name": "tremolo-ui-react-example",
   "version": "0.0.0",
   "private": true,
   "main": "src/index.tsx",
   "dependencies": {
-    "@tremolo-ui/react": "latest",
+    "@tremolo-ui/react": "^${tremoloUIVersion}",
     "react": "^19",
     "react-dom": "^19",
     "tone": "^15"
@@ -51,7 +51,7 @@ const packageJSON = `{
   "devDependencies": {
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "react-scripts-ts": "latest"
+    "react-scripts-ts": "^3.1.0"
   }
 }
 `
@@ -72,20 +72,22 @@ const tsconfigJson = `{
 }
 `
 
-export const files = {
-  'public/index.html': {
-    content: indexHtml,
-  },
-  'src/index.tsx': {
-    content: indexTs,
-  },
-  'src/tremolo.css': {
-    content: themeCss,
-  },
-  'package.json': {
-    content: packageJSON,
-  },
-  'tsconfig.json': {
-    content: tsconfigJson,
-  },
+export function createFiles(tremoloUIVersion: string) {
+  return {
+    'public/index.html': {
+      content: indexHtml,
+    },
+    'src/index.tsx': {
+      content: indexTs,
+    },
+    'src/tremolo.css': {
+      content: themeCss,
+    },
+    'package.json': {
+      content: packageJSON(tremoloUIVersion),
+    },
+    'tsconfig.json': {
+      content: tsconfigJson,
+    },
+  }
 }

@@ -86,7 +86,7 @@ const indexHtml = `<!doctype html>
 </html>
 `
 
-const packageJson = `{
+const packageJson = (tremoloUIVersion: string) => `{
   "name": "tremolo-ui-react-example",
   "private": true,
   "version": "0.0.0",
@@ -98,7 +98,7 @@ const packageJson = `{
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tremolo-ui/react": "latest",
+    "@tremolo-ui/react": "^${tremoloUIVersion}",
     "react": "^19",
     "react-dom": "^19",
     "tone": "^15"
@@ -191,16 +191,20 @@ export default defineConfig({
 })
 `
 
-export const files: { [path: string]: string } = {
-  'src/main.tsx': main,
-  'src/tremolo.css': themeCss,
-  'src/vite-env.d.ts': viteEnv,
-  '.gitignore': gitIgnore,
-  'eslint.config.js': eslintConfig,
-  'index.html': indexHtml,
-  'package.json': packageJson,
-  'tsconfig.json': tsconfigJson,
-  'tsconfig.app.json': tsconfigAppJson,
-  'tsconfig.node.json': tsconfigNodeJson,
-  'vite.config.ts': viteConfig,
+export function createFiles(tremoloUIVersion: string): {
+  [path: string]: string
+} {
+  return {
+    'src/main.tsx': main,
+    'src/tremolo.css': themeCss,
+    'src/vite-env.d.ts': viteEnv,
+    '.gitignore': gitIgnore,
+    'eslint.config.js': eslintConfig,
+    'index.html': indexHtml,
+    'package.json': packageJson(tremoloUIVersion),
+    'tsconfig.json': tsconfigJson,
+    'tsconfig.app.json': tsconfigAppJson,
+    'tsconfig.node.json': tsconfigNodeJson,
+    'vite.config.ts': viteConfig,
+  }
 }

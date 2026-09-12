@@ -54,6 +54,7 @@ interface ControlsProps {
   code: string
   externalFiles?: Record<string, string>
   githubPath?: string
+  tremoloUIVersion: string
   showCode?: boolean
   setShowCode?: (arg: boolean | (() => boolean)) => void
   expanded?: boolean
@@ -66,6 +67,7 @@ function Controls({
   code,
   externalFiles,
   githubPath,
+  tremoloUIVersion,
   showCode,
   setShowCode,
   expanded,
@@ -86,14 +88,14 @@ function Controls({
         <button
           className={styles.iconButton}
           title="Open in Stackblitz"
-          onClick={() => openStackblitz(code, externalFiles)}
+          onClick={() => openStackblitz(code, tremoloUIVersion, externalFiles)}
         >
           <SiStackblitz />
         </button>
         <a
           className={styles.iconButton}
           title="Open in CodeSandbox"
-          href={generateCodeSandboxUrl(code, externalFiles)}
+          href={generateCodeSandboxUrl(code, tremoloUIVersion, externalFiles)}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -183,6 +185,8 @@ function ThemedLiveEditor({ code }: { code?: string }) {
 const DEFAULT_TRANSFORM_CODE = (code: string) => `${code};`
 
 type customLiveCodeBlock = {
+  /** The @tremolo-ui/react this site was built against. See customFields. */
+  tremoloUIVersion?: string
   liveCodeBlock?: {
     defaultShowCode?: boolean
     defaultExpanded?: boolean
@@ -214,6 +218,9 @@ export default function Playground({
   const customFields = siteConfig?.customFields as customLiveCodeBlock
   const githubLink = customFields?.liveCodeBlock?.githubLink
   const githubPath = (githubLink?.replace(/\/$/, '') || '') + '/' + sourcePath
+  // Injected by the config at build time, so the sandbox a page opens installs
+  // the version that page was written against.
+  const tremoloUIVersion = customFields?.tremoloUIVersion ?? 'latest'
 
   const prismTheme = usePrismTheme()
   const [showCode, setShowCode] = useState(_showCode)
@@ -247,6 +254,7 @@ export default function Playground({
           setExpanded={setExpanded}
           copyCode={() => copyCode()}
           githubPath={githubPath}
+          tremoloUIVersion={tremoloUIVersion}
         />
         {showCode && <ThemedLiveEditor code={expanded ? expand : collapse} />}
       </LiveProvider>

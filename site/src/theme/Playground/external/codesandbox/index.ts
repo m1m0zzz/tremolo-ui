@@ -1,14 +1,16 @@
 // @ts-nocheck
 import { getParameters } from 'codesandbox-import-utils/lib/api/define'
 
-import { files } from './files'
+import { createFiles } from './files'
 
 // https://codesandbox.io/docs/learn/sandboxes/cli-api
 
 export function generateCodeSandboxUrl(
   code: string,
+  tremoloUIVersion: string,
   additionalFiles: Record<string, string> = {},
 ) {
+  const files = createFiles(tremoloUIVersion)
   // console.log('hello')
   const parameters = getParameters({
     files: {
