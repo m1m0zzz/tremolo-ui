@@ -273,19 +273,13 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
         if (!['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key))
           return
 
-        const inputAxis = (event.target as HTMLElement).dataset.axis
-        const i: 0 | 1 =
-          inputAxis === '0' || inputAxis === '1'
-            ? (Number(inputAxis) as 0 | 1)
-            : key === 'ArrowRight' || key === 'ArrowLeft'
-              ? 0
-              : 1
-        const matchesAxis =
-          inputAxis === undefined ||
-          (i === 0 && (key === 'ArrowRight' || key === 'ArrowLeft')) ||
-          (i === 1 && (key === 'ArrowUp' || key === 'ArrowDown'))
+        // The key picks the axis, whichever of the two inputs holds the
+        // focus: the pad is one control to the person moving it, and the focus
+        // lands on the x input, so reading the axis off the input would leave
+        // the y axis with no keys at all.
+        const i: 0 | 1 = key === 'ArrowRight' || key === 'ArrowLeft' ? 0 : 1
         event.preventDefault()
-        if (!matchesAxis || !onChange || inactive || !keyboard) return
+        if (!onChange || inactive || !keyboard) return
         let direction = 1
         if (key === 'ArrowLeft' || key === 'ArrowUp') direction *= -1
         if (reverse[i]) direction *= -1

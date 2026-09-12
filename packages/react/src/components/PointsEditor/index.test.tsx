@@ -263,6 +263,18 @@ describe('PointsEditor', () => {
     expect(onChange).toHaveBeenLastCalledWith({ x: 0.5, y: 0.5 })
   })
 
+  test('the arrow keys move both axes, from either input', () => {
+    const { point, onChange } = setup()
+
+    // The focus lands on the x input, so up and down have to move y from
+    // there: the point is one control to the person moving it.
+    fireEvent.keyDown(pointInput(point, 'x'), { key: 'ArrowUp' })
+    expect(onChange).toHaveBeenLastCalledWith({ x: 0.5, y: 0.49 })
+
+    fireEvent.keyDown(pointInput(point, 'y'), { key: 'ArrowRight' })
+    expect(onChange).toHaveBeenLastCalledWith({ x: 0.51, y: 0.49 })
+  })
+
   test('a keyboard nudge stops at min and max', () => {
     const { point, onChange } = setup({
       initial: { x: 0, y: 0.5 },
