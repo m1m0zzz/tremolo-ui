@@ -24,7 +24,7 @@ function App() {
         onChange={(v) => setValue(v)}
       >
         <Slider.Track>
-          <Slider.Thumb />
+          <Slider.Thumb aria-label="Level" />
         </Slider.Track>
       </Slider.Root>
       <span

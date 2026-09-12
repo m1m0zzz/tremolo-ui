@@ -42,7 +42,6 @@
   align-items: center;
   justify-content: center;
   box-sizing: content-box;
-  outline: 0px;
   border: solid 1px transparent;
   margin: 0px;
   cursor: pointer;
@@ -61,6 +60,11 @@
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);
     color: var(--ifm-link-hover-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ifm-color-primary);
+    outline-offset: 2px;
   }
 }
 

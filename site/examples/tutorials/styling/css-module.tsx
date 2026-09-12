@@ -12,6 +12,7 @@ function App() {
   return (
     <div className={myKnob.container}>
       <Knob.Root
+        aria-label="Level"
         className={myKnob.knob}
         value={value}
         min={0}
