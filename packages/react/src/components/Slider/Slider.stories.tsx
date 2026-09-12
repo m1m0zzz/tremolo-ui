@@ -64,7 +64,7 @@ export const Basic: Story = {
           {/* A fixed interval, not `'step'`: over 0-100 with the default
               step of 1 that is 101 marks, and Controls can make `step`
               smaller still. */}
-          {marks && <Slider.Marks options={[25, 'mark-number']} />}
+          {marks && <Slider.Marks options={25} />}
         </Slider.Root>
         <p>value: {value}</p>
       </>
@@ -370,11 +370,11 @@ export const ConfigScale: Story = {
               <Slider.Thumb />
             </Slider.Track>
             <Slider.Marks>
-              <Slider.MarksOption value={0} type="mark-number" />
-              <Slider.MarksOption value={25} type="mark" />
-              <Slider.MarksOption value={50} type="mark-number" />
-              <Slider.MarksOption value={75} type="mark" />
-              <Slider.MarksOption value={100} type="mark-number" />
+              <Slider.MarksOption value={0} />
+              <Slider.MarksOption value={25} label={null} />
+              <Slider.MarksOption value={50} />
+              <Slider.MarksOption value={75} label={null} />
+              <Slider.MarksOption value={100} />
             </Slider.Marks>
           </Slider.Root>
           <p>value: {value}</p>
@@ -387,20 +387,14 @@ export const ConfigScale: Story = {
             <Slider.Marks gap={0} style={{ height: 42 }}>
               <Slider.MarksOption
                 value={0}
-                type="mark-number"
                 length="1rem"
                 styles={{ label: { color: 'red' } }}
               />
-              <Slider.MarksOption value={25} type="mark" />
-              <Slider.MarksOption
-                value={50}
-                type="mark-number"
-                length="0.75rem"
-              />
-              <Slider.MarksOption value={75} type="mark" />
+              <Slider.MarksOption value={25} label={null} />
+              <Slider.MarksOption value={50} length="0.75rem" />
+              <Slider.MarksOption value={75} label={null} />
               <Slider.MarksOption
                 value={100}
-                type="mark-number"
                 length="1rem"
                 styles={{ label: { color: 'blue' } }}
               />
@@ -412,7 +406,7 @@ export const ConfigScale: Story = {
           <Slider.Root
             {...args}
             value={value3}
-            // The step is what `options={['step', 'number']}` reads.
+            // The step is what `options={{ per: 'step' }}` reads.
             min={0}
             max={35}
             step={10}
@@ -422,7 +416,7 @@ export const ConfigScale: Story = {
             <Slider.Track>
               <Slider.Thumb />
             </Slider.Track>
-            <Slider.Marks options={['step', 'number']} />
+            <Slider.Marks options={{ per: 'step', mark: false }} />
           </Slider.Root>
           <p>value: {value3}</p>
         </section>

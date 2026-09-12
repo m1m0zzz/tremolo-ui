@@ -53,8 +53,15 @@ export function Marks({
     >
       <Placement name="Slider.Marks">
         {options
-          ? optionsList.map(({ value, type }, index) => {
-              return <MarksOption key={index} value={value} type={type} />
+          ? optionsList.map(({ value, mark, label }, index) => {
+              return (
+                <MarksOption
+                  key={index}
+                  value={value}
+                  mark={mark}
+                  label={label ? undefined : null}
+                />
+              )
             })
           : children}
       </Placement>
