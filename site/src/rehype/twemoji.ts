@@ -1,4 +1,5 @@
 import twemoji from '@twemoji/api'
+import twemojiPackage from '@twemoji/api/package.json'
 import emojiRegex from 'emoji-regex'
 import replaceToArray from 'string-replace-to-array'
 import { map } from 'unist-util-map'
@@ -6,6 +7,12 @@ import { map } from 'unist-util-map'
 import type { ElementContent, Root, RootContent } from 'hast'
 
 export const regex = emojiRegex()
+
+/**
+ * The assets follow the installed @twemoji/api rather than the CDN's `latest`:
+ * otherwise what the site serves changes without the build changing.
+ */
+export const defaultBaseUrl = `https://cdn.jsdelivr.net/gh/jdecked/twemoji@${twemojiPackage.version}/assets`
 
 // https://github.com/cliid/rehype-twemojify/blob/master/src/index.ts
 
@@ -20,7 +27,7 @@ export function resolveOptions(options?: Partial<Options>) {
   const defaultOptions = {
     exclude: [],
     className: 'emoji',
-    baseUrl: 'https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets',
+    baseUrl: defaultBaseUrl,
     size: 'svg',
   } as Options
   return {

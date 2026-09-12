@@ -12,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 11 |
-| 対応する（未対応） | 4 |
+| 対応済み | 12 |
+| 対応する（未対応） | 3 |
 | 要判断 | 0 |
 | 対応しない | 1 |
 | 未判断 | 0 |
@@ -441,7 +441,7 @@ feature 画像が装飾なら `aria-hidden="true"` と `focusable="false"` を�
 
 ### [P3] favicon helper が複合 emoji のコードポイントを切り捨てる — site/docusaurus.config.ts:12
 
-> **状況: 対応する（未対応）** — `codePoint.split("-")[0]` で先頭のコードポイントだけを使っているため、複合 emoji では別の画像になることを確認した。
+> **状況: 対応済み** — favicon / navbar のロゴも `src/rehype/twemoji.ts` の `toCodePoint` / `toUrl` を通すようにして、先頭のコードポイントだけを使う実装をやめた。CDN の `latest` もインストール済みの `@twemoji/api` の版に固定した（package.json から読むので依存を上げれば追従する）。
 
 **何が問題か**
 
