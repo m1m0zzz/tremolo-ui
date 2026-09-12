@@ -258,6 +258,10 @@ const config: Config = {
               to: '/docs/api/functions',
             },
             {
+              label: 'dom',
+              to: '/docs/api/dom',
+            },
+            {
               label: 'React',
               to: '/docs/api/react',
             },

@@ -1,0 +1,38 @@
+import CodeBlock from '@theme/CodeBlock'
+import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/components/points-editor/basic'
+
+# PointsEditor
+
+Editor for a set of points, each one dragged within the same area.
+
+A point is placed by its position in the container, so its value is `{ x, y }`
+in the range 0..1 on each axis, with `y` growing downwards. Points can be
+selected and moved together, with a rubber band or with ctrl / meta.
+
+<GitHubLink
+  path='packages/react/src/components/PointsEditor/index.tsx'
+/>
+<StyleGitHubLink
+  path='site/src/css/tremolo/PointsEditor.css'
+/>
+
+## Import
+
+```jsx
+import { PointsEditor } from '@tremolo-ui/react'
+```
+
+## Examples
+
+### Basic
+
+Drag a point, or click one and use the arrow keys. The wheel moves the focused
+point from anywhere over the editor, and shift switches it to the x axis.
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/points-editor/basic.tsx'
+>{basic}</CodeBlock>

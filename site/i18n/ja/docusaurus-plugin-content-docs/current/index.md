@@ -31,6 +31,7 @@ UIカタログとドキュメントを Storybook上で確認できます。
 typedoc によるAPIドキュメント
 
 - [@tremolo-ui/functions](./api/functions/)
+- [@tremolo-ui/dom](./api/dom/)
 - [@tremolo-ui/react](./api/react/)
 
 ## このドキュメントについて
