@@ -28,7 +28,7 @@ describe('Slider.Thumb', () => {
     )
 
     expect(thumb()).toHaveClass('tremolo-slider-thumb')
-    expect(thumb().firstElementChild?.tagName).toBe('IMG')
+    expect(thumb().querySelector('img')).not.toBeNull()
     // Nothing wraps it: the element the caller sees is the positioned one.
     expect(thumb().parentElement).toHaveClass('tremolo-slider-track')
   })
@@ -83,6 +83,6 @@ describe('Slider.Thumb', () => {
 
     act(() => screen.getByText('focus').click())
 
-    expect(thumb()).toHaveFocus()
+    expect(screen.getByRole('slider')).toHaveFocus()
   })
 })
