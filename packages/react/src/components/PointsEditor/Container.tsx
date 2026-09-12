@@ -24,10 +24,10 @@ export const Container = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       disabled,
       selectable,
       nudgeFocusedPoint,
-      marquee,
-      beginMarquee,
-      moveMarquee,
-      endMarquee,
+      selectionBox,
+      beginSelectionBox,
+      moveSelectionBox,
+      endSelectionBox,
     } = usePointsEditorContext()
     const { refCallback: dragRefCallback } = useDragValue<HTMLDivElement>({
       axis: AXIS,
@@ -41,10 +41,10 @@ export const Container = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
           '.tremolo-points-editor-point',
         ),
       onDragStart: ([x, y], state) => {
-        beginMarquee({ x, y }, state.event)
+        beginSelectionBox({ x, y }, state.event)
       },
-      onChange: ([x, y]) => moveMarquee({ x, y }),
-      onDragEnd: endMarquee,
+      onChange: ([x, y]) => moveSelectionBox({ x, y }),
+      onDragEnd: endSelectionBox,
     })
 
     // One listener for the whole editor rather than one per point: a wheel
@@ -86,14 +86,14 @@ export const Container = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         {...props}
       >
         <Placement name="PointsEditor.Container">{children}</Placement>
-        {marquee && (
+        {selectionBox && (
           <div
-            className="tremolo-points-editor-marquee"
+            className="tremolo-points-editor-selection-box"
             style={{
-              left: `${marquee.x * 100}%`,
-              top: `${marquee.y * 100}%`,
-              width: `${marquee.width * 100}%`,
-              height: `${marquee.height * 100}%`,
+              left: `${selectionBox.x * 100}%`,
+              top: `${selectionBox.y * 100}%`,
+              width: `${selectionBox.width * 100}%`,
+              height: `${selectionBox.height * 100}%`,
             }}
           />
         )}
