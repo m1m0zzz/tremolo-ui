@@ -194,7 +194,7 @@ const config: Config = {
     navbar: {
       title: '@tremolo-ui',
       logo: {
-        alt: 'My Site Logo',
+        alt: 'tremolo-ui',
         src: emojiUrl('🎸', 'svg'),
       },
       items: [
