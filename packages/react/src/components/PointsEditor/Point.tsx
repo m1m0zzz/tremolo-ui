@@ -22,7 +22,7 @@ import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { cssLength } from '../_util/css-length'
 import { cx } from '../_util/cx'
-import { useCheckPlacement } from '../_util/placement'
+import { useCheckPlacement } from '../_util/Placement'
 import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
 import { type PointRegistration, usePointsEditorContext } from './context'

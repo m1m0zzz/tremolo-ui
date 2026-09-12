@@ -3,7 +3,7 @@ import { SVGProps } from 'react'
 import { clamp } from '@tremolo-ui/functions'
 
 import { cx } from '../_util/cx'
-import { useCheckPlacement } from '../_util/placement'
+import { useCheckPlacement } from '../_util/Placement'
 
 import { useKnobContext, viewBoxSize } from './context'
 
