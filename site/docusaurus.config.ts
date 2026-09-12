@@ -1,18 +1,19 @@
 import remarkNpm2Yarn from '@docusaurus/remark-plugin-npm2yarn'
-import twemoji from '@twemoji/api'
 import { themes as prismThemes } from 'prism-react-renderer'
 
-import rehypeTwemoj from './src/rehype/twemoji'
+import rehypeTwemoj, { resolveOptions, toUrl } from './src/rehype/twemoji'
 
 import type * as Preset from '@docusaurus/preset-classic'
 import type { Config } from '@docusaurus/types'
 
-const emojiBaseUrl = 'https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets'
-
 function emojiUrl(emoji: string, format: 'svg' | 'png' = 'svg') {
-  const codePoint = twemoji.convert.toCodePoint(emoji)
-  const fmt = format == 'svg' ? format : '72x72'
-  return emojiBaseUrl + `/${fmt}/${codePoint.split('-')[0]}.${format}`
+  // The same helper the emojis in the pages go through: taking only the first
+  // code point would ask the CDN for a different emoji as soon as one is made
+  // of a ZWJ sequence.
+  return toUrl(
+    emoji,
+    resolveOptions({ size: format === 'svg' ? 'svg' : '72x72' }),
+  )
 }
 
 function typedocPlugins() {
