@@ -3,7 +3,7 @@ import { ComponentPropsWithoutRef, forwardRef, ReactNode } from 'react'
 import { useComposedRefs } from '../../compose-refs'
 import { useDragValue } from '../../hooks/useDragValue'
 import { cx } from '../_util/cx'
-import { Placement } from '../_util/placement'
+import { Placement } from '../_util/Placement'
 
 import { usePointsEditorContext } from './context'
 

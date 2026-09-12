@@ -10,7 +10,7 @@ import { xor } from '@tremolo-ui/functions'
 import { useComposedRefs } from '../../compose-refs'
 import { cssLength } from '../_util/css-length'
 import { cx } from '../_util/cx'
-import { Placement } from '../_util/placement'
+import { Placement } from '../_util/Placement'
 
 import { useSliderContext } from './context'
 

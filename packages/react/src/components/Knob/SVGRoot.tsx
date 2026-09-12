@@ -1,6 +1,6 @@
 import { ReactNode, SVGProps } from 'react'
 
-import { Placement } from '../_util/placement'
+import { Placement } from '../_util/Placement'
 
 import { viewBoxSize } from './context'
 

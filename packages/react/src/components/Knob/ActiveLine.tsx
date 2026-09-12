@@ -1,7 +1,7 @@
 import { SVGProps } from 'react'
 
 import { cx } from '../_util/cx'
-import { useCheckPlacement } from '../_util/placement'
+import { useCheckPlacement } from '../_util/Placement'
 
 import { arcPath, arcRadius, useKnobContext } from './context'
 

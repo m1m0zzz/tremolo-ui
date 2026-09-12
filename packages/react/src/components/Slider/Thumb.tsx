@@ -9,7 +9,7 @@ import {
 } from 'react'
 
 import { cx } from '../_util/cx'
-import { useCheckPlacement } from '../_util/placement'
+import { useCheckPlacement } from '../_util/Placement'
 import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
 import { useSliderContext } from './context'

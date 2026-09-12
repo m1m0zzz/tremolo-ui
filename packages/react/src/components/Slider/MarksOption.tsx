@@ -4,7 +4,7 @@ import { toFixed, xor } from '@tremolo-ui/functions'
 
 import { cssLength } from '../_util/css-length'
 import { cx } from '../_util/cx'
-import { useCheckPlacement } from '../_util/placement'
+import { useCheckPlacement } from '../_util/Placement'
 
 import { useSliderContext } from './context'
 import { MarksType } from './type'
