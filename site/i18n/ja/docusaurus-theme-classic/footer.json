@@ -58,5 +58,9 @@
   "link.item.label.Storybook": {
     "message": "Storybook",
     "description": "The label of footer link with label=Storybook linking to https://tremolo-ui.mimoz.dev/i/storybook-react/"
+  },
+  "link.item.label.dom": {
+    "message": "dom",
+    "description": "The label of footer link with label=dom linking to /docs/api/dom"
   }
 }
