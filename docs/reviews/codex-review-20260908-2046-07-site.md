@@ -12,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 10 |
-| 対応する（未対応） | 5 |
+| 対応済み | 11 |
+| 対応する（未対応） | 4 |
 | 要判断 | 0 |
 | 対応しない | 1 |
 | 未判断 | 0 |
@@ -410,7 +410,7 @@ API 一覧と footer に DOM を追加し、PointsEditor に他コンポーネ�
 
 ### [P3] トップページの SVG が装飾か情報画像か判別できず、ロゴの代替文も不正確 — site/src/components/HomepageFeatures/index.tsx:39
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — feature の挿絵は見出しと本文が内容を持つため装飾として扱い、`aria-hidden="true"` と `focusable="false"` を指定した。navbar の alt は `tremolo-ui` にし、en / ja の navbar.json も合わせた。
 
 **何が問題か**
 
