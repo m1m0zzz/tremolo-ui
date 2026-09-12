@@ -30,7 +30,7 @@ const FeatureList: FeatureItem[] = [
     title: 'Headless UI',
     Svg: require('@site/static/img/undraw_web_development.svg').default,
     description:
-      'It provides a rich default UI and a DOM-like component system that is easy to customize.',
+      'It ships no CSS. You get the markup, the ARIA and data attributes, and the interaction; the look is yours to define.',
   },
 ]
 
