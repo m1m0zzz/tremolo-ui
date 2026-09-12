@@ -7,7 +7,12 @@ export {
   type InitFunction,
   type RelativeSizingProps,
 } from './components/AnimationCanvas'
-export { Knob, type KnobProps, type KnobMethods } from './components/Knob'
+export {
+  Knob,
+  useKnobContext,
+  type KnobProps,
+  type KnobMethods,
+} from './components/Knob'
 export {
   NumberInput,
   useNumberInputContext,
@@ -43,7 +48,9 @@ export {
   Slider,
   useSliderContext,
   type MarksOptionProps,
+  type MarksOptions,
   type MarksProps,
+  type MarksType,
   type SliderMethods,
   type SliderProps,
   type SliderThumbMethods,
@@ -52,6 +59,7 @@ export {
 } from './components/Slider'
 export {
   XYPad,
+  useXYPadContext,
   type XYPadProps,
   type XYPadMethods,
   type XYPadAreaProps,

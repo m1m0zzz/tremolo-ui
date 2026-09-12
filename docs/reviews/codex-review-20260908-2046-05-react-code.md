@@ -12,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 16 |
-| 対応する（未対応） | 4 |
+| 対応済み | 17 |
+| 対応する（未対応） | 3 |
 | 要判断 | 0 |
 | 対応しない | 0 |
 | 未判断 | 0 |
@@ -521,7 +521,7 @@ d={`M ${start.x} ${start.y} A ${radius} ${radius} -135 ${
 
 ### [P3] context hooks と関連型の root export がコンポーネント間で揃っていない — packages/react/src/index.ts:10
 
-> **状況: 対応する（未対応）** — `src/index.ts` が `useSliderContext` / `useNumberInputContext` / `usePointsEditorContext` だけを公開し、`useKnobContext` と `useXYPadContext` が漏れていることを確認した。
+> **状況: 対応済み** — `useKnobContext` / `useXYPadContext` と Slider の `MarksOptions` / `MarksType` を root barrel から明示的に export した。`export *` は各コンポーネントが `Root` を export しているため名前が衝突し（TS2308）、内部実装まで公開面に載るので採らない。tree shaking は `sideEffects: false` と `/* @__PURE__ */` で成立しており、barrel の書き方には依存しない。
 
 **何が問題か**
 
