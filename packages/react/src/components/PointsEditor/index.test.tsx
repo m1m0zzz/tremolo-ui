@@ -331,6 +331,16 @@ describe('PointsEditor', () => {
     expect(onB).not.toHaveBeenCalled()
   })
 
+  test('draws the children inside the point', () => {
+    const { point } = setup({ point: { children: <span>knob</span> } })
+
+    // The theme draws the point itself, so what a caller passes has to reach
+    // the same element rather than replace it.
+    expect(point).toHaveClass('tremolo-points-editor-point')
+    expect(point).toHaveTextContent('knob')
+    expect(point.querySelectorAll('input[type="range"]')).toHaveLength(2)
+  })
+
   test('registers one wheel listener, however many points are mounted', () => {
     const original = HTMLElement.prototype.addEventListener
     const targets: HTMLElement[] = []
