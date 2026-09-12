@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { createRef, useState } from 'react'
 
 import { PointBaseType, PointsEditor, PointProps } from '.'
@@ -111,6 +111,10 @@ function setup(props: SubjectProps = {}) {
   return { container, onChange, point: screen.getByTestId('point') }
 }
 
+function pointInput(point: Element, axis: 'x' | 'y') {
+  return point.querySelector<HTMLInputElement>(`input[data-axis="${axis}"]`)!
+}
+
 function drag(
   point: Element,
   to: { clientX: number; clientY: number },
@@ -158,6 +162,22 @@ describe('PointsEditor', () => {
     expect(point.getAttribute('style')).toContain('top: 75%')
   })
 
+  test('exposes one named range input for each axis', () => {
+    const { point, onChange } = setup({
+      point: { ariaLabels: { x: 'Time', y: 'Level' } },
+    })
+    const x = pointInput(point, 'x')
+    const y = pointInput(point, 'y')
+
+    expect(x).toHaveAccessibleName('Time')
+    expect(x).toHaveValue('0.5')
+    expect(y).toHaveAccessibleName('Level')
+    expect(y).toHaveValue('0.5')
+
+    fireEvent.change(x, { target: { value: '0.75' } })
+    expect(onChange).toHaveBeenLastCalledWith({ x: 0.75, y: 0.5 })
+  })
+
   test('a drag moves the point by the distance dragged', () => {
     const { point, onChange } = setup()
 
@@ -185,7 +205,8 @@ describe('PointsEditor', () => {
     const { point, onChange } = setup({ readonly: true })
 
     expect(point.getAttribute('aria-readonly')).toBe('true')
-    expect(point).toHaveAttribute('tabindex', '0')
+    expect(pointInput(point, 'x')).not.toBeDisabled()
+    expect(pointInput(point, 'y')).not.toBeDisabled()
     drag(point, { clientX: 50, clientY: 25 })
     expect(onChange).not.toHaveBeenCalled()
   })
@@ -207,10 +228,11 @@ describe('PointsEditor', () => {
     expect(point.getAttribute('aria-disabled')).toBe('true')
     drag(point, { clientX: 50, clientY: 25 })
     keyDown(point, 'ArrowRight')
-    act(() => (point as HTMLElement).focus())
+    act(() => pointInput(point, 'x').focus())
     wheel(point, { deltaY: -1 })
 
-    expect(point).toHaveAttribute('tabindex', '-1')
+    expect(pointInput(point, 'x')).toBeDisabled()
+    expect(pointInput(point, 'y')).toBeDisabled()
     expect(onChange).not.toHaveBeenCalled()
   })
 
@@ -281,7 +303,7 @@ describe('PointsEditor', () => {
     wheel(point, { deltaY: -1 })
     expect(onChange).not.toHaveBeenCalled()
 
-    act(() => (point as HTMLElement).focus())
+    act(() => pointInput(point, 'x').focus())
     wheel(point, { deltaY: -1 })
     expect(onChange).toHaveBeenLastCalledWith({ x: 0.5, y: 0.49 })
   })
@@ -289,7 +311,7 @@ describe('PointsEditor', () => {
   test('the wheel reaches the focused point from anywhere over the editor', () => {
     const { point, onChange } = setup()
 
-    act(() => (point as HTMLElement).focus())
+    act(() => pointInput(point, 'x').focus())
     // Nowhere near the point: the listener is on the container, not on the
     // 16px point the cursor would otherwise have to stay on.
     wheel(screen.getByTestId('container'), { deltaY: -1 })
@@ -302,7 +324,7 @@ describe('PointsEditor', () => {
     const onB = vi.fn()
     render(<TwoPoints onA={onA} onB={onB} />)
 
-    act(() => (screen.getByTestId('a') as HTMLElement).focus())
+    act(() => pointInput(screen.getByTestId('a'), 'x').focus())
     wheel(screen.getByTestId('b'), { deltaY: -1 })
 
     expect(onA).toHaveBeenLastCalledWith({ x: 0.25, y: 0.49 })
@@ -314,7 +336,7 @@ describe('PointsEditor', () => {
     const onB = vi.fn()
     render(<TwoPoints onA={onA} onB={onB} />)
 
-    act(() => (screen.getByTestId('a') as HTMLElement).focus())
+    act(() => pointInput(screen.getByTestId('a'), 'x').focus())
     wheel(screen.getByTestId('two-container'), { deltaY: -1 })
 
     expect(onA).toHaveBeenCalledTimes(1)
@@ -334,7 +356,7 @@ describe('PointsEditor', () => {
     })
     expect(ignored.defaultPrevented).toBe(false)
 
-    act(() => (point as HTMLElement).focus())
+    act(() => pointInput(point, 'x').focus())
     const taken = new WheelEvent('wheel', {
       bubbles: true,
       cancelable: true,
@@ -349,7 +371,7 @@ describe('PointsEditor', () => {
   test('shift makes the wheel move the x axis', () => {
     const { point, onChange } = setup()
 
-    act(() => (point as HTMLElement).focus())
+    act(() => pointInput(point, 'x').focus())
     wheel(point, { deltaY: 1, shiftKey: true })
 
     expect(onChange).toHaveBeenLastCalledWith({ x: 0.51, y: 0.5 })
@@ -358,7 +380,7 @@ describe('PointsEditor', () => {
   test('wheel={null} on Root turns the wheel off', () => {
     const { point, onChange } = setup({ wheel: null })
 
-    act(() => (point as HTMLElement).focus())
+    act(() => pointInput(point, 'x').focus())
     wheel(point, { deltaY: -1 })
     expect(onChange).not.toHaveBeenCalled()
   })

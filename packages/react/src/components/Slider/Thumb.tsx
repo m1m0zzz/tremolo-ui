@@ -117,7 +117,11 @@ export function Thumb({
         aria-describedby={ariaDescribedby}
         aria-valuetext={ariaValuetext}
         onChange={(event) => {
-          if (!readonly) onChange?.(event.currentTarget.valueAsNumber)
+          if (readonly) {
+            event.currentTarget.value = String(value)
+            return
+          }
+          onChange?.(event.currentTarget.valueAsNumber)
         }}
       />
       {children}

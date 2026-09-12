@@ -116,6 +116,11 @@ export interface XYPadProps {
    */
   readonly?: boolean
 
+  /** Accessible names for the x and y range inputs. */
+  ariaLabels?: XYInput<string>
+  /** Accessible value text for the x and y range inputs. */
+  ariaValueText?: XYInput<string>
+
   onChange?: (value: XY<number>) => void
   onDragStart?: (value: XY<number>) => void
   onDragEnd?: (value: XY<number>) => void
@@ -166,6 +171,8 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
       externalStyles: _externalStyles,
       disabled = false,
       readonly = false,
+      ariaLabels: _ariaLabels = ['x', 'y'],
+      ariaValueText: _ariaValueText,
       onChange,
       onDragStart,
       onDragEnd,
@@ -192,6 +199,11 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
     const step = useMemo(() => toXY(_step), [_step])
     const scale = useMemo(() => toXY(_scale), [_scale])
     const reverse = useMemo(() => toXY(_reverse), [_reverse])
+    const ariaLabels = useMemo(() => toXY(_ariaLabels), [_ariaLabels])
+    const ariaValueText = useMemo(
+      () => (_ariaValueText === undefined ? undefined : toXY(_ariaValueText)),
+      [_ariaValueText],
+    )
 
     const percent = useMemo((): XY<number> => {
       const normalized = [0, 1].map((i) =>
@@ -257,16 +269,27 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
 
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
-        if (!onChange || inactive || !keyboard) return
         const key = event.key
-        if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
-          const i: 0 | 1 = key === 'ArrowRight' || key === 'ArrowLeft' ? 0 : 1
-          event.preventDefault()
-          let direction = 1
-          if (key === 'ArrowLeft' || key === 'ArrowUp') direction *= -1
-          if (reverse[i]) direction *= -1
-          onChange(nudge(i, direction, keyboard, event))
-        }
+        if (!['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key))
+          return
+
+        const inputAxis = (event.target as HTMLElement).dataset.axis
+        const i: 0 | 1 =
+          inputAxis === '0' || inputAxis === '1'
+            ? (Number(inputAxis) as 0 | 1)
+            : key === 'ArrowRight' || key === 'ArrowLeft'
+              ? 0
+              : 1
+        const matchesAxis =
+          inputAxis === undefined ||
+          (i === 0 && (key === 'ArrowRight' || key === 'ArrowLeft')) ||
+          (i === 1 && (key === 'ArrowUp' || key === 'ArrowDown'))
+        event.preventDefault()
+        if (!matchesAxis || !onChange || inactive || !keyboard) return
+        let direction = 1
+        if (key === 'ArrowLeft' || key === 'ArrowUp') direction *= -1
+        if (reverse[i]) direction *= -1
+        onChange(nudge(i, direction, keyboard, event))
       },
       [onChange, inactive, keyboard, reverse, nudge],
     )
@@ -331,11 +354,27 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
         reverse,
         disabled,
         readonly,
+        onChange,
+        ariaLabels,
+        ariaValueText,
         percent,
         areaRef,
         thumbRef,
       }),
-      [value, min, max, step, scale, reverse, disabled, readonly, percent],
+      [
+        value,
+        min,
+        max,
+        step,
+        scale,
+        reverse,
+        disabled,
+        readonly,
+        onChange,
+        ariaLabels,
+        ariaValueText,
+        percent,
+      ],
     )
 
     useImperativeHandle(forwardedRef, () => {
@@ -352,13 +391,14 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
 
     return (
       <XYPadProvider value={context}>
-        {/* oxlint-disable-next-line jsx-a11y/no-static-element-interactions */}
+        {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- the group handles pointer and keyboard input shared by its two range controls */}
         <div
           className={cx('tremolo-xy-pad', className)}
           ref={rootRefCallback}
+          role="group"
           tabIndex={-1}
           aria-disabled={disabled}
-          aria-readonly={readonly}
+          data-readonly={readonly}
           style={style}
           onPointerDown={onPointerDown}
           onKeyDown={(event) => {

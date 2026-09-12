@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { createRef, useState } from 'react'
 
 import { exponentialScale, linearScale } from '@tremolo-ui/functions'
@@ -101,8 +101,8 @@ const wheel = (root: Element, init: { deltaY: number; shiftKey?: boolean }) =>
 const thumbPosition = () =>
   screen.getByTestId('thumb').getAttribute('style') ?? ''
 
-/** The thumb is a single element, and it is the one that takes focus. */
-const thumbElement = () => screen.getByTestId('thumb')
+const axisInput = (axis: 'x' | 'y') =>
+  screen.getByRole('slider', { name: axis })
 
 describe('XYPad', () => {
   test('places the thumb from the value of each axis', () => {
@@ -110,6 +110,38 @@ describe('XYPad', () => {
 
     expect(thumbPosition()).toContain('left: 25%')
     expect(thumbPosition()).toContain('top: 75%')
+  })
+
+  test('exposes one named range input for each axis', () => {
+    const { onChange, root } = setup({
+      'aria-label': 'Position',
+      ariaLabels: ['Pan', 'Tilt'],
+    })
+    const x = screen.getByRole('slider', { name: 'Pan' })
+    const y = screen.getByRole('slider', { name: 'Tilt' })
+
+    expect(root).toHaveAttribute('role', 'group')
+    expect(root).toHaveAccessibleName('Position')
+    expect(x).toHaveValue('50')
+    expect(x).toHaveAttribute('aria-orientation', 'horizontal')
+    expect(y).toHaveValue('50')
+    expect(y).toHaveAttribute('aria-orientation', 'vertical')
+
+    fireEvent.change(y, { target: { value: '75' } })
+    expect(onChange).toHaveBeenLastCalledWith([50, 75])
+  })
+
+  test('each range input only handles keys for its own axis', () => {
+    const { onChange } = setup()
+
+    fireEvent.keyDown(axisInput('x'), { key: 'ArrowUp' })
+    expect(onChange).not.toHaveBeenCalled()
+
+    fireEvent.keyDown(axisInput('x'), { key: 'ArrowRight' })
+    expect(onChange).toHaveBeenLastCalledWith([51, 50])
+
+    fireEvent.keyDown(axisInput('y'), { key: 'ArrowUp' })
+    expect(onChange).toHaveBeenLastCalledWith([51, 49])
   })
 
   test('y is measured from the top, so it is not flipped for display', () => {
@@ -193,7 +225,7 @@ describe('XYPad', () => {
   test('the wheel moves y, and x while shift is held', () => {
     const { onChange, root } = setup()
 
-    act(() => thumbElement().focus())
+    act(() => axisInput('x').focus())
 
     wheel(root, { deltaY: -1 })
     expect(onChange).toHaveBeenLastCalledWith([50, 49])
@@ -215,12 +247,13 @@ describe('XYPad', () => {
 
     drag(root, { clientX: 20, clientY: 40 })
     keyDown(root, 'ArrowRight')
-    act(() => thumbElement().focus())
+    act(() => axisInput('x').focus())
     wheel(root, { deltaY: -1 })
 
     expect(onChange).not.toHaveBeenCalled()
-    expect(root.getAttribute('aria-readonly')).toBe('true')
-    expect(thumbElement()).toHaveAttribute('tabindex', '0')
+    expect(root).toHaveAttribute('data-readonly', 'true')
+    expect(axisInput('x')).not.toBeDisabled()
+    expect(axisInput('y')).not.toBeDisabled()
   })
 
   test('disabled leaves every input inert and removes the thumb from the tab order', () => {
@@ -228,11 +261,12 @@ describe('XYPad', () => {
 
     drag(root, { clientX: 20, clientY: 40 })
     keyDown(root, 'ArrowRight')
-    act(() => thumbElement().focus())
+    act(() => axisInput('x').focus())
     wheel(root, { deltaY: -1 })
 
     expect(root.getAttribute('aria-disabled')).toBe('true')
-    expect(thumbElement()).toHaveAttribute('tabindex', '-1')
+    expect(axisInput('x')).toBeDisabled()
+    expect(axisInput('y')).toBeDisabled()
     expect(onChange).not.toHaveBeenCalled()
   })
 
@@ -240,7 +274,7 @@ describe('XYPad', () => {
     const { onChange, root } = setup({ wheel: null, keyboard: null })
 
     keyDown(root, 'ArrowRight')
-    act(() => thumbElement().focus())
+    act(() => axisInput('x').focus())
     wheel(root, { deltaY: -1 })
 
     expect(onChange).not.toHaveBeenCalled()
@@ -259,10 +293,10 @@ describe('XYPad', () => {
     setup({ ref })
 
     act(() => ref.current?.focus())
-    expect(document.activeElement).toBe(thumbElement())
+    expect(axisInput('x')).toHaveFocus()
 
     act(() => ref.current?.blur())
-    expect(document.activeElement).not.toBe(thumbElement())
+    expect(axisInput('x')).not.toHaveFocus()
   })
 
   test('a drag focuses the thumb wherever it was placed', () => {
@@ -270,6 +304,6 @@ describe('XYPad', () => {
 
     drag(root, { clientX: 20, clientY: 40 })
 
-    expect(document.activeElement).toBe(thumbElement())
+    expect(axisInput('x')).toHaveFocus()
   })
 })

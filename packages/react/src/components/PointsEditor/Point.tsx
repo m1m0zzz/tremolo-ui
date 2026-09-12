@@ -23,6 +23,7 @@ import { useWheel } from '../../hooks/useWheel'
 import { cssLength } from '../_util/css-length'
 import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/placement'
+import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
 import { type PointRegistration, usePointsEditorContext } from './context'
 
@@ -69,6 +70,9 @@ export interface PointProps<T extends PointBaseType> {
   /** Overrides the `keyboard` of `PointsEditor.Root`. */
   keyboard?: ModifierValue<InputEventOption> | null
 
+  /** Accessible names for the x and y range inputs. */
+  ariaLabels?: Partial<Record<'x' | 'y', string>>
+
   onChange?: (value: PointBaseType) => void
   onDragStart?: (value: PointBaseType) => void
   onDragEnd?: (value: PointBaseType) => void
@@ -94,6 +98,7 @@ export function Point<T extends PointBaseType>({
   readonly: _readonly,
   wheel: _wheel,
   keyboard: _keyboard,
+  ariaLabels = { x: 'x', y: 'y' },
 
   onChange,
   onDragStart,
@@ -136,6 +141,8 @@ export function Point<T extends PointBaseType>({
 
   // Compared against the focus below, so the point needs its own element.
   const [element, setElement] = useState<HTMLDivElement | null>(null)
+  const xInputRef = useRef<HTMLInputElement>(null)
+  const yInputRef = useRef<HTMLInputElement>(null)
 
   // What the editor needs to move this point along with the rest of a
   // selection. Rewritten after every render rather than kept in the registry
@@ -179,6 +186,7 @@ export function Point<T extends PointBaseType>({
         // the element runs before React's, and the two would disagree.
         beginPointDrag(id, state.event)
         pointerOrigin.current = { x, y }
+        xInputRef.current?.focus()
 
         if (inactive) return
         onDragStart?.(clampPoint(value, min, max))
@@ -214,12 +222,13 @@ export function Point<T extends PointBaseType>({
   // point sees the event and the focused one acts, so the wheel works anywhere
   // over the editor, the way it does for Slider and XYPad.
   //
-  // The focus test is an identity check, not `contains`: with `contains` every
-  // point would match the container's focus and they would all move at once.
+  // Each point only matches focus within its own two range inputs. Testing the
+  // point wrapper keeps both axes connected to the same wheel interaction.
   useWheel(
     (event) => {
       if (!onChange || inactive || !wheel) return
-      if (!element || element.ownerDocument.activeElement !== element) return
+      if (!element || !element.contains(element.ownerDocument.activeElement))
+        return
       event.preventDefault()
       // Scrolling up moves the point towards y = 0; shift switches to x.
       // Browsers turn shift+wheel into horizontal scrolling: `deltaY` comes
@@ -242,26 +251,36 @@ export function Point<T extends PointBaseType>({
   )
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (!onChange || inactive || !keyboard) return
     const key = event.key
-    if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
-      event.preventDefault()
-      // y grows downwards, so ArrowUp moves the point towards 0.
-      const axis = key === 'ArrowRight' || key === 'ArrowLeft' ? 'x' : 'y'
-      const direction = key === 'ArrowLeft' || key === 'ArrowUp' ? -1 : 1
-      nudge(axis, direction, keyboard, event)
-    }
+    if (!['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key))
+      return
+    const inputAxis = (event.target as HTMLElement).dataset.axis
+    const axis =
+      inputAxis === 'x' || inputAxis === 'y'
+        ? inputAxis
+        : key === 'ArrowRight' || key === 'ArrowLeft'
+          ? 'x'
+          : 'y'
+    const matchesAxis =
+      inputAxis === undefined ||
+      (axis === 'x' && (key === 'ArrowRight' || key === 'ArrowLeft')) ||
+      (axis === 'y' && (key === 'ArrowUp' || key === 'ArrowDown'))
+    event.preventDefault()
+    if (!matchesAxis || !onChange || inactive || !keyboard) return
+    // y grows downwards, so ArrowUp moves the point towards 0.
+    const direction = key === 'ArrowLeft' || key === 'ArrowUp' ? -1 : 1
+    nudge(axis, direction, keyboard, event)
   }
 
+  const current = clampPoint(value, min, max)
+
   return (
-    // The point is a drag handle rather than a control of a known kind: it has
-    // no single value to announce, so there is no role that fits it.
+    // The visual point has two values, so its semantics live on the two range
+    // inputs nested inside it rather than on this drag handle.
     // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
       ref={refCallback}
       className={cx('tremolo-points-editor-point', className)}
-      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-      tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled}
       aria-readonly={readonly}
       data-dragging={dragging}
@@ -283,6 +302,34 @@ export function Point<T extends PointBaseType>({
         onKeyDown?.(event)
       }}
       {...props}
-    />
+    >
+      {(['x', 'y'] as const).map((axis) => (
+        <VisuallyHiddenRangeInput
+          key={axis}
+          ref={axis === 'x' ? xInputRef : yInputRef}
+          className={`tremolo-points-editor-${axis}-input`}
+          data-axis={axis}
+          value={current[axis]}
+          min={min?.[axis] ?? 0}
+          max={max?.[axis] ?? 1}
+          step="any"
+          disabled={disabled}
+          aria-readonly={readonly}
+          aria-orientation={axis === 'x' ? 'horizontal' : 'vertical'}
+          aria-label={ariaLabels[axis] ?? axis}
+          onChange={(event) => {
+            if (readonly) {
+              event.currentTarget.value = String(current[axis])
+              return
+            }
+            const delta = event.currentTarget.valueAsNumber - value[axis]
+            nudgeSelection(id, {
+              x: axis === 'x' ? delta : 0,
+              y: axis === 'y' ? delta : 0,
+            })
+          }}
+        />
+      ))}
+    </div>
   )
 }
