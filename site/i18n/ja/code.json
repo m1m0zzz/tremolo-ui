@@ -340,7 +340,7 @@
     "message": "ヘッドレスUI"
   },
   "homepage.features.headless-ui.description": {
-    "message": "リッチなデフォルトUIと、カスタマイズが容易なDOMライクなコンポーネント・システムを提供します。"
+    "message": "CSSは同梱しません。マークアップとARIA / data属性、操作ロジックを提供し、見た目は利用者が定義します。"
   },
   "theme.colorToggle.ariaLabel.mode.system": {
     "message": "システムモード",
