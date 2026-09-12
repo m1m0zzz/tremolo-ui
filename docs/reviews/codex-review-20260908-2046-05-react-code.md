@@ -12,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 18 |
-| 対応する（未対応） | 2 |
+| 対応済み | 19 |
+| 対応する（未対応） | 1 |
 | 要判断 | 0 |
 | 対応しない | 0 |
 | 未判断 | 0 |
@@ -604,7 +604,7 @@ SVG の class へ `className` を含めてください。`classes.thumb` と役�
 
 ### [P3] PointsEditor は Point 数だけ同じ wheel listener を登録する — packages/react/src/components/PointsEditor/Point.tsx:214
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — listener を `Container` の 1 つに集約した。フォーカス中の point を探すのは registry を持つ `Root` の `nudgeFocusedPoint` で、point の registration が自分の element と解決済みの wheel 設定を持つようにした。エディタのどこでもホイールが効く挙動は変わらない。
 
 **何が問題か**
 

@@ -19,7 +19,6 @@ import {
 
 import { useComposedRefs } from '../../compose-refs'
 import { useDragValue } from '../../hooks/useDragValue'
-import { useWheel } from '../../hooks/useWheel'
 import { cssLength } from '../_util/css-length'
 import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/Placement'
@@ -82,7 +81,7 @@ export interface PointProps<T extends PointBaseType> {
  * A point is placed by its position within the container, so its value is a
  * position: 0..1 on each axis, with y growing downwards.
  */
-const AXIS = { min: 0, max: 1 }
+export const AXIS = { min: 0, max: 1 }
 
 export function Point<T extends PointBaseType>({
   value,
@@ -153,9 +152,19 @@ export function Point<T extends PointBaseType>({
     max,
     readonly: inactive,
     onChange,
+    element,
+    wheel,
   })
   useEffect(() => {
-    registration.current = { value, min, max, readonly: inactive, onChange }
+    registration.current = {
+      value,
+      min,
+      max,
+      readonly: inactive,
+      onChange,
+      element,
+      wheel,
+    }
   })
 
   useEffect(() => registerPoint(id, registration), [id, registerPoint])
@@ -215,34 +224,6 @@ export function Point<T extends PointBaseType>({
       })
     },
     [value, id, nudgeSelection],
-  )
-
-  // The listener sits on the container rather than on the point: a wheel event
-  // only reaches what the cursor is over, and a point is a 16px target. Every
-  // point sees the event and the focused one acts, so the wheel works anywhere
-  // over the editor, the way it does for Slider and XYPad.
-  //
-  // Each point only matches focus within its own two range inputs. Testing the
-  // point wrapper keeps both axes connected to the same wheel interaction.
-  useWheel(
-    (event) => {
-      if (!onChange || inactive || !wheel) return
-      if (!element || !element.contains(element.ownerDocument.activeElement))
-        return
-      event.preventDefault()
-      // Scrolling up moves the point towards y = 0; shift switches to x.
-      // Browsers turn shift+wheel into horizontal scrolling: `deltaY` comes
-      // out empty and `deltaX` carries the movement. Reading whichever axis
-      // moved keeps shift working as the x-axis modifier — and picks up a
-      // trackpad's own horizontal gesture, which never had a modifier.
-      const horizontal = event.deltaX !== 0
-      const delta = horizontal ? event.deltaX : event.deltaY
-      if (delta === 0) return
-      const axis = horizontal || event.shiftKey ? 'x' : 'y'
-      const direction = delta < 0 ? -1 : 1
-      nudge(axis, direction, wheel, event)
-    },
-    { target: containerRef },
   )
 
   const refCallback = useComposedRefs<HTMLDivElement>(

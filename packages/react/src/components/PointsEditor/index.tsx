@@ -12,6 +12,7 @@ import {
 } from 'react'
 
 import {
+  applyDelta,
   clamp,
   type InputEventOption,
   type ModifierState,
@@ -30,7 +31,7 @@ import {
   type PointRegistration,
   PointsEditorProvider,
 } from './context'
-import { Point, type PointBaseType } from './Point'
+import { AXIS, Point, type PointBaseType } from './Point'
 
 /** One array for every editor with selection turned off, so memos hold still. */
 const EMPTY: readonly string[] = []
@@ -357,6 +358,37 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       [applyDeltaTo, snapshot],
     )
 
+    const nudgeFocusedPoint = useCallback(
+      (axis: 'x' | 'y', direction: number, modifiers: ModifierState) => {
+        const container = containerRef.current
+        const active = container?.ownerDocument.activeElement
+        if (!container || !active || !container.contains(active)) return false
+        for (const [id, entry] of points.current) {
+          const { element, wheel, readonly, onChange, value } = entry.current
+          // A point answers only for the focus inside its own inputs, so both
+          // axes stay part of the same interaction.
+          if (!element?.contains(active)) continue
+          if (!wheel || readonly || !onChange) return false
+          const next = applyDelta(
+            value[axis],
+            direction,
+            wheel,
+            AXIS,
+            modifiers,
+          )
+          // As a move, so that the rest of the selection comes along and the
+          // whole group stops together at the edge.
+          nudgeSelection(id, {
+            x: axis === 'x' ? next - value.x : 0,
+            y: axis === 'y' ? next - value.y : 0,
+          })
+          return true
+        }
+        return false
+      },
+      [nudgeSelection],
+    )
+
     // --- rubber band ---
     const [marquee, setMarquee] = useState<Marquee | null>(null)
     const marqueeRef = useRef<{
@@ -438,6 +470,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         beginPointDrag,
         movePointDrag,
         nudgeSelection,
+        nudgeFocusedPoint,
         marquee,
         beginMarquee,
         moveMarquee,
@@ -456,6 +489,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         beginPointDrag,
         movePointDrag,
         nudgeSelection,
+        nudgeFocusedPoint,
         marquee,
         beginMarquee,
         moveMarquee,

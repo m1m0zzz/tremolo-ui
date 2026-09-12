@@ -21,6 +21,10 @@ export interface PointRegistration {
   max?: Partial<PointBaseType>
   readonly: boolean
   onChange?: (value: PointBaseType) => void
+  /** The point's own element, to match the focus against. */
+  element: HTMLElement | null
+  /** The wheel option this point resolved, root inheritance applied. */
+  wheel: ModifierValue<InputEventOption> | null
 }
 
 /** The rubber band while it is being dragged, in the 0..1 space of a point. */
@@ -68,6 +72,17 @@ export type PointsEditorContextValue = {
    * key or a wheel notch. The current values are the starting point.
    */
   nudgeSelection: (id: string, delta: PointBaseType) => void
+  /**
+   * Move the point that currently holds focus by one notch. The wheel listener
+   * belongs to `Container` rather than to every `Point`, so the lookup of who
+   * has focus happens here, where the registry is. Returns whether a point
+   * took it, so the caller knows whether to consume the event.
+   */
+  nudgeFocusedPoint: (
+    axis: 'x' | 'y',
+    direction: number,
+    modifiers: ModifierState,
+  ) => boolean
 
   /** The rubber band, while one is being dragged. */
   marquee: Marquee | null
