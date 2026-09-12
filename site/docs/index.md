@@ -12,7 +12,7 @@ It has the following features:
 - headless UI
 - mobile support
 - tree shakable
-- minimal dependences (clsx, zustand)
+- no external runtime dependencies (only the internal dom / functions packages)
 
 ## 🧬Install
 
