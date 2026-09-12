@@ -263,6 +263,17 @@ describe('PointsEditor', () => {
     expect(onChange).toHaveBeenLastCalledWith({ x: 0.5, y: 0.5 })
   })
 
+  test('focus reaching the point is handed to its input', () => {
+    const { point } = setup()
+
+    // A press lands on the point, which the browser answers by clearing the
+    // focus unless the point can take it. It takes it, and passes it on.
+    expect(point).toHaveAttribute('tabindex', '-1')
+    act(() => (point as HTMLElement).focus())
+
+    expect(document.activeElement).toBe(pointInput(point, 'x'))
+  })
+
   test('the arrow keys move both axes, from either input', () => {
     const { point, onChange } = setup()
 
