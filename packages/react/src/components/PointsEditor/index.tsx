@@ -12,6 +12,12 @@ import {
 } from 'react'
 
 import {
+  createSelectionBox,
+  type SelectionBoxInstance,
+  type SelectionBoxRect,
+  type XY,
+} from '@tremolo-ui/dom'
+import {
   applyDelta,
   clamp,
   type InputEventOption,
@@ -26,11 +32,7 @@ import { cx } from '../_util/cx'
 
 import { Background } from './Background'
 import { Container } from './Container'
-import {
-  type SelectionBox,
-  type PointRegistration,
-  PointsEditorProvider,
-} from './context'
+import { type PointRegistration, PointsEditorProvider } from './context'
 import { AXIS, Point, type PointBaseType } from './Point'
 
 /** One array for every editor with selection turned off, so memos hold still. */
@@ -390,78 +392,58 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
     )
 
     // --- selection box ---
-    const [selectionBox, setSelectionBox] = useState<SelectionBox | null>(null)
-    const selectionBoxRef = useRef<{
-      from: PointBaseType
-      to: PointBaseType
-      base: readonly string[]
-    } | null>(null)
-
-    const selectionBoxOf = (
-      from: PointBaseType,
-      to: PointBaseType,
-    ): SelectionBox => ({
-      x: Math.min(from.x, to.x),
-      y: Math.min(from.y, to.y),
-      width: Math.abs(to.x - from.x),
-      height: Math.abs(to.y - from.y),
-    })
-
-    const applySelectionBox = useCallback(
-      (rect: SelectionBox, base: readonly string[]) => {
-        const inside: string[] = []
+    // The box itself lives in the core: which items a rectangle covers, and
+    // what a press adds to or replaces, are not React's to decide. What is
+    // left here is the registry it reads and the state the box is drawn from.
+    const [selectionBox, setSelectionBox] = useState<SelectionBoxRect | null>(
+      null,
+    )
+    const selectionBoxRef = useRef<SelectionBoxInstance<string> | null>(null)
+    selectionBoxRef.current ??= createSelectionBox<string>({
+      *items(): Generator<readonly [string, XY<number>]> {
         for (const [id, entry] of points.current) {
           const { x, y } = entry.current.value
-          if (
-            x >= rect.x &&
-            x <= rect.x + rect.width &&
-            y >= rect.y &&
-            y <= rect.y + rect.height
-          ) {
-            inside.push(id)
-          }
+          yield [id, [x, y]]
         }
-        changeSelection([...base, ...inside.filter((id) => !base.includes(id))])
       },
-      [changeSelection],
-    )
+      onBoxChange: setSelectionBox,
+    })
+
+    // The selection is reported to whoever owns it, and that handler is a new
+    // function whenever the caller's is, so it is handed over rather than
+    // closed over.
+    useEffect(() => {
+      selectionBoxRef.current?.update({ onSelectionChange: changeSelection })
+    }, [changeSelection])
+
+    useEffect(() => {
+      const box = selectionBoxRef.current
+      return () => box?.destroy()
+    }, [])
 
     const beginSelectionBox = useCallback(
       (at: PointBaseType, modifiers: ModifierState) => {
         if (!selectable) return
-        const additive = modifiers.ctrlKey || modifiers.metaKey
-        selectionBoxRef.current = {
-          from: at,
-          to: at,
-          base: additive ? selectionRef.current : [],
-        }
-        setSelectionBox(selectionBoxOf(at, at))
-        if (!additive) changeSelection([])
+        selectionBoxRef.current?.begin([at.x, at.y], {
+          // Ctrl / meta rather than shift: shift is the fine-adjustment key on
+          // every control here, and it cannot be both.
+          additive: modifiers.ctrlKey || modifiers.metaKey,
+          selection: selectionRef.current,
+        })
       },
-      [selectable, changeSelection],
+      [selectable],
     )
 
-    const moveSelectionBox = useCallback(
-      (to: PointBaseType) => {
-        const state = selectionBoxRef.current
-        if (!state) return
-        state.to = to
-        const rect = selectionBoxOf(state.from, to)
-        setSelectionBox(rect)
-        applySelectionBox(rect, state.base)
-      },
-      [applySelectionBox],
-    )
+    const moveSelectionBox = useCallback((to: PointBaseType) => {
+      selectionBoxRef.current?.move([to.x, to.y])
+    }, [])
 
     const endSelectionBox = useCallback(() => {
-      const dragged = selectionBoxRef.current !== null
-      selectionBoxRef.current = null
-      setSelectionBox(null)
-      if (!dragged) return
+      if (!selectionBoxRef.current?.end()) return
       // A selection box is drawn on the container, which is not a control and
       // cannot hold focus, so the press that started it left the focus on
       // nothing. The arrow keys and the wheel reach a point only through the
-      // focus, so it is handed to one of the points the band selected —
+      // focus, so it is handed to one of the points the box selected —
       // whichever point takes it moves the whole selection.
       const [first] = selectionRef.current
       if (first) points.current.get(first)?.current.element?.focus()
