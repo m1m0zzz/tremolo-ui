@@ -1,5 +1,6 @@
 import { createContext, CSSProperties, RefObject, useContext } from 'react'
 
+import type { SelectionBoxRect } from '@tremolo-ui/dom'
 import type {
   InputEventOption,
   ModifierState,
@@ -25,14 +26,6 @@ export interface PointRegistration {
   element: HTMLElement | null
   /** The wheel option this point resolved, root inheritance applied. */
   wheel: ModifierValue<InputEventOption> | null
-}
-
-/** The selection box while it is being dragged, in the 0..1 space of a point. */
-export interface SelectionBox {
-  x: number
-  y: number
-  width: number
-  height: number
 }
 
 export type PointsEditorContextValue = {
@@ -85,7 +78,7 @@ export type PointsEditorContextValue = {
   ) => boolean
 
   /** The selection box, while one is being dragged. */
-  selectionBox: SelectionBox | null
+  selectionBox: SelectionBoxRect | null
   beginSelectionBox: (at: PointBaseType, modifiers: ModifierState) => void
   moveSelectionBox: (to: PointBaseType) => void
   endSelectionBox: () => void

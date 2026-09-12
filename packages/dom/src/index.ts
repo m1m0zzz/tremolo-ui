@@ -57,4 +57,12 @@ export {
   type WheelInstance,
   type WheelOptions,
 } from './pointer/wheel'
+export {
+  createSelectionBox,
+  selectionBoxCovers,
+  type SelectionBoxBeginOptions,
+  type SelectionBoxInstance,
+  type SelectionBoxOptions,
+  type SelectionBoxRect,
+} from './selection/box'
 export { toXY, type XY, type XYInput } from './xy'
