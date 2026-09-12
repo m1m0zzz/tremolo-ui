@@ -24,7 +24,6 @@ export const Container = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       disabled,
       selectable,
       nudgeFocusedPoint,
-      selectionBox,
       beginSelectionBox,
       moveSelectionBox,
       endSelectionBox,
@@ -86,17 +85,6 @@ export const Container = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         {...props}
       >
         <Placement name="PointsEditor.Container">{children}</Placement>
-        {selectionBox && (
-          <div
-            className="tremolo-points-editor-selection-box"
-            style={{
-              left: `${selectionBox.x * 100}%`,
-              top: `${selectionBox.y * 100}%`,
-              width: `${selectionBox.width * 100}%`,
-              height: `${selectionBox.height * 100}%`,
-            }}
-          />
-        )}
       </div>
     )
   },

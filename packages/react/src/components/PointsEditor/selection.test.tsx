@@ -79,6 +79,7 @@ function Subject({
             }}
           />
         ))}
+        <PointsEditor.SelectionBox data-testid="selection-box" />
       </PointsEditor.Container>
     </PointsEditor.Root>
   )
@@ -285,6 +286,40 @@ describe('the selection box', () => {
 
     expect(onChange).toHaveBeenCalledWith('a', { x: 0.2, y: 0.21 })
     expect(onChange).toHaveBeenCalledWith('b', { x: 0.4, y: 0.41 })
+  })
+
+  test('the box is only drawn where one is placed', () => {
+    render(
+      <PointsEditor.Root selectable>
+        <PointsEditor.Container data-testid="bare-container">
+          <PointsEditor.Point value={{ x: 0.2, y: 0.2 }} />
+        </PointsEditor.Container>
+      </PointsEditor.Root>,
+    )
+    const area = screen.getByTestId('bare-container')
+    fakeLayout(area)
+
+    press(area, { clientX: 0, clientY: 0 })
+    move(area, { clientX: 50, clientY: 50 })
+
+    // The selection still works; there is just nothing drawing it.
+    expect(
+      area.querySelector('.tremolo-points-editor-selection-box'),
+    ).toBeNull()
+    expect(area.querySelector('[data-selected="true"]')).not.toBeNull()
+  })
+
+  test('what is passed to the box reaches the element it draws', () => {
+    setup()
+    const area = screen.getByTestId('container')
+
+    press(area, { clientX: 0, clientY: 0 })
+    move(area, { clientX: 50, clientY: 50 })
+
+    const box = screen.getByTestId('selection-box')
+    expect(box).toHaveClass('tremolo-points-editor-selection-box')
+    // The size comes from the drag rather than from a style.
+    expect(box.getAttribute('style')).toContain('width: 50%')
   })
 
   test('a plain drag on empty space clears the selection first', () => {

@@ -30,6 +30,7 @@ function App() {
               }
             />
           ))}
+          <PointsEditor.SelectionBox />
         </PointsEditor.Container>
       </PointsEditor.Root>
       <p>
