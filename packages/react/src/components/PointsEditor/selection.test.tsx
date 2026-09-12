@@ -240,7 +240,7 @@ describe('moving a selection', () => {
   })
 })
 
-describe('the rubber band', () => {
+describe('the selection box', () => {
   test('a drag on empty space selects what it covers', () => {
     const { container } = setup()
     const area = screen.getByTestId('container')
@@ -254,10 +254,12 @@ describe('the rubber band', () => {
 
     // It is drawn while the drag runs, and gone once it ends.
     expect(
-      container.querySelector('.tremolo-points-editor-marquee'),
+      container.querySelector('.tremolo-points-editor-selection-box'),
     ).not.toBeNull()
     release(area)
-    expect(container.querySelector('.tremolo-points-editor-marquee')).toBeNull()
+    expect(
+      container.querySelector('.tremolo-points-editor-selection-box'),
+    ).toBeNull()
   })
 
   test('the focus lands on the selection, so the keys reach it', () => {
@@ -301,9 +303,11 @@ describe('the rubber band', () => {
 
     click(point('a'))
 
-    // No rubber band: the container declined the press before taking the
+    // No selection box: the container declined the press before taking the
     // pointer capture away from the point.
-    expect(container.querySelector('.tremolo-points-editor-marquee')).toBeNull()
+    expect(
+      container.querySelector('.tremolo-points-editor-selection-box'),
+    ).toBeNull()
     expect(selected('a')).toBe('true')
   })
 })
@@ -328,14 +332,16 @@ describe('with selection turned off', () => {
     expect(onChange).toHaveBeenCalledWith('a', { x: 0.3, y: 0.3 })
   })
 
-  test('a drag on empty space draws no rubber band', () => {
+  test('a drag on empty space draws no selection box', () => {
     const { container } = setup({ selectable: false })
     const area = screen.getByTestId('container')
 
     press(area, { clientX: 0, clientY: 0 })
     move(area, { clientX: 50, clientY: 50 })
 
-    expect(container.querySelector('.tremolo-points-editor-marquee')).toBeNull()
+    expect(
+      container.querySelector('.tremolo-points-editor-selection-box'),
+    ).toBeNull()
     expect(selected('a')).toBe('false')
   })
 })

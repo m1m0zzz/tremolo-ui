@@ -56,11 +56,11 @@
 }
 
 /*
- * The rubber band, while a drag on empty space is running. It is drawn over
+ * The selection box, while a drag on empty space is running. It is drawn over
  * the points but takes no pointer events of its own, so the drag underneath
  * carries on.
  */
-.tremolo-points-editor-marquee {
+.tremolo-points-editor-selection-box {
   --color: oklch(59.5% 0.17548 266.373);
 
   position: absolute;

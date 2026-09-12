@@ -27,7 +27,7 @@ import { cx } from '../_util/cx'
 import { Background } from './Background'
 import { Container } from './Container'
 import {
-  type Marquee,
+  type SelectionBox,
   type PointRegistration,
   PointsEditorProvider,
 } from './context'
@@ -151,7 +151,7 @@ export interface PointsEditorProps {
    * Let points be selected, and a selection be moved as one.
    *
    * Off by default, because it changes what a press and a drag mean: a press
-   * on empty space starts a rubber band rather than doing nothing, and a drag
+   * on empty space starts a selection box rather than doing nothing, and a drag
    * on a point moves everything else that is selected. An editor whose points
    * each mean something different — the four handles of an ADSR envelope, say
    * — has nothing to gain from moving them together.
@@ -389,23 +389,26 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       [nudgeSelection],
     )
 
-    // --- rubber band ---
-    const [marquee, setMarquee] = useState<Marquee | null>(null)
-    const marqueeRef = useRef<{
+    // --- selection box ---
+    const [selectionBox, setSelectionBox] = useState<SelectionBox | null>(null)
+    const selectionBoxRef = useRef<{
       from: PointBaseType
       to: PointBaseType
       base: readonly string[]
     } | null>(null)
 
-    const marqueeOf = (from: PointBaseType, to: PointBaseType): Marquee => ({
+    const selectionBoxOf = (
+      from: PointBaseType,
+      to: PointBaseType,
+    ): SelectionBox => ({
       x: Math.min(from.x, to.x),
       y: Math.min(from.y, to.y),
       width: Math.abs(to.x - from.x),
       height: Math.abs(to.y - from.y),
     })
 
-    const applyMarquee = useCallback(
-      (rect: Marquee, base: readonly string[]) => {
+    const applySelectionBox = useCallback(
+      (rect: SelectionBox, base: readonly string[]) => {
         const inside: string[] = []
         for (const [id, entry] of points.current) {
           const { x, y } = entry.current.value
@@ -423,39 +426,39 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       [changeSelection],
     )
 
-    const beginMarquee = useCallback(
+    const beginSelectionBox = useCallback(
       (at: PointBaseType, modifiers: ModifierState) => {
         if (!selectable) return
         const additive = modifiers.ctrlKey || modifiers.metaKey
-        marqueeRef.current = {
+        selectionBoxRef.current = {
           from: at,
           to: at,
           base: additive ? selectionRef.current : [],
         }
-        setMarquee(marqueeOf(at, at))
+        setSelectionBox(selectionBoxOf(at, at))
         if (!additive) changeSelection([])
       },
       [selectable, changeSelection],
     )
 
-    const moveMarquee = useCallback(
+    const moveSelectionBox = useCallback(
       (to: PointBaseType) => {
-        const state = marqueeRef.current
+        const state = selectionBoxRef.current
         if (!state) return
         state.to = to
-        const rect = marqueeOf(state.from, to)
-        setMarquee(rect)
-        applyMarquee(rect, state.base)
+        const rect = selectionBoxOf(state.from, to)
+        setSelectionBox(rect)
+        applySelectionBox(rect, state.base)
       },
-      [applyMarquee],
+      [applySelectionBox],
     )
 
-    const endMarquee = useCallback(() => {
-      const dragged = marqueeRef.current !== null
-      marqueeRef.current = null
-      setMarquee(null)
+    const endSelectionBox = useCallback(() => {
+      const dragged = selectionBoxRef.current !== null
+      selectionBoxRef.current = null
+      setSelectionBox(null)
       if (!dragged) return
-      // A rubber band is drawn on the container, which is not a control and
+      // A selection box is drawn on the container, which is not a control and
       // cannot hold focus, so the press that started it left the focus on
       // nothing. The arrow keys and the wheel reach a point only through the
       // focus, so it is handed to one of the points the band selected —
@@ -480,10 +483,10 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         movePointDrag,
         nudgeSelection,
         nudgeFocusedPoint,
-        marquee,
-        beginMarquee,
-        moveMarquee,
-        endMarquee,
+        selectionBox,
+        beginSelectionBox,
+        moveSelectionBox,
+        endSelectionBox,
       }),
       [
         disabled,
@@ -499,10 +502,10 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         movePointDrag,
         nudgeSelection,
         nudgeFocusedPoint,
-        marquee,
-        beginMarquee,
-        moveMarquee,
-        endMarquee,
+        selectionBox,
+        beginSelectionBox,
+        moveSelectionBox,
+        endSelectionBox,
       ],
     )
 

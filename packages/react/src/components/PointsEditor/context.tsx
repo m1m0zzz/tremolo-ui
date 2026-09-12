@@ -27,8 +27,8 @@ export interface PointRegistration {
   wheel: ModifierValue<InputEventOption> | null
 }
 
-/** The rubber band while it is being dragged, in the 0..1 space of a point. */
-export interface Marquee {
+/** The selection box while it is being dragged, in the 0..1 space of a point. */
+export interface SelectionBox {
   x: number
   y: number
   width: number
@@ -84,11 +84,11 @@ export type PointsEditorContextValue = {
     modifiers: ModifierState,
   ) => boolean
 
-  /** The rubber band, while one is being dragged. */
-  marquee: Marquee | null
-  beginMarquee: (at: PointBaseType, modifiers: ModifierState) => void
-  moveMarquee: (to: PointBaseType) => void
-  endMarquee: () => void
+  /** The selection box, while one is being dragged. */
+  selectionBox: SelectionBox | null
+  beginSelectionBox: (at: PointBaseType, modifiers: ModifierState) => void
+  moveSelectionBox: (to: PointBaseType) => void
+  endSelectionBox: () => void
 }
 
 const PointsEditorContext =

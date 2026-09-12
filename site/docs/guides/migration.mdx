@@ -50,7 +50,7 @@ together.
 - a press selects the point it landed on
 - **ctrl or ⌘ adds to the selection** — not shift, which is the
   fine-adjustment key on every control here and cannot be both
-- a drag on empty space draws a rubber band and selects what it covers; hold
+- a drag on empty space draws a selection box and selects what it covers; hold
   ctrl or ⌘ to add to what is already selected
 - dragging or arrow-keying one selected point moves the whole selection
 
@@ -74,8 +74,8 @@ onChange={(v) => setPoints((prev) => ({ ...prev, [id]: v }))}
 onChange={(v) => setPoints({ ...points, [id]: v })}
 ```
 
-A selected point carries `data-selected="true"`, and the rubber band is
-`.tremolo-points-editor-marquee`. Both are in the theme in
+A selected point carries `data-selected="true"`, and the box a drag on empty
+space draws is `.tremolo-points-editor-selection-box`. Both are in the theme in
 [Styling](/docs/tutorials/styling).
 
 **A drag now moves a point rather than putting it under the pointer.** Grabbing
