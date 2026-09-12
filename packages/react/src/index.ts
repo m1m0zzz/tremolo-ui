@@ -50,7 +50,6 @@ export {
   type MarksOptionProps,
   type MarksOptions,
   type MarksProps,
-  type MarksType,
   type SliderMethods,
   type SliderProps,
   type SliderThumbMethods,

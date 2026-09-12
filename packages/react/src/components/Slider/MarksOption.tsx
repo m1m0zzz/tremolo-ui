@@ -7,16 +7,19 @@ import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/Placement'
 
 import { useSliderContext } from './context'
-import { MarksType } from './type'
 
 export interface MarksOptionProps {
   // required
   value: number
 
   // optional
-  type?: MarksType
-  /** Display text instead of value. */
-  label?: string
+  /** Whether to draw the mark itself. */
+  mark?: boolean
+  /**
+   * Text shown in place of the value. `null` leaves the label out; an empty
+   * string draws an empty label.
+   */
+  label?: number | string | null
   /** Mark thickness. Sets `--thickness`. */
   thickness?: number | string
   /** Mark length. Sets `--length`. */
@@ -37,7 +40,7 @@ export interface MarksOptionProps {
 
 export function MarksOption({
   value,
-  type = 'mark-number',
+  mark = true,
   label,
   thickness,
   length,
@@ -86,19 +89,19 @@ export function MarksOption({
       data-vertical={vertical}
       {...props}
     >
-      {type !== 'number' && (
+      {mark && (
         <div
           className={cx('tremolo-slider-marks-option-mark', classes?.mark)}
           style={styles?.mark}
           data-vertical={vertical}
         ></div>
       )}
-      {type !== 'mark' && (
+      {label !== null && (
         <div
           className={cx('tremolo-slider-marks-option-label', classes?.label)}
           style={styles?.label}
         >
-          {label || value}
+          {label ?? value}
         </div>
       )}
     </div>
