@@ -1,8 +1,8 @@
 import {
   ComponentPropsWithoutRef,
   CSSProperties,
+  forwardRef,
   ReactNode,
-  Ref,
   useImperativeHandle,
   useRef,
 } from 'react'
@@ -28,7 +28,6 @@ export interface XYPadThumbProps {
    * it — `className` and `style` are how its own appearance is changed.
    */
   children?: ReactNode
-  ref?: Ref<XYPadThumbMethods>
 }
 
 export interface XYPadThumbMethods {
@@ -39,90 +38,88 @@ export interface XYPadThumbMethods {
 type Props = XYPadThumbProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadThumbProps>
 
-export function Thumb({
-  color,
-  children,
-  className,
-  style,
-  ref,
-  ...props
-}: Props) {
-  const xInputRef = useRef<HTMLInputElement>(null)
-  const yInputRef = useRef<HTMLInputElement>(null)
-  const {
-    value,
-    min,
-    max,
-    step,
-    disabled,
-    readonly,
-    onChange,
-    ariaLabels,
-    ariaValueText,
-    percent,
-    thumbRef,
-  } = useXYPadContext()
+export const Thumb = /* @__PURE__ */ forwardRef<XYPadThumbMethods, Props>(
+  function Thumb(
+    { color, children, className, style, ...props },
+    forwardedRef,
+  ) {
+    const xInputRef = useRef<HTMLInputElement>(null)
+    const yInputRef = useRef<HTMLInputElement>(null)
+    const {
+      value,
+      min,
+      max,
+      step,
+      disabled,
+      readonly,
+      onChange,
+      ariaLabels,
+      ariaValueText,
+      percent,
+      thumbRef,
+    } = useXYPadContext()
 
-  // The thumb is positioned against the area.
-  useCheckPlacement('XYPad.Thumb', 'XYPad.Area')
+    // The thumb is positioned against the area.
+    useCheckPlacement('XYPad.Thumb', 'XYPad.Area')
 
-  const methods = () => ({
-    focus() {
-      if (!disabled) xInputRef.current?.focus()
-    },
-    blur() {
-      xInputRef.current?.blur()
-      yInputRef.current?.blur()
-    },
-  })
+    const methods = () => ({
+      focus() {
+        if (!disabled) xInputRef.current?.focus()
+      },
+      blur() {
+        xInputRef.current?.blur()
+        yInputRef.current?.blur()
+      },
+    })
 
-  useImperativeHandle(ref, methods, [disabled])
-  // Root focuses the thumb when a drag starts, wherever the user placed it.
-  useImperativeHandle(thumbRef, methods, [disabled])
+    useImperativeHandle(forwardedRef, methods, [disabled])
+    // Root focuses the thumb when a drag starts, wherever the user placed it.
+    useImperativeHandle(thumbRef, methods, [disabled])
 
-  return (
-    <div
-      className={cx('tremolo-xy-pad-thumb', className)}
-      aria-disabled={disabled}
-      aria-readonly={readonly}
-      {...props}
-      style={{
-        ...{ '--color': color },
-        ...style,
-        // Where the thumb sits is the component's decision, not a style: a
-        // `left` from the caller would take it off the area, so it is written
-        // after theirs.
-        left: `${percent[0]}%`,
-        top: `${percent[1]}%`,
-      }}
-    >
-      {([0, 1] as const).map((axis) => (
-        <VisuallyHiddenRangeInput
-          key={axis}
-          ref={axis === 0 ? xInputRef : yInputRef}
-          className={`tremolo-xy-pad-${axis === 0 ? 'x' : 'y'}-input`}
-          data-axis={axis}
-          value={value[axis]}
-          min={min[axis]}
-          max={max[axis]}
-          step={step[axis]}
-          disabled={disabled}
-          aria-readonly={readonly}
-          aria-orientation={axis === 0 ? 'horizontal' : 'vertical'}
-          aria-label={ariaLabels[axis]}
-          aria-valuetext={ariaValueText?.[axis]}
-          onChange={(event) => {
-            if (readonly) {
-              event.currentTarget.value = String(value[axis])
-              return
-            }
-            const next = [...value] as [number, number]
-            next[axis] = event.currentTarget.valueAsNumber
-            onChange?.(next)
-          }}
-        />
-      ))}
-      {children}
-    </div>
-  )
-}
+    return (
+      <div
+        className={cx('tremolo-xy-pad-thumb', className)}
+        aria-disabled={disabled}
+        aria-readonly={readonly}
+        {...props}
+        style={{
+          ...{ '--color': color },
+          ...style,
+          // Where the thumb sits is the component's decision, not a style: a
+          // `left` from the caller would take it off the area, so it is written
+          // after theirs.
+          left: `${percent[0]}%`,
+          top: `${percent[1]}%`,
+        }}
+      >
+        {([0, 1] as const).map((axis) => (
+          <VisuallyHiddenRangeInput
+            key={axis}
+            ref={axis === 0 ? xInputRef : yInputRef}
+            className={`tremolo-xy-pad-${axis === 0 ? 'x' : 'y'}-input`}
+            data-axis={axis}
+            value={value[axis]}
+            min={min[axis]}
+            max={max[axis]}
+            step={step[axis]}
+            disabled={disabled}
+            aria-readonly={readonly}
+            aria-orientation={axis === 0 ? 'horizontal' : 'vertical'}
+            aria-label={ariaLabels[axis]}
+            aria-valuetext={ariaValueText?.[axis]}
+            onChange={(event) => {
+              if (readonly) {
+                event.currentTarget.value = String(value[axis])
+                return
+              }
+              const next = [...value] as [number, number]
+              next[axis] = event.currentTarget.valueAsNumber
+              onChange?.(next)
+            }}
+          />
+        ))}
+        {children}
+      </div>
+    )
+  },
+)

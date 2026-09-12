@@ -1,4 +1,9 @@
-import { ComponentPropsWithoutRef, CSSProperties, ReactNode, Ref } from 'react'
+import {
+  ComponentPropsWithoutRef,
+  CSSProperties,
+  forwardRef,
+  ReactNode,
+} from 'react'
 
 import { xor } from '@tremolo-ui/functions'
 
@@ -27,52 +32,58 @@ export interface SliderTrackProps {
   style?: CSSProperties
   /** `<Slider.Thumb />` goes here. */
   children?: ReactNode
-  ref?: Ref<HTMLDivElement>
 }
 
-export function Track({
-  length,
-  thickness,
-  active,
-  inactive,
-  children,
-  className,
-  style,
-  ref,
-  ...props
-}: SliderTrackProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof SliderTrackProps>) {
-  const { vertical, reverse, disabled, percent, trackRef } = useSliderContext()
+type Props = SliderTrackProps &
+  Omit<ComponentPropsWithoutRef<'div'>, keyof SliderTrackProps>
 
-  // The track is what the pointer position is normalized against, so the
-  // context ref is composed with any ref the caller passed.
-  const composedRef = useComposedRefs<HTMLDivElement>(ref, trackRef)
+export const Track = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
+  function Track(
+    {
+      length,
+      thickness,
+      active,
+      inactive,
+      children,
+      className,
+      style,
+      ...props
+    },
+    forwardedRef,
+  ) {
+    const { vertical, reverse, disabled, percent, trackRef } =
+      useSliderContext()
 
-  return (
-    <div
-      ref={composedRef}
-      className={cx('tremolo-slider-track', className)}
-      aria-disabled={disabled}
-      data-vertical={vertical}
-      // Which end the value grows from. `percent` is already the position on
-      // screen, so this only says which side of it is the filled one.
-      data-flipped={xor(vertical, reverse)}
-      style={
-        {
-          '--active': active,
-          '--inactive': inactive,
-          '--length': cssLength(length),
-          '--thickness': cssLength(thickness),
-          // Where the value sits, for the theme to paint the fill with. The
-          // component draws nothing itself: this is the one number CSS cannot
-          // work out on its own.
-          '--percent': `${percent}%`,
-          ...style,
-        } as CSSProperties
-      }
-      {...props}
-    >
-      <Placement name="Slider.Track">{children}</Placement>
-    </div>
-  )
-}
+    // The track is what the pointer position is normalized against, so the
+    // context ref is composed with any ref the caller passed.
+    const composedRef = useComposedRefs<HTMLDivElement>(forwardedRef, trackRef)
+
+    return (
+      <div
+        ref={composedRef}
+        className={cx('tremolo-slider-track', className)}
+        aria-disabled={disabled}
+        data-vertical={vertical}
+        // Which end the value grows from. `percent` is already the position on
+        // screen, so this only says which side of it is the filled one.
+        data-flipped={xor(vertical, reverse)}
+        style={
+          {
+            '--active': active,
+            '--inactive': inactive,
+            '--length': cssLength(length),
+            '--thickness': cssLength(thickness),
+            // Where the value sits, for the theme to paint the fill with. The
+            // component draws nothing itself: this is the one number CSS cannot
+            // work out on its own.
+            '--percent': `${percent}%`,
+            ...style,
+          } as CSSProperties
+        }
+        {...props}
+      >
+        <Placement name="Slider.Track">{children}</Placement>
+      </div>
+    )
+  },
+)
