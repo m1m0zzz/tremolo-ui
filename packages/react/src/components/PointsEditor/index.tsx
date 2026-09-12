@@ -451,8 +451,17 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
     )
 
     const endMarquee = useCallback(() => {
+      const dragged = marqueeRef.current !== null
       marqueeRef.current = null
       setMarquee(null)
+      if (!dragged) return
+      // A rubber band is drawn on the container, which is not a control and
+      // cannot hold focus, so the press that started it left the focus on
+      // nothing. The arrow keys and the wheel reach a point only through the
+      // focus, so it is handed to one of the points the band selected —
+      // whichever point takes it moves the whole selection.
+      const [first] = selectionRef.current
+      if (first) points.current.get(first)?.current.element?.focus()
     }, [])
 
     const context = useMemo(

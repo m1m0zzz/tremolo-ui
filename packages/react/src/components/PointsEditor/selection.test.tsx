@@ -260,6 +260,31 @@ describe('the rubber band', () => {
     expect(container.querySelector('.tremolo-points-editor-marquee')).toBeNull()
   })
 
+  test('the focus lands on the selection, so the keys reach it', () => {
+    const onChange = vi.fn()
+    setup({ onChange })
+    const area = screen.getByTestId('container')
+
+    // The press on the container takes the focus out of the editor in a
+    // browser, which would leave the selection with no way to be moved.
+    act(() => (document.activeElement as HTMLElement | null)?.blur())
+    press(area, { clientX: 0, clientY: 0 })
+    move(area, { clientX: 50, clientY: 50 })
+    release(area)
+
+    const focused = document.activeElement as HTMLElement
+    expect(focused.closest('.tremolo-points-editor-point')).toBe(point('a'))
+
+    act(() => {
+      focused.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }),
+      )
+    })
+
+    expect(onChange).toHaveBeenCalledWith('a', { x: 0.2, y: 0.21 })
+    expect(onChange).toHaveBeenCalledWith('b', { x: 0.4, y: 0.41 })
+  })
+
   test('a plain drag on empty space clears the selection first', () => {
     setup()
 
