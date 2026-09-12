@@ -34,6 +34,7 @@ import { Background } from './Background'
 import { Container } from './Container'
 import { type PointRegistration, PointsEditorProvider } from './context'
 import { AXIS, Point, type PointBaseType } from './Point'
+import { SelectionBox } from './SelectionBox'
 
 /** One array for every editor with selection turned off, so memos hold still. */
 const EMPTY: readonly string[] = []
@@ -522,6 +523,7 @@ export const PointsEditor = {
   Background,
   Container,
   Point,
+  SelectionBox,
 }
 
 export {
@@ -530,4 +532,5 @@ export {
 } from './context'
 export { type PointsEditorBackgroundProps } from './Background'
 export { type PointsEditorContainerProps } from './Container'
+export { type PointsEditorSelectionBoxProps } from './SelectionBox'
 export { clampPoint, type PointBaseType, type PointProps } from './Point'

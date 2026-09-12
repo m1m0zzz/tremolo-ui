@@ -127,6 +127,18 @@ describe('subcomponent placement', () => {
     )
   })
 
+  test('PointsEditor.SelectionBox outside PointsEditor.Container', () => {
+    render(
+      <PointsEditor.Root selectable>
+        <PointsEditor.SelectionBox />
+      </PointsEditor.Root>,
+    )
+
+    expect(warnings()).toContain(
+      'PointsEditor.SelectionBox has to be rendered inside PointsEditor.Container',
+    )
+  })
+
   test('the warning says the component still renders', () => {
     render(
       <Slider.Root value={0} min={0} max={100}>

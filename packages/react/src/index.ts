@@ -41,6 +41,7 @@ export {
   type PointsEditorContextValue,
   type PointsEditorBackgroundProps,
   type PointsEditorContainerProps,
+  type PointsEditorSelectionBoxProps,
   type PointProps,
   type PointBaseType,
 } from './components/PointsEditor'

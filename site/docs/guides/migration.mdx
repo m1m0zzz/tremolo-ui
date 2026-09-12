@@ -75,8 +75,8 @@ onChange={(v) => setPoints({ ...points, [id]: v })}
 ```
 
 A selected point carries `data-selected="true"`, and the box a drag on empty
-space draws is `.tremolo-points-editor-selection-box`. Both are in the theme in
-[Styling](/docs/tutorials/styling).
+space draws is `<PointsEditor.SelectionBox />`, which you place inside the
+container. Both are in the theme in [Styling](/docs/tutorials/styling).
 
 **A drag now moves a point rather than putting it under the pointer.** Grabbing
 a point at its edge used to shift it under the cursor on the first movement;

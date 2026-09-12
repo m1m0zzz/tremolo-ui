@@ -100,6 +100,7 @@ export const Basic: Story = {
                 }}
               />
             ))}
+            <PointsEditor.SelectionBox />
           </PointsEditor.Container>
         </PointsEditor.Root>
       </div>
