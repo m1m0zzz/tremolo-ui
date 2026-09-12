@@ -48,3 +48,36 @@ export const Basic: Story = {
     )
   },
 }
+
+/**
+ * The arrows are what the steppers draw when nothing is passed. Children
+ * replace them, and everything a div takes reaches the button around them —
+ * which is where a colour telling the two directions apart belongs.
+ *
+ * The theme keeps the steppers out of the way until the input is hovered or
+ * focused, so hover the field to see them.
+ */
+export const CustomIcons: Story = {
+  args: {
+    min: 0,
+    max: 10,
+    step: 1,
+  },
+  render: (args) => {
+    const [value, setValue] = useState(5)
+
+    return (
+      <NumberInput.Root {...args} value={value} onChange={(v) => setValue(v)}>
+        <NumberInput.InputField />
+        <NumberInput.Stepper>
+          <NumberInput.IncrementStepper style={{ backgroundColor: '#d8f3dc' }}>
+            +
+          </NumberInput.IncrementStepper>
+          <NumberInput.DecrementStepper style={{ backgroundColor: '#ffd9d9' }}>
+            −
+          </NumberInput.DecrementStepper>
+        </NumberInput.Stepper>
+      </NumberInput.Root>
+    )
+  },
+}
