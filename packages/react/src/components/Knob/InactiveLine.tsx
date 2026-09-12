@@ -3,7 +3,7 @@ import { SVGProps } from 'react'
 import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/placement'
 
-import { arcRadius, pointOnArc, useKnobContext } from './context'
+import { arcPath, arcRadius, useKnobContext } from './context'
 
 export function InactiveLine({
   stroke = 'currentColor',
@@ -23,17 +23,13 @@ export function InactiveLine({
   const r4 = useKnobContext((s) => s.r4)
 
   const radius = arcRadius(strokeWidth)
-  const p1 = pointOnArc(r1, radius)
-  const p2 = pointOnArc(r2, radius)
-  const p3 = pointOnArc(r3, radius)
-  const p4 = pointOnArc(r4, radius)
 
   return (
     <>
       {startValue > min && (
         <path
           className={cx('tremolo-knob-inactive-line', className)}
-          d={`M ${p1.x} ${p1.y} A ${radius} ${radius} -135 ${r2 - r1 > 180 ? 1 : 0} 1 ${p2.x} ${p2.y}`}
+          d={arcPath(r1, r2, radius)}
           fill="none"
           stroke={stroke}
           strokeWidth={strokeWidth}
@@ -43,7 +39,7 @@ export function InactiveLine({
       {startValue < max && (
         <path
           className={cx('tremolo-knob-inactive-line', className)}
-          d={`M ${p3.x} ${p3.y} A ${radius} ${radius} -135 ${r4 - r3 > 180 ? 1 : 0} 1 ${p4.x} ${p4.y}`}
+          d={arcPath(r3, r4, radius)}
           fill="none"
           stroke={stroke}
           strokeWidth={strokeWidth}
