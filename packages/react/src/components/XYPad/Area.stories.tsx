@@ -16,13 +16,13 @@ type Story = StoryObj<typeof XYPad.Area>
 /**
  * The area is the surface the thumb is placed on, and what the pointer is
  * normalized against: a press anywhere in it is a position on both axes. Its
- * props write the custom properties the theme reads for the size and colour.
+ * props write the custom properties the theme reads — `color` is the surface
+ * itself, so the theme's near-white stands unless Controls says otherwise.
  */
 export const Basic: Story = {
   args: {
     width: 200,
     height: 140,
-    color: '#4e76e5',
   },
   render: (args) => {
     const [value, setValue] = useState<[number, number]>([32, 56])

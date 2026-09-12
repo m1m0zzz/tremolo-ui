@@ -18,12 +18,13 @@ type Story = StoryObj<typeof Knob.Root>
 /**
  * `SVGRoot` is the `<svg>` the knob is drawn in. The parts inside it are
  * painted in the order they are written, so the two knobs below differ only in
- * where `Thumb` sits in that order: over the lines on the left, under them on
- * the right.
+ * where `Thumb` sits in that order: it covers the arcs on the left, and the
+ * arcs are drawn over it on the right. The lines are thick here so that the
+ * overlap is there to see — at the default width the parts barely meet.
  */
 export const PaintOrder: Story = {
   args: {
-    size: 60,
+    size: 90,
   },
   render: (args) => {
     const [value, setValue] = useState(70)
@@ -39,9 +40,9 @@ export const PaintOrder: Story = {
           onChange={(v) => setValue(v)}
         >
           <Knob.SVGRoot>
-            <Knob.InactiveLine />
-            <Knob.ActiveLine />
-            <Knob.Thumb />
+            <Knob.InactiveLine strokeWidth={16} stroke="#dfe3ea" />
+            <Knob.ActiveLine strokeWidth={16} stroke="#4e76e5" />
+            <Knob.Thumb thumbSize={88} thumb="#e0699f" thumbLine="#fff" />
           </Knob.SVGRoot>
         </Knob.Root>
         <Knob.Root
@@ -53,9 +54,9 @@ export const PaintOrder: Story = {
           onChange={(v) => setValue(v)}
         >
           <Knob.SVGRoot>
-            <Knob.Thumb />
-            <Knob.InactiveLine />
-            <Knob.ActiveLine />
+            <Knob.Thumb thumbSize={88} thumb="#e0699f" thumbLine="#fff" />
+            <Knob.InactiveLine strokeWidth={16} stroke="#dfe3ea" />
+            <Knob.ActiveLine strokeWidth={16} stroke="#4e76e5" />
           </Knob.SVGRoot>
         </Knob.Root>
         <p>value: {value}</p>

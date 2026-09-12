@@ -10,7 +10,7 @@ export default {
 
 type Story = StoryObj<typeof NumberInput.DecrementStepper>
 
-function Subject({ children }: { children?: React.ReactNode }) {
+function Subject() {
   const [value, setValue] = useState(5)
 
   return (
@@ -23,7 +23,7 @@ function Subject({ children }: { children?: React.ReactNode }) {
       <NumberInput.InputField />
       <NumberInput.Stepper>
         <NumberInput.IncrementStepper />
-        <NumberInput.DecrementStepper>{children}</NumberInput.DecrementStepper>
+        <NumberInput.DecrementStepper />
       </NumberInput.Stepper>
     </NumberInput.Root>
   )
@@ -32,15 +32,4 @@ function Subject({ children }: { children?: React.ReactNode }) {
 /** Lowers the value by one `step`, and keeps lowering it while it is held. */
 export const Basic: Story = {
   render: () => <Subject />,
-}
-
-/**
- * The arrow is what the component draws when nothing is passed. Children
- * replace it, and `--stepper-icon-size` is what sizes it in the theme.
- */
-export const CustomIcon: Story = {
-  args: {
-    children: '−',
-  },
-  render: ({ children }) => <Subject>{children}</Subject>,
 }
