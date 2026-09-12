@@ -12,8 +12,8 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 14 |
-| 対応する（未対応） | 1 |
+| 対応済み | 15 |
+| 対応する（未対応） | 0 |
 | 要判断 | 0 |
 | 対応しない | 1 |
 | 未判断 | 0 |
@@ -340,7 +340,7 @@ ref: [AnimationCanvasProps](/docs/api/react/components/AnimationCanvas/#absolute
 
 ### [P3] 外部 Playground の依存バージョンが再現不能な `latest` — site/src/theme/Playground/external/stackblitz/files.ts:97
 
-> **状況: 対応する（未対応）** — `latest` だと、後から開いたときに再現しない。
+> **状況: 対応済み** — `docusaurus.config.ts` の `customFields` に `packages/react/package.json` の version を流し込み、StackBlitz / CodeSandbox の `package.json` がそのバージョンを入れるようにした。`react-scripts-ts` も `^3.1.0` に固定した。
 
 **何が問題か**
 

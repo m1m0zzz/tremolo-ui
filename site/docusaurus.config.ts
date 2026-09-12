@@ -1,6 +1,8 @@
 import remarkNpm2Yarn from '@docusaurus/remark-plugin-npm2yarn'
 import { themes as prismThemes } from 'prism-react-renderer'
 
+import reactPackage from '../packages/react/package.json'
+
 import rehypeTwemoj, { resolveOptions, toUrl } from './src/rehype/twemoji'
 
 import type * as Preset from '@docusaurus/preset-classic'
@@ -131,6 +133,9 @@ const config: Config = {
     liveCodeBlock: {
       githubLink: 'https://github.com/m1m0zzz/tremolo-ui/blob/main/site',
     },
+    // The external playgrounds install this rather than `latest`, so a page
+    // opens with the version it was written against however old it is.
+    tremoloUIVersion: reactPackage.version,
   },
 
   plugins: [...typedocPlugins()],

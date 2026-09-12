@@ -1,13 +1,15 @@
 import sdk from '@stackblitz/sdk'
 
-import { files } from './files'
+import { createFiles } from './files'
 
 // https://developer.stackblitz.com/platform/api/javascript-sdk
 
 export function openStackblitz(
   code: string,
+  tremoloUIVersion: string,
   additionalFiles: Record<string, string> = {},
 ) {
+  const files = createFiles(tremoloUIVersion)
   sdk.openProject(
     {
       title: 'tremolo-ui react example',
