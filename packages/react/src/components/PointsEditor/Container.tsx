@@ -2,10 +2,12 @@ import { ComponentPropsWithoutRef, forwardRef, ReactNode } from 'react'
 
 import { useComposedRefs } from '../../compose-refs'
 import { useDragValue } from '../../hooks/useDragValue'
+import { useWheel } from '../../hooks/useWheel'
 import { cx } from '../_util/cx'
 import { Placement } from '../_util/Placement'
 
 import { usePointsEditorContext } from './context'
+import { AXIS } from './Point'
 
 export interface PointsEditorContainerProps {
   /** `<PointsEditor.Point />` goes here. */
@@ -15,15 +17,13 @@ export interface PointsEditorContainerProps {
 type Props = PointsEditorContainerProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorContainerProps>
 
-/** The rubber band runs over the same 0..1 space a point's value lives in. */
-const AXIS = { min: 0, max: 1 }
-
 export const Container = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   function Container({ children, className, ...props }, forwardedRef) {
     const {
       containerRef,
       disabled,
       selectable,
+      nudgeFocusedPoint,
       marquee,
       beginMarquee,
       moveMarquee,
@@ -46,6 +46,27 @@ export const Container = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       onChange: ([x, y]) => moveMarquee({ x, y }),
       onDragEnd: endMarquee,
     })
+
+    // One listener for the whole editor rather than one per point: a wheel
+    // event only reaches what the cursor is over, and a point is a 16px
+    // target, so the focused point takes it from anywhere over the editor —
+    // the way it does for Slider and XYPad.
+    useWheel(
+      (event) => {
+        // Scrolling up moves the point towards y = 0; shift switches to x.
+        // Browsers turn shift+wheel into horizontal scrolling: `deltaY` comes
+        // out empty and `deltaX` carries the movement. Reading whichever axis
+        // moved keeps shift working as the x-axis modifier — and picks up a
+        // trackpad's own horizontal gesture, which never had a modifier.
+        const horizontal = event.deltaX !== 0
+        const delta = horizontal ? event.deltaX : event.deltaY
+        if (delta === 0) return
+        const axis = horizontal || event.shiftKey ? 'x' : 'y'
+        const direction = delta < 0 ? -1 : 1
+        if (nudgeFocusedPoint(axis, direction, event)) event.preventDefault()
+      },
+      { target: containerRef },
+    )
 
     // The container is what the pointer position is normalized against, so the
     // context ref is composed with any ref the caller passed.

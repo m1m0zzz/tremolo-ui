@@ -331,6 +331,34 @@ describe('PointsEditor', () => {
     expect(onB).not.toHaveBeenCalled()
   })
 
+  test('registers one wheel listener, however many points are mounted', () => {
+    const original = HTMLElement.prototype.addEventListener
+    const targets: HTMLElement[] = []
+    const addEventListener = vi
+      .spyOn(HTMLElement.prototype, 'addEventListener')
+      .mockImplementation(function (
+        this: HTMLElement,
+        type: string,
+        listener: EventListenerOrEventListenerObject,
+        options?: boolean | AddEventListenerOptions,
+      ) {
+        if (type === 'wheel') targets.push(this)
+        return original.call(this, type, listener, options)
+      })
+    render(<TwoPoints onA={vi.fn()} onB={vi.fn()} />)
+    addEventListener.mockRestore()
+
+    // React's own delegation listens on the root it rendered into, so only the
+    // editor's own listeners are counted: one, on the container. One per point
+    // would grow with the editor, and every one of them would run on every
+    // notch of the wheel.
+    const own = targets.filter((target) =>
+      target.closest('.tremolo-points-editor'),
+    )
+    expect(own).toHaveLength(1)
+    expect(own[0]).toHaveClass('tremolo-points-editor-container')
+  })
+
   test('only one point acts, however many are mounted', () => {
     const onA = vi.fn()
     const onB = vi.fn()
