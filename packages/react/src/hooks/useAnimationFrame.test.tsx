@@ -4,10 +4,12 @@ import { useAnimationFrame } from './useAnimationFrame'
 
 let flush: () => void
 let pending: () => number
+let cancels: () => number
 
 /** jsdom does not drive requestAnimationFrame, so frames are stepped by hand. */
 function stubAnimationFrame() {
   let nextId = 1
+  let cancelled = 0
   const queued = new Map<number, FrameRequestCallback>()
 
   globalThis.requestAnimationFrame = (callback) => {
@@ -16,7 +18,7 @@ function stubAnimationFrame() {
     return id
   }
   globalThis.cancelAnimationFrame = (id) => {
-    queued.delete(id)
+    if (queued.delete(id)) cancelled++
   }
 
   flush = () => {
@@ -25,6 +27,7 @@ function stubAnimationFrame() {
     for (const callback of callbacks) callback(performance.now())
   }
   pending = () => queued.size
+  cancels = () => cancelled
 }
 
 beforeEach(stubAnimationFrame)
@@ -58,6 +61,29 @@ describe('useAnimationFrame', () => {
     expect(pending()).toBe(0)
     act(() => flush())
     expect(callback).toHaveBeenCalledTimes(1)
+  })
+
+  test('an inline callback does not restart the loop on every render', () => {
+    const seen: number[] = []
+
+    function Inline({ value }: { value: number }) {
+      useAnimationFrame(() => seen.push(value))
+      return null
+    }
+
+    const { rerender } = render(<Inline value={1} />)
+    act(() => flush())
+    rerender(<Inline value={2} />)
+
+    // The loop the first render started is still the one running: a new
+    // function identity is not a reason to cancel it.
+    expect(cancels()).toBe(0)
+    expect(pending()).toBe(1)
+
+    act(() => flush())
+
+    // Still the latest render's callback, ref or not.
+    expect(seen).toEqual([1, 2])
   })
 
   test('a dependency change swaps the callback without doubling the loop', () => {
