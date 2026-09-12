@@ -68,6 +68,17 @@ function drag(root: Element) {
 }
 
 describe('Slider input guards', () => {
+  test('focus reaching the root is handed to the thumb input', () => {
+    const { root, input } = setup()
+
+    // A press lands on the track or the thumb, which the browser answers by
+    // clearing the focus unless something there can take it.
+    expect(root).toHaveAttribute('tabindex', '-1')
+    act(() => (root as HTMLElement).focus())
+
+    expect(document.activeElement).toBe(input)
+  })
+
   test('disabled blocks every input and removes the thumb from the tab order', () => {
     const { root, input, onChange } = setup({ disabled: true })
 

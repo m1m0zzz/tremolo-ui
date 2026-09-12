@@ -111,6 +111,7 @@ export function Point<T extends PointBaseType>({
   style,
   onPointerDown,
   onKeyDown,
+  onFocus,
   ...props
 }: PointProps<T> & Omit<ComponentPropsWithoutRef<'div'>, keyof PointProps<T>>) {
   const {
@@ -262,6 +263,11 @@ export function Point<T extends PointBaseType>({
       className={cx('tremolo-points-editor-point', className)}
       aria-disabled={disabled}
       aria-readonly={readonly}
+      // A press lands on the point, which cannot hold focus, and the browser
+      // answers that by clearing the focus to the body — undoing the focus the
+      // drag just gave the input. Taking the focus here keeps it inside, and
+      // it is passed on to the input below.
+      tabIndex={-1}
       data-dragging={dragging}
       data-selected={selected}
       style={
@@ -276,6 +282,14 @@ export function Point<T extends PointBaseType>({
         } as CSSProperties
       }
       onPointerDown={onPointerDown}
+      onFocus={(event) => {
+        // The point itself is not the control: its semantics live on the
+        // inputs, so whatever reaches it is handed to the first of them.
+        if (!disabled && event.target === event.currentTarget) {
+          xInputRef.current?.focus()
+        }
+        onFocus?.(event)
+      }}
       onKeyDown={(event) => {
         handleKeyDown(event)
         onKeyDown?.(event)

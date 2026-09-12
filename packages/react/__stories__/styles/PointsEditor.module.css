@@ -40,7 +40,7 @@
   --color: white;
 }
 
-.point:focus .pointInner {
+.point:focus-within .pointInner {
   background-color: var(--color);
 }
 
@@ -93,6 +93,6 @@
  * The package draws no focus ring, so the story adds one: with the keyboard
  * wired up you have to be able to tell which point is focused.
  */
-.focusRing:focus {
+.focusRing:focus-within {
   box-shadow: 0px 0px 0px 3px color-mix(in srgb, currentColor 25%, transparent);
 }

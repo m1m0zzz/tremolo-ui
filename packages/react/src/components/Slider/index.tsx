@@ -319,6 +319,11 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
           className={cx('tremolo-slider', className)}
           ref={rootRefCallback}
           role="group"
+          // A press lands on the track or the thumb, neither of which can hold
+          // focus, and the browser answers that by clearing the focus to the
+          // body — undoing the focus the drag just gave the input. Taking the
+          // focus here keeps it inside, and `onFocus` passes it to the input.
+          tabIndex={-1}
           data-vertical={vertical}
           data-disabled={disabled}
           data-readonly={readonly}
