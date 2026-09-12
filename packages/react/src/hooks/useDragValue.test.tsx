@@ -111,6 +111,17 @@ function Relative() {
 }
 
 describe('useDragValue', () => {
+  test('requires an absolute or relative mapping', () => {
+    function Invalid() {
+      useDragValue({ axis: { min: 0, max: 1 } })
+      return null
+    }
+
+    expect(() => render(<Invalid />)).toThrow(
+      'useDragValue: give either baseElementRef or getValue, so that the drag has something to move',
+    )
+  })
+
   test('reports the value under the pointer, from pointer down onwards', () => {
     const { getByTestId } = render(<Absolute />)
     const root = getByTestId('root')

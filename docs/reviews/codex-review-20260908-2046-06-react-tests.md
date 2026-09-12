@@ -12,9 +12,9 @@
 
 | 状況 | 件数 |
 | --- | --- |
-| 対応済み | 4 |
-| 一部対応 | 2 |
-| 対応する（未対応） | 7 |
+| 対応済み | 13 |
+| 一部対応 | 0 |
+| 対応する（未対応） | 0 |
 | 要判断 | 0 |
 | 対応しない | 0 |
 | 未判断 | 0 |
@@ -173,7 +173,7 @@ Knob のテストはサイズ、ドラッグ、Shift キー操作だけで、`de
 
 ### [P2] `Knob.Thumb` の `className` が捨てられているがテストされていない — packages/react/src/components/Knob/Thumb.tsx:28
 
-> **状況: 対応する（未対応）** — #204 で Slider / XYPad の Thumb は直したが、Knob は手つかず。同じ形に揃える。
+> **状況: 対応済み** — `Knob.Thumb` の SVG に利用者の `className` を結合し、`data-*` とイベント handler を含むホスト props の転送をテストした。
 
 **何が問題か**
 
@@ -203,7 +203,7 @@ export function Thumb({
 
 ### [P2] Piano の `fill` 分岐と白鍵ゼロの境界値が未テスト — packages/react/src/components/Piano/index.tsx:176
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — fake `ResizeObserver` で親幅、`keyGap` の変更、unmount 時の切断を検証した。白鍵がない範囲でも分母を 1 以上にして有限の幅を返すようにした。
 
 **何が問題か**
 
@@ -239,7 +239,7 @@ ResizeObserver を制御できる fake を用意し、以下を検証してく�
 
 ### [P2] Storybook の namespace component 収集経路が fixture から抜けている — packages/react/__tests__/storybook/propTypes.test.ts:7
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — fixture に直接 export と namespace object の両方を追加し、member の収集と直接 export との重複排除を検証した。
 
 **何が問題か**
 
@@ -284,7 +284,7 @@ fixture に `Root` とサブコンポーネントを持つ namespace オブジ�
 
 ### [P2] React 19 callback-ref cleanup の専用分岐が未テスト — packages/react/__tests__/util/composeRefs.test.tsx:51
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — callback ref が返す React 19 cleanup の呼び出しと、object ref が unmount 時に `null` へ戻ることを専用テストで固定した。
 
 **何が問題か**
 
@@ -325,7 +325,7 @@ callback ref が disposer を返す Host を作り、アンマウント時に di
 
 ### [P2] NumberInput の「長押しで繰り返す」契約が一度も検証されていない — packages/react/src/components/NumberInput/stepperButton.tsx:42
 
-> **状況: 一部対応** — #209 で `useLongPress` の即時実行、待機後の反復、`pointerup` / `pointercancel` / window blur での停止を fake timer で検証した。NumberInput の Stepper と結合した長押しテストはまだない。
+> **状況: 対応済み** — #209 の hook 単体テストに加え、NumberInput の Stepper を長押ししたときの即時更新、待機後の反復、解放後の停止と次回長押しの待機時間リセットを結合テストで固定した。
 
 **何が問題か**
 
@@ -371,7 +371,7 @@ fake timer を使い、即時一回、499 ms では追加なし、500 ms で一�
 
 ### [P2] MIDI の React bridge 二つにテストがない — packages/react/src/hooks/useMIDIAccess.ts:23
 
-> **状況: 一部対応** — #209 で `useMIDIAccess` の StrictMode 下の request、購読、unmount cleanup のテストを追加した。`requestOnMount={false}`、store の `inputs` / `error` 更新、`useMIDIMessage` の handler 更新・access 交換はまだ未検証。
+> **状況: 対応済み** — #209 の StrictMode テストに加え、`requestOnMount={false}`、inputs / error の更新、`useMIDIMessage` の最新 handler、access 交換、unmount cleanup を検証した。
 
 **何が問題か**
 
@@ -411,7 +411,7 @@ DOM 内部の MIDI デコードを再テストせず、fake instance で React b
 
 ### [P2] AnimationCanvas の relative sizing 切替経路が未テスト — packages/react/src/components/AnimationCanvas/index.tsx:112
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — `relativeSize` の切り替えで instance を再構築し、通常の props 更新では再利用することを検証した。テストで見つかった再構築時に前 render のサイズを使う問題も修正した。
 
 **何が問題か**
 
@@ -440,7 +440,7 @@ ResizeObserver の fake を使い、絶対→相対および相対→絶対の r
 
 ### [P3] 実在しない `KeyboardEvent.key === ''` で黒鍵ショートカットを検証している — packages/react/src/components/Piano/index.test.tsx:153
 
-> **状況: 対応する（未対応）** — テストが実際には起こらない入力を前提にしている。
+> **状況: 対応済み** — HOME_ROW_NATURAL の黒鍵ショートカットを実在する `KeyboardEvent.key === 'w'` で検証するようにした。
 
 **何が問題か**
 
@@ -503,7 +503,7 @@ expect(onChange).toHaveBeenLastCalledWith([50, 49])
 
 ### [P3] `useDragValue` の必須 mapping エラー経路が未テスト — packages/react/src/hooks/useDragValue.ts:104
 
-> **状況: 対応する（未対応）**
+> **状況: 対応済み** — `linear` / `rotary` のどちらも指定しない場合に、契約どおり例外を投げることをテストした。
 
 **何が問題か**
 

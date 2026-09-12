@@ -28,6 +28,25 @@ describe('collectPropTypes', () => {
   test('leaves undefined off an optional prop, and keeps boolean whole', () => {
     expect(props?.flag).toBe('boolean')
   })
+
+  test('collects namespace members without duplicating their direct exports', () => {
+    expect(collected).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          exportName: 'Namespace',
+          member: 'Root',
+          props: { value: 'number' },
+        }),
+        expect.objectContaining({
+          exportName: 'Namespace',
+          member: 'Part',
+          props: { label: 'string' },
+        }),
+      ]),
+    )
+    expect(collected.some((entry) => entry.exportName === 'Root')).toBe(false)
+    expect(collected.some((entry) => entry.exportName === 'Part')).toBe(false)
+  })
 })
 
 describe('propTypesModule', () => {
@@ -36,5 +55,7 @@ describe('propTypesModule', () => {
 
     expect(source).toContain(`import * as m0 from ${JSON.stringify(fixture)}`)
     expect(source).toContain('[m0.Fixture, {')
+    expect(source).toContain('[m0.Namespace.Root, {')
+    expect(source).toContain('[m0.Namespace.Part, {')
   })
 })

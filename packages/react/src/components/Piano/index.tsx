@@ -285,7 +285,9 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
       if (!parent) throw new Error("doesn't have a parent element.")
 
       const resizeObserver = new ResizeObserver(() => {
-        setFilledKeyWidth(node.clientWidth / whiteKeyCount - keyGap)
+        setFilledKeyWidth(
+          node.clientWidth / Math.max(whiteKeyCount, 1) - keyGap,
+        )
       })
       resizeObserver.observe(parent)
       return () => resizeObserver.disconnect()

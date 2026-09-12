@@ -60,4 +60,27 @@ describe('useComposedRefs', () => {
     unmount()
     expect(onAttach).toHaveBeenLastCalledWith(null)
   })
+
+  test('runs callback cleanup and clears an object ref on unmount', () => {
+    const objectRef = { current: null as HTMLDivElement | null }
+    const cleanup = vi.fn()
+    const callbackRef = vi.fn((_node: HTMLDivElement | null) => cleanup)
+
+    function Host() {
+      const ref = useComposedRefs(objectRef, callbackRef)
+      return <div data-testid="cleanup-target" ref={ref} />
+    }
+
+    const { unmount } = render(<Host />)
+    expect(objectRef.current).toBe(
+      document.querySelector('[data-testid="cleanup-target"]'),
+    )
+
+    unmount()
+
+    expect(cleanup).toHaveBeenCalledTimes(1)
+    expect(callbackRef).toHaveBeenCalledTimes(1)
+    expect(callbackRef).not.toHaveBeenCalledWith(null)
+    expect(objectRef.current).toBeNull()
+  })
 })
