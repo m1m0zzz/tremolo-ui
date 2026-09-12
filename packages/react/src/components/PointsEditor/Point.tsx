@@ -239,19 +239,13 @@ export function Point<T extends PointBaseType>({
     const key = event.key
     if (!['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key))
       return
-    const inputAxis = (event.target as HTMLElement).dataset.axis
-    const axis =
-      inputAxis === 'x' || inputAxis === 'y'
-        ? inputAxis
-        : key === 'ArrowRight' || key === 'ArrowLeft'
-          ? 'x'
-          : 'y'
-    const matchesAxis =
-      inputAxis === undefined ||
-      (axis === 'x' && (key === 'ArrowRight' || key === 'ArrowLeft')) ||
-      (axis === 'y' && (key === 'ArrowUp' || key === 'ArrowDown'))
+    // The key picks the axis, whichever of the two inputs holds the focus: a
+    // point is one control to the person moving it, and the focus lands on the
+    // x input, so reading the axis off the input would leave the y axis with
+    // no keys at all.
+    const axis = key === 'ArrowRight' || key === 'ArrowLeft' ? 'x' : 'y'
     event.preventDefault()
-    if (!matchesAxis || !onChange || inactive || !keyboard) return
+    if (!onChange || inactive || !keyboard) return
     // y grows downwards, so ArrowUp moves the point towards 0.
     const direction = key === 'ArrowLeft' || key === 'ArrowUp' ? -1 : 1
     nudge(axis, direction, keyboard, event)

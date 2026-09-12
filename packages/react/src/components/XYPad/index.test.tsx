@@ -131,17 +131,22 @@ describe('XYPad', () => {
     expect(onChange).toHaveBeenLastCalledWith([50, 75])
   })
 
-  test('each range input only handles keys for its own axis', () => {
+  test('the arrow keys move both axes, from either input', () => {
     const { onChange } = setup()
 
+    // The focus lands on the x input, so up and down have to move y from
+    // there: the pad is one control to the person moving it.
     fireEvent.keyDown(axisInput('x'), { key: 'ArrowUp' })
-    expect(onChange).not.toHaveBeenCalled()
+    expect(onChange).toHaveBeenLastCalledWith([50, 49])
 
     fireEvent.keyDown(axisInput('x'), { key: 'ArrowRight' })
-    expect(onChange).toHaveBeenLastCalledWith([51, 50])
-
-    fireEvent.keyDown(axisInput('y'), { key: 'ArrowUp' })
     expect(onChange).toHaveBeenLastCalledWith([51, 49])
+
+    fireEvent.keyDown(axisInput('y'), { key: 'ArrowRight' })
+    expect(onChange).toHaveBeenLastCalledWith([52, 49])
+
+    fireEvent.keyDown(axisInput('y'), { key: 'ArrowDown' })
+    expect(onChange).toHaveBeenLastCalledWith([52, 50])
   })
 
   test('y is measured from the top, so it is not flipped for display', () => {
