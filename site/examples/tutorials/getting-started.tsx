@@ -2,6 +2,9 @@
 import { useState } from 'react'
 
 import { Knob } from '@tremolo-ui/react'
+
+// Copy this file from the Styling page into your own project.
+import knobTheme from './Knob.module.css'
 // expand end
 
 function App() {
@@ -17,6 +20,7 @@ function App() {
       }}
     >
       <Knob.Root
+        className={knobTheme.root}
         aria-label="Level"
         value={value}
         min={0}
@@ -25,9 +29,12 @@ function App() {
         onChange={(v) => setValue(v)}
       >
         <Knob.SVGRoot>
-          <Knob.ActiveLine />
-          <Knob.InactiveLine />
-          <Knob.Thumb />
+          <Knob.ActiveLine className={knobTheme.activeLine} />
+          <Knob.InactiveLine className={knobTheme.inactiveLine} />
+          <Knob.Thumb
+            className={knobTheme.thumb}
+            classes={{ thumbLine: knobTheme.thumbLine }}
+          />
         </Knob.SVGRoot>
       </Knob.Root>
       {value}

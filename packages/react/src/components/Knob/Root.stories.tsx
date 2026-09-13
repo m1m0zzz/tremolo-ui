@@ -5,6 +5,8 @@ import { exponentialScale, linearScale } from '@tremolo-ui/functions'
 
 import { Knob } from '.'
 
+import knobTheme from 'shared/css/Knob.module.css'
+
 /**
  * Args that are not props: which parts `SVGRoot` is given. Storybook shows
  * anything in `args`, so a story can put its own switches in Controls as long
@@ -69,11 +71,23 @@ export const Basic: Story = {
 
     return (
       <>
-        <Knob.Root {...args} value={value} onChange={(v) => setValue(v)}>
+        <Knob.Root
+          className={knobTheme.root}
+          {...args}
+          value={value}
+          onChange={(v) => setValue(v)}
+        >
           <Knob.SVGRoot>
-            {inactiveLine && <Knob.InactiveLine />}
-            {activeLine && <Knob.ActiveLine />}
-            {thumb && <Knob.Thumb />}
+            {inactiveLine && (
+              <Knob.InactiveLine className={knobTheme.inactiveLine} />
+            )}
+            {activeLine && <Knob.ActiveLine className={knobTheme.activeLine} />}
+            {thumb && (
+              <Knob.Thumb
+                className={knobTheme.thumb}
+                classes={{ thumbLine: knobTheme.thumbLine }}
+              />
+            )}
           </Knob.SVGRoot>
         </Knob.Root>
         <p>value: {value}</p>
@@ -102,11 +116,19 @@ export const FineAdjustment: Story = {
 
     return (
       <>
-        <Knob.Root {...args} value={value} onChange={(v) => setValue(v)}>
+        <Knob.Root
+          className={knobTheme.root}
+          {...args}
+          value={value}
+          onChange={(v) => setValue(v)}
+        >
           <Knob.SVGRoot>
-            <Knob.InactiveLine />
-            <Knob.ActiveLine />
-            <Knob.Thumb />
+            <Knob.InactiveLine className={knobTheme.inactiveLine} />
+            <Knob.ActiveLine className={knobTheme.activeLine} />
+            <Knob.Thumb
+              className={knobTheme.thumb}
+              classes={{ thumbLine: knobTheme.thumbLine }}
+            />
           </Knob.SVGRoot>
         </Knob.Root>
         <p>value: {value.toFixed(2)}</p>
@@ -150,11 +172,19 @@ export const Logarithmic: Story = {
         <div style={{ display: 'flex', justifyContent: 'center', gap: 32 }}>
           <div style={container}>
             <p>linear</p>
-            <Knob.Root {...args} value={value} onChange={(v) => setValue(v)}>
+            <Knob.Root
+              className={knobTheme.root}
+              {...args}
+              value={value}
+              onChange={(v) => setValue(v)}
+            >
               <Knob.SVGRoot>
-                <Knob.InactiveLine />
-                <Knob.ActiveLine />
-                <Knob.Thumb />
+                <Knob.InactiveLine className={knobTheme.inactiveLine} />
+                <Knob.ActiveLine className={knobTheme.activeLine} />
+                <Knob.Thumb
+                  className={knobTheme.thumb}
+                  classes={{ thumbLine: knobTheme.thumbLine }}
+                />
               </Knob.SVGRoot>
             </Knob.Root>
             <p>freq. {fmt(value)}</p>
@@ -162,6 +192,7 @@ export const Logarithmic: Story = {
           <div style={container}>
             <p>log</p>
             <Knob.Root
+              className={knobTheme.root}
               {...args}
               value={value2}
               scale={exponentialScale}
@@ -169,9 +200,12 @@ export const Logarithmic: Story = {
               onChange={(v) => setValue2(v)}
             >
               <Knob.SVGRoot>
-                <Knob.InactiveLine />
-                <Knob.ActiveLine />
-                <Knob.Thumb />
+                <Knob.InactiveLine className={knobTheme.inactiveLine} />
+                <Knob.ActiveLine className={knobTheme.activeLine} />
+                <Knob.Thumb
+                  className={knobTheme.thumb}
+                  classes={{ thumbLine: knobTheme.thumbLine }}
+                />
               </Knob.SVGRoot>
             </Knob.Root>
             <p>freq. {fmt(value2)}</p>
@@ -228,7 +262,12 @@ export const Customizing: Story = {
           padding: '1rem',
         }}
       >
-        <Knob.Root {...args} value={value} onChange={(v) => setValue(v)}>
+        <Knob.Root
+          className={knobTheme.root}
+          {...args}
+          value={value}
+          onChange={(v) => setValue(v)}
+        >
           <div
             style={{
               position: 'relative',

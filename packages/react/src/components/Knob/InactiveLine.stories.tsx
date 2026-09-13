@@ -3,6 +3,8 @@ import { useState } from 'react'
 
 import { Knob } from '.'
 
+import knobTheme from 'shared/css/Knob.module.css'
+
 export default {
   title: 'Components/Knob/InactiveLine',
   component: Knob.InactiveLine,
@@ -26,6 +28,7 @@ export const Basic: Story = {
     return (
       <>
         <Knob.Root
+          className={knobTheme.root}
           value={value}
           min={0}
           max={100}
@@ -33,9 +36,12 @@ export const Basic: Story = {
           onChange={(v) => setValue(v)}
         >
           <Knob.SVGRoot>
-            <Knob.ActiveLine />
-            <Knob.InactiveLine {...args} />
-            <Knob.Thumb />
+            <Knob.ActiveLine className={knobTheme.activeLine} />
+            <Knob.InactiveLine className={knobTheme.inactiveLine} {...args} />
+            <Knob.Thumb
+              className={knobTheme.thumb}
+              classes={{ thumbLine: knobTheme.thumbLine }}
+            />
           </Knob.SVGRoot>
         </Knob.Root>
         <p>value: {value}</p>

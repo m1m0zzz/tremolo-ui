@@ -10,12 +10,12 @@ import CodeBlock from '@theme/CodeBlock'
 import cssModule from '!!raw-loader!@site/examples/tutorials/styling/css-module'
 import myKnobCss from '!!raw-loader!@site/examples/tutorials/styling/my-knob.module.css'
 
-import knobCss from '!!raw-loader!@site/src/css/tremolo/Knob.css'
+import knobCss from '!!raw-loader!shared/css/Knob.module.css'
 import numberInputCss from '!!raw-loader!@site/src/css/tremolo/NumberInput.css'
 import pianoCss from '!!raw-loader!@site/src/css/tremolo/Piano.css'
 import pointsEditorCss from '!!raw-loader!@site/src/css/tremolo/PointsEditor.css'
 import sliderCss from '!!raw-loader!shared/css/Slider.module.css'
-import xyPadCss from '!!raw-loader!@site/src/css/tremolo/XYPad.css'
+import xyPadCss from '!!raw-loader!shared/css/XYPad.module.css'
 
 **tremolo-ui は CSS を配りません。** コンポーネントが受け持つのはマークアップの描画と、
 値の管理と、ポインタ・キーボード・ホイールの処理までで、見た目は利用者のものです。
@@ -142,14 +142,14 @@ propへ渡した数値はpxとして扱われます。それ以外はそのま�
 あり、thumb・mark・point の `--translate` で中央合わせをずらせます。
 
 <Tabs>
-  <TabItem value="Knob.css" default>
-    <CodeBlock language='css' title='Knob.css'>{knobCss}</CodeBlock>
+  <TabItem value="Knob.module.css" default>
+    <CodeBlock language='css' title='Knob.module.css'>{knobCss}</CodeBlock>
   </TabItem>
   <TabItem value="Slider.module.css">
     <CodeBlock language='css' title='Slider.module.css'>{sliderCss}</CodeBlock>
   </TabItem>
-  <TabItem value="XYPad.css">
-    <CodeBlock language='css' title='XYPad.css'>{xyPadCss}</CodeBlock>
+  <TabItem value="XYPad.module.css">
+    <CodeBlock language='css' title='XYPad.module.css'>{xyPadCss}</CodeBlock>
   </TabItem>
   <TabItem value="NumberInput.css">
     <CodeBlock language='css' title='NumberInput.css'>{numberInputCss}</CodeBlock>

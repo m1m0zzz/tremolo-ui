@@ -3,6 +3,8 @@ import { useState } from 'react'
 
 import { Knob } from '.'
 
+import knobTheme from 'shared/css/Knob.module.css'
+
 export default {
   title: 'Components/Knob/SVGRoot',
   component: Knob.SVGRoot,
@@ -32,6 +34,7 @@ export const PaintOrder: Story = {
     return (
       <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
         <Knob.Root
+          className={knobTheme.root}
           {...args}
           aria-label="Thumb on top"
           value={value}
@@ -40,12 +43,27 @@ export const PaintOrder: Story = {
           onChange={(v) => setValue(v)}
         >
           <Knob.SVGRoot>
-            <Knob.InactiveLine strokeWidth={16} stroke="#dfe3ea" />
-            <Knob.ActiveLine strokeWidth={16} stroke="#4e76e5" />
-            <Knob.Thumb thumbSize={88} thumb="#e0699f" thumbLine="#fff" />
+            <Knob.InactiveLine
+              className={knobTheme.inactiveLine}
+              strokeWidth={16}
+              stroke="#dfe3ea"
+            />
+            <Knob.ActiveLine
+              className={knobTheme.activeLine}
+              strokeWidth={16}
+              stroke="#4e76e5"
+            />
+            <Knob.Thumb
+              className={knobTheme.thumb}
+              classes={{ thumbLine: knobTheme.thumbLine }}
+              thumbSize={88}
+              thumb="#e0699f"
+              thumbLine="#fff"
+            />
           </Knob.SVGRoot>
         </Knob.Root>
         <Knob.Root
+          className={knobTheme.root}
           {...args}
           aria-label="Thumb underneath"
           value={value}
@@ -54,9 +72,23 @@ export const PaintOrder: Story = {
           onChange={(v) => setValue(v)}
         >
           <Knob.SVGRoot>
-            <Knob.Thumb thumbSize={88} thumb="#e0699f" thumbLine="#fff" />
-            <Knob.InactiveLine strokeWidth={16} stroke="#dfe3ea" />
-            <Knob.ActiveLine strokeWidth={16} stroke="#4e76e5" />
+            <Knob.Thumb
+              className={knobTheme.thumb}
+              classes={{ thumbLine: knobTheme.thumbLine }}
+              thumbSize={88}
+              thumb="#e0699f"
+              thumbLine="#fff"
+            />
+            <Knob.InactiveLine
+              className={knobTheme.inactiveLine}
+              strokeWidth={16}
+              stroke="#dfe3ea"
+            />
+            <Knob.ActiveLine
+              className={knobTheme.activeLine}
+              strokeWidth={16}
+              stroke="#4e76e5"
+            />
           </Knob.SVGRoot>
         </Knob.Root>
         <p>value: {value}</p>
