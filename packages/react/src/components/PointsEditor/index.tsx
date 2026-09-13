@@ -28,7 +28,6 @@ import {
 
 import { DEFAULT_DRAG_SENSITIVITY } from '../../input-event'
 import { cssLength } from '../_util/css-length'
-import { cx } from '../_util/cx'
 
 import { Background } from './Background'
 import { Container } from './Container'
@@ -361,6 +360,17 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       [applyDeltaTo, snapshot],
     )
 
+    const isPointElement = useCallback(
+      (element: Element | null | undefined) => {
+        if (!element) return false
+        for (const [, entry] of points.current) {
+          if (entry.current.element?.contains(element)) return true
+        }
+        return false
+      },
+      [],
+    )
+
     const nudgeFocusedPoint = useCallback(
       (axis: 'x' | 'y', direction: number, modifiers: ModifierState) => {
         const container = containerRef.current
@@ -462,6 +472,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         selectable,
         selection,
         registerPoint,
+        isPointElement,
         beginPointDrag,
         movePointDrag,
         nudgeSelection,
@@ -481,6 +492,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         selectable,
         selection,
         registerPoint,
+        isPointElement,
         beginPointDrag,
         movePointDrag,
         nudgeSelection,
@@ -496,7 +508,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       <PointsEditorProvider value={context}>
         <div
           ref={forwardedRef}
-          className={cx('tremolo-points-editor', className)}
+          className={className}
           data-disabled={disabled || undefined}
           data-readonly={readonly || undefined}
           style={

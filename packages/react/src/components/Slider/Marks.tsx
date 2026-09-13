@@ -3,7 +3,6 @@ import { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react'
 import { xor } from '@tremolo-ui/functions'
 
 import { cssLength } from '../_util/css-length'
-import { cx } from '../_util/cx'
 import { Placement } from '../_util/Placement'
 
 import { useSliderContext } from './context'
@@ -41,7 +40,7 @@ export function Marks({
 
   return (
     <div
-      className={cx('tremolo-slider-marks', className)}
+      className={className}
       data-orientation={vertical ? 'vertical' : 'horizontal'}
       style={
         {

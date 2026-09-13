@@ -25,7 +25,6 @@ import {
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { cssLength } from '../_util/css-length'
-import { cx } from '../_util/cx'
 
 import { KeyboardShortcuts } from './keyboard-shortcuts'
 
@@ -394,7 +393,7 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
     return (
       <div
         ref={setNode}
-        className={cx('tremolo-piano', className)}
+        className={className}
         data-fill={fill || undefined}
         role="group"
         // The group can own keyboard shortcuts and must receive focus.
@@ -432,7 +431,7 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
           return (
             <div
               key={note}
-              className={cx(`tremolo-piano-${keyType}-key`, keyClassName)}
+              className={keyClassName}
               data-note={note}
               data-note-key={noteKey(note)}
               data-active={state.active || undefined}
@@ -457,17 +456,8 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
               }}
             >
               {content !== '' && content !== null && content !== undefined && (
-                <div
-                  className={cx(
-                    'tremolo-piano-key-label-wrapper',
-                    classes?.keyLabelWrapper,
-                  )}
-                >
-                  <div
-                    className={cx('tremolo-piano-key-label', classes?.keyLabel)}
-                  >
-                    {content}
-                  </div>
+                <div className={classes?.keyLabelWrapper}>
+                  <div className={classes?.keyLabel}>{content}</div>
                 </div>
               )}
             </div>

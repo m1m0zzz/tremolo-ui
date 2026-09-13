@@ -10,15 +10,19 @@ function Subject(props: ComponentProps<typeof Slider.MarksOption>) {
         <Slider.Thumb />
       </Slider.Track>
       <Slider.Marks>
-        <Slider.MarksOption data-testid="option" {...props} />
+        <Slider.MarksOption
+          data-testid="option"
+          classes={{ mark: 'mark', label: 'label' }}
+          {...props}
+        />
       </Slider.Marks>
     </Slider.Root>
   )
 }
 
 const option = () => screen.getByTestId('option')
-const mark = () => option().querySelector('.tremolo-slider-marks-option-mark')
-const label = () => option().querySelector('.tremolo-slider-marks-option-label')
+const mark = () => option().querySelector('.mark')
+const label = () => option().querySelector('.label')
 
 describe('Slider.MarksOption', () => {
   test('draws the mark and the value by default', () => {

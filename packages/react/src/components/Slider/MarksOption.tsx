@@ -3,7 +3,6 @@ import { ComponentPropsWithoutRef, CSSProperties, useCallback } from 'react'
 import { toFixed, xor } from '@tremolo-ui/functions'
 
 import { cssLength } from '../_util/css-length'
-import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/Placement'
 
 import { useSliderContext } from './context'
@@ -72,7 +71,7 @@ export function MarksOption({
 
   return (
     <div
-      className={cx('tremolo-slider-marks-option', className)}
+      className={className}
       style={
         {
           // The mark and the label read these, so they are set once here.
@@ -97,16 +96,13 @@ export function MarksOption({
     >
       {mark && (
         <div
-          className={cx('tremolo-slider-marks-option-mark', classes?.mark)}
+          className={classes?.mark}
           style={styles?.mark}
           data-orientation={vertical ? 'vertical' : 'horizontal'}
         ></div>
       )}
       {label !== null && (
-        <div
-          className={cx('tremolo-slider-marks-option-label', classes?.label)}
-          style={styles?.label}
-        >
+        <div className={classes?.label} style={styles?.label}>
           {label ?? value}
         </div>
       )}

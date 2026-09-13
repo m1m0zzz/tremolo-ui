@@ -14,6 +14,7 @@ describe('a caller ref reaches the element the context also uses', () => {
       return (
         <Slider.Root value={50} min={0} max={100}>
           <Slider.Track
+            data-testid="track"
             ref={(node) => {
               seen = node
             }}
@@ -25,7 +26,7 @@ describe('a caller ref reaches the element the context also uses', () => {
     }
 
     const { container } = render(<Subject />)
-    expect(seen).toBe(container.querySelector('.tremolo-slider-track'))
+    expect(seen).toBe(container.querySelector('[data-testid="track"]'))
   })
 
   test('XYPad.Area', () => {
@@ -34,6 +35,7 @@ describe('a caller ref reaches the element the context also uses', () => {
     const { container } = render(
       <XYPad.Root value={[0, 0]} min={0} max={100}>
         <XYPad.Area
+          data-testid="area"
           ref={(node) => {
             seen = node
           }}
@@ -42,6 +44,6 @@ describe('a caller ref reaches the element the context also uses', () => {
         </XYPad.Area>
       </XYPad.Root>,
     )
-    expect(seen).toBe(container.querySelector('.tremolo-xy-pad-area'))
+    expect(seen).toBe(container.querySelector('[data-testid="area"]'))
   })
 })

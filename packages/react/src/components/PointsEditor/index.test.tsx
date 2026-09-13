@@ -58,7 +58,7 @@ function Subject({
   const [value, setValue] = useState(initial)
 
   return (
-    <PointsEditor.Root {...rootProps}>
+    <PointsEditor.Root data-testid="editor" {...rootProps}>
       <PointsEditor.Background data-testid="background" />
       <PointsEditor.Container data-testid="container">
         <PointsEditor.Point
@@ -81,7 +81,7 @@ function TwoPoints({ onA, onB }: { onA: Mock; onB: Mock }) {
   const [b, setB] = useState<PointBaseType>({ x: 0.75, y: 0.5 })
 
   return (
-    <PointsEditor.Root>
+    <PointsEditor.Root data-testid="editor">
       <PointsEditor.Container data-testid="two-container">
         <PointsEditor.Point
           data-testid="a"
@@ -144,15 +144,15 @@ describe('PointsEditor', () => {
   test('renders the children as they are composed', () => {
     setup()
 
-    expect(screen.getByTestId('background').className).toBe(
-      'tremolo-points-editor-background',
-    )
-    expect(screen.getByTestId('container').className).toBe(
-      'tremolo-points-editor-container',
-    )
-    expect(screen.getByTestId('point').className).toBe(
-      'tremolo-points-editor-point',
-    )
+    // The parts are what the caller composed: nothing wraps them, and the
+    // point is inside the container rather than the editor root.
+    const editor = screen.getByTestId('editor')
+    const background = screen.getByTestId('background')
+    const container = screen.getByTestId('container')
+
+    expect(background.parentElement).toBe(editor)
+    expect(container.parentElement).toBe(editor)
+    expect(screen.getByTestId('point').parentElement).toBe(container)
   })
 
   test('places a point by its value within the container', () => {
@@ -365,7 +365,7 @@ describe('PointsEditor', () => {
 
     // The theme draws the point itself, so what a caller passes has to reach
     // the same element rather than replace it.
-    expect(point).toHaveClass('tremolo-points-editor-point')
+    expect(point.tagName).toBe('DIV')
     expect(point).toHaveTextContent('knob')
     expect(point.querySelectorAll('input[type="range"]')).toHaveLength(2)
   })
@@ -392,10 +392,10 @@ describe('PointsEditor', () => {
     // would grow with the editor, and every one of them would run on every
     // notch of the wheel.
     const own = targets.filter((target) =>
-      target.closest('.tremolo-points-editor'),
+      target.closest('[data-testid="editor"]'),
     )
     expect(own).toHaveLength(1)
-    expect(own[0]).toHaveClass('tremolo-points-editor-container')
+    expect(own[0]).toBe(screen.getByTestId('two-container'))
   })
 
   test('only one point acts, however many are mounted', () => {

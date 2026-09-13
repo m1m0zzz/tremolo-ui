@@ -9,7 +9,6 @@ import { xor } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
 import { cssLength } from '../_util/css-length'
-import { cx } from '../_util/cx'
 import { Placement } from '../_util/Placement'
 
 import { useSliderContext } from './context'
@@ -61,7 +60,7 @@ export const Track = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
     return (
       <div
         ref={composedRef}
-        className={cx('tremolo-slider-track', className)}
+        className={className}
         data-disabled={disabled || undefined}
         data-orientation={vertical ? 'vertical' : 'horizontal'}
         // Which end the value grows from. `percent` is already the position on

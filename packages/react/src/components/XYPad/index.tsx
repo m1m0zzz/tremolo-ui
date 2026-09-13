@@ -31,7 +31,6 @@ import {
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
 } from '../../input-event'
-import { cx } from '../_util/cx'
 
 import { Area } from './Area'
 import { toXY, XY, XYInput, XYPadProvider } from './context'
@@ -371,7 +370,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
       <XYPadProvider value={context}>
         {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- the group handles pointer and keyboard input shared by its two range controls */}
         <div
-          className={cx('tremolo-xy-pad', className)}
+          className={className}
           ref={rootRefCallback}
           role="group"
           tabIndex={-1}

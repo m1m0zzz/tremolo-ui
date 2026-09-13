@@ -1,6 +1,5 @@
 import { SVGProps } from 'react'
 
-import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/Placement'
 
 import { arcPath, arcRadius, useKnobContext } from './context'
@@ -28,7 +27,7 @@ export function InactiveLine({
     <>
       {startValue > min && (
         <path
-          className={cx('tremolo-knob-inactive-line', className)}
+          className={className}
           d={arcPath(r1, r2, radius)}
           fill="none"
           stroke={stroke}
@@ -38,7 +37,7 @@ export function InactiveLine({
       )}
       {startValue < max && (
         <path
-          className={cx('tremolo-knob-inactive-line', className)}
+          className={className}
           d={arcPath(r3, r4, radius)}
           fill="none"
           stroke={stroke}

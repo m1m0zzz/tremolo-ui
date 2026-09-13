@@ -13,24 +13,24 @@ function renderSlider(
 ) {
   const { container } = render(
     <Slider.Root value={25} min={0} max={100} {...props}>
-      <Slider.Track>
+      <Slider.Track data-testid="track">
         <Slider.Thumb />
       </Slider.Track>
     </Slider.Root>,
   )
-  return container.querySelector('.tremolo-slider-track')!
+  return container.querySelector('[data-testid="track"]')!
 }
 
 describe('appearance props write custom properties', () => {
   test('a number is written as pixels', () => {
     const { container } = render(
       <Slider.Root value={25} min={0} max={100}>
-        <Slider.Track length={200} thickness={16}>
+        <Slider.Track data-testid="track" length={200} thickness={16}>
           <Slider.Thumb />
         </Slider.Track>
       </Slider.Root>,
     )
-    const track = container.querySelector('.tremolo-slider-track')!
+    const track = container.querySelector('[data-testid="track"]')!
 
     expect(variable(track, '--length')).toBe('200px')
     expect(variable(track, '--thickness')).toBe('16px')
@@ -39,12 +39,12 @@ describe('appearance props write custom properties', () => {
   test('a string is written as given', () => {
     const { container } = render(
       <Slider.Root value={25} min={0} max={100}>
-        <Slider.Track length="50%" thickness="0.5rem">
+        <Slider.Track data-testid="track" length="50%" thickness="0.5rem">
           <Slider.Thumb />
         </Slider.Track>
       </Slider.Root>,
     )
-    const track = container.querySelector('.tremolo-slider-track')!
+    const track = container.querySelector('[data-testid="track"]')!
 
     expect(variable(track, '--length')).toBe('50%')
     expect(variable(track, '--thickness')).toBe('0.5rem')
@@ -80,12 +80,12 @@ describe('appearance props write custom properties', () => {
   test('XYPad.Area', () => {
     const { container } = render(
       <XYPad.Root value={[0, 0]} min={[0, 0]} max={[10, 10]}>
-        <XYPad.Area width={300} height="10rem" color="red">
+        <XYPad.Area data-testid="area" width={300} height="10rem" color="red">
           <XYPad.Thumb />
         </XYPad.Area>
       </XYPad.Root>,
     )
-    const area = container.querySelector('.tremolo-xy-pad-area')!
+    const area = container.querySelector('[data-testid="area"]')!
 
     expect(variable(area, '--width')).toBe('300px')
     expect(variable(area, '--height')).toBe('10rem')
@@ -94,14 +94,18 @@ describe('appearance props write custom properties', () => {
 
   test('PointsEditor and its points', () => {
     const { container } = render(
-      <PointsEditor.Root width={400} height={200}>
+      <PointsEditor.Root data-testid="editor" width={400} height={200}>
         <PointsEditor.Container>
-          <PointsEditor.Point value={{ x: 0.5, y: 0.5 }} size={24} />
+          <PointsEditor.Point
+            data-testid="point"
+            value={{ x: 0.5, y: 0.5 }}
+            size={24}
+          />
         </PointsEditor.Container>
       </PointsEditor.Root>,
     )
-    const editor = container.querySelector('.tremolo-points-editor')!
-    const point = container.querySelector('.tremolo-points-editor-point')!
+    const editor = container.querySelector('[data-testid="editor"]')!
+    const point = container.querySelector('[data-testid="point"]')!
 
     expect(variable(editor, '--width')).toBe('400px')
     expect(variable(editor, '--height')).toBe('200px')

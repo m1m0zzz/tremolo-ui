@@ -8,7 +8,7 @@ import type { SliderThumbMethods } from './Thumb'
 function Subject({ children, ...props }: ComponentProps<typeof Slider.Thumb>) {
   return (
     <Slider.Root value={25} min={0} max={100}>
-      <Slider.Track>
+      <Slider.Track data-testid="track">
         <Slider.Thumb data-testid="thumb" {...props}>
           {children}
         </Slider.Thumb>
@@ -27,10 +27,9 @@ describe('Slider.Thumb', () => {
       </Subject>,
     )
 
-    expect(thumb()).toHaveClass('tremolo-slider-thumb')
     expect(thumb().querySelector('img')).not.toBeNull()
     // Nothing wraps it: the element the caller sees is the positioned one.
-    expect(thumb().parentElement).toHaveClass('tremolo-slider-track')
+    expect(thumb().parentElement).toBe(screen.getByTestId('track'))
   })
 
   test('renders children that are falsy, rather than replacing them', () => {
@@ -70,7 +69,7 @@ describe('Slider.Thumb', () => {
         <>
           <button onClick={() => ref.current?.focus()}>focus</button>
           <Slider.Root value={0} min={0} max={100}>
-            <Slider.Track>
+            <Slider.Track data-testid="track">
               <Slider.Thumb ref={ref} data-testid="thumb">
                 <span>custom</span>
               </Slider.Thumb>

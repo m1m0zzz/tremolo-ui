@@ -12,8 +12,6 @@ import {
   type AnimationFrame,
 } from '@tremolo-ui/dom'
 
-import { cx } from '../_util/cx'
-
 export type InitFunction = (
   context: CanvasRenderingContext2D,
   option: {
@@ -154,7 +152,7 @@ export function AnimationCanvas({
 
   return (
     <canvas
-      className={cx('tremolo-animation-canvas', className)}
+      className={className}
       ref={setNode}
       onContextMenu={onContextMenu}
       {...props}

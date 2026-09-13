@@ -1,6 +1,5 @@
 import { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react'
 
-import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/Placement'
 
 import { usePointsEditorContext } from './context'
@@ -30,7 +29,7 @@ export function SelectionBox({
 
   return (
     <div
-      className={cx('tremolo-points-editor-selection-box', className)}
+      className={className}
       {...props}
       style={
         {

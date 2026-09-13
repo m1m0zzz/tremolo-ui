@@ -8,7 +8,6 @@ import {
   useRef,
 } from 'react'
 
-import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/Placement'
 import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
@@ -90,7 +89,7 @@ export const Thumb = /* @__PURE__ */ forwardRef<SliderThumbMethods, Props>(
 
     return (
       <div
-        className={cx('tremolo-slider-thumb', className)}
+        className={className}
         data-disabled={disabled || undefined}
         data-readonly={readonly || undefined}
         {...props}
@@ -113,7 +112,6 @@ export const Thumb = /* @__PURE__ */ forwardRef<SliderThumbMethods, Props>(
       >
         <VisuallyHiddenRangeInput
           ref={inputRef}
-          className="tremolo-slider-input"
           value={value}
           min={min}
           max={max}

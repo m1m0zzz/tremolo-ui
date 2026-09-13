@@ -54,6 +54,11 @@ export type PointsEditorContextValue = {
   /** Register a point so that a selection can move it with the rest. */
   registerPoint: (id: string, entry: RefObject<PointRegistration>) => () => void
   /**
+   * Whether the element is a point, or inside one. The registry knows which
+   * elements the points are, so nothing has to be recognised by a class name.
+   */
+  isPointElement: (element: Element | null | undefined) => boolean
+  /**
    * A pointer went down on a point: works out the new selection and takes the
    * snapshot the move will be measured against.
    */

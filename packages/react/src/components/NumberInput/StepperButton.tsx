@@ -1,7 +1,6 @@
 import { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react'
 
 import { useLongPress } from '../../hooks/useLongPress'
-import { cx } from '../_util/cx'
 
 import { useNumberInputContext, useStepperContext } from './context'
 
@@ -49,7 +48,7 @@ export function StepperButton({
 
   return (
     <div
-      className={cx(`tremolo-number-input-${variant}-stepper`, className)}
+      className={className}
       role="button"
       tabIndex={-1}
       // A bare arrow has no accessible name of its own. Overridable, since a
@@ -75,7 +74,6 @@ export function StepperButton({
 export function StepperArrow({ up }: { up: boolean }) {
   return (
     <svg
-      className="tremolo-number-input-stepper-icon"
       // The arrow the component draws when no children are given, so it sizes
       // itself rather than asking a stylesheet to.
       style={{

@@ -21,7 +21,6 @@ import {
 import { useComposedRefs } from '../../compose-refs'
 import { useDragValue } from '../../hooks/useDragValue'
 import { cssLength } from '../_util/css-length'
-import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/Placement'
 import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
@@ -277,7 +276,7 @@ export function Point<T extends PointBaseType>({
     // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
       ref={refCallback}
-      className={cx('tremolo-points-editor-point', className)}
+      className={className}
       data-disabled={disabled || undefined}
       data-readonly={readonly || undefined}
       // A press lands on the point, which cannot hold focus, and the browser
@@ -321,7 +320,6 @@ export function Point<T extends PointBaseType>({
         <VisuallyHiddenRangeInput
           key={axis}
           ref={axis === 'x' ? xInputRef : yInputRef}
-          className={`tremolo-points-editor-${axis}-input`}
           data-axis={axis}
           value={current[axis]}
           min={min?.[axis] ?? 0}

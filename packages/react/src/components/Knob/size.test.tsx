@@ -1,9 +1,9 @@
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 
 import { Knob } from '.'
 
 function renderKnob(size?: number) {
-  const { container } = render(
+  render(
     <Knob.Root value={50} min={0} max={100} size={size}>
       <Knob.SVGRoot>
         <Knob.InactiveLine />
@@ -12,7 +12,7 @@ function renderKnob(size?: number) {
       </Knob.SVGRoot>
     </Knob.Root>,
   )
-  return container.querySelector('.tremolo-knob') as HTMLElement
+  return screen.getByRole('slider')
 }
 
 describe('Knob size', () => {
@@ -32,14 +32,14 @@ describe('Knob size', () => {
   })
 
   test('a string is passed through as written', () => {
-    const { container } = render(
+    render(
       <Knob.Root value={50} min={0} max={100} size="3rem">
         <Knob.SVGRoot>
           <Knob.Thumb />
         </Knob.SVGRoot>
       </Knob.Root>,
     )
-    const knob = container.querySelector('.tremolo-knob') as HTMLElement
+    const knob = screen.getByRole('slider')
     expect(knob.style.getPropertyValue('--knob-size')).toBe('3rem')
   })
 })
