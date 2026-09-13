@@ -116,8 +116,6 @@ export interface XYPadProps {
    */
   readonly?: boolean
 
-  // TODO: aria-* のpropsを上書きして使う
-
   onChange?: (value: XY<number>) => void
   onDragStart?: (value: XY<number>) => void
   onDragEnd?: (value: XY<number>) => void
