@@ -107,12 +107,12 @@ export interface XYPadProps {
 
   /**
    * Make the pad unchangeable and remove its thumb from the tab order.
-   * aria-disabled property is also applied.
+   * The parts carry `data-disabled` while it is set.
    */
   disabled?: boolean
   /**
    * Make the pad unchangeable while leaving its thumb focusable.
-   * aria-readonly property is also applied.
+   * The parts carry `data-readonly` while it is set.
    */
   readonly?: boolean
 
@@ -391,8 +391,8 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
           ref={rootRefCallback}
           role="group"
           tabIndex={-1}
-          aria-disabled={disabled}
-          data-readonly={readonly}
+          data-disabled={disabled || undefined}
+          data-readonly={readonly || undefined}
           style={style}
           onPointerDown={onPointerDown}
           onKeyDown={(event) => {

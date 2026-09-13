@@ -119,7 +119,7 @@ describe('the editing draft', () => {
 
     expect(onChange).toHaveBeenLastCalledWith(1e20)
     expect(input().value).toBe(String(1e20))
-    expect(input().getAttribute('data-out-of-range')).toBe('true')
+    expect(input()).toHaveAttribute('data-out-of-range')
   })
 
   test('an unbounded input keeps a value beyond the safe-integer range', () => {

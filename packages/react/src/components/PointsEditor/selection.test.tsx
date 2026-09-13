@@ -92,7 +92,7 @@ function setup(props: React.ComponentProps<typeof Subject> = {}) {
 }
 
 const point = (id: string) => screen.getByTestId(id)
-const selected = (id: string) => point(id).getAttribute('data-selected')
+const selected = (id: string) => point(id).hasAttribute('data-selected')
 
 function press(
   element: Element,
@@ -132,12 +132,12 @@ describe('selecting points', () => {
     setup()
 
     click(point('a'))
-    expect(selected('a')).toBe('true')
-    expect(selected('b')).toBe('false')
+    expect(selected('a')).toBe(true)
+    expect(selected('b')).toBe(false)
 
     click(point('b'))
-    expect(selected('a')).toBe('false')
-    expect(selected('b')).toBe('true')
+    expect(selected('a')).toBe(false)
+    expect(selected('b')).toBe(true)
   })
 
   test('ctrl adds to the selection rather than replacing it', () => {
@@ -146,8 +146,8 @@ describe('selecting points', () => {
     click(point('a'))
     click(point('b'), { ctrlKey: true })
 
-    expect(selected('a')).toBe('true')
-    expect(selected('b')).toBe('true')
+    expect(selected('a')).toBe(true)
+    expect(selected('b')).toBe(true)
   })
 
   test('ctrl on a selected point takes it out again', () => {
@@ -156,7 +156,7 @@ describe('selecting points', () => {
 
     click(point('a'))
     press(point('a'), { ctrlKey: true })
-    expect(selected('a')).toBe('false')
+    expect(selected('a')).toBe(false)
 
     // The press was a deselect, so what follows it is not a move.
     move(point('a'), { clientX: 50, clientY: 50 })
@@ -168,12 +168,12 @@ describe('selecting points', () => {
     setup({ selection: ['c'], onSelectionChange })
 
     // Controlled: the prop decides, and a press only asks.
-    expect(selected('c')).toBe('true')
+    expect(selected('c')).toBe(true)
 
     press(point('a'))
     expect(onSelectionChange).toHaveBeenLastCalledWith(['a'])
-    expect(selected('a')).toBe('false')
-    expect(selected('c')).toBe('true')
+    expect(selected('a')).toBe(false)
+    expect(selected('c')).toBe(true)
   })
 })
 
@@ -249,9 +249,9 @@ describe('the selection box', () => {
     press(area, { clientX: 0, clientY: 0 })
     move(area, { clientX: 50, clientY: 50 })
 
-    expect(selected('a')).toBe('true')
-    expect(selected('b')).toBe('true')
-    expect(selected('c')).toBe('false')
+    expect(selected('a')).toBe(true)
+    expect(selected('b')).toBe(true)
+    expect(selected('c')).toBe(false)
 
     // It is drawn while the drag runs, and gone once it ends.
     expect(
@@ -306,7 +306,7 @@ describe('the selection box', () => {
     expect(
       area.querySelector('.tremolo-points-editor-selection-box'),
     ).toBeNull()
-    expect(area.querySelector('[data-selected="true"]')).not.toBeNull()
+    expect(area.querySelector('[data-selected]')).not.toBeNull()
   })
 
   test('what is passed to the box reaches the element it draws', () => {
@@ -326,11 +326,11 @@ describe('the selection box', () => {
     setup()
 
     click(point('c'))
-    expect(selected('c')).toBe('true')
+    expect(selected('c')).toBe(true)
 
     const area = screen.getByTestId('container')
     press(area, { clientX: 0, clientY: 0 })
-    expect(selected('c')).toBe('false')
+    expect(selected('c')).toBe(false)
   })
 
   test('a press on a point is left to the point', () => {
@@ -343,7 +343,7 @@ describe('the selection box', () => {
     expect(
       container.querySelector('.tremolo-points-editor-selection-box'),
     ).toBeNull()
-    expect(selected('a')).toBe('true')
+    expect(selected('a')).toBe(true)
   })
 })
 
@@ -353,7 +353,7 @@ describe('with selection turned off', () => {
 
     click(point('a'))
 
-    expect(selected('a')).toBe('false')
+    expect(selected('a')).toBe(false)
   })
 
   test('a drag still moves the point it started on', () => {
@@ -377,6 +377,6 @@ describe('with selection turned off', () => {
     expect(
       container.querySelector('.tremolo-points-editor-selection-box'),
     ).toBeNull()
-    expect(selected('a')).toBe('false')
+    expect(selected('a')).toBe(false)
   })
 })

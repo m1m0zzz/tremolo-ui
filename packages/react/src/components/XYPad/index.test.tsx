@@ -263,7 +263,7 @@ describe('XYPad', () => {
     wheel(root, { deltaY: -1 })
 
     expect(onChange).not.toHaveBeenCalled()
-    expect(root).toHaveAttribute('data-readonly', 'true')
+    expect(root).toHaveAttribute('data-readonly')
     expect(axisInput('x')).not.toBeDisabled()
     expect(axisInput('y')).not.toBeDisabled()
   })
@@ -276,7 +276,7 @@ describe('XYPad', () => {
     act(() => axisInput('x').focus())
     wheel(root, { deltaY: -1 })
 
-    expect(root.getAttribute('aria-disabled')).toBe('true')
+    expect(root).toHaveAttribute('data-disabled')
     expect(axisInput('x')).toBeDisabled()
     expect(axisInput('y')).toBeDisabled()
     expect(onChange).not.toHaveBeenCalled()

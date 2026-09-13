@@ -138,12 +138,12 @@ export interface KnobProps {
 
   /**
    * Make the knob unchangeable and remove it from the tab order.
-   * aria-disabled property is also applied.
+   * The parts carry `data-disabled` while it is set.
    */
   disabled?: boolean
   /**
    * Make the knob unchangeable while leaving it focusable.
-   * aria-readonly property is also applied.
+   * The parts carry `data-readonly` while it is set.
    */
   readonly?: boolean
 
@@ -308,7 +308,9 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
           aria-valuemax={max}
           aria-disabled={disabled}
           aria-readonly={readonly}
-          data-dragging={dragging}
+          data-disabled={disabled || undefined}
+          data-readonly={readonly || undefined}
+          data-dragging={dragging || undefined}
           style={
             {
               '--knob-size': cssLength(size),

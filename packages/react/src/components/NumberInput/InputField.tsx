@@ -192,6 +192,8 @@ export const InputField = /* @__PURE__ */ forwardRef<HTMLInputElement, Props>(
         readOnly={readonly}
         aria-disabled={disabled}
         aria-readonly={readonly}
+        data-disabled={disabled || undefined}
+        data-readonly={readonly || undefined}
         aria-valuenow={value}
         aria-valuemin={min}
         aria-valuemax={max}
@@ -199,7 +201,7 @@ export const InputField = /* @__PURE__ */ forwardRef<HTMLInputElement, Props>(
         // the one that says what the value means.
         aria-valuetext={text}
         step={step}
-        data-out-of-range={outOfRange}
+        data-out-of-range={outOfRange || undefined}
         style={style}
         onChange={(event) => {
           // The text is the user's own now, so a caret measured against the

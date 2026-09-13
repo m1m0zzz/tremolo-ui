@@ -9,7 +9,7 @@
   height: var(--height);
 
   /* The width is the keyboard's own, so a filled piano stretches both ways. */
-  &[data-fill='true'] {
+  &[data-fill] {
     --height: 100%;
   }
 }
@@ -30,12 +30,12 @@
   cursor: pointer;
   z-index: 1;
 
-  &[data-active='true'] {
+  &[data-active] {
     background-color: var(--active-bg);
     color: var(--active-color);
   }
 
-  &[aria-disabled='true'] {
+  &[data-disabled] {
     cursor: not-allowed;
   }
 }
@@ -56,12 +56,12 @@
   cursor: pointer;
   z-index: 2;
 
-  &[data-active='true'] {
+  &[data-active] {
     background-color: var(--active-bg);
     color: var(--active-color);
   }
 
-  &[aria-disabled='true'] {
+  &[data-disabled] {
     cursor: not-allowed;
   }
 }
