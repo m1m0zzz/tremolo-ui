@@ -1,7 +1,23 @@
-.tremolo-slider {
-  /* Half the thumb size. The thumb overhangs the ends of the track, so the
-     slider reserves room for it. Override this when using a different size. */
+/*
+ * The demo theme for `Slider`, as a CSS Module: one class per part, applied by
+ * the caller. Copy this file into your project and edit it — it is a starting
+ * point, not a dependency.
+ *
+ * It says what the parts look like, not where they go: the component places
+ * them itself.
+ */
+
+/*
+ * The size the thumb is drawn at, and the room the slider leaves for it. Both
+ * parts need the value and nothing inherits it, so it is composed into each
+ * of them and stays written once.
+ */
+.thumbSize {
   --thumb-size: 22px;
+}
+
+.root {
+  composes: thumbSize;
 
   display: inline-flex;
   flex-direction: column;
@@ -19,10 +35,10 @@
   }
 }
 
-.tremolo-slider-thumb {
-  --color: oklch(59.5% 0.17548 266.373);
+.thumb {
+  composes: thumbSize;
 
-  /* The component writes top / left as a percentage of the track. */
+  --color: oklch(59.5% 0.17548 266.373);
 
   width: var(--thumb-size);
   height: var(--thumb-size);
@@ -41,7 +57,7 @@
   }
 }
 
-.tremolo-slider-track {
+.track {
   --active: oklch(69.212% 0.12903 267.633);
   --inactive: oklch(95% 0 0);
   --length: 140px;
@@ -92,7 +108,7 @@
   }
 }
 
-.tremolo-slider-marks {
+.marks {
   /* Space between the marks and the track. */
   --gap: 6px;
 
@@ -105,7 +121,7 @@
   }
 }
 
-.tremolo-slider-marks-option {
+.marksOption {
   /* Read by the mark and the label below, which is why they are set here. */
   --thickness: 1px;
   --length: 0.5rem;
@@ -123,7 +139,7 @@
   }
 }
 
-.tremolo-slider-marks-option-mark {
+.mark {
   background-color: currentColor;
   width: var(--thickness);
   height: var(--length);
@@ -137,32 +153,37 @@
   }
 }
 
-.tremolo-slider-marks-option-label {
+.label {
   text-align: right;
   width: var(--label-width);
 }
 
-:where(.dark, [data-theme='dark']) {
-  .tremolo-slider-thumb {
-    --color: oklch(64.5% 0.17548 266.373);
+/*
+ * Dark mode follows whatever marks the page — `.dark` and `[data-theme=dark]`
+ * are what this site and Storybook set. Swap them for however your own app
+ * says it, or read `prefers-color-scheme` instead.
+ */
+:global(.dark) .thumb,
+:global([data-theme='dark']) .thumb {
+  --color: oklch(64.5% 0.17548 266.373);
 
-    &:hover {
-      --color: oklch(67.5% 0.17548 266.373);
-    }
+  &:hover {
+    --color: oklch(67.5% 0.17548 266.373);
+  }
+}
+
+:global(.dark) .track,
+:global([data-theme='dark']) .track {
+  --active: oklch(59.5% 0.17548 266.373);
+  --inactive: oklch(41.7% 0 0);
+
+  &:hover {
+    --active: oklch(62.5% 0.17548 266.373);
+    --inactive: oklch(44.7% 0 0);
   }
 
-  .tremolo-slider-track {
-    --active: oklch(59.5% 0.17548 266.373);
-    --inactive: oklch(41.7% 0 0);
-
-    &:hover {
-      --active: oklch(62.5% 0.17548 266.373);
-      --inactive: oklch(44.7% 0 0);
-    }
-
-    &[data-disabled] {
-      --active: oklch(75.327% 0.01237 264.547);
-      --inactive: oklch(89.755% 0.0001 271.152);
-    }
+  &[data-disabled] {
+    --active: oklch(75.327% 0.01237 264.547);
+    --inactive: oklch(89.755% 0.0001 271.152);
   }
 }

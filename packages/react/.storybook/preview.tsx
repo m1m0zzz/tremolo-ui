@@ -1,3 +1,4 @@
+// @ts-ignore
 import propTypes from 'virtual:tremolo-prop-types'
 
 import { propTypeEnhancers } from './argTypes'
@@ -5,6 +6,7 @@ import { propTypeEnhancers } from './argTypes'
 import type { Preview } from '@storybook/react-vite'
 
 // storybook css
+// @ts-ignore
 import './global.css'
 
 // The demo theme, which the package no longer ships. It lives with the
@@ -13,7 +15,6 @@ import '../../../site/src/css/tremolo/Knob.css'
 import '../../../site/src/css/tremolo/NumberInput.css'
 import '../../../site/src/css/tremolo/Piano.css'
 import '../../../site/src/css/tremolo/PointsEditor.css'
-import '../../../site/src/css/tremolo/Slider.css'
 import '../../../site/src/css/tremolo/XYPad.css'
 
 const preview: Preview = {

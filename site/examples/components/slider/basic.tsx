@@ -3,6 +3,9 @@ import { useState } from 'react'
 
 import { Slider } from '@tremolo-ui/react'
 
+// Copy this file from the Styling page into your own project.
+import sliderTheme from './Slider.module.css'
+
 // expand end
 
 function App() {
@@ -18,13 +21,14 @@ function App() {
       }}
     >
       <Slider.Root
+        className={sliderTheme.root}
         value={value}
         min={0}
         max={100}
         onChange={(v) => setValue(v)}
       >
-        <Slider.Track>
-          <Slider.Thumb aria-label="Level" />
+        <Slider.Track className={sliderTheme.track}>
+          <Slider.Thumb className={sliderTheme.thumb} aria-label="Level" />
         </Slider.Track>
       </Slider.Root>
       <span

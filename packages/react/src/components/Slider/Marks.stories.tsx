@@ -3,6 +3,8 @@ import { useState } from 'react'
 
 import { Slider } from '.'
 
+import sliderTheme from 'shared/css/Slider.module.css'
+
 export default {
   title: 'Components/Slider/Marks',
   component: Slider.Marks,
@@ -25,11 +27,17 @@ export const FromOptions: Story = {
 
     return (
       <div style={{ padding: '0 1rem 2rem' }}>
-        <Slider.Root value={value} min={0} max={100} onChange={setValue}>
-          <Slider.Track>
-            <Slider.Thumb aria-label="Level" />
+        <Slider.Root
+          className={sliderTheme.root}
+          value={value}
+          min={0}
+          max={100}
+          onChange={setValue}
+        >
+          <Slider.Track className={sliderTheme.track}>
+            <Slider.Thumb className={sliderTheme.thumb} aria-label="Level" />
           </Slider.Track>
-          <Slider.Marks {...args} />
+          <Slider.Marks className={sliderTheme.marks} {...args} />
         </Slider.Root>
       </div>
     )
@@ -49,15 +57,39 @@ export const Written: Story = {
 
     return (
       <div style={{ padding: '0 1rem 2rem' }}>
-        <Slider.Root value={value} min={0} max={100} onChange={setValue}>
-          <Slider.Track>
-            <Slider.Thumb aria-label="Level" />
+        <Slider.Root
+          className={sliderTheme.root}
+          value={value}
+          min={0}
+          max={100}
+          onChange={setValue}
+        >
+          <Slider.Track className={sliderTheme.track}>
+            <Slider.Thumb className={sliderTheme.thumb} aria-label="Level" />
           </Slider.Track>
-          <Slider.Marks {...args}>
-            <Slider.MarksOption value={0} />
-            <Slider.MarksOption value={30} label="mid" />
-            <Slider.MarksOption value={60} label={null} />
-            <Slider.MarksOption value={100} />
+          <Slider.Marks className={sliderTheme.marks} {...args}>
+            <Slider.MarksOption
+              className={sliderTheme.marksOption}
+              classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+              value={0}
+            />
+            <Slider.MarksOption
+              className={sliderTheme.marksOption}
+              classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+              value={30}
+              label="mid"
+            />
+            <Slider.MarksOption
+              className={sliderTheme.marksOption}
+              classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+              value={60}
+              label={null}
+            />
+            <Slider.MarksOption
+              className={sliderTheme.marksOption}
+              classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+              value={100}
+            />
           </Slider.Marks>
         </Slider.Root>
       </div>
