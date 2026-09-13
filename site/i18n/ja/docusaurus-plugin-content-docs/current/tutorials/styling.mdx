@@ -7,7 +7,9 @@ import Tabs from '@theme/Tabs'
 import TabItem from '@theme/TabItem'
 import CodeBlock from '@theme/CodeBlock'
 
+import TailwindRuntime from '@site/src/components/TailwindRuntime'
 import cssModule from '!!raw-loader!@site/examples/tutorials/styling/css-module'
+import tailwind from '!!raw-loader!@site/examples/tutorials/styling/tailwind'
 import myKnobCss from '!!raw-loader!@site/examples/tutorials/styling/my-knob.module.css'
 
 import knobCss from '!!raw-loader!shared/css/Knob.module.css'
@@ -168,24 +170,68 @@ propへ渡した数値はpxとして扱われます。それ以外はそのま�
   </TabItem>
 </Tabs>
 
-## 🧩コンポーネント単位のスタイリング
+### ダークモード
 
-スタイルをグローバルに置く必要はありません。同じノブを CSS Modules で書き、
-クラスを対象のパートに渡す例です。
+テーマはページ側の目印を読みます。祖先の `.dark`、または
+`[data-theme="dark"]` で、このサイトと Storybook が付けているものです。
+
+```css
+:global(.dark) .thumb,
+:global([data-theme='dark']) .thumb {
+  --color: oklch(64.5% 0.17548 266.373);
+}
+```
+
+セレクタが 2 つ並んでいるのは、CSS Module では `:global` が書いた場所に
+そのまま残るためです。自分のアプリでのダークの表し方（独自のクラス、あるいは
+`@media (prefers-color-scheme: dark)`）に差し替えてください。
+
+## 🧩すでに使っているやり方で
+
+クラスはクラスです。下は同じノブを 2 通りで書いたもので、片方は CSS Modules、
+もう片方は Tailwind です。ライブラリ側に特別扱いはありません。各パートが
+`className` を受け取り、あとは自分のスタイルシートの話です。
+
+<TailwindRuntime />
 
 <Tabs>
-  <TabItem value="index.tsx" default>
+  <TabItem value="CSS Modules" default>
+    <Tabs>
+      <TabItem value="index.tsx" default>
+        <CodeBlock
+          jsx
+          live
+          expand
+          showCode
+          sourcePath="examples/tutorials/styling/css-module.tsx"
+          externalFiles={{'src/my-knob.module.css': myKnobCss}}
+        >{cssModule}</CodeBlock>
+      </TabItem>
+      <TabItem value="my-knob.module.css">
+        <CodeBlock language='css'>{myKnobCss}</CodeBlock>
+      </TabItem>
+    </Tabs>
+  </TabItem>
+  <TabItem value="Tailwind">
     <CodeBlock
       jsx
       live
       expand
       showCode
-      sourcePath="examples/tutorials/styling/css-module.tsx"
-      externalFiles={{'src/my-knob.module.css': myKnobCss}}
-    >{cssModule}</CodeBlock>
-  </TabItem>
-  <TabItem value="my-knob.module.css">
-    <CodeBlock language='css'>{myKnobCss}</CodeBlock>
+      sourcePath="examples/tutorials/styling/tailwind.tsx"
+    >{tailwind}</CodeBlock>
+
+    線の hover / focus は root に付けた `group` から辿っています（線自身ではなく
+    ノブの状態に従うため）。`size` は従来どおり `--knob-size` を書き出すので、
+    テーマが読んでいたところを arbitrary value で読めます。
+
+    ダークは Tailwind のアプリと同じ `dark:` です。既定では
+    `prefers-color-scheme` を見るため、このサイトのようにトグルで切り替える場合は、
+    ページ側の目印を variant に教える 1 行が要ります。
+
+    ```css
+    @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+    ```
   </TabItem>
 </Tabs>
 
