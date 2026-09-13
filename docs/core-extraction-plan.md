@@ -1882,12 +1882,30 @@ Components のドキュメントを実際に確認した。分かったことは
   `{...props}` がラッパー div に展開されるため、`aria-label` を渡しても装飾用の div に
   付くだけだった（意味を持つのは中の input）
 
-### 9.3 これから（決定済み・未実装）
+### 9.3 構造をコンポーネントへ吸収 — **完了**
+
+配る CSS から「コピーし忘れると壊れる部分」をなくすため、Radix と同じく**位置決めを
+コンポーネント側のインラインスタイルに移した**。
+
+判断の基準は「**コンポーネント自身が書き込む座標を成立させるために必要か**」。
+
+| 吸収した | 残した |
+| --- | --- |
+| Slider: track / marks の `position: relative`、thumb・marks-option の `position: absolute` + `translate` + `z-index` | root の `display: inline-flex` と縦横の `flex-direction`（レイアウトの選択） |
+| XYPad: area の `position: relative`、thumb の `position: absolute` + `translate` + `z-index` | 同上 |
+| PointsEditor: root の `position: relative`、background / container の `absolute` + `inset` + `z-index`、point の `absolute` + `translate`、selection box の `absolute` + `z-index` + `pointer-events: none` | 色・角丸・サイズ |
+| Piano: root の `position: relative`、鍵盤の `absolute` と白 1 / 黒 2 の `z-index` | 同上 |
+| NumberInput: **なし** | stepper の `absolute` は「右端に重ねる」というテーマの選択で、コンポーネントは座標を書かない |
+| Knob: **なし** | 描画は SVG が自分で持つ |
+
+中央合わせだけは好みの余地があるので、`translate: var(--translate, -50% -50%)` の形で
+逃げ道を開けた（thumb / marks-option / point）。テーマ CSS は 31 行減った。
+
+### 9.4 これから（決定済み・未実装）
 
 | 決定 | 内容 |
 | --- | --- |
 | クラス名 | `tremolo-*` を styling / identity とも**廃止**。契約は状態属性のみ。実装が唯一クラス名に依存していた `closest('.tremolo-points-editor-point')` は registry 判定へ書き換える |
-| 構造 | `position` / `translate` / `inset` / `z-index` / `pointer-events` を**コンポーネントへ吸収**する（Radix 型）。コピーし忘れで壊れる部分を残さないため。上書き用に custom property の逃げ道を付ける |
 | 配るもの | `packages/shared`（private）に**装飾だけの CSS Module をコンポーネント別 6 ファイル**。素の CSS の配布はやめる |
 | 継承 | `--thumb-size` のような共有トークンは継承させず、CSS Modules の `composes` で各パートに載せる |
 | ダーク | 現在の `:where(.dark, [data-theme='dark'])` を踏襲し、設定方法を docs に書く |

@@ -96,6 +96,13 @@ export const Thumb = /* @__PURE__ */ forwardRef<SliderThumbMethods, Props>(
         {...props}
         style={{
           ...{ '--color': color },
+          // Not a style but the mechanics of the position below: the thumb is
+          // placed by a percentage of the track, which needs it out of flow
+          // and measured from its own centre. `--translate` is there for a
+          // thumb that should hang off its edge instead.
+          position: 'absolute',
+          translate: 'var(--translate, -50% -50%)',
+          zIndex: 100,
           ...style,
           // Where the thumb sits is the component's decision, not a style: a
           // `left` from the caller would take it off the track, so it is

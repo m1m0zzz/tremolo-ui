@@ -77,6 +77,8 @@ export const Track = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
             // component draws nothing itself: this is the one number CSS cannot
             // work out on its own.
             '--percent': `${percent}%`,
+            // The thumb inside is placed against this box.
+            position: 'relative',
             ...style,
           } as CSSProperties
         }

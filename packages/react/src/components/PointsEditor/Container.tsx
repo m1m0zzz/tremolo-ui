@@ -18,7 +18,7 @@ type Props = PointsEditorContainerProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorContainerProps>
 
 export const Container = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
-  function Container({ children, className, ...props }, forwardedRef) {
+  function Container({ children, className, style, ...props }, forwardedRef) {
     const {
       containerRef,
       disabled,
@@ -82,6 +82,14 @@ export const Container = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       <div
         ref={composedRef}
         className={cx('tremolo-points-editor-container', className)}
+        style={{
+          // The points inside are placed against this box, over the
+          // background and under the selection box.
+          position: 'absolute',
+          inset: 0,
+          zIndex: 10,
+          ...style,
+        }}
         {...props}
       >
         <Placement name="PointsEditor.Container">{children}</Placement>

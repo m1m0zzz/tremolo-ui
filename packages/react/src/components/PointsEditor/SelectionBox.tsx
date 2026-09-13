@@ -34,6 +34,11 @@ export function SelectionBox({
       {...props}
       style={
         {
+          // Drawn over the points while a drag runs, and taking none of the
+          // pointer: the drag underneath is what it is reporting on.
+          position: 'absolute',
+          zIndex: 20,
+          pointerEvents: 'none',
           ...style,
           // Where the box is and how big it is: the drag, not a style, so it
           // is written after whatever the caller passed.

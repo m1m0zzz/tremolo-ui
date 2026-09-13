@@ -138,6 +138,12 @@ Each is plain CSS with no build step, and each one leans on custom properties
 (`--knob-size`, `--thumb-size`, `--active-color` …) so the common changes are a
 one-line override.
 
+**They say what the parts look like, not where they go.** A component places
+its own parts — a thumb is taken out of flow and centred on the value by the
+component itself — so a theme of your own cannot put one in the wrong place by
+leaving a rule out. Where that placement has room for taste, it reads a custom
+property: `--translate` on a thumb, a mark or a point moves it off its centre.
+
 <Tabs>
   <TabItem value="Knob.css" default>
     <CodeBlock language='css' title='Knob.css'>{knobCss}</CodeBlock>

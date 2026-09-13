@@ -23,9 +23,6 @@
   --color: oklch(59.5% 0.17548 266.373);
 
   /* The component writes top / left as a percentage of the track. */
-  position: absolute;
-  translate: -50% -50%;
-  z-index: 100;
 
   width: var(--thumb-size);
   height: var(--thumb-size);
@@ -53,7 +50,6 @@
      so a flipped slider only swaps which side of it is the filled one. */
   --axis: to right;
 
-  position: relative;
   width: var(--length);
   height: var(--thickness);
   border-radius: calc(var(--thickness) / 2);
@@ -101,7 +97,6 @@
   --gap: 6px;
 
   display: block;
-  position: relative;
   margin-top: var(--gap);
 
   &[data-orientation='vertical'] {
@@ -122,13 +117,9 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  translate: -50% 0;
-  z-index: 10;
 
   &[data-orientation='vertical'] {
     flex-direction: row;
-    translate: 0 -50%;
   }
 }
 

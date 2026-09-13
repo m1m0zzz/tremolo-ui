@@ -48,6 +48,8 @@ export const Area = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
             '--color': color,
             '--width': cssLength(width),
             '--height': cssLength(height),
+            // The thumb inside is placed against this box.
+            position: 'relative',
             ...style,
           } as CSSProperties
         }

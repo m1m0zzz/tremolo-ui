@@ -80,10 +80,16 @@ export function MarksOption({
           '--length': cssLength(length),
           '--gap': cssLength(gap),
           '--label-width': cssLength(labelWidth),
+          // The mechanics of the position below, as on the thumb.
+          position: 'absolute',
+          translate: vertical
+            ? 'var(--translate, 0 -50%)'
+            : 'var(--translate, -50% 0)',
+          zIndex: 10,
+          ...style,
           // Where the mark belongs on the track: the value, not a style.
           left: !vertical ? `${calcPercent(value)}%` : undefined,
           top: vertical ? `${calcPercent(value)}%` : undefined,
-          ...style,
         } as CSSProperties
       }
       data-orientation={vertical ? 'vertical' : 'horizontal'}
