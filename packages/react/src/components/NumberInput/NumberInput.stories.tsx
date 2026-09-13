@@ -7,6 +7,8 @@ import { Knob } from '../Knob'
 
 import { NumberInput } from '.'
 
+import knobTheme from 'shared/css/Knob.module.css'
+
 export default {
   title: 'Components/NumberInput/Root',
   component: NumberInput.Root,
@@ -144,15 +146,19 @@ export const WithAnotherComponents: Story = {
           }}
         >
           <Knob.Root
+            className={knobTheme.root}
             value={value}
             min={args.min ?? 0}
             max={args.max ?? 100}
             onChange={(v) => setValue(v)}
           >
             <Knob.SVGRoot>
-              <Knob.InactiveLine />
-              <Knob.ActiveLine />
-              <Knob.Thumb />
+              <Knob.InactiveLine className={knobTheme.inactiveLine} />
+              <Knob.ActiveLine className={knobTheme.activeLine} />
+              <Knob.Thumb
+                className={knobTheme.thumb}
+                classes={{ thumbLine: knobTheme.thumbLine }}
+              />
             </Knob.SVGRoot>
           </Knob.Root>
           {value}

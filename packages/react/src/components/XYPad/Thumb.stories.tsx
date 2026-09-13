@@ -3,6 +3,8 @@ import { useState } from 'react'
 
 import { XYPad } from '.'
 
+import xyPadTheme from 'shared/css/XYPad.module.css'
+
 export default {
   title: 'Components/XYPad/Thumb',
   component: XYPad.Thumb,
@@ -27,9 +29,19 @@ export const Basic: Story = {
 
     return (
       <>
-        <XYPad.Root value={value} min={0} max={100} onChange={setValue}>
-          <XYPad.Area>
-            <XYPad.Thumb aria-label={['X position', 'Y position']} {...args} />
+        <XYPad.Root
+          className={xyPadTheme.root}
+          value={value}
+          min={0}
+          max={100}
+          onChange={setValue}
+        >
+          <XYPad.Area className={xyPadTheme.area}>
+            <XYPad.Thumb
+              className={xyPadTheme.thumb}
+              aria-label={['X position', 'Y position']}
+              {...args}
+            />
           </XYPad.Area>
         </XYPad.Root>
         <p>
@@ -53,9 +65,19 @@ export const WithChildren: Story = {
     const [value, setValue] = useState<[number, number]>([50, 50])
 
     return (
-      <XYPad.Root value={value} min={0} max={100} onChange={setValue}>
-        <XYPad.Area>
-          <XYPad.Thumb aria-label={['X position', 'Y position']} {...args} />
+      <XYPad.Root
+        className={xyPadTheme.root}
+        value={value}
+        min={0}
+        max={100}
+        onChange={setValue}
+      >
+        <XYPad.Area className={xyPadTheme.area}>
+          <XYPad.Thumb
+            className={xyPadTheme.thumb}
+            aria-label={['X position', 'Y position']}
+            {...args}
+          />
         </XYPad.Area>
       </XYPad.Root>
     )

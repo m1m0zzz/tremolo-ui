@@ -22,6 +22,7 @@ import {
 } from './atoms'
 
 import styles from './ADSR.module.css'
+import knobTheme from 'shared/css/Knob.module.css'
 
 export default {
   title: 'combined/WavetableSynth/ADSR',
@@ -130,6 +131,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
         <div className={styles.knobAndLabel}>
           <div className={`label ${styles.label}`}>A</div>
           <Knob.Root
+            className={knobTheme.root}
             value={attack}
             min={MIN_ATTACK}
             max={MAX_ATTACK}
@@ -138,9 +140,15 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             size={40}
           >
             <Knob.SVGRoot>
-              <Knob.ActiveLine stroke={themeColor} />
-              <Knob.InactiveLine />
-              <Knob.Thumb />
+              <Knob.ActiveLine
+                className={knobTheme.activeLine}
+                stroke={themeColor}
+              />
+              <Knob.InactiveLine className={knobTheme.inactiveLine} />
+              <Knob.Thumb
+                className={knobTheme.thumb}
+                classes={{ thumbLine: knobTheme.thumbLine }}
+              />
             </Knob.SVGRoot>
           </Knob.Root>
 
@@ -149,6 +157,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
         <div className={styles.knobAndLabel}>
           <div className={`label ${styles.label}`}>D</div>
           <Knob.Root
+            className={knobTheme.root}
             value={decay}
             min={MIN_DECAY}
             max={MAX_DECAY}
@@ -157,9 +166,15 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             size={40}
           >
             <Knob.SVGRoot>
-              <Knob.ActiveLine stroke={themeColor} />
-              <Knob.InactiveLine />
-              <Knob.Thumb />
+              <Knob.ActiveLine
+                className={knobTheme.activeLine}
+                stroke={themeColor}
+              />
+              <Knob.InactiveLine className={knobTheme.inactiveLine} />
+              <Knob.Thumb
+                className={knobTheme.thumb}
+                classes={{ thumbLine: knobTheme.thumbLine }}
+              />
             </Knob.SVGRoot>
           </Knob.Root>
           <div className={`label ${styles.label}`}>{decay}ms</div>
@@ -167,6 +182,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
         <div className={styles.knobAndLabel}>
           <div className={`label ${styles.label}`}>S</div>
           <Knob.Root
+            className={knobTheme.root}
             value={sustain}
             min={MIN_SUSTAIN}
             max={MAX_SUSTAIN}
@@ -175,9 +191,15 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             size={40}
           >
             <Knob.SVGRoot>
-              <Knob.ActiveLine stroke={themeColor} />
-              <Knob.InactiveLine />
-              <Knob.Thumb />
+              <Knob.ActiveLine
+                className={knobTheme.activeLine}
+                stroke={themeColor}
+              />
+              <Knob.InactiveLine className={knobTheme.inactiveLine} />
+              <Knob.Thumb
+                className={knobTheme.thumb}
+                classes={{ thumbLine: knobTheme.thumbLine }}
+              />
             </Knob.SVGRoot>
           </Knob.Root>
           <div className={`label ${styles.label}`}>
@@ -190,6 +212,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
         <div className={styles.knobAndLabel}>
           <div className={`label ${styles.label}`}>R</div>
           <Knob.Root
+            className={knobTheme.root}
             value={release}
             min={MIN_RELEASE}
             max={MAX_RELEASE}
@@ -198,9 +221,15 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             size={40}
           >
             <Knob.SVGRoot>
-              <Knob.ActiveLine stroke={themeColor} />
-              <Knob.InactiveLine />
-              <Knob.Thumb />
+              <Knob.ActiveLine
+                className={knobTheme.activeLine}
+                stroke={themeColor}
+              />
+              <Knob.InactiveLine className={knobTheme.inactiveLine} />
+              <Knob.Thumb
+                className={knobTheme.thumb}
+                classes={{ thumbLine: knobTheme.thumbLine }}
+              />
             </Knob.SVGRoot>
           </Knob.Root>
           <div className={`label ${styles.label}`}>{release}ms</div>

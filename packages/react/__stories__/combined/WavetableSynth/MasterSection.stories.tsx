@@ -17,6 +17,7 @@ import {
 } from './atoms'
 
 import styles from './MasterSection.module.css'
+import knobTheme from 'shared/css/Knob.module.css'
 
 export default {
   title: 'combined/WavetableSynth/MasterSection',
@@ -37,6 +38,7 @@ export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
       <div className={styles.knob}>
         <div className="label">Master</div>
         <Knob.Root
+          className={knobTheme.root}
           value={masterVolume}
           min={MIN_MASTER_VOLUME}
           max={MAX_MASTER_VOLUME}
@@ -49,9 +51,15 @@ export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
           step={0.1}
         >
           <Knob.SVGRoot>
-            <Knob.ActiveLine stroke={themeColor} />
-            <Knob.InactiveLine />
-            <Knob.Thumb />
+            <Knob.ActiveLine
+              className={knobTheme.activeLine}
+              stroke={themeColor}
+            />
+            <Knob.InactiveLine className={knobTheme.inactiveLine} />
+            <Knob.Thumb
+              className={knobTheme.thumb}
+              classes={{ thumbLine: knobTheme.thumbLine }}
+            />
           </Knob.SVGRoot>
         </Knob.Root>
         <div className="label" style={{ width: 55 }}>
@@ -67,6 +75,7 @@ export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
       >
         <div className="label">Voice</div>
         <Knob.Root
+          className={knobTheme.root}
           value={voice}
           min={MIN_VOICE}
           max={MAX_VOICE}
@@ -74,9 +83,15 @@ export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
           size={30}
         >
           <Knob.SVGRoot>
-            <Knob.ActiveLine stroke={themeColor} />
-            <Knob.InactiveLine />
-            <Knob.Thumb />
+            <Knob.ActiveLine
+              className={knobTheme.activeLine}
+              stroke={themeColor}
+            />
+            <Knob.InactiveLine className={knobTheme.inactiveLine} />
+            <Knob.Thumb
+              className={knobTheme.thumb}
+              classes={{ thumbLine: knobTheme.thumbLine }}
+            />
           </Knob.SVGRoot>
         </Knob.Root>
         <div className="label">{voice}</div>
@@ -90,6 +105,7 @@ export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
       >
         <div className="label">Detune</div>
         <Knob.Root
+          className={knobTheme.root}
           value={voiceDetune}
           min={MIN_VOICE_DETUNE}
           max={MAX_VOICE_DETUNE}
@@ -98,10 +114,14 @@ export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
         >
           <Knob.SVGRoot>
             <Knob.ActiveLine
+              className={knobTheme.activeLine}
               stroke={voice > 1 ? themeColor : 'rgb(159, 166, 187)'}
             />
-            <Knob.InactiveLine />
-            <Knob.Thumb />
+            <Knob.InactiveLine className={knobTheme.inactiveLine} />
+            <Knob.Thumb
+              className={knobTheme.thumb}
+              classes={{ thumbLine: knobTheme.thumbLine }}
+            />
           </Knob.SVGRoot>
         </Knob.Root>
         <div className="label">{voiceDetune}</div>

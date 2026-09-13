@@ -3,6 +3,8 @@ import { useState } from 'react'
 
 import { XYPad } from '.'
 
+import xyPadTheme from 'shared/css/XYPad.module.css'
+
 export default {
   title: 'Components/XYPad/Area',
   component: XYPad.Area,
@@ -29,9 +31,18 @@ export const Basic: Story = {
 
     return (
       <>
-        <XYPad.Root value={value} min={0} max={100} onChange={setValue}>
-          <XYPad.Area {...args}>
-            <XYPad.Thumb aria-label={['X position', 'Y position']} />
+        <XYPad.Root
+          className={xyPadTheme.root}
+          value={value}
+          min={0}
+          max={100}
+          onChange={setValue}
+        >
+          <XYPad.Area className={xyPadTheme.area} {...args}>
+            <XYPad.Thumb
+              className={xyPadTheme.thumb}
+              aria-label={['X position', 'Y position']}
+            />
           </XYPad.Area>
         </XYPad.Root>
         <p>
@@ -55,8 +66,14 @@ export const WithBackdrop: Story = {
     const [value, setValue] = useState<[number, number]>([50, 50])
 
     return (
-      <XYPad.Root value={value} min={0} max={100} onChange={setValue}>
-        <XYPad.Area {...args}>
+      <XYPad.Root
+        className={xyPadTheme.root}
+        value={value}
+        min={0}
+        max={100}
+        onChange={setValue}
+      >
+        <XYPad.Area className={xyPadTheme.area} {...args}>
           <svg
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
@@ -74,7 +91,10 @@ export const WithBackdrop: Story = {
               opacity="0.3"
             />
           </svg>
-          <XYPad.Thumb aria-label={['X position', 'Y position']} />
+          <XYPad.Thumb
+            className={xyPadTheme.thumb}
+            aria-label={['X position', 'Y position']}
+          />
         </XYPad.Area>
       </XYPad.Root>
     )

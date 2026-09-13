@@ -12,6 +12,8 @@ import { AnimationCanvas } from '../AnimationCanvas'
 
 import { XYPad } from '.'
 
+import xyPadTheme from 'shared/css/XYPad.module.css'
+
 export default {
   title: 'Components/XYPad/Root',
   component: XYPad.Root,
@@ -58,6 +60,7 @@ export const Basic: Story = {
     return (
       <>
         <XYPad.Root
+          className={xyPadTheme.root}
           {...args}
           value={[valueX, valueY]}
           onChange={([x, y]) => {
@@ -67,7 +70,9 @@ export const Basic: Story = {
           onDragStart={([x, y]) => console.log(`drag start: x=${x}, y=${y}`)}
           onDragEnd={([x, y]) => console.log(`drag end: x=${x}, y=${y}`)}
         >
-          <XYPad.Area>{thumb && <XYPad.Thumb />}</XYPad.Area>
+          <XYPad.Area className={xyPadTheme.area}>
+            {thumb && <XYPad.Thumb className={xyPadTheme.thumb} />}
+          </XYPad.Area>
         </XYPad.Root>
         <p>x: {valueX}</p>
         <p>y: {valueY}</p>
@@ -187,6 +192,7 @@ export const AdvancedFilterPad: Story = {
           }}
         >
           <XYPad.Root
+            className={xyPadTheme.root}
             {...args}
             value={[frequency, q]}
             style={{ '--thumb-size': '40px' } as CSSProperties}
@@ -195,8 +201,13 @@ export const AdvancedFilterPad: Story = {
               setQ(y)
             }}
           >
-            <XYPad.Area width={200} color="transparent">
+            <XYPad.Area
+              className={xyPadTheme.area}
+              width={200}
+              color="transparent"
+            >
               <XYPad.Thumb
+                className={xyPadTheme.thumb}
                 style={{ background: 'none', width: 'auto', height: 'auto' }}
               >
                 <ThumbAnimation />

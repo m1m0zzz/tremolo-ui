@@ -8,7 +8,9 @@ import {
 import { Slider, SliderMethods } from '../../src/components/Slider'
 import { XYPad, XYPadMethods } from '../../src/components/XYPad'
 
+import knobTheme from 'shared/css/Knob.module.css'
 import sliderTheme from 'shared/css/Slider.module.css'
+import xyPadTheme from 'shared/css/XYPad.module.css'
 
 export default {
   title: 'combined/ControlFocus',
@@ -37,6 +39,7 @@ export const ControlFocus = () => {
         }}
       >
         <Knob.Root
+          className={knobTheme.root}
           ref={refs.current.knob}
           value={value}
           min={0}
@@ -44,9 +47,12 @@ export const ControlFocus = () => {
           onChange={(v) => setValue(v)}
         >
           <Knob.SVGRoot>
-            <Knob.InactiveLine />
-            <Knob.ActiveLine />
-            <Knob.Thumb />
+            <Knob.InactiveLine className={knobTheme.inactiveLine} />
+            <Knob.ActiveLine className={knobTheme.activeLine} />
+            <Knob.Thumb
+              className={knobTheme.thumb}
+              classes={{ thumbLine: knobTheme.thumbLine }}
+            />
           </Knob.SVGRoot>
         </Knob.Root>
         <NumberInput.Root
@@ -71,6 +77,7 @@ export const ControlFocus = () => {
           </Slider.Track>
         </Slider.Root>
         <XYPad.Root
+          className={xyPadTheme.root}
           ref={refs.current.xyPad}
           value={[value, value2]}
           min={0}
@@ -80,8 +87,8 @@ export const ControlFocus = () => {
             setValue2(y)
           }}
         >
-          <XYPad.Area>
-            <XYPad.Thumb />
+          <XYPad.Area className={xyPadTheme.area}>
+            <XYPad.Thumb className={xyPadTheme.thumb} />
           </XYPad.Area>
         </XYPad.Root>
       </div>

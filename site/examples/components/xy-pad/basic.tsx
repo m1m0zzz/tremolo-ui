@@ -3,6 +3,9 @@ import { useState } from 'react'
 
 import { XYPad } from '@tremolo-ui/react'
 
+// Copy this file from the Styling page into your own project.
+import xyPadTheme from './XYPad.module.css'
+
 // expand end
 
 function App() {
@@ -12,6 +15,7 @@ function App() {
   return (
     <div>
       <XYPad.Root
+        className={xyPadTheme.root}
         value={[valueX, valueY]}
         min={0}
         max={100}
@@ -20,8 +24,11 @@ function App() {
           setValueY(y)
         }}
       >
-        <XYPad.Area>
-          <XYPad.Thumb aria-label={['X position', 'Y position']} />
+        <XYPad.Area className={xyPadTheme.area}>
+          <XYPad.Thumb
+            className={xyPadTheme.thumb}
+            aria-label={['X position', 'Y position']}
+          />
         </XYPad.Area>
       </XYPad.Root>
       <p>
