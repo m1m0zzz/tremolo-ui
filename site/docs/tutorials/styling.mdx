@@ -7,7 +7,9 @@ import Tabs from '@theme/Tabs'
 import TabItem from '@theme/TabItem'
 import CodeBlock from '@theme/CodeBlock'
 
+import TailwindRuntime from '@site/src/components/TailwindRuntime'
 import cssModule from '!!raw-loader!@site/examples/tutorials/styling/css-module'
+import tailwind from '!!raw-loader!@site/examples/tutorials/styling/tailwind'
 import myKnobCss from '!!raw-loader!@site/examples/tutorials/styling/my-knob.module.css'
 
 import knobCss from '!!raw-loader!shared/css/Knob.module.css'
@@ -171,24 +173,68 @@ property: `--translate` on a thumb, a mark or a point moves it off its centre.
   </TabItem>
 </Tabs>
 
-## 🧩Component-based styling
+### Dark mode
 
-Nothing says the styles have to be global. Here is the same knob with CSS
-Modules, passing a class to the part it belongs to.
+The theme reads whatever marks the page: `.dark` on an ancestor, or
+`[data-theme="dark"]`, which is what this site and Storybook set.
+
+```css
+:global(.dark) .thumb,
+:global([data-theme='dark']) .thumb {
+  --color: oklch(64.5% 0.17548 266.373);
+}
+```
+
+They are two selectors rather than one because a CSS Module leaves `:global`
+where you write it. Swap them for however your own app says dark — a class of
+your own, or `@media (prefers-color-scheme: dark)` if it follows the system.
+
+## 🧩Whatever you already use
+
+A class is a class: the same knob below is written twice, once with CSS Modules
+and once with Tailwind. Neither is special to the library — the parts take a
+`className` and the rest is your own stylesheet.
+
+<TailwindRuntime />
 
 <Tabs>
-  <TabItem value="index.tsx" default>
+  <TabItem value="CSS Modules" default>
+    <Tabs>
+      <TabItem value="index.tsx" default>
+        <CodeBlock
+          jsx
+          live
+          expand
+          showCode
+          sourcePath="examples/tutorials/styling/css-module.tsx"
+          externalFiles={{'src/my-knob.module.css': myKnobCss}}
+        >{cssModule}</CodeBlock>
+      </TabItem>
+      <TabItem value="my-knob.module.css">
+        <CodeBlock language='css'>{myKnobCss}</CodeBlock>
+      </TabItem>
+    </Tabs>
+  </TabItem>
+  <TabItem value="Tailwind">
     <CodeBlock
       jsx
       live
       expand
       showCode
-      sourcePath="examples/tutorials/styling/css-module.tsx"
-      externalFiles={{'src/my-knob.module.css': myKnobCss}}
-    >{cssModule}</CodeBlock>
-  </TabItem>
-  <TabItem value="my-knob.module.css">
-    <CodeBlock language='css'>{myKnobCss}</CodeBlock>
+      sourcePath="examples/tutorials/styling/tailwind.tsx"
+    >{tailwind}</CodeBlock>
+
+    The hover and focus of the lines come from `group` on the root, since they
+    follow the knob rather than themselves. `size` still writes `--knob-size`,
+    so an arbitrary value reads it where a theme would.
+
+    Dark is `dark:`, the same as anywhere else in a Tailwind app. Out of the box
+    it follows `prefers-color-scheme`, so a theme toggle — this site's included —
+    needs one line pointing the variant at whatever marks the page:
+
+    ```css
+    @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+    ```
   </TabItem>
 </Tabs>
 

@@ -1942,12 +1942,26 @@ Components のドキュメントを実際に確認した。分かったことは
 - テストは role / `data-testid` ベースへ。`Piano` の鍵盤は `keyProps`、ラベルは
   `classes` から名前を付けて引く（利用者と同じ手段）
 
-### 9.6 これから（決定済み・未実装）
+### 9.6 Tailwind の例 — **完了**
 
-| 決定 | 内容 |
-| --- | --- |
-| 配るもの | `packages/shared`（private）に**装飾だけの CSS Module をコンポーネント別 6 ファイル**。素の CSS の配布はやめる（**6 コンポーネントとも移行済み**） |
-| 継承 | `--thumb-size` のような共有トークンは継承させず、CSS Modules の `composes` で各パートに載せる（Slider / XYPad で実施） |
-| ダーク | 現在の `:where(.dark, [data-theme='dark'])` を踏襲し、設定方法を docs に書く |
-| Tailwind | site に CDN（preflight 切り・Playground のあるページのみ）。**例は手書き**で、module からの生成はしない |
-| テスト | クラス名で引いている 63 箇所は role 優先、引けないものは `data-testid` を足す |
+styling のチュートリアルに、同じノブを CSS Modules と Tailwind の 2 通りで見せる
+タブを置いた。決めたとおり**生成はせず手書き**で、正本は module のまま。
+
+- Tailwind はブラウザビルド（`@tailwindcss/browser@4`）を **styling のページだけ**で
+  読み込む。`<style type="text/tailwindcss">` で `theme` と `utilities` だけを
+  import し、**preflight は入れない**（サイト側に既にリセットがあるため）
+- ブラウザビルドは DOM を見てクラスを生成するので、**読者が live 例に打った
+  クラスもその場で効く**。実ブラウザで確認済み
+- hover / focus のように「親の状態で子を変える」ところは `group` で書ける。
+  `--knob-size` のような custom property は arbitrary value で読む
+
+### 9.7 残り
+
+9 章に挙げた決定はすべて実装済み。手を付けていないのは次だけ。
+
+- **Playground の iframe 化**（A3 の第二手）。preflight を切った CDN で当面の目的は
+  足りているが、iframe にすると「ページのスタイルが例に漏れる」問題ごと解決する。
+  Tailwind の都合とは切り離して検討する
+- **`prefers-color-scheme` への対応**。今のテーマはページの目印（`.dark` /
+  `[data-theme]`）を読む形のままで、これは配布物としては利用者が差し替える前提。
+  既定をどちらにするかは決めていない
