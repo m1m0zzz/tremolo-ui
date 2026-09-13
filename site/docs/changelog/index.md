@@ -14,6 +14,3 @@ version, so a release usually shows up in more than one of these.
 
 Each release is also tagged on
 [GitHub](https://github.com/m1m0zzz/tremolo-ui/releases).
-
-For the breaking changes of 0.x, and what to write instead, see
-[Migration](../guides/migration.mdx).

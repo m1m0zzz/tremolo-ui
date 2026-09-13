@@ -74,13 +74,3 @@
 1. **公開をやめる** — `functions` 内で完結。影響は `react` の import のみ
 2. **`piano.ts` を `dom` へ** — `react` の Piano の import 変更
 3. **modifier 一式 + `applyDelta` を `dom` へ** — `react` の 12 ファイルの import 変更。`ModifierValue<T extends number | InputEventOption>` の制約もここで入れる
-
-## レビューの指摘との対応
-
-`docs/reviews/` の指摘のうち、この作業で一緒に片付くもの。
-
-- `ModifierValue<T>` が `default` を持つ通常オブジェクトを誤判定する（01 P2）→ 手順 3 の制約で解消
-- [x] `InputEventOptions` のエイリアス削除（同上）
-- [x] `isEmpty` の引数型が実際より広い（01 P3）→ 未使用の実装と公開 export を削除した
-- 黒鍵が範囲端にあるときの `pianoWidth` の不整合（01 P2）→ 手順 2 の移動先で直す
-- テストが公開 entry point を迂回している（02 P3）→ 手順 1 で公開面が縮むので、確認するテストを足しやすくなる

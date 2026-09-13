@@ -72,7 +72,6 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 - [ ] **`PointsEditor` のドキュメントページを書く。** `site/docs/components/` に存在しない唯一のコンポーネント。複数選択（core-extraction-plan.md 5.21）で書くことが増えた
 - [ ] **hooks のドキュメントを充実させる。** 現在 `site/docs/hooks/` には `web-midi-api` しかない。`useDrag` / `useWheel` / `useDragValue` は typedoc の自動生成のみ
 - [ ] **Vue / Svelte を足したときのドキュメント構成を決める。** 現在の `site/docs/components/<Name>/index.mdx` は React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）。フレームワークごとにタブを分けるのか、サイト自体を分けるのか
-- [x] **移行ガイドを書く。** `site/docs/guides/migration.mdx`。新しいものから順に、変更前後のコードを並べて書く。CSS の配布方法変更（5.1）も Unreleased に載せたので、「Still to come」に残っている項目は無い
 - [x] **`site/i18n` の typedoc サイドバー翻訳キーを掃除した。** `sidebar.typedocSidebar.*` を en / ja とも**全て削除**した（114 キー → 7 キー）。
 
   残骸を選り分けるつもりで調べたところ、**107 キーのうち翻訳されているものが 1 つも無かった**（`message` が全てラベルと同一）。しかも typedoc のラベルはモジュールパスとシンボル名（`math`、`useDrag`、`components/Slider`）で、**そもそも翻訳する対象ではない**。消してもラベルにフォールバックするだけなので表示は変わらず、ja の翻訳ファイルには「実際に翻訳が要る 7 個」だけが残る。

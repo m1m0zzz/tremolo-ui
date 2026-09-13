@@ -1110,7 +1110,6 @@ export interface Scale {
 
 - [x] `createWheel` に「要素の中にフォーカスがあるときだけ発火する」オプションを足す（`requireFocus`。あわせて `update()` も追加）
 - [x] Slider / Knob / XYPad / NumberInput をそれに切り替える（**PointsEditor は対象外**。`wheel` / `keyboard` prop を宣言しているだけで、どこからも使っていない。下記参照）
-- [x] 移行ガイドに載せる（挙動の破壊的変更）→ `site/docs/guides/migration.mdx` の 0.5.0 に *The wheel only acts while the focus is inside* として載っている
 
 #### 判定は `activeElement` そのものではなく `contains` で行う
 

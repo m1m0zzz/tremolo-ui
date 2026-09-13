@@ -29,11 +29,9 @@ npm run lint                  # oxlint（自動修正は lint:fix）
 npm run format                # oxfmt（差分だけ見るなら format:check）
 npm run sb -w packages/react  # Storybook 開発サーバ
 npm run typecheck -w packages/react
-npm run docs                  # docusaurus start（typedoc の API 生成が走るので遅い）
-npm run docs:fast             # SKIP_API=true で typedoc をスキップ
+npm run build:docs
 npm run docs:ja               # --locale ja
 npm run docs:wtr:ja           # ja の翻訳スタブを再生成
-npm run build:docs
 ```
 
 単一テストファイルの実行（vitest）:

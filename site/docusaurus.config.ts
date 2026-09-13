@@ -94,7 +94,7 @@ function typedocPlugins() {
 
 const config: Config = {
   title: '@tremolo-ui',
-  tagline: 'UI library for Web Audio App',
+  tagline: 'UI library for Audio Apps',
   favicon: emojiUrl('🎸', 'svg'),
   // favicon: 'img/favicon.ico',
 
