@@ -1,5 +1,203 @@
 # @tremolo-ui/dom
 
+## 0.6.0
+
+### Minor Changes
+
+- [#213](https://github.com/m1m0zzz/tremolo-ui/pull/213) [`91f2486`](https://github.com/m1m0zzz/tremolo-ui/commit/91f24860cedde8f8286546741809a889576da360) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - ドラッグ終了時の移動、pointer lock、複数インスタンスのスタイル管理など、Pointer API の境界条件を修正します。Wheel の callback は `update()` で差し替えられるようになります。
+
+- [#150](https://github.com/m1m0zzz/tremolo-ui/pull/150) [`9c5abb1`](https://github.com/m1m0zzz/tremolo-ui/commit/9c5abb1a69951a31968c50c3000297a8784a2949) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Build out the MIDI input: every channel voice message, the channel they arrived on, and devices that come and go.
+  
+  Three bugs came out of it:
+  
+  - **A device plugged in after permission was granted never worked.** `createMIDIMessage` took the input list once, when it was created, so a keyboard connected later got no listener and stayed silent until the component remounted. The device list is now followed through `statechange`.
+  - **Pitch bend reported its two bytes the wrong way round.** `onPitchBendEvent(msb, lsb)` was handed `(data[1], data[2])`, but pitch bend sends the low 7 bits first — the opposite order from every other message.
+  - **`useMIDIInput` and `useMIDIMessage` resubscribed on every render.** The handlers were effect dependencies, so writing one inline tore the listeners down and built them again each time. They are read fresh on every event now, and the listeners stay put.
+  
+  Beyond note on/off and pitch bend, `createMIDIInput` now decodes control change, program change, polyphonic aftertouch and channel pressure. Every handler is given the channel last, as 0-15.
+  
+  ```jsx
+  useMIDIInput(midiAccess, {
+    onNoteOnEvent: (note, velocity, channel) => play(note, velocity / 127),
+    onNoteOffEvent: (note) => stop(note),
+    onControlChangeEvent: (controller, value) => {
+      if (controller === 1) setModulation(value / 127)
+    },
+  })
+  ```
+  
+  `createMIDIAccess` gained the rest of what a device UI needs: `inputs` in its state, kept current as devices come and go; `request({ sysex: true })` for system exclusive; and errors told apart rather than flattened — `SecurityError` and `NotAllowedError` become `PERMISSION_DENIED`, `NotSupportedError` becomes `NOT_SUPPORTED`, and everything else becomes the new `UNAVAILABLE`. A user who said no can be asked again; a browser without the API cannot.
+  
+  Breaking changes:
+  
+  - `useMIDIInput(access, onNoteOn, onNoteOff, onPitchBend)` takes a handlers object instead: `useMIDIInput(access, { onNoteOnEvent, onNoteOffEvent, ... })`. Seven handlers do not fit in positional arguments
+  - `onPitchBendEvent` is `(value, channel)`, where `value` is the 14-bit bend 0-16383, centred at the new `PITCH_BEND_CENTER` (8192), rather than the two raw bytes
+  - `useMIDIAccess().request` takes options, so `onClick={request}` has to become `onClick={() => request()}` — otherwise the click event arrives as the options object
+
+- [#208](https://github.com/m1m0zzz/tremolo-ui/pull/208) [`ba7be4b`](https://github.com/m1m0zzz/tremolo-ui/commit/ba7be4b4d4ee46180d577c97f7dd38d5b7da3c45) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **Breaking:** Piano keyboard shortcuts now listen from the focused root instead of the whole page by default. The root is a focusable `group`; set `keyboardShortcutsScope="window"` to keep page-wide shortcuts. Held shortcut notes are released when mappings change, focus is lost, or the component unmounts, and shortcuts no longer play outside the displayed range or while editing text.
+  
+  Lowering `midiMax` now releases active notes above the new limit, including every source and pointer holding them.
+
+- [#259](https://github.com/m1m0zzz/tremolo-ui/pull/259) [`afce3a3`](https://github.com/m1m0zzz/tremolo-ui/commit/afce3a3a89da61ca175f12a159dbd49b86c9c62d) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Move the selection box of `PointsEditor` into the core as `createSelectionBox`: which items a rectangle covers, and whether a press adds to the selection or replaces it, no longer live in React. `PointsEditorContextValue.selectionBox` now carries the core's `SelectionBoxRect`, and the React-only `SelectionBox` type is gone.
+
+- [#175](https://github.com/m1m0zzz/tremolo-ui/pull/175) [`eec3e53`](https://github.com/m1m0zzz/tremolo-ui/commit/eec3e53ab2c3b22e940e0fb9d73ee99c0d66fd8f) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **Shift makes a `Knob` drag count a tenth as much**, matching what it already
+  does on the arrow keys. `dragSensitivity` rebinds it, or takes a bare number to
+  use no modifier.
+  
+  Pressing or releasing the key mid-drag does not disturb the value: the travel
+  so far is kept and the new sensitivity applies from the next movement. Holding
+  it before the pointer goes down applies it from the first pixel.
+  
+  `relativeMapping` of `@tremolo-ui/dom` takes a `sensitivity` callback for this,
+  read on every move. `selectModifier` of `@tremolo-ui/functions` resolves any
+  per-modifier setting, not just an input amount.
+
+- [#187](https://github.com/m1m0zzz/tremolo-ui/pull/187) [`0721aa2`](https://github.com/m1m0zzz/tremolo-ui/commit/0721aa296526cd37fd0d004e184993de16acabd4) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **`PointsEditor` selects points, and a selection moves as one**, with
+  `selectable`.
+  
+  It is off by default. Selection changes what a press and a drag mean, and an
+  editor whose points each mean something different — the four handles of an
+  ADSR envelope, say — has nothing to gain from moving them together.
+  
+  - a press selects the point it landed on
+  - **ctrl or ⌘ adds to the selection** — not shift, which is the
+    fine-adjustment key on every control here and cannot be both
+  - a drag on empty space draws a rubber band and selects what it covers
+  - dragging or arrow-keying one selected point moves the whole selection
+  
+  The editor keeps the selection unless you take it over with `selection` /
+  `onSelectionChange`. Points are named by their `id` prop, or by one generated
+  to last as long as the point is mounted. A selected point carries
+  `data-selected="true"`, and the rubber band is
+  `.tremolo-points-editor-marquee`.
+  
+  A selection stops as a whole when any one of its points reaches a limit.
+  Clamping each point on its own would leave that one behind while the rest
+  carried on, pulling the selection out of shape.
+  
+  **A drag now moves a point rather than putting it under the pointer.** Grabbing
+  a point at its edge used to shift it under the cursor on the first movement.
+  It keeps the offset it was grabbed at now — which is also what makes moving
+  several at once mean anything.
+  
+  Deleting and duplicating are not included: the points are yours, and only you
+  know what the array behind them is.
+  
+  `createDrag` of `@tremolo-ui/dom` takes `shouldStart`, which decides whether a
+  pointerdown starts a drag at all. It is checked **before the pointer is
+  captured**, which is the whole point: a rubber band on a container has to
+  decline a press that landed on one of the objects it would select, and
+  declining any later means the capture has already been taken away from the
+  object that was going to handle it.
+  
+  `useDragValue`'s handlers receive the `DragState` as a second argument, the
+  way `useDrag`'s do.
+  
+  Two things to know when you turn it on.
+  
+  **Update each point from the previous state.** A selection calls `onChange` on
+  several points in the same tick, so a handler that rebuilds its state from a
+  value captured in the render keeps only the last one, and every point but one
+  appears stuck:
+  
+  ```jsx
+  // good
+  onChange={(v) => setPoints((prev) => ({ ...prev, [id]: v }))}
+  // throws away every call but the last
+  onChange={(v) => setPoints({ ...points, [id]: v })}
+  ```
+  
+  **The rubber band puts a drag on `PointsEditor.Container`**, and a drag sets
+  `touch-action: none` on what it holds, so dragging a finger across the editor
+  draws a selection rather than scrolling the page. That was already true over a
+  point; with `selectable` it is true over the whole surface. Without it the
+  container takes no drag at all.
+
+- [#182](https://github.com/m1m0zzz/tremolo-ui/pull/182) [`30e927a`](https://github.com/m1m0zzz/tremolo-ui/commit/30e927ac00a7b058b6feecd5a4ea4cd42df58e86) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **Shift now makes a `Slider`, `XYPad` or `PointsEditor` drag fine, the way it
+  already did on `Knob`.** All four take `dragSensitivity`, default
+  `{ default: 1, shift: 0.1 }`, and a bare number opts out of modifiers.
+  
+  These three are different from `Knob`: their value is the position pointed at,
+  so a fine drag cannot stay under the pointer. It moves a tenth as fast and the
+  two drift apart — and they stay apart once the key is released. Snapping the
+  value back under the pointer would move it by however far they had drifted,
+  which is a jump nobody asked for.
+  
+  Pressing or releasing the key partway through does not disturb the value, and a
+  plain click still lands where it was aimed.
+  
+  `elementMapping` of `@tremolo-ui/dom` takes the same `sensitivity` callback
+  `relativeMapping` does:
+  
+  ```ts
+  elementMapping(() => track, {
+    sensitivity: (state) => (state.event.shiftKey ? 0.1 : 1),
+  })
+  ```
+  
+  It reports `origin + (position - anchor) * sensitivity`, where origin and
+  anchor only move when the sensitivity does. With no callback the two never
+  part, so the result is the raw position and nothing changes.
+
+- [#215](https://github.com/m1m0zzz/tremolo-ui/pull/215) [`12d6463`](https://github.com/m1m0zzz/tremolo-ui/commit/12d6463974c0a98560e3022bef64f5f6f317b7b9) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - 競合する Web MIDI access request と終了後の非同期結果を安全に扱い、Piano の命令 API で MIDI note 範囲を検証します。
+
+- [#219](https://github.com/m1m0zzz/tremolo-ui/pull/219) [`7ec27cc`](https://github.com/m1m0zzz/tremolo-ui/commit/7ec27cc43c97f4d01bb9f6a90557ee22dff5e018) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Keep an animation canvas sharp when the device pixel ratio changes, and preserve its drawing state across every resize. Snapshot pixels are restored with neutral compositing before the caller's styles, line dash, and transform are reinstated.
+
+- [#185](https://github.com/m1m0zzz/tremolo-ui/pull/185) [`5ebb50e`](https://github.com/m1m0zzz/tremolo-ui/commit/5ebb50e458ece38eef60df5cfa750bd00a6ef9ef) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **`pointerLock` hides the cursor for the length of a drag** on `Knob` and
+  `NumberInput.Stepper`, reading the pointer movement directly instead of
+  following it around the screen.
+  
+  The reason is not tidiness. A relative drag does not care where the pointer is,
+  but it still stops at the edge of the screen: the operating system pins the
+  pointer there and the coordinates stop changing, so the value stops moving
+  however far you keep dragging. A fine drag — shift held, or a low
+  `dragSensitivity` — reaches that edge quickly.
+  
+  It is off by default. The browser shows a notice of its own, Esc takes the lock
+  back, and the request can be refused. A refusal is not an error: the drag
+  carries on as an ordinary one, since the coordinates are only read as movement
+  once the lock is actually held. Losing the lock ends the drag, because no
+  pointerup is coming after it.
+  
+  Movement that happened while the request was in flight is kept, so the value
+  does not jump when the lock takes effect.
+  
+  Not for `Slider`, `XYPad` or `PointsEditor`: their value is the position
+  pointed at, and `clientX` / `clientY` freeze under the lock. `createDrag` and
+  `createDragValue` of `@tremolo-ui/dom` take the option, as do the `useDrag` and
+  `useDragValue` hooks.
+
+### Patch Changes
+
+- [#207](https://github.com/m1m0zzz/tremolo-ui/pull/207) [`5f12a47`](https://github.com/m1m0zzz/tremolo-ui/commit/5f12a47117b3599350ac57a8fe216c726d4454bf) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - End every active drag when its instance is destroyed or its pointer capture is
+  lost. These paths use the existing `onDragEnd` callback, as cleanup is required
+  after every drag that started regardless of how the pointer stopped tracking.
+  
+  React controls now balance the page-wide `user-select: none` they acquire even
+  when they unmount or become readonly during a drag.
+
+- [#179](https://github.com/m1m0zzz/tremolo-ui/pull/179) [`e180798`](https://github.com/m1m0zzz/tremolo-ui/commit/e1807981b328c574df9d25facc94e9c7884e43ae) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **Values no longer collect binary float debris.** Holding shift and pressing
+  the arrow key twelve times from 5 used to reach 5.699999999999998, and the
+  input showed exactly that. The fine-adjustment modifier deliberately takes
+  `step` out of the pipeline, and `step` was the only thing rounding the
+  artefact back.
+  
+  A value is now rounded to the 15 significant digits a double actually carries,
+  at the two places a value is produced: `applyDelta`, which the wheel and the
+  arrow keys go through, and `createDragValue`, which every drag goes through.
+  Rounding happens before the clamp, so `min` and `max` still have the last word.
+  
+  This is not rounding in the sense `step` is. `step` puts a value on a grid you
+  asked for; this removes digits that were never in the value — the result of a
+  float calculation already carries error that size or larger, so nothing real
+  is lost. There is no way to turn it off, and no reason to want one.
+  
+  `toPrecision(x, significantDigits = 15)` is exported from
+  `@tremolo-ui/functions` alongside the existing `toFixed`, with
+  `SIGNIFICANT_DIGITS` for the default.
+- Updated dependencies [[`fc5b383`](https://github.com/m1m0zzz/tremolo-ui/commit/fc5b383c7ca55e6ccd8a648962fedaa51daac422), [`a712bc2`](https://github.com/m1m0zzz/tremolo-ui/commit/a712bc2a2eef095f00aa18f7ce398a89ee4d264a), [`d1dc65f`](https://github.com/m1m0zzz/tremolo-ui/commit/d1dc65f9165b77fdae5a23539be194d804002e4d), [`2ff5c1d`](https://github.com/m1m0zzz/tremolo-ui/commit/2ff5c1db221bf2be7c685ce8149da36d1084819d), [`041483e`](https://github.com/m1m0zzz/tremolo-ui/commit/041483e300a6848daf08e53b998342536053d335), [`e180798`](https://github.com/m1m0zzz/tremolo-ui/commit/e1807981b328c574df9d25facc94e9c7884e43ae), [`e31065c`](https://github.com/m1m0zzz/tremolo-ui/commit/e31065c076d4e163539bd5c34165b1f5c16694dc), [`83fa74b`](https://github.com/m1m0zzz/tremolo-ui/commit/83fa74b9618ea0367a5e08453241e7a190db9b88), [`84cbcdb`](https://github.com/m1m0zzz/tremolo-ui/commit/84cbcdb477cf825ff2206ad447ad0e6cdfb1ab09)]:
+  - @tremolo-ui/functions@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes
