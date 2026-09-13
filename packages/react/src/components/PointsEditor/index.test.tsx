@@ -164,7 +164,7 @@ describe('PointsEditor', () => {
 
   test('exposes one named range input for each axis', () => {
     const { point, onChange } = setup({
-      point: { ariaLabels: { x: 'Time', y: 'Level' } },
+      point: { 'aria-label': { x: 'Time', y: 'Level' } },
     })
     const x = pointInput(point, 'x')
     const y = pointInput(point, 'y')
@@ -272,6 +272,12 @@ describe('PointsEditor', () => {
     act(() => (point as HTMLElement).focus())
 
     expect(document.activeElement).toBe(pointInput(point, 'x'))
+  })
+
+  test('one name covers both axes of a point', () => {
+    setup({ point: { 'aria-label': 'Handle' } })
+
+    expect(screen.getAllByRole('slider', { name: 'Handle' })).toHaveLength(2)
   })
 
   test('the arrow keys move both axes, from either input', () => {

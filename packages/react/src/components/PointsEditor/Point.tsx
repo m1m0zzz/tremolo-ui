@@ -72,8 +72,13 @@ export interface PointProps<T extends PointBaseType> {
   /** Overrides the `keyboard` of `PointsEditor.Root`. */
   keyboard?: ModifierValue<InputEventOption> | null
 
-  /** Accessible names for the x and y range inputs. */
-  ariaLabels?: Partial<Record<'x' | 'y', string>>
+  /**
+   * The accessible name of each axis. There are two range inputs inside the
+   * point, so this takes one name per axis; a single string names them both.
+   */
+  'aria-label'?: string | Partial<Record<'x' | 'y', string>>
+  /** What the value of each axis means, when the number does not say it. */
+  'aria-valuetext'?: string | Partial<Record<'x' | 'y', string>>
 
   onChange?: (value: PointBaseType) => void
   onDragStart?: (value: PointBaseType) => void
@@ -85,6 +90,17 @@ export interface PointProps<T extends PointBaseType> {
  * position: 0..1 on each axis, with y growing downwards.
  */
 export const AXIS = { min: 0, max: 1 }
+
+/**
+ * One setting for both axes, or one per axis. The point holds a range input
+ * for each, so anything that names or describes it comes in a pair.
+ */
+function perAxis(
+  value: string | Partial<Record<'x' | 'y', string>> | undefined,
+  axis: 'x' | 'y',
+) {
+  return typeof value === 'string' ? value : value?.[axis]
+}
 
 export function Point<T extends PointBaseType>({
   value,
@@ -101,7 +117,8 @@ export function Point<T extends PointBaseType>({
   readonly: _readonly,
   wheel: _wheel,
   keyboard: _keyboard,
-  ariaLabels = { x: 'x', y: 'y' },
+  'aria-label': ariaLabel,
+  'aria-valuetext': ariaValuetext,
 
   onChange,
   onDragStart,
@@ -309,7 +326,8 @@ export function Point<T extends PointBaseType>({
           disabled={disabled}
           aria-readonly={readonly}
           aria-orientation={axis === 'x' ? 'horizontal' : 'vertical'}
-          aria-label={ariaLabels[axis] ?? axis}
+          aria-label={perAxis(ariaLabel, axis) ?? axis}
+          aria-valuetext={perAxis(ariaValuetext, axis)}
           onChange={(event) => {
             if (readonly) {
               event.currentTarget.value = String(current[axis])

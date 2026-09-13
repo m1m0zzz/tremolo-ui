@@ -1,4 +1,5 @@
 import {
+  AriaAttributes,
   ComponentPropsWithoutRef,
   CSSProperties,
   forwardRef,
@@ -11,7 +12,7 @@ import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/Placement'
 import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
-import { useXYPadContext } from './context'
+import { toXY, useXYPadContext, type XYInput } from './context'
 
 export interface XYPadThumbProps {
   /**
@@ -28,6 +29,17 @@ export interface XYPadThumbProps {
    * it — `className` and `style` are how its own appearance is changed.
    */
   children?: ReactNode
+
+  /**
+   * The accessible name of each axis. There are two range inputs inside the
+   * thumb, so this takes one name per axis; a single string names them both,
+   * which is rarely what you want.
+   */
+  'aria-label'?: XYInput<AriaAttributes['aria-label']>
+  'aria-labelledby'?: XYInput<AriaAttributes['aria-labelledby']>
+  'aria-describedby'?: XYInput<AriaAttributes['aria-describedby']>
+  /** What the value of each axis means, when the number does not say it. */
+  'aria-valuetext'?: XYInput<AriaAttributes['aria-valuetext']>
 }
 
 export interface XYPadThumbMethods {
@@ -40,7 +52,17 @@ type Props = XYPadThumbProps &
 
 export const Thumb = /* @__PURE__ */ forwardRef<XYPadThumbMethods, Props>(
   function Thumb(
-    { color, children, className, style, ...props },
+    {
+      color,
+      children,
+      className,
+      style,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledby,
+      'aria-describedby': ariaDescribedby,
+      'aria-valuetext': ariaValuetext,
+      ...props
+    },
     forwardedRef,
   ) {
     const xInputRef = useRef<HTMLInputElement>(null)
@@ -53,14 +75,18 @@ export const Thumb = /* @__PURE__ */ forwardRef<XYPadThumbMethods, Props>(
       disabled,
       readonly,
       onChange,
-      ariaLabels,
-      ariaValueText,
       percent,
       thumbRef,
     } = useXYPadContext()
 
     // The thumb is positioned against the area.
     useCheckPlacement('XYPad.Thumb', 'XYPad.Area')
+
+    // Per axis, since the thumb holds one input for each.
+    const labels = toXY(ariaLabel)
+    const labelledby = toXY(ariaLabelledby)
+    const describedby = toXY(ariaDescribedby)
+    const valueText = toXY(ariaValuetext)
 
     const methods = () => ({
       focus() {
@@ -105,8 +131,10 @@ export const Thumb = /* @__PURE__ */ forwardRef<XYPadThumbMethods, Props>(
             disabled={disabled}
             aria-readonly={readonly}
             aria-orientation={axis === 0 ? 'horizontal' : 'vertical'}
-            aria-label={ariaLabels[axis]}
-            aria-valuetext={ariaValueText?.[axis]}
+            aria-label={labels[axis] ?? (axis === 0 ? 'x' : 'y')}
+            aria-labelledby={labelledby[axis]}
+            aria-describedby={describedby[axis]}
+            aria-valuetext={valueText[axis]}
             onChange={(event) => {
               if (readonly) {
                 event.currentTarget.value = String(value[axis])

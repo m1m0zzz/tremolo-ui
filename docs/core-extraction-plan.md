@@ -1835,3 +1835,61 @@ npm 側の trusted publisher 設定はワークフローの**ファイル名**�
 - [x] ダミーの patch changeset で 1 リリース通し、CHANGELOG・タグ・npm 上のバージョンを確認
 
 **移行完了（0.2.1 で実リリース済み）。** 確認できたこと: `fixed` により changeset を付けていない functions も同時に bump / publish される / 内部依存レンジが `^0.2.1` に自動更新され、旧 publish.sh のレンジずれが解消 / タグは `@tremolo-ui/<pkg>@0.2.1` のパッケージ単位に変化 / CHANGELOG はコミットリンクと貢献者付きで生成 / **OIDC trusted publishing は問題なく動作し、7.4 の既知問題（E404）は踏まなかった**（公開物に SLSA provenance が付いている）。
+
+## 9. コア切り出し後に決め直した公開契約（styling / ARIA）
+
+dom への切り出しが済んだあと、**ヘッドレス UI としての公開契約そのものを決め直した**。
+ここは「何をやるか」ではなく「なぜその形にしたか」の記録。実装状況は各項目に書く。
+
+背景として、Radix Primitives / Base UI / Headless UI / Ark UI (Zag) / React Aria
+Components のドキュメントを実際に確認した。分かったことは 3 つ。
+
+- **styling 用のクラス名を配るのは少数派**（React Aria だけが既定クラス名を持つ）。
+  Radix / Base UI / Headless UI は状態の data 属性だけを契約にしている
+- **構造だけを別ファイルで配るライブラリは無い**。Radix は位置決めをコンポーネント側で
+  インラインに持ち、React Aria は構造と装飾を混ぜた starter CSS を配り、Zag は算出結果を
+  custom property で渡す
+- **両記法（Tailwind / CSS Modules）を見せているところも、両方を手で書いている**
+  （Base UI が同じ例を Tailwind / CSS Modules / Emotion の 3 通りで持つ）。片方から
+  片方を生成している例は無い
+
+### 9.1 状態は属性だけで表す — **完了**
+
+- `data-vertical="true|false"` → **`data-orientation="horizontal|vertical"`**。
+  「縦か？」を真偽で持つのをやめる。横向き限定の規則も `[data-orientation='horizontal']`
+  と書ける（それまで `[data-vertical='false']` と書いていた）
+- XYPad の隠し input の `data-axis` を `0|1` から **`x|y`** にし、PointsEditor と揃えた
+- **真偽値の状態は on のときだけ属性を出す。** `[data-disabled]` のつもりで書くと常時
+  マッチする、という罠をなくす（テーマにも「有効なときだけ当てる」つもりの
+  `[aria-disabled='false']` が紛れていた）
+- **ARIA と data の分担を決めた。** それ自体がコントロールでないラッパー（各 root、
+  track、thumb、point、Piano の鍵盤）は `data-disabled` / `data-readonly` だけを持つ。
+  本物のコントロール（`Knob`、`NumberInput.InputField`、ステッパー、thumb の中の
+  range input）は ARIA を残し、styling 用の data を併記する。**ARIA は「何であるか」、
+  data は「スタイルが読むもの」**
+
+### 9.2 ARIA は標準の props で受ける — **完了**
+
+`ariaLabels` のような独自 props をやめ、**標準の `aria-*` を props として受けて
+コンポーネント自身の既定を上書きさせる**。
+
+- `XYPad.Thumb` が `aria-label` / `aria-labelledby` / `aria-describedby` /
+  `aria-valuetext` を `XYInput<string>`（1 つで両軸、ペアで軸ごと）で受ける。
+  `XYPad.Root` の `ariaLabels` / `ariaValueText` は廃止
+- `PointsEditor.Point` も同様に `aria-label` / `aria-valuetext` を
+  `string | { x, y }` で受ける
+- **これは #222 で Slider の ARIA を Thumb へ移したのと同じ整理。** 2 軸コントロールでは
+  `{...props}` がラッパー div に展開されるため、`aria-label` を渡しても装飾用の div に
+  付くだけだった（意味を持つのは中の input）
+
+### 9.3 これから（決定済み・未実装）
+
+| 決定 | 内容 |
+| --- | --- |
+| クラス名 | `tremolo-*` を styling / identity とも**廃止**。契約は状態属性のみ。実装が唯一クラス名に依存していた `closest('.tremolo-points-editor-point')` は registry 判定へ書き換える |
+| 構造 | `position` / `translate` / `inset` / `z-index` / `pointer-events` を**コンポーネントへ吸収**する（Radix 型）。コピーし忘れで壊れる部分を残さないため。上書き用に custom property の逃げ道を付ける |
+| 配るもの | `packages/shared`（private）に**装飾だけの CSS Module をコンポーネント別 6 ファイル**。素の CSS の配布はやめる |
+| 継承 | `--thumb-size` のような共有トークンは継承させず、CSS Modules の `composes` で各パートに載せる |
+| ダーク | 現在の `:where(.dark, [data-theme='dark'])` を踏襲し、設定方法を docs に書く |
+| Tailwind | site に CDN（preflight 切り・Playground のあるページのみ）。**例は手書き**で、module からの生成はしない |
+| テスト | クラス名で引いている 63 箇所は role 優先、引けないものは `data-testid` を足す |

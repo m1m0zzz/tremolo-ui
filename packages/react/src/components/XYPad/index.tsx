@@ -116,10 +116,7 @@ export interface XYPadProps {
    */
   readonly?: boolean
 
-  /** Accessible names for the x and y range inputs. */
-  ariaLabels?: XYInput<string>
-  /** Accessible value text for the x and y range inputs. */
-  ariaValueText?: XYInput<string>
+  // TODO: aria-* のpropsを上書きして使う
 
   onChange?: (value: XY<number>) => void
   onDragStart?: (value: XY<number>) => void
@@ -171,8 +168,6 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
       externalStyles: _externalStyles,
       disabled = false,
       readonly = false,
-      ariaLabels: _ariaLabels = ['x', 'y'],
-      ariaValueText: _ariaValueText,
       onChange,
       onDragStart,
       onDragEnd,
@@ -199,11 +194,6 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
     const step = useMemo(() => toXY(_step), [_step])
     const scale = useMemo(() => toXY(_scale), [_scale])
     const reverse = useMemo(() => toXY(_reverse), [_reverse])
-    const ariaLabels = useMemo(() => toXY(_ariaLabels), [_ariaLabels])
-    const ariaValueText = useMemo(
-      () => (_ariaValueText === undefined ? undefined : toXY(_ariaValueText)),
-      [_ariaValueText],
-    )
 
     const percent = useMemo((): XY<number> => {
       const normalized = [0, 1].map((i) =>
@@ -349,8 +339,6 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
         disabled,
         readonly,
         onChange,
-        ariaLabels,
-        ariaValueText,
         percent,
         areaRef,
         thumbRef,
@@ -365,8 +353,6 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
         disabled,
         readonly,
         onChange,
-        ariaLabels,
-        ariaValueText,
         percent,
       ],
     )
