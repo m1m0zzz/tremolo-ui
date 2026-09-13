@@ -46,6 +46,8 @@ export function Marks({
       style={
         {
           '--gap': cssLength(gap),
+          // Each option inside is placed against this box.
+          position: 'relative',
           ...style,
         } as CSSProperties
       }

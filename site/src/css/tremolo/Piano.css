@@ -5,7 +5,6 @@
   box-sizing: border-box;
   user-select: none;
   touch-action: none;
-  position: relative;
   height: var(--height);
 
   /* The width is the keyboard's own, so a filled piano stretches both ways. */
@@ -21,14 +20,12 @@
   --active-color: oklch(0% 0 0);
 
   box-sizing: border-box;
-  position: absolute;
   background-color: var(--bg);
   -webkit-tap-highlight-color: transparent;
   color: var(--color);
   border: 1px solid #555;
   border-radius: 0px 0px 8px 8px;
   cursor: pointer;
-  z-index: 1;
 
   &[data-active] {
     background-color: var(--active-bg);
@@ -47,14 +44,12 @@
   --active-bg: oklch(44% 0 0);
 
   box-sizing: border-box;
-  position: absolute;
   background-color: var(--bg);
   -webkit-tap-highlight-color: transparent;
   color: var(--color);
   border: 1px solid #555;
   border-radius: 0px 0px 8px 8px;
   cursor: pointer;
-  z-index: 2;
 
   &[data-active] {
     background-color: var(--active-bg);

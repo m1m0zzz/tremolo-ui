@@ -135,6 +135,12 @@ propへ渡した数値はpxとして扱われます。それ以外はそのま�
 `--thumb-size`、`--active-color` など）を使っているため、よくある変更は
 1 行の上書きで済みます。
 
+**テーマが決めるのは見た目であって、位置ではありません。** 各パートの配置は
+コンポーネント自身が行います（thumb は自分で flow から外れ、値の位置に中央を
+合わせます）。そのため、自前のテーマで規則を書き忘れてパートが変な場所に飛ぶ、
+ということは起きません。配置に好みの余地がある部分はカスタムプロパティで開けて
+あり、thumb・mark・point の `--translate` で中央合わせをずらせます。
+
 <Tabs>
   <TabItem value="Knob.css" default>
     <CodeBlock language='css' title='Knob.css'>{knobCss}</CodeBlock>

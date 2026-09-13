@@ -292,10 +292,14 @@ export function Point<T extends PointBaseType>({
           '--color': color,
           '--width': cssLength(size ?? width),
           '--height': cssLength(size ?? height),
+          // The mechanics of the position below: a point is placed by its
+          // position in the container, measured from its own centre.
+          position: 'absolute',
+          translate: 'var(--translate, -50% -50%)',
+          ...style,
           // Where the point is: the value, not a style.
           left: `${value.x * 100}%`,
           top: `${value.y * 100}%`,
-          ...style,
         } as CSSProperties
       }
       onPointerDown={onPointerDown}

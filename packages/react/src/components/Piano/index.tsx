@@ -395,6 +395,8 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
             // Computed from the layout rather than chosen, so it stays inline.
             width: fill ? '100%' : pianoWidth(layout),
             '--height': cssLength(height),
+            // The keys inside are placed against this box.
+            position: 'relative',
             ...style,
           } as CSSProperties
         }
@@ -427,6 +429,11 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
               data-disabled={state.disabled || undefined}
               {...rest}
               style={{
+                // The key is placed and sized from the layout below, which
+                // needs it out of flow; the black keys sit over the white
+                // ones whichever order they are drawn in.
+                position: 'absolute',
+                zIndex: keyType === 'white' ? 1 : 2,
                 ...keyStyle,
                 left: notePosition(note, layout),
                 width:

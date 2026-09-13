@@ -503,6 +503,8 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
             {
               '--width': cssLength(width),
               '--height': cssLength(height),
+              // The layers inside are placed against this box.
+              position: 'relative',
               ...style,
             } as CSSProperties
           }
