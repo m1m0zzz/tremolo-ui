@@ -131,6 +131,13 @@ describe('XYPad', () => {
     expect(onChange).toHaveBeenLastCalledWith([50, 75])
   })
 
+  test('each input says which axis it is', () => {
+    setup()
+
+    expect(axisInput('x')).toHaveAttribute('data-axis', 'x')
+    expect(axisInput('y')).toHaveAttribute('data-axis', 'y')
+  })
+
   test('the arrow keys move both axes, from either input', () => {
     const { onChange } = setup()
 

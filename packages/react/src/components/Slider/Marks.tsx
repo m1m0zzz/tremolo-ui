@@ -42,7 +42,7 @@ export function Marks({
   return (
     <div
       className={cx('tremolo-slider-marks', className)}
-      data-vertical={vertical}
+      data-orientation={vertical ? 'vertical' : 'horizontal'}
       style={
         {
           '--gap': cssLength(gap),

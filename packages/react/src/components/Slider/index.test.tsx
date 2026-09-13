@@ -67,6 +67,30 @@ function drag(root: Element) {
   })
 }
 
+describe('Slider state attributes', () => {
+  test('every part says which way the slider runs', () => {
+    const { root } = setup()
+
+    // The attribute is the styling contract, so it names the orientation
+    // rather than answering "is it vertical".
+    expect(root).toHaveAttribute('data-orientation', 'horizontal')
+    expect(screen.getByTestId('track')).toHaveAttribute(
+      'data-orientation',
+      'horizontal',
+    )
+  })
+
+  test('and says so when it runs vertically', () => {
+    const { root } = setup({ vertical: true })
+
+    expect(root).toHaveAttribute('data-orientation', 'vertical')
+    expect(screen.getByTestId('track')).toHaveAttribute(
+      'data-orientation',
+      'vertical',
+    )
+  })
+})
+
 describe('Slider input guards', () => {
   test('focus reaching the root is handed to the thumb input', () => {
     const { root, input } = setup()

@@ -63,7 +63,7 @@ export const Track = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         ref={composedRef}
         className={cx('tremolo-slider-track', className)}
         aria-disabled={disabled}
-        data-vertical={vertical}
+        data-orientation={vertical ? 'vertical' : 'horizontal'}
         // Which end the value grows from. `percent` is already the position on
         // screen, so this only says which side of it is the filled one.
         data-flipped={xor(vertical, reverse)}
