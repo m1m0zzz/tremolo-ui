@@ -1901,7 +1901,7 @@ Components のドキュメントを実際に確認した。分かったことは
 中央合わせだけは好みの余地があるので、`translate: var(--translate, -50% -50%)` の形で
 逃げ道を開けた（thumb / marks-option / point）。テーマ CSS は 31 行減った。
 
-### 9.4 テーマを CSS Module として配る — **Slider 完了、残り 5 コンポーネント**
+### 9.4 テーマを CSS Module として配る — **完了**
 
 `packages/shared`（private、`name: "shared"`）を作り、コンポーネント別の
 `css/<Name>.module.css` を置く。決めたこと:
@@ -1915,15 +1915,25 @@ Components のドキュメントを実際に確認した。分かったことは
 - **site の例は `./Slider.module.css` を import する形で見せる。** 実行時は
   `ReactLiveScope` が同じ module を渡すので、import 行は読むためのもの。外部
   Playground には `themeModules` として `src/` に書き出す
-- Storybook / docs のグローバル注入は、移行したコンポーネントから順に外す
+- Storybook / docs のグローバル注入は全て外した。テーマはもうどこにも自動では当たらない
+- 移行の過程で分かったこと:
+  - Knob のように root の hover / focus から各パートへ降りる規則は、module 内の
+    ローカルクラス参照でそのまま書ける
+  - Piano の鍵盤は `keyProps` 経由、ラベルは今回足した `classes` 経由でしか届かない。
+    サブコンポーネントを持たない設計なので、テーマを当てる口も props になる
+  - NumberInput の既定の矢印は `--stepper-icon-size` を自分で読むようにして、
+    テーマから `.stepperIcon` を落とした（children で差し替えたら消える要素なので、
+    スタイルの当て先としては不適切だった）
+  - 自前の見た目を持つ story（VolumeFader の thumb、WavetableSynth の NumberInput、
+    styling tutorial の CSS Module 例）にはテーマを当てない
 
 ### 9.5 これから（決定済み・未実装）
 
 | 決定 | 内容 |
 | --- | --- |
 | クラス名 | `tremolo-*` を styling / identity とも**廃止**。契約は状態属性のみ。実装が唯一クラス名に依存していた `closest('.tremolo-points-editor-point')` は registry 判定へ書き換える |
-| 配るもの | `packages/shared`（private）に**装飾だけの CSS Module をコンポーネント別 6 ファイル**。素の CSS の配布はやめる。**Slider は移行済み**、残り 5 つは順次 |
-| 継承 | `--thumb-size` のような共有トークンは継承させず、CSS Modules の `composes` で各パートに載せる（Slider で実施） |
+| 配るもの | `packages/shared`（private）に**装飾だけの CSS Module をコンポーネント別 6 ファイル**。素の CSS の配布はやめる（**6 コンポーネントとも移行済み**） |
+| 継承 | `--thumb-size` のような共有トークンは継承させず、CSS Modules の `composes` で各パートに載せる（Slider / XYPad で実施） |
 | ダーク | 現在の `:where(.dark, [data-theme='dark'])` を踏襲し、設定方法を docs に書く |
 | Tailwind | site に CDN（preflight 切り・Playground のあるページのみ）。**例は手書き**で、module からの生成はしない |
 | テスト | クラス名で引いている 63 箇所は role 優先、引けないものは `data-testid` を足す |

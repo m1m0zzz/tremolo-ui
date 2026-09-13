@@ -3,6 +3,8 @@ import { useState } from 'react'
 
 import { NumberInput } from '.'
 
+import numberInputTheme from 'shared/css/NumberInput.module.css'
+
 export default {
   title: 'Components/NumberInput/IncrementStepper',
   component: NumberInput.IncrementStepper,
@@ -15,15 +17,20 @@ function Subject() {
 
   return (
     <NumberInput.Root
+      className={numberInputTheme.root}
       min={0}
       max={10}
       value={value}
       onChange={(v) => setValue(v)}
     >
-      <NumberInput.InputField />
-      <NumberInput.Stepper>
-        <NumberInput.IncrementStepper />
-        <NumberInput.DecrementStepper />
+      <NumberInput.InputField className={numberInputTheme.field} />
+      <NumberInput.Stepper className={numberInputTheme.stepper}>
+        <NumberInput.IncrementStepper
+          className={numberInputTheme.incrementStepper}
+        />
+        <NumberInput.DecrementStepper
+          className={numberInputTheme.decrementStepper}
+        />
       </NumberInput.Stepper>
     </NumberInput.Root>
   )

@@ -78,6 +78,15 @@ export interface KeyState {
 }
 
 export interface PianoProps {
+  /**
+   * Classes for the parts a key draws inside itself. The key itself is reached
+   * through `keyProps`, which is where the note and its state are.
+   */
+  classes?: {
+    keyLabelWrapper?: string
+    keyLabel?: string
+  }
+
   noteRange: NoteRange
 
   /**
@@ -191,6 +200,7 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
       className,
       label,
       keyProps,
+      classes,
       onPlayNote,
       onStopNote,
       ...props
@@ -447,8 +457,17 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
               }}
             >
               {content !== '' && content !== null && content !== undefined && (
-                <div className="tremolo-piano-key-label-wrapper">
-                  <div className="tremolo-piano-key-label">{content}</div>
+                <div
+                  className={cx(
+                    'tremolo-piano-key-label-wrapper',
+                    classes?.keyLabelWrapper,
+                  )}
+                >
+                  <div
+                    className={cx('tremolo-piano-key-label', classes?.keyLabel)}
+                  >
+                    {content}
+                  </div>
                 </div>
               )}
             </div>

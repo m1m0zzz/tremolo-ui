@@ -3,6 +3,9 @@ import { useState } from 'react'
 
 import { PointsEditor } from '@tremolo-ui/react'
 
+// Copy this file from the Styling page into your own project.
+import pointsEditorTheme from './PointsEditor.module.css'
+
 // expand end
 
 function App() {
@@ -15,13 +18,14 @@ function App() {
 
   return (
     <div>
-      <PointsEditor.Root selectable>
+      <PointsEditor.Root className={pointsEditorTheme.root} selectable>
         <PointsEditor.Background
           style={{ background: '#f2f4f5', borderRadius: 4 }}
         />
         <PointsEditor.Container>
           {Object.entries(points).map(([id, point]) => (
             <PointsEditor.Point
+              className={pointsEditorTheme.point}
               key={id}
               id={id}
               value={point}
@@ -30,7 +34,9 @@ function App() {
               }
             />
           ))}
-          <PointsEditor.SelectionBox />
+          <PointsEditor.SelectionBox
+            className={pointsEditorTheme.selectionBox}
+          />
         </PointsEditor.Container>
       </PointsEditor.Root>
       <p>

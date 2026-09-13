@@ -1,4 +1,9 @@
-.tremolo-piano {
+/*
+ * The demo theme for `Piano`, as a CSS Module: one class per part, applied by
+ * the caller. Copy this file into your project and edit it.
+ */
+
+.root {
   --height: 160px;
 
   display: inline-block;
@@ -13,7 +18,7 @@
   }
 }
 
-.tremolo-piano-white-key {
+.whiteKey {
   --bg: oklch(100% 0 0);
   --color: oklch(0% 0 0);
   --active-bg: oklch(92% 0 0);
@@ -37,7 +42,7 @@
   }
 }
 
-.tremolo-piano-black-key {
+.blackKey {
   --color: oklch(100% 0 0);
   --bg: oklch(32% 0 0);
   --active-color: oklch(100% 0 0);
@@ -61,14 +66,14 @@
   }
 }
 
-.tremolo-piano-key-label-wrapper {
+.keyLabelWrapper {
   display: flex;
   justify-content: center;
   align-items: end;
   height: 100%;
 }
 
-.tremolo-piano-key-label {
+.keyLabel {
   box-sizing: content-box;
   display: flex;
   justify-content: center;
@@ -83,11 +88,15 @@
   max-width: calc(100% - 16px);
 }
 
-:where(.dark, [data-theme='dark']) {
-  .tremolo-piano-white-key {
-    --bg: oklch(80% 0 0);
-    --color: oklch(0% 0 0);
-    --active-bg: oklch(72% 0 0);
-    --active-color: oklch(0% 0 0);
-  }
+/*
+ * Dark mode follows whatever marks the page — `.dark` and `[data-theme=dark]`
+ * are what this site and Storybook set.
+ */
+
+:global(.dark) .whiteKey,
+:global([data-theme='dark']) .whiteKey {
+  --bg: oklch(80% 0 0);
+  --color: oklch(0% 0 0);
+  --active-bg: oklch(72% 0 0);
+  --active-color: oklch(0% 0 0);
 }

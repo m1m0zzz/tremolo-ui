@@ -76,6 +76,12 @@ export function StepperArrow({ up }: { up: boolean }) {
   return (
     <svg
       className="tremolo-number-input-stepper-icon"
+      // The arrow the component draws when no children are given, so it sizes
+      // itself rather than asking a stylesheet to.
+      style={{
+        width: 'var(--stepper-icon-size)',
+        height: 'var(--stepper-icon-size)',
+      }}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

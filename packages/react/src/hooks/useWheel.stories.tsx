@@ -6,6 +6,8 @@ import { NumberInput } from '../components/NumberInput'
 
 import { useWheel } from './useWheel'
 
+import numberInputTheme from 'shared/css/NumberInput.module.css'
+
 export default {
   title: 'Hooks/useWheel',
 }
@@ -37,6 +39,7 @@ export const Basic = () => {
       </div>
       scale:{' '}
       <NumberInput.Root
+        className={numberInputTheme.root}
         value={scale}
         min={0.1}
         step={0.1}
@@ -48,7 +51,7 @@ export const Basic = () => {
           marginRight: '0.5rem',
         }}
       >
-        <NumberInput.InputField />
+        <NumberInput.InputField className={numberInputTheme.field} />
       </NumberInput.Root>
       <button type="button" onClick={() => setCount(0)}>
         Reset count

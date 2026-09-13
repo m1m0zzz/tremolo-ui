@@ -1,10 +1,9 @@
-import { themeCss, themeModules } from '../theme'
+import { themeModules } from '../theme'
 
 const main = `import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import App from './App.tsx';
-import './tremolo.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -196,9 +195,8 @@ export function createFiles(tremoloUIVersion: string): {
 } {
   return {
     'src/main.tsx': main,
-    'src/tremolo.css': themeCss,
-    // The parts of the theme that are CSS Modules: the example imports them
-    // by name, so they sit next to App.tsx.
+    // The theme is CSS Modules: the example imports the parts it uses by name,
+    // so they sit next to App.tsx.
     ...Object.fromEntries(
       Object.entries(themeModules).map(([name, css]) => [`src/${name}`, css]),
     ),

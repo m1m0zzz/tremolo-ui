@@ -8,6 +8,8 @@ import { Piano, PianoMethods } from '../components/Piano'
 import { useMIDIAccess } from './useMIDIAccess'
 import { PITCH_BEND_CENTER, useMIDIInput } from './useMIDIInput'
 
+import pianoTheme from 'shared/css/Piano.module.css'
+
 export default {
   title: 'Hooks/useMIDIInput',
 }
@@ -108,6 +110,15 @@ export const Basic = () => {
         }}
       >
         <Piano.Root
+          className={pianoTheme.root}
+          classes={{
+            keyLabelWrapper: pianoTheme.keyLabelWrapper,
+            keyLabel: pianoTheme.keyLabel,
+          }}
+          keyProps={(_note, { keyType }) => ({
+            className:
+              keyType === 'white' ? pianoTheme.whiteKey : pianoTheme.blackKey,
+          })}
           ref={pianoRef}
           noteRange={{ first: noteNumber('A0'), last: noteNumber('C8') }}
           label={(note) => (note % 12 === 0 ? noteName(note) : undefined)}

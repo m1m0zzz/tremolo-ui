@@ -37,6 +37,7 @@ import { basicShapesWave } from './wavetable'
 
 import './index.css'
 import styles from './WavetableSynth.module.css'
+import pianoTheme from 'shared/css/Piano.module.css'
 
 export default {
   title: 'combined/WavetableSynth/WavetableSynth',
@@ -252,6 +253,15 @@ export const WavetableSynth = () => {
   const pianoMemo = useMemo(
     () => (
       <Piano.Root
+        className={pianoTheme.root}
+        classes={{
+          keyLabelWrapper: pianoTheme.keyLabelWrapper,
+          keyLabel: pianoTheme.keyLabel,
+        }}
+        keyProps={(_note, { keyType }) => ({
+          className:
+            keyType === 'white' ? pianoTheme.whiteKey : pianoTheme.blackKey,
+        })}
         noteRange={{ first: firstNote, last: lastNote }}
         keyboardShortcuts={SHORTCUTS.HOME_ROW}
         label={(_, { index }) => SHORTCUTS.HOME_ROW.keys[index]?.toUpperCase()}

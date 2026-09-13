@@ -3,6 +3,9 @@ import { useState } from 'react'
 
 import { NumberInput } from '@tremolo-ui/react'
 
+// Copy this file from the Styling page into your own project.
+import numberInputTheme from './NumberInput.module.css'
+
 // expand end
 
 function App() {
@@ -17,15 +20,23 @@ function App() {
       }}
     >
       <NumberInput.Root
+        className={numberInputTheme.root}
         value={value}
         min={0}
         max={100}
         onChange={(v) => setValue(v)}
       >
-        <NumberInput.InputField aria-label="Value" />
-        <NumberInput.Stepper>
-          <NumberInput.IncrementStepper />
-          <NumberInput.DecrementStepper />
+        <NumberInput.InputField
+          className={numberInputTheme.field}
+          aria-label="Value"
+        />
+        <NumberInput.Stepper className={numberInputTheme.stepper}>
+          <NumberInput.IncrementStepper
+            className={numberInputTheme.incrementStepper}
+          />
+          <NumberInput.DecrementStepper
+            className={numberInputTheme.decrementStepper}
+          />
         </NumberInput.Stepper>
       </NumberInput.Root>
     </div>

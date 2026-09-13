@@ -15,6 +15,8 @@ import { useMIDIInput } from '../../hooks/useMIDIInput'
 
 import { Piano, PianoMethods, SHORTCUTS } from '.'
 
+import pianoTheme from 'shared/css/Piano.module.css'
+
 export default {
   title: 'Components/Piano/Root',
   component: Piano.Root,
@@ -44,6 +46,15 @@ export const Basic: Story = {
           PolySynth.
         </p>
         <Piano.Root
+          className={pianoTheme.root}
+          classes={{
+            keyLabelWrapper: pianoTheme.keyLabelWrapper,
+            keyLabel: pianoTheme.keyLabel,
+          }}
+          keyProps={(_note, { keyType }) => ({
+            className:
+              keyType === 'white' ? pianoTheme.whiteKey : pianoTheme.blackKey,
+          })}
           {...args}
           onPlayNote={(noteNumber) => {
             synth.triggerAttack(noteName(noteNumber))
@@ -100,6 +111,15 @@ export const Range: Story = {
           </label>
         </div>
         <Piano.Root
+          className={pianoTheme.root}
+          classes={{
+            keyLabelWrapper: pianoTheme.keyLabelWrapper,
+            keyLabel: pianoTheme.keyLabel,
+          }}
+          keyProps={(_note, { keyType }) => ({
+            className:
+              keyType === 'white' ? pianoTheme.whiteKey : pianoTheme.blackKey,
+          })}
           {...args}
           noteRange={{ first: first, last: last }}
           label={(note) => {
@@ -135,11 +155,22 @@ export const Styling: Story = {
   },
   render: (args) => (
     <Piano.Root
+      className={pianoTheme.root}
+      classes={{
+        keyLabelWrapper: pianoTheme.keyLabelWrapper,
+        keyLabel: pianoTheme.keyLabel,
+      }}
       {...args}
       keyProps={(_, { keyType }) =>
         keyType === 'white'
-          ? { style: { '--bg': '#83888a', '--active-bg': '#5acee8' } }
-          : { style: { '--bg': '#333536', '--active-bg': '#5acee8' } }
+          ? {
+              className: pianoTheme.whiteKey,
+              style: { '--bg': '#83888a', '--active-bg': '#5acee8' },
+            }
+          : {
+              className: pianoTheme.blackKey,
+              style: { '--bg': '#333536', '--active-bg': '#5acee8' },
+            }
       }
       label={(note, { keyType }) =>
         keyType === 'white' && noteKey(note) === 'C'
@@ -209,9 +240,16 @@ export const ScaleHighlight: Story = {
           </label>
         </div>
         <Piano.Root
+          className={pianoTheme.root}
+          classes={{
+            keyLabelWrapper: pianoTheme.keyLabelWrapper,
+            keyLabel: pianoTheme.keyLabel,
+          }}
           {...args}
-          keyProps={(note, { keyType }) =>
-            inScale(note, root, scale)
+          keyProps={(note, { keyType }) => ({
+            className:
+              keyType === 'white' ? pianoTheme.whiteKey : pianoTheme.blackKey,
+            ...(inScale(note, root, scale)
               ? {
                   style:
                     keyType === 'white'
@@ -222,8 +260,8 @@ export const ScaleHighlight: Story = {
                           '--active-color': '#04121d',
                         },
                 }
-              : {}
-          }
+              : {}),
+          })}
         />
       </div>
     )
@@ -244,6 +282,15 @@ export const NaturalShortcuts: Story = {
 
     return (
       <Piano.Root
+        className={pianoTheme.root}
+        classes={{
+          keyLabelWrapper: pianoTheme.keyLabelWrapper,
+          keyLabel: pianoTheme.keyLabel,
+        }}
+        keyProps={(_note, { keyType }) => ({
+          className:
+            keyType === 'white' ? pianoTheme.whiteKey : pianoTheme.blackKey,
+        })}
         {...args}
         onPlayNote={(note) => synth.triggerAttack(noteName(note))}
         onStopNote={(note) => synth.triggerRelease(noteName(note))}
@@ -272,7 +319,18 @@ export const Fill: Story = {
         minHeight: 120,
       }}
     >
-      <Piano.Root {...args} />
+      <Piano.Root
+        className={pianoTheme.root}
+        classes={{
+          keyLabelWrapper: pianoTheme.keyLabelWrapper,
+          keyLabel: pianoTheme.keyLabel,
+        }}
+        keyProps={(_note, { keyType }) => ({
+          className:
+            keyType === 'white' ? pianoTheme.whiteKey : pianoTheme.blackKey,
+        })}
+        {...args}
+      />
     </div>
   ),
 }
@@ -318,6 +376,15 @@ export const WithWebMidiAPI: Story = {
         {error && <p>error: {error}</p>}
 
         <Piano.Root
+          className={pianoTheme.root}
+          classes={{
+            keyLabelWrapper: pianoTheme.keyLabelWrapper,
+            keyLabel: pianoTheme.keyLabel,
+          }}
+          keyProps={(_note, { keyType }) => ({
+            className:
+              keyType === 'white' ? pianoTheme.whiteKey : pianoTheme.blackKey,
+          })}
           {...args}
           ref={pianoRef} // emit midi event
           onPlayNote={(noteNumber, velocity) => {

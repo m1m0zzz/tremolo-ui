@@ -5,6 +5,8 @@ import { unitFormat } from '@tremolo-ui/functions'
 
 import { NumberInput } from '.'
 
+import numberInputTheme from 'shared/css/NumberInput.module.css'
+
 export default {
   title: 'Components/NumberInput/Stepper',
   component: NumberInput.Stepper,
@@ -38,11 +40,20 @@ export const Basic: Story = {
     const [value, setValue] = useState(5)
 
     return (
-      <NumberInput.Root {...args} value={value} onChange={(v) => setValue(v)}>
-        <NumberInput.InputField />
-        <NumberInput.Stepper>
-          <NumberInput.IncrementStepper />
-          <NumberInput.DecrementStepper />
+      <NumberInput.Root
+        className={numberInputTheme.root}
+        {...args}
+        value={value}
+        onChange={(v) => setValue(v)}
+      >
+        <NumberInput.InputField className={numberInputTheme.field} />
+        <NumberInput.Stepper className={numberInputTheme.stepper}>
+          <NumberInput.IncrementStepper
+            className={numberInputTheme.incrementStepper}
+          />
+          <NumberInput.DecrementStepper
+            className={numberInputTheme.decrementStepper}
+          />
         </NumberInput.Stepper>
       </NumberInput.Root>
     )
@@ -67,13 +78,24 @@ export const CustomIcons: Story = {
     const [value, setValue] = useState(5)
 
     return (
-      <NumberInput.Root {...args} value={value} onChange={(v) => setValue(v)}>
-        <NumberInput.InputField />
-        <NumberInput.Stepper>
-          <NumberInput.IncrementStepper style={{ backgroundColor: '#d8f3dc' }}>
+      <NumberInput.Root
+        className={numberInputTheme.root}
+        {...args}
+        value={value}
+        onChange={(v) => setValue(v)}
+      >
+        <NumberInput.InputField className={numberInputTheme.field} />
+        <NumberInput.Stepper className={numberInputTheme.stepper}>
+          <NumberInput.IncrementStepper
+            className={numberInputTheme.incrementStepper}
+            style={{ backgroundColor: '#d8f3dc' }}
+          >
             +
           </NumberInput.IncrementStepper>
-          <NumberInput.DecrementStepper style={{ backgroundColor: '#ffd9d9' }}>
+          <NumberInput.DecrementStepper
+            className={numberInputTheme.decrementStepper}
+            style={{ backgroundColor: '#ffd9d9' }}
+          >
             −
           </NumberInput.DecrementStepper>
         </NumberInput.Stepper>

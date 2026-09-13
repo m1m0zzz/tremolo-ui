@@ -3,6 +3,8 @@ import { useState } from 'react'
 
 import { PointBaseType, PointsEditor } from '.'
 
+import pointsEditorTheme from 'shared/css/PointsEditor.module.css'
+
 export default {
   title: 'Components/PointsEditor/Background',
   component: PointsEditor.Background,
@@ -28,7 +30,7 @@ export const Graph: Story = {
       .join(' ')
 
     return (
-      <PointsEditor.Root>
+      <PointsEditor.Root className={pointsEditorTheme.root}>
         <PointsEditor.Background {...args}>
           <svg
             viewBox="0 0 100 100"
@@ -41,6 +43,7 @@ export const Graph: Story = {
         <PointsEditor.Container>
           {Object.entries(points).map(([id, point]) => (
             <PointsEditor.Point
+              className={pointsEditorTheme.point}
               key={id}
               id={id}
               value={point}

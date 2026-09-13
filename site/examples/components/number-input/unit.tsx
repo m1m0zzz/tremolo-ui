@@ -4,6 +4,9 @@ import { useState } from 'react'
 import { unitFormat } from '@tremolo-ui/functions'
 import { NumberInput } from '@tremolo-ui/react'
 
+// Copy this file from the Styling page into your own project.
+import numberInputTheme from './NumberInput.module.css'
+
 // expand end
 
 // Hertz takes SI prefixes, so 1234 is shown as 1.23kHz.
@@ -23,15 +26,20 @@ function App() {
   return (
     <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
       <NumberInput.Root
+        className={numberInputTheme.root}
         {...hz}
         value={frequency}
         min={20}
         max={22000}
         onChange={setFrequency}
       >
-        <NumberInput.InputField aria-label="Frequency" />
+        <NumberInput.InputField
+          className={numberInputTheme.field}
+          aria-label="Frequency"
+        />
       </NumberInput.Root>
       <NumberInput.Root
+        className={numberInputTheme.root}
         {...dB}
         value={gain}
         min={-60}
@@ -39,16 +47,23 @@ function App() {
         step={0.1}
         onChange={setGain}
       >
-        <NumberInput.InputField aria-label="Gain" />
+        <NumberInput.InputField
+          className={numberInputTheme.field}
+          aria-label="Gain"
+        />
       </NumberInput.Root>
       <NumberInput.Root
+        className={numberInputTheme.root}
         {...ms}
         value={release}
         min={1}
         max={10000}
         onChange={setRelease}
       >
-        <NumberInput.InputField aria-label="Release time" />
+        <NumberInput.InputField
+          className={numberInputTheme.field}
+          aria-label="Release time"
+        />
       </NumberInput.Root>
     </div>
     // expand end

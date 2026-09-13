@@ -5,6 +5,9 @@ import * as Tone from 'tone'
 import { noteName, noteNumber } from '@tremolo-ui/functions'
 import { Piano, SHORTCUTS } from '@tremolo-ui/react'
 
+// Copy this file from the Styling page into your own project.
+import pianoTheme from './Piano.module.css'
+
 // expand end
 
 function App() {
@@ -30,6 +33,15 @@ function App() {
       }}
     >
       <Piano.Root
+        className={pianoTheme.root}
+        classes={{
+          keyLabelWrapper: pianoTheme.keyLabelWrapper,
+          keyLabel: pianoTheme.keyLabel,
+        }}
+        keyProps={(_note, { keyType }) => ({
+          className:
+            keyType === 'white' ? pianoTheme.whiteKey : pianoTheme.blackKey,
+        })}
         noteRange={{ first: noteNumber('C3'), last: noteNumber('B4') }}
         keyboardShortcuts={SHORTCUTS.HOME_ROW}
         onPlayNote={(noteNumber) => {

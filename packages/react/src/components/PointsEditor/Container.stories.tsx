@@ -3,6 +3,8 @@ import { useState } from 'react'
 
 import { PointBaseType, PointsEditor } from '.'
 
+import pointsEditorTheme from 'shared/css/PointsEditor.module.css'
+
 export default {
   title: 'Components/PointsEditor/Container',
   component: PointsEditor.Container,
@@ -26,13 +28,14 @@ export const Inset: Story = {
     })
 
     return (
-      <PointsEditor.Root>
+      <PointsEditor.Root className={pointsEditorTheme.root}>
         <PointsEditor.Background
           style={{ background: '#f2f4f5', borderRadius: 4 }}
         />
         <PointsEditor.Container {...args}>
           {Object.entries(points).map(([id, point]) => (
             <PointsEditor.Point
+              className={pointsEditorTheme.point}
               key={id}
               id={id}
               value={point}

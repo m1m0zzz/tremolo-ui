@@ -3,6 +3,8 @@ import { useState } from 'react'
 
 import { PointBaseType, PointsEditor } from '.'
 
+import pointsEditorTheme from 'shared/css/PointsEditor.module.css'
+
 export default {
   title: 'Components/PointsEditor/SelectionBox',
   component: PointsEditor.SelectionBox,
@@ -23,20 +25,24 @@ function Subject({
   return (
     <>
       <p>Drag over the points to select them, then move them with the keys.</p>
-      <PointsEditor.Root selectable>
+      <PointsEditor.Root className={pointsEditorTheme.root} selectable>
         <PointsEditor.Background
           style={{ background: '#f2f4f5', borderRadius: 4 }}
         />
         <PointsEditor.Container>
           {Object.entries(points).map(([id, point]) => (
             <PointsEditor.Point
+              className={pointsEditorTheme.point}
               key={id}
               id={id}
               value={point}
               onChange={(v) => setPoints((all) => ({ ...all, [id]: v }))}
             />
           ))}
-          <PointsEditor.SelectionBox {...props}>
+          <PointsEditor.SelectionBox
+            className={pointsEditorTheme.selectionBox}
+            {...props}
+          >
             {children}
           </PointsEditor.SelectionBox>
         </PointsEditor.Container>
