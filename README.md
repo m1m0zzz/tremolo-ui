@@ -1,7 +1,8 @@
 
 # [tremolo-ui](https://github.com/m1m0zzz/tremolo-ui)
 
-Components library for Audio Applications.
+A UI library for audio applications. It handles event listener support, ARIA compliance, and more.
+Centered around `dom`, it supports multiple libraries and frameworks including `react`, `vue`, and `svelte`.
 
 [![Build and Test](https://github.com/m1m0zzz/tremolo-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/m1m0zzz/tremolo-ui/actions/workflows/ci.yml)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/%40tremolo-ui%2Freact)](https://bundlephobia.com/package/@tremolo-ui/react)
@@ -20,9 +21,11 @@ Components library for Audio Applications.
 
 ## ✨ Features
 
-- headless UI
-- mobile support
-- tree shaking
+- Headless
+- Touch Device Support
+- Accessible
+- No Dependences
+- Tree Shaking
 
 ## 📚 Links
 
@@ -34,4 +37,4 @@ Components library for Audio Applications.
 
 ## 📜 LICENSE
 
-tremolo-ui is [MIT License](./LICENSE)
+Licensed under the [MIT License](./LICENSE), Copyright © mimoz.
