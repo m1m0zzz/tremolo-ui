@@ -25,6 +25,7 @@ import {
 } from './wavetable'
 
 import style from './WaveSelector.module.css'
+import sliderTheme from 'shared/css/Slider.module.css'
 
 const sampleLength = 100
 const frameLength = 100
@@ -87,6 +88,7 @@ export const WaveSelector = ({
         }}
       >
         <Slider.Root
+          className={sliderTheme.root}
           value={position}
           min={0}
           max={100}
@@ -97,6 +99,7 @@ export const WaveSelector = ({
           }}
         >
           <Slider.Track
+            className={sliderTheme.track}
             length={170}
             thickness="auto"
             style={{ background: 'none' }}
@@ -144,7 +147,10 @@ export const WaveSelector = ({
             />
 
             {/* This one shows no thumb at all. */}
-            <Slider.Thumb style={{ display: 'none' }} />
+            <Slider.Thumb
+              className={sliderTheme.thumb}
+              style={{ display: 'none' }}
+            />
           </Slider.Track>
         </Slider.Root>
         <div
@@ -197,6 +203,7 @@ export const WaveSelector = ({
         }}
       >
         <Slider.Root
+          className={sliderTheme.root}
           value={position}
           min={0}
           max={100}
@@ -208,8 +215,14 @@ export const WaveSelector = ({
             margin: 10,
           }}
         >
-          <Slider.Track thickness={6} length="100%" active={themeColor}>
+          <Slider.Track
+            className={sliderTheme.track}
+            thickness={6}
+            length="100%"
+            active={themeColor}
+          >
             <Slider.Thumb
+              className={sliderTheme.thumb}
               style={{
                 border: `solid 4px ${themeColor}`,
                 background: 'white',

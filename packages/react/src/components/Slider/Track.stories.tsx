@@ -3,6 +3,8 @@ import { useState } from 'react'
 
 import { Slider } from '.'
 
+import sliderTheme from 'shared/css/Slider.module.css'
+
 export default {
   title: 'Components/Slider/Track',
   component: Slider.Track,
@@ -25,9 +27,15 @@ export const Basic: Story = {
 
     return (
       <>
-        <Slider.Root value={value} min={0} max={100} onChange={setValue}>
-          <Slider.Track {...args}>
-            <Slider.Thumb aria-label="Level" />
+        <Slider.Root
+          className={sliderTheme.root}
+          value={value}
+          min={0}
+          max={100}
+          onChange={setValue}
+        >
+          <Slider.Track className={sliderTheme.track} {...args}>
+            <Slider.Thumb className={sliderTheme.thumb} aria-label="Level" />
           </Slider.Track>
         </Slider.Root>
         <p>value: {value}</p>
@@ -52,9 +60,19 @@ export const Colors: Story = {
     const [value, setValue] = useState(70)
 
     return (
-      <Slider.Root value={value} min={0} max={100} onChange={setValue}>
-        <Slider.Track {...args}>
-          <Slider.Thumb aria-label="Level" color="#e0699f" />
+      <Slider.Root
+        className={sliderTheme.root}
+        value={value}
+        min={0}
+        max={100}
+        onChange={setValue}
+      >
+        <Slider.Track className={sliderTheme.track} {...args}>
+          <Slider.Thumb
+            className={sliderTheme.thumb}
+            aria-label="Level"
+            color="#e0699f"
+          />
         </Slider.Track>
       </Slider.Root>
     )

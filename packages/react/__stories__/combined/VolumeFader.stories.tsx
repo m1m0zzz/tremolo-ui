@@ -7,6 +7,7 @@ import { Slider } from '../../src/components/Slider'
 import { getRMS } from '../lib/dsp'
 
 import styles from '../styles/Slider.module.css'
+import sliderTheme from 'shared/css/Slider.module.css'
 
 export default {
   title: 'combined/VolumeFader',
@@ -78,6 +79,7 @@ export const VolumeFader = () => {
       </div>
 
       <Slider.Root
+        className={sliderTheme.root}
         value={volume}
         min={min}
         max={max}
@@ -92,6 +94,7 @@ export const VolumeFader = () => {
         wheel={['normalized', 0.1]}
       >
         <Slider.Track
+          className={sliderTheme.track}
           active="#555"
           inactive="#555"
           style={{
@@ -122,13 +125,44 @@ export const VolumeFader = () => {
             }}
           />
         </Slider.Track>
-        <Slider.Marks>
-          <Slider.MarksOption value={6} labelWidth={30} />
-          <Slider.MarksOption value={0} labelWidth={30} />
-          <Slider.MarksOption value={-6} labelWidth={30} />
-          <Slider.MarksOption value={-12} labelWidth={30} />
-          <Slider.MarksOption value={-24} labelWidth={30} />
-          <Slider.MarksOption value={-100} labelWidth={30} label="-inf" />
+        <Slider.Marks className={sliderTheme.marks}>
+          <Slider.MarksOption
+            className={sliderTheme.marksOption}
+            classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+            value={6}
+            labelWidth={30}
+          />
+          <Slider.MarksOption
+            className={sliderTheme.marksOption}
+            classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+            value={0}
+            labelWidth={30}
+          />
+          <Slider.MarksOption
+            className={sliderTheme.marksOption}
+            classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+            value={-6}
+            labelWidth={30}
+          />
+          <Slider.MarksOption
+            className={sliderTheme.marksOption}
+            classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+            value={-12}
+            labelWidth={30}
+          />
+          <Slider.MarksOption
+            className={sliderTheme.marksOption}
+            classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+            value={-24}
+            labelWidth={30}
+          />
+          <Slider.MarksOption
+            className={sliderTheme.marksOption}
+            classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+            value={-100}
+            labelWidth={30}
+            label="-inf"
+          />
         </Slider.Marks>
       </Slider.Root>
       <p>{volume <= -100 ? '-inf' : volume} dB</p>

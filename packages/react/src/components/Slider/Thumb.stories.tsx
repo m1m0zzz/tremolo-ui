@@ -3,6 +3,8 @@ import { useState } from 'react'
 
 import { Slider } from '.'
 
+import sliderTheme from 'shared/css/Slider.module.css'
+
 export default {
   title: 'Components/Slider/Thumb',
   component: Slider.Thumb,
@@ -28,9 +30,15 @@ export const Basic: Story = {
 
     return (
       <>
-        <Slider.Root value={value} min={0} max={100} onChange={setValue}>
-          <Slider.Track>
-            <Slider.Thumb {...args} />
+        <Slider.Root
+          className={sliderTheme.root}
+          value={value}
+          min={0}
+          max={100}
+          onChange={setValue}
+        >
+          <Slider.Track className={sliderTheme.track}>
+            <Slider.Thumb className={sliderTheme.thumb} {...args} />
           </Slider.Track>
         </Slider.Root>
         <p>value: {value}</p>
@@ -54,9 +62,15 @@ export const WithChildren: Story = {
     const [value, setValue] = useState(40)
 
     return (
-      <Slider.Root value={value} min={0} max={100} onChange={setValue}>
-        <Slider.Track>
-          <Slider.Thumb {...args} />
+      <Slider.Root
+        className={sliderTheme.root}
+        value={value}
+        min={0}
+        max={100}
+        onChange={setValue}
+      >
+        <Slider.Track className={sliderTheme.track}>
+          <Slider.Thumb className={sliderTheme.thumb} {...args} />
         </Slider.Track>
       </Slider.Root>
     )

@@ -5,6 +5,8 @@ import { Slider } from '../Slider'
 
 import { AnimationCanvas, AnimationCanvasProps } from '.'
 
+import sliderTheme from 'shared/css/Slider.module.css'
+
 export default {
   title: 'Components/AnimationCanvas',
   component: AnimationCanvas,
@@ -266,9 +268,15 @@ export const NoAnimate: Story = {
           }}
         >
           <span>hue</span>
-          <Slider.Root value={value} min={0} max={360} onChange={setValue}>
-            <Slider.Track>
-              <Slider.Thumb />
+          <Slider.Root
+            className={sliderTheme.root}
+            value={value}
+            min={0}
+            max={360}
+            onChange={setValue}
+          >
+            <Slider.Track className={sliderTheme.track}>
+              <Slider.Thumb className={sliderTheme.thumb} />
             </Slider.Track>
           </Slider.Root>
           <span>{value} deg</span>

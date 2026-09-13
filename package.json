@@ -35,6 +35,7 @@
     "packages/functions",
     "packages/dom",
     "packages/react",
+    "packages/shared",
     "site"
   ],
   "devDependencies": {

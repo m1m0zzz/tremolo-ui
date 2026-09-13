@@ -3,6 +3,9 @@ import { useState } from 'react'
 
 import { AnimationCanvas, Slider } from '@tremolo-ui/react'
 
+// Copy this file from the Styling page into your own project.
+import sliderTheme from './Slider.module.css'
+
 // expand end
 
 function App() {
@@ -29,9 +32,15 @@ function App() {
           }
         }}
       />
-      <Slider.Root value={hue} min={0} max={360} onChange={(v) => setHue(v)}>
-        <Slider.Track>
-          <Slider.Thumb aria-label="Hue" />
+      <Slider.Root
+        className={sliderTheme.root}
+        value={hue}
+        min={0}
+        max={360}
+        onChange={(v) => setHue(v)}
+      >
+        <Slider.Track className={sliderTheme.track}>
+          <Slider.Thumb className={sliderTheme.thumb} aria-label="Hue" />
         </Slider.Track>
       </Slider.Root>
     </div>

@@ -1,4 +1,4 @@
-import { themeCss } from '../theme'
+import { themeCss, themeModules } from '../theme'
 
 const main = `import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -197,6 +197,11 @@ export function createFiles(tremoloUIVersion: string): {
   return {
     'src/main.tsx': main,
     'src/tremolo.css': themeCss,
+    // The parts of the theme that are CSS Modules: the example imports them
+    // by name, so they sit next to App.tsx.
+    ...Object.fromEntries(
+      Object.entries(themeModules).map(([name, css]) => [`src/${name}`, css]),
+    ),
     'src/vite-env.d.ts': viteEnv,
     '.gitignore': gitIgnore,
     'eslint.config.js': eslintConfig,

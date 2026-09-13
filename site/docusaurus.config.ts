@@ -162,7 +162,6 @@ const config: Config = {
             './src/css/tremolo/NumberInput.css',
             './src/css/tremolo/Piano.css',
             './src/css/tremolo/PointsEditor.css',
-            './src/css/tremolo/Slider.css',
             './src/css/tremolo/XYPad.css',
           ],
         },

@@ -8,6 +8,8 @@ import {
 import { Slider, SliderMethods } from '../../src/components/Slider'
 import { XYPad, XYPadMethods } from '../../src/components/XYPad'
 
+import sliderTheme from 'shared/css/Slider.module.css'
+
 export default {
   title: 'combined/ControlFocus',
   tags: ['!autodocs'],
@@ -57,14 +59,15 @@ export const ControlFocus = () => {
           <NumberInput.InputField />
         </NumberInput.Root>
         <Slider.Root
+          className={sliderTheme.root}
           ref={refs.current.slider}
           value={value}
           min={0}
           max={100}
           onChange={(v) => setValue(v)}
         >
-          <Slider.Track>
-            <Slider.Thumb />
+          <Slider.Track className={sliderTheme.track}>
+            <Slider.Thumb className={sliderTheme.thumb} />
           </Slider.Track>
         </Slider.Root>
         <XYPad.Root

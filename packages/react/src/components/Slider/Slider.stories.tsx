@@ -7,6 +7,8 @@ import { NumberInput } from '../NumberInput'
 
 import { Slider } from '.'
 
+import sliderTheme from 'shared/css/Slider.module.css'
+
 export default {
   title: 'Components/Slider/Root',
   component: Slider.Root,
@@ -54,17 +56,20 @@ export const Basic: Story = {
     return (
       <>
         <Slider.Root
+          className={sliderTheme.root}
           {...args}
           value={value}
           onChange={(v) => setValue(v)}
           onDragStart={(v) => console.log('drag start: ', v)}
           onDragEnd={(v) => console.log('drag end: ', v)}
         >
-          <Slider.Track>{thumb && <Slider.Thumb />}</Slider.Track>
+          <Slider.Track className={sliderTheme.track}>
+            {thumb && <Slider.Thumb className={sliderTheme.thumb} />}
+          </Slider.Track>
           {/* A fixed interval, not `'step'`: over 0-100 with the default
               step of 1 that is 101 marks, and Controls can make `step`
               smaller still. */}
-          {marks && <Slider.Marks options={25} />}
+          {marks && <Slider.Marks className={sliderTheme.marks} options={25} />}
         </Slider.Root>
         <p>value: {value}</p>
       </>
@@ -102,9 +107,14 @@ export const SelectionSuppression: Story = {
           Drag the slider far into this text. With a mouse, text around the
           control should remain unselected throughout the gesture.
         </p>
-        <Slider.Root {...args} value={value} onChange={setValue}>
-          <Slider.Track style={{ width: 240 }}>
-            <Slider.Thumb />
+        <Slider.Root
+          className={sliderTheme.root}
+          {...args}
+          value={value}
+          onChange={setValue}
+        >
+          <Slider.Track className={sliderTheme.track} style={{ width: 240 }}>
+            <Slider.Thumb className={sliderTheme.thumb} />
           </Slider.Track>
         </Slider.Root>
         <p>
@@ -159,6 +169,7 @@ export const LogarithmicParameter: Story = {
           </NumberInput.Root>
         </div>
         <Slider.Root
+          className={sliderTheme.root}
           {...args}
           value={value}
           scale={curveScale(
@@ -166,8 +177,8 @@ export const LogarithmicParameter: Story = {
           )}
           onChange={(v) => setValue(v)}
         >
-          <Slider.Track>
-            <Slider.Thumb />
+          <Slider.Track className={sliderTheme.track}>
+            <Slider.Thumb className={sliderTheme.thumb} />
           </Slider.Track>
         </Slider.Root>
         <p>{value <= -100 ? '-inf' : value} dB</p>
@@ -187,6 +198,7 @@ export const CustomImage: Story = {
     return (
       <>
         <Slider.Root
+          className={sliderTheme.root}
           {...args}
           value={value}
           onChange={(v) => setValue(v)}
@@ -195,6 +207,7 @@ export const CustomImage: Story = {
           }}
         >
           <Slider.Track
+            className={sliderTheme.track}
             length={200}
             active="rgb(149,234,231)"
             style={{
@@ -204,6 +217,7 @@ export const CustomImage: Story = {
             {/* The thumb is one element: its own look is turned off so that
                 only the image shows. */}
             <Slider.Thumb
+              className={sliderTheme.thumb}
               style={{ background: 'none', width: 'auto', height: 'auto' }}
             >
               <img
@@ -260,17 +274,22 @@ export const Flex: Story = {
             item1
           </div>
           <Slider.Root
+            className={sliderTheme.root}
             {...args}
             value={value}
             onChange={(v) => setValue(v)}
             style={{ flex: '1 1 auto' }}
           >
             <Slider.Track
+              className={sliderTheme.track}
               style={{
                 width: '100%',
               }}
             >
-              <Slider.Thumb color="rgb(87, 71, 233)" />
+              <Slider.Thumb
+                className={sliderTheme.thumb}
+                color="rgb(87, 71, 233)"
+              />
             </Slider.Track>
           </Slider.Root>
           <div
@@ -310,6 +329,7 @@ export const Flex: Story = {
             item1
           </div>
           <Slider.Root
+            className={sliderTheme.root}
             {...args}
             value={value}
             onChange={(v) => setValue(v)}
@@ -318,11 +338,12 @@ export const Flex: Story = {
             style={{ flex: '1 1 auto' }}
           >
             <Slider.Track
+              className={sliderTheme.track}
               style={{
                 height: '100%',
               }}
             >
-              <Slider.Thumb />
+              <Slider.Thumb className={sliderTheme.thumb} />
             </Slider.Track>
           </Slider.Root>
           <div
@@ -361,39 +382,90 @@ export const ConfigScale: Story = {
       <>
         <section style={{ marginBottom: '2rem' }}>
           <Slider.Root
+            className={sliderTheme.root}
             {...args}
             value={value}
             onChange={(v) => setValue(v)}
             vertical
           >
-            <Slider.Track>
-              <Slider.Thumb />
+            <Slider.Track className={sliderTheme.track}>
+              <Slider.Thumb className={sliderTheme.thumb} />
             </Slider.Track>
-            <Slider.Marks>
-              <Slider.MarksOption value={0} />
-              <Slider.MarksOption value={25} label={null} />
-              <Slider.MarksOption value={50} />
-              <Slider.MarksOption value={75} label={null} />
-              <Slider.MarksOption value={100} />
+            <Slider.Marks className={sliderTheme.marks}>
+              <Slider.MarksOption
+                className={sliderTheme.marksOption}
+                classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+                value={0}
+              />
+              <Slider.MarksOption
+                className={sliderTheme.marksOption}
+                classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+                value={25}
+                label={null}
+              />
+              <Slider.MarksOption
+                className={sliderTheme.marksOption}
+                classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+                value={50}
+              />
+              <Slider.MarksOption
+                className={sliderTheme.marksOption}
+                classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+                value={75}
+                label={null}
+              />
+              <Slider.MarksOption
+                className={sliderTheme.marksOption}
+                classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+                value={100}
+              />
             </Slider.Marks>
           </Slider.Root>
           <p>value: {value}</p>
         </section>
         <section style={{ marginBottom: '2rem' }}>
-          <Slider.Root {...args} value={value2} onChange={(v) => setValue2(v)}>
-            <Slider.Track>
-              <Slider.Thumb />
+          <Slider.Root
+            className={sliderTheme.root}
+            {...args}
+            value={value2}
+            onChange={(v) => setValue2(v)}
+          >
+            <Slider.Track className={sliderTheme.track}>
+              <Slider.Thumb className={sliderTheme.thumb} />
             </Slider.Track>
-            <Slider.Marks gap={0} style={{ height: 42 }}>
+            <Slider.Marks
+              className={sliderTheme.marks}
+              gap={0}
+              style={{ height: 42 }}
+            >
               <Slider.MarksOption
+                className={sliderTheme.marksOption}
+                classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
                 value={0}
                 length="1rem"
                 styles={{ label: { color: 'red' } }}
               />
-              <Slider.MarksOption value={25} label={null} />
-              <Slider.MarksOption value={50} length="0.75rem" />
-              <Slider.MarksOption value={75} label={null} />
               <Slider.MarksOption
+                className={sliderTheme.marksOption}
+                classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+                value={25}
+                label={null}
+              />
+              <Slider.MarksOption
+                className={sliderTheme.marksOption}
+                classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+                value={50}
+                length="0.75rem"
+              />
+              <Slider.MarksOption
+                className={sliderTheme.marksOption}
+                classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
+                value={75}
+                label={null}
+              />
+              <Slider.MarksOption
+                className={sliderTheme.marksOption}
+                classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
                 value={100}
                 length="1rem"
                 styles={{ label: { color: 'blue' } }}
@@ -404,6 +476,7 @@ export const ConfigScale: Story = {
         </section>
         <section style={{ marginBottom: '2rem' }}>
           <Slider.Root
+            className={sliderTheme.root}
             {...args}
             value={value3}
             // The step is what `options={{ per: 'step' }}` reads.
@@ -413,10 +486,13 @@ export const ConfigScale: Story = {
             onChange={(v) => setValue3(v)}
             vertical
           >
-            <Slider.Track>
-              <Slider.Thumb />
+            <Slider.Track className={sliderTheme.track}>
+              <Slider.Thumb className={sliderTheme.thumb} />
             </Slider.Track>
-            <Slider.Marks options={{ per: 'step', mark: false }} />
+            <Slider.Marks
+              className={sliderTheme.marks}
+              options={{ per: 'step', mark: false }}
+            />
           </Slider.Root>
           <p>value: {value3}</p>
         </section>
