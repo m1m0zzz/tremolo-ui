@@ -1,0 +1,275 @@
+/*
+ * The pad from `combined/DJFilterPad`. The thumb's position arrives as `--x`
+ * and `--y` (0–1 across the area), and the circles and the border both follow
+ * it. `data-pressed` is on the pad while the pad is held down; let go, the
+ * story puts the value back at the centre and the pad glides there.
+ */
+
+/* Registered so that they can be transitioned: an unregistered custom
+   property jumps to its new value. */
+@property --x {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0.5;
+}
+
+@property --y {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0.5;
+}
+
+/* How far the thumb's own wave has spread, 0–1. A background cannot be
+   scaled the way the rings are, so its size and fade are worked out from
+   this instead. */
+@property --wave {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+.pad {
+  --thumb-size: 40px;
+  --area-width: 200px;
+  --area-height: 120px;
+  --border-width: 2px;
+  /* The room around the area. The circles are placed from it, so it is kept
+     here rather than written into `.root` alone. */
+  --margin: 16px;
+  --circle-size: 80px;
+
+  --surface: white;
+  --circle-outer: rgb(220, 114, 255);
+  --circle-inner: rgb(110, 48, 255);
+  --border: rgb(171, 146, 234);
+  --border-near: rgb(83, 19, 234);
+  --thumb-color: rgb(138, 104, 217);
+
+  /* The grid of dots on the surface, and how far the circles are blurred
+     before they are seen through it. */
+  --dot: transparent;
+  --dot-radius: 1px;
+  --dot-gap: 11px;
+  /* A triangular lattice: each tile holds two dots, half a gap and half a
+     row apart, so every dot is one gap from its six neighbours. */
+  --dot-tile: var(--dot-gap) calc(var(--dot-gap) * 1.7320508);
+  --blur: 32px;
+
+  /* The thumb's centre, measured from the inside of the border. */
+  --cx: calc(var(--margin) + var(--x) * var(--area-width));
+  --cy: calc(var(--margin) + var(--y) * var(--area-height));
+
+  display: inline-block;
+  padding: var(--border-width);
+  border-radius: 10px;
+  /* The border is this background showing around the surface, so darkening
+     it near the thumb is a gradient centred on the thumb. */
+  background: radial-gradient(
+    circle var(--circle-size) at calc(var(--border-width) + var(--cx))
+      calc(var(--border-width) + var(--cy)),
+    var(--border-near),
+    var(--border)
+  );
+
+  /* Only on the way back: while held, the circles follow the pointer. */
+  &:not([data-pressed]) {
+    transition:
+      --x 200ms ease-out,
+      --y 200ms ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.surface {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: var(--surface);
+}
+
+/* Two flat circles, one inside the other, that only open while pressed. */
+.circles {
+  position: absolute;
+  left: var(--cx);
+  top: var(--cy);
+  width: var(--circle-size);
+  height: var(--circle-size);
+  translate: -50% -50%;
+  scale: 0;
+  transition: scale 200ms ease-out;
+  filter: blur(var(--blur));
+  pointer-events: none;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+  }
+
+  &::before {
+    inset: 0;
+    background-color: var(--circle-outer);
+  }
+
+  &::after {
+    inset: 25%;
+    background-color: var(--circle-inner);
+  }
+
+  .pad[data-pressed] & {
+    scale: 1;
+  }
+}
+
+/* A triangular lattice of faint dots over the whole surface. */
+.dots,
+.glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.dots {
+  background-image:
+    radial-gradient(
+      circle at 25% 25%,
+      var(--dot) var(--dot-radius),
+      transparent calc(var(--dot-radius) + 0.5px)
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      var(--dot) var(--dot-radius),
+      transparent calc(var(--dot-radius) + 0.5px)
+    );
+  background-size: var(--dot-tile);
+}
+
+/* The blurred circles, seen only through the same grid: where they are, the
+   dots light up in their colours. The mask is on this layer, which covers the
+   whole surface, so the dots stay in place as the circles move under them. */
+.glow {
+  mask-image:
+    radial-gradient(
+      circle at 25% 25%,
+      black var(--dot-radius),
+      transparent calc(var(--dot-radius) + 0.5px)
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      black var(--dot-radius),
+      transparent calc(var(--dot-radius) + 0.5px)
+    );
+  mask-size: var(--dot-tile);
+}
+
+.root {
+  display: block;
+  margin: var(--margin);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.area {
+  width: var(--area-width);
+  height: var(--area-height);
+}
+
+.thumb {
+  width: var(--thumb-size);
+  height: var(--thumb-size);
+  border-radius: 50%;
+  outline: none;
+  /* The same wave as the rings below, drawn as a background: from a quarter
+     of the thumb to all of it, fading out on the way. */
+  --wave-radius: calc(var(--thumb-size) / 2 * (0.25 + 0.75 * var(--wave)));
+  background: radial-gradient(
+    circle,
+    color-mix(
+        in srgb,
+        var(--thumb-color) calc((1 - var(--wave)) * 100%),
+        transparent
+      )
+      var(--wave-radius),
+    transparent calc(var(--wave-radius) + 0.5px)
+  );
+  animation: wave 2s ease-out infinite;
+  /* Shown only while the pad is held down, like the circles. */
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+
+  .pad[data-pressed] & {
+    opacity: 1;
+  }
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--thumb-color);
+    border-radius: 50%;
+    animation: ripple 2s ease-out infinite;
+    pointer-events: none;
+  }
+
+  /* Three waves a third of a period apart: the background, then the rings. */
+  &::before {
+    animation-delay: -0.667s;
+  }
+
+  &::after {
+    animation-delay: -1.333s;
+  }
+
+  /* The same glide back as the pad's `--x` / `--y`, while it fades out. */
+  .pad:not([data-pressed]) & {
+    transition:
+      left 200ms ease-out,
+      top 200ms ease-out,
+      opacity 200ms ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Both selectors, or the glide above would outrank this. */
+    &,
+    .pad:not([data-pressed]) & {
+      transition: none;
+    }
+
+    & {
+      animation: none;
+    }
+
+    &::before,
+    &::after {
+      animation: none;
+      opacity: 0;
+    }
+  }
+}
+
+@keyframes ripple {
+  from {
+    scale: 0.25;
+    opacity: 1;
+  }
+
+  to {
+    scale: 1;
+    opacity: 0;
+  }
+}
+
+@keyframes wave {
+  from {
+    --wave: 0;
+  }
+
+  to {
+    --wave: 1;
+  }
+}
