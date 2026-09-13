@@ -88,7 +88,7 @@ export interface PianoProps {
   glissando?: boolean
 
   /**
-   * Highest note that can sound. Keys above it are drawn `aria-disabled`.
+   * Highest note that can sound. Keys above it carry `data-disabled`.
    *
    * @default 127
    */
@@ -385,7 +385,7 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
       <div
         ref={setNode}
         className={cx('tremolo-piano', className)}
-        data-fill={fill}
+        data-fill={fill || undefined}
         role="group"
         // The group can own keyboard shortcuts and must receive focus.
         // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
@@ -423,8 +423,8 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
               className={cx(`tremolo-piano-${keyType}-key`, keyClassName)}
               data-note={note}
               data-note-key={noteKey(note)}
-              data-active={state.active}
-              aria-disabled={state.disabled}
+              data-active={state.active || undefined}
+              data-disabled={state.disabled || undefined}
               {...rest}
               style={{
                 ...keyStyle,

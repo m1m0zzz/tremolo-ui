@@ -63,19 +63,13 @@ describe('appearance props write custom properties', () => {
   })
 
   test('data-flipped says which end the value grows from', () => {
-    expect(renderSlider().getAttribute('data-flipped')).toBe('false')
-    expect(renderSlider({ vertical: true }).getAttribute('data-flipped')).toBe(
-      'true',
-    )
-    expect(renderSlider({ reverse: true }).getAttribute('data-flipped')).toBe(
-      'true',
-    )
+    expect(renderSlider()).not.toHaveAttribute('data-flipped')
+    expect(renderSlider({ vertical: true })).toHaveAttribute('data-flipped')
+    expect(renderSlider({ reverse: true })).toHaveAttribute('data-flipped')
     // Both at once cancel out: the value grows the ordinary way again.
-    expect(
-      renderSlider({ vertical: true, reverse: true }).getAttribute(
-        'data-flipped',
-      ),
-    ).toBe('false')
+    expect(renderSlider({ vertical: true, reverse: true })).not.toHaveAttribute(
+      'data-flipped',
+    )
   })
 
   test('the track no longer paints itself', () => {

@@ -112,7 +112,7 @@ describe('Slider input guards', () => {
     fireEvent.wheel(root, { deltaY: -1 })
 
     expect(onChange).not.toHaveBeenCalled()
-    expect(root).toHaveAttribute('data-disabled', 'true')
+    expect(root).toHaveAttribute('data-disabled')
     expect(input).toBeDisabled()
   })
 

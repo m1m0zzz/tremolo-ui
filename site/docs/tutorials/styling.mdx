@@ -40,22 +40,28 @@ theme below lists all of them.
 ## 🚦State
 
 State is on the element as an attribute, not as an extra class, so it is a
-selector away.
+selector away. **A state that is off leaves no attribute behind**, so the
+attribute alone is the selector — there is no `="false"` to match by mistake.
 
 | Attribute | Where | Meaning |
 | --- | --- | --- |
-| `[aria-disabled="true"]` | every component | `disabled` is set |
-| `[aria-readonly="true"]` | every component | `readonly` is set |
-| `[data-dragging="true"]` | `Knob`, `PointsEditor.Point` | a drag is in progress |
+| `[data-disabled]` | every component | `disabled` is set |
+| `[data-readonly]` | every component | `readonly` is set |
+| `[data-dragging]` | `Knob`, `PointsEditor.Point` | a drag is in progress |
 | `[data-orientation="vertical\|horizontal"]` | `Slider`, `Slider.Track`, `Slider.Marks`, `Slider.MarksOption` | which way the slider runs |
-| `[data-flipped="true"]` | `Slider.Track` | the value grows from the far end (`vertical` or `reverse`, not both) |
-| `[data-active="true"]` | `Piano` keys | the note is sounding |
-| `[data-out-of-range="true"]` | `NumberInput.InputField` | the value is outside `min`/`max` |
-| `[data-fill="true"]` | `Piano` | `fill` is set |
-| `[data-selected="true"]` | `PointsEditor.Point` | the point is in the selection |
+| `[data-flipped]` | `Slider.Track` | the value grows from the far end (`vertical` or `reverse`, not both) |
+| `[data-active]` | `Piano` keys | the note is sounding |
+| `[data-out-of-range]` | `NumberInput.InputField` | the value is outside `min`/`max` |
+| `[data-fill]` | `Piano` | `fill` is set |
+| `[data-selected]` | `PointsEditor.Point` | the point is in the selection |
+
+The controls that are one in their own right — `Knob`, `NumberInput.InputField`,
+the steppers, and the range inputs inside a thumb — carry the matching ARIA as
+well (`aria-disabled`, `aria-readonly`). Those say what the control *is*;
+the `data-` attributes above are what the styles read.
 
 ```css
-.tremolo-slider[data-disabled='true'] {
+.tremolo-slider[data-disabled] {
   opacity: 0.5;
 }
 ```

@@ -99,12 +99,12 @@ export interface PointsEditorProps {
 
   /**
    * Make the points unchangeable and remove them from the tab order.
-   * aria-disabled property is also applied.
+   * The parts carry `data-disabled` while it is set.
    */
   disabled?: boolean
   /**
    * Make the points unmovable.
-   * aria-readonly property is also applied.
+   * The parts carry `data-readonly` while it is set.
    */
   readonly?: boolean
 
@@ -497,8 +497,8 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         <div
           ref={forwardedRef}
           className={cx('tremolo-points-editor', className)}
-          aria-disabled={disabled}
-          aria-readonly={readonly}
+          data-disabled={disabled || undefined}
+          data-readonly={readonly || undefined}
           style={
             {
               '--width': cssLength(width),

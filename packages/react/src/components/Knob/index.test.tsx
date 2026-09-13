@@ -71,7 +71,7 @@ describe('Knob input guards', () => {
     useEveryInput(knob)
 
     expect(onChange).not.toHaveBeenCalled()
-    expect(knob).toHaveAttribute('aria-disabled', 'true')
+    expect(knob).toHaveAttribute('data-disabled')
     expect(knob).toHaveAttribute('tabindex', '-1')
   })
 
@@ -81,7 +81,7 @@ describe('Knob input guards', () => {
     fireEvent.doubleClick(knob)
 
     expect(onChange).not.toHaveBeenCalled()
-    expect(knob).toHaveAttribute('aria-readonly', 'true')
+    expect(knob).toHaveAttribute('data-readonly')
     expect(knob).toHaveAttribute('tabindex', '0')
   })
 

@@ -129,7 +129,7 @@ describe('Piano', () => {
       )
     })
     expect(onPlayNote).toHaveBeenCalledWith(noteNumber('C3'), undefined)
-    expect(key(noteNumber('C3')).getAttribute('data-active')).toBe('true')
+    expect(key(noteNumber('C3'))).toHaveAttribute('data-active')
 
     act(() => {
       piano.dispatchEvent(
@@ -137,7 +137,7 @@ describe('Piano', () => {
       )
     })
     expect(onStopNote).toHaveBeenCalledWith(noteNumber('C3'))
-    expect(key(noteNumber('C3')).getAttribute('data-active')).toBe('false')
+    expect(key(noteNumber('C3'))).not.toHaveAttribute('data-active')
   })
 
   test('a black key wins where it overlaps a white one', () => {
@@ -171,9 +171,9 @@ describe('Piano', () => {
       )
     })
 
-    expect(key(noteNumber('C3')).getAttribute('data-active')).toBe('true')
-    expect(key(noteNumber('G3')).getAttribute('data-active')).toBe('true')
-    expect(key(noteNumber('D3')).getAttribute('data-active')).toBe('false')
+    expect(key(noteNumber('C3'))).toHaveAttribute('data-active')
+    expect(key(noteNumber('G3'))).toHaveAttribute('data-active')
+    expect(key(noteNumber('D3'))).not.toHaveAttribute('data-active')
   })
 
   test('keyboard shortcuts play notes', () => {
@@ -189,7 +189,7 @@ describe('Piano', () => {
       dispatchKey(piano, 'keydown', 'a')
     })
     expect(onPlayNote).toHaveBeenCalledWith(noteNumber('C3'), undefined)
-    expect(key(noteNumber('C3')).getAttribute('data-active')).toBe('true')
+    expect(key(noteNumber('C3'))).toHaveAttribute('data-active')
 
     act(() => {
       dispatchKey(piano, 'keyup', 'a')
@@ -353,7 +353,7 @@ describe('Piano', () => {
 
     act(() => ref.current?.playNote(noteNumber('E3'), 0.8))
     expect(onPlayNote).toHaveBeenCalledWith(noteNumber('E3'), 0.8)
-    expect(key(noteNumber('E3')).getAttribute('data-active')).toBe('true')
+    expect(key(noteNumber('E3'))).toHaveAttribute('data-active')
 
     act(() => ref.current?.stopNote(noteNumber('E3')))
     expect(onStopNote).toHaveBeenCalledWith(noteNumber('E3'))
@@ -372,7 +372,7 @@ describe('Piano', () => {
 
     act(() => ref.current?.stopNote(noteNumber('C3')))
     expect(onStopNote).not.toHaveBeenCalled()
-    expect(key(noteNumber('C3')).getAttribute('data-active')).toBe('true')
+    expect(key(noteNumber('C3'))).toHaveAttribute('data-active')
 
     act(() => {
       piano.dispatchEvent(
@@ -385,8 +385,8 @@ describe('Piano', () => {
   test('midiMax disables the keys above it', () => {
     const { onPlayNote, ref } = setup({ midiMax: noteNumber('C4') })
 
-    expect(key(noteNumber('C4')).getAttribute('aria-disabled')).toBe('false')
-    expect(key(noteNumber('C#4')).getAttribute('aria-disabled')).toBe('true')
+    expect(key(noteNumber('C4'))).not.toHaveAttribute('data-disabled')
+    expect(key(noteNumber('C#4'))).toHaveAttribute('data-disabled')
 
     act(() => ref.current?.playNote(noteNumber('C#4')))
     expect(onPlayNote).not.toHaveBeenCalled()
@@ -428,11 +428,11 @@ describe('Piano', () => {
       }),
     })
 
-    expect(key(noteNumber('D3')).getAttribute('data-in-scale')).toBe('true')
-    expect(key(noteNumber('F#3')).getAttribute('data-in-scale')).toBe('true')
-    expect(key(noteNumber('F3')).getAttribute('data-in-scale')).toBe('false')
+    expect(key(noteNumber('D3'))).toHaveAttribute('data-in-scale', 'true')
+    expect(key(noteNumber('F#3'))).toHaveAttribute('data-in-scale', 'true')
+    expect(key(noteNumber('F3'))).toHaveAttribute('data-in-scale', 'false')
     // Octave independent.
-    expect(key(noteNumber('F#4')).getAttribute('data-in-scale')).toBe('true')
+    expect(key(noteNumber('F#4'))).toHaveAttribute('data-in-scale', 'true')
   })
 
   test('keyProps cannot move a key away from where it responds', () => {

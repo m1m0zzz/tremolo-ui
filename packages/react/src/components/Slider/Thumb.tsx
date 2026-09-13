@@ -91,8 +91,8 @@ export const Thumb = /* @__PURE__ */ forwardRef<SliderThumbMethods, Props>(
     return (
       <div
         className={cx('tremolo-slider-thumb', className)}
-        aria-disabled={disabled}
-        aria-readonly={readonly}
+        data-disabled={disabled || undefined}
+        data-readonly={readonly || undefined}
         {...props}
         style={{
           ...{ '--color': color },

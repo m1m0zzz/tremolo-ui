@@ -31,9 +31,7 @@
       color-mix(in srgb, var(--active-color) 10%, transparent);
   }
 
-  &:not(:focus-within):has(
-      .tremolo-number-input-field[data-out-of-range='true']
-    ) {
+  &:not(:focus-within):has(.tremolo-number-input-field[data-out-of-range]) {
     border-color: oklch(64.245% 0.21266 25.499);
   }
 
@@ -56,7 +54,7 @@
   outline: none;
   appearance: none;
 
-  &[aria-readonly='true'] {
+  &[data-readonly] {
     cursor: not-allowed;
   }
 }
@@ -101,12 +99,12 @@
   user-select: none;
   cursor: pointer;
 
-  &[aria-disabled='false']:active {
+  &:not([data-disabled]):active {
     background-color: oklch(37.798% 0.03812 254.612 / 0.055);
   }
 
-  &[aria-disabled='true'],
-  &[aria-readonly='true'] {
+  &[data-disabled],
+  &[data-readonly] {
     cursor: not-allowed;
   }
 }

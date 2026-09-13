@@ -204,7 +204,7 @@ describe('PointsEditor', () => {
   test('readonly on Root reaches the points', () => {
     const { point, onChange } = setup({ readonly: true })
 
-    expect(point.getAttribute('aria-readonly')).toBe('true')
+    expect(point).toHaveAttribute('data-readonly')
     expect(pointInput(point, 'x')).not.toBeDisabled()
     expect(pointInput(point, 'y')).not.toBeDisabled()
     drag(point, { clientX: 50, clientY: 25 })
@@ -217,7 +217,7 @@ describe('PointsEditor', () => {
       point: { readonly: false },
     })
 
-    expect(point.getAttribute('aria-readonly')).toBe('false')
+    expect(point).not.toHaveAttribute('data-readonly')
     drag(point, { clientX: 50, clientY: 25 })
     expect(onChange).toHaveBeenCalled()
   })
@@ -225,7 +225,7 @@ describe('PointsEditor', () => {
   test('disabled reaches the points and leaves every input inert', () => {
     const { point, onChange } = setup({ disabled: true })
 
-    expect(point.getAttribute('aria-disabled')).toBe('true')
+    expect(point).toHaveAttribute('data-disabled')
     drag(point, { clientX: 50, clientY: 25 })
     keyDown(point, 'ArrowRight')
     act(() => pointInput(point, 'x').focus())
@@ -242,7 +242,7 @@ describe('PointsEditor', () => {
       point: { disabled: false },
     })
 
-    expect(point.getAttribute('aria-disabled')).toBe('false')
+    expect(point).not.toHaveAttribute('data-disabled')
     drag(point, { clientX: 50, clientY: 25 })
     expect(onChange).toHaveBeenCalled()
   })

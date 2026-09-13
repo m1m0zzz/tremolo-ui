@@ -133,12 +133,12 @@ export interface NumberInputProps {
 
   /**
    * Make the input unchangeable and remove it from the tab order.
-   * aria-disabled property is also applied.
+   * The parts carry `data-disabled` while it is set.
    */
   disabled?: boolean
   /**
    * Make the value unchangeable.
-   * aria-readonly property is also applied.
+   * The parts carry `data-readonly` while it is set.
    */
   readonly?: boolean
 
@@ -414,8 +414,8 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         <div
           ref={wheelRefCallback}
           className={cx('tremolo-number-input', className)}
-          aria-disabled={disabled}
-          aria-readonly={readonly}
+          data-disabled={disabled || undefined}
+          data-readonly={readonly || undefined}
           style={style}
           {...props}
         >

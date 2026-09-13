@@ -79,8 +79,8 @@ export const Thumb = /* @__PURE__ */ forwardRef<XYPadThumbMethods, Props>(
     return (
       <div
         className={cx('tremolo-xy-pad-thumb', className)}
-        aria-disabled={disabled}
-        aria-readonly={readonly}
+        data-disabled={disabled || undefined}
+        data-readonly={readonly || undefined}
         {...props}
         style={{
           ...{ '--color': color },

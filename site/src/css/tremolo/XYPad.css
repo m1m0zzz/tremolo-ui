@@ -8,7 +8,7 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 
-  &[data-readonly='true'] {
+  &[data-readonly] {
     cursor: not-allowed;
   }
 }
@@ -47,7 +47,7 @@
   outline: none;
   background-color: var(--color);
 
-  &[aria-disabled='true'] {
+  &[data-disabled] {
     background-color: oklch(50.462% 0.03307 270.021);
   }
 

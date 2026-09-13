@@ -107,12 +107,12 @@ export interface SliderProps {
 
   /**
    * Make the slider unchangeable and remove it from the tab order.
-   * aria-disabled property is also applied.
+   * The parts carry `data-disabled` while it is set.
    */
   disabled?: boolean
   /**
    * Make the value unchangeable.
-   * aria-readonly property is also applied.
+   * The parts carry `data-readonly` while it is set.
    */
   readonly?: boolean
   className?: string
@@ -325,8 +325,8 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
           // focus here keeps it inside, and `onFocus` passes it to the input.
           tabIndex={-1}
           data-orientation={vertical ? 'vertical' : 'horizontal'}
-          data-disabled={disabled}
-          data-readonly={readonly}
+          data-disabled={disabled || undefined}
+          data-readonly={readonly || undefined}
           style={style}
           onPointerDown={onPointerDown}
           onKeyDown={(event) => {

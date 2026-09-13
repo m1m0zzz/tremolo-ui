@@ -16,11 +16,11 @@
   cursor: grab;
   outline: 0;
 
-  &[aria-readonly='true'] {
+  &[data-readonly] {
     cursor: not-allowed;
   }
 
-  &[data-dragging='true'] {
+  &[data-dragging] {
     cursor: inherit;
   }
 }
@@ -32,7 +32,7 @@
     color: oklch(59.5% 0.17548 266.373);
   }
 
-  :where(.tremolo-knob[aria-disabled='true']) & {
+  :where(.tremolo-knob[data-disabled]) & {
     color: oklch(50.5% 0.03307 270.021);
   }
 }
