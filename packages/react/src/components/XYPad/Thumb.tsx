@@ -97,7 +97,7 @@ export const Thumb = /* @__PURE__ */ forwardRef<XYPadThumbMethods, Props>(
             key={axis}
             ref={axis === 0 ? xInputRef : yInputRef}
             className={`tremolo-xy-pad-${axis === 0 ? 'x' : 'y'}-input`}
-            data-axis={axis}
+            data-axis={axis === 0 ? 'x' : 'y'}
             value={value[axis]}
             min={min[axis]}
             max={max[axis]}

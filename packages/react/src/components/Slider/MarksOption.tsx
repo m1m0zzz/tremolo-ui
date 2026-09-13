@@ -86,14 +86,14 @@ export function MarksOption({
           ...style,
         } as CSSProperties
       }
-      data-vertical={vertical}
+      data-orientation={vertical ? 'vertical' : 'horizontal'}
       {...props}
     >
       {mark && (
         <div
           className={cx('tremolo-slider-marks-option-mark', classes?.mark)}
           style={styles?.mark}
-          data-vertical={vertical}
+          data-orientation={vertical ? 'vertical' : 'horizontal'}
         ></div>
       )}
       {label !== null && (
