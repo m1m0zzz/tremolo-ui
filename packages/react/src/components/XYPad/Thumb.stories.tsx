@@ -15,8 +15,8 @@ type Story = StoryObj<typeof XYPad.Thumb>
 
 /**
  * The thumb carries the pad's semantics: a range input per axis lives inside
- * it, which is where the focus, the values and the accessible names sit. The
- * names come from `ariaLabels` on `Root`, since there are two of them.
+ * it, which is where the focus, the values and the accessible names sit.
+ * `aria-label` takes one name per axis, since there are two inputs.
  */
 export const Basic: Story = {
   args: {
@@ -27,15 +27,9 @@ export const Basic: Story = {
 
     return (
       <>
-        <XYPad.Root
-          ariaLabels={['X position', 'Y position']}
-          value={value}
-          min={0}
-          max={100}
-          onChange={setValue}
-        >
+        <XYPad.Root value={value} min={0} max={100} onChange={setValue}>
           <XYPad.Area>
-            <XYPad.Thumb {...args} />
+            <XYPad.Thumb aria-label={['X position', 'Y position']} {...args} />
           </XYPad.Area>
         </XYPad.Root>
         <p>
@@ -59,15 +53,9 @@ export const WithChildren: Story = {
     const [value, setValue] = useState<[number, number]>([50, 50])
 
     return (
-      <XYPad.Root
-        ariaLabels={['X position', 'Y position']}
-        value={value}
-        min={0}
-        max={100}
-        onChange={setValue}
-      >
+      <XYPad.Root value={value} min={0} max={100} onChange={setValue}>
         <XYPad.Area>
-          <XYPad.Thumb {...args} />
+          <XYPad.Thumb aria-label={['X position', 'Y position']} {...args} />
         </XYPad.Area>
       </XYPad.Root>
     )

@@ -44,12 +44,15 @@ type SubjectProps = Omit<
 > & {
   initial?: XY<number>
   onChange?: (value: XY<number>) => void
+  /** Props for the thumb, where the two range inputs live. */
+  thumb?: Partial<React.ComponentProps<typeof XYPad.Thumb>>
 }
 
 function Subject({
   initial = [50, 50],
   onChange,
   ref,
+  thumb,
   ...props
 }: SubjectProps & { ref?: React.Ref<XYPadMethods> }) {
   const [value, setValue] = useState<XY<number>>(initial)
@@ -68,7 +71,7 @@ function Subject({
       }}
     >
       <XYPad.Area data-testid="area">
-        <XYPad.Thumb data-testid="thumb" />
+        <XYPad.Thumb data-testid="thumb" {...thumb} />
       </XYPad.Area>
     </XYPad.Root>
   )
@@ -115,7 +118,7 @@ describe('XYPad', () => {
   test('exposes one named range input for each axis', () => {
     const { onChange, root } = setup({
       'aria-label': 'Position',
-      ariaLabels: ['Pan', 'Tilt'],
+      thumb: { 'aria-label': ['Pan', 'Tilt'] as [string, string] },
     })
     const x = screen.getByRole('slider', { name: 'Pan' })
     const y = screen.getByRole('slider', { name: 'Tilt' })
@@ -129,6 +132,14 @@ describe('XYPad', () => {
 
     fireEvent.change(y, { target: { value: '75' } })
     expect(onChange).toHaveBeenLastCalledWith([50, 75])
+  })
+
+  test('one name covers both axes, and a pair names them apart', () => {
+    setup({ thumb: { 'aria-label': 'Position' } })
+
+    // A single string is written to both inputs, which is rarely what a
+    // caller wants — hence the pair — but it is what they asked for.
+    expect(screen.getAllByRole('slider', { name: 'Position' })).toHaveLength(2)
   })
 
   test('each input says which axis it is', () => {

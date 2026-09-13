@@ -29,15 +29,9 @@ export const Basic: Story = {
 
     return (
       <>
-        <XYPad.Root
-          ariaLabels={['X position', 'Y position']}
-          value={value}
-          min={0}
-          max={100}
-          onChange={setValue}
-        >
+        <XYPad.Root value={value} min={0} max={100} onChange={setValue}>
           <XYPad.Area {...args}>
-            <XYPad.Thumb />
+            <XYPad.Thumb aria-label={['X position', 'Y position']} />
           </XYPad.Area>
         </XYPad.Root>
         <p>
@@ -61,13 +55,7 @@ export const WithBackdrop: Story = {
     const [value, setValue] = useState<[number, number]>([50, 50])
 
     return (
-      <XYPad.Root
-        ariaLabels={['X position', 'Y position']}
-        value={value}
-        min={0}
-        max={100}
-        onChange={setValue}
-      >
+      <XYPad.Root value={value} min={0} max={100} onChange={setValue}>
         <XYPad.Area {...args}>
           <svg
             viewBox="0 0 100 100"
@@ -86,7 +74,7 @@ export const WithBackdrop: Story = {
               opacity="0.3"
             />
           </svg>
-          <XYPad.Thumb />
+          <XYPad.Thumb aria-label={['X position', 'Y position']} />
         </XYPad.Area>
       </XYPad.Root>
     )

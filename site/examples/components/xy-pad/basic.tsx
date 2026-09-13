@@ -12,7 +12,6 @@ function App() {
   return (
     <div>
       <XYPad.Root
-        ariaLabels={['X position', 'Y position']}
         value={[valueX, valueY]}
         min={0}
         max={100}
@@ -22,7 +21,7 @@ function App() {
         }}
       >
         <XYPad.Area>
-          <XYPad.Thumb />
+          <XYPad.Thumb aria-label={['X position', 'Y position']} />
         </XYPad.Area>
       </XYPad.Root>
       <p>

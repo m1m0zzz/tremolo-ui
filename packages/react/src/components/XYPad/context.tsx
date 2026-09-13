@@ -18,8 +18,6 @@ export type XYPadContextValue = {
   disabled: boolean
   readonly: boolean
   onChange?: (value: XY<number>) => void
-  ariaLabels: XY<string>
-  ariaValueText?: XY<string>
 
   /**
    * Position of the thumb, 0-100 per axis, already accounting for `reverse`.
