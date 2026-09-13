@@ -21,6 +21,7 @@ function SliderSubject({
   const [value, setValue] = useState(initial)
   return (
     <Slider.Root
+      data-testid="slider"
       min={0}
       max={10}
       {...props}
@@ -30,7 +31,7 @@ function SliderSubject({
         onChange?.(v)
       }}
     >
-      <Slider.Track>
+      <Slider.Track data-testid="track">
         <Slider.Thumb />
       </Slider.Track>
     </Slider.Root>
@@ -76,7 +77,7 @@ describe('shift as the fine-adjustment key', () => {
     // The wheel listener sits on the root and only acts while the focus is
     // inside, so the thumb has to take it first.
     slider().focus()
-    fireEvent.wheel(container.querySelector('.tremolo-slider')!, {
+    fireEvent.wheel(container.querySelector('[data-testid="slider"]')!, {
       deltaY: -1,
       shiftKey: true,
     })
@@ -119,6 +120,7 @@ describe('the same default reaches the other components', () => {
       const [value, setValue] = useState(5)
       return (
         <Knob.Root
+          data-testid="knob"
           min={0}
           max={10}
           value={value}
@@ -153,6 +155,7 @@ describe('the wheel on a two-dimensional control', () => {
     const [value, setValue] = useState<[number, number]>([5, 5])
     return (
       <XYPad.Root
+        data-testid="xy-pad"
         min={0}
         max={10}
         value={value}
@@ -170,8 +173,8 @@ describe('the wheel on a two-dimensional control', () => {
 
   const fire = (container: HTMLElement, init: Partial<WheelEventInit>) => {
     // The wheel only acts while one of the thumb's axis inputs has focus.
-    container.querySelector<HTMLElement>('.tremolo-xy-pad-x-input')!.focus()
-    fireEvent.wheel(container.querySelector('.tremolo-xy-pad')!, init)
+    container.querySelector<HTMLElement>('input[data-axis="x"]')!.focus()
+    fireEvent.wheel(container.querySelector('[data-testid="xy-pad"]')!, init)
   }
 
   test('shift moves x, and the direction still follows the scroll', () => {
@@ -207,6 +210,7 @@ describe('shift while dragging a Knob', () => {
     const [value, setValue] = useState(50)
     return (
       <Knob.Root
+        data-testid="knob"
         min={0}
         max={100}
         step={0.01}
@@ -256,7 +260,7 @@ describe('shift while dragging a Knob', () => {
   test('a plain drag covers the whole range in 100px', () => {
     const onChange = vi.fn()
     const { container } = render(<KnobSubject onChange={onChange} />)
-    const knob = container.querySelector('.tremolo-knob')!
+    const knob = container.querySelector('[data-testid="knob"]')!
 
     // Dragging up raises the value.
     drag(knob, [{ screenY: 0 }, { screenY: -20 }])
@@ -267,7 +271,7 @@ describe('shift while dragging a Knob', () => {
   test('shift makes the same movement count a tenth', () => {
     const onChange = vi.fn()
     const { container } = render(<KnobSubject onChange={onChange} />)
-    const knob = container.querySelector('.tremolo-knob')!
+    const knob = container.querySelector('[data-testid="knob"]')!
 
     // Held before the pointer goes down, so it counts from the first pixel.
     drag(knob, [
@@ -281,7 +285,7 @@ describe('shift while dragging a Knob', () => {
   test('pressing shift mid-drag does not move the value', () => {
     const onChange = vi.fn()
     const { container } = render(<KnobSubject onChange={onChange} />)
-    const knob = container.querySelector('.tremolo-knob')!
+    const knob = container.querySelector('[data-testid="knob"]')!
 
     drag(knob, [
       { screenY: 0 },
@@ -338,10 +342,13 @@ describe('shift while dragging a Slider', () => {
     const { container } = render(
       <SliderSubject initial={0} max={100} onChange={onChange} {...props} />,
     )
-    const track = container.querySelector('.tremolo-slider-track')!
+    const track = container.querySelector('[data-testid="track"]')!
     track.getBoundingClientRect = () =>
       ({ left: 0, top: 0, right: 100, bottom: 10 }) as DOMRect
-    return { onChange, root: container.querySelector('.tremolo-slider')! }
+    return {
+      onChange,
+      root: container.querySelector('[data-testid="slider"]')!,
+    }
   }
 
   test('a plain drag puts the value under the pointer', () => {
@@ -408,7 +415,7 @@ describe('shift while dragging a NumberInput Stepper', () => {
         }}
       >
         <NumberInput.InputField />
-        <NumberInput.Stepper>
+        <NumberInput.Stepper data-testid="stepper">
           <NumberInput.IncrementStepper />
           <NumberInput.DecrementStepper />
         </NumberInput.Stepper>
@@ -455,7 +462,7 @@ describe('shift while dragging a NumberInput Stepper', () => {
     const { container } = render(<Subject onChange={onChange} {...props} />)
     return {
       onChange,
-      stepper: container.querySelector('.tremolo-number-input-stepper')!,
+      stepper: container.querySelector('[data-testid="stepper"]')!,
     }
   }
 

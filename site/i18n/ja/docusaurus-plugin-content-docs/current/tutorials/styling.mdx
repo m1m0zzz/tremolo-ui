@@ -22,20 +22,26 @@ import xyPadCss from '!!raw-loader!shared/css/XYPad.module.css'
 素の CSS でも CSS Modules でも Tailwind でも CSS-in-JS でも、アプリの他の部分で
 使っているやり方をそのまま使えます。
 
-## 🎨クラス名
+## 🎨クラスは自分で当てる
 
-すべての要素に `tremolo-` で始まるクラスが付いているので、自前のラッパーを
-挟まなくても素の CSS で届きます。
+**クラス名は配りません。** 各パートが `className` を受け取り、そこに渡したものが
+その要素の持つ唯一のクラスになります。こちらのクラスを打ち消す必要も、
+こちらのスタイルが勝手に当たることもありません。
 
-```css
-.tremolo-knob-active-line {
-  color: rebeccapurple;
-}
+```jsx
+<Slider.Root className={theme.root} value={value} min={0} max={100} onChange={setValue}>
+  <Slider.Track className={theme.track}>
+    <Slider.Thumb className={theme.thumb} aria-label="Level" />
+  </Slider.Track>
+</Slider.Root>
 ```
 
-名前はコンポーネントとパートに対応します。`tremolo-slider`、
-`tremolo-slider-track`、`tremolo-slider-thumb`、`tremolo-slider-marks` のように。
-すべては下のテーマに載っています。
+`style` も同じです。複数の要素を描くパートは、中身用に `classes` を受け取ります
+（`Slider.MarksOption` の `classes={{ mark, label }}` など）。`Piano` の鍵盤は
+`keyProps` から届きます。
+
+下のテーマが CSS Modules なのはこのためで、各ファイルがパートごとに 1 クラスを
+export します。上のように結びつけて使ってください。
 
 ## 🚦状態
 
@@ -61,7 +67,7 @@ thumb の中の range input）には対応する ARIA（`aria-disabled` / `aria-
 上の `data-` 属性です。
 
 ```css
-.tremolo-slider[data-disabled] {
+.slider[data-disabled] {
   opacity: 0.5;
 }
 ```
@@ -85,7 +91,7 @@ prop、スタイルシート、inline style は同じ値を指定する3つの�
 すべてのinstanceへpropを渡さなくても、CSSルール1つでまとめて変更できます。
 
 ```css
-.tremolo-slider-track {
+.track {
   --thickness: 16px;
 }
 ```
@@ -114,7 +120,7 @@ propへ渡した数値はpxとして扱われます。それ以外はそのま�
 パッケージが描く要素ではなく、テーマのルールです。
 
 ```css
-.tremolo-slider-track {
+.track {
   background: linear-gradient(
     var(--axis),
     var(--active) var(--percent),

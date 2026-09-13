@@ -1927,11 +1927,25 @@ Components のドキュメントを実際に確認した。分かったことは
   - 自前の見た目を持つ story（VolumeFader の thumb、WavetableSynth の NumberInput、
     styling tutorial の CSS Module 例）にはテーマを当てない
 
-### 9.5 これから（決定済み・未実装）
+### 9.5 クラス名の廃止 — **完了**
+
+`tremolo-*` を styling / identity とも廃止した。各パートが持つのは利用者が渡した
+`className` だけになる。
+
+- 実装が唯一クラス名に依存していた `closest('.tremolo-points-editor-point')` は、
+  registry を引く `isPointElement` に置き換えた
+- `cx()` は不要になったので削除。唯一残った 2 引数の合成（`Knob.Thumb` の
+  `classes.thumb` と `className`）は、同じ要素に当たる重複だったので `classes.thumb`
+  ごと廃止した
+- 隠し input の `tremolo-*-input` も落とした。引き当ては `role="slider"` と
+  `data-axis` で足りる
+- テストは role / `data-testid` ベースへ。`Piano` の鍵盤は `keyProps`、ラベルは
+  `classes` から名前を付けて引く（利用者と同じ手段）
+
+### 9.6 これから（決定済み・未実装）
 
 | 決定 | 内容 |
 | --- | --- |
-| クラス名 | `tremolo-*` を styling / identity とも**廃止**。契約は状態属性のみ。実装が唯一クラス名に依存していた `closest('.tremolo-points-editor-point')` は registry 判定へ書き換える |
 | 配るもの | `packages/shared`（private）に**装飾だけの CSS Module をコンポーネント別 6 ファイル**。素の CSS の配布はやめる（**6 コンポーネントとも移行済み**） |
 | 継承 | `--thumb-size` のような共有トークンは継承させず、CSS Modules の `composes` で各パートに載せる（Slider / XYPad で実施） |
 | ダーク | 現在の `:where(.dark, [data-theme='dark'])` を踏襲し、設定方法を docs に書く |

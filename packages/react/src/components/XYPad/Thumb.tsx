@@ -8,7 +8,6 @@ import {
   useRef,
 } from 'react'
 
-import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/Placement'
 import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
@@ -104,7 +103,7 @@ export const Thumb = /* @__PURE__ */ forwardRef<XYPadThumbMethods, Props>(
 
     return (
       <div
-        className={cx('tremolo-xy-pad-thumb', className)}
+        className={className}
         data-disabled={disabled || undefined}
         data-readonly={readonly || undefined}
         {...props}
@@ -128,7 +127,6 @@ export const Thumb = /* @__PURE__ */ forwardRef<XYPadThumbMethods, Props>(
           <VisuallyHiddenRangeInput
             key={axis}
             ref={axis === 0 ? xInputRef : yInputRef}
-            className={`tremolo-xy-pad-${axis === 0 ? 'x' : 'y'}-input`}
             data-axis={axis === 0 ? 'x' : 'y'}
             value={value[axis]}
             min={min[axis]}

@@ -2,7 +2,6 @@ import { SVGProps } from 'react'
 
 import { clamp } from '@tremolo-ui/functions'
 
-import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/Placement'
 
 import { useKnobContext, viewBoxSize } from './context'
@@ -19,8 +18,8 @@ interface Props {
   /** percent (0-100) */
   thumbLineLength?: number
 
+  /** The line that points at the value, inside the thumb. */
   classes?: {
-    thumb?: string
     thumbLine?: string
   }
 }
@@ -45,13 +44,10 @@ export function Thumb({
   const r1 = useKnobContext((s) => s.r1)
 
   return (
-    <svg
-      className={cx('tremolo-knob-thumb', classes?.thumb, className)}
-      {...props}
-    >
+    <svg className={className} {...props}>
       <circle cx="50%" cy="50%" r={`${thumbSize / 2}%`} fill={thumb} />
       <line
-        className={cx('tremolo-knob-thumb-line', classes?.thumbLine)}
+        className={classes?.thumbLine}
         x1="50%"
         y1={`${(viewBoxSize - clamp(thumbSize, 0, 100)) / 2}%`}
         x2="50%"

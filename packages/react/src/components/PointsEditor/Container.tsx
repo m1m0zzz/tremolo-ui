@@ -3,7 +3,6 @@ import { ComponentPropsWithoutRef, forwardRef, ReactNode } from 'react'
 import { useComposedRefs } from '../../compose-refs'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
-import { cx } from '../_util/cx'
 import { Placement } from '../_util/Placement'
 
 import { usePointsEditorContext } from './context'
@@ -23,6 +22,7 @@ export const Container = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       containerRef,
       disabled,
       selectable,
+      isPointElement,
       nudgeFocusedPoint,
       beginSelectionBox,
       moveSelectionBox,
@@ -35,10 +35,7 @@ export const Container = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       // rather than in onDragStart matters: by then the container would already
       // have taken the pointer capture away from the point.
       shouldStart: (event) =>
-        !disabled &&
-        !(event.target as Element | null)?.closest?.(
-          '.tremolo-points-editor-point',
-        ),
+        !disabled && !isPointElement(event.target as Element | null),
       onDragStart: ([x, y], state) => {
         beginSelectionBox({ x, y }, state.event)
       },
@@ -81,7 +78,7 @@ export const Container = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
     return (
       <div
         ref={composedRef}
-        className={cx('tremolo-points-editor-container', className)}
+        className={className}
         style={{
           // The points inside are placed against this box, over the
           // background and under the selection box.

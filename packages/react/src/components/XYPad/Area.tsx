@@ -7,7 +7,6 @@ import {
 
 import { useComposedRefs } from '../../compose-refs'
 import { cssLength } from '../_util/css-length'
-import { cx } from '../_util/cx'
 import { Placement } from '../_util/Placement'
 
 import { useXYPadContext } from './context'
@@ -42,7 +41,7 @@ export const Area = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
     return (
       <div
         ref={composedRef}
-        className={cx('tremolo-xy-pad-area', className)}
+        className={className}
         style={
           {
             '--color': color,

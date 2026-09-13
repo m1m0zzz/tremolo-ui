@@ -30,7 +30,6 @@ import {
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
 } from '../../input-event'
-import { cx } from '../_util/cx'
 
 import { SliderProvider } from './context'
 import { Marks } from './Marks'
@@ -316,7 +315,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
       <SliderProvider value={context}>
         {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- the group is the pointer and keyboard event area, while the nested range input carries its control semantics */}
         <div
-          className={cx('tremolo-slider', className)}
+          className={className}
           ref={rootRefCallback}
           role="group"
           // A press lands on the track or the thumb, neither of which can hold

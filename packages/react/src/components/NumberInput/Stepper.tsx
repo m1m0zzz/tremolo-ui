@@ -16,7 +16,6 @@ import {
 
 import { useComposedRefs } from '../../compose-refs'
 import { useDrag } from '../../hooks/useDrag'
-import { cx } from '../_util/cx'
 
 import { StepperProvider, useNumberInputContext } from './context'
 
@@ -146,12 +145,7 @@ export const Stepper = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
 
     return (
       <StepperProvider value={context}>
-        <div
-          ref={composedRef}
-          className={cx('tremolo-number-input-stepper', className)}
-          style={style}
-          {...props}
-        >
+        <div ref={composedRef} className={className} style={style} {...props}>
           {children}
         </div>
       </StepperProvider>

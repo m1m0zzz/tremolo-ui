@@ -28,7 +28,6 @@ import {
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
 } from '../../input-event'
-import { cx } from '../_util/cx'
 
 import { NumberInputProvider } from './context'
 import { DecrementStepper } from './DecrementStepper'
@@ -413,7 +412,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
       <NumberInputProvider value={context}>
         <div
           ref={wheelRefCallback}
-          className={cx('tremolo-number-input', className)}
+          className={className}
           data-disabled={disabled || undefined}
           data-readonly={readonly || undefined}
           style={style}

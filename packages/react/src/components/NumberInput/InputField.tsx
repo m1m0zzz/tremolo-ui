@@ -9,7 +9,6 @@ import {
 } from 'react'
 
 import { useComposedRefs } from '../../compose-refs'
-import { cx } from '../_util/cx'
 
 import { useNumberInputContext } from './context'
 
@@ -181,7 +180,7 @@ export const InputField = /* @__PURE__ */ forwardRef<HTMLInputElement, Props>(
     return (
       <input
         ref={composedRef}
-        className={cx('tremolo-number-input-field', className)}
+        className={className}
         // Not type="number": that brings native spinners and a value the browser
         // parses itself, neither of which survives a unit suffix.
         type="text"

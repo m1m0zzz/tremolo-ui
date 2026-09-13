@@ -19,7 +19,7 @@ describe('Knob.Thumb', () => {
     )
 
     const thumb = screen.getByTestId('thumb')
-    expect(thumb).toHaveClass('tremolo-knob-thumb', 'custom-thumb')
+    expect(thumb).toHaveClass('custom-thumb')
     expect(thumb).toHaveAttribute('data-part', 'handle')
     fireEvent.click(thumb)
     expect(onClick).toHaveBeenCalledTimes(1)

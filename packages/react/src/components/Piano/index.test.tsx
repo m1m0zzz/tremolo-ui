@@ -40,6 +40,10 @@ function setup(props: Partial<PianoProps> = {}) {
       ref={ref}
       noteRange={range}
       data-testid="piano"
+      // The key type and the label have no class of their own, so the test
+      // names them the way a caller would.
+      keyProps={(_note, { keyType }) => ({ 'data-key-type': keyType })}
+      classes={{ keyLabel: 'label' }}
       onPlayNote={onPlayNote}
       onStopNote={onStopNote}
       {...props}
@@ -62,6 +66,8 @@ function setup(props: Partial<PianoProps> = {}) {
         ref={ref}
         noteRange={range}
         data-testid="piano"
+        keyProps={(_note, { keyType }) => ({ 'data-key-type': keyType })}
+        classes={{ keyLabel: 'label' }}
         onPlayNote={onPlayNote}
         onStopNote={onStopNote}
         {...props}
@@ -114,9 +120,9 @@ describe('Piano', () => {
 
     // Two octaves, C3..B4.
     expect(document.querySelectorAll('[data-note]')).toHaveLength(24)
-    expect(key(noteNumber('C3')).className).toBe('tremolo-piano-white-key')
+    expect(key(noteNumber('C3'))).toHaveAttribute('data-key-type', 'white')
     expect(key(noteNumber('C3')).getAttribute('data-note-key')).toBe('C')
-    expect(key(noteNumber('C#3')).className).toBe('tremolo-piano-black-key')
+    expect(key(noteNumber('C#3'))).toHaveAttribute('data-key-type', 'black')
     expect(key(noteNumber('C#3')).getAttribute('data-note-key')).toBe('C#')
   })
 
@@ -403,16 +409,10 @@ describe('Piano', () => {
     })
 
     expect(key(noteNumber('C3')).textContent).toBe('C')
-    expect(
-      key(noteNumber('C#3')).querySelector('.tremolo-piano-key-label'),
-    ).toBe(null)
-    expect(
-      key(noteNumber('D3')).querySelector('.tremolo-piano-key-label'),
-    ).toBe(null)
+    expect(key(noteNumber('C#3')).querySelector('.label')).toBe(null)
+    expect(key(noteNumber('D3')).querySelector('.label')).toBe(null)
     // Not covered by the range object above, so undefined.
-    expect(
-      key(noteNumber('E3')).querySelector('.tremolo-piano-key-label'),
-    ).toBe(null)
+    expect(key(noteNumber('E3')).querySelector('.label')).toBe(null)
   })
 
   test('label keeps 0', () => {
@@ -444,7 +444,7 @@ describe('Piano', () => {
     })
 
     const c3 = key(noteNumber('C3'))
-    expect(c3.className).toBe('tremolo-piano-white-key mine')
+    expect(c3.className).toBe('mine')
     // The custom property survives; the geometry is the layout's.
     expect(c3.style.getPropertyValue('--bg')).toBe('red')
     expect(c3.style.left).toBe('0px')

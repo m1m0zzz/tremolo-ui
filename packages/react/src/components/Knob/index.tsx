@@ -30,7 +30,6 @@ import {
   DEFAULT_WHEEL_OPTIONS,
 } from '../../input-event'
 import { cssLength } from '../_util/css-length'
-import { cx } from '../_util/cx'
 
 import { ActiveLine } from './ActiveLine'
 import { calcAngles, KnobProvider } from './context'
@@ -300,7 +299,7 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
       <KnobProvider value={context}>
         <div
           ref={rootRefCallback}
-          className={cx('tremolo-knob', className)}
+          className={className}
           tabIndex={disabled ? -1 : 0}
           role="slider"
           aria-valuenow={value}

@@ -74,7 +74,7 @@ onChange={(v) => setPoints((prev) => ({ ...prev, [id]: v }))}
 onChange={(v) => setPoints({ ...points, [id]: v })}
 ```
 
-A selected point carries `data-selected="true"`, and the box a drag on empty
+A selected point carries `data-selected`, and the box a drag on empty
 space draws is `<PointsEditor.SelectionBox />`, which you place inside the
 container. Both are in the theme in [Styling](/docs/tutorials/styling).
 
@@ -88,7 +88,35 @@ would pull the selection out of shape.
 Deleting and duplicating are not here: the points are yours, and only you know
 what the array behind them is.
 
-### Appearance props write custom properties
+### No class names, and your own on every part
+
+**The `tremolo-` class names are gone.** A part carries what you pass to
+`className` and nothing else, so the way to style anything is to give it a
+class of your own:
+
+```diff
+-<Slider.Track>
+-  <Slider.Thumb />
++<Slider.Track className={theme.track}>
++  <Slider.Thumb className={theme.thumb} />
+```
+
+The demo theme the documentation publishes is a set of CSS Modules for exactly
+this — one class per part, copied into your project. See
+[Styling](/docs/tutorials/styling).
+
+**States are the attribute alone.** `[data-disabled]`, `[data-dragging]`,
+`[data-selected]` and the rest are written only while they are on, in place of
+`="true"` / `="false"`, and the wrappers that are not controls of their own
+carry `data-disabled` / `data-readonly` where they used to carry the ARIA.
+`data-vertical` became `data-orientation="horizontal|vertical"`.
+
+**The components place their own parts.** A thumb, a mark, a point and the
+selection box take themselves out of flow and centre on their value, so a
+stylesheet of yours only says what they look like. `--translate` moves one off
+its centre if you need that.
+
+## Appearance props write custom properties
 
 Every prop that decides what a component looks like now sets a custom property
 and nothing else. The default moved with it, from the component into the CSS.
@@ -105,7 +133,7 @@ Now they are the same cascade as everything else, and a rule of yours is enough
 to change the default everywhere:
 
 ```css
-.tremolo-slider-track {
+.track {
   --thickness: 16px;
 }
 ```
@@ -118,7 +146,7 @@ track publishes `--percent` — where the value sits, the one number CSS cannot
 work out — and the fill is a rule in the theme:
 
 ```css
-.tremolo-slider-track {
+.track {
   background: linear-gradient(
     var(--axis),
     var(--active) var(--percent),
@@ -246,7 +274,7 @@ time.
 + import './tremolo-theme.css'
 ```
 
-Nothing about the markup changed: the same `tremolo-` class names and the same
+Nothing about the markup changed at the time: the same class names and the same
 `aria-*` / `data-*` state attributes are still there, so a stylesheet that
 already overrides them keeps working. What is gone is the one underneath it.
 

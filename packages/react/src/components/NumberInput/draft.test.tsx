@@ -17,6 +17,7 @@ function Subject({
   const [value, setValue] = useState(initial)
   return (
     <NumberInput.Root
+      data-testid="number-input"
       {...props}
       value={value}
       onChange={(v) => {
@@ -238,7 +239,7 @@ describe('value changes', () => {
     fireEvent.change(input(), { target: { value: '9' } })
     fireEvent.pointerDown(screen.getByRole('button', { name: 'Increment' }))
     input().focus()
-    fireEvent.wheel(input().closest('.tremolo-number-input')!, { deltaY: -1 })
+    fireEvent.wheel(screen.getByTestId('number-input'), { deltaY: -1 })
 
     expect(onChange).not.toHaveBeenCalled()
     expect(input().value).toBe('5')
@@ -256,7 +257,7 @@ describe('value changes', () => {
     const increment = screen.getByRole('button', { name: 'Increment' })
     fireEvent.pointerDown(increment)
     increment.focus()
-    fireEvent.wheel(input().closest('.tremolo-number-input')!, { deltaY: -1 })
+    fireEvent.wheel(screen.getByTestId('number-input'), { deltaY: -1 })
 
     expect(onChange).not.toHaveBeenCalled()
     expect(input().value).toBe('5')
@@ -268,7 +269,7 @@ describe('value changes', () => {
     render(<Subject initial={5} min={0} max={10} />)
 
     input().focus()
-    fireEvent.wheel(input().closest('.tremolo-number-input')!, { deltaY: -1 })
+    fireEvent.wheel(screen.getByTestId('number-input'), { deltaY: -1 })
 
     expect(input().value).toBe('6')
   })
@@ -292,9 +293,9 @@ describe('accessibility', () => {
   })
 
   test('the input is the tab stop, not the wrapper', () => {
-    const { container } = render(<Subject initial={5} />)
+    render(<Subject initial={5} />)
 
-    const root = container.querySelector('.tremolo-number-input')
+    const root = screen.getByTestId('number-input')
     expect(root?.hasAttribute('tabindex')).toBe(false)
     expect(input().hasAttribute('tabindex')).toBe(false)
   })

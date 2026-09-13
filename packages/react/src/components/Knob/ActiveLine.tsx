@@ -1,6 +1,5 @@
 import { SVGProps } from 'react'
 
-import { cx } from '../_util/cx'
 import { useCheckPlacement } from '../_util/Placement'
 
 import { arcPath, arcRadius, useKnobContext } from './context'
@@ -20,7 +19,7 @@ export function ActiveLine({
 
   return (
     <path
-      className={cx('tremolo-knob-active-line', className)}
+      className={className}
       d={arcPath(r2, r3, radius)}
       fill="none"
       stroke={stroke}

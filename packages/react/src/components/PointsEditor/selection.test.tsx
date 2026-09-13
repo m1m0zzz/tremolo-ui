@@ -255,12 +255,10 @@ describe('the selection box', () => {
 
     // It is drawn while the drag runs, and gone once it ends.
     expect(
-      container.querySelector('.tremolo-points-editor-selection-box'),
+      container.querySelector('[data-testid="selection-box"]'),
     ).not.toBeNull()
     release(area)
-    expect(
-      container.querySelector('.tremolo-points-editor-selection-box'),
-    ).toBeNull()
+    expect(container.querySelector('[data-testid="selection-box"]')).toBeNull()
   })
 
   test('the focus lands on the selection, so the keys reach it', () => {
@@ -276,7 +274,7 @@ describe('the selection box', () => {
     release(area)
 
     const focused = document.activeElement as HTMLElement
-    expect(focused.closest('.tremolo-points-editor-point')).toBe(point('a'))
+    expect(focused.closest('[data-testid="a"]')).toBe(point('a'))
 
     act(() => {
       focused.dispatchEvent(
@@ -303,9 +301,7 @@ describe('the selection box', () => {
     move(area, { clientX: 50, clientY: 50 })
 
     // The selection still works; there is just nothing drawing it.
-    expect(
-      area.querySelector('.tremolo-points-editor-selection-box'),
-    ).toBeNull()
+    expect(area.querySelector('[data-testid="selection-box"]')).toBeNull()
     expect(area.querySelector('[data-selected]')).not.toBeNull()
   })
 
@@ -317,7 +313,7 @@ describe('the selection box', () => {
     move(area, { clientX: 50, clientY: 50 })
 
     const box = screen.getByTestId('selection-box')
-    expect(box).toHaveClass('tremolo-points-editor-selection-box')
+    expect(box.tagName).toBe('DIV')
     // The size comes from the drag rather than from a style.
     expect(box.getAttribute('style')).toContain('width: 50%')
   })
@@ -340,9 +336,7 @@ describe('the selection box', () => {
 
     // No selection box: the container declined the press before taking the
     // pointer capture away from the point.
-    expect(
-      container.querySelector('.tremolo-points-editor-selection-box'),
-    ).toBeNull()
+    expect(container.querySelector('[data-testid="selection-box"]')).toBeNull()
     expect(selected('a')).toBe(true)
   })
 })
@@ -374,9 +368,7 @@ describe('with selection turned off', () => {
     press(area, { clientX: 0, clientY: 0 })
     move(area, { clientX: 50, clientY: 50 })
 
-    expect(
-      container.querySelector('.tremolo-points-editor-selection-box'),
-    ).toBeNull()
+    expect(container.querySelector('[data-testid="selection-box"]')).toBeNull()
     expect(selected('a')).toBe(false)
   })
 })
