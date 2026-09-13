@@ -9,6 +9,8 @@ import {
 
 import { NumberInput } from '.'
 
+import numberInputTheme from 'shared/css/NumberInput.module.css'
+
 export default {
   title: 'Components/NumberInput/InputField',
   component: NumberInput.InputField,
@@ -33,11 +35,20 @@ export const UnformatOnFocus: Story = {
     const [value, setValue] = useState(1230)
 
     return (
-      <NumberInput.Root value={value} {...hz} onChange={setValue}>
-        <NumberInput.InputField {...args} />
-        <NumberInput.Stepper>
-          <NumberInput.IncrementStepper />
-          <NumberInput.DecrementStepper />
+      <NumberInput.Root
+        className={numberInputTheme.root}
+        value={value}
+        {...hz}
+        onChange={setValue}
+      >
+        <NumberInput.InputField className={numberInputTheme.field} {...args} />
+        <NumberInput.Stepper className={numberInputTheme.stepper}>
+          <NumberInput.IncrementStepper
+            className={numberInputTheme.incrementStepper}
+          />
+          <NumberInput.DecrementStepper
+            className={numberInputTheme.decrementStepper}
+          />
         </NumberInput.Stepper>
       </NumberInput.Root>
     )
@@ -71,22 +82,36 @@ export const KeepCaretOnStep: Story = {
     return (
       <div>
         <NumberInput.Root
+          className={numberInputTheme.root}
           value={value}
           step={step}
           keyboard={keyboard}
           onChange={setValue}
         >
-          <NumberInput.InputField {...args} />
-          <NumberInput.Stepper>
-            <NumberInput.IncrementStepper />
-            <NumberInput.DecrementStepper />
+          <NumberInput.InputField
+            className={numberInputTheme.field}
+            {...args}
+          />
+          <NumberInput.Stepper className={numberInputTheme.stepper}>
+            <NumberInput.IncrementStepper
+              className={numberInputTheme.incrementStepper}
+            />
+            <NumberInput.DecrementStepper
+              className={numberInputTheme.decrementStepper}
+            />
           </NumberInput.Stepper>
         </NumberInput.Root>
         <p>config</p>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <span>step: </span>
-          <NumberInput.Root value={step} step={0.01} min={0} onChange={setStep}>
-            <NumberInput.InputField />
+          <NumberInput.Root
+            className={numberInputTheme.root}
+            value={step}
+            step={0.01}
+            min={0}
+            onChange={setStep}
+          >
+            <NumberInput.InputField className={numberInputTheme.field} />
           </NumberInput.Root>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -124,8 +149,13 @@ export const SelectOnFocus: Story = {
     const [value, setValue] = useState(32)
 
     return (
-      <NumberInput.Root value={value} {...hz} onChange={setValue}>
-        <NumberInput.InputField {...args} />
+      <NumberInput.Root
+        className={numberInputTheme.root}
+        value={value}
+        {...hz}
+        onChange={setValue}
+      >
+        <NumberInput.InputField className={numberInputTheme.field} {...args} />
       </NumberInput.Root>
     )
   },

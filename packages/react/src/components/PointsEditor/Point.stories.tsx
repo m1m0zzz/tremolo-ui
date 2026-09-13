@@ -3,6 +3,8 @@ import { useState } from 'react'
 
 import { PointBaseType, PointsEditor } from '.'
 
+import pointsEditorTheme from 'shared/css/PointsEditor.module.css'
+
 export default {
   title: 'Components/PointsEditor/Point',
   component: PointsEditor.Point,
@@ -28,12 +30,17 @@ export const Basic: Story = {
 
     return (
       <>
-        <PointsEditor.Root>
+        <PointsEditor.Root className={pointsEditorTheme.root}>
           <PointsEditor.Background
             style={{ background: '#f2f4f5', borderRadius: 4 }}
           />
           <PointsEditor.Container>
-            <PointsEditor.Point {...args} value={point} onChange={setPoint} />
+            <PointsEditor.Point
+              className={pointsEditorTheme.point}
+              {...args}
+              value={point}
+              onChange={setPoint}
+            />
           </PointsEditor.Container>
         </PointsEditor.Root>
         <p>
@@ -59,12 +66,17 @@ export const Limited: Story = {
 
     return (
       <>
-        <PointsEditor.Root>
+        <PointsEditor.Root className={pointsEditorTheme.root}>
           <PointsEditor.Background
             style={{ background: '#f2f4f5', borderRadius: 4 }}
           />
           <PointsEditor.Container>
-            <PointsEditor.Point {...args} value={point} onChange={setPoint} />
+            <PointsEditor.Point
+              className={pointsEditorTheme.point}
+              {...args}
+              value={point}
+              onChange={setPoint}
+            />
           </PointsEditor.Container>
         </PointsEditor.Root>
         <p>only x moves: {point.x}</p>
@@ -86,12 +98,17 @@ export const WithChildren: Story = {
     const [point, setPoint] = useState<PointBaseType>({ x: 0.5, y: 0.5 })
 
     return (
-      <PointsEditor.Root>
+      <PointsEditor.Root className={pointsEditorTheme.root}>
         <PointsEditor.Background
           style={{ background: '#f2f4f5', borderRadius: 4 }}
         />
         <PointsEditor.Container>
-          <PointsEditor.Point {...args} value={point} onChange={setPoint} />
+          <PointsEditor.Point
+            className={pointsEditorTheme.point}
+            {...args}
+            value={point}
+            onChange={setPoint}
+          />
         </PointsEditor.Container>
       </PointsEditor.Root>
     )

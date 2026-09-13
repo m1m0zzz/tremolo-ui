@@ -9,6 +9,7 @@ import { Slider, SliderMethods } from '../../src/components/Slider'
 import { XYPad, XYPadMethods } from '../../src/components/XYPad'
 
 import knobTheme from 'shared/css/Knob.module.css'
+import numberInputTheme from 'shared/css/NumberInput.module.css'
 import sliderTheme from 'shared/css/Slider.module.css'
 import xyPadTheme from 'shared/css/XYPad.module.css'
 
@@ -56,13 +57,14 @@ export const ControlFocus = () => {
           </Knob.SVGRoot>
         </Knob.Root>
         <NumberInput.Root
+          className={numberInputTheme.root}
           ref={refs.current.numberInput}
           value={value}
           min={0}
           max={100}
           onChange={(v) => setValue(v)}
         >
-          <NumberInput.InputField />
+          <NumberInput.InputField className={numberInputTheme.field} />
         </NumberInput.Root>
         <Slider.Root
           className={sliderTheme.root}

@@ -7,6 +7,7 @@ import { NumberInput } from '../NumberInput'
 
 import { Slider } from '.'
 
+import numberInputTheme from 'shared/css/NumberInput.module.css'
 import sliderTheme from 'shared/css/Slider.module.css'
 
 export default {
@@ -162,10 +163,11 @@ export const LogarithmicParameter: Story = {
         <div>
           centerValue:{' '}
           <NumberInput.Root
+            className={numberInputTheme.root}
             value={centerValue}
             onChange={(v) => setCenterValue(v)}
           >
-            <NumberInput.InputField />
+            <NumberInput.InputField className={numberInputTheme.field} />
           </NumberInput.Root>
         </div>
         <Slider.Root

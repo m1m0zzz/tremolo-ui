@@ -1,4 +1,9 @@
-.tremolo-number-input {
+/*
+ * The demo theme for `NumberInput`, as a CSS Module: one class per part, applied by
+ * the caller. Copy this file into your project and edit it.
+ */
+
+.root {
   --border-radius: 4px;
   --stepper-width: 20px;
   --stepper-icon-size: 12px;
@@ -31,17 +36,17 @@
       color-mix(in srgb, var(--active-color) 10%, transparent);
   }
 
-  &:not(:focus-within):has(.tremolo-number-input-field[data-out-of-range]) {
+  &:not(:focus-within):has(.field[data-out-of-range]) {
     border-color: oklch(64.245% 0.21266 25.499);
   }
 
   /* Only leave room for the stepper when one was composed in. */
-  &:not(:has(.tremolo-number-input-stepper)) {
+  &:not(:has(.stepper)) {
     --stepper-width: 0px;
   }
 }
 
-.tremolo-number-input-field {
+.field {
   display: block;
   color: inherit;
   width: calc(100% - 20px - var(--stepper-width));
@@ -59,7 +64,7 @@
   }
 }
 
-.tremolo-number-input-stepper {
+.stepper {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -74,21 +79,12 @@
   transform: translateX(40%);
 }
 
-:is(.tremolo-number-input:hover, .tremolo-number-input:focus-within)
-  .tremolo-number-input-stepper {
+:is(.root:hover, .root:focus-within) .stepper {
   opacity: 1;
   transform: translateX(0);
 }
 
-.tremolo-number-input-stepper-icon {
-  width: var(--stepper-icon-size);
-  height: var(--stepper-icon-size);
-}
-
-:is(
-  .tremolo-number-input-increment-stepper,
-  .tremolo-number-input-decrement-stepper
-) {
+:is(.incrementStepper, .decrementStepper) {
   border-inline-start: 1px solid oklch(84.522% 0 0);
   font-size: 0.75rem;
   display: flex;
@@ -109,17 +105,21 @@
   }
 }
 
-.tremolo-number-input-increment-stepper {
+.incrementStepper {
   border-top-right-radius: var(--border-radius);
 }
 
-.tremolo-number-input-decrement-stepper {
+.decrementStepper {
   border-top: 1px solid oklch(84.522% 0 0);
   border-bottom-right-radius: var(--border-radius);
 }
 
-:where(.dark, [data-theme='dark']) {
-  .tremolo-number-input {
-    --border-color: oklch(52% 0 0);
-  }
+/*
+ * Dark mode follows whatever marks the page — `.dark` and `[data-theme=dark]`
+ * are what this site and Storybook set.
+ */
+
+:global(.dark) .root,
+:global([data-theme='dark']) .root {
+  --border-color: oklch(52% 0 0);
 }

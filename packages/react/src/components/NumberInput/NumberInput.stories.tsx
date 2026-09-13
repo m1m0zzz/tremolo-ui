@@ -8,6 +8,7 @@ import { Knob } from '../Knob'
 import { NumberInput } from '.'
 
 import knobTheme from 'shared/css/Knob.module.css'
+import numberInputTheme from 'shared/css/NumberInput.module.css'
 
 export default {
   title: 'Components/NumberInput/Root',
@@ -55,12 +56,21 @@ export const Basic: Story = {
     const [value, setValue] = useState(32)
 
     return (
-      <NumberInput.Root {...args} value={value} onChange={(v) => setValue(v)}>
-        <NumberInput.InputField />
+      <NumberInput.Root
+        className={numberInputTheme.root}
+        {...args}
+        value={value}
+        onChange={(v) => setValue(v)}
+      >
+        <NumberInput.InputField className={numberInputTheme.field} />
         {stepper && (
-          <NumberInput.Stepper>
-            <NumberInput.IncrementStepper />
-            <NumberInput.DecrementStepper />
+          <NumberInput.Stepper className={numberInputTheme.stepper}>
+            <NumberInput.IncrementStepper
+              className={numberInputTheme.incrementStepper}
+            />
+            <NumberInput.DecrementStepper
+              className={numberInputTheme.decrementStepper}
+            />
           </NumberInput.Stepper>
         )}
       </NumberInput.Root>
@@ -76,11 +86,20 @@ export const WithUnit: Story = {
     const [value, setValue] = useState(4321)
 
     return (
-      <NumberInput.Root {...args} value={value} onChange={(v) => setValue(v)}>
-        <NumberInput.InputField />
-        <NumberInput.Stepper>
-          <NumberInput.IncrementStepper />
-          <NumberInput.DecrementStepper />
+      <NumberInput.Root
+        className={numberInputTheme.root}
+        {...args}
+        value={value}
+        onChange={(v) => setValue(v)}
+      >
+        <NumberInput.InputField className={numberInputTheme.field} />
+        <NumberInput.Stepper className={numberInputTheme.stepper}>
+          <NumberInput.IncrementStepper
+            className={numberInputTheme.incrementStepper}
+          />
+          <NumberInput.DecrementStepper
+            className={numberInputTheme.decrementStepper}
+          />
         </NumberInput.Stepper>
       </NumberInput.Root>
     )
@@ -103,16 +122,21 @@ export const CustomFormat: Story = {
     return (
       <div>
         <NumberInput.Root
+          className={numberInputTheme.root}
           {...args}
           value={value}
           format={(v) => `${Math.round(v * 100)}%`}
           parse={(t) => (parseFloat(t) || 0) / 100}
           onChange={(v) => setValue(v)}
         >
-          <NumberInput.InputField />
-          <NumberInput.Stepper>
-            <NumberInput.IncrementStepper />
-            <NumberInput.DecrementStepper />
+          <NumberInput.InputField className={numberInputTheme.field} />
+          <NumberInput.Stepper className={numberInputTheme.stepper}>
+            <NumberInput.IncrementStepper
+              className={numberInputTheme.incrementStepper}
+            />
+            <NumberInput.DecrementStepper
+              className={numberInputTheme.decrementStepper}
+            />
           </NumberInput.Stepper>
         </NumberInput.Root>
         <p>value: {value}</p>
@@ -163,11 +187,20 @@ export const WithAnotherComponents: Story = {
           </Knob.Root>
           {value}
         </div>
-        <NumberInput.Root {...args} value={value} onChange={(v) => setValue(v)}>
-          <NumberInput.InputField />
-          <NumberInput.Stepper>
-            <NumberInput.IncrementStepper />
-            <NumberInput.DecrementStepper />
+        <NumberInput.Root
+          className={numberInputTheme.root}
+          {...args}
+          value={value}
+          onChange={(v) => setValue(v)}
+        >
+          <NumberInput.InputField className={numberInputTheme.field} />
+          <NumberInput.Stepper className={numberInputTheme.stepper}>
+            <NumberInput.IncrementStepper
+              className={numberInputTheme.incrementStepper}
+            />
+            <NumberInput.DecrementStepper
+              className={numberInputTheme.decrementStepper}
+            />
           </NumberInput.Stepper>
         </NumberInput.Root>
       </div>
@@ -191,11 +224,20 @@ export const ClampValue: Story = {
 
     return (
       <div>
-        <NumberInput.Root {...args} value={value} onChange={setValue}>
-          <NumberInput.InputField />
-          <NumberInput.Stepper>
-            <NumberInput.IncrementStepper />
-            <NumberInput.DecrementStepper />
+        <NumberInput.Root
+          className={numberInputTheme.root}
+          {...args}
+          value={value}
+          onChange={setValue}
+        >
+          <NumberInput.InputField className={numberInputTheme.field} />
+          <NumberInput.Stepper className={numberInputTheme.stepper}>
+            <NumberInput.IncrementStepper
+              className={numberInputTheme.incrementStepper}
+            />
+            <NumberInput.DecrementStepper
+              className={numberInputTheme.decrementStepper}
+            />
           </NumberInput.Stepper>
         </NumberInput.Root>
         <p>value: {value}</p>

@@ -9,6 +9,7 @@ import { NumberInput } from '../NumberInput'
 import { PointBaseType, PointsEditor } from '.'
 
 import styles from '../../../__stories__/styles/PointsEditor.module.css'
+import pointsEditorTheme from 'shared/css/PointsEditor.module.css'
 
 export default {
   title: 'Components/PointsEditor/Root',
@@ -71,7 +72,7 @@ export const Basic: Story = {
           width: 'min-content',
         }}
       >
-        <PointsEditor.Root {...args}>
+        <PointsEditor.Root className={pointsEditorTheme.root} {...args}>
           {background && (
             <PointsEditor.Background>
               <svg
@@ -87,6 +88,7 @@ export const Basic: Story = {
           <PointsEditor.Container>
             {Object.entries(points).map(([id, point]) => (
               <PointsEditor.Point
+                className={pointsEditorTheme.point}
                 key={id}
                 id={id}
                 value={point}
@@ -100,7 +102,9 @@ export const Basic: Story = {
                 }}
               />
             ))}
-            <PointsEditor.SelectionBox />
+            <PointsEditor.SelectionBox
+              className={pointsEditorTheme.selectionBox}
+            />
           </PointsEditor.Container>
         </PointsEditor.Root>
       </div>
@@ -131,7 +135,7 @@ export const KeyboardAndWheel: Story = {
           Click a point, then use the arrow keys, or the wheel anywhere over the
           editor.
         </p>
-        <PointsEditor.Root {...args}>
+        <PointsEditor.Root className={pointsEditorTheme.root} {...args}>
           <PointsEditor.Background
             style={{ background: '#f2f4f5', borderRadius: 4 }}
           />
@@ -263,7 +267,7 @@ export const ADSRWithSlope: Story = {
       <div className={styles.root}>
         <div className={styles.flex}>
           <div className={styles.adsr}>
-            <PointsEditor.Root {...args}>
+            <PointsEditor.Root className={pointsEditorTheme.root} {...args}>
               <PointsEditor.Background>
                 <AnimationCanvas
                   relativeSize
@@ -305,6 +309,7 @@ export const ADSRWithSlope: Story = {
               </PointsEditor.Background>
               <PointsEditor.Container>
                 <PointsEditor.Point
+                  className={pointsEditorTheme.point}
                   {...subPointProps}
                   value={{ x: A / 2, y: slopeFunction(0.5, 1 - aSlope) }}
                   min={{ y: slopePointYMin }}
@@ -312,12 +317,14 @@ export const ADSRWithSlope: Story = {
                   onChange={({ y }) => setASlope(1 - y)}
                 />
                 <PointsEditor.Point
+                  className={pointsEditorTheme.point}
                   {...pointProps}
                   value={{ x: A, y: 0 }}
                   max={{ x: 1 / 3 }}
                   onChange={({ x }) => setA(x)}
                 />
                 <PointsEditor.Point
+                  className={pointsEditorTheme.point}
                   {...subPointProps}
                   value={{
                     x: (A + A + D) / 2,
@@ -328,6 +335,7 @@ export const ADSRWithSlope: Story = {
                   onChange={({ y }) => setDSlope(1 - y / S)}
                 />
                 <PointsEditor.Point
+                  className={pointsEditorTheme.point}
                   {...pointProps}
                   value={add({ x: A, y: 0 }, { x: D, y: S })}
                   min={{ x: A }}
@@ -338,6 +346,7 @@ export const ADSRWithSlope: Story = {
                   }}
                 />
                 <PointsEditor.Point
+                  className={pointsEditorTheme.point}
                   {...subPointProps}
                   value={{
                     x: (2 / 3 + R) / 2,
@@ -348,6 +357,7 @@ export const ADSRWithSlope: Story = {
                   onChange={({ y }) => setRSlope(1 - (y - S) / (1 - S))}
                 />
                 <PointsEditor.Point
+                  className={pointsEditorTheme.point}
                   {...pointProps}
                   value={{ x: R, y: 1 }}
                   min={{ x: 2 / 3 }}
