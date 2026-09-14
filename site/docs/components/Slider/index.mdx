@@ -19,6 +19,19 @@ Customizable slider component.
 import { Slider } from '@tremolo-ui/react'
 ```
 
+## Data attributes
+
+State is on the element as an attribute, so it is a selector away — see
+[Styling](/docs/tutorials/styling). An attribute is only there while its
+state is on.
+
+| Attribute | Part | Present when |
+| --- | --- | --- |
+| `data-orientation="horizontal\|vertical"` | `Slider.Root`, `Slider.Track`, `Slider.Marks`, `Slider.MarksOption` and its mark | always; which way the slider runs |
+| `data-disabled` | `Slider.Root`, `Slider.Track`, `Slider.Thumb` | `disabled` is set |
+| `data-readonly` | `Slider.Root`, `Slider.Thumb` | `readonly` is set |
+| `data-flipped` | `Slider.Track` | the value grows from the far end (`vertical` or `reverse`, not both) |
+
 ## Examples
 
 ### Basic

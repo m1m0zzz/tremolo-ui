@@ -3,30 +3,40 @@ sidebar_position: 2
 title: Templates
 ---
 
-# With a prebuilt templates...
+# Start from a template
 
-## [tremolo-ui-example-vite-react-ts](https://github.com/m1m0zzz/tremolo-ui-example-vite-react-ts)
+The templates live in [the tremolo-ui repository](https://github.com/m1m0zzz/tremolo-ui/tree/main/templates),
+next to the packages, and are built on every change — so they always use the
+current API. Copy one out with [degit](https://github.com/Rich-Harris/degit),
+which takes the files without the history.
 
-**Features**
+Each one shows every component wired up to
+[the theme these docs use](/docs/tutorials/styling#the-theme-used-on-this-site),
+copied into `src/theme/`. tremolo-ui ships no CSS, so those files are yours to
+edit.
 
-- Vite
-- TypeScript
-- SWC
-- ESLint
+## vite-react-ts
 
-Deploy: [Vercel](https://tremolo-ui-example-vite-react-ts.vercel.app/)
+Vite, React and TypeScript, linted with Oxlint.
 
-[:octopus: Use this template](https://github.com/new?template_name=tremolo-ui-example-vite-react-ts&template_owner=m1m0zzz)
+```bash
+npx degit m1m0zzz/tremolo-ui/templates/vite-react-ts my-app
+cd my-app
+npm install
+npm run dev
+```
 
+[Source](https://github.com/m1m0zzz/tremolo-ui/tree/main/templates/vite-react-ts)
 
-## [tremolo-ui-example-next-ts](https://github.com/m1m0zzz/tremolo-ui-example-next-ts)
+## next-ts
 
-**Features**
+Next.js (App Router) and TypeScript, linted with ESLint.
 
-- Next.js (App Router)
-- TypeScript
-- ESLint
+```bash
+npx degit m1m0zzz/tremolo-ui/templates/next-ts my-app
+cd my-app
+npm install
+npm run dev
+```
 
-Deploy: [Vercel](https://tremolo-ui-example-next-ts.vercel.app/)
-
-[:octopus: Use this template](https://github.com/new?template_name=tremolo-ui-example-next-ts&template_owner=m1m0zzz)
+[Source](https://github.com/m1m0zzz/tremolo-ui/tree/main/templates/next-ts)

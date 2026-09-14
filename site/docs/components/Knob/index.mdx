@@ -19,6 +19,17 @@ Interactive rotary knob component implemented in SVG.
 import { Knob } from '@tremolo-ui/react'
 ```
 
+## Data attributes
+
+State is on the element as an attribute, so it is a selector away — see
+[Styling](/docs/tutorials/styling). An attribute is only there while its
+state is on.
+
+| Attribute | Part | Present when |
+| --- | --- | --- |
+| `data-disabled` | `Knob.Root` | `disabled` is set |
+| `data-readonly` | `Knob.Root` | `readonly` is set |
+| `data-dragging` | `Knob.Root` | a drag is in progress |
 
 ## Examples
 

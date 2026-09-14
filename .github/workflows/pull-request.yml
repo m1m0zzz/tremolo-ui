@@ -41,12 +41,25 @@ jobs:
     - run: npm run lint
     - run: npm run format:check
 
+    # テーマはテンプレートにもコピーしてある（degit で取り出したテンプレートが単体で
+    # 動くように）。正本は packages/shared/css なので、ずれていたら落とす。
+    - name: Check template themes
+      run: |
+        for f in templates/*/src/theme/*.module.css; do
+          cmp "$f" "packages/shared/css/$(basename "$f")"
+        done
+
     # packages/react のテストは workspace symlink 越しに他パッケージの dist を
     # 解決するため、テストより先にビルドする必要がある。site と Storybook も
     # 同じ symlink 越しに dist を見るので、この 1 回で全部が揃う。
     - run: npm run build:package
 
     - run: npm run test
+
+    # テンプレートは workspaces に入っているので、@tremolo-ui/* は手元の dist に
+    # symlink される。ここで落ちるのは、テンプレートが追随していない破壊的変更。
+    - name: Build templates
+      run: npm run build -w templates/vite-react-ts -w templates/next-ts
 
     - run: npm run build:sb -w packages/react
 

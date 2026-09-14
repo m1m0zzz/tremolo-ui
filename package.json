@@ -36,7 +36,9 @@
     "packages/dom",
     "packages/react",
     "packages/shared",
-    "site"
+    "site",
+    "templates/vite-react-ts",
+    "templates/next-ts"
   ],
   "devDependencies": {
     "@arethetypeswrong/core": "0.18.5",
@@ -73,6 +75,7 @@
   "allowScripts": {
     "core-js": false,
     "workerd": false,
-    "esbuild": false
+    "esbuild": false,
+    "unrs-resolver": false
   }
 }

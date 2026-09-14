@@ -51,22 +51,19 @@ export します。上のように結びつけて使ってください。
 **off の状態では属性そのものが付かない**ので、属性名だけがセレクタになります（`="false"` に
 誤ってマッチすることがありません）。
 
-| 属性 | 対象 | 意味 |
-| --- | --- | --- |
-| `[data-disabled]` | 全コンポーネント | `disabled` が指定されている |
-| `[data-readonly]` | 全コンポーネント | `readonly` が指定されている |
-| `[data-dragging]` | `Knob` / `PointsEditor.Point` | ドラッグ中 |
-| `[data-orientation="vertical\|horizontal"]` | `Slider` / `Slider.Track` / `Slider.Marks` / `Slider.MarksOption` | スライダーの向き |
-| `[data-flipped]` | `Slider.Track` | 値が反対側から増える（`vertical` と `reverse` の一方だけが有効） |
-| `[data-active]` | `Piano` の鍵盤 | その音が鳴っている |
-| `[data-out-of-range]` | `NumberInput.InputField` | 値が `min` / `max` の外にある |
-| `[data-fill]` | `Piano` | `fill` が指定されている |
-| `[data-selected]` | `PointsEditor.Point` | 選択中のポイント |
+各コンポーネントが持つ属性は、それぞれのページの **Data attributes** に
+載せています（[Knob](/docs/components/Knob/#data-attributes)、
+[Slider](/docs/components/Slider/#data-attributes)、
+[XYPad](/docs/components/XYPad/#data-attributes)、
+[NumberInput](/docs/components/NumberInput/#data-attributes)、
+[Piano](/docs/components/Piano/#data-attributes)、
+[PointsEditor](/docs/components/PointsEditor/#data-attributes)）。よく使うのは
+`[data-disabled]` と `[data-readonly]` です。
 
 それ自体がコントロールである要素（`Knob`、`NumberInput.InputField`、ステッパー、
 thumb の中の range input）には対応する ARIA（`aria-disabled` / `aria-readonly`）も
 付いています。ARIA はコントロールが何であるかを伝えるもので、スタイルが読むのは
-上の `data-` 属性です。
+`data-` 属性です。
 
 ```css
 .slider[data-disabled] {

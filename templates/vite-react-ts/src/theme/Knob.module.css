@@ -1,0 +1,101 @@
+/*
+ * The demo theme for `Knob`, as a CSS Module: one class per part, applied by
+ * the caller. Copy this file into your project and edit it.
+ *
+ * The knob draws itself as an SVG, so this is colour and cursor only.
+ */
+
+.root {
+  /* The knob has no intrinsic size: the SVG inside scales to its box.
+     Override with the `size` prop, or by setting this variable. */
+  --knob-size: 50px;
+
+  display: inline-block;
+  width: var(--knob-size);
+  height: var(--knob-size);
+  /* A knob is a fixed-size control, like a button. Without this a flex row
+     that runs short shrinks the width and leaves the height alone, so the box
+     stops being square and the knob sits in it with dead space below.
+     `aspect-ratio` is not the answer: it is ignored while both width and
+     height are definite, and dropping the height to free it up lets
+     `align-items: stretch` pull the box the other way. */
+  flex-shrink: 0;
+  cursor: grab;
+  outline: 0;
+
+  &[data-readonly] {
+    cursor: not-allowed;
+  }
+
+  &[data-dragging] {
+    cursor: inherit;
+  }
+}
+
+.activeLine {
+  color: oklch(69.2% 0.17548 266.373);
+
+  :where(.root:focus, .root:hover) & {
+    color: oklch(59.5% 0.17548 266.373);
+  }
+
+  :where(.root[data-disabled]) & {
+    color: oklch(50.5% 0.03307 270.021);
+  }
+}
+
+.inactiveLine {
+  color: oklch(95% 0 0);
+
+  :where(.root:focus, .root:hover) & {
+    color: oklch(90% 0 0);
+  }
+}
+
+.thumb {
+  color: oklch(85.7% 0 0);
+
+  :where(.root:focus, .root:hover) & {
+    color: oklch(84.5% 0 0);
+  }
+}
+
+.thumbLine {
+  color: oklch(94.2% 0 0);
+}
+
+/*
+ * Dark mode follows whatever marks the page — `.dark` and `[data-theme=dark]`
+ * are what this site and Storybook set.
+ */
+:global(.dark) .activeLine,
+:global([data-theme='dark']) .activeLine {
+  color: oklch(59.5% 0.17548 266.373);
+
+  :where(.root:focus, .root:hover) & {
+    color: oklch(65.2% 0.17548 266.373);
+  }
+}
+
+:global(.dark) .inactiveLine,
+:global([data-theme='dark']) .inactiveLine {
+  color: oklch(41.7% 0 0);
+
+  :where(.root:focus, .root:hover) & {
+    color: oklch(44.59% 0 0);
+  }
+}
+
+:global(.dark) .thumb,
+:global([data-theme='dark']) .thumb {
+  color: oklch(48.6% 0 0);
+
+  :where(.root:focus, .root:hover) & {
+    color: oklch(51.7% 0 0);
+  }
+}
+
+:global(.dark) .thumbLine,
+:global([data-theme='dark']) .thumbLine {
+  color: oklch(84.2% 0 0);
+}
