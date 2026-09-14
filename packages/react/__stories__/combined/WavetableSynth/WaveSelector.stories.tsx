@@ -167,13 +167,11 @@ export const WaveSelector = ({
               min={MIN_SEMITONE}
               max={MAX_SEMITONE}
               {...unitFormat('st', { prefixes: false })}
+              selectOnFocus="number"
               className={style.numberInputWrapper}
               onChange={(v) => setSemitone(v)}
             >
-              <NumberInput.InputField
-                selectOnFocus="number"
-                className={style.numberInput}
-              />
+              <NumberInput.InputField className={style.numberInput} />
             </NumberInput.Root>
           </div>
           <div>
@@ -183,13 +181,11 @@ export const WaveSelector = ({
               min={MIN_DETUNE}
               max={MAX_DETUNE}
               {...unitFormat('ct', { prefixes: false })}
+              selectOnFocus="number"
               className={style.numberInputWrapper}
               onChange={(v) => setDetune(v)}
             >
-              <NumberInput.InputField
-                selectOnFocus="number"
-                className={style.numberInput}
-              />
+              <NumberInput.InputField className={style.numberInput} />
             </NumberInput.Root>
           </div>
         </div>
@@ -238,13 +234,11 @@ export const WaveSelector = ({
           min={0}
           max={100}
           {...unitFormat('%', { prefixes: false })}
+          selectOnFocus="number"
           className={style.numberInputWrapper}
           onChange={(v) => setPosition(v)}
         >
-          <NumberInput.InputField
-            selectOnFocus="number"
-            className={style.numberInput}
-          />
+          <NumberInput.InputField className={style.numberInput} />
         </NumberInput.Root>
       </div>
     </div>

@@ -42,6 +42,15 @@ export type NumberInputContextValue = {
   /** Whether a `Stepper` drag hides the pointer and reads its movement. */
   pointerLock: boolean
 
+  /** What `InputField` selects when it takes focus. */
+  selectOnFocus: 'all' | 'number' | 'none'
+  /** Whether `InputField` shows the plain value while it has focus. */
+  unformatOnFocus: boolean
+  /** Whether `InputField` puts the caret back after an arrow key steps the value. */
+  keepCaretOnStep: boolean
+  /** Whether Enter leaves `InputField` as well as committing. */
+  blurOnEnter: boolean
+
   /** What the input shows: the draft while editing, the formatted value otherwise. */
   text: string
   editing: boolean

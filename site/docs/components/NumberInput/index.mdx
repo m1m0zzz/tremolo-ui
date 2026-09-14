@@ -104,12 +104,12 @@ typed.
 `1.23kHz` once you click into it. Editing that means either replacing the whole
 thing or putting the caret inside a unit string.
 
-`unformatOnFocus` on `NumberInput.InputField` drops the format while the field
-has focus and shows the plain value instead.
+`unformatOnFocus` on `NumberInput.Root` drops the format while the field has
+focus and shows the plain value instead.
 
 ```tsx
-<NumberInput.Root {...unitFormat('Hz', { digits: 2 })} value={1230} …>
-  <NumberInput.InputField unformatOnFocus />
+<NumberInput.Root {...unitFormat('Hz', { digits: 2 })} value={1230} unformatOnFocus …>
+  <NumberInput.InputField />
 </NumberInput.Root>
 ```
 
@@ -141,7 +141,9 @@ therefore always acts on the last digit.
 `keepCaretOnStep` puts it back.
 
 ```tsx
-<NumberInput.InputField keepCaretOnStep />
+<NumberInput.Root value={value} keepCaretOnStep …>
+  <NumberInput.InputField />
+</NumberInput.Root>
 ```
 
 The position is measured **from the decimal point**, not from either end, so it

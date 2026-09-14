@@ -13,49 +13,6 @@ import { useComposedRefs } from '../../compose-refs'
 import { useNumberInputContext } from './context'
 
 export interface NumberInputFieldProps {
-  /**
-   * Select the text when the input takes focus. `'number'` selects the leading
-   * number, leaving whatever the format appended to it.
-   * @default 'none'
-   */
-  selectOnFocus?: 'all' | 'number' | 'none'
-  /**
-   * Show the plain value while the input has focus, dropping whatever `format`
-   * put around it: an input reading `1.23kHz` shows `1230` to be typed over.
-   *
-   * The number shown is the value itself, not the number inside the formatted
-   * text. Those differ whenever the format scales — `1.23` out of `1.23kHz`
-   * would read back as 1.23 and lose a factor of a thousand — and it is also
-   * why a rounded display no longer becomes the value: `1.6` shown as `2Hz`
-   * offers `1.6` for editing, not `2`.
-   *
-   * @default false
-   */
-  unformatOnFocus?: boolean
-  /**
-   * Put the caret back where it was after an arrow key steps the value.
-   *
-   * A controlled input whose `value` is replaced drops the caret at the end,
-   * so without this the second press of a repeated step always acts on the
-   * last digit. With it, the digit under the caret stays under the caret and
-   * a column can be held while stepping.
-   *
-   * The position is measured from the decimal point rather than from either
-   * end, so it survives the number growing or shrinking: the caret between
-   * `9` and `.9` is still between `10` and `.0`.
-   *
-   * It only restores the caret. Which digit it sits on does not change the
-   * size of the step — that is `keyboard`'s to say.
-   *
-   * @default false
-   */
-  keepCaretOnStep?: boolean
-  /**
-   * Commit and leave the input when Enter is pressed. Enter commits either way.
-   * @default true
-   */
-  blurOnEnter?: boolean
-
   className?: string
   style?: CSSProperties
 }
@@ -90,21 +47,13 @@ const decimalAnchor = (text: string) => {
  *
  * While the user types, their own text stands rather than `format(value)`, so
  * that a half-finished entry is not rewritten under the caret.
+ *
+ * How it behaves on focus, Enter and the arrow keys is set on `Root`
+ * (`selectOnFocus`, `unformatOnFocus`, `keepCaretOnStep`, `blurOnEnter`).
  */
 export const InputField = /* @__PURE__ */ forwardRef<HTMLInputElement, Props>(
   function InputField(
-    {
-      selectOnFocus = 'none',
-      unformatOnFocus = false,
-      keepCaretOnStep = false,
-      blurOnEnter = true,
-      className,
-      style,
-      onFocus,
-      onBlur,
-      onKeyDown,
-      ...props
-    },
+    { className, style, onFocus, onBlur, onKeyDown, ...props },
     forwardedRef,
   ) {
     const {
@@ -115,6 +64,10 @@ export const InputField = /* @__PURE__ */ forwardRef<HTMLInputElement, Props>(
       disabled,
       readonly,
       keyboard,
+      selectOnFocus,
+      unformatOnFocus,
+      keepCaretOnStep,
+      blurOnEnter,
       text,
       editing,
       outOfRange,

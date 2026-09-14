@@ -160,7 +160,7 @@ CI       ci.yml (push) / pull-request.yml (PR)。PR は versions upload --previe
 
   移動後、`functions` は 値の分布 / 数値変換 / 音楽理論 / 表示 の 4 本になる。
 
-- [ ] **`NumberInput` の `InputField` の props を `Root` に集める。** 破壊的変更。
+- [x] **`NumberInput` の `InputField` の props を `Root` に集めた。** 破壊的変更。
 
   現状は非対称になっている。**`Stepper` の設定（`drag` / `dragSensitivity` / `pointerLock`）は `Root` にあるのに、`InputField` の設定（`selectOnFocus` / `unformatOnFocus` / `keepCaretOnStep` / `blurOnEnter`）だけ `InputField` にある。** `Stepper` 自身が持つのは `className` / `style` / `children` / `ref` だけで、振る舞いは 1 つも無い。
 
@@ -178,6 +178,12 @@ CI       ci.yml (push) / pull-request.yml (PR)。PR は versions upload --previe
   - `NumberInputProps` が 18 → 22 になる。`Root` が「値の設定」と「各パートの設定」の両方を持つことになるので、**JSDoc でどのパートに効くのかを書く**（`drag` は既にそうなっている）
   - `className` / `style` / `ref` はパートごとの話なのでサブコンポーネントに残す
   - 逆向き（`drag` 系を `Stepper` へ移す）も一応ある。ただし `Stepper` が無ければドラッグ自体が存在しないので、**`Stepper` を置くかどうかと `drag` をいくつにするかが別の場所に散る**。`Root` に集約する方を採る
+
+  やったこと:
+
+  - 4 つの prop を `NumberInputProps` へ移し、JSDoc にどのパートに効くのかを書いた。`Root` が context で渡し、`InputField` は読むだけ。`NumberInputFieldProps` は `className` / `style` だけになった
+  - **移行ガイドは changeset に書いた。** `keepCaretOnStep` / `unformatOnFocus` は未リリースなので、足したときの changeset の主語を `Root` に書き換えただけ。リリース済みの `selectOnFocus` / `blurOnEnter` についてだけ、移行用の changeset を足した
+  - `InputField` の story も `Root` に対して型付けし、`Stepper` の story と揃えた。サブコンポーネントの story が主題の prop を Controls に出すには `Root` で型付けする、で統一される
 
 ## 7. コンポーネントと story の追加
 

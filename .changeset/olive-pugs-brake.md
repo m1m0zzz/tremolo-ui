@@ -2,7 +2,7 @@
 '@tremolo-ui/react': minor
 ---
 
-`NumberInput.InputField` takes `unformatOnFocus`. With it set, the field drops
+`NumberInput.Root` takes `unformatOnFocus`. With it set, `InputField` drops
 whatever `format` put around the value while it has focus and shows the plain
 number, so a field reading `1.23kHz` offers `1230` to type over.
 

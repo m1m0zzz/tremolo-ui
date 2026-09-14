@@ -131,6 +131,52 @@ export interface NumberInputProps {
   pointerLock?: boolean
 
   /**
+   * Select the text when `InputField` takes focus. `'number'` selects the
+   * leading number, leaving whatever the format appended to it.
+   * @default 'none'
+   */
+  selectOnFocus?: 'all' | 'number' | 'none'
+  /**
+   * Show the plain value while `InputField` has focus, dropping whatever
+   * `format` put around it: an input reading `1.23kHz` shows `1230` to be
+   * typed over.
+   *
+   * The number shown is the value itself, not the number inside the formatted
+   * text. Those differ whenever the format scales — `1.23` out of `1.23kHz`
+   * would read back as 1.23 and lose a factor of a thousand — and it is also
+   * why a rounded display no longer becomes the value: `1.6` shown as `2Hz`
+   * offers `1.6` for editing, not `2`.
+   *
+   * @default false
+   */
+  unformatOnFocus?: boolean
+  /**
+   * Put the caret in `InputField` back where it was after an arrow key steps
+   * the value.
+   *
+   * A controlled input whose `value` is replaced drops the caret at the end,
+   * so without this the second press of a repeated step always acts on the
+   * last digit. With it, the digit under the caret stays under the caret and
+   * a column can be held while stepping.
+   *
+   * The position is measured from the decimal point rather than from either
+   * end, so it survives the number growing or shrinking: the caret between
+   * `9` and `.9` is still between `10` and `.0`.
+   *
+   * It only restores the caret. Which digit it sits on does not change the
+   * size of the step — that is `keyboard`'s to say.
+   *
+   * @default false
+   */
+  keepCaretOnStep?: boolean
+  /**
+   * Commit and leave `InputField` when Enter is pressed. Enter commits either
+   * way.
+   * @default true
+   */
+  blurOnEnter?: boolean
+
+  /**
    * Make the input unchangeable and remove it from the tab order.
    * The parts carry `data-disabled` while it is set.
    */
@@ -199,6 +245,10 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
       drag = 1,
       dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
       pointerLock = false,
+      selectOnFocus = 'none',
+      unformatOnFocus = false,
+      keepCaretOnStep = false,
+      blurOnEnter = true,
       disabled = false,
       readonly = false,
       className,
@@ -359,6 +409,10 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         outOfRange,
         dragSensitivity,
         pointerLock,
+        selectOnFocus,
+        unformatOnFocus,
+        keepCaretOnStep,
+        blurOnEnter,
         atMin: clampValue && min !== undefined && value <= min,
         atMax: clampValue && max !== undefined && value >= max,
         drag,
@@ -388,6 +442,10 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         drag,
         dragSensitivity,
         pointerLock,
+        selectOnFocus,
+        unformatOnFocus,
+        keepCaretOnStep,
+        blurOnEnter,
         format,
         parse,
         handleDraft,
