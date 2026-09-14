@@ -2,5 +2,12 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "github>m1m0zzz/renovate-config"
+  ],
+  "packageRules": [
+    {
+      "description": "templates/ は 共有設定の config:best-practices が入れる :pinDevDependencies を打ち消し、config:recommended と同じ rangeStrategy に戻す",
+      "matchFileNames": ["templates/**"],
+      "rangeStrategy": "auto"
+    }
   ]
 }
