@@ -270,7 +270,7 @@ export const ADSRWithSlope: Story = {
             <PointsEditor.Root className={pointsEditorTheme.root} {...args}>
               <PointsEditor.Background>
                 <AnimationCanvas
-                  relativeSize
+                  resizable
                   draw={(ctx, { width, height }) => {
                     ctx.clearRect(0, 0, width, height)
                     ctx.beginPath()

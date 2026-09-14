@@ -47,7 +47,7 @@ export interface AnimationCanvasOptions {
   animate?: boolean
 
   /**
-   * Size in CSS pixels. Ignored when `relativeSize` is on.
+   * Size in CSS pixels. Ignored when `resizable` is on.
    *
    * @default { width: 100, height: 100 }
    */
@@ -61,7 +61,7 @@ export interface AnimationCanvasOptions {
    *
    * @default false
    */
-  relativeSize?: boolean
+  resizable?: boolean
 
   /**
    * Carry the drawing across a resize, so that the canvas does not blank for a
@@ -86,7 +86,7 @@ export interface AnimationCanvasInstance {
    * render without restarting the animation, so the frame count and the
    * elapsed time keep running.
    *
-   * `relativeSize` and `contextAttributes` are fixed for the lifetime of the
+   * `resizable` and `contextAttributes` are fixed for the lifetime of the
    * instance and are ignored here.
    *
    * While `animate` is off this also draws a frame, since nothing else would.
@@ -119,7 +119,7 @@ export function createAnimationCanvas(
   }
   const context: CanvasRenderingContext2D = context2d
 
-  const relativeSize = opts.relativeSize ?? false
+  const resizable = opts.resizable ?? false
 
   /** Off-document canvas holding the drawing while the real one is resized. */
   let memo: HTMLCanvasElement | null = null
@@ -250,11 +250,11 @@ export function createAnimationCanvas(
 
   let observer: ResizeObserver | null = null
 
-  if (relativeSize) {
+  if (resizable) {
     const parent = canvas.parentElement
     if (!parent) {
       throw new Error(
-        'createAnimationCanvas: relativeSize needs the canvas to have a parent element',
+        'createAnimationCanvas: resizable needs the canvas to have a parent element',
       )
     }
     // The observer reports the current size as soon as it starts, so it is the
@@ -289,11 +289,11 @@ export function createAnimationCanvas(
       opts = {
         ...opts,
         ...next,
-        relativeSize,
+        resizable,
         contextAttributes: opts.contextAttributes,
       }
 
-      if (!relativeSize) {
+      if (!resizable) {
         const { width: w = 100, height: h = 100 } = opts.size ?? {}
         if (w !== width || h !== height) applySize(w, h)
       }

@@ -101,6 +101,10 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 - [x] **`NumberInput` の `InputField` の props を `Root` に集めた。** 破壊的変更。
 
+- [x] **親の大きさに合わせる指定を `resizable` に揃えた。** 破壊的変更。`AnimationCanvas` の `relativeSize`、`Piano` の `fill`、`createAnimationCanvas` の `relativeSize` を `resizable` にし、`Piano` の `data-fill` も `data-resizable` にした
+  - `AnimationCanvas` の props は `resizable` で切り替わる判別可能ユニオンにした（`AnimationCanvasFixedProps` / `AnimationCanvasResizableProps`）。以前はオーバーロードが 2 つあっても、どちらも `width` と `relativeSize` を同時に受け付けていて、`width` は黙って無視されていた
+  - `reduceFlickering` は `AnimationCanvasCommonProps` に移した。コアでは固定サイズで `width` / `height` が変わったときにも効いていて、relative 側だけに置くのは実装と合っていなかった
+
 - [ ] **`packages/react/AGENTS.md` の規約とずれている既存コードを揃える。** 規約を書き起こしたときに見つかったもの。規約の側を直すか、コードを揃えるかも含めて決める
   - [ ] **公開する型がコンポーネント名で始まっていない。** 破壊的変更。`src/index.ts` に並べると、どのコンポーネントの型か分からない → **すべて揃えて**
     - `AnimationCanvas`: `CommonProps` / `AbsoluteSizingProps` / `RelativeSizingProps`

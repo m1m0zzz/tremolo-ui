@@ -44,7 +44,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
     <div className={styles.adsr}>
       <div className={styles.canvas}>
         <AnimationCanvas
-          relativeSize
+          resizable
           draw={(ctx, { width, height }) => {
             ctx.clearRect(0, 0, width, height)
 

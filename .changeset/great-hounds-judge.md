@@ -39,7 +39,7 @@ Positions computed from the value stay inline: a thumb's `left`, a point's
 `top`, the `left` of a piano key. Those are the value, not a style.
 
 New state attributes: `data-flipped` on `Slider.Track` for a value that grows
-from the far end, `data-fill` on `Piano`, and `data-vertical` on
+from the far end, `data-resizable` on `Piano`, and `data-vertical` on
 `Slider.Marks`.
 
 If you are not using the theme from the docs, `Slider.Track`, `XYPad.Area`,

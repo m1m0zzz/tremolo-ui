@@ -3,24 +3,31 @@ import { useState } from 'react'
 
 import { Slider } from '../Slider'
 
-import { AnimationCanvas, AnimationCanvasProps } from '.'
+import { AnimationCanvas } from '.'
 
 import sliderTheme from 'shared/css/Slider.module.css'
 
 export default {
   title: 'Components/AnimationCanvas',
   component: AnimationCanvas,
+  // The props are a union on `resizable`, and react-docgen records no type for
+  // these three, so Storybook cannot pick a control on its own.
   argTypes: {
+    resizable: {
+      control: 'boolean',
+    },
     width: {
-      if: { arg: 'relativeSize', truthy: false },
+      control: 'number',
+      if: { arg: 'resizable', truthy: false },
     },
     height: {
-      if: { arg: 'relativeSize', truthy: false },
+      control: 'number',
+      if: { arg: 'resizable', truthy: false },
     },
   },
-} satisfies Meta<AnimationCanvasProps>
+} satisfies Meta<typeof AnimationCanvas>
 
-type Story = StoryObj<AnimationCanvasProps>
+type Story = StoryObj<typeof AnimationCanvas>
 
 export const Basic: Story = {
   args: {
@@ -71,9 +78,9 @@ const fillTextCenter = (
   ctx.fillText(text, x - w / 2, y)
 }
 
-export const RelativeSize: Story = {
+export const Resizable: Story = {
   args: {
-    relativeSize: true,
+    resizable: true,
   },
   render: (args) => (
     <div
@@ -139,7 +146,7 @@ export const RelativeSize: Story = {
 
 export const SavingContext: Story = {
   args: {
-    relativeSize: true,
+    resizable: true,
   },
   render: (args) => (
     <div
@@ -185,7 +192,7 @@ export const SavingContext: Story = {
 export const NoAnimate: Story = {
   args: {
     animate: false,
-    relativeSize: true,
+    resizable: true,
     reduceFlickering: false,
   },
   render: (args) => {

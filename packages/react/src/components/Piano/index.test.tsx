@@ -472,9 +472,9 @@ describe('Piano', () => {
     expect(onPlayNote).toHaveBeenCalledWith(noteNumber('D3'), undefined)
   })
 
-  test('fill observes the parent and recalculates width when keyGap changes', () => {
+  test('resizable observes the parent and recalculates width when keyGap changes', () => {
     const observers = stubResizeObserver()
-    const { piano, rerender, unmount } = setup({ fill: true, keyGap: 2 })
+    const { piano, rerender, unmount } = setup({ resizable: true, keyGap: 2 })
     Object.defineProperty(piano, 'clientWidth', {
       configurable: true,
       value: 280,
@@ -485,7 +485,7 @@ describe('Piano', () => {
     )
     expect(Number.parseFloat(key(noteNumber('C3')).style.width)).toBeCloseTo(18)
 
-    rerender({ fill: true, keyGap: 4 })
+    rerender({ resizable: true, keyGap: 4 })
     expect(observers[0].disconnect).toHaveBeenCalledTimes(1)
     act(() =>
       observers[1].callback([], observers[1] as unknown as ResizeObserver),
@@ -496,11 +496,11 @@ describe('Piano', () => {
     expect(observers[1].disconnect).toHaveBeenCalledTimes(1)
   })
 
-  test('fill keeps a black-key-only range finite', () => {
+  test('resizable keeps a black-key-only range finite', () => {
     const observers = stubResizeObserver()
     const black = noteNumber('C#3')
     const { piano } = setup({
-      fill: true,
+      resizable: true,
       noteRange: { first: black, last: black },
     })
     Object.defineProperty(piano, 'clientWidth', { value: 100 })

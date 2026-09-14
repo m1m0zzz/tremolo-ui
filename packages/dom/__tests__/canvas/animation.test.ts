@@ -360,9 +360,9 @@ describe('animate: false', () => {
   })
 })
 
-describe('relativeSize', () => {
+describe('resizable', () => {
   test('takes its size from the parent, reported by the observer', () => {
-    const { parent, draw } = setup({ relativeSize: true }, { withParent: true })
+    const { parent, draw } = setup({ resizable: true }, { withParent: true })
 
     expect(resizeObserver.observed()).toEqual([parent])
     // Nothing to draw before a size is known.
@@ -378,7 +378,7 @@ describe('relativeSize', () => {
 
   test('redraws on a resize when not animating', () => {
     const { draw } = setup(
-      { relativeSize: true, animate: false },
+      { resizable: true, animate: false },
       { withParent: true },
     )
 
@@ -390,10 +390,7 @@ describe('relativeSize', () => {
   })
 
   test('carries the drawing across a resize when reduceFlickering is on', () => {
-    const { canvas, context } = setup(
-      { relativeSize: true },
-      { withParent: true },
-    )
+    const { canvas, context } = setup({ resizable: true }, { withParent: true })
 
     resizeObserver.resize(100, 100)
     resizeObserver.resize(120, 100)
@@ -415,7 +412,7 @@ describe('relativeSize', () => {
       context.translate(5, 7)
     }
     const { context } = setup(
-      { relativeSize: true, reduceFlickering: false, init },
+      { resizable: true, reduceFlickering: false, init },
       { withParent: true },
     )
 
@@ -437,7 +434,7 @@ describe('relativeSize', () => {
   })
 
   test('restores a snapshot before the caller drawing state', () => {
-    const { context } = setup({ relativeSize: true }, { withParent: true })
+    const { context } = setup({ resizable: true }, { withParent: true })
     resizeObserver.resize(100, 100)
     context.globalAlpha = 0.4
     context.globalCompositeOperation = 'destination-out'
@@ -467,10 +464,7 @@ describe('relativeSize', () => {
     const init = (context: CanvasRenderingContext2D) => {
       context.translate(5, 7)
     }
-    const { context } = setup(
-      { relativeSize: true, init },
-      { withParent: true },
-    )
+    const { context } = setup({ resizable: true, init }, { withParent: true })
 
     resizeObserver.resize(100, 100)
     frames.flush()
@@ -491,7 +485,7 @@ describe('relativeSize', () => {
     // the canvas's own device size and drawn back at its old CSS size, so
     // nothing is resampled while the ratio stays put.
     globalThis.devicePixelRatio = 2
-    const { context } = setup({ relativeSize: true }, { withParent: true })
+    const { context } = setup({ resizable: true }, { withParent: true })
 
     resizeObserver.resize(100, 80)
     context.drawImage.mockClear()
@@ -508,7 +502,7 @@ describe('relativeSize', () => {
 
   test('rescales the snapshot when the device pixel ratio changes', () => {
     globalThis.devicePixelRatio = 1
-    const { context } = setup({ relativeSize: true }, { withParent: true })
+    const { context } = setup({ resizable: true }, { withParent: true })
 
     resizeObserver.resize(100, 80)
     globalThis.devicePixelRatio = 2
@@ -525,7 +519,7 @@ describe('relativeSize', () => {
 
   test('reduceFlickering off leaves the resized canvas blank', () => {
     const { context } = setup(
-      { relativeSize: true, reduceFlickering: false },
+      { resizable: true, reduceFlickering: false },
       { withParent: true },
     )
 
@@ -542,7 +536,7 @@ describe('relativeSize', () => {
     context2D.get(canvas)
 
     expect(() =>
-      createAnimationCanvas(canvas, { draw: vi.fn(), relativeSize: true }),
+      createAnimationCanvas(canvas, { draw: vi.fn(), resizable: true }),
     ).toThrow(/parent element/)
   })
 })
@@ -561,7 +555,7 @@ describe('destroy', () => {
   })
 
   test('disconnects the observer', () => {
-    const { instance } = setup({ relativeSize: true }, { withParent: true })
+    const { instance } = setup({ resizable: true }, { withParent: true })
 
     instance.destroy()
 

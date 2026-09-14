@@ -114,12 +114,12 @@ export interface PianoProps {
   keyboardShortcutsScope?: KeyboardShortcutsScope
 
   /**
-   * Fill the parent element, deriving the width of a white key from it.
-   * {@link PianoProps.whiteKeyWidth} is ignored.
+   * Follow the width of the parent element, deriving the width of a white key
+   * from it. {@link PianoProps.whiteKeyWidth} is ignored.
    *
    * @default false
    */
-  fill?: boolean
+  resizable?: boolean
 
   /** @default 40 */
   whiteKeyWidth?: number
@@ -141,7 +141,7 @@ export interface PianoProps {
 
   /**
    * Sets `--height`; the height the theme gives it stands when omitted, which
-   * follows `fill` through the `data-fill` attribute.
+   * follows `resizable` through the `data-resizable` attribute.
    */
   height?: number | string
 
@@ -189,7 +189,7 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
       midiMax = 127,
       keyboardShortcuts,
       keyboardShortcutsScope = 'root',
-      fill = false,
+      resizable = false,
       whiteKeyWidth = 40,
       keyGap = 1,
       blackKeyWidthRatio = 0.65,
@@ -210,8 +210,8 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
     // ref would be re-attached on every render and tear the instance down.
     const [node, setNode] = useState<HTMLDivElement | null>(null)
     const [activeNotes, setActiveNotes] = useState<number[]>([])
-    /** Set while `fill` is on, measured from the parent. */
-    const [filledKeyWidth, setFilledKeyWidth] = useState(whiteKeyWidth)
+    /** Set while `resizable` is on, measured from the parent. */
+    const [resizedKeyWidth, setResizedKeyWidth] = useState(whiteKeyWidth)
 
     const notes = useMemo(() => getNoteRangeArray(noteRange), [noteRange])
     const whiteKeyCount = useMemo(
@@ -222,15 +222,15 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
     const layout: PianoLayout = useMemo(
       () => ({
         noteRange,
-        whiteKeyWidth: fill ? filledKeyWidth : whiteKeyWidth,
+        whiteKeyWidth: resizable ? resizedKeyWidth : whiteKeyWidth,
         keyGap,
         blackKeyWidthRatio,
         blackKeyHeightRatio,
       }),
       [
         noteRange,
-        fill,
-        filledKeyWidth,
+        resizable,
+        resizedKeyWidth,
         whiteKeyWidth,
         keyGap,
         blackKeyWidthRatio,
@@ -279,7 +279,7 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
       }
       // Only the element decides how the instance is wired. Everything else is
       // pushed with update() below, so that changing the layout mid-drag — the
-      // parent being resized under `fill`, say — does not abort the drag.
+      // parent being resized under `resizable`, say — does not abort the drag.
     }, [node])
 
     // Runs after every render.
@@ -289,18 +289,18 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
     })
 
     useEffect(() => {
-      if (!fill || !node) return
+      if (!resizable || !node) return
       const parent = node.parentElement
       if (!parent) throw new Error("doesn't have a parent element.")
 
       const resizeObserver = new ResizeObserver(() => {
-        setFilledKeyWidth(
+        setResizedKeyWidth(
           node.clientWidth / Math.max(whiteKeyCount, 1) - keyGap,
         )
       })
       resizeObserver.observe(parent)
       return () => resizeObserver.disconnect()
-    }, [fill, node, whiteKeyCount, keyGap])
+    }, [resizable, node, whiteKeyCount, keyGap])
 
     const shortcutKeys = keyboardShortcuts?.keys
     const hasShortcuts = shortcutKeys !== undefined
@@ -394,7 +394,7 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
       <div
         ref={setNode}
         className={className}
-        data-fill={fill || undefined}
+        data-resizable={resizable || undefined}
         role="group"
         // The group can own keyboard shortcuts and must receive focus.
         // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
@@ -402,7 +402,7 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
         style={
           {
             // Computed from the layout rather than chosen, so it stays inline.
-            width: fill ? '100%' : pianoWidth(layout),
+            width: resizable ? '100%' : pianoWidth(layout),
             '--height': cssLength(height),
             // The keys inside are placed against this box.
             position: 'relative',

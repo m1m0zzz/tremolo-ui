@@ -154,7 +154,7 @@ describe('AnimationCanvas', () => {
     expect(canvas.style.width).toBe('40px')
   })
 
-  test('rebuilds when relativeSize changes and disconnects the old observer', () => {
+  test('rebuilds when resizable changes and disconnects the old observer', () => {
     const draw = vi.fn()
     const { container, rerender } = render(
       <AnimationCanvas width={10} height={20} draw={draw} />,
@@ -164,7 +164,7 @@ describe('AnimationCanvas', () => {
     expect(queuedFrames()).toBe(1)
     expect(resizeObservers).toHaveLength(0)
 
-    rerender(<AnimationCanvas relativeSize draw={draw} />)
+    rerender(<AnimationCanvas resizable draw={draw} />)
     expect(queuedFrames()).toBe(1)
     expect(resizeObservers).toHaveLength(1)
     expect(resizeObservers[0].observe).toHaveBeenCalledWith(parent)
@@ -183,6 +183,21 @@ describe('AnimationCanvas', () => {
     expect(queuedFrames()).toBe(1)
     expect(canvas.width).toBe(30)
     expect(canvas.height).toBe(15)
+  })
+
+  // Checked by `tsc`, not by the test run: a resizable canvas takes its size
+  // from the parent, so a size given alongside would be ignored without a word.
+  test('width and height are not accepted together with resizable', () => {
+    const draw = () => {}
+    const elements = [
+      // @ts-expect-error width belongs to a fixed canvas
+      <AnimationCanvas key="width" resizable width={10} draw={draw} />,
+      // @ts-expect-error height belongs to a fixed canvas
+      <AnimationCanvas key="height" resizable height={10} draw={draw} />,
+      <AnimationCanvas key="fixed" width={10} height={10} draw={draw} />,
+      <AnimationCanvas key="resizable" resizable draw={draw} />,
+    ]
+    expect(elements).toHaveLength(4)
   })
 
   // The "Reactive Canvas" pattern the docs describe: useState + animate={false},

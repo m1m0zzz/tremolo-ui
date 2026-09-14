@@ -1,11 +1,11 @@
 export {
   AnimationCanvas,
-  type AbsoluteSizingProps,
+  type AnimationCanvasCommonProps,
+  type AnimationCanvasFixedProps,
   type AnimationCanvasProps,
-  type CommonProps,
+  type AnimationCanvasResizableProps,
   type DrawFunction,
   type InitFunction,
-  type RelativeSizingProps,
 } from './components/AnimationCanvas'
 export {
   Knob,
