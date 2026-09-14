@@ -20,6 +20,19 @@ Input with some useful functions for entering numerical values.
 import { NumberInput } from '@tremolo-ui/react'
 ```
 
+## Data attributes
+
+State is on the element as an attribute, so it is a selector away — see
+[Styling](/docs/tutorials/styling). An attribute is only there while its
+state is on.
+
+| Attribute | Part | Present when |
+| --- | --- | --- |
+| `data-disabled` | `NumberInput.Root`, `NumberInput.InputField` | `disabled` is set |
+| `data-disabled` | `NumberInput.IncrementStepper`, `NumberInput.DecrementStepper` | `disabled` is set, or the value is already at `max` (increment) / `min` (decrement) |
+| `data-readonly` | `NumberInput.Root`, `NumberInput.InputField`, both steppers | `readonly` is set |
+| `data-out-of-range` | `NumberInput.InputField` | the value is outside `min` / `max` |
+
 ## Examples
 
 ### Basic

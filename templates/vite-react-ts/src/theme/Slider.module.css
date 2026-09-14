@@ -1,0 +1,189 @@
+/*
+ * The demo theme for `Slider`, as a CSS Module: one class per part, applied by
+ * the caller. Copy this file into your project and edit it — it is a starting
+ * point, not a dependency.
+ *
+ * It says what the parts look like, not where they go: the component places
+ * them itself.
+ */
+
+/*
+ * The size the thumb is drawn at, and the room the slider leaves for it. Both
+ * parts need the value and nothing inherits it, so it is composed into each
+ * of them and stays written once.
+ */
+.thumbSize {
+  --thumb-size: 22px;
+}
+
+.root {
+  composes: thumbSize;
+
+  display: inline-flex;
+  flex-direction: column;
+  margin: calc(var(--thumb-size) / 2);
+  cursor: pointer;
+  outline: 0;
+  -webkit-tap-highlight-color: transparent;
+
+  &[data-orientation='vertical'] {
+    flex-direction: row;
+  }
+
+  &[data-readonly] {
+    cursor: not-allowed;
+  }
+}
+
+.thumb {
+  composes: thumbSize;
+
+  --color: oklch(59.5% 0.17548 266.373);
+
+  width: var(--thumb-size);
+  height: var(--thumb-size);
+
+  background: var(--color);
+  border-radius: 50%;
+  outline: none;
+
+  &[data-disabled] {
+    background: oklch(50.462% 0.03307 270.021);
+  }
+
+  &:focus-within {
+    box-shadow: 0px 0px 0px 3px
+      color-mix(in srgb, var(--color) 20%, transparent);
+  }
+}
+
+.track {
+  --active: oklch(69.212% 0.12903 267.633);
+  --inactive: oklch(95% 0 0);
+  --length: 140px;
+  --thickness: 10px;
+  /* Which way the fill runs. `--percent` is where the thumb sits on screen,
+     so a flipped slider only swaps which side of it is the filled one. */
+  --axis: to right;
+
+  width: var(--length);
+  height: var(--thickness);
+  border-radius: calc(var(--thickness) / 2);
+  /* The component sets `--percent` and paints nothing itself, so the fill is
+     yours to change: a second colour stop, a gradient, an image. */
+  background: linear-gradient(
+    var(--axis),
+    var(--active) var(--percent),
+    var(--inactive) var(--percent)
+  );
+
+  &[data-flipped] {
+    background: linear-gradient(
+      var(--axis),
+      var(--inactive) var(--percent),
+      var(--active) var(--percent)
+    );
+  }
+
+  &[data-orientation='horizontal'] {
+    min-width: 50px;
+  }
+
+  &[data-orientation='vertical'] {
+    --axis: to bottom;
+
+    width: var(--thickness);
+    height: var(--length);
+    min-height: 50px;
+  }
+
+  &:hover {
+    --active: oklch(64.276% 0.15244 266.932);
+    --inactive: #e0e0e0;
+  }
+
+  &[data-disabled] {
+    --active: oklch(75.327% 0.01237 264.547);
+    --inactive: oklch(89.755% 0.0001 271.152);
+  }
+}
+
+.marks {
+  /* Space between the marks and the track. */
+  --gap: 6px;
+
+  display: block;
+  margin-top: var(--gap);
+
+  &[data-orientation='vertical'] {
+    margin-top: 0;
+    margin-left: var(--gap);
+  }
+}
+
+.marksOption {
+  /* Read by the mark and the label below, which is why they are set here. */
+  --thickness: 1px;
+  --length: 0.5rem;
+  --gap: 2px;
+  --label-width: auto;
+
+  display: flex;
+  color: oklch(25.197% 0.00003 271.152);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  &[data-orientation='vertical'] {
+    flex-direction: row;
+  }
+}
+
+.mark {
+  background-color: currentColor;
+  width: var(--thickness);
+  height: var(--length);
+  margin-bottom: var(--gap);
+
+  &[data-orientation='vertical'] {
+    width: var(--length);
+    height: var(--thickness);
+    margin-bottom: 0;
+    margin-right: var(--gap);
+  }
+}
+
+.label {
+  text-align: right;
+  width: var(--label-width);
+}
+
+/*
+ * Dark mode follows whatever marks the page — `.dark` and `[data-theme=dark]`
+ * are what this site and Storybook set. Swap them for however your own app
+ * says it, or read `prefers-color-scheme` instead.
+ */
+:global(.dark) .thumb,
+:global([data-theme='dark']) .thumb {
+  --color: oklch(64.5% 0.17548 266.373);
+
+  &:hover {
+    --color: oklch(67.5% 0.17548 266.373);
+  }
+}
+
+:global(.dark) .track,
+:global([data-theme='dark']) .track {
+  --active: oklch(59.5% 0.17548 266.373);
+  --inactive: oklch(41.7% 0 0);
+
+  &:hover {
+    --active: oklch(62.5% 0.17548 266.373);
+    --inactive: oklch(44.7% 0 0);
+  }
+
+  &[data-disabled] {
+    --active: oklch(75.327% 0.01237 264.547);
+    --inactive: oklch(89.755% 0.0001 271.152);
+  }
+}

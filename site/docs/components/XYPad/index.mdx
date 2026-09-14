@@ -19,6 +19,17 @@ Two-dimensional slider component.
 import { XYPad } from '@tremolo-ui/react'
 ```
 
+## Data attributes
+
+State is on the element as an attribute, so it is a selector away — see
+[Styling](/docs/tutorials/styling). An attribute is only there while its
+state is on.
+
+| Attribute | Part | Present when |
+| --- | --- | --- |
+| `data-disabled` | `XYPad.Root`, `XYPad.Thumb` | `disabled` is set |
+| `data-readonly` | `XYPad.Root`, `XYPad.Thumb` | `readonly` is set |
+
 ## Examples
 
 ### Basic

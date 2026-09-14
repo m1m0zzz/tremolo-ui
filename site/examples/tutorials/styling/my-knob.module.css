@@ -1,3 +1,13 @@
+.knob {
+  /* The component writes `--knob-size` and nothing else: the box is sized
+     here. Without a width and height the knob has no size at all. */
+  width: var(--knob-size);
+  height: var(--knob-size);
+  flex-shrink: 0;
+  cursor: grab;
+  outline: 0;
+}
+
 .activeLine {
   color: rgb(235, 76, 76);
 
@@ -6,11 +16,11 @@
   }
 }
 
-:where(.dark, [data-theme='dark']) {
-  .activeLine {
-    :where(.knob:focus, .knob:hover) & {
-      color: rgb(235, 91, 91);
-    }
+/* `:global`, or the module renames `.dark` along with its own classes. */
+:global(.dark) .activeLine,
+:global([data-theme='dark']) .activeLine {
+  :where(.knob:focus, .knob:hover) & {
+    color: rgb(235, 91, 91);
   }
 }
 

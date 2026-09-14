@@ -1,0 +1,102 @@
+/*
+ * The demo theme for `Piano`, as a CSS Module: one class per part, applied by
+ * the caller. Copy this file into your project and edit it.
+ */
+
+.root {
+  --height: 160px;
+
+  display: inline-block;
+  box-sizing: border-box;
+  user-select: none;
+  touch-action: none;
+  height: var(--height);
+
+  /* The width is the keyboard's own, so a filled piano stretches both ways. */
+  &[data-fill] {
+    --height: 100%;
+  }
+}
+
+.whiteKey {
+  --bg: oklch(100% 0 0);
+  --color: oklch(0% 0 0);
+  --active-bg: oklch(92% 0 0);
+  --active-color: oklch(0% 0 0);
+
+  box-sizing: border-box;
+  background-color: var(--bg);
+  -webkit-tap-highlight-color: transparent;
+  color: var(--color);
+  border: 1px solid #555;
+  border-radius: 0px 0px 8px 8px;
+  cursor: pointer;
+
+  &[data-active] {
+    background-color: var(--active-bg);
+    color: var(--active-color);
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+  }
+}
+
+.blackKey {
+  --color: oklch(100% 0 0);
+  --bg: oklch(32% 0 0);
+  --active-color: oklch(100% 0 0);
+  --active-bg: oklch(44% 0 0);
+
+  box-sizing: border-box;
+  background-color: var(--bg);
+  -webkit-tap-highlight-color: transparent;
+  color: var(--color);
+  border: 1px solid #555;
+  border-radius: 0px 0px 8px 8px;
+  cursor: pointer;
+
+  &[data-active] {
+    background-color: var(--active-bg);
+    color: var(--active-color);
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+  }
+}
+
+.keyLabelWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  height: 100%;
+}
+
+.keyLabel {
+  box-sizing: content-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.6rem;
+  height: 10px;
+  margin-bottom: 10px;
+  padding: 4px;
+  border-radius: 4px;
+  border: 1px solid #888;
+  aspect-ratio: 1;
+  max-width: calc(100% - 16px);
+}
+
+/*
+ * Dark mode follows whatever marks the page — `.dark` and `[data-theme=dark]`
+ * are what this site and Storybook set.
+ */
+
+:global(.dark) .whiteKey,
+:global([data-theme='dark']) .whiteKey {
+  --bg: oklch(80% 0 0);
+  --color: oklch(0% 0 0);
+  --active-bg: oklch(72% 0 0);
+  --active-color: oklch(0% 0 0);
+}

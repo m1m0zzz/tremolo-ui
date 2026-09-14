@@ -3,30 +3,40 @@ sidebar_position: 2
 title: テンプレート
 ---
 
-# 構築済みのテンプレートで始める
+# テンプレートから始める
 
-## [tremolo-ui-example-vite-react-ts](https://github.com/m1m0zzz/tremolo-ui-example-vite-react-ts)
+テンプレートは [tremolo-ui のリポジトリ](https://github.com/m1m0zzz/tremolo-ui/tree/main/templates)
+にパッケージと一緒に置いてあり、変更のたびにビルドしています。いつでも最新の API で
+書かれています。履歴を含めずにファイルだけを取り出せる
+[degit](https://github.com/Rich-Harris/degit) でコピーしてください。
 
-**Features**
+どのテンプレートも、全コンポーネントに
+[このドキュメントで使っているテーマ](/docs/tutorials/styling#このサイトで使っているテーマ)
+を当てた例になっています。テーマは `src/theme/` にコピーしてあります。tremolo-ui は
+CSS を配らないので、これらのファイルは自由に書き換えてください。
 
-- Vite
-- TypeScript
-- SWC
-- ESLint
+## vite-react-ts
 
-Deploy: [Vercel](https://tremolo-ui-example-vite-react-ts.vercel.app/)
+Vite + React + TypeScript。lint は Oxlint です。
 
-[:octopus: Use this template](https://github.com/new?template_name=tremolo-ui-example-vite-react-ts&template_owner=m1m0zzz)
+```bash
+npx degit m1m0zzz/tremolo-ui/templates/vite-react-ts my-app
+cd my-app
+npm install
+npm run dev
+```
 
+[ソースコード](https://github.com/m1m0zzz/tremolo-ui/tree/main/templates/vite-react-ts)
 
-## [tremolo-ui-example-next-ts](https://github.com/m1m0zzz/tremolo-ui-example-next-ts)
+## next-ts
 
-**Features**
+Next.js (App Router) + TypeScript。lint は ESLint です。
 
-- Next.js (App Router)
-- TypeScript
-- ESLint
+```bash
+npx degit m1m0zzz/tremolo-ui/templates/next-ts my-app
+cd my-app
+npm install
+npm run dev
+```
 
-Deploy: [Vercel](https://tremolo-ui-example-next-ts.vercel.app/)
-
-[:octopus: Use this template](https://github.com/new?template_name=tremolo-ui-example-next-ts&template_owner=m1m0zzz)
+[ソースコード](https://github.com/m1m0zzz/tremolo-ui/tree/main/templates/next-ts)

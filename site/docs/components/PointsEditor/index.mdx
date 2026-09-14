@@ -24,6 +24,19 @@ selected and moved together, with ctrl / meta or by dragging a
 import { PointsEditor } from '@tremolo-ui/react'
 ```
 
+## Data attributes
+
+State is on the element as an attribute, so it is a selector away — see
+[Styling](/docs/tutorials/styling). An attribute is only there while its
+state is on.
+
+| Attribute | Part | Present when |
+| --- | --- | --- |
+| `data-disabled` | `PointsEditor.Root`, `PointsEditor.Point` | `disabled` is set |
+| `data-readonly` | `PointsEditor.Root`, `PointsEditor.Point` | `readonly` is set |
+| `data-dragging` | `PointsEditor.Point` | the point is being dragged |
+| `data-selected` | `PointsEditor.Point` | the point is in the selection |
+
 ## Examples
 
 ### Basic
