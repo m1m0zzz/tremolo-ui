@@ -4,7 +4,7 @@
 
 1.0 を出すために必要な作業をまとめる。詳細な手順は各リンク先で管理する。
 
-現在: 全パッケージ 0.4.0（Phase 3 をマージ済みで、次のリリースで 0.5.0）。破壊的変更を入れつつ 0.x に留まるため、changeset では `major` ではなく `minor` を選ぶ運用（[core-extraction-plan.md 8.3](./core-extraction-plan.md)）。
+現在: 全パッケージ 0.5.0。破壊的変更を入れつつ 0.x に留まるため、changeset では `major` ではなく `minor` を選ぶ運用（[core-extraction-plan.md 8.3](./core-extraction-plan.md)）。
 
 ## 1. dom 切り出し
 
@@ -21,7 +21,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 | Phase 3: `createDragValue` | 完了 |
 | Phase 4: Piano / AnimationCanvas / NumberInput | 完了（NumberInput [4.1](./core-extraction-plan.md) / AnimationCanvas [4.2](./core-extraction-plan.md) / Piano [4.3](./core-extraction-plan.md)） |
 | Phase 5: zustand 除去 | 完了（`zustand` を dependencies から削除済み。`useSyncExternalStore` は使わずに済んだ） |
-| 5 章: CSS ヘッドレス化・修飾キー・単位の扱い など | 5.1 / 5.2（CSS ヘッドレス化）、5.12（Knob が潰れる）、5.14（`format` 一本化）、5.17（テストと story の配置）が完了。5.16（フォーカス時に書式を外す）と 5.11 の wheel / keyboard も完了。5.13（上下キーでキャレット位置を保つ）、5.15（表示桁と `step`）、5.18（ドラッグの修飾キー）、5.19（浮動小数の誤差）、5.20（ドラッグ中のポインタ固定）、5.21（PointsEditor の複数選択）、5.22（見た目に関わる props）、5.23（`clsx` 除去と tree shaking）も完了。**5 章は全て完了。** 残るのは `PointsEditor` のドキュメントページ（5.21）だけ |
+| 5 章: CSS ヘッドレス化・修飾キー・単位の扱い など | 5.1 / 5.2（CSS ヘッドレス化）、5.12（Knob が潰れる）、5.14（`format` 一本化）、5.17（テストと story の配置）が完了。5.16（フォーカス時に書式を外す）と 5.11 の wheel / keyboard も完了。5.13（上下キーでキャレット位置を保つ）、5.15（表示桁と `step`）、5.18（ドラッグの修飾キー）、5.19（浮動小数の誤差）、5.20（ドラッグ中のポインタ固定）、5.21（PointsEditor の複数選択）、5.22（見た目に関わる props）、5.23（`clsx` 除去と tree shaking）も完了。**5 章は全て完了。** 5.21 で残っていた `PointsEditor` のドキュメントページも書いた |
 
 着手前に決める必要がある未確定事項（同ドキュメント 2 章）:
 
@@ -56,10 +56,10 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 あわせて必要になるもの:
 
 - [ ] ローカル publish には npm へのログインが必要（普段の publish は CI の OIDC 経由なので、ローカルの authToken が失効していることがある。scoped パッケージでは未認証でも 401 ではなく E404 が返るため `npm whoami` で切り分ける）
-- [ ] `.changeset/config.json` の `fixed` は `[["@tremolo-ui/*"]]` のグロブなので**変更不要**
-- [ ] `packages/<name>/LICENSE` を置く場合、`.oxfmtrc.json` の `ignorePatterns` に `LICENSE` があること（`.prettierignore` から移行済み。oxfmt は知らない拡張子を黙って飛ばすので、prettier のときのように pre-commit が落ちることは無いはず）
-- [ ] Vercel の Storybook プロジェクトのビルドコマンドは `npm run build:sb`（全ワークスペースをビルドしてから Storybook をビルドする）であること
-- [x] CSS の配布方法は決着した。**パッケージは CSS を配らない**ので、各パッケージで重複させるかという問題自体が無くなった（core-extraction-plan.md 5.1）。デモのテーマは `site/src/css/tremolo/` にあり、Vue / Svelte を足してもクラス名と状態属性さえ揃っていれば同じものが使える
+- [x] `.changeset/config.json` の `fixed` は `[["@tremolo-ui/*"]]` のグロブなので**変更不要**
+- [x] `packages/<name>/LICENSE` を置く場合、`.oxfmtrc.json` の `ignorePatterns` に `LICENSE` があること（`.prettierignore` から移行済み。oxfmt は知らない拡張子を黙って飛ばすので、prettier のときのように pre-commit が落ちることは無いはず）
+- [ ] Storybook を持つパッケージなら、`packages/react/wrangler.jsonc` に倣って Worker と `tremolo-ui.mimoz.dev/i/storybook-<name>*` の Route を足し、`ci.yml` と `pull-request.yml` の**両方**にビルドとデプロイの手順を足す
+- [x] CSS の配布方法は決着した。**パッケージは CSS を配らない**ので、各パッケージで重複させるかという問題自体が無くなった（core-extraction-plan.md 5.1）。デモのテーマは `packages/shared/css/` にあり、Vue / Svelte を足しても、各パートが `className` を受け取り同じ `data-*` 属性を出していれば同じものが使える
 
 ## 4. ドキュメント整備
 
@@ -68,8 +68,8 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   **サイドバーの翻訳キーはラベルから作られ、それが 1 つのサイドバー内で衝突するとビルドが落ちる。** typedoc はページのラベルにモジュールパスの**最後のセグメントだけ**を使うので、`dom` を足した時点で `midi/input` と `piano/input` が両方 `input` になり、さらに `dom/piano` と `functions/piano` が衝突した。`sidebars.ts` の `withKeys()` で doc id（既に一意）を `key` に入れて解決している。パッケージが増えるたびに起きるので、新しい typedoc plugin を足すときはこれを通すこと。
 
   あわせて `packages/dom/src/piano/input.ts` を `piano/index.ts` に改名した（`dom` の公開 API は `exports` が `.` だけなので影響なし）。
-- [x] **CSS のデモを公開する形に作り替えた。** `site/docs/tutorials/styling.mdx` を書き直し、`site/src/css/tremolo/` の 6 ファイルを `raw-loader` で全文タブ表示している。コピー元と、サイト / Storybook が実際に読み込むファイルは同一（core-extraction-plan.md 5.1）
-- [ ] **`PointsEditor` のドキュメントページを書く。** `site/docs/components/` に存在しない唯一のコンポーネント。複数選択（core-extraction-plan.md 5.21）で書くことが増えた
+- [x] **CSS のデモを公開する形に作り替えた。** `site/docs/tutorials/styling.mdx` を書き直し、`packages/shared/css/` の 6 ファイルを `raw-loader` で全文タブ表示している。コピー元と、サイト / Storybook が実際に読み込むファイルは同一（core-extraction-plan.md 5.1 / 9.4）
+- [x] **`PointsEditor` のドキュメントページを書く。** `site/docs/components/PointsEditor/` に追加した。複数選択（core-extraction-plan.md 5.21）と `SelectionBox` にも触れている
 - [ ] **hooks のドキュメントを充実させる。** 現在 `site/docs/hooks/` には `web-midi-api` しかない。`useDrag` / `useWheel` / `useDragValue` は typedoc の自動生成のみ
 - [ ] **Vue / Svelte を足したときのドキュメント構成を決める。** 現在の `site/docs/components/<Name>/index.mdx` は React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）。フレームワークごとにタブを分けるのか、サイト自体を分けるのか
 - [x] **`site/i18n` の typedoc サイドバー翻訳キーを掃除した。** `sidebar.typedocSidebar.*` を en / ja とも**全て削除**した（114 キー → 7 キー）。
@@ -90,7 +90,6 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - パッケージごとに 1 ページ。バージョンは 3 つとも揃うので**バージョン単位で 1 ページにまとめる**手もあるが、`Updated dependencies` の行を落とす前処理が要る割にサイトの体験は大きく変わらないので見送った
 - [x] `format` に一本化するときに、`units` / `digit` を使っている example / story / ドキュメントを全部書き換えた（core-extraction-plan.md 5.14）
 - [ ] **テンプレートをモノレポに移す。** 現在は別リポジトリ（`m1m0zzz/tremolo-ui-example-next-ts` / `m1m0zzz/tremolo-ui-example-vite-react-ts`）にある。破壊的変更のたびに追随を忘れる場所が増えるので、`templates/` としてこのリポジトリに入れ、**ドキュメントでは `degit` などで取り出す形をアナウンスする**（`npx degit m1m0zzz/tremolo-ui/templates/vite-react-ts`）。CI で少なくともビルドは通しておくと、破壊的変更の当たり判定になる
-- [ ] 1.0 時点で `README.md` の「*tremolo-ui is now WIP*」と「An unstable version (0.x) has been released.」を更新する
 - [ ] **複数のタブ（ファイル）を持てる Playground を作る。** 現状の `site/src/theme/Playground/` は 1 ファイルの live code が前提で、CSS Module のような 2 つ目のファイルは `externalFiles` で外部 Playground に書き出すときにしか渡らない。iframe 化（[core-extraction-plan.md 9.7](./core-extraction-plan.md)）と一緒に検討する
 - [ ] **bug: styling ページの CSS Modules の部分**（`site/docs/tutorials/styling.mdx`）。症状は未記録なので、着手時に再現から
 - [ ] **各コンポーネントのページに `data-*` の説明を置く。** あわせて styling ページの `data-*` の一覧表（`🚦State`）は消す
@@ -122,47 +121,27 @@ CI       ci.yml (push) / pull-request.yml (PR)。PR は versions upload --previe
 
 **実測（origin/main 時点）**: docs 296 ファイル / 14 MB、Storybook 93 ファイル / 9 MB。無料プランの上限 20,000 ファイル・1 ファイル 25 MiB に対して余裕がある。
 
-- [ ] `site` / Storybook それぞれに wrangler の設定を置く（`assets` のみ、`main` 無し）。docs は `force-trailing-slash`、Storybook は既定のまま
-- [ ] Storybook は `viteFinal` で vite の `base` を `/i/storybook-react/` にし、成果物も `i/storybook-react/` 配下に出す。**本番ビルドのみ**（dev に掛けるとローカルの URL が変わる）。この配置なら preview URL でも本番と同じパスになり、base path 起因の差異が出ない
-- [ ] `docusaurus.config.ts` は `url` を差し替えるだけ。**サブドメイン直下なので `baseUrl: '/'` のままでよく、i18n（`/ja/`）との組み合わせも変わらない**
-- [ ] ワークフローを trigger ごとに分ける。`pull-request.yml` は `wrangler versions upload --preview-alias <branch>`、`ci.yml`（main への push）は `wrangler deploy`
+- [x] `site` / Storybook それぞれに wrangler の設定を置く（`assets` のみ、`main` 無し）。docs は `force-trailing-slash`、Storybook は既定のまま
+- [x] Storybook は `viteFinal` で vite の `base` を `/i/storybook-react/` にし、成果物も `i/storybook-react/` 配下に出す。**本番ビルドのみ**（dev に掛けるとローカルの URL が変わる）。この配置なら preview URL でも本番と同じパスになり、base path 起因の差異が出ない
+- [x] `docusaurus.config.ts` は `url` を差し替えるだけ。**サブドメイン直下なので `baseUrl: '/'` のままでよく、i18n（`/ja/`）との組み合わせも変わらない**
+- [x] ワークフローを trigger ごとに分ける。`pull-request.yml` は `wrangler versions upload --preview-alias <branch>`、`ci.yml`（main への push）は `wrangler deploy`
   - alias は**小文字・数字・ハイフンのみ、先頭は小文字**。ブランチ名の `/` はサニタイズが要る。さらに `alias + Worker 名` が **63 文字以内**（DNS 制約）
   - **fork からの PR には secrets が渡らないので preview は出ない。** Access を掛ける以上どのみち外部の人は見られないので実害は無い（`pull_request_target` は使わない）
   - preview URL は `marocchino/sticky-pull-request-comment`（`header: preview`）で PR に貼る。job に `pull-requests: write` が要る
   - API token は Account -> Workers Scripts:Edit と、Zone -> Workers Routes:Edit（`mimoz.dev`）
-- [ ] preview を Cloudflare Access で保護する。**Zero Trust の無料プランで 50 シートまで**。Worker の Access タブから「preview URL のみ」を選べる
+- [x] preview を Cloudflare Access で保護する。**Zero Trust の無料プランで 50 シートまで**。Worker の Access タブから「preview URL のみ」を選べる
   - preview URL は **`workers_dev` が有効なときだけ出る**（無効にすると preview も消える）ので、`workers_dev = true` のまま Access で塞ぐ
   - Worker レベルの Access は WebSocket 非対応だが、静的サイトなので影響しない
-- [ ] `mimoz.dev` は既に Cloudflare の zone（`ignat` / `june` の NS）。`tremolo-ui.mimoz.dev` のレコードは未作成
-- [ ] リンクの書き換え: `README.md`（4 箇所。うち 2 つは `deploy-badge.vercel.app` のバッジで、**Cloudflare 版の同等品が無い**ので素のリンクか shields.io に置き換える）、`SECURITY.md`、`CONTRIBUTING.md`、`site/README.md`、`docusaurus.config.ts` の navbar / footer、`site/i18n/*/docusaurus-theme-classic/footer.json`
-- [ ] Vercel はリダイレクトとして残す。**`*.vercel.app` はデプロイが存在しないとリダイレクトを返せない**ので、プロジェクト自体は維持したうえで push ごとの再ビルドを Ignored Build Step で止める
-- [ ] **Vercel のビルド回数制限（24 時間の rate limit）から抜けられるのが実利。** stacked PR で 3 レイヤ同時に上げると 6 デプロイが走って制限に当たり、プレビュー URL が出なくなっていた。Cloudflare 側は rate limit ではなくキューイングなので、この症状は起きない
+- [x] `mimoz.dev` は既に Cloudflare の zone（`ignat` / `june` の NS）。`tremolo-ui.mimoz.dev` のレコードは docs の Custom Domain が作成した
+- [x] リンクの書き換え: `README.md`（4 箇所。うち 2 つは `deploy-badge.vercel.app` のバッジで、**Cloudflare 版の同等品が無い**ので素のリンクか shields.io に置き換える）、`SECURITY.md`、`CONTRIBUTING.md`、`site/README.md`、`docusaurus.config.ts` の navbar / footer、`site/i18n/*/docusaurus-theme-classic/footer.json`
+- [x] Vercel はリダイレクトとして残す。**`*.vercel.app` はデプロイが存在しないとリダイレクトを返せない**ので、プロジェクト自体は維持したうえで push ごとの再ビルドを止める。Ignored Build Step ではなく Git 連携を切る形にした（`vercel-redirect/README.md`）
 
 ### ツールチェーンの見直し
 
-いずれも「可能であれば」。**移行そのものが目的ではないので、詰まったら現状維持でよい。**
+**実施済み**
 
-- [x] **jest → vitest。** `packages/*/vitest.config.ts` に `globals: true` と `environment` だけを置いた。`testMatch` の指定は不要（vitest の既定の `include` が `*.test.*` のみを拾うので、`__tests__` のヘルパーを掴まない）。`@tremolo-ui/*` の解決は vite が workspace の symlink 越しに `dist` を見るだけで、設定は要らなかった
-  - `functions` は `environment: 'node'`。DOM を一切触らないので jsdom を作る必要がない
-  - jest / ts-jest / jest-environment-jsdom / `@types/jest` が消えて **`node_modules` のパッケージが 2252 → 1908（-344）**
-  - **速くはならなかった。** 全 502 件のルートからの実測で jest 6.4s / vitest 6.6s。実利は速度ではなく、ts-jest の transform 設定が消えること・ESM をそのまま扱えること・Storybook と同じ vite の設定を共有できること・watch がある（`test:watch`）ことの 4 つ
-  - `react` は所要 4.3s のうち **63% が jsdom の生成**（1 ファイルにつき 1 つ、27 回）。vitest は `isolate: false` を勧めてくるが、**入れると 1 件落ちる**（`<body>` のインラインスタイルなど、ファイルをまたいで残るグローバルがある）ので既定のまま
-  - `@types/jest` を落とすと `jest.Mock` / `jest.SpyInstance` の代わりが要る。`vi.fn` / `vi.spyOn` はグローバルだが型はグローバルではないので、`import type { Mock, MockInstance } from 'vitest'` を 8 ファイルに足した
-  - **`jest-environment-jsdom` が連れてきていた `@types/jsdom` が `DOM.Iterable` を有効にしていた。** 外すと `tsc` が落ちるので、ルートの `tsconfig.json` の `lib` に明示した
-- [x] **eslint / prettier → oxlint / oxfmt。** `.oxlintrc.json` と `.oxfmtrc.json` の 2 つになり（devDependency も oxlint / oxfmt の 2 つ）、`eslint.config.js` / `.prettierrc.json` / `.prettierignore` と devDependency 10 個（eslint 本体 + プラグイン 5 + typescript-eslint + prettier + 型 2）が消えた。**lint が 9.2s → 0.33s、format は 2.5s → 15ms**（リポジトリ全体、手元での実測）。`node_modules` のパッケージは 1908 → 1774（-134）で、vitest 分と合わせて main から **-478**
-  - **争点だった `import/order` は oxlint に無い。** 代わりに **oxfmt の `sortImports`** が持つ（eslint-plugin-perfectionist と同じアルゴリズム）。`@tremolo-ui/**` は `customGroups` で external の直後に置き、`type` と `style` を最後にすれば今までと同じ並びになる。`packages/*/src` で動いたのは、CSS module の import が最後に来ていなかった `PointsEditor.stories.tsx` の 1 ファイルだけ（eslint は見落としていた）。あとは eslint が `ignores` に入れていた `site/examples` と `site/src/theme`
-  - **`partitionByComment: true` が要る。** 既定では import の間のコメントを越えて並べ替えるので、`site/examples/*` の `// expand begin` / `// expand end`（ドキュメントの折りたたみ範囲）の外に import が飛び出す。`.storybook/preview.tsx` の CSS の塊も同じ理由で崩れた
-  - `--migrate=prettier` で `.prettierrc.json` と `.prettierignore` をそのまま移せる。**整形結果の非互換はリポジトリ全体で 2 ファイルだけ**で、どちらも union 型の改行（`A | B | C` を先頭 `|` で縦に割る）
-  - **`eslint-plugin-storybook` に相当するものは oxlint に無い。** 実際に `flat/recommended` を全 21 story + `main.ts` に当てて（warn の 3 つも error に上げて）測ったところ**指摘は 0 件**で、内訳は以下
-    - **3 つは `no-restricted-imports` で取り戻した。** `no-renderer-packages` / `use-storybook-testing-library` / `use-storybook-expect`。glob は前方一致ではないので `@storybook/react` は落ちて `@storybook/react-vite` は通る。**Vue / Svelte を足すと `@storybook/vue3` と `@storybook/vue3-vite` を取り違える余地が実際に生まれる**ので、ここが実質の本命
-    - **1 つは最初から適用されていなかった。** `no-uninstalled-addons` は `files` が `.storybook/main.@(js|cjs|mjs|ts)` とルート直下にアンカーされていて、`packages/react/.storybook/main.ts` にマッチしない。`**/` を足すと存在しないアドオン名をちゃんと error で捕まえるので、**モノレポでは黙って無効になるルール**。失ったのではなく元から無かった
-    - **2 つは不発。** `await-interactions` / `context-in-play-function` は **play 関数が 1 つも無い**ので判定対象が存在しない（取り戻した 3 つのうち storybook/test 系の 2 つも、今は同じ理由で不発）
-    - **代替が無いのは残り 5 つ。** `default-exports` / `story-exports` / `hierarchy-separator` / `no-redundant-story-name` / `prefer-pascal-case` で、いずれも CSF の書き方の統一
-    - 代わりに vitest プラグインが入り、`test.only` の消し忘れなどを見るようになった
-  - oxlint 固有の指摘は 23 件。実バグが 1 件（`expect(() => { expect(...) })` と入れ子になっていて内側に matcher が無い）、残りは `unicorn/no-useless-spread` と React Compiler 系の 3 ルールで、いずれも意図的な書き方だったので設定で切った
-  - **oxlint は `eslint-disable` コメントも読む**が、名前空間が違う（`@typescript-eslint/x` → `typescript/x`）ので `oxlint-disable` に書き換えた。書き換えないと、後でそのルールを有効にしたときに黙って効かなくなる
-  - **lint-staged には `--no-error-on-unmatched-pattern` が要る。** oxlint も oxfmt も、渡されたパスが全て ignore に当たると「対象が無い」で非ゼロ終了する（oxlint 1 / oxfmt 2）。`.md` だけのコミットが pre-commit で落ちるので、両方に付ける
-  - ついでに CI に `lint` と `format:check` を足した。**今まで CI は lint を一度も回していなかった**（pre-commit の lint-staged だけ）。import の並び順が formatter 側に移ったので、`format:check` まで無いと同じところを見ていることにならない
+- [x] **jest → vitest。** 
+- [x] **eslint / prettier → oxlint / oxfmt。** 
 
 ## 6. 公開 API の整理
 
@@ -174,38 +153,6 @@ CI       ci.yml (push) / pull-request.yml (PR)。PR は versions upload --previe
   - **Controls には prop でない値も出せる。** args に入れたキーは Storybook がそのまま拾うので、`Root` 以外のパートをマウントするかどうかを args に置き、`render` で分割代入して取り出せば Controls から切り替えられる。`ComponentProps<typeof X.Root> & Parts` を `Meta` / `StoryObj` に渡し、`table: { category: 'Parts' }` で本物の prop と別の欄にまとめる。**`render` で取り出さずに `{...args}` を撒くと DOM に渡ってしまう**ので、分割代入は必須
   - 入れたのは各コンポーネントの `Basic` だけ（`Knob` の 3 パート、`NumberInput` の `Stepper`、`Slider` の `Thumb` / `Marks`、`XYPad` の `Thumb`、`PointsEditor` の `Background`）。**argTypes を meta ではなく story 側に書いた**ので、主題が別にある story の Controls は汚れない
   - **`Slider.Marks` の `options` に `'step'` を渡してはいけない場面がある。** 目盛りは `max / per - min / per + 1` 本作られるので、`['step', …]` は `step` に比例して増える。0-100 で既定の `step` = 1 なら 101 本、Controls で `step` を 0.1 にされたら 1001 本。`Basic` では固定間隔（`[25, 'mark-number']`）にした
-
-- [ ] **`composeRefs` をやめる。**
-
-  現在 9 箇所で「利用者から渡された `ref`」と「context が持つ内部 `ref`」を `useComposedRefs` で合成している（`Slider.Track` / `XYPad.Area` / `NumberInput.InputField` / `NumberInput.Stepper` / `PointsEditor.Point` / `PointsEditor.Container` と、Slider / Knob / XYPad の `Root`）。実装は Radix からの持ち込みで、リポジトリが自前で保守している。
-
-  **[5.3](./core-extraction-plan.md) でいったん「削除せず使う」と決めた項目の再検討。** 当時の理由は「インライン ref は毎レンダー新しい関数になり React が ref を付け直す（`node → null → node`）ので、memo 化した合成でまとめれば付け直しが無くなる」だった。
-
-  **測ったところ、この前提が成立するのは呼び出し側の ref が安定している場合だけだった。** 同じ要素に安定した内部 ref と不安定な外部 ref を渡し、3 回再レンダーしたときの付け外し:
-
-  ```
-  合成しない場合
-    内部（安定）  : attach
-    外部（不安定）: attach → detach → attach → detach → attach → detach → attach
-
-  合成した場合
-    内部（本来は安定）: attach → detach → attach → detach → attach → detach → attach
-    外部（不安定）    : attach → detach → attach → detach → attach → detach → attach
-  ```
-
-  **不安定さが伝染する。** 合成後のコールバックの同一性は最も不安定な入力に決まり、React は同一性が変われば必ず付け直す。`useComposedRefs` は `useCallback(composeRefs(...refs), refs)` で memo 化しているが、**依存に外部 ref が入っている以上、外部が毎レンダー新しければ memo は効かない。** `Slider.Track` にインラインの ref を渡した場合も同じ結果になった。
-
-  **ライブラリ側は外部 ref の同一性を制御できない。** `ref={(node) => ...}` と書くのは React の普通の書き方で、それを禁じることはできない。これは「2 つの利用者が 1 つの ref スロットを共有する」という構造から来るもので、`composeRefs` の実装を直しても消えない。
-
-  **現時点で壊れてはいない。** ドラッグ系の hook は node を state で持ち、生成・破棄を effect で行っているので、付け直しに耐える形になっている。ただし ref コールバックの中でリソースを確保する実装を将来書くと再発する（Phase 2 で一度出した不具合がこれ）。
-
-  やめるには、**context が `RefObject` を配って各パートがそこへ自分を合成する形をやめる**必要がある。パート側が「自分の要素を context へ登録する」形にすれば、利用者の `ref` はそのまま要素へ渡せて合成が要らなくなる。ドラッグ系の hook が既に「node を state で持つ」形をとっているので、同じ考え方を context にも適用することになる。
-
-  一緒に片付くもの:
-
-  - `useComposedRefs` は `useCallback(composeRefs(...refs), refs)` の形で可変長の ref 配列を依存に撒いており、そのために lint を 2 つ無効化している
-  - React 19 の callback ref cleanup の分岐がテストされていない（`docs/reviews/` の 06 P3）
-  - Radix から持ち込んだコードの保守が要らなくなる
 
 - [ ] **`functions` を汎用な関数だけにする。** 破壊的変更。詳細: **[functions-scope.md](./functions-scope.md)**
 

@@ -1638,7 +1638,7 @@ step = 1、shift: ['raw', 0.1]、値 5 から shift + ↑ を連打
 #### 残り
 
 - [x] **ラバーバンド中も `<body>` の `user-select: none` を付ける。** 点のドラッグと同じ扱い。あわせて、`Container` に drag が付いたことで `touch-action: none` が編集領域全体に掛かる（**指でなぞってもページがスクロールしなくなる**）。点の上では元からそうだった
-- [ ] **`PointsEditor` にはドキュメントページが無い**（`site/docs/components/` に存在しない）。複数選択で書くことが増えたので、そろそろ要る
+- [x] **`PointsEditor` にはドキュメントページが無い** → `site/docs/components/PointsEditor/` に追加した
 
 #### テスト
 

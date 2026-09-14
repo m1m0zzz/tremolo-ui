@@ -37,7 +37,8 @@ function typedocPlugins() {
         parametersFormat: 'table',
         enumMembersFormat: 'table',
         useCodeBlocks: true,
-        // for Vercel Deploy (npm run build:docs:production)
+        // COMMIT_SHA is set only by `npm run build:docs:production`, a leftover
+        // from the Vercel build. CI builds the site without it.
         ...(process.env.COMMIT_SHA && {
           sourceLinkTemplate:
             'https://github.com/m1m0zzz/tremolo-ui/blob/{gitRevision}/{path}#L{line}',
@@ -61,7 +62,8 @@ function typedocPlugins() {
         // example, `xy` and `XY`). Preserve TypeDoc's link targets instead of
         // relying on Docusaurus's deduplicated heading IDs.
         useCustomAnchors: true,
-        // for Vercel Deploy (npm run build:docs:production)
+        // COMMIT_SHA is set only by `npm run build:docs:production`, a leftover
+        // from the Vercel build. CI builds the site without it.
         ...(process.env.COMMIT_SHA && {
           sourceLinkTemplate:
             'https://github.com/m1m0zzz/tremolo-ui/blob/{gitRevision}/{path}#L{line}',
@@ -81,7 +83,8 @@ function typedocPlugins() {
         parametersFormat: 'table',
         enumMembersFormat: 'table',
         useCodeBlocks: true,
-        // for Vercel Deploy (npm run build:docs:production)
+        // COMMIT_SHA is set only by `npm run build:docs:production`, a leftover
+        // from the Vercel build. CI builds the site without it.
         ...(process.env.COMMIT_SHA && {
           sourceLinkTemplate:
             'https://github.com/m1m0zzz/tremolo-ui/blob/{gitRevision}/{path}#L{line}',
