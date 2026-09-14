@@ -360,9 +360,9 @@ export const Slider = {
   MarksOption,
 }
 
-export { useSliderContext } from './context'
+export { useSliderContext, type SliderContextValue } from './context'
 export { type SliderThumbMethods, type SliderThumbProps } from './Thumb'
 export { type SliderTrackProps } from './Track'
-export { type MarksProps } from './Marks'
-export { type MarksOptionProps } from './MarksOption'
+export { type SliderMarksProps } from './Marks'
+export { type SliderMarksOptionProps } from './MarksOption'
 export { type MarksOptions } from './type'

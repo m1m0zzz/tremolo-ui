@@ -1,6 +1,6 @@
 import {
   ComponentPropsWithoutRef,
-  ReactElement,
+  forwardRef,
   useEffect,
   useRef,
   useState,
@@ -11,6 +11,8 @@ import {
   type AnimationCanvasInstance,
   type AnimationFrame,
 } from '@tremolo-ui/dom'
+
+import { useComposedRefs } from '../../compose-refs'
 
 export type InitFunction = (
   context: CanvasRenderingContext2D,
@@ -83,26 +85,34 @@ type Props = AnimationCanvasProps &
 /**
  * A simple animatable canvas with requestAnimationFrame()
  */
-export function AnimationCanvas({
-  // common
-  draw,
-  init,
-  animate = true,
-  options,
-  reduceFlickering = true,
-  // fixed
-  width = 100,
-  height = 100,
-  // resizable
-  resizable = false,
-  // canvas props
-  className,
-  onContextMenu = (event) => event.preventDefault(),
-  ...props
-}: Props): ReactElement {
+export const AnimationCanvas = /* @__PURE__ */ forwardRef<
+  HTMLCanvasElement,
+  Props
+>(function AnimationCanvas(
+  {
+    // common
+    draw,
+    init,
+    animate = true,
+    options,
+    reduceFlickering = true,
+    // fixed
+    width = 100,
+    height = 100,
+    // resizable
+    resizable = false,
+    // canvas props
+    className,
+    onContextMenu = (event) => event.preventDefault(),
+    ...props
+  },
+  forwardedRef,
+) {
   // See useDrag for why the node is held in state rather than a ref: an inline
   // ref would be re-attached on every render and tear the instance down.
   const [node, setNode] = useState<HTMLCanvasElement | null>(null)
+  // The caller's ref gets the same element.
+  const composedRef = useComposedRefs<HTMLCanvasElement>(forwardedRef, setNode)
 
   // Read when the instance is created. The effect below keeps it current, and
   // runs right after, so a stale handler is replaced within the same commit.
@@ -165,9 +175,9 @@ export function AnimationCanvas({
   return (
     <canvas
       className={className}
-      ref={setNode}
+      ref={composedRef}
       onContextMenu={onContextMenu}
       {...props}
     />
   )
-}
+})

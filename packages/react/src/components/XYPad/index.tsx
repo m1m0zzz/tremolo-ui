@@ -410,4 +410,9 @@ export const XYPad = {
 
 export { type XYPadThumbProps, type XYPadThumbMethods } from './Thumb'
 export { type XYPadAreaProps } from './Area'
-export { useXYPadContext, type XY, type XYInput } from './context'
+export {
+  useXYPadContext,
+  type XYPadContextValue,
+  type XY,
+  type XYInput,
+} from './context'

@@ -494,8 +494,8 @@ export const NumberInput = {
   DecrementStepper,
 }
 
-export { useNumberInputContext } from './context'
-export { type NumberInputFieldProps } from './InputField'
-export { type StepperProps } from './Stepper'
-export { type IncrementStepperProps } from './IncrementStepper'
-export { type DecrementStepperProps } from './DecrementStepper'
+export { useNumberInputContext, type NumberInputContextValue } from './context'
+export { type NumberInputInputFieldProps } from './InputField'
+export { type NumberInputStepperProps } from './Stepper'
+export { type NumberInputIncrementStepperProps } from './IncrementStepper'
+export { type NumberInputDecrementStepperProps } from './DecrementStepper'

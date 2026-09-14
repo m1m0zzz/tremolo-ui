@@ -7,7 +7,7 @@ import { useCheckPlacement } from '../_util/Placement'
 
 import { useSliderContext } from './context'
 
-export interface MarksOptionProps {
+export interface SliderMarksOptionProps {
   // required
   value: number
 
@@ -50,8 +50,8 @@ export function MarksOption({
   className,
   style,
   ...props
-}: MarksOptionProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof MarksOptionProps>) {
+}: SliderMarksOptionProps &
+  Omit<ComponentPropsWithoutRef<'div'>, keyof SliderMarksOptionProps>) {
   useCheckPlacement('Slider.MarksOption', 'Slider.Marks')
 
   const min = useSliderContext((s) => s.min)

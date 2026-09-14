@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { createRef, useState } from 'react'
 
-import { PointBaseType, PointsEditor, PointProps } from '.'
+import { PointBaseType, PointsEditor, PointsEditorPointProps } from '.'
 
 import type { Mock } from 'vitest'
 
@@ -44,7 +44,7 @@ type SubjectProps = Partial<
     'disabled' | 'readonly' | 'wheel' | 'keyboard'
   >
 > & {
-  point?: Partial<PointProps<PointBaseType>>
+  point?: Partial<PointsEditorPointProps<PointBaseType>>
   initial?: PointBaseType
   onChange?: (value: PointBaseType) => void
 }

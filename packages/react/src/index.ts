@@ -10,18 +10,20 @@ export {
 export {
   Knob,
   useKnobContext,
+  type KnobContextValue,
   type KnobProps,
   type KnobMethods,
 } from './components/Knob'
 export {
   NumberInput,
   useNumberInputContext,
+  type NumberInputContextValue,
   type NumberInputProps,
   type NumberInputMethods,
-  type NumberInputFieldProps,
-  type StepperProps,
-  type IncrementStepperProps,
-  type DecrementStepperProps,
+  type NumberInputInputFieldProps,
+  type NumberInputStepperProps,
+  type NumberInputIncrementStepperProps,
+  type NumberInputDecrementStepperProps,
 } from './components/NumberInput'
 export {
   Piano,
@@ -42,15 +44,16 @@ export {
   type PointsEditorBackgroundProps,
   type PointsEditorContainerProps,
   type PointsEditorSelectionBoxProps,
-  type PointProps,
+  type PointsEditorPointProps,
   type PointBaseType,
 } from './components/PointsEditor'
 export {
   Slider,
   useSliderContext,
-  type MarksOptionProps,
+  type SliderContextValue,
+  type SliderMarksOptionProps,
   type MarksOptions,
-  type MarksProps,
+  type SliderMarksProps,
   type SliderMethods,
   type SliderProps,
   type SliderThumbMethods,
@@ -60,6 +63,7 @@ export {
 export {
   XYPad,
   useXYPadContext,
+  type XYPadContextValue,
   type XYPadProps,
   type XYPadMethods,
   type XYPadAreaProps,

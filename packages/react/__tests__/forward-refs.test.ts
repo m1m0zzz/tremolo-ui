@@ -1,7 +1,14 @@
-import { NumberInput, PointsEditor, Slider, XYPad } from '../src'
+import {
+  AnimationCanvas,
+  NumberInput,
+  PointsEditor,
+  Slider,
+  XYPad,
+} from '../src'
 
 describe('React 18 ref support', () => {
   test.each([
+    ['AnimationCanvas', AnimationCanvas],
     ['NumberInput.InputField', NumberInput.InputField],
     ['NumberInput.Stepper', NumberInput.Stepper],
     ['PointsEditor.Container', PointsEditor.Container],

@@ -1,5 +1,5 @@
 import { render, act } from '@testing-library/react'
-import { useState } from 'react'
+import { createRef, useState } from 'react'
 
 import { AnimationCanvas } from '.'
 
@@ -183,6 +183,15 @@ describe('AnimationCanvas', () => {
     expect(queuedFrames()).toBe(1)
     expect(canvas.width).toBe(30)
     expect(canvas.height).toBe(15)
+  })
+
+  test('passes the ref to the canvas', () => {
+    const ref = createRef<HTMLCanvasElement>()
+    const { container } = render(
+      <AnimationCanvas ref={ref} width={10} height={10} draw={() => {}} />,
+    )
+
+    expect(ref.current).toBe(container.querySelector('canvas'))
   })
 
   // Checked by `tsc`, not by the test run: a resizable canvas takes its size
