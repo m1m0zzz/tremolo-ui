@@ -5,7 +5,7 @@
   ],
   "packageRules": [
     {
-      "description": "templates/ は degit で取り出して使う雛形なので、依存の範囲は create-vite / create-next-app と同じ書き方のまま保つ。共有設定の config:best-practices が入れる :pinDevDependencies を打ち消し、config:recommended と同じ rangeStrategy に戻す（範囲内の更新は lockfile だけが変わる）",
+      "description": "templates/ は 共有設定の config:best-practices が入れる :pinDevDependencies を打ち消し、config:recommended と同じ rangeStrategy に戻す",
       "matchFileNames": ["templates/**"],
       "rangeStrategy": "auto"
     }
