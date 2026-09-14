@@ -39,24 +39,8 @@
   margin-left: auto;
 }
 
-/* The "flushed" look, as in WaveSelector. */
-.numberInputWrapper {
-  --active-color: #34c2ed;
-
-  width: 40px;
-  height: 25px;
-  border-width: 0 0 1px 0;
-  border-radius: 0;
-}
-
-.numberInput {
-  font-size: 0.75rem;
-  text-align: center;
-  padding: 4px 6px 2px 6px;
-  width: 100%;
-
-  &::selection {
-    background-color: rgb(63, 166, 245);
-    color: white;
-  }
+/* The shortcuts listen on the window, so focusing the keyboard means nothing
+   and the ring would only be noise. */
+.piano {
+  outline: none;
 }

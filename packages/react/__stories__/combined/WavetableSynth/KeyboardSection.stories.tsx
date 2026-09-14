@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai'
-import { useMemo, useRef, type KeyboardEvent } from 'react'
+import { useMemo, useRef } from 'react'
 import { start } from 'tone'
 
 import { clamp, noteName, noteNumber } from '@tremolo-ui/functions'
@@ -11,6 +11,7 @@ import {
   SHORTCUTS,
   type PianoMethods,
 } from '../../../src/components/Piano'
+import { useEventListener } from '../../../src/hooks/useEventListener'
 import { useMIDIAccess } from '../../../src/hooks/useMIDIAccess'
 import { useMIDIInput } from '../../../src/hooks/useMIDIInput'
 
@@ -23,6 +24,7 @@ import {
   velocityAtom,
 } from './atoms'
 
+import flushed from './FlushedNumberInput.module.css'
 import styles from './KeyboardSection.module.css'
 import knobTheme from 'shared/css/Knob.module.css'
 import pianoTheme from 'shared/css/Piano.module.css'
@@ -38,6 +40,16 @@ const BASE_LAST_NOTE = noteNumber('B4')
 
 /** How far C / V move the velocity, as in the computer keyboards of DAWs. */
 const VELOCITY_STEP = 20
+
+/** Outside the component, so the listener is not re-attached on every render. */
+const windowTarget = () => globalThis.window
+
+function isEditableTarget(target: EventTarget | null) {
+  return (
+    target instanceof HTMLElement &&
+    (target.matches('input, textarea, select') || target.isContentEditable)
+  )
+}
 
 interface Props {
   themeColor?: string
@@ -74,9 +86,11 @@ export function KeyboardSection({
     onNoteOffEvent: (note) => pianoRef.current?.stopNote(note),
   })
 
-  // The note shortcuts are on the home row, which leaves Z X C V free.
-  function handleKeyDown(e: KeyboardEvent) {
+  // The note shortcuts are on the home row, which leaves Z X C V free. They
+  // listen where the piano's do, and like them stay out of the text fields.
+  useEventListener(windowTarget, 'keydown', (e) => {
     if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return
+    if (isEditableTarget(e.target)) return
     switch (e.key) {
       case 'z':
         setOctave((o) => clamp(o - 1, MIN_OCTAVE, MAX_OCTAVE))
@@ -91,7 +105,7 @@ export function KeyboardSection({
         setVelocity((v) => clamp(v + VELOCITY_STEP, MIN_VELOCITY, MAX_VELOCITY))
         break
     }
-  }
+  })
 
   return (
     <div className={styles.container}>
@@ -103,10 +117,10 @@ export function KeyboardSection({
             min={MIN_OCTAVE}
             max={MAX_OCTAVE}
             selectOnFocus="number"
-            className={styles.numberInputWrapper}
+            className={flushed.root}
             onChange={(v) => setOctave(v)}
           >
-            <NumberInput.InputField className={styles.numberInput} />
+            <NumberInput.InputField className={flushed.field} />
           </NumberInput.Root>
           <span className={`label ${styles.range}`}>
             {noteName(noteRange.first)} - {noteName(noteRange.last)}
@@ -164,7 +178,7 @@ export function KeyboardSection({
       </div>
       <Piano.Root
         ref={pianoRef}
-        className={pianoTheme.root}
+        className={`${pianoTheme.root} ${styles.piano}`}
         classes={{
           keyLabelWrapper: pianoTheme.keyLabelWrapper,
           keyLabel: pianoTheme.keyLabel,
@@ -174,6 +188,7 @@ export function KeyboardSection({
             keyType === 'white' ? pianoTheme.whiteKey : pianoTheme.blackKey,
         })}
         noteRange={noteRange}
+        keyboardShortcutsScope={'window'}
         keyboardShortcuts={SHORTCUTS.HOME_ROW}
         label={(_, { index }) => SHORTCUTS.HOME_ROW.keys[index]?.toUpperCase()}
         height={120}
@@ -181,7 +196,6 @@ export function KeyboardSection({
         // keyboard play at the knob's.
         onPlayNote={(note, v) => onPlayNote?.(note, v ?? velocity / 127)}
         onStopNote={(note) => onStopNote?.(note)}
-        onKeyDown={handleKeyDown}
       />
     </div>
   )

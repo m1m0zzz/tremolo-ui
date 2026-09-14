@@ -24,7 +24,7 @@ import {
   middleWave,
 } from './wavetable'
 
-import style from './WaveSelector.module.css'
+import flushed from './FlushedNumberInput.module.css'
 import sliderTheme from 'shared/css/Slider.module.css'
 
 const sampleLength = 100
@@ -153,39 +153,42 @@ export const WaveSelector = ({
             />
           </Slider.Track>
         </Slider.Root>
+        {/* The labels sit beside the fields, so this row is as tall as a field
+            and lines up with the position field at the foot of the next column. */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'space-around',
+            alignItems: 'center',
           }}
         >
-          <div>
-            <span className="label">Semi: </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span className="label">Semi:</span>
             <NumberInput.Root
               value={semitone}
               min={MIN_SEMITONE}
               max={MAX_SEMITONE}
               {...unitFormat('st', { prefixes: false })}
               selectOnFocus="number"
-              className={style.numberInputWrapper}
+              className={flushed.root}
               onChange={(v) => setSemitone(v)}
             >
-              <NumberInput.InputField className={style.numberInput} />
+              <NumberInput.InputField className={flushed.field} />
             </NumberInput.Root>
           </div>
-          <div>
-            <span className="label">Det: </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span className="label">Det:</span>
             <NumberInput.Root
               value={detune}
               min={MIN_DETUNE}
               max={MAX_DETUNE}
               {...unitFormat('ct', { prefixes: false })}
               selectOnFocus="number"
-              className={style.numberInputWrapper}
+              className={flushed.root}
               onChange={(v) => setDetune(v)}
             >
-              <NumberInput.InputField className={style.numberInput} />
+              <NumberInput.InputField className={flushed.field} />
             </NumberInput.Root>
           </div>
         </div>
@@ -198,6 +201,7 @@ export const WaveSelector = ({
           gap: 4,
         }}
       >
+        {/* Takes whatever the field below leaves, so the field sits at the foot. */}
         <Slider.Root
           className={sliderTheme.root}
           value={position}
@@ -207,8 +211,9 @@ export const WaveSelector = ({
           vertical
           style={{
             width: 'min-content',
-            height: 'calc(100% - 1rem)',
-            margin: 10,
+            flex: 1,
+            minHeight: 0,
+            margin: '10px 10px 0',
           }}
         >
           <Slider.Track
@@ -235,10 +240,10 @@ export const WaveSelector = ({
           max={100}
           {...unitFormat('%', { prefixes: false })}
           selectOnFocus="number"
-          className={style.numberInputWrapper}
+          className={flushed.root}
           onChange={(v) => setPosition(v)}
         >
-          <NumberInput.InputField className={style.numberInput} />
+          <NumberInput.InputField className={flushed.field} />
         </NumberInput.Root>
       </div>
     </div>
