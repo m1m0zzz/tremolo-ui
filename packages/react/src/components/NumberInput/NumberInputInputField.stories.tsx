@@ -16,7 +16,11 @@ export default {
   component: NumberInput.InputField,
 } satisfies Meta<typeof NumberInput.InputField>
 
-type Story = StoryObj<typeof NumberInput.InputField>
+/**
+ * Typed against `Root`, not `InputField`. What the field does on focus, Enter
+ * and the arrow keys is set on `Root`, and this is what puts those in Controls.
+ */
+type Story = StoryObj<typeof NumberInput.Root>
 
 /** `format` and `parse` come as a pair, so they spread in together. */
 const hz = unitFormat('Hz')
@@ -37,11 +41,12 @@ export const UnformatOnFocus: Story = {
     return (
       <NumberInput.Root
         className={numberInputTheme.root}
+        {...args}
         value={value}
         {...hz}
         onChange={setValue}
       >
-        <NumberInput.InputField className={numberInputTheme.field} {...args} />
+        <NumberInput.InputField className={numberInputTheme.field} />
         <NumberInput.Stepper className={numberInputTheme.stepper}>
           <NumberInput.IncrementStepper
             className={numberInputTheme.incrementStepper}
@@ -83,15 +88,13 @@ export const KeepCaretOnStep: Story = {
       <div>
         <NumberInput.Root
           className={numberInputTheme.root}
+          {...args}
           value={value}
           step={step}
           keyboard={keyboard}
           onChange={setValue}
         >
-          <NumberInput.InputField
-            className={numberInputTheme.field}
-            {...args}
-          />
+          <NumberInput.InputField className={numberInputTheme.field} />
           <NumberInput.Stepper className={numberInputTheme.stepper}>
             <NumberInput.IncrementStepper
               className={numberInputTheme.incrementStepper}
@@ -151,11 +154,12 @@ export const SelectOnFocus: Story = {
     return (
       <NumberInput.Root
         className={numberInputTheme.root}
+        {...args}
         value={value}
         {...hz}
         onChange={setValue}
       >
-        <NumberInput.InputField className={numberInputTheme.field} {...args} />
+        <NumberInput.InputField className={numberInputTheme.field} />
       </NumberInput.Root>
     )
   },

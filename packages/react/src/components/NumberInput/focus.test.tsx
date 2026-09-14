@@ -3,19 +3,15 @@ import { useState } from 'react'
 
 import { unitFormat } from '@tremolo-ui/functions'
 
-import { NumberInputFieldProps } from './InputField'
-
 import { NumberInput, NumberInputProps } from '.'
 
 function Subject({
   initial = 0,
   onChange,
-  field,
   ...props
 }: {
   initial?: number
   onChange?: (v: number) => void
-  field?: NumberInputFieldProps
 } & Omit<NumberInputProps, 'value' | 'children'>) {
   const [value, setValue] = useState(initial)
   return (
@@ -27,7 +23,7 @@ function Subject({
         onChange?.(v)
       }}
     >
-      <NumberInput.InputField {...field} />
+      <NumberInput.InputField />
     </NumberInput.Root>
   )
 }
@@ -47,7 +43,7 @@ describe('unformatOnFocus', () => {
   })
 
   test('shows the plain value while focused and formats again on blur', () => {
-    render(<Subject initial={1230} {...hz} field={{ unformatOnFocus: true }} />)
+    render(<Subject initial={1230} {...hz} unformatOnFocus />)
 
     expect(input().value).toBe('1.23kHz')
 
@@ -60,7 +56,7 @@ describe('unformatOnFocus', () => {
 
   test('shows the value, not the number inside the formatted text', () => {
     // '1.23' would read back as 1.23 and lose a factor of a thousand.
-    render(<Subject initial={1230} {...hz} field={{ unformatOnFocus: true }} />)
+    render(<Subject initial={1230} {...hz} unformatOnFocus />)
 
     fireEvent.focus(input())
 
@@ -70,12 +66,7 @@ describe('unformatOnFocus', () => {
   test('taking focus and leaving again commits nothing', () => {
     const onChange = vi.fn()
     render(
-      <Subject
-        initial={1230}
-        {...hz}
-        onChange={onChange}
-        field={{ unformatOnFocus: true }}
-      />,
+      <Subject initial={1230} {...hz} onChange={onChange} unformatOnFocus />,
     )
 
     fireEvent.focus(input())
@@ -92,7 +83,7 @@ describe('unformatOnFocus', () => {
         initial={1.6}
         {...unitFormat('Hz', { prefixes: false, digits: 0 })}
         onChange={onChange}
-        field={{ unformatOnFocus: true }}
+        unformatOnFocus
       />,
     )
 
@@ -107,7 +98,7 @@ describe('unformatOnFocus', () => {
   })
 
   test('typing takes over from the plain value', () => {
-    render(<Subject initial={1230} {...hz} field={{ unformatOnFocus: true }} />)
+    render(<Subject initial={1230} {...hz} unformatOnFocus />)
 
     fireEvent.focus(input())
     fireEvent.change(input(), { target: { value: '44' } })
@@ -126,7 +117,7 @@ describe('unformatOnFocus', () => {
         step={10}
         keyboard={['raw', 10]}
         {...hz}
-        field={{ unformatOnFocus: true }}
+        unformatOnFocus
       />,
     )
 
@@ -147,7 +138,7 @@ describe('selectOnFocus', () => {
   })
 
   test('all covers the whole text', () => {
-    render(<Subject initial={1230} {...hz} field={{ selectOnFocus: 'all' }} />)
+    render(<Subject initial={1230} {...hz} selectOnFocus="all" />)
 
     fireEvent.focus(input())
 
@@ -156,9 +147,7 @@ describe('selectOnFocus', () => {
   })
 
   test('number stops where the unit begins', () => {
-    render(
-      <Subject initial={1230} {...hz} field={{ selectOnFocus: 'number' }} />,
-    )
+    render(<Subject initial={1230} {...hz} selectOnFocus="number" />)
 
     fireEvent.focus(input())
 
@@ -170,11 +159,7 @@ describe('selectOnFocus', () => {
     // The selection is applied after the text is swapped, so it covers the
     // number that is actually there rather than the formatted one.
     render(
-      <Subject
-        initial={1230}
-        {...hz}
-        field={{ selectOnFocus: 'number', unformatOnFocus: true }}
-      />,
+      <Subject initial={1230} {...hz} selectOnFocus="number" unformatOnFocus />,
     )
 
     fireEvent.focus(input())

@@ -2,8 +2,8 @@
 '@tremolo-ui/react': minor
 ---
 
-`NumberInput.InputField` takes `keepCaretOnStep`, which puts the caret back
-where it was after an arrow key steps the value. Without it a controlled input
+`NumberInput.Root` takes `keepCaretOnStep`, which puts the caret in `InputField`
+back where it was after an arrow key steps the value. Without it a controlled input
 drops the caret at the end, so holding the key down always acts on the last
 digit and a column cannot be held.
 

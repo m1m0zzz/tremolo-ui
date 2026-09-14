@@ -3,22 +3,18 @@ import { useState } from 'react'
 
 import { unitFormat } from '@tremolo-ui/functions'
 
-import { NumberInputFieldProps } from './InputField'
-
 import { NumberInput, NumberInputProps } from '.'
 
 function Subject({
   initial = 0,
-  field,
   ...props
 }: {
   initial?: number
-  field?: NumberInputFieldProps
 } & Omit<NumberInputProps, 'value' | 'children'>) {
   const [value, setValue] = useState(initial)
   return (
     <NumberInput.Root {...props} value={value} onChange={setValue}>
-      <NumberInput.InputField {...field} />
+      <NumberInput.InputField />
     </NumberInput.Root>
   )
 }
@@ -47,7 +43,7 @@ describe('keepCaretOnStep', () => {
         initial={1234.5}
         step={0.1}
         keyboard={['raw', 0.1]}
-        field={{ keepCaretOnStep: true }}
+        keepCaretOnStep
       />,
     )
 
@@ -63,7 +59,7 @@ describe('keepCaretOnStep', () => {
         initial={1234.5}
         step={0.1}
         keyboard={['raw', 0.1]}
-        field={{ keepCaretOnStep: true }}
+        keepCaretOnStep
       />,
     )
 
@@ -83,7 +79,7 @@ describe('keepCaretOnStep', () => {
         step={0.1}
         max={100}
         keyboard={['raw', 0.1]}
-        field={{ keepCaretOnStep: true }}
+        keepCaretOnStep
       />,
     )
 
@@ -96,7 +92,7 @@ describe('keepCaretOnStep', () => {
   })
 
   test('follows it when the number shrinks', () => {
-    render(<Subject initial={10} step={1} field={{ keepCaretOnStep: true }} />)
+    render(<Subject initial={10} step={1} keepCaretOnStep />)
 
     // Between the 1 and the 0: the tens column.
     step(1, 'ArrowDown')
@@ -112,7 +108,7 @@ describe('keepCaretOnStep', () => {
         step={10}
         keyboard={['raw', 10]}
         {...unitFormat('Hz', { digits: 2 })}
-        field={{ keepCaretOnStep: true }}
+        keepCaretOnStep
       />,
     )
 
@@ -124,15 +120,7 @@ describe('keepCaretOnStep', () => {
   })
 
   test('leaves the caret alone when the value is clamped', () => {
-    render(
-      <Subject
-        initial={10}
-        min={0}
-        max={10}
-        step={1}
-        field={{ keepCaretOnStep: true }}
-      />,
-    )
+    render(<Subject initial={10} min={0} max={10} step={1} keepCaretOnStep />)
 
     step(1, 'ArrowUp')
 
@@ -146,7 +134,7 @@ describe('keepCaretOnStep', () => {
         initial={1234.5}
         step={0.1}
         keyboard={['raw', 0.1]}
-        field={{ keepCaretOnStep: true }}
+        keepCaretOnStep
       />,
     )
 
@@ -158,14 +146,7 @@ describe('keepCaretOnStep', () => {
 
   test('an IME conversion is left to the IME', () => {
     const onChange = vi.fn()
-    render(
-      <Subject
-        initial={5}
-        step={1}
-        onChange={onChange}
-        field={{ keepCaretOnStep: true }}
-      />,
-    )
+    render(<Subject initial={5} step={1} onChange={onChange} keepCaretOnStep />)
 
     fireEvent.keyDown(input(), { key: 'ArrowUp', isComposing: true })
 
