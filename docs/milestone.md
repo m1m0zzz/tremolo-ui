@@ -91,6 +91,10 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 - [x] `format` に一本化するときに、`units` / `digit` を使っている example / story / ドキュメントを全部書き換えた（core-extraction-plan.md 5.14）
 - [ ] **テンプレートをモノレポに移す。** 現在は別リポジトリ（`m1m0zzz/tremolo-ui-example-next-ts` / `m1m0zzz/tremolo-ui-example-vite-react-ts`）にある。破壊的変更のたびに追随を忘れる場所が増えるので、`templates/` としてこのリポジトリに入れ、**ドキュメントでは `degit` などで取り出す形をアナウンスする**（`npx degit m1m0zzz/tremolo-ui/templates/vite-react-ts`）。CI で少なくともビルドは通しておくと、破壊的変更の当たり判定になる
 - [ ] 1.0 時点で `README.md` の「*tremolo-ui is now WIP*」と「An unstable version (0.x) has been released.」を更新する
+- [ ] **複数のタブ（ファイル）を持てる Playground を作る。** 現状の `site/src/theme/Playground/` は 1 ファイルの live code が前提で、CSS Module のような 2 つ目のファイルは `externalFiles` で外部 Playground に書き出すときにしか渡らない。iframe 化（[core-extraction-plan.md 9.7](./core-extraction-plan.md)）と一緒に検討する
+- [ ] **bug: styling ページの CSS Modules の部分**（`site/docs/tutorials/styling.mdx`）。症状は未記録なので、着手時に再現から
+- [ ] **各コンポーネントのページに `data-*` の説明を置く。** あわせて styling ページの `data-*` の一覧表（`🚦State`）は消す
+- [ ] **API（props）の一部をコンポーネントのページへ移す。** typedoc の API ページは残したまま、主要な props の説明をコンポーネントのページでも読めるようにする
 
 ## 5. 開発基盤とホスティング
 
@@ -227,6 +231,19 @@ CI       ci.yml (push) / pull-request.yml (PR)。PR は versions upload --previe
   - `NumberInputProps` が 18 → 22 になる。`Root` が「値の設定」と「各パートの設定」の両方を持つことになるので、**JSDoc でどのパートに効くのかを書く**（`drag` は既にそうなっている）
   - `className` / `style` / `ref` はパートごとの話なのでサブコンポーネントに残す
   - 逆向き（`drag` 系を `Stepper` へ移す）も一応ある。ただし `Stepper` が無ければドラッグ自体が存在しないので、**`Stepper` を置くかどうかと `drag` をいくつにするかが別の場所に散る**。`Root` に集約する方を採る
+
+## 7. コンポーネントと story の追加
+
+- [ ] `FileInput` コンポーネント
+- [ ] `DropZone` コンポーネント
+- [ ] **WavetableSynth の story を作り込む**（`packages/react/__stories__/combined/WavetableSynth/`）
+  - [ ] octave のコントロール
+  - [ ] velocity のコントロール
+  - [ ] MIDI キーボード
+
+## 8. コードベース
+
+- [ ] **コード内のコメントとテストの説明（`describe` / `it`）を日本語にする。** 内部向けの文書と揃える。ただし公開 API の JSDoc は typedoc の API ページと IDE の補完に出て、公開ドキュメント（英語）の一部になるので、対象に含めるかを先に決める
 
 ## 1.0 の基準
 
