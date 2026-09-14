@@ -1,0 +1,37 @@
+/* The "flushed" look, which used to be the `variant` prop of NumberInput: an
+   underline and nothing else. */
+.root {
+  --line-color: rgb(159, 166, 187);
+  --active-color: rgb(67, 170, 248);
+
+  display: inline-flex;
+  width: 50px;
+  border-bottom: 1px solid var(--line-color);
+  transition: border-color 0.1s;
+
+  &:hover {
+    --line-color: rgb(110, 116, 135);
+  }
+
+  &:focus-within {
+    --line-color: var(--active-color);
+  }
+}
+
+.field {
+  width: 100%;
+  margin: 0;
+  padding: 4px 6px 2px 6px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.75rem;
+  text-align: center;
+
+  &::selection {
+    background-color: rgb(63, 166, 245);
+    color: white;
+  }
+}

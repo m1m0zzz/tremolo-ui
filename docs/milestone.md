@@ -189,10 +189,12 @@ CI       ci.yml (push) / pull-request.yml (PR)。PR は versions upload --previe
 
 - [ ] `FileInput` コンポーネント
 - [ ] `DropZone` コンポーネント
-- [ ] **WavetableSynth の story を作り込む**（`packages/react/__stories__/combined/WavetableSynth/`）
-  - [ ] octave のコントロール
-  - [ ] velocity のコントロール
-  - [ ] MIDI キーボード
+- [x] **WavetableSynth の story を作り込む**（`packages/react/__stories__/combined/WavetableSynth/`）
+  - [x] octave のコントロール
+  - [x] velocity のコントロール
+  - [x] MIDI キーボード
+  - 鍵盤まわりを `KeyboardSection` に切り出した。octave は `noteRange` を 12 半音ずつずらす（Z / X でも動く）。velocity はマウスと PC キーボードで弾いたときの値で、MIDI キーボードは自分の velocity を使う（C / V で ±20）。どちらも `AmplitudeEnvelope.triggerAttack` の velocity に渡す
+  - **MIDI は `Piano.playNote` を経由させた。** 鍵盤が光り、マウスと MIDI で同じノートを押しても 1 回だけ鳴る。Piano のコアは `noteRange` の外のノートも拒まないので、表示範囲の外を MIDI で弾いても鳴る。そのためエンベロープと音源は `noteRange` からの添字ではなくノート番号で持ち、初めて弾いたときに作る
 
 ## 8. コードベース
 

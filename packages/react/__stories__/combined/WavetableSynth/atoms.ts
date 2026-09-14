@@ -24,6 +24,12 @@ export const MAX_VOICE = 8
 export const MIN_VOICE_DETUNE = 1
 export const MAX_VOICE_DETUNE = 100
 
+// keyboard
+export const MIN_OCTAVE = -3
+export const MAX_OCTAVE = 3
+export const MIN_VELOCITY = 1
+export const MAX_VELOCITY = 127
+
 export const positionAtom = atom(MIN_POSITION)
 export const semitoneAtom = atom(0)
 export const detuneAtom = atom(0)
@@ -35,6 +41,10 @@ export const releaseAtom = atom(200)
 export const masterVolumeAtom = atom(-6)
 export const voiceAtom = atom(1)
 export const voiceDetuneAtom = atom(15)
+
+export const octaveAtom = atom(0)
+/** Used by the mouse and the computer keyboard; MIDI brings its own. */
+export const velocityAtom = atom(100)
 
 export interface KeyState {
   trigger: 'pressed' | 'release'
