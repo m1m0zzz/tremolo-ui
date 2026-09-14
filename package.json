@@ -35,7 +35,7 @@
     "packages/functions",
     "packages/dom",
     "packages/react",
-    "packages/shared",
+    "shared",
     "site",
     "templates/vite-react-ts",
     "templates/next-ts"
