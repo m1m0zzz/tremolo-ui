@@ -12,14 +12,40 @@ export default {
 
 type Story = StoryObj<typeof Slider.Marks>
 
+export const Basic: Story = {
+  args: {
+    options: 25,
+  },
+  render: (args) => {
+    const [value, setValue] = useState(40)
+
+    return (
+      <div style={{ padding: '0 1rem 2rem' }}>
+        <Slider.Root
+          className={sliderTheme.root}
+          value={value}
+          min={0}
+          max={100}
+          onChange={setValue}
+        >
+          <Slider.Track className={sliderTheme.track}>
+            <Slider.Thumb className={sliderTheme.thumb} aria-label="Level" />
+          </Slider.Track>
+          <Slider.Marks className={sliderTheme.marks} {...args} />
+        </Slider.Root>
+      </div>
+    )
+  },
+}
+
 /**
  * Given `options`, `Marks` fills itself in: one option every interval, or
  * every `step` of the slider with `'step'`. The object form turns the mark or
- * the label off for the whole set.
+ * the label off for the whole set — here, the labels.
  */
 export const FromOptions: Story = {
   args: {
-    options: 25,
+    options: { per: 25, label: false },
     gap: 4,
   },
   render: (args) => {
