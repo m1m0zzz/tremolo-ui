@@ -40,11 +40,11 @@ jobs:
     - run: npm run format:check
 
     # テーマはテンプレートにもコピーしてある（degit で取り出したテンプレートが単体で
-    # 動くように）。正本は packages/shared/css なので、ずれていたら落とす。
+    # 動くように）。正本は shared/css なので、ずれていたら落とす。
     - name: Check template themes
       run: |
         for f in templates/*/src/theme/*.module.css; do
-          cmp "$f" "packages/shared/css/$(basename "$f")"
+          cmp "$f" "shared/css/$(basename "$f")"
         done
 
     # packages/react のテストは workspace symlink 越しに他パッケージの dist を
