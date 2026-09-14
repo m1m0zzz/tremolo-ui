@@ -1182,7 +1182,7 @@ DAW のノブやフェーダーは、shift で細かく、alt（option）で既�
 - [x] **`InputEventOption` の形。** `ModifierValue<InputEventOption>` で、タプルと `{ default, shift?, alt?, ctrl?, meta? }` の両方を受ける
 - [x] **どの層で扱うか。** wheel / keyboard は React 側のハンドラで完結する。`applyDelta` が 5 つ目の引数にイベントを取り、`selectInputEvent` が解決する。どちらも `@tremolo-ui/functions` にあるので Vue / Svelte でも使える
 - [x] 全コンポーネントで規約を揃えた
-- [ ] ~~ドラッグ中に修飾キーを押した/離した場合~~ → 5.18
+- [x] ~~ドラッグ中に修飾キーを押した/離した場合~~ → 5.18
 
 #### 決めたこと
 
@@ -1953,14 +1953,3 @@ styling のチュートリアルに、同じノブを CSS Modules と Tailwind �
   クラスもその場で効く**。実ブラウザで確認済み
 - hover / focus のように「親の状態で子を変える」ところは `group` で書ける。
   `--knob-size` のような custom property は arbitrary value で読む
-
-### 9.7 残り
-
-9 章に挙げた決定はすべて実装済み。手を付けていないのは次だけ。
-
-- **Playground の iframe 化**（A3 の第二手）。preflight を切った CDN で当面の目的は
-  足りているが、iframe にすると「ページのスタイルが例に漏れる」問題ごと解決する。
-  Tailwind の都合とは切り離して検討する
-- **`prefers-color-scheme` への対応**。今のテーマはページの目印（`.dark` /
-  `[data-theme]`）を読む形のままで、これは配布物としては利用者が差し替える前提。
-  既定をどちらにするかは決めていない

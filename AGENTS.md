@@ -51,18 +51,7 @@ npm run test:watch -w packages/react
 
 ## アーキテクチャ
 
-### コンポーネント
-
-- 各コンポーネントのディレクトリは、単一のコンポーネントではなく `Root` などをまとめたプレーンなオブジェクトを export する
-- **children はそのまま描画し、既定の描画へフォールバックしない。** `Root` の `children` は型で必須。サブコンポーネントの `children` はその要素の中身として描かれるだけで、要素そのものを差し替えることはない（`children` の有無で描き分けると、`className` / `style` / ref の行き先が変わって黙って落ちる）
-- **Piano だけはサブコンポーネントを持たない。** 鍵盤は `Root` が描き、per-key のカスタマイズはコールバックで受ける（判断の経緯は `docs/core-extraction-plan.md` 5.5）。children による合成に戻さないこと
-- サブコンポーネントは props のバケツリレーではなく `context.tsx` から読む。**中身は素の React context だけで、外部ストアも同期する state も置かない。** `useEffect(..., [props])` で流し込む形は、値が変わったフレームで古い値を返す不具合を生んで除去した経緯がある（同 Phase 5）
-
-### インタラクション用 hooks
-
-ポインタ / ホイール / MIDI の実体は `@tremolo-ui/dom` にあり、`packages/react/src/hooks/` はそれを React に橋渡しするだけ。**新しいインタラクションもまずコアに書く**（設計の意図は `docs/core-extraction-plan.md` Phase 3）。React の外から非同期に変わる状態を購読しているのは `useMIDIAccess` だけ。
-
-内部専用の hook は `src/hooks/_internal/` に置く。**直下に置くと typedoc が API ページを生成する**ので、公開するつもりのないものを置かないこと。
+コンポーネント・hooks・stories とテストの書き方など、`@tremolo-ui/react` の中だけで効く決まりごとは `packages/react/AGENTS.md` にある。ここには複数のパッケージや `site` にまたがるものだけを置く。
 
 ### スタイリング
 
@@ -76,13 +65,6 @@ npm run test:watch -w packages/react
 
 - `src/index.ts` から re-export しなければ公開 API には入らない
 - **モジュールのトップレベルで関数を呼ぶときは `/* @__PURE__ */` を付けること**（`forwardRef(...)` / `createContext(...)`）。注釈が無いとバンドラは副作用があるかもしれないと見なして残すので、**`Knob` だけを import しても Piano も Slider も落ちてこない**
-
-### stories とテスト
-
-- 1 つのコンポーネント / hook に対応する story とテストは、実装の隣に置く
-- **どのコンポーネントの隣にも置けないものだけ** `packages/react/__tests__/` / `__stories__/` に置く。複数のコンポーネントを一緒に render するもの、共有ユーティリティのテスト、ビルドツール自身のテスト、story の素材の 4 つ。**1 つのコンポーネントで代表させられる挙動をここに足さないこと**
-- story とテストが `src/` の中に混ざるので、**`.ts` / `.tsx` 以外の種類のファイルを足すときは 3 箇所を個別に直す。** `package.json` の `files`（publish から除く）、typedoc の `exclude`（API ページを作らせない）、`.storybook/main.ts` の `stories`（**ここだけ「拾う」側**で、書かなければ Storybook に出てこない）
-- **`Root` は `export const Root = forwardRef(...)` の形で export すること。** react-docgen は export されたコンポーネント定義しか拾わないため、`const Root` のままだと Controls パネルに props が 1 つも出ない
 
 ## 規約
 
