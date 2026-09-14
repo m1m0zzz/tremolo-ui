@@ -2,5 +2,12 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "github>m1m0zzz/renovate-config"
+  ],
+  "packageRules": [
+    {
+      "description": "templates/ は degit で取り出して使う雛形なので、依存の範囲は create-vite / create-next-app と同じ書き方のまま保つ。共有設定の config:best-practices が入れる :pinDevDependencies を打ち消し、config:recommended と同じ rangeStrategy に戻す（範囲内の更新は lockfile だけが変わる）",
+      "matchFileNames": ["templates/**"],
+      "rangeStrategy": "auto"
+    }
   ]
 }
