@@ -1,0 +1,62 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.control {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Wide enough for the longest range, so the row does not shift as it changes. */
+.range {
+  width: 4.5rem;
+  opacity: 0.7;
+}
+
+.velocity {
+  width: 1.75rem;
+}
+
+.hint {
+  margin: 0;
+  opacity: 0.7;
+}
+
+.midi {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-left: auto;
+}
+
+/* The "flushed" look, as in WaveSelector. */
+.numberInputWrapper {
+  --active-color: #34c2ed;
+
+  width: 40px;
+  height: 25px;
+  border-width: 0 0 1px 0;
+  border-radius: 0;
+}
+
+.numberInput {
+  font-size: 0.75rem;
+  text-align: center;
+  padding: 4px 6px 2px 6px;
+  width: 100%;
+
+  &::selection {
+    background-color: rgb(63, 166, 245);
+    color: white;
+  }
+}

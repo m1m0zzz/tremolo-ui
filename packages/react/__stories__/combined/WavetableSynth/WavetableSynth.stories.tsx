@@ -10,9 +10,7 @@ import {
   Volume,
 } from 'tone'
 
-import { noteNumber, noteToFrequency } from '@tremolo-ui/functions'
-
-import { Piano, SHORTCUTS } from '../../../src/components/Piano'
+import { noteToFrequency } from '@tremolo-ui/functions'
 
 import { ADSR } from './ADSR.stories'
 import {
@@ -29,6 +27,7 @@ import {
   voiceAtom,
   voiceDetuneAtom,
 } from './atoms'
+import { KeyboardSection } from './KeyboardSection.stories'
 import { MasterSection } from './MasterSection.stories'
 import { SpectrumAnalyzer } from './SpectrumAnalyzer'
 import { VolumeMeter } from './VolumeMeter'
@@ -37,7 +36,6 @@ import { basicShapesWave } from './wavetable'
 
 import './index.css'
 import styles from './WavetableSynth.module.css'
-import pianoTheme from 'shared/css/Piano.module.css'
 
 export default {
   title: 'combined/WavetableSynth/WavetableSynth',
@@ -45,19 +43,21 @@ export default {
 }
 
 const sampleRate = 48000
-const firstNote = noteNumber('C3')
-const lastNote = noteNumber('B4')
-const noteLength = lastNote - firstNote + 1
 
-const envelopes: AmplitudeEnvelope[] = []
-const sourcesMemo: {
-  sources: ToneBufferSource[]
-  position?: number
-  semitone?: number
-  detune?: number
-  voice?: number
-  voiceDetune?: number
-}[] = []
+// Keyed by note number and built the first time a note is played: the octave
+// shift and the MIDI keyboard reach notes the drawn keyboard does not show.
+const envelopes = new Map<number, AmplitudeEnvelope>()
+const sourcesMemo = new Map<
+  number,
+  {
+    sources: ToneBufferSource[]
+    position?: number
+    semitone?: number
+    detune?: number
+    voice?: number
+    voiceDetune?: number
+  }
+>()
 const volume = new Volume(0)
 const masterVolume = new Volume()
 const meter = new Meter()
@@ -99,6 +99,7 @@ function panningVoices(voice: number, width: number) {
 
 function generateAndAssignSource(
   ctx: AudioContext,
+  envelope: AmplitudeEnvelope,
   noteNumber: number,
   position: number,
   semitone: number,
@@ -106,13 +107,13 @@ function generateAndAssignSource(
   voice: number,
   voiceDetune: number,
 ) {
-  const noteIndex = noteNumber - firstNote
+  const memo = sourcesMemo.get(noteNumber)
   if (
-    sourcesMemo[noteIndex]?.position === position &&
-    sourcesMemo[noteIndex]?.semitone === semitone &&
-    sourcesMemo[noteIndex]?.detune === detune &&
-    sourcesMemo[noteIndex]?.voice === voice &&
-    sourcesMemo[noteIndex]?.voiceDetune === voiceDetune
+    memo?.position === position &&
+    memo?.semitone === semitone &&
+    memo?.detune === detune &&
+    memo?.voice === voice &&
+    memo?.voiceDetune === voiceDetune
   )
     return
 
@@ -135,8 +136,7 @@ function generateAndAssignSource(
       }
     }
     // stop all source
-    for (let s = 0; s < sourcesMemo[noteIndex]?.sources.length; s++) {
-      const source = sourcesMemo[noteIndex]?.sources[s]
+    for (const source of memo?.sources ?? []) {
       if (source.state === 'started') source.stop()
     }
     const source = new ToneBufferSource({
@@ -144,18 +144,18 @@ function generateAndAssignSource(
       loop: true,
       loopEnd: 1 / freq,
     })
-    source.connect(envelopes[noteIndex])
+    source.connect(envelope)
     source.start()
     sources.push(source)
   }
-  sourcesMemo[noteIndex] = {
+  sourcesMemo.set(noteNumber, {
     sources: sources,
     position: position,
     semitone: semitone,
     detune: detune,
     voice: voice,
     voiceDetune: voiceDetune,
-  }
+  })
 }
 
 export const WavetableSynth = () => {
@@ -178,8 +178,18 @@ export const WavetableSynth = () => {
 
   const masterDb = useAtomValue(masterVolumeAtom)
 
+  const envelopeOptions = useMemo(
+    () => ({
+      attack: attack / 1000,
+      decay: decay / 1000,
+      sustain: sustain / 100,
+      release: release / 1000,
+    }),
+    [attack, decay, sustain, release],
+  )
+
   const handlePlay = useCallback(
-    (noteNumber: number) => {
+    (noteNumber: number, velocity: number) => {
       let ctx
       if (audioContext.current) {
         ctx = audioContext.current
@@ -188,9 +198,16 @@ export const WavetableSynth = () => {
         audioContext.current = ctx
       }
 
+      let envelope = envelopes.get(noteNumber)
+      if (!envelope) {
+        envelope = new AmplitudeEnvelope(envelopeOptions).connect(volume)
+        envelopes.set(noteNumber, envelope)
+      }
+
       pressedCount.current += 1
       generateAndAssignSource(
         ctx,
+        envelope,
         noteNumber,
         position,
         semitone,
@@ -199,7 +216,7 @@ export const WavetableSynth = () => {
         voiceDetune,
       )
 
-      envelopes[noteNumber - firstNote].triggerAttack()
+      envelope.triggerAttack(undefined, velocity)
       volume.volume.rampTo(
         gainToDb(1 / Math.sqrt(Math.max(1, pressedCount.current))),
         0.001,
@@ -210,11 +227,11 @@ export const WavetableSynth = () => {
         timestamp: performance.now(),
       })
     },
-    [position, semitone, detune, voice, voiceDetune, audioContext],
+    [position, semitone, detune, voice, voiceDetune, envelopeOptions],
   )
 
   const handleStop = useCallback((noteNumber: number) => {
-    envelopes[noteNumber - firstNote]?.triggerRelease()
+    envelopes.get(noteNumber)?.triggerRelease()
     pressedCount.current -= 1
     if (pressedCount.current <= 0) {
       setKeyState({
@@ -224,52 +241,20 @@ export const WavetableSynth = () => {
     }
   }, [])
 
+  // Envelopes built later take the options in handlePlay.
   useEffect(() => {
-    const a = attack / 1000
-    const d = decay / 1000
-    const s = sustain / 100
-    const r = release / 1000
-    for (let i = 0; i < noteLength; i++) {
-      if (envelopes[i]) {
-        envelopes[i].attack = a
-        envelopes[i].decay = d
-        envelopes[i].sustain = s
-        envelopes[i].release = r
-      } else {
-        envelopes[i] = new AmplitudeEnvelope({
-          attack: a,
-          decay: d,
-          sustain: s,
-          release: r,
-        }).connect(volume)
-      }
+    for (const envelope of envelopes.values()) {
+      envelope.set(envelopeOptions)
     }
-  }, [attack, decay, sustain, release])
+  }, [envelopeOptions])
 
   useEffect(() => {
     masterVolume.volume.value = masterDb
   }, [masterDb])
 
-  const pianoMemo = useMemo(
-    () => (
-      <Piano.Root
-        className={pianoTheme.root}
-        classes={{
-          keyLabelWrapper: pianoTheme.keyLabelWrapper,
-          keyLabel: pianoTheme.keyLabel,
-        }}
-        keyProps={(_note, { keyType }) => ({
-          className:
-            keyType === 'white' ? pianoTheme.whiteKey : pianoTheme.blackKey,
-        })}
-        noteRange={{ first: firstNote, last: lastNote }}
-        keyboardShortcuts={SHORTCUTS.HOME_ROW}
-        label={(_, { index }) => SHORTCUTS.HOME_ROW.keys[index]?.toUpperCase()}
-        height={120}
-        onPlayNote={handlePlay}
-        onStopNote={handleStop}
-      />
-    ),
+  // keyState changes on every note, and the keyboard need not follow it.
+  const keyboardMemo = useMemo(
+    () => <KeyboardSection onPlayNote={handlePlay} onStopNote={handleStop} />,
     [handlePlay, handleStop],
   )
 
@@ -287,7 +272,7 @@ export const WavetableSynth = () => {
         <ADSR keyState={keyState} />
         <MasterSection />
       </div>
-      <div className={styles.piano}>{pianoMemo}</div>
+      <div className={styles.piano}>{keyboardMemo}</div>
     </div>
   )
 }
