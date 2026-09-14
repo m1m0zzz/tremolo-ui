@@ -1,7 +1,8 @@
 // @ts-ignore
 import propTypes from 'virtual:tremolo-prop-types'
 
-import { propTypeEnhancers } from './argTypes'
+// https://storybook.js.org/docs/faq#extensionless-imports-in-storybook-main-config
+import { propTypeEnhancers } from './argTypes.ts'
 
 import type { Preview } from '@storybook/react-vite'
 
