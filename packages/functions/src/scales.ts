@@ -4,7 +4,7 @@ import {
   type ModifierState,
   type ModifierValue,
   selectInputEvent,
-} from './types'
+} from './modifiers'
 
 /**
  * How a value is distributed across the travel of a control.

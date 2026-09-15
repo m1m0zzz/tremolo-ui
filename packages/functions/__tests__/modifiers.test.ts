@@ -1,11 +1,11 @@
-import { applyDelta } from '../src/scales'
 import {
   mapModifier,
   selectInputEvent,
   selectModifier,
   type InputEventOption,
   type ModifierValue,
-} from '../src/types'
+} from '../src/modifiers'
+import { applyDelta } from '../src/scales'
 
 type InputOptions = ModifierValue<InputEventOption>
 

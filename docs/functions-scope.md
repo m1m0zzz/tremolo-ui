@@ -21,7 +21,7 @@
 
 ## `dom` へ移すもの
 
-### 1. 入力イベントの解釈（`types.ts` 一式 + `applyDelta`）
+### 1. 入力イベントの解釈（`modifiers.ts` 一式 + `applyDelta`）
 
 `Modifier` `ModifierState` `ModifierMap` `ModifierValue` `InputEventOption` `SelectedInputEvent` `selectModifier` `mapModifier` `selectInputEvent` `applyDelta`
 
