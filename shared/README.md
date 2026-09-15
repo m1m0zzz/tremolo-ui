@@ -8,4 +8,4 @@ here is published to npm.
 
 **They say what the parts look like, not where they go.** A component places
 its own parts, so a theme that leaves a rule out cannot put one in the wrong
-place. See `docs/core-extraction-plan.md` 9.3.
+place.

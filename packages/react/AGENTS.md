@@ -7,14 +7,14 @@
 - 各コンポーネントのディレクトリは、単一のコンポーネントではなく `Root` などをまとめたプレーンなオブジェクトを export する
   - **`AnimationCanvas` だけはコンポーネントそのものを export する。** 描くのは `<canvas>` 1 つで、分けるパートが無いため。ref はその `<canvas>` に渡す
 - **children はそのまま描画し、既定の描画へフォールバックしない。** `Root` の `children` は型で必須。サブコンポーネントの `children` はその要素の中身として描かれるだけで、要素そのものを差し替えることはない（`children` の有無で描き分けると、`className` / `style` / ref の行き先が変わって黙って落ちる）
-- **Piano だけはサブコンポーネントを持たない。** 鍵盤は `Root` が描き、per-key のカスタマイズはコールバックで受ける（判断の経緯はルートの `docs/core-extraction-plan.md` 5.5）。children による合成に戻さないこと
-- サブコンポーネントは props のバケツリレーではなく `context.tsx` から読む。**中身は素の React context だけで、外部ストアも同期する state も置かない。** `useEffect(..., [props])` で流し込む形は、値が変わったフレームで古い値を返す不具合を生んで除去した経緯がある（同 Phase 5）
+- **Piano だけはサブコンポーネントを持たない。** 鍵盤は `Root` が描き、per-key のカスタマイズはコールバックで受ける。鍵盤の数は `noteRange` で変わるので、children で書かせると最小構成が map のボイラープレートになる。children による合成に戻さないこと
+- サブコンポーネントは props のバケツリレーではなく `context.tsx` から読む。**中身は素の React context だけで、外部ストアも同期する state も置かない。** `useEffect(..., [props])` で流し込む形は、値が変わったフレームで古い値を返す不具合を生んで除去した経緯がある
 - **`Root` は `export const Root = forwardRef(...)` の形で export すること。** react-docgen は export されたコンポーネント定義しか拾わないため、`const Root` のままだと Controls パネルに props が 1 つも出ない
 - **peer に React 18 を含むので、ref を受けるパートも `forwardRef` で書く**（React 19 の ref-as-prop に頼らない）。足したら `__tests__/forward-refs.test.ts` に加える
 
 ## インタラクション用 hooks
 
-ポインタ / ホイール / MIDI の実体は `@tremolo-ui/dom` にあり、`src/hooks/` はそれを React に橋渡しするだけ。**新しいインタラクションもまずコアに書く**（設計の意図はルートの `docs/core-extraction-plan.md` Phase 3）。React の外から非同期に変わる状態を購読しているのは `useMIDIAccess` だけ。
+ポインタ / ホイール / MIDI の実体は `@tremolo-ui/dom` にあり、`src/hooks/` はそれを React に橋渡しするだけ。**新しいインタラクションもまずコアに書く**（Vue / Svelte のラッパーからも同じものを使うため）。React の外から非同期に変わる状態を購読しているのは `useMIDIAccess` だけ。
 
 ## 内部専用のディレクトリ
 

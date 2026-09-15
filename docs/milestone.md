@@ -2,13 +2,11 @@
 
 1.0 を出すために必要な作業をまとめる。詳細な手順は各リンク先で管理する。
 
-現在: 全パッケージ 0.5.0。破壊的変更を入れつつ 0.x に留まるため、changeset では `major` ではなく `minor` を選ぶ運用（[core-extraction-plan.md 8.3](./core-extraction-plan.md)）。
+現在: 全パッケージ 0.5.0。破壊的変更を入れつつ 0.x に留まるため、changeset では `major` ではなく `minor` を選ぶ運用（ルートの `AGENTS.md`「リリース」）。
 
 ## 1. dom 切り出し
 
 React 依存のロジックを framework-agnostic なコアへ切り出し、Vue / Svelte のラッパーを作れる状態にする。
-
-詳細: **[core-extraction-plan.md](./core-extraction-plan.md)**
 
 | | 状態 |
 | --- | --- |
@@ -24,7 +22,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 ## 2. テスト整備
 
 - [x] **dom 移行前からテストが無い部分にテストを足す。** 全コンポーネントに専用のテストが揃った（Piano は 4.3、PointsEditor は Phase 5、XYPad は 5.7 と同時に追加）。`__tests__/drag.test.tsx` と `__tests__/Slider/compose.test.tsx` は複数コンポーネントにまたがるものとしてそのまま残す
-- [x] **テストと story を実装コードと同じディレクトリに置く。** → [core-extraction-plan.md 5.17](./core-extraction-plan.md) で完了
+- [x] **テストと story を実装コードと同じディレクトリに置く。**
 
 ## 3. Vue / Svelte
 
@@ -49,22 +47,22 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 - [x] `.changeset/config.json` の `fixed` は `[["@tremolo-ui/*"]]` のグロブなので**変更不要**
 - [x] `packages/<name>/LICENSE` を置く場合、`.oxfmtrc.json` の `ignorePatterns` に `LICENSE` があること（`.prettierignore` から移行済み。oxfmt は知らない拡張子を黙って飛ばすので、prettier のときのように pre-commit が落ちることは無いはず）
 - [ ] Storybook を持つパッケージなら、`packages/react/wrangler.jsonc` に倣って Worker と `tremolo-ui.mimoz.dev/i/storybook-<name>*` の Route を足し、`ci.yml` と `pull-request.yml` の**両方**にビルドとデプロイの手順を足す
-- [x] CSS の配布方法は決着した。**パッケージは CSS を配らない**ので、各パッケージで重複させるかという問題自体が無くなった（core-extraction-plan.md 5.1）。デモのテーマは `shared/css/` にあり、Vue / Svelte を足しても、各パートが `className` を受け取り同じ `data-*` 属性を出していれば同じものが使える
+- [x] CSS の配布方法は決着した。**パッケージは CSS を配らない**ので、各パッケージで重複させるかという問題自体が無くなった。デモのテーマは `shared/css/` にあり、Vue / Svelte を足しても、各パートが `className` を受け取り同じ `data-*` 属性を出していれば同じものが使える
 
 ## 4. ドキュメント整備
 
 - [x] **`@tremolo-ui/dom` のドキュメントを追加する。** typedoc の 3 つ目の plugin として追加し、サイドバーに `@tremolo-ui/dom` のカテゴリを足した。
-- [x] **CSS のデモを公開する形に作り替えた。** `site/docs/tutorials/styling.mdx` を書き直し、`shared/css/` の 6 ファイルを `raw-loader` で全文タブ表示している。コピー元と、サイト / Storybook が実際に読み込むファイルは同一（core-extraction-plan.md 5.1 / 9.4）
-- [x] **`PointsEditor` のドキュメントページを書く。** `site/docs/components/PointsEditor/` に追加した。複数選択（core-extraction-plan.md 5.21）と `SelectionBox` にも触れている
+- [x] **CSS のデモを公開する形に作り替えた。** `site/docs/tutorials/styling.mdx` を書き直し、`shared/css/` の 6 ファイルを `raw-loader` で全文タブ表示している。コピー元と、サイト / Storybook が実際に読み込むファイルは同一
+- [x] **`PointsEditor` のドキュメントページを書く。** `site/docs/components/PointsEditor/` に追加した。複数選択と `SelectionBox` にも触れている
 - [ ] **hooks のドキュメントを充実させる。** 現在 `site/docs/hooks/` には `web-midi-api` しかない。`useDrag` / `useWheel` / `useDragValue` は typedoc の自動生成のみ
 - [ ] **Vue / Svelte を足したときのドキュメント構成を決める。** 現在の `site/docs/components/<Name>/index.mdx` は React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）。フレームワークごとにタブを分けるのか、サイト自体を分けるのか
 - [x] **`site/i18n` の typedoc サイドバー翻訳キーを掃除した。** `sidebar.typedocSidebar.*` を en / ja とも**全て削除**した（114 キー → 7 キー）。
 - [x] `site/docs/support/CHANGELOG.md` の二重管理をやめた。中身は「TODO: record from version 1.0.0」のスタブのままだったので、各パッケージの `CHANGELOG.md` と GitHub リリース、移行ガイドへのリンクに置き換えた
 - [x] **その GitHub へのリンクをやめ、リリースノートをサイトに載せた。** `site/scripts/changelog.mjs` が `packages/*/CHANGELOG.md` を front matter 付きで `site/docs/changelog/<pkg>.md` に写す。typedoc の `docs/api/` と同じ扱いで、生成物はコミットしない（`site/.gitignore`。手書きの `index.md` だけ `!` で除外を戻す）
   - **`format: md` を front matter に入れるのが要点。** Docusaurus 3 の既定は `.md` も MDX として読むので、changesets が書いた文章に `<` や `{` が 1 つ紛れ込むだけでビルドが落ちる。生成物にだけ効かせられるので、サイト全体の `markdown.format` は触っていない
-- [x] `format` に一本化するときに、`units` / `digit` を使っている example / story / ドキュメントを全部書き換えた（core-extraction-plan.md 5.14）
+- [x] `format` に一本化するときに、`units` / `digit` を使っている example / story / ドキュメントを全部書き換えた
 - [x] **テンプレートをモノレポに移す。** 別リポジトリ（`m1m0zzz/tremolo-ui-example-next-ts` / `m1m0zzz/tremolo-ui-example-vite-react-ts`）にあったものを、0.5.0 の API で書き直して `templates/` に入れた（決まりごとは `templates/README.md`）。破壊的変更のたびに追随を忘れる場所が増えるので、`templates/` としてこのリポジトリに入れ、**ドキュメントでは `degit` などで取り出す形をアナウンスする**（`npx degit m1m0zzz/tremolo-ui/templates/vite-react-ts`）。CI で少なくともビルドは通しておくと、破壊的変更の当たり判定になる
-- [ ] **複数のタブ（ファイル）を持てる Playground を作る。** 現状の `site/src/theme/Playground/` は 1 ファイルの live code が前提で、CSS Module のような 2 つ目のファイルは `externalFiles` で外部 Playground に書き出すときにしか渡らない。iframe 化（[core-extraction-plan.md 9.7](./core-extraction-plan.md)）と一緒に検討する
+- [ ] **複数のタブ（ファイル）を持てる Playground を作る。** 現状の `site/src/theme/Playground/` は 1 ファイルの live code が前提で、CSS Module のような 2 つ目のファイルは `externalFiles` で外部 Playground に書き出すときにしか渡らない。Playground の iframe 化（一時タスクリストの「検討中」）と一緒に検討する
 - [x] **bug: styling ページの CSS Modules の部分**（`site/docs/tutorials/styling.mdx`）。例のノブが 0×0 で表示されていなかった。コンポーネントが書くのは `--knob-size` だけで、`width` / `height` はテーマ側が持つのに、例の `my-knob.module.css` にそれが無かった。ダークモードの `.dark` も `:global` が無く、module にリネームされて効いていなかった
 - [x] **各コンポーネントのページに `data-*` の説明を置く。** あわせて styling ページの `data-*` の一覧表（`🚦State`）は消し、各ページへのリンクにした
 - [ ] **API（props）の一部をコンポーネントのページへ移す。** typedoc の API ページは残したまま、主要な props の説明をコンポーネントのページでも読めるようにする
@@ -98,6 +96,8 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   全 63 export を「このライブラリを使わない人が使うか」で見直したところ、**入力イベントの解釈**（modifier 一式 + `applyDelta`）と**描画された鍵盤の幾何**（`piano.ts`）という汎用でない 2 つの塊が入っていた。どちらも `dom` へ移す。あわせて使用箇所ゼロの `isEmpty` / `mod` など 6 つの公開をやめる。
 
   移動後、`functions` は 値の分布 / 数値変換 / 音楽理論 / 表示 の 4 本になる。
+
+- [ ] **トップレベルの `types` が CJS 用の宣言ファイルを指している。** 3 パッケージとも `"types": "dist/index.d.cts"`。`exports` 側は require / import で分岐しているので実害は出にくいが、`exports` を見ない古いツールチェーンでは ESM の利用者に CJS の型が渡る。devDependencies にある `@arethetypeswrong/core` で検証してから直す
 
 - [x] **`NumberInput` の `InputField` の props を `Root` に集めた。** 破壊的変更。
 
@@ -140,5 +140,5 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 - [x] コア切り出しが Phase 5 まで完了し、`@tremolo-ui/react` が薄いラッパーになっている
 - [ ] Vue / Svelte のいずれかが公開されている（コアが framework-agnostic であることの実証）
-- [x] CSS の配布方法が確定し、移行ガイドがある（5.1 / 5.2。パッケージは CSS を配らず、テーマはドキュメントで公開する）
+- [x] CSS の配布方法が確定し、移行ガイドがある（パッケージは CSS を配らず、テーマはドキュメントで公開する）
 - [ ] 公開 API が安定し、以降の破壊的変更に `major` を使う運用へ切り替えられる
