@@ -38,7 +38,7 @@
   - コンポーネント: `Components/<Component>/<Part>`。`Root` も `Root` と書く。compound でないもの（`AnimationCanvas`）だけ `Components/<Component>`
   - hook: `Hooks/<hookName>`
   - combined: `combined/<Name>`。複数ファイルにまたがる例は `combined/<Name>/<Name>` を入口にする
-- 最初の story は `Basic` にする
+- 最初の story は `Basic` にする。ただし、描く要素の属性（`className` / `style` / `children`）しか受けないパートには置かず、主題の story だけでよい。素の形を見せても、Controls で触れるものが無いため
 - テーマは `import sliderTheme from 'shared/css/Slider.module.css'` のように `<camelCase>Theme` の名前で読み、story 専用の CSS は `styles` の名前で読む
 
 ## stories とテストの置き場
@@ -64,7 +64,7 @@
 
 ### hooks の story
 
-- **`src/index.ts` から公開している hook にだけ置く**
+- **`src/index.ts` から公開している hook にだけ置く。** ただし全部には置かない。操作して挙動を確かめるもの（ドラッグ・長押し・MIDI など）に置き、ブラウザ API を薄く包むだけのもの（`useEventListener` / `useInterval` / `useAnimationFrame`）には置かない
 - 描く component が無いので `Meta` / `StoryObj` は使わない。`export default { title }` と、関数の story（`export const Basic = () => ...`）で書く
 - **story を開いただけで権限プロンプトや音が出ないようにする。** ユーザーの操作から始める（`useMIDIAccess(false)` にしてボタンで `request` する、など）
 

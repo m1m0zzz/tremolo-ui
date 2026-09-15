@@ -113,9 +113,9 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
     - `Slider`: `MarksProps` / `MarksOptionProps`
   - [x] **`AnimationCanvas` だけが compound でない。** `{ Root }` をまとめたオブジェクトではなく、コンポーネントそのものを export している。ref も受けない（内部の要素は `useDrag` と同じ理由で state に持つ） → **refは対応。compoundにしない**
   - [x] **`PointsEditorContextValue` を公開している。** 他のコンポーネントは `use<Component>Context` だけを公開し、`<Component>ContextValue` は公開していない。→ **他のコンポーネントも公開する側に揃える**
-  - [ ] **story のファイル名が揃っていない。** `Root` の story は `<Component>.stories.tsx` にしているが、`Knob` だけ `Root.stories.tsx`。`NumberInput` のパートは `NumberInputInputField.stories.tsx` / `NumberInputStepper.stories.tsx` とコンポーネント名が付いている
-  - [ ] **`Basic` が無い story がある。** `Knob/SVGRoot`（`PaintOrder`）/ `NumberInput` の `InputField`（`SelectOnFocus` ほか）/ `PointsEditor/Background`（`Graph`）/ `PointsEditor/Container`（`Inset`）/ `Slider/Marks`（`FromOptions` ほか）。どれも主題の story だけがある。名前だけ変えるのか、素の形を見せる `Basic` を足すのか決める → **特別なpropsを持っているならばBasicを足す(html要素のpropsのみなら足さない)**
-  - [ ] **公開している hook に story が無い。** `useAnimationFrame` / `useDragValue` / `useEventListener` / `useInterval` / `useLongPress` → {いらない / いる / いらない / いらない / いる }
+  - [x] **story のファイル名が揃っていない。** `Root` の story は `<Component>.stories.tsx` にしているが、`Knob` だけ `Root.stories.tsx`。`NumberInput` のパートは `NumberInputInputField.stories.tsx` / `NumberInputStepper.stories.tsx` とコンポーネント名が付いている
+  - [x] **`Basic` が無い story がある。** `Knob/SVGRoot`（`PaintOrder`）/ `NumberInput` の `InputField`（`SelectOnFocus` ほか）/ `PointsEditor/Background`（`Graph`）/ `PointsEditor/Container`（`Inset`）/ `Slider/Marks`（`FromOptions` ほか）。どれも主題の story だけがある。名前だけ変えるのか、素の形を見せる `Basic` を足すのか決める → **特別なpropsを持っているならばBasicを足す(html要素のpropsのみなら足さない)**
+  - [x] **公開している hook に story が無い。** `useAnimationFrame` / `useDragValue` / `useEventListener` / `useInterval` / `useLongPress` → {いらない / いる / いらない / いらない / いる }
   - [ ] **テストファイル名の書き方が決まっていない。** `long-press.test.tsx` のような kebab-case と、`stepperDrag.test.tsx` / `__tests__/util/checkSteps.test.tsx` のような camelCase が混ざっている。規約を決めてから揃える → **そのコンポーネント用のテストならComponentName、複合ならkebab-case**
 
 ## 7. コンポーネントと story の追加
