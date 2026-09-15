@@ -62,7 +62,7 @@ export {
   mapModifier,
   selectInputEvent,
   selectModifier,
-} from './types'
+} from './modifiers'
 export {
   type SIPrefix,
   type UnitFormatOptions,

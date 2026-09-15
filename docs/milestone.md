@@ -117,6 +117,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - [x] **`Basic` が無い story がある。** `Knob/SVGRoot`（`PaintOrder`）/ `NumberInput` の `InputField`（`SelectOnFocus` ほか）/ `PointsEditor/Background`（`Graph`）/ `PointsEditor/Container`（`Inset`）/ `Slider/Marks`（`FromOptions` ほか）。どれも主題の story だけがある。名前だけ変えるのか、素の形を見せる `Basic` を足すのか決める → **特別なpropsを持っているならばBasicを足す(html要素のpropsのみなら足さない)**
   - [x] **公開している hook に story が無い。** `useAnimationFrame` / `useDragValue` / `useEventListener` / `useInterval` / `useLongPress` → {いらない / いる / いらない / いらない / いる }
   - [x] **テストファイル名の書き方が決まっていない。** `long-press.test.tsx` のような kebab-case と、`stepperDrag.test.tsx` / `__tests__/util/checkSteps.test.tsx` のような camelCase が混ざっている。規約を決めてから揃える → **そのコンポーネント用のテストならComponentName、複合ならkebab-case**
+    - `packages/dom` / `packages/functions` も同じ考え方で揃えた。テストは実装のファイル名に合わせ（`drag-value.test.ts` / `drag-value.scale-jump.test.ts` / `scales.apply-delta.test.ts` / `index.test.ts`）、中身が modifier の型と関数だけだった `functions/src/types.ts` は `modifiers.ts` にした
 
 ## 7. コンポーネントと story の追加
 
