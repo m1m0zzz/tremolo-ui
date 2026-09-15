@@ -1,0 +1,92 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink from '@site/src/components/GitHubLink'
+
+import basic from '!!raw-loader!@site/examples/components/animation-canvas/basic'
+import reactive from '!!raw-loader!@site/examples/components/animation-canvas/reactive'
+import saveRestore from '!!raw-loader!@site/examples/components/animation-canvas/save-restore'
+
+# AnimationCanvas
+
+`requestAnimationFrame()` でアニメーションできる、シンプルなキャンバス。
+
+<GitHubLink
+  path='packages/react/src/components/AnimationCanvas/index.tsx'
+/>
+
+## インポート {#import}
+
+```jsx
+import { AnimationCanvas } from '@tremolo-ui/react'
+```
+
+
+## 特長 {#features}
+
+- [devicePixelRatio](https://developer.mozilla.org/docs/Web/API/Window/devicePixelRatio) に合わせます。
+- リサイズしたときのちらつきを抑えます。
+- 親要素の大きさを監視します。
+- シンプルなティッカーとタイマー
+
+## API リファレンス {#api-reference}
+
+`AnimationCanvas` は `<canvas>` を描画し、その属性（`className` や `style` など）を受け取ります。ref は `<canvas>` に届きます。
+
+<PropsTable of="AnimationCanvasCommonProps" />
+
+### Fixed と Resizable {#fixed-vs-resizable}
+
+キャンバスは既定で固定サイズで、`width` と `height` が CSS ピクセルでの大きさを決めます。`resizable` を付けると、代わりに親要素の大きさに合わせるので、親要素が自分の大きさを持っている必要があります。2 つは排他的で、`resizable` と一緒に `width` や `height` を渡すと型エラーになります。
+
+#### Fixed {#fixed}
+
+<PropsTable of="AnimationCanvasFixedProps" />
+
+#### Resizable {#resizable}
+
+<PropsTable of="AnimationCanvasResizableProps" />
+
+### Reactive Canvas {#reactive-canvas}
+
+既定では、キャンバスはアニメーションフレームごとに描き直します。描画が時間ではなく state で決まるときは `animate={false}` にします。するとキャンバスは、描く理由があるときだけ描きます。マウントしたとき、リサイズされたとき、そして**コンポーネントが再レンダーされたとき**です。
+
+最後の 1 つがあるので、`React.useState` をそのまま描画の元にできます。新しい `draw` を渡せばキャンバスが描き直すので、メモ化するものも、手で起こす再描画もありません。
+
+動く例は下の [Reactive](#reactive) にあります。
+
+:::tip
+
+どちらの場合でも、`draw` はインラインで書いて構いません。キャンバスは 1 度だけ作られ、ハンドラはその場で差し替えられるので、再レンダーでアニメーションが最初からやり直しになったり、`count` や `elapsedTime` がリセットされたり、`init` がもう 1 度走ったりはしません。コンポーネントを `React.memo` で包んだり、`draw` を `useCallback` で持ったりする必要はありません。
+
+:::
+
+
+## 例 {#examples}
+
+### Basic {#basic}
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/animation-canvas/basic.tsx'
+>{basic}</CodeBlock>
+
+### Reactive {#reactive}
+
+`animate={false}` にして、時間ではなく state で描くキャンバス。スライダーを動かすとコンポーネントが再レンダーされ、それがキャンバスを描き直します。
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/animation-canvas/reactive.tsx'
+>{reactive}</CodeBlock>
+
+### Save / Restore {#save--restore}
+
+<CodeBlock
+  jsx
+  live
+  sourcePath='examples/components/animation-canvas/save-restore.tsx'
+>{saveRestore}</CodeBlock>

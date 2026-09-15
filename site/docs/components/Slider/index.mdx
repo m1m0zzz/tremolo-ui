@@ -1,4 +1,5 @@
 import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
 import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/components/slider/basic'
 
@@ -19,18 +20,72 @@ Customizable slider component.
 import { Slider } from '@tremolo-ui/react'
 ```
 
-## Data attributes
+## API Reference {#api-reference}
 
-State is on the element as an attribute, so it is a selector away — see
-[Styling](/docs/tutorials/styling). An attribute is only there while its
-state is on.
+Each part lists the props of its own. It also takes the attributes of the
+element it renders, such as `className` and `style`.
 
-| Attribute | Part | Present when |
+State is on the element as a data attribute, so it is a selector away — see
+[Styling](/docs/tutorials/styling). An attribute is only there while its state
+is on.
+
+### Root
+
+Holds the value and the settings, and passes them to the parts inside.
+
+<PropsTable of="SliderProps" />
+
+| Data attribute | Values | Description |
 | --- | --- | --- |
-| `data-orientation="horizontal\|vertical"` | `Slider.Root`, `Slider.Track`, `Slider.Marks`, `Slider.MarksOption` and its mark | always; which way the slider runs |
-| `data-disabled` | `Slider.Root`, `Slider.Track`, `Slider.Thumb` | `disabled` is set |
-| `data-readonly` | `Slider.Root`, `Slider.Thumb` | `readonly` is set |
-| `data-flipped` | `Slider.Track` | the value grows from the far end (`vertical` or `reverse`, not both) |
+| `data-orientation` | `"horizontal" \| "vertical"` | Which way the slider runs. |
+| `data-disabled` | `"true"` | Present while `disabled` is set. |
+| `data-readonly` | `"true"` | Present while `readonly` is set. |
+
+### Track
+
+The bar the value runs along. It sets `--percent` to where the value is, so
+the theme can fill the part below it.
+
+<PropsTable of="SliderTrackProps" />
+
+| Data attribute | Values | Description |
+| --- | --- | --- |
+| `data-orientation` | `"horizontal" \| "vertical"` | Which way the slider runs. |
+| `data-disabled` | `"true"` | Present while `disabled` is set. |
+| `data-flipped` | `"true"` | Present while the value grows from the far end: `vertical` or `reverse`, but not both. |
+
+### Thumb
+
+The handle. A visually hidden range input inside it takes the focus and
+carries the ARIA.
+
+<PropsTable of="SliderThumbProps" />
+
+| Data attribute | Values | Description |
+| --- | --- | --- |
+| `data-disabled` | `"true"` | Present while `disabled` is set. |
+| `data-readonly` | `"true"` | Present while `readonly` is set. |
+
+### Marks
+
+A row of marks along the track, built from `options` or from
+`Slider.MarksOption` children.
+
+<PropsTable of="SliderMarksProps" />
+
+| Data attribute | Values | Description |
+| --- | --- | --- |
+| `data-orientation` | `"horizontal" \| "vertical"` | Which way the slider runs. |
+
+### MarksOption
+
+One mark and its label, placed at `value`.
+
+<PropsTable of="SliderMarksOptionProps" />
+
+| Data attribute | Values | Description |
+| --- | --- | --- |
+| `data-orientation` | `"horizontal" \| "vertical"` | Which way the slider runs. The mark inside carries it too. |
 
 ## Examples
 

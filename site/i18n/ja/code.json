@@ -592,5 +592,20 @@
   "theme.Playground.buttons.reset": {
     "message": "Reset",
     "description": "The reset button label for live code blocks"
+  },
+  "apiReference.props.prop": {
+    "message": "Prop"
+  },
+  "apiReference.props.type": {
+    "message": "型"
+  },
+  "apiReference.props.default": {
+    "message": "既定値"
+  },
+  "apiReference.props.required": {
+    "message": "必須"
+  },
+  "apiReference.props.more": {
+    "message": "すべての説明: {link}"
   }
 }

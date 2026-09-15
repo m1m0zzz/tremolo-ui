@@ -5,9 +5,10 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "changelog": "node scripts/changelog.mjs",
-    "start": "npm run changelog && docusaurus start",
-    "start:fast": "npm run changelog && SKIP_API=true docusaurus start",
-    "build": "npm run changelog && docusaurus build",
+    "api-props": "node scripts/api-props.mjs",
+    "start": "npm run changelog && npm run api-props && docusaurus start",
+    "start:fast": "npm run changelog && npm run api-props && SKIP_API=true docusaurus start",
+    "build": "npm run changelog && npm run api-props && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
@@ -43,6 +44,7 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "docusaurus-plugin-typedoc": "1.4.3",
+    "markdown-it": "^14.3.1",
     "typedoc": "0.28.20",
     "typedoc-plugin-markdown": "4.13.0",
     "typescript": "5.9.3"

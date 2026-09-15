@@ -1,0 +1,66 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/components/xy-pad/basic'
+
+# XYPad
+
+2 次元のスライダーのコンポーネント。
+
+<GitHubLink
+  path='packages/react/src/components/XYPad/index.tsx'
+/>
+<StyleGitHubLink
+  path='shared/css/XYPad.module.css'
+/>
+
+## インポート {#import}
+
+```jsx
+import { XYPad } from '@tremolo-ui/react'
+```
+
+## API リファレンス {#api-reference}
+
+各パートには、そのパート独自の props を載せています。これに加えて、描画する要素の属性（`className` や `style` など）も受け取ります。
+
+状態は data 属性として要素に乗っているので、セレクタ 1 つで届きます（[スタイリング](/docs/tutorials/styling)を参照）。属性はその状態が on の間だけ付きます。
+
+### Root
+
+両軸の値と設定を持ち、中のパートに渡します。
+
+<PropsTable of="XYPadProps" />
+
+| Data 属性 | 値 | 説明 |
+| --- | --- | --- |
+| `data-disabled` | `"true"` | `disabled` を設定している間だけ付きます。 |
+| `data-readonly` | `"true"` | `readonly` を設定している間だけ付きます。 |
+
+### Area
+
+つまみが動く面。
+
+<PropsTable of="XYPadAreaProps" />
+
+### Thumb
+
+つまみ。中にある軸ごとの 2 つの視覚的に隠れた range input が、フォーカスを受け取り ARIA を持ちます。
+
+<PropsTable of="XYPadThumbProps" />
+
+| Data 属性 | 値 | 説明 |
+| --- | --- | --- |
+| `data-disabled` | `"true"` | `disabled` を設定している間だけ付きます。 |
+| `data-readonly` | `"true"` | `readonly` を設定している間だけ付きます。 |
+
+## 例 {#examples}
+
+### Basic {#basic}
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/xy-pad/basic.tsx'
+>{basic}</CodeBlock>

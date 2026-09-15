@@ -1,4 +1,5 @@
 import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
 import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/components/piano/basic'
 
@@ -20,19 +21,36 @@ import { noteNumber, noteName } from '@tremolo-ui/functions'
 import { Piano, SHORTCUTS } from '@tremolo-ui/react'
 ```
 
-## Data attributes
+## API Reference {#api-reference}
 
-State is on the element as an attribute, so it is a selector away — see
-[Styling](/docs/tutorials/styling). An attribute is only there while its
-state is on.
+`Piano.Root` also takes the attributes of the element it renders, such as
+`className` and `style`.
 
-| Attribute | Part | Present when |
+State is on the element as a data attribute, so it is a selector away — see
+[Styling](/docs/tutorials/styling). An attribute is only there while its state
+is on.
+
+### Root
+
+Draws a key for every note in `noteRange`. It has no other parts: a key is
+customised through `label` and `keyProps`.
+
+<PropsTable of="PianoProps" />
+
+| Data attribute | Values | Description |
 | --- | --- | --- |
-| `data-resizable` | `Piano.Root` | `resizable` is set |
-| `data-note` | each key | always; the note number of the key, e.g. `60` |
-| `data-note-key` | each key | always; the pitch class of the key, `C`, `C#` … `B` |
-| `data-active` | each key | the note is sounding |
-| `data-disabled` | each key | the note is past the highest MIDI note |
+| `data-resizable` | `"true"` | Present while `resizable` is set. |
+
+#### Keys
+
+Each key carries these.
+
+| Data attribute | Values | Description |
+| --- | --- | --- |
+| `data-note` | `"0"` … `"127"` | The note number of the key, e.g. `"60"`. Always present. |
+| `data-note-key` | `"C" \| "C#" \| … \| "B"` | The pitch class of the key. Always present. |
+| `data-active` | `"true"` | Present while the note is sounding. |
+| `data-disabled` | `"true"` | Present when the note is past `midiMax`. |
 
 A key takes more through `keyProps`, so a state of your own is one more
 attribute:

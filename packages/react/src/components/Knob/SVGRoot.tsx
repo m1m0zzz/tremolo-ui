@@ -4,7 +4,7 @@ import { Placement } from '../_util/Placement'
 
 import { viewBoxSize } from './context'
 
-export interface SVGRootProps {
+export interface KnobSVGRootProps {
   /**
    * `<Knob.InactiveLine />`, `<Knob.ActiveLine />` and `<Knob.Thumb />` go
    * here, in the order you want them painted.
@@ -16,7 +16,7 @@ export function SVGRoot({
   children,
   style,
   ...props
-}: SVGRootProps & Omit<SVGProps<SVGSVGElement>, keyof SVGRootProps>) {
+}: KnobSVGRootProps & Omit<SVGProps<SVGSVGElement>, keyof KnobSVGRootProps>) {
   return (
     <svg
       viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}

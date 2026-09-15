@@ -42,12 +42,19 @@ const defaultExternalStyles: SliderProps['externalStyles'] = {
 }
 
 export interface SliderProps {
-  // required
+  /** The current value. The slider shows only this, so update it from `onChange`. */
   value: number
+  /** The value at the start of the travel. */
   min: number
+  /** The value at the end of the travel. */
   max: number
 
-  // optional
+  /**
+   * Granularity of the value. A drag, the wheel and the arrow keys snap it to
+   * multiples of `step`.
+   *
+   * @default 1
+   */
   step?: number
   /**
    * How the value is distributed across the travel.
@@ -60,19 +67,40 @@ export interface SliderProps {
    */
   scale?: Scale
   /**
-   * slider orientation
-   * aria-orientation property is also applied.
+   * Run the slider vertically, with the value growing upwards. The range input
+   * inside the thumb takes its `aria-orientation` from this.
+   *
+   * @default false
    */
   vertical?: boolean
+  /**
+   * Grow the value the other way: leftwards, or downwards when `vertical`.
+   * The arrow keys follow the direction on screen.
+   *
+   * @default false
+   */
   reverse?: boolean
 
-  /** CSS cursor applied while dragging. */
+  /**
+   * The cursor to show while dragging. It is set on the dragged element, so it
+   * stays while the pointer is outside the slider.
+   *
+   * @default { cursor: 'pointer' }
+   */
   externalStyles?: {
     cursor?: CSSProperties['cursor']
   }
   /**
-   * wheel control option
-   * If null, no event will be triggered
+   * How much one notch of the wheel moves the value. It only acts while the
+   * focus is inside, so that scrolling the page past the slider leaves it
+   * alone.
+   *
+   * `['raw', n]` moves the value by `n`, and `['normalized', n]` by `n` of the
+   * range between `min` and `max`. The result is snapped to `step`, except for
+   * an amount set on a modifier key (`{ default: …, shift: … }`). `null` turns
+   * the wheel off.
+   *
+   * @default ['raw', 1]
    */
   wheel?: ModifierValue<InputEventOption> | null
   /**
@@ -96,11 +124,16 @@ export interface SliderProps {
   /**
    * How much one arrow key press moves the value.
    *
-   * Shift moves a tenth of a step by default. Name a modifier to change that,
-   * or pass a bare `['raw', 1]` to use no modifier at all. A modifier amount
-   * is not snapped to `step`.
+   * `['raw', n]` moves the value by `n`, and `['normalized', n]` by `n` of the
+   * range between `min` and `max`. The result is snapped to `step`, except for
+   * an amount set on a modifier key, which is what lets shift move off the
+   * grid. `null` turns the arrow keys off.
    *
-   * If null, no event will be triggered
+   * The default moves by 1, and by 0.1 with shift. With a `step` above 1, raise
+   * the amount to match: 1 would round straight back to where it started, and
+   * a development build warns about it.
+   *
+   * @default { default: ['raw', 1], shift: ['raw', 0.1] }
    */
   keyboard?: ModifierValue<InputEventOption> | null
 
@@ -116,8 +149,11 @@ export interface SliderProps {
   readonly?: boolean
   className?: string
   style?: CSSProperties
+  /** Called with the new value when a drag, the wheel or an arrow key moves it. */
   onChange?: (value: number) => void
+  /** Called when a drag starts, with the value where the track was pressed. */
   onDragStart?: (value: number) => void
+  /** Called when the drag ends, with the value it ended on. */
   onDragEnd?: (value: number) => void
   /**
    * The slider renders exactly what you compose here; there is no default

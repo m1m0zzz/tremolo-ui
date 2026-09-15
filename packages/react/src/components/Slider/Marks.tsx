@@ -15,7 +15,19 @@ export interface SliderMarksProps {
    * spacing stands when this is omitted.
    */
   gap?: number | string
+  /**
+   * Build the marks instead of writing `Slider.MarksOption` out: a number puts
+   * one every that many, `'step'` one every `step`, and `{ per, mark, label }`
+   * also turns the mark or the label off for all of them. `children` is
+   * ignored while it is set.
+   *
+   * `'step'` makes one per step, which is a great many for a fine `step`.
+   */
   options?: MarksOptions
+  /**
+   * `<Slider.MarksOption />` goes here, one per mark. Ignored while `options`
+   * is set.
+   */
   children?: ReactNode
 }
 

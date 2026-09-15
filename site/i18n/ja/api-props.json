@@ -1,0 +1,694 @@
+{
+  "AnimationCanvasCommonProps.draw": {
+    "message": "1 フレームを描きます。2D コンテキストと、フレームの情報（CSS ピクセルでの大きさ、`count`、`deltaTime`、`elapsedTime`、`fps`）を受け取ります。\n\n新しい関数を渡すとその場で差し替わるので、インラインで書いても何もやり直しになりません。",
+    "source": "51c9d8fe"
+  },
+  "AnimationCanvasCommonProps.init": {
+    "message": "最初のフレームの前に 1 度だけ、コンテキストと CSS ピクセルでの大きさを受け取って呼ばれます。すべてのフレームで共有する準備はここで行います。",
+    "source": "2b879d26"
+  },
+  "AnimationCanvasCommonProps.animate": {
+    "message": "アニメーションフレームごとに描き直します。off にすると、描く理由があるときだけ描きます。キャンバスがマウントされたとき、リサイズされたとき、コンポーネントが再レンダーされたときです。",
+    "source": "8212d832"
+  },
+  "AnimationCanvasCommonProps.options": {
+    "message": "2D コンテキストを作るときに 1 度だけ読みます。あとから変えても効かないので、レンダーのたびに新しいオブジェクトを渡しても害はありません。",
+    "source": "1ca93514"
+  },
+  "AnimationCanvasCommonProps.reduceFlickering": {
+    "message": "リサイズをまたいで描画を引き継ぎ、新しい大きさで描き直すまでの 1 フレームの間、キャンバスが空白にならないようにします。固定サイズのキャンバスも、`width` や `height` が変わればリサイズされます。",
+    "source": "eb2aff0b"
+  },
+  "AnimationCanvasFixedProps.resizable": {
+    "message": "省略するか `false` を渡すと、下の大きさに固定されたキャンバスになります。",
+    "source": "550659c0"
+  },
+  "AnimationCanvasFixedProps.width": {
+    "message": "CSS ピクセルでのキャンバスの幅。",
+    "source": "45397871"
+  },
+  "AnimationCanvasFixedProps.height": {
+    "message": "CSS ピクセルでのキャンバスの高さ。",
+    "source": "2eebf6fb"
+  },
+  "AnimationCanvasResizableProps.resizable": {
+    "message": "`width` と `height` の代わりに、親要素の大きさに合わせます。切り替えるとキャンバスを作り直します。",
+    "source": "ac135312"
+  },
+  "AnimationCanvasResizableProps.width": {
+    "message": "受け付けません。大きさは親要素から決まります。",
+    "source": "df31cce8"
+  },
+  "AnimationCanvasResizableProps.height": {
+    "message": "受け付けません。大きさは親要素から決まります。",
+    "source": "df31cce8"
+  },
+  "KnobProps.value": {
+    "message": "現在の値。ノブはこの値だけを表示するので、`onChange` から更新します。",
+    "source": "7fe9bfd5"
+  },
+  "KnobProps.min": {
+    "message": "ノブを一番下まで回したときの値。",
+    "source": "8ab704f1"
+  },
+  "KnobProps.max": {
+    "message": "ノブを一番上まで回したときの値。",
+    "source": "4878fed8"
+  },
+  "KnobProps.step": {
+    "message": "値の刻み。ドラッグ・ホイール・矢印キーは、値を `step` の倍数に丸めます。",
+    "source": "09b79920"
+  },
+  "KnobProps.scale": {
+    "message": "値を移動量にどう配分するか。\n\n`@tremolo-ui/functions` のスケールから選びます: `linearScale`、`exponentialScale`、`curveScale(n)`、`symmetricSkewScale(n)`。JUCE のパラメータと値を一致させる必要があるときは `skewScale(n)` を使います。",
+    "source": "f48cfb3c"
+  },
+  "KnobProps.defaultValue": {
+    "message": "`enableDoubleClickDefault` が on の間、ダブルクリックで戻す値。",
+    "source": "a4a17d42"
+  },
+  "KnobProps.startValue": {
+    "message": "アクティブな円弧の起点。パンのような双極性のコントロールでは中央に置くと、円弧がそこから両側へ伸びます。",
+    "source": "60dfea7e"
+  },
+  "KnobProps.size": {
+    "message": "ノブの幅と高さ。`--knob-size` を設定します。省略するとテーマが与えた大きさになります。",
+    "source": "c565564c"
+  },
+  "KnobProps.externalStyles": {
+    "message": "ドラッグ中に表示するカーソル。ドラッグしている要素に設定するので、ポインタがノブの外に出ても変わりません。",
+    "source": "dee00454"
+  },
+  "KnobProps.wheel": {
+    "message": "ホイール 1 目盛りで値が動く量。フォーカスが中にある間だけ効くので、ページをスクロールしてノブの上を通り過ぎても値は変わりません。\n\n`['raw', n]` は値を `n` だけ、`['normalized', n]` は `min` から `max` までの範囲の `n` だけ動かします。結果は `step` に丸められますが、修飾キーに設定した量（`{ default: …, shift: … }`）は丸められません。`null` にするとホイールを無効にします。",
+    "source": "83a7488a"
+  },
+  "KnobProps.dragSensitivity": {
+    "message": "修飾キーごとの、ドラッグで値が動く量。\n\n`1` は範囲全体を 100px で動かす通常の移動量で、`0.1` にすると同じ移動で範囲の 10 分の 1 だけ動きます。矢印キーでの動きに合わせて、既定では shift に `0.1` を割り当てています。\n\nドラッグの途中でキーを押したり離したりしても値は飛びません。それまでの移動量はそのままで、そこから新しい感度が効きます。キー単体ではポインタのイベントが出ないので、効くのは次にポインタを動かしたときです。",
+    "source": "0bea7971"
+  },
+  "KnobProps.pointerLock": {
+    "message": "ドラッグ中はカーソルを隠し、画面上をさまよわせずにポインタの移動量を直接読みます。\n\nノブにとって大事なのはポインタの位置ではなく動いた距離だけで、さまよわせると 2 つの損があります。つかんでいるノブからカーソルが遠く離れてしまうことと、**画面の端でドラッグが止まってしまう**ことです。画面の端では OS がポインタを押しとどめ、座標が変わらなくなります。`dragSensitivity` が 1 より小さいと、すぐに端に着きます。\n\n既定で off なのは、代償があるためです。ブラウザが独自の通知を出し、Esc でロックが解除され、要求にはユーザーの操作が必要で、拒否されることもあります。拒否されてもエラーにはならず、ドラッグは普通のドラッグとして続きます。",
+    "source": "dbd5f64a"
+  },
+  "KnobProps.keyboard": {
+    "message": "矢印キーを 1 回押したときに値が動く量。\n\n`['raw', n]` は値を `n` だけ、`['normalized', n]` は `min` から `max` までの範囲の `n` だけ動かします。結果は `step` に丸められますが、修飾キーに設定した量は丸められず、そのおかげで shift で刻みの間の値へ動かせます。`null` にすると矢印キーを無効にします。\n\n既定では 1 ずつ、shift を押すと 0.1 ずつ動きます。`step` が 1 より大きいときは、量もそれに合わせてください。1 のままだと元の値に丸め戻されてしまい、開発ビルドでは警告が出ます。",
+    "source": "f7833cda"
+  },
+  "KnobProps.enableDoubleClickDefault": {
+    "message": "ダブルクリックで `defaultValue` に戻します。",
+    "source": "bad0f20a"
+  },
+  "KnobProps.disabled": {
+    "message": "ノブを変更できなくし、タブ順から外します。設定している間、パートは `data-disabled` を持ちます。",
+    "source": "9ed216b7"
+  },
+  "KnobProps.readonly": {
+    "message": "フォーカスは受け取れるまま、ノブを変更できなくします。設定している間、パートは `data-readonly` を持ちます。",
+    "source": "6c46ee02"
+  },
+  "KnobProps.angleRange": {
+    "message": "`min` から `max` までにノブが回る角度（度）。真上を中心にします。",
+    "source": "bc1ec9c3"
+  },
+  "KnobProps.onChange": {
+    "message": "ドラッグ・ホイール・矢印キー・ダブルクリックで値が動いたときに、新しい値を渡して呼ばれます。",
+    "source": "6aca439d"
+  },
+  "KnobProps.children": {
+    "message": "ここに組み立てたものがそのまま描画されます。フォールバックする既定のマークアップはありません。",
+    "source": "85fffa79"
+  },
+  "KnobSVGRootProps.children": {
+    "message": "`<Knob.InactiveLine />`、`<Knob.ActiveLine />`、`<Knob.Thumb />` をここに、描きたい順に置きます。",
+    "source": "1c1d6ce0"
+  },
+  "KnobThumbProps.thumb": {
+    "message": "円の塗りの色。",
+    "source": "96f7a0f5"
+  },
+  "KnobThumbProps.thumbLine": {
+    "message": "値を指す線の色。",
+    "source": "b787807a"
+  },
+  "KnobThumbProps.thumbSize": {
+    "message": "円の直径。ノブに対するパーセントで指定します。",
+    "source": "341cbee4"
+  },
+  "KnobThumbProps.thumbLineWeight": {
+    "message": "線の太さ。ノブに対するパーセントで指定します。",
+    "source": "165c7469"
+  },
+  "KnobThumbProps.thumbLineLength": {
+    "message": "線が下へどこまで伸びるか。ノブの上端からのパーセントで指定します。線は円の縁から始まります。",
+    "source": "1b6a5c34"
+  },
+  "KnobThumbProps.classes": {
+    "message": "つまみが中に描くもののクラス。`thumbLine` は値を指す線です。",
+    "source": "38a8d1b7"
+  },
+  "NumberInputProps.value": {
+    "message": "値。入力欄には `format(value)` が表示されます。ただし入力中は、確定するまで利用者が打ったテキストがそのまま残ります。",
+    "source": "613fec88"
+  },
+  "NumberInputProps.min": {
+    "message": "最小値。省略すると下限はありません。\n\n`clampValue` が on の間、値を確定したときやステップしたときに適用されます。値がこれより小さいときは、`InputField` が `data-out-of-range` を持ちます。",
+    "source": "5926f31e"
+  },
+  "NumberInputProps.max": {
+    "message": "最大値。省略すると上限はありません。\n\n`clampValue` が on の間、値を確定したときやステップしたときに適用されます。値がこれより大きいときは、`InputField` が `data-out-of-range` を持ちます。",
+    "source": "0ca10b04"
+  },
+  "NumberInputProps.step": {
+    "message": "値の刻み。ステッパー、`Stepper` のドラッグ、ホイール、矢印キーは、値を `step` の倍数に丸めます。打ち込んだ値はそのままです。",
+    "source": "3c3b0bec"
+  },
+  "NumberInputProps.scale": {
+    "message": "ドラッグや、`'normalized'` のホイール / キーボード操作で、値を移動量にどう配分するか。",
+    "source": "2ab534fb"
+  },
+  "NumberInputProps.format": {
+    "message": "値をテキストにします。既定では数字だけです。\n\n`@tremolo-ui/functions` の `unitFormat` は、単位に合わせてこれと `parse` をまとめて作り、ルートに展開できる組として返します。",
+    "source": "02e2a0bc"
+  },
+  "NumberInputProps.parse": {
+    "message": "テキストから値を読み戻します。`format` の逆になっている必要があります。\n\n数字が含まれないテキストは `NaN` と読まれ、値は変わりません。",
+    "source": "6307eff0"
+  },
+  "NumberInputProps.clampValue": {
+    "message": "確定したときやステップしたときに、値を `min` と `max` の範囲に収めます。入力中はクランプしないので、値を 1 桁ずつ打ち込めます。",
+    "source": "f29a9d4f"
+  },
+  "NumberInputProps.wheel": {
+    "message": "ホイール 1 目盛りで値が動く量。フォーカスが中にある間だけ効くので、ページをスクロールして入力欄の上を通り過ぎても値は変わりません。\n\n`['raw', n]` は値を `n` だけ、`['normalized', n]` は `min` から `max` までの範囲の `n` だけ動かします。結果は `step` に丸められますが、修飾キーに設定した量（`{ default: …, shift: … }`）は丸められません。`null` にするとホイールを無効にします。",
+    "source": "72e28ad3"
+  },
+  "NumberInputProps.keyboard": {
+    "message": "矢印キーを 1 回押したときに値が動く量。\n\n`['raw', n]` は値を `n` だけ、`['normalized', n]` は `min` から `max` までの範囲の `n` だけ動かします。結果は `step` に丸められますが、修飾キーに設定した量は丸められず、そのおかげで shift で刻みの間の値へ動かせます。`null` にすると矢印キーを無効にします。\n\n既定では 1 ずつ、shift を押すと 0.1 ずつ動きます。`step` が 1 より大きいときは、量もそれに合わせてください。1 のままだと元の値に丸め戻されてしまい、開発ビルドでは警告が出ます。",
+    "source": "f7833cda"
+  },
+  "NumberInputProps.drag": {
+    "message": "`Stepper` を縦にドラッグしたとき、値を 1 `step` 動かすのに要るピクセル数。`null` にするとドラッグを無効にします。",
+    "source": "faab6fdd"
+  },
+  "NumberInputProps.dragSensitivity": {
+    "message": "修飾キーごとの、`Stepper` のドラッグの効き方。\n\n`1` は 1 `step` あたり `drag` ピクセルで、`0.1` にすると同じ移動でその 10 分の 1 だけ動きます。矢印キーでの動きに合わせて、既定では shift に `0.1` を割り当てています。\n\n修飾キーのエントリは `step` に丸められません。そのおかげで、細かい量でも値が動きます。",
+    "source": "1d89ff4d"
+  },
+  "NumberInputProps.pointerLock": {
+    "message": "`Stepper` をドラッグしている間はカーソルを隠し、画面上をさまよわせずにポインタの移動量を直接読みます。\n\nドラッグはもともと相対的なのでポインタの位置に意味はありませんが、それでも画面の端には突き当たります。画面の端では OS がポインタを押しとどめ、座標が変わらなくなります。\n\n既定では off です。ブラウザが独自の通知を出し、Esc でロックが解除され、要求は拒否されることもあります。拒否されてもエラーにはならず、ドラッグは普通のドラッグとして続きます。",
+    "source": "7004cd32"
+  },
+  "NumberInputProps.selectOnFocus": {
+    "message": "`InputField` にフォーカスが入ったときにテキストを選択します。`'all'` はすべてを選択し、`'number'` は先頭の数字だけを選択して書式が付け足した部分を残します。`'none'` はクリックした位置にキャレットを置いたままにします。",
+    "source": "fec9f784"
+  },
+  "NumberInputProps.unformatOnFocus": {
+    "message": "`InputField` にフォーカスがある間は、`format` が付けた書式を外して素の値を表示します。`1.23kHz` と表示している入力欄なら、上書きできるように `1230` を出します。\n\n表示されるのは値そのもので、書式付きのテキストの中にある数字ではありません。書式が桁を変える場合、この 2 つは食い違います。`1.23kHz` から `1.23` を取り出すと 1.23 と読み戻され、1000 倍ずれてしまいます。丸めた表示が値にならないのも同じ理由です。`2Hz` と表示している `1.6` は、編集用に `2` ではなく `1.6` を出します。",
+    "source": "c9d269ad"
+  },
+  "NumberInputProps.keepCaretOnStep": {
+    "message": "矢印キーで値をステップしたあと、`InputField` のキャレットを元の位置に戻します。\n\n`value` を差し替えられた制御された input はキャレットを末尾に落とすので、これが無いと、続けてステップしたときの 2 回目以降は必ず最後の桁に効きます。これを使うと、キャレットの下の桁はキャレットの下に留まり、同じ桁を押さえたままステップできます。\n\n位置はどちらかの端からではなく小数点から測るので、数字の桁数が増えても減ってもずれません。`9` と `.9` の間にあったキャレットは、`10` と `.0` の間に来ます。\n\n戻すのはキャレットだけです。どの桁にあってもステップの大きさは変わりません。それを決めるのは `keyboard` です。",
+    "source": "e74effeb"
+  },
+  "NumberInputProps.blurOnEnter": {
+    "message": "Enter を押したときに、確定して `InputField` から離れます。これが無くても Enter で確定はします。",
+    "source": "7e7903a9"
+  },
+  "NumberInputProps.disabled": {
+    "message": "入力欄を変更できなくし、タブ順から外します。設定している間、パートは `data-disabled` を持ちます。",
+    "source": "4a26d988"
+  },
+  "NumberInputProps.readonly": {
+    "message": "値を変更できなくします。設定している間、パートは `data-readonly` を持ちます。",
+    "source": "69a3289d"
+  },
+  "NumberInputProps.onChange": {
+    "message": "新しい値を渡して呼ばれます。入力中は、テキストが数字として読めるたびにクランプせずに呼ばれ、確定したときにクランプで値が変わればもう 1 度呼ばれます。",
+    "source": "be1cbc7c"
+  },
+  "NumberInputProps.children": {
+    "message": "ここに組み立てたものがそのまま描画されます。フォールバックする既定のマークアップはありません。",
+    "source": "0983e6bd"
+  },
+  "NumberInputStepperProps.children": {
+    "message": "`<NumberInput.IncrementStepper />` と `<NumberInput.DecrementStepper />` をここに置きます。",
+    "source": "e89a419f"
+  },
+  "NumberInputIncrementStepperProps.children": {
+    "message": "既定の矢印を置き換えます。大きさは `--stepper-icon-size` 変数で指定します。",
+    "source": "08192f1f"
+  },
+  "NumberInputDecrementStepperProps.children": {
+    "message": "既定の矢印を置き換えます。大きさは `--stepper-icon-size` 変数で指定します。",
+    "source": "08192f1f"
+  },
+  "PianoProps.classes": {
+    "message": "鍵盤が中に描くもののクラス。`keyLabelWrapper` と、`label` が返したものを包む `keyLabel` です。鍵盤そのもののクラスは `keyProps` から渡します。ノートとその状態を受け取れるのもそちらです。",
+    "source": "f9a2682b"
+  },
+  "PianoProps.noteRange": {
+    "message": "鍵盤を描くノートの範囲。MIDI ノート番号で、`first` から `last` まで（両端を含む）を指定します。",
+    "source": "08d81ca7"
+  },
+  "PianoProps.glissando": {
+    "message": "押したままのポインタを、隣の鍵盤へ滑らせて弾けるようにします。off にすると、押した鍵盤がポインタを離すまで鳴り続けます。",
+    "source": "9b4a7525"
+  },
+  "PianoProps.midiMax": {
+    "message": "鳴らせる最も高いノート。これより上の鍵盤は `data-disabled` を持ちます。",
+    "source": "274af558"
+  },
+  "PianoProps.keyboardShortcuts": {
+    "message": "PC のキーボードでノートを弾けるようにします。`keys[i]` が `noteRange.first + i` を鳴らします。`SHORTCUTS` に用意したレイアウトは、`noteRange.first` が C であることを前提にしています。どこでキーを受け付けるかは `keyboardShortcutsScope` で決めます。",
+    "source": "abdfc6ef"
+  },
+  "PianoProps.keyboardShortcutsScope": {
+    "message": "キーボードショートカットを受け付ける範囲。`root` は Piano のルートかその子孫にフォーカスがある間だけ、`window` は編集可能な要素の中を除くページ全体でキーを受け付けます。",
+    "source": "a2e6a47d"
+  },
+  "PianoProps.resizable": {
+    "message": "親要素の幅に合わせ、白鍵の幅をそこから求めます。`whiteKeyWidth` は無視されます。",
+    "source": "b399c773"
+  },
+  "PianoProps.whiteKeyWidth": {
+    "message": "白鍵の幅（ピクセル、`keyGap` を含まない）。`resizable` が on の間は無視されます。",
+    "source": "c1ae29ce"
+  },
+  "PianoProps.keyGap": {
+    "message": "隣り合う白鍵の間隔（ピクセル）。",
+    "source": "9bf583ad"
+  },
+  "PianoProps.blackKeyWidthRatio": {
+    "message": "黒鍵の幅。`whiteKeyWidth` に対する割合で指定します。",
+    "source": "352c7f53"
+  },
+  "PianoProps.blackKeyHeightRatio": {
+    "message": "黒鍵の高さ。鍵盤全体の高さに対する割合で指定します。",
+    "source": "c86e4cad"
+  },
+  "PianoProps.height": {
+    "message": "鍵盤の高さ。`--height` を設定します。省略するとテーマが与えた高さになり、テーマは `data-resizable` で `resizable` かどうかを見分けられます。",
+    "source": "62e13a9a"
+  },
+  "PianoProps.label": {
+    "message": "鍵盤の中に描くもの。`''`、`null`、`undefined` は何も描かないので、`HOME_ROW_NATURAL` のように歯抜けのある配列でも特別扱いは要りません。",
+    "source": "3d3b3d02"
+  },
+  "PianoProps.keyProps": {
+    "message": "ノートごとに鍵盤へ足す props。クラスやスタイル、セレクタに使う `data-*` 属性などです。\n\n鍵盤の幾何（`left`、`width`、`height`）は返した `style` のあとに当てられ、上書きできません。反応する場所と違うところに鍵盤が描かれることはありません。",
+    "source": "182c0ff3"
+  },
+  "PianoProps.onPlayNote": {
+    "message": "ノートが鳴り始めたときに呼ばれます。ポインタ・キーボードショートカット・`playNote` のどれから鳴らしても同じです。同じノートを複数の入力元が同時に押しても、1 回だけ呼ばれます。`velocity` は `playNote` に渡した値で、それ以外では `undefined` です。",
+    "source": "30258017"
+  },
+  "PianoProps.onStopNote": {
+    "message": "ノートを押していたすべての入力元が離したときに呼ばれます。",
+    "source": "fd1cf17a"
+  },
+  "PointsEditorProps.width": {
+    "message": "`--width` を設定します。省略するとテーマが与えた大きさになります。",
+    "source": "cb49b3ed"
+  },
+  "PointsEditorProps.height": {
+    "message": "`--height` を設定します。省略するとテーマが与えた大きさになります。",
+    "source": "8257fc59"
+  },
+  "PointsEditorProps.disabled": {
+    "message": "点を変更できなくし、タブ順から外します。設定している間、パートは `data-disabled` を持ちます。",
+    "source": "3300c410"
+  },
+  "PointsEditorProps.readonly": {
+    "message": "点を動かせなくします。設定している間、パートは `data-readonly` を持ちます。",
+    "source": "e6d699cc"
+  },
+  "PointsEditorProps.externalStyles": {
+    "message": "点をドラッグしている間に表示するカーソル。ドラッグしている点に設定するので、ポインタが点の外に出ても変わりません。",
+    "source": "821a55c9"
+  },
+  "PointsEditorProps.wheel": {
+    "message": "ホイール 1 目盛りで、フォーカス中の `Point` が動く量。横スクロールか、shift を押しながらのスクロールで x が、それ以外では y が動きます。\n\n位置は 0 から 1 なので、`['normalized', n]` も `['raw', n]` もエディタの `n` だけ動かします。`null` にするとホイールを無効にします。`Point` は自分の `wheel` で上書きできます。",
+    "source": "452c475c"
+  },
+  "PointsEditorProps.keyboard": {
+    "message": "矢印キーを 1 回押したときに `Point` が動く量。左右で x が、上下で y が動きます。\n\n位置は 0 から 1 なので、`['normalized', n]` も `['raw', n]` もエディタの `n` だけ動かします。修飾キーごとに量を決めるときはマップを渡します。`null` にすると矢印キーを無効にします。`Point` は自分の `keyboard` で上書きできます。",
+    "source": "8e9728d9"
+  },
+  "PointsEditorProps.dragSensitivity": {
+    "message": "修飾キーごとの、ドラッグで `Point` が動く量。\n\n`1` はポインタの位置そのもので、点のドラッグは普通これです。**それ以外にするとドラッグは相対的になります**。`0.1` にすると同じ移動でエディタの 10 分の 1 だけ動くので、点はポインタに追従しなくなり、10 分の 1 の速さで動き始めます。矢印キーでの動きに合わせて、既定では shift に `0.1` を割り当てています。\n\nドラッグの途中でキーを押したり離したりしても点は飛びません。それまでの移動量はそのままで、そこから新しい感度が効きます。**そのドラッグが終わるまで、ポインタと点は離れたままです**。キーを離したときに揃え直すと、誰も動かそうとしていない点が動いてしまいます。",
+    "source": "d09d0385"
+  },
+  "PointsEditorProps.selectable": {
+    "message": "点を選択し、選択した点をまとめて動かせるようにします。\n\n押す操作とドラッグの意味が変わるので、既定では off です。空いている場所を押すと、何も起きない代わりに選択の枠が始まり、点をドラッグすると選択中の他の点も動きます。ADSR エンベロープの 4 つのハンドルのように点ごとに意味が違うエディタでは、まとめて動かしても得るものがありません。\n\n**選択していると、同じ tick の中で複数の点の `onChange` が呼ばれます**。それぞれ、レンダー時に捕まえた値ではなく前の state から更新する必要があります:\n\n```jsx\nonChange={(v) => setPoints((prev) => ({ ...prev, [id]: v }))}\n```\n\n逆に `setPoints({ ...points, [id]: v })` と書くと、最後の 1 回以外が捨てられ、1 つの点しか動かないように見えます。",
+    "source": "cc558326"
+  },
+  "PointsEditorProps.selection": {
+    "message": "選択中の点の id。選択を自分で持つときに渡します。省略するとエディタが自分で持ちます。\n\n`Point` の id は `id` prop から取り、無ければマウントされている間だけ続く id を生成します。",
+    "source": "413e32d5"
+  },
+  "PointsEditorProps.defaultSelection": {
+    "message": "エディタが選択を自分で持つときの、最初の選択。",
+    "source": "e5cc48d0"
+  },
+  "PointsEditorProps.onSelectionChange": {
+    "message": "選択が変わるたびに呼ばれます。制御されているかどうかは問いません。",
+    "source": "bb0edbb0"
+  },
+  "PointsEditorProps.children": {
+    "message": "ここに組み立てたものがそのまま描画されます。フォールバックする既定のマークアップはありません。",
+    "source": "59ed6a48"
+  },
+  "PointsEditorBackgroundProps.children": {
+    "message": "点を重ねる下地。グラフ、キャンバス、画像など。",
+    "source": "5edd27f8"
+  },
+  "PointsEditorContainerProps.children": {
+    "message": "`<PointsEditor.Point />` をここに置きます。",
+    "source": "5616a652"
+  },
+  "PointsEditorSelectionBoxProps.children": {
+    "message": "枠の中に描くもの。枠はドラッグしている間だけ存在します。",
+    "source": "d36c0223"
+  },
+  "PointsEditorPointProps.value": {
+    "message": "点の位置。各軸 0 から 1 の `{ x, y }` で、`y` は下に向かって増えます。",
+    "source": "35116e6f"
+  },
+  "PointsEditorPointProps.children": {
+    "message": "点の中に描くもの。省略するとテーマの点がそのまま出ます。",
+    "source": "8ef51567"
+  },
+  "PointsEditorPointProps.id": {
+    "message": "選択がこの点を指すための id。省略すると、点がマウントされている間だけ続く id を生成します。再マウントをまたいで選択を保ちたいときや、自分の state で見分けたいときは自分で渡します。",
+    "source": "b7ad21e7"
+  },
+  "PointsEditorPointProps.min": {
+    "message": "点が取れる最小の位置（軸ごと）。省略した軸は 0 です。",
+    "source": "aa177d9f"
+  },
+  "PointsEditorPointProps.max": {
+    "message": "点が取れる最大の位置（軸ごと）。省略した軸は 1 です。",
+    "source": "b0f9d9df"
+  },
+  "PointsEditorPointProps.size": {
+    "message": "幅と高さをまとめて指定します。`--width` と `--height` の両方を設定します。",
+    "source": "be69c11a"
+  },
+  "PointsEditorPointProps.width": {
+    "message": "`--width` を設定します。省略するとテーマが与えた大きさになります。",
+    "source": "cb49b3ed"
+  },
+  "PointsEditorPointProps.height": {
+    "message": "`--height` を設定します。省略するとテーマが与えた大きさになります。",
+    "source": "8257fc59"
+  },
+  "PointsEditorPointProps.color": {
+    "message": "`--color` を設定します。テーマが点の色に使います。",
+    "source": "3ebbe0fc"
+  },
+  "PointsEditorPointProps.disabled": {
+    "message": "`PointsEditor.Root` の `disabled` を上書きします。",
+    "source": "7cece666"
+  },
+  "PointsEditorPointProps.readonly": {
+    "message": "`PointsEditor.Root` の `readonly` を上書きします。",
+    "source": "0470cb06"
+  },
+  "PointsEditorPointProps.wheel": {
+    "message": "`PointsEditor.Root` の `wheel` を上書きします。",
+    "source": "738c4fa3"
+  },
+  "PointsEditorPointProps.keyboard": {
+    "message": "`PointsEditor.Root` の `keyboard` を上書きします。",
+    "source": "42513038"
+  },
+  "PointsEditorPointProps.aria-label": {
+    "message": "各軸のアクセシブルな名前。点の中には range input が 2 つあるので、軸ごとに 1 つずつ名前を取ります。文字列 1 つなら両方に同じ名前を付けます。",
+    "source": "3ae0103a"
+  },
+  "PointsEditorPointProps.aria-valuetext": {
+    "message": "数字だけでは伝わらないときに、各軸の値が何を意味するか。",
+    "source": "cb022547"
+  },
+  "PointsEditorPointProps.onChange": {
+    "message": "点をドラッグしたとき、矢印キーやホイールで動かしたとき、選択と一緒に動いたときに、新しい位置を渡して呼ばれます。",
+    "source": "3d00d344"
+  },
+  "PointsEditorPointProps.onDragStart": {
+    "message": "この点のドラッグが始まったときに、点の位置を渡して呼ばれます。",
+    "source": "06694965"
+  },
+  "PointsEditorPointProps.onDragEnd": {
+    "message": "そのドラッグが終わったときに、点の位置を渡して呼ばれます。",
+    "source": "2b7d8c2c"
+  },
+  "SliderMarksOptionProps.value": {
+    "message": "目盛りを置く位置。つまみと同じスケールで置かれます。",
+    "source": "1baba6aa"
+  },
+  "SliderMarksOptionProps.mark": {
+    "message": "目盛りそのものを描きます。off にするとラベルだけを表示します。",
+    "source": "83e0c388"
+  },
+  "SliderMarksOptionProps.label": {
+    "message": "目盛りの横に表示するテキスト。省略すると値を表示します。`null` はラベルを出さず、空文字列は空のラベルを描きます。",
+    "source": "24416cf6"
+  },
+  "SliderMarksOptionProps.thickness": {
+    "message": "目盛りの太さ。`--thickness` を設定します。",
+    "source": "e2916038"
+  },
+  "SliderMarksOptionProps.length": {
+    "message": "目盛りの長さ。`--length` を設定します。",
+    "source": "2af7cb2b"
+  },
+  "SliderMarksOptionProps.gap": {
+    "message": "目盛りとラベルの間隔。`--gap` を設定します。",
+    "source": "492045ac"
+  },
+  "SliderMarksOptionProps.labelWidth": {
+    "message": "ラベルの幅。`--label-width` を設定します。",
+    "source": "bfa58a3d"
+  },
+  "SliderMarksOptionProps.classes": {
+    "message": "オプションの中の、目盛りとラベルのクラス。",
+    "source": "512518e8"
+  },
+  "SliderMarksOptionProps.styles": {
+    "message": "オプションの中の、目盛りとラベルのスタイル。",
+    "source": "0843a89c"
+  },
+  "SliderMarksProps.gap": {
+    "message": "目盛りとトラックの間隔。`--gap` を設定します。省略するとテーマの間隔になります。",
+    "source": "6e331ca7"
+  },
+  "SliderMarksProps.options": {
+    "message": "`Slider.MarksOption` を書き並べる代わりに、目盛りを作ります。数値ならその間隔ごとに、`'step'` なら `step` ごとに 1 つ作ります。`{ per, mark, label }` なら、すべての目盛りやラベルをまとめて off にもできます。設定している間、`children` は無視されます。\n\n`'step'` は刻みごとに 1 つ作るので、`step` が細かいと非常に多くなります。",
+    "source": "fe677245"
+  },
+  "SliderMarksProps.children": {
+    "message": "`<Slider.MarksOption />` を目盛りごとにここに置きます。`options` を設定している間は無視されます。",
+    "source": "c621ee9f"
+  },
+  "SliderProps.value": {
+    "message": "現在の値。スライダーはこの値だけを表示するので、`onChange` から更新します。",
+    "source": "cb56a015"
+  },
+  "SliderProps.min": {
+    "message": "移動範囲の始点の値。",
+    "source": "970152a6"
+  },
+  "SliderProps.max": {
+    "message": "移動範囲の終点の値。",
+    "source": "020cef64"
+  },
+  "SliderProps.step": {
+    "message": "値の刻み。ドラッグ・ホイール・矢印キーは、値を `step` の倍数に丸めます。",
+    "source": "09b79920"
+  },
+  "SliderProps.scale": {
+    "message": "値を移動量にどう配分するか。\n\n`@tremolo-ui/functions` のスケールから選びます: `linearScale`、`exponentialScale`、`curveScale(n)`、`symmetricSkewScale(n)`。JUCE のパラメータと値を一致させる必要があるときは `skewScale(n)` を使います。",
+    "source": "f48cfb3c"
+  },
+  "SliderProps.vertical": {
+    "message": "スライダーを縦にし、値が上に向かって増えるようにします。つまみの中の range input の `aria-orientation` もこれに従います。",
+    "source": "13c049d3"
+  },
+  "SliderProps.reverse": {
+    "message": "値の増える向きを逆にします。横なら左へ、`vertical` なら下へ増えます。矢印キーは画面上の向きに従います。",
+    "source": "ce098808"
+  },
+  "SliderProps.externalStyles": {
+    "message": "ドラッグ中に表示するカーソル。ドラッグしている要素に設定するので、ポインタがスライダーの外に出ても変わりません。",
+    "source": "e83c64f7"
+  },
+  "SliderProps.wheel": {
+    "message": "ホイール 1 目盛りで値が動く量。フォーカスが中にある間だけ効くので、ページをスクロールしてスライダーの上を通り過ぎても値は変わりません。\n\n`['raw', n]` は値を `n` だけ、`['normalized', n]` は `min` から `max` までの範囲の `n` だけ動かします。結果は `step` に丸められますが、修飾キーに設定した量（`{ default: …, shift: … }`）は丸められません。`null` にするとホイールを無効にします。",
+    "source": "586f2ec3"
+  },
+  "SliderProps.dragSensitivity": {
+    "message": "修飾キーごとの、ドラッグで値が動く量。\n\n`1` はポインタの位置そのもので、ここでのドラッグは普通これです。**それ以外にするとドラッグは相対的になります**。`0.1` にすると同じ移動で移動範囲の 10 分の 1 だけ動くので、値はポインタに追従しなくなり、10 分の 1 の速さで動き始めます。矢印キーでの動きに合わせて、既定では shift に `0.1` を割り当てています。\n\nドラッグの途中でキーを押したり離したりしても値は飛びません。それまでの移動量はそのままで、そこから新しい感度が効きます。**そのドラッグが終わるまで、ポインタと値は離れたままです**。キーを離したときに揃え直すと、誰も動かそうとしていない値が動いてしまいます。",
+    "source": "f0647506"
+  },
+  "SliderProps.keyboard": {
+    "message": "矢印キーを 1 回押したときに値が動く量。\n\n`['raw', n]` は値を `n` だけ、`['normalized', n]` は `min` から `max` までの範囲の `n` だけ動かします。結果は `step` に丸められますが、修飾キーに設定した量は丸められず、そのおかげで shift で刻みの間の値へ動かせます。`null` にすると矢印キーを無効にします。\n\n既定では 1 ずつ、shift を押すと 0.1 ずつ動きます。`step` が 1 より大きいときは、量もそれに合わせてください。1 のままだと元の値に丸め戻されてしまい、開発ビルドでは警告が出ます。",
+    "source": "f7833cda"
+  },
+  "SliderProps.disabled": {
+    "message": "スライダーを変更できなくし、タブ順から外します。設定している間、パートは `data-disabled` を持ちます。",
+    "source": "93291891"
+  },
+  "SliderProps.readonly": {
+    "message": "値を変更できなくします。設定している間、パートは `data-readonly` を持ちます。",
+    "source": "69a3289d"
+  },
+  "SliderProps.onChange": {
+    "message": "ドラッグ・ホイール・矢印キーで値が動いたときに、新しい値を渡して呼ばれます。",
+    "source": "84db5c60"
+  },
+  "SliderProps.onDragStart": {
+    "message": "ドラッグが始まったときに、トラックを押した位置の値を渡して呼ばれます。",
+    "source": "951280e8"
+  },
+  "SliderProps.onDragEnd": {
+    "message": "ドラッグが終わったときに、終わった位置の値を渡して呼ばれます。",
+    "source": "9c5a1888"
+  },
+  "SliderProps.children": {
+    "message": "ここに組み立てたものがそのまま描画されます。フォールバックする既定のマークアップはありません。",
+    "source": "2c7c75ce"
+  },
+  "SliderThumbProps.color": {
+    "message": "`--color` を設定します。テーマがつまみの色に使います。大きさはここではなく `Slider.Root` の `--thumb-size` で決まり、ルートはそれに合わせてトラックの周りに余白を取れます。",
+    "source": "f0f8ae7e"
+  },
+  "SliderThumbProps.children": {
+    "message": "つまみの中に描くもの。つまみはどちらにしても 1 つの要素なので、ここに渡すものはつまみを置き換えるのではなく、その上に載る飾りです。つまみ自体の見た目は `className` と `style` で変えます。",
+    "source": "46bb657d"
+  },
+  "SliderTrackProps.length": {
+    "message": "スライダーの向きに沿ったトラックの長さ。`--length` を設定します。省略するとテーマが与えた大きさになります。",
+    "source": "8cbf1429"
+  },
+  "SliderTrackProps.thickness": {
+    "message": "それと直交する方向のトラックの太さ。`--thickness` を設定します。",
+    "source": "379c69cd"
+  },
+  "SliderTrackProps.active": {
+    "message": "`min` から値までの部分の色。`--active` を設定します。",
+    "source": "74df5c15"
+  },
+  "SliderTrackProps.inactive": {
+    "message": "トラックの残りの部分の色。`--inactive` を設定します。",
+    "source": "f5919715"
+  },
+  "SliderTrackProps.children": {
+    "message": "`<Slider.Thumb />` をここに置きます。",
+    "source": "d2259cb9"
+  },
+  "XYPadProps.value": {
+    "message": "現在の値（`[x, y]`）。パッドはこの値だけを表示するので、`onChange` から更新します。",
+    "source": "56d46b58"
+  },
+  "XYPadProps.min": {
+    "message": "各軸の始点の値。`[x, y]` か、両軸に共通の数値 1 つで指定します。",
+    "source": "2cd43cae"
+  },
+  "XYPadProps.max": {
+    "message": "各軸の終点の値。`[x, y]` か、両軸に共通の数値 1 つで指定します。",
+    "source": "fe703849"
+  },
+  "XYPadProps.step": {
+    "message": "各軸の刻み。`[x, y]` か、両軸に共通の数値 1 つで指定します。ドラッグ・ホイール・矢印キーは、値をその倍数に丸めます。",
+    "source": "acd6516f"
+  },
+  "XYPadProps.scale": {
+    "message": "各軸の値を移動量にどう配分するか。`[x, y]` か、両軸に共通のスケール 1 つで指定します。\n\n`@tremolo-ui/functions` のスケールから選びます: `linearScale`、`exponentialScale`、`curveScale(n)`、`symmetricSkewScale(n)`。JUCE のパラメータと値を一致させる必要があるときは `skewScale(n)` を使います。",
+    "source": "86106de7"
+  },
+  "XYPadProps.reverse": {
+    "message": "軸の増える向きを逆にします。`[x, y]` か、両軸に共通の値 1 つで指定します。既定では x は右へ、y は下へ増えます。矢印キーは画面上の向きに従います。",
+    "source": "9888f290"
+  },
+  "XYPadProps.wheel": {
+    "message": "ホイール 1 目盛りで値が動く量。フォーカスが中にある間だけ効くので、ページをスクロールしてパッドの上を通り過ぎても値は変わりません。横スクロールか、shift を押しながらのスクロールで x が、それ以外では y が動きます。\n\n`['raw', n]` は値を `n` だけ、`['normalized', n]` はその軸の範囲の `n` だけ動かします。結果は `step` に丸められますが、修飾キーに設定した量（`{ default: …, alt: … }`）は丸められません。`null` にするとホイールを無効にします。",
+    "source": "e40d987f"
+  },
+  "XYPadProps.dragSensitivity": {
+    "message": "修飾キーごとの、ドラッグで値が動く量。\n\n`1` はポインタの位置そのもので、ここでのドラッグは普通これです。**それ以外にするとドラッグは相対的になります**。`0.1` にすると同じ移動で移動範囲の 10 分の 1 だけ動くので、値はポインタに追従しなくなり、10 分の 1 の速さで動き始めます。矢印キーでの動きに合わせて、既定では shift に `0.1` を割り当てています。\n\nドラッグの途中でキーを押したり離したりしても値は飛びません。それまでの移動量はそのままで、そこから新しい感度が効きます。**そのドラッグが終わるまで、ポインタと値は離れたままです**。キーを離したときに揃え直すと、誰も動かそうとしていない値が動いてしまいます。",
+    "source": "f0647506"
+  },
+  "XYPadProps.keyboard": {
+    "message": "矢印キーを 1 回押したときに値が動く量。左右で x が、上下で y が動きます。\n\n`['raw', n]` は値を `n` だけ、`['normalized', n]` はその軸の範囲の `n` だけ動かします。結果は `step` に丸められますが、修飾キーに設定した量は丸められず、そのおかげで shift で刻みの間の値へ動かせます。`null` にすると矢印キーを無効にします。\n\n既定では 1 ずつ、shift を押すと 0.1 ずつ動きます。`step` が 1 より大きいときは、量もそれに合わせてください。1 のままだと元の値に丸め戻されてしまい、開発ビルドでは警告が出ます。",
+    "source": "e502a1a2"
+  },
+  "XYPadProps.externalStyles": {
+    "message": "ドラッグ中に表示するカーソル。ドラッグしている要素に設定するので、ポインタがパッドの外に出ても変わりません。",
+    "source": "32c36e19"
+  },
+  "XYPadProps.disabled": {
+    "message": "パッドを変更できなくし、つまみをタブ順から外します。設定している間、パートは `data-disabled` を持ちます。",
+    "source": "f7212e0f"
+  },
+  "XYPadProps.readonly": {
+    "message": "つまみはフォーカスを受け取れるまま、パッドを変更できなくします。設定している間、パートは `data-readonly` を持ちます。",
+    "source": "7e52dfcd"
+  },
+  "XYPadProps.onChange": {
+    "message": "ドラッグ・ホイール・矢印キーで値が動いたときに、新しい値を渡して呼ばれます。",
+    "source": "84db5c60"
+  },
+  "XYPadProps.onDragStart": {
+    "message": "ドラッグが始まったときに、エリアを押した位置の値を渡して呼ばれます。",
+    "source": "aadd17dd"
+  },
+  "XYPadProps.onDragEnd": {
+    "message": "ドラッグが終わったときに、終わった位置の値を渡して呼ばれます。",
+    "source": "9c5a1888"
+  },
+  "XYPadProps.children": {
+    "message": "ここに組み立てたものがそのまま描画されます。フォールバックする既定のマークアップはありません。",
+    "source": "76b82a66"
+  },
+  "XYPadAreaProps.width": {
+    "message": "`--width` を設定します。省略するとテーマが与えた大きさになります。",
+    "source": "cb49b3ed"
+  },
+  "XYPadAreaProps.height": {
+    "message": "`--height` を設定します。省略するとテーマが与えた大きさになります。",
+    "source": "8257fc59"
+  },
+  "XYPadAreaProps.color": {
+    "message": "`--color` を設定します。テーマがエリアの色に使います。",
+    "source": "41383a28"
+  },
+  "XYPadAreaProps.children": {
+    "message": "`<XYPad.Thumb />` をここに置きます。",
+    "source": "29eda733"
+  },
+  "XYPadThumbProps.color": {
+    "message": "`--color` を設定します。テーマがつまみの色に使います。大きさはここではなく `XYPad.Root` の `--thumb-size` で決まり、ルートはそれに合わせてエリアの周りに余白を取れます。",
+    "source": "73f8585f"
+  },
+  "XYPadThumbProps.children": {
+    "message": "つまみの中に描くもの。つまみはどちらにしても 1 つの要素なので、ここに渡すものはつまみを置き換えるのではなく、その上に載る飾りです。つまみ自体の見た目は `className` と `style` で変えます。",
+    "source": "46bb657d"
+  },
+  "XYPadThumbProps.aria-label": {
+    "message": "各軸のアクセシブルな名前（`[x, y]`）。つまみの中には range input が 2 つあるので、それぞれに名前を付けます。文字列 1 つなら両方に同じ名前が付きますが、それを望むことはまずありません。",
+    "source": "f9e8c5d0"
+  },
+  "XYPadThumbProps.aria-labelledby": {
+    "message": "各軸をラベル付けする要素の id。`[x, y]` か、両軸に共通の値 1 つで指定します。",
+    "source": "5fe3f9f6"
+  },
+  "XYPadThumbProps.aria-describedby": {
+    "message": "各軸を説明する要素の id。`[x, y]` か、両軸に共通の値 1 つで指定します。",
+    "source": "eb644734"
+  },
+  "XYPadThumbProps.aria-valuetext": {
+    "message": "数字だけでは伝わらないときに、各軸の値が何を意味するか。`[x, y]` か、両軸に共通の値 1 つで指定します。",
+    "source": "19032897"
+  }
+}

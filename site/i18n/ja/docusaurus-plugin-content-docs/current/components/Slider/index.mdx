@@ -1,0 +1,93 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/components/slider/basic'
+
+# Slider
+
+カスタマイズできるスライダーのコンポーネント。
+
+<GitHubLink
+  path='packages/react/src/components/Slider/index.tsx'
+/>
+<StyleGitHubLink
+  path='shared/css/Slider.module.css'
+/>
+
+## インポート {#import}
+
+```jsx
+import { Slider } from '@tremolo-ui/react'
+```
+
+## API リファレンス {#api-reference}
+
+各パートには、そのパート独自の props を載せています。これに加えて、描画する要素の属性（`className` や `style` など）も受け取ります。
+
+状態は data 属性として要素に乗っているので、セレクタ 1 つで届きます（[スタイリング](/docs/tutorials/styling)を参照）。属性はその状態が on の間だけ付きます。
+
+### Root
+
+値と設定を持ち、中のパートに渡します。
+
+<PropsTable of="SliderProps" />
+
+| Data 属性 | 値 | 説明 |
+| --- | --- | --- |
+| `data-orientation` | `"horizontal" \| "vertical"` | スライダーの向き。 |
+| `data-disabled` | `"true"` | `disabled` を設定している間だけ付きます。 |
+| `data-readonly` | `"true"` | `readonly` を設定している間だけ付きます。 |
+
+### Track
+
+値が動くバー。値の位置を `--percent` に書くので、テーマは値より下の部分を塗れます。
+
+<PropsTable of="SliderTrackProps" />
+
+| Data 属性 | 値 | 説明 |
+| --- | --- | --- |
+| `data-orientation` | `"horizontal" \| "vertical"` | スライダーの向き。 |
+| `data-disabled` | `"true"` | `disabled` を設定している間だけ付きます。 |
+| `data-flipped` | `"true"` | 値が向こう側の端から伸びる間だけ付きます。`vertical` と `reverse` のどちらか一方を設定しているときです。 |
+
+### Thumb
+
+つまみ。中にある視覚的に隠れた range input が、フォーカスを受け取り ARIA を持ちます。
+
+<PropsTable of="SliderThumbProps" />
+
+| Data 属性 | 値 | 説明 |
+| --- | --- | --- |
+| `data-disabled` | `"true"` | `disabled` を設定している間だけ付きます。 |
+| `data-readonly` | `"true"` | `readonly` を設定している間だけ付きます。 |
+
+### Marks
+
+トラックに沿って並ぶ目盛り。`options` か、子の `Slider.MarksOption` から作ります。
+
+<PropsTable of="SliderMarksProps" />
+
+| Data 属性 | 値 | 説明 |
+| --- | --- | --- |
+| `data-orientation` | `"horizontal" \| "vertical"` | スライダーの向き。 |
+
+### MarksOption
+
+`value` の位置に置く、1 つの目盛りとそのラベル。
+
+<PropsTable of="SliderMarksOptionProps" />
+
+| Data 属性 | 値 | 説明 |
+| --- | --- | --- |
+| `data-orientation` | `"horizontal" \| "vertical"` | スライダーの向き。中の目盛りにも付きます。 |
+
+## 例 {#examples}
+
+### Basic {#basic}
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/slider/basic.tsx'
+>{basic}</CodeBlock>

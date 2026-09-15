@@ -65,7 +65,16 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 - [ ] **複数のタブ（ファイル）を持てる Playground を作る。** 現状の `site/src/theme/Playground/` は 1 ファイルの live code が前提で、CSS Module のような 2 つ目のファイルは `externalFiles` で外部 Playground に書き出すときにしか渡らない。Playground の iframe 化（一時タスクリストの「検討中」）と一緒に検討する
 - [x] **bug: styling ページの CSS Modules の部分**（`site/docs/tutorials/styling.mdx`）。例のノブが 0×0 で表示されていなかった。コンポーネントが書くのは `--knob-size` だけで、`width` / `height` はテーマ側が持つのに、例の `my-knob.module.css` にそれが無かった。ダークモードの `.dark` も `:global` が無く、module にリネームされて効いていなかった
 - [x] **各コンポーネントのページに `data-*` の説明を置く。** あわせて styling ページの `data-*` の一覧表（`🚦State`）は消し、各ページへのリンクにした
-- [ ] **API（props）の一部をコンポーネントのページへ移す。** typedoc の API ページは残したまま、主要な props の説明をコンポーネントのページでも読めるようにする
+- [x] **API（props）の一部をコンポーネントのページへ移す。** typedoc の API ページは残したまま、主要な props の説明をコンポーネントのページでも読めるようにする
+  - Radix Primitives に倣い、各ページに **API Reference** を置いた。パートごとに、props の表（`<PropsTable of="SliderProps" />`）と data 属性の表（値と説明）を並べる。以前の「Data attributes」はここに統合した
+  - **props の表は手で書かず、`site/scripts/api-props.mjs` が typedoc で JSDoc から作る。** 型・既定値・説明が実装とずれない。載せるのは独自の props だけで、`className` / `style` と、説明の無い `children` / `aria-*` は除く
+  - typedoc は export された型しか拾わないので、`Knob.SVGRoot` / `Knob.Thumb` の props 型を公開し、ステッパーの props 型をエイリアスから interface にした
+  - **コンポーネントのページを ja に翻訳した**（7 ページ）。props の説明の訳は `site/i18n/ja/api-props.json` に、英語の hash と一緒に持つ。英語が変わった訳は使わずに英語を出し、スクリプトが一覧を出す
+  - data 属性の表は型から作れないので手書きのまま
+  - **表に出すにあたって JSDoc を補強した。** 説明の無かった `value` / `min` / `max` / `step` / コールバックなどを埋め、`wheel` / `keyboard` / `externalStyles` / `step` / `angleRange` などに `@default` を足した
+    - **`'raw'` の量は値の単位で、step の単位ではない。** 「shift で 1 step の 10 分の 1」と書いていたが、`step` が 1 のときしか正しくない。既定の `['raw', 1]` は `step` が 1 より大きいと丸め戻されて動かない（開発ビルドは警告する）ので、そのことも書いた
+    - `SliderThumbProps.color` / `XYPadThumbProps.color` の説明が大きさの話だけで、色に触れていなかった
+    - `KnobThumbProps` の「color」「percent (0-100)」のような、何の色・何の割合か分からない説明を書き直した
 
 ## 5. 開発基盤とホスティング
 
@@ -105,7 +114,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - `AnimationCanvas` の props は `resizable` で切り替わる判別可能ユニオンにした（`AnimationCanvasFixedProps` / `AnimationCanvasResizableProps`）。以前はオーバーロードが 2 つあっても、どちらも `width` と `relativeSize` を同時に受け付けていて、`width` は黙って無視されていた
   - `reduceFlickering` は `AnimationCanvasCommonProps` に移した。コアでは固定サイズで `width` / `height` が変わったときにも効いていて、relative 側だけに置くのは実装と合っていなかった
 
-- [ ] **`packages/react/AGENTS.md` の規約とずれている既存コードを揃える。** 規約を書き起こしたときに見つかったもの。規約の側を直すか、コードを揃えるかも含めて決める
+- [x] **`packages/react/AGENTS.md` の規約とずれている既存コードを揃える。** 規約を書き起こしたときに見つかったもの。規約の側を直すか、コードを揃えるかも含めて決める
   - [x] **公開する型がコンポーネント名で始まっていない。** 破壊的変更。`src/index.ts` に並べると、どのコンポーネントの型か分からない → **すべて揃えて**
     - `AnimationCanvas`: `CommonProps` / `AbsoluteSizingProps` / `RelativeSizingProps`
     - `NumberInput`: `StepperProps` / `IncrementStepperProps` / `DecrementStepperProps`。`NumberInputFieldProps` はパート名が `InputField` なので、規約どおりなら `NumberInputInputFieldProps` になる

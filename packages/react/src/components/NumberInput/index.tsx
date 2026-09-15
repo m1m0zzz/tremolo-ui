@@ -42,8 +42,27 @@ export interface NumberInputProps {
    */
   value: number
 
+  /**
+   * Lowest value. Leave it out for no lower bound.
+   *
+   * It is enforced when a value is committed or stepped, while `clampValue` is
+   * on. A value below it carries `data-out-of-range` on `InputField`.
+   */
   min?: number
+  /**
+   * Highest value. Leave it out for no upper bound.
+   *
+   * It is enforced when a value is committed or stepped, while `clampValue` is
+   * on. A value above it carries `data-out-of-range` on `InputField`.
+   */
   max?: number
+  /**
+   * Granularity of the value. The steppers, a drag on `Stepper`, the wheel and
+   * the arrow keys snap it to multiples of `step`; a typed value is left as it
+   * is.
+   *
+   * @default 1
+   */
   step?: number
   /**
    * How the value is distributed across the travel of a drag or a
@@ -57,7 +76,7 @@ export interface NumberInputProps {
    * Render the value as text. Plain digits by default.
    *
    * `unitFormat` from `@tremolo-ui/functions` builds this and `parse` together
-   * for a unit, and spreads into the input:
+   * for a unit, as a pair to spread into the root.
    *
    * @example
    * <NumberInput.Root {...unitFormat('Hz', { digits: 2 })} value={v} />
@@ -78,24 +97,36 @@ export interface NumberInputProps {
   clampValue?: boolean
 
   /**
-   * Wheel control option. Only applies while the focus is inside, so that
-   * scrolling past the input does not change it.
-   * If null, no event will be triggered
+   * How much one notch of the wheel moves the value. It only acts while the
+   * focus is inside, so that scrolling the page past the input leaves it
+   * alone.
+   *
+   * `['raw', n]` moves the value by `n`, and `['normalized', n]` by `n` of the
+   * range between `min` and `max`. The result is snapped to `step`, except for
+   * an amount set on a modifier key (`{ default: …, shift: … }`). `null` turns
+   * the wheel off.
+   *
+   * @default ['raw', 1]
    */
   wheel?: ModifierValue<InputEventOption> | null
   /**
    * How much one arrow key press moves the value.
    *
-   * Shift moves a tenth of a step by default. Name a modifier to change that,
-   * or pass a bare `['raw', 1]` to use no modifier at all. A modifier amount
-   * is not snapped to `step`.
+   * `['raw', n]` moves the value by `n`, and `['normalized', n]` by `n` of the
+   * range between `min` and `max`. The result is snapped to `step`, except for
+   * an amount set on a modifier key, which is what lets shift move off the
+   * grid. `null` turns the arrow keys off.
    *
-   * If null, no event will be triggered
+   * The default moves by 1, and by 0.1 with shift. With a `step` above 1, raise
+   * the amount to match: 1 would round straight back to where it started, and
+   * a development build warns about it.
+   *
+   * @default { default: ['raw', 1], shift: ['raw', 0.1] }
    */
   keyboard?: ModifierValue<InputEventOption> | null
   /**
    * Pixels of vertical drag on `Stepper` that move the value by one `step`.
-   * If null, no event will be triggered
+   * `null` turns the drag off.
    * @default 1
    */
   drag?: number | null
@@ -131,8 +162,9 @@ export interface NumberInputProps {
   pointerLock?: boolean
 
   /**
-   * Select the text when `InputField` takes focus. `'number'` selects the
-   * leading number, leaving whatever the format appended to it.
+   * Select the text when `InputField` takes focus: `'all'` selects all of it,
+   * `'number'` only the leading number, leaving whatever the format appended,
+   * and `'none'` leaves the caret where the click put it.
    * @default 'none'
    */
   selectOnFocus?: 'all' | 'number' | 'none'
@@ -189,6 +221,11 @@ export interface NumberInputProps {
 
   className?: string
   style?: CSSProperties
+  /**
+   * Called with the new value. While the user types, it is called for every
+   * entry that reads as a number, unclamped; committing the entry calls it
+   * again if clamping changes the value.
+   */
   onChange?: (value: number) => void
 
   /**

@@ -14,9 +14,9 @@ import { useXYPadContext } from './context'
 export interface XYPadAreaProps {
   /** Sets `--width`; the size the theme gives it stands when omitted. */
   width?: number | string
-  /** Sets `--height`. */
+  /** Sets `--height`; the size the theme gives it stands when omitted. */
   height?: number | string
-  /** Sets `--color`. */
+  /** Sets `--color`, for the theme to colour the area with. */
   color?: string
   className?: string
   style?: CSSProperties

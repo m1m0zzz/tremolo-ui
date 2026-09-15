@@ -78,18 +78,24 @@ export interface KeyState {
 
 export interface PianoProps {
   /**
-   * Classes for the parts a key draws inside itself. The key itself is reached
-   * through `keyProps`, which is where the note and its state are.
+   * Classes for what a key draws inside itself: `keyLabelWrapper`, and
+   * `keyLabel` around what `label` returns. The key itself takes a class
+   * through `keyProps`, which is also where the note and its state are.
    */
   classes?: {
     keyLabelWrapper?: string
     keyLabel?: string
   }
 
+  /**
+   * The notes to draw keys for, as MIDI note numbers from `first` to `last`,
+   * both included.
+   */
   noteRange: NoteRange
 
   /**
-   * Let a pointer slide from one key to the next while it is down.
+   * Let a pointer slide from one key to the next while it is down. With it
+   * off, the key that was pressed sounds until the pointer is released.
    *
    * @default true
    */
@@ -102,6 +108,11 @@ export interface PianoProps {
    */
   midiMax?: number
 
+  /**
+   * Play notes from the computer keyboard: `keys[i]` plays
+   * `noteRange.first + i`. `SHORTCUTS` has ready-made layouts, which assume
+   * `noteRange.first` is a C. Where they listen is `keyboardShortcutsScope`.
+   */
   keyboardShortcuts?: KeyboardShortcuts
 
   /**
@@ -121,10 +132,14 @@ export interface PianoProps {
    */
   resizable?: boolean
 
-  /** @default 40 */
+  /**
+   * Width of a white key in pixels, not counting `keyGap`. Ignored while
+   * `resizable` is on.
+   * @default 40
+   */
   whiteKeyWidth?: number
   /**
-   * Space between two white keys.
+   * Space between two white keys, in pixels.
    * @default 1
    */
   keyGap?: number
@@ -140,8 +155,9 @@ export interface PianoProps {
   blackKeyHeightRatio?: number
 
   /**
-   * Sets `--height`; the height the theme gives it stands when omitted, which
-   * follows `resizable` through the `data-resizable` attribute.
+   * Height of the keyboard. Sets `--height`; when it is omitted, the height
+   * the theme gives stands, and the theme can tell `resizable` apart through
+   * `data-resizable`.
    */
   height?: number | string
 
@@ -169,7 +185,14 @@ export interface PianoProps {
    */
   keyProps?: (note: number, state: KeyState) => KeyAttributes
 
+  /**
+   * Called when a note starts sounding, whether a pointer, a keyboard shortcut
+   * or `playNote` asked for it. A note held by several of them at once is
+   * reported once. `velocity` is what `playNote` was given, and `undefined`
+   * otherwise.
+   */
   onPlayNote?: (note: number, velocity?: number) => void
+  /** Called once everything holding a note has let go of it. */
   onStopNote?: (note: number) => void
 }
 

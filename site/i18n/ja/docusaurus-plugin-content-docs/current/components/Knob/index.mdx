@@ -1,0 +1,70 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/components/knob/basic'
+
+# Knob
+
+SVG で描く、操作できる回転ノブのコンポーネント。
+
+<GitHubLink
+  path='packages/react/src/components/Knob/index.tsx'
+/>
+<StyleGitHubLink
+  path='shared/css/Knob.module.css'
+/>
+
+## インポート {#import}
+
+```jsx
+import { Knob } from '@tremolo-ui/react'
+```
+
+## API リファレンス {#api-reference}
+
+各パートには、そのパート独自の props を載せています。これに加えて、描画する要素の属性（`className` や `style` など）も受け取ります。
+
+状態は data 属性として要素に乗っているので、セレクタ 1 つで届きます（[スタイリング](/docs/tutorials/styling)を参照）。属性はその状態が on の間だけ付きます。
+
+### Root
+
+値を持ち、ドラッグ・ホイール・矢印キーを処理します。これ自体がコントロールで、フォーカスを受け取り ARIA を持ちます。
+
+<PropsTable of="KnobProps" />
+
+| Data 属性 | 値 | 説明 |
+| --- | --- | --- |
+| `data-disabled` | `"true"` | `disabled` を設定している間だけ付きます。 |
+| `data-readonly` | `"true"` | `readonly` を設定している間だけ付きます。 |
+| `data-dragging` | `"true"` | ドラッグしている間だけ付きます。 |
+
+### SVGRoot
+
+描画用のパートを入れる `<svg>`。パートが描く基準になる viewBox を設定します。
+
+<PropsTable of="KnobSVGRootProps" />
+
+### InactiveLine
+
+値の外側の円弧。独自の props は無く、SVG の `<path>` の属性を受け取ります。円弧は、渡した `strokeWidth` の分だけ内側に描かれ、viewBox に収まります。
+
+### ActiveLine
+
+`startValue` と値の間の円弧。`Knob.InactiveLine` と同じく、SVG の `<path>` の属性を受け取ります。
+
+### Thumb
+
+値に合わせて回る円と、その上で値を指す線。
+
+<PropsTable of="KnobThumbProps" />
+
+## 例 {#examples}
+
+### Basic {#basic}
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/knob/basic.tsx'
+>{basic}</CodeBlock>

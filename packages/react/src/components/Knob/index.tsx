@@ -42,12 +42,19 @@ const defaultExternalStyles: KnobProps['externalStyles'] = {
 }
 
 export interface KnobProps {
-  // required
+  /** The current value. The knob shows only this, so update it from `onChange`. */
   value: number
+  /** The value with the knob turned all the way down. */
   min: number
+  /** The value with the knob turned all the way up. */
   max: number
 
-  // optional
+  /**
+   * Granularity of the value. A drag, the wheel and the arrow keys snap it to
+   * multiples of `step`.
+   *
+   * @default 1
+   */
   step?: number
   /**
    * How the value is distributed across the travel.
@@ -60,15 +67,14 @@ export interface KnobProps {
    */
   scale?: Scale
   /**
-   * value set when double-clicking
-   * restriction: enableDoubleClickDefault = true
+   * The value a double click restores, while `enableDoubleClickDefault` is on.
    * @default min
-   * @see enableDoubleClickDefault
    */
   defaultValue?: number
 
   /**
-   * Value to be used as the starting point of the line when drawing.
+   * Where the active arc starts. Put it at the centre of a bipolar control,
+   * such as a pan knob, so that the arc grows from there either way.
    * @default min
    */
   startValue?: number
@@ -79,13 +85,25 @@ export interface KnobProps {
    */
   size?: number | string
 
-  /** CSS cursor applied while dragging. */
+  /**
+   * The cursor to show while dragging. It is set on the dragged element, so it
+   * stays while the pointer is outside the knob.
+   *
+   * @default { cursor: 'grabbing' }
+   */
   externalStyles?: {
     cursor?: CSSProperties['cursor']
   }
   /**
-   * wheel control option
-   * If null, no event will be triggered
+   * How much one notch of the wheel moves the value. It only acts while the
+   * focus is inside, so that scrolling the page past the knob leaves it alone.
+   *
+   * `['raw', n]` moves the value by `n`, and `['normalized', n]` by `n` of the
+   * range between `min` and `max`. The result is snapped to `step`, except for
+   * an amount set on a modifier key (`{ default: …, shift: … }`). `null` turns
+   * the wheel off.
+   *
+   * @default ['raw', 1]
    */
   wheel?: ModifierValue<InputEventOption> | null
   /**
@@ -126,13 +144,22 @@ export interface KnobProps {
   /**
    * How much one arrow key press moves the value.
    *
-   * Shift moves a tenth of a step by default. Name a modifier to change that,
-   * or pass a bare `['raw', 1]` to use no modifier at all. A modifier amount
-   * is not snapped to `step`.
+   * `['raw', n]` moves the value by `n`, and `['normalized', n]` by `n` of the
+   * range between `min` and `max`. The result is snapped to `step`, except for
+   * an amount set on a modifier key, which is what lets shift move off the
+   * grid. `null` turns the arrow keys off.
    *
-   * If null, no event will be triggered
+   * The default moves by 1, and by 0.1 with shift. With a `step` above 1, raise
+   * the amount to match: 1 would round straight back to where it started, and
+   * a development build warns about it.
+   *
+   * @default { default: ['raw', 1], shift: ['raw', 0.1] }
    */
   keyboard?: ModifierValue<InputEventOption> | null
+  /**
+   * Restore `defaultValue` on a double click.
+   * @default true
+   */
   enableDoubleClickDefault?: boolean
 
   /**
@@ -146,9 +173,17 @@ export interface KnobProps {
    */
   readonly?: boolean
 
-  /** angle range [degree] */
+  /**
+   * How far the knob turns from `min` to `max`, in degrees, centred on the
+   * top.
+   * @default 270
+   */
   angleRange?: number
 
+  /**
+   * Called with the new value when a drag, the wheel, an arrow key or a double
+   * click moves it.
+   */
   onChange?: (value: number) => void
 
   /**
@@ -348,3 +383,5 @@ export const Knob = {
 }
 
 export { useKnobContext, type KnobContextValue } from './context'
+export { type KnobSVGRootProps } from './SVGRoot'
+export { type KnobThumbProps } from './Thumb'

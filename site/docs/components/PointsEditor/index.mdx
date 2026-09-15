@@ -1,4 +1,5 @@
 import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
 import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/components/points-editor/basic'
 
@@ -24,18 +25,59 @@ selected and moved together, with ctrl / meta or by dragging a
 import { PointsEditor } from '@tremolo-ui/react'
 ```
 
-## Data attributes
+## API Reference {#api-reference}
 
-State is on the element as an attribute, so it is a selector away — see
-[Styling](/docs/tutorials/styling). An attribute is only there while its
-state is on.
+Each part lists the props of its own. It also takes the attributes of the
+element it renders, such as `className` and `style`.
 
-| Attribute | Part | Present when |
+State is on the element as a data attribute, so it is a selector away — see
+[Styling](/docs/tutorials/styling). An attribute is only there while its state
+is on.
+
+### Root
+
+Holds the selection and the settings every point shares.
+
+<PropsTable of="PointsEditorProps" />
+
+| Data attribute | Values | Description |
 | --- | --- | --- |
-| `data-disabled` | `PointsEditor.Root`, `PointsEditor.Point` | `disabled` is set |
-| `data-readonly` | `PointsEditor.Root`, `PointsEditor.Point` | `readonly` is set |
-| `data-dragging` | `PointsEditor.Point` | the point is being dragged |
-| `data-selected` | `PointsEditor.Point` | the point is in the selection |
+| `data-disabled` | `"true"` | Present while `disabled` is set. |
+| `data-readonly` | `"true"` | Present while `readonly` is set. |
+
+### Background
+
+Drawn behind the points.
+
+<PropsTable of="PointsEditorBackgroundProps" />
+
+### Container
+
+The area the points are placed in. A drag on its empty space draws a
+selection.
+
+<PropsTable of="PointsEditorContainerProps" />
+
+### Point
+
+One point, moved by dragging, the arrow keys or the wheel. Two visually hidden
+range inputs inside it, one per axis, take the focus and carry the ARIA.
+
+<PropsTable of="PointsEditorPointProps" />
+
+| Data attribute | Values | Description |
+| --- | --- | --- |
+| `data-disabled` | `"true"` | Present while the point is disabled, by its own `disabled` or by `Root`'s. |
+| `data-readonly` | `"true"` | Present while the point is read-only, by its own `readonly` or by `Root`'s. |
+| `data-dragging` | `"true"` | Present while the point is being dragged. |
+| `data-selected` | `"true"` | Present while the point is in the selection. |
+
+### SelectionBox
+
+The box a drag on empty space draws; the points it covers are selected. Nothing
+is rendered while no drag is running.
+
+<PropsTable of="PointsEditorSelectionBoxProps" />
 
 ## Examples
 

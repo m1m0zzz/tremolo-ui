@@ -93,7 +93,7 @@ const DEFAULT_KEYBOARD: ModifierValue<InputEventOption> = {
 export interface PointsEditorProps {
   /** Sets `--width`; the size the theme gives it stands when omitted. */
   width?: number | string
-  /** Sets `--height`. */
+  /** Sets `--height`; the size the theme gives it stands when omitted. */
   height?: number | string
 
   /**
@@ -107,27 +107,37 @@ export interface PointsEditorProps {
    */
   readonly?: boolean
 
-  /** CSS cursor applied while dragging a point. */
+  /**
+   * The cursor to show while dragging a point. It is set on the dragged
+   * point, so it stays while the pointer is outside it.
+   *
+   * @default { cursor: 'grabbing' }
+   */
   externalStyles?: {
     cursor?: CSSProperties['cursor']
   }
 
   /**
-   * wheel control option for every `Point`. Scrolling sideways moves x,
-   * which is what a browser turns shift+wheel into.
-   * If null, no event will be triggered
+   * How much one notch of the wheel moves the focused `Point`. Scrolling
+   * sideways, or with shift held, moves x; otherwise it moves y.
    *
-   * A `Point` can override it with a `wheel` of its own.
+   * A position runs from 0 to 1, so `['normalized', n]` and `['raw', n]` both
+   * move it by `n` of the editor. `null` turns the wheel off, and a `Point`
+   * can override it with a `wheel` of its own.
+   *
+   * @default ['normalized', 0.01]
    */
   wheel?: ModifierValue<InputEventOption> | null
   /**
-   * How much one arrow key press moves a `Point`.
+   * How much one arrow key press moves a `Point`. Left and right move x, up
+   * and down move y.
    *
-   * Shift moves a tenth of the default amount. Name a modifier to change that,
-   * or pass a bare tuple to use no modifier at all.
+   * A position runs from 0 to 1, so `['normalized', n]` and `['raw', n]` both
+   * move it by `n` of the editor; give a map to set an amount per modifier
+   * key. `null` turns the arrow keys off, and a `Point` can override it with a
+   * `keyboard` of its own.
    *
-   * If null, no event will be triggered.
-   * A `Point` can override it with a `keyboard` of its own.
+   * @default { default: ['normalized', 0.01], shift: ['normalized', 0.001] }
    */
   keyboard?: ModifierValue<InputEventOption> | null
 

@@ -1,4 +1,5 @@
 import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
 import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/components/xy-pad/basic'
 
@@ -19,16 +20,44 @@ Two-dimensional slider component.
 import { XYPad } from '@tremolo-ui/react'
 ```
 
-## Data attributes
+## API Reference {#api-reference}
 
-State is on the element as an attribute, so it is a selector away — see
-[Styling](/docs/tutorials/styling). An attribute is only there while its
-state is on.
+Each part lists the props of its own. It also takes the attributes of the
+element it renders, such as `className` and `style`.
 
-| Attribute | Part | Present when |
+State is on the element as a data attribute, so it is a selector away — see
+[Styling](/docs/tutorials/styling). An attribute is only there while its state
+is on.
+
+### Root
+
+Holds the value of both axes and the settings, and passes them to the parts
+inside.
+
+<PropsTable of="XYPadProps" />
+
+| Data attribute | Values | Description |
 | --- | --- | --- |
-| `data-disabled` | `XYPad.Root`, `XYPad.Thumb` | `disabled` is set |
-| `data-readonly` | `XYPad.Root`, `XYPad.Thumb` | `readonly` is set |
+| `data-disabled` | `"true"` | Present while `disabled` is set. |
+| `data-readonly` | `"true"` | Present while `readonly` is set. |
+
+### Area
+
+The surface the thumb moves across.
+
+<PropsTable of="XYPadAreaProps" />
+
+### Thumb
+
+The handle. Two visually hidden range inputs inside it, one per axis, take the
+focus and carry the ARIA.
+
+<PropsTable of="XYPadThumbProps" />
+
+| Data attribute | Values | Description |
+| --- | --- | --- |
+| `data-disabled` | `"true"` | Present while `disabled` is set. |
+| `data-readonly` | `"true"` | Present while `readonly` is set. |
 
 ## Examples
 

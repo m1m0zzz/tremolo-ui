@@ -1,0 +1,84 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/components/points-editor/basic'
+
+# PointsEditor
+
+同じ領域の中で 1 つずつドラッグできる、点の集まりのエディタ。
+
+点はコンテナの中の位置で置かれるので、値は各軸 0..1 の `{ x, y }` で、`y` は下に向かって増えます。点は ctrl / meta で選択するか、`<PointsEditor.SelectionBox />` をドラッグして囲むことで、まとめて動かせます。
+
+<GitHubLink
+  path='packages/react/src/components/PointsEditor/index.tsx'
+/>
+<StyleGitHubLink
+  path='shared/css/PointsEditor.module.css'
+/>
+
+## インポート {#import}
+
+```jsx
+import { PointsEditor } from '@tremolo-ui/react'
+```
+
+## API リファレンス {#api-reference}
+
+各パートには、そのパート独自の props を載せています。これに加えて、描画する要素の属性（`className` や `style` など）も受け取ります。
+
+状態は data 属性として要素に乗っているので、セレクタ 1 つで届きます（[スタイリング](/docs/tutorials/styling)を参照）。属性はその状態が on の間だけ付きます。
+
+### Root
+
+選択と、すべての点が共有する設定を持ちます。
+
+<PropsTable of="PointsEditorProps" />
+
+| Data 属性 | 値 | 説明 |
+| --- | --- | --- |
+| `data-disabled` | `"true"` | `disabled` を設定している間だけ付きます。 |
+| `data-readonly` | `"true"` | `readonly` を設定している間だけ付きます。 |
+
+### Background
+
+点の後ろに描くもの。
+
+<PropsTable of="PointsEditorBackgroundProps" />
+
+### Container
+
+点を置く領域。空いている場所でドラッグすると、選択の枠を描きます。
+
+<PropsTable of="PointsEditorContainerProps" />
+
+### Point
+
+ドラッグ・矢印キー・ホイールで動かす 1 つの点。中にある軸ごとの 2 つの視覚的に隠れた range input が、フォーカスを受け取り ARIA を持ちます。
+
+<PropsTable of="PointsEditorPointProps" />
+
+| Data 属性 | 値 | 説明 |
+| --- | --- | --- |
+| `data-disabled` | `"true"` | 点が無効な間だけ付きます。自分の `disabled` でも `Root` のものでも付きます。 |
+| `data-readonly` | `"true"` | 点が読み取り専用の間だけ付きます。自分の `readonly` でも `Root` のものでも付きます。 |
+| `data-dragging` | `"true"` | 点をドラッグしている間だけ付きます。 |
+| `data-selected` | `"true"` | 点が選択に含まれている間だけ付きます。 |
+
+### SelectionBox
+
+空いている場所でのドラッグが描く枠で、枠が覆った点が選択されます。ドラッグしていない間は何も描きません。
+
+<PropsTable of="PointsEditorSelectionBoxProps" />
+
+## 例 {#examples}
+
+### Basic {#basic}
+
+点をドラッグするか、クリックして矢印キーで動かします。ホイールは、エディタの上ならどこからでもフォーカス中の点を動かし、shift で x 軸に切り替わります。
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/points-editor/basic.tsx'
+>{basic}</CodeBlock>

@@ -13,6 +13,8 @@ export {
   type KnobContextValue,
   type KnobProps,
   type KnobMethods,
+  type KnobSVGRootProps,
+  type KnobThumbProps,
 } from './components/Knob'
 export {
   NumberInput,

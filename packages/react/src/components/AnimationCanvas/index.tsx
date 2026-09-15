@@ -30,8 +30,26 @@ export type DrawFunction = (
 ) => void
 
 export interface AnimationCanvasCommonProps {
+  /**
+   * Draw one frame. It is given the 2D context and the frame: the size in CSS
+   * pixels, `count`, `deltaTime`, `elapsedTime` and `fps`.
+   *
+   * A new function replaces the old one in place, so writing it inline does
+   * not restart anything.
+   */
   draw: DrawFunction
+  /**
+   * Called once before the first frame, with the context and the size in CSS
+   * pixels. Set up what every frame shares here.
+   */
   init?: InitFunction
+  /**
+   * Redraw on every animation frame. Turn it off to draw only when there is a
+   * reason to: when the canvas mounts, when it is resized, and when the
+   * component re-renders.
+   *
+   * @default true
+   */
   animate?: boolean
   /**
    * Read once, when the 2D context is created, so changing it later has no
@@ -52,10 +70,17 @@ export interface AnimationCanvasCommonProps {
 
 /** A canvas of the size given in CSS pixels. This is the default. */
 export interface AnimationCanvasFixedProps {
+  /** Leave it out, or pass `false`, for a canvas of the size below. */
   resizable?: false
-  /** @default 100 */
+  /**
+   * Width of the canvas in CSS pixels.
+   * @default 100
+   */
   width?: number
-  /** @default 100 */
+  /**
+   * Height of the canvas in CSS pixels.
+   * @default 100
+   */
   height?: number
 }
 
@@ -69,7 +94,9 @@ export interface AnimationCanvasResizableProps {
    * Switching it rebuilds the canvas.
    */
   resizable: true
+  /** Not accepted: the size comes from the parent element. */
   width?: never
+  /** Not accepted: the size comes from the parent element. */
   height?: never
 }
 

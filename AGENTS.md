@@ -75,7 +75,8 @@ npm run test:watch -w packages/react
 - **lint-staged の `--no-error-on-unmatched-pattern` を外さないこと。** 渡されたパスが全て ignore に当たると「対象が無い」で非ゼロ終了し、`.md` だけのコミットが落ちる
 - `.cspell.json` を使用しているため、新しいドメイン用語は追加が必要になる場合がある
 - **vitest は `globals: true` で走らせる。** Testing Library の自動 cleanup が、グローバルの `afterEach` の有無で自分を仕込むかどうかを決めるため
-- **site のスクリプトで changelog の生成が要るものには、`npm run changelog &&` を直接書く。** npm の `pre*` に頼ると、`start:fast` のようにスクリプトが増えたときに付け忘れる
+- **site のスクリプトで生成物が要るものには、`npm run changelog &&` / `npm run api-props &&` を直接書く。** npm の `pre*` に頼ると、`start:fast` のようにスクリプトが増えたときに付け忘れる
+- **コンポーネントのページの props の表は、`site/scripts/api-props.mjs` が JSDoc から作る。** 説明を直すときは JSDoc を直す。日本語の説明は `site/i18n/ja/api-props.json` にあり、英語が変わると古い訳は使われず英語が出る（スクリプトが一覧を出すので訳し直す）
 
 ## デプロイ
 

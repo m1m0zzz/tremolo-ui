@@ -40,6 +40,10 @@ export function clampPoint(
 }
 
 export interface PointsEditorPointProps<T extends PointBaseType> {
+  /**
+   * Where the point is, as `{ x, y }` from 0 to 1 on each axis, with `y`
+   * growing downwards.
+   */
   value: T
   /** Drawn inside the point: the theme's own dot stands when it is left out. */
   children?: ReactNode
@@ -49,16 +53,18 @@ export interface PointsEditorPointProps<T extends PointBaseType> {
    * selection has to survive a remount, or be recognised in your own state.
    */
   id?: string
+  /** The lowest position the point can take, per axis. An axis left out is 0. */
   min?: Partial<PointBaseType>
+  /** The highest position the point can take, per axis. An axis left out is 1. */
   max?: Partial<PointBaseType>
 
   /** Width and height at once. Sets both `--width` and `--height`. */
   size?: number | string
   /** Sets `--width`; the size the theme gives it stands when omitted. */
   width?: number | string
-  /** Sets `--height`. */
+  /** Sets `--height`; the size the theme gives it stands when omitted. */
   height?: number | string
-  /** Sets `--color`. */
+  /** Sets `--color`, for the theme to colour the point with. */
   color?: string
 
   /** Overrides the `disabled` of `PointsEditor.Root`. */
@@ -79,8 +85,14 @@ export interface PointsEditorPointProps<T extends PointBaseType> {
   /** What the value of each axis means, when the number does not say it. */
   'aria-valuetext'?: string | Partial<Record<'x' | 'y', string>>
 
+  /**
+   * Called with the new position when the point is dragged or moved by the
+   * arrow keys or the wheel, including when it moves along with a selection.
+   */
   onChange?: (value: PointBaseType) => void
+  /** Called when a drag on this point starts, with where the point is. */
   onDragStart?: (value: PointBaseType) => void
+  /** Called when that drag ends, with where the point is. */
   onDragEnd?: (value: PointBaseType) => void
 }
 

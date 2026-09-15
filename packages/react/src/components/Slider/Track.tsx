@@ -22,9 +22,9 @@ export interface SliderTrackProps {
   /** How thick the track is across that axis. Sets `--thickness`. */
   thickness?: number | string
 
-  /** Colour of the part below the value. Sets `--active`. */
+  /** Colour of the part from `min` to the value. Sets `--active`. */
   active?: string
-  /** Colour of the part above it. Sets `--inactive`. */
+  /** Colour of the rest of the track. Sets `--inactive`. */
   inactive?: string
 
   className?: string
