@@ -30,6 +30,7 @@
 - 公開する props の型には独自の props だけを書く。描く要素の属性はファイル内で `type Props = XProps & Omit<ComponentPropsWithoutRef<'div'>, keyof XProps>` と合わせる。ネイティブの属性を API ページや Controls に並べないため
 - context は `<Component>ContextValue` を型にし、selector を受ける `use<Component>Context` と一緒に公開する。selector の引数の型として利用者が書くため
 - `useCheckPlacement` と `<Placement name>` に渡す名前は、利用者が JSX に書く形（`'Slider.Thumb'`）にする。警告にそのまま出る
+- **テストファイルの名前は、何のテストかで決める。** 1 つのコンポーネントのテストは `<Component>.test.tsx`、トピックで分けるときは `<Component>.<topic>.test.tsx`（トピックは kebab-case）。パートのテストは `<Part>.test.tsx`、hook のテストは hook と同じ名前にする。複数のコンポーネントにまたがる `__tests__/` のテストは kebab-case
 
 ### stories
 

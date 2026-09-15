@@ -37,7 +37,7 @@ npm run docs:wtr:ja           # ja の翻訳スタブを再生成
 単一テストファイルの実行（vitest）:
 
 ```bash
-npm run test -w packages/react -- src/components/Slider/type.test.ts
+npm run test -w packages/react -- src/components/Slider/Slider.type.test.ts
 npm run test:watch -w packages/react
 ```
 

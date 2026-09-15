@@ -1,5 +1,5 @@
 /**
- * A component for `propTypes.test.ts` to read the types of. It lives under a
+ * A component for `prop-types.test.ts` to read the types of. It lives under a
  * `components` directory because that is where `collectPropTypes` looks.
  */
 import type { ReactNode } from 'react'
