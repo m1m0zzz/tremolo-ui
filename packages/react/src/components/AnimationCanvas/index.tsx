@@ -27,7 +27,7 @@ export type DrawFunction = (
   option: AnimationFrame,
 ) => void
 
-export interface CommonProps {
+export interface AnimationCanvasCommonProps {
   draw: DrawFunction
   init?: InitFunction
   animate?: boolean
@@ -38,56 +38,68 @@ export interface CommonProps {
    * @see https://developer.mozilla.org/docs/Web/API/HTMLCanvasElement/getContext#contextattributes
    */
   options?: CanvasRenderingContext2DSettings
-}
-
-export interface AbsoluteSizingProps {
-  width?: number
-  height?: number
-}
-
-export interface RelativeSizingProps {
-  relativeSize?: boolean
+  /**
+   * Carry the drawing across a resize, so that the canvas does not blank for a
+   * frame while the new size is drawn. A fixed canvas is resized too, when its
+   * `width` or `height` changes.
+   *
+   * @default true
+   */
   reduceFlickering?: boolean
 }
 
-export type AnimationCanvasProps = CommonProps &
-  AbsoluteSizingProps &
-  RelativeSizingProps
+/** A canvas of the size given in CSS pixels. This is the default. */
+export interface AnimationCanvasFixedProps {
+  resizable?: false
+  /** @default 100 */
+  width?: number
+  /** @default 100 */
+  height?: number
+}
+
+/**
+ * A canvas that follows the size of its parent element, so the parent needs a
+ * size of its own.
+ */
+export interface AnimationCanvasResizableProps {
+  /**
+   * Follow the size of the parent element instead of `width` and `height`.
+   * Switching it rebuilds the canvas.
+   */
+  resizable: true
+  width?: never
+  height?: never
+}
+
+export type AnimationCanvasProps = AnimationCanvasCommonProps &
+  (AnimationCanvasFixedProps | AnimationCanvasResizableProps)
+
+type Props = AnimationCanvasProps &
+  Omit<
+    ComponentPropsWithoutRef<'canvas'>,
+    keyof AnimationCanvasCommonProps | 'resizable' | 'width' | 'height'
+  >
 
 /**
  * A simple animatable canvas with requestAnimationFrame()
  */
-export function AnimationCanvas(
-  props: CommonProps &
-    AbsoluteSizingProps &
-    Omit<ComponentPropsWithoutRef<'canvas'>, keyof AnimationCanvasProps>,
-): ReactElement
-export function AnimationCanvas(
-  pros: CommonProps &
-    RelativeSizingProps &
-    Omit<ComponentPropsWithoutRef<'canvas'>, keyof AnimationCanvasProps>,
-): ReactElement
 export function AnimationCanvas({
   // common
   draw,
   init,
   animate = true,
   options,
-  // absolute
+  reduceFlickering = true,
+  // fixed
   width = 100,
   height = 100,
-  // relative
-  relativeSize = false,
-  reduceFlickering = true,
+  // resizable
+  resizable = false,
   // canvas props
   className,
   onContextMenu = (event) => event.preventDefault(),
   ...props
-}: AnimationCanvasProps &
-  Omit<
-    ComponentPropsWithoutRef<'canvas'>,
-    keyof AnimationCanvasProps
-  >): ReactElement {
+}: Props): ReactElement {
   // See useDrag for why the node is held in state rather than a ref: an inline
   // ref would be re-attached on every render and tear the instance down.
   const [node, setNode] = useState<HTMLCanvasElement | null>(null)
@@ -135,7 +147,7 @@ export function AnimationCanvas({
       animate: current.animate,
       size: { width: current.width, height: current.height },
       reduceFlickering: current.reduceFlickering,
-      relativeSize,
+      resizable,
       contextAttributes: current.options,
     })
     instanceRef.current = instance
@@ -144,11 +156,11 @@ export function AnimationCanvas({
       instanceRef.current = null
       instance.destroy()
     }
-    // Only `relativeSize` decides how the instance is wired, so it is the one
+    // Only `resizable` decides how the instance is wired, so it is the one
     // setting that rebuilds it. `options` is read from the ref above rather
     // than depended on: it is almost always written inline, and depending on
     // it would tear the canvas down on every render.
-  }, [node, relativeSize])
+  }, [node, resizable])
 
   return (
     <canvas

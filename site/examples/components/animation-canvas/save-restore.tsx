@@ -12,7 +12,7 @@ function App() {
       }}
     >
       <AnimationCanvas
-        relativeSize
+        resizable
         draw={(ctx, { width, height, elapsedTime, count }) => {
           // save default context
           ctx.save()

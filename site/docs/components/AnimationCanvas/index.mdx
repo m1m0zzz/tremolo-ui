@@ -31,14 +31,19 @@ import { AnimationCanvas } from '@tremolo-ui/react'
 
 ref: [AnimationCanvasProps](/docs/api/react/types/AnimationCanvasProps/)
 
-### [Absolute Sizing](/docs/api/react/interfaces/AbsoluteSizingProps/) vs [Relative Sizing](/docs/api/react/interfaces/RelativeSizingProps/)
+### [Fixed](/docs/api/react/interfaces/AnimationCanvasFixedProps/) vs [Resizable](/docs/api/react/interfaces/AnimationCanvasResizableProps/)
+
+A canvas is fixed by default: `width` and `height` set its size in CSS pixels.
+With `resizable` it follows the size of its parent element instead, so the
+parent needs a size of its own. The two are exclusive, and passing `width` or
+`height` together with `resizable` is a type error.
 
 
 ### Reactive Canvas
 
 By default the canvas redraws on every animation frame. When the drawing is
 driven by state rather than by time, set
-[`animate={false}`](/docs/api/react/interfaces/CommonProps/#animate): the
+[`animate={false}`](/docs/api/react/interfaces/AnimationCanvasCommonProps/#animate): the
 canvas then draws only when it has a reason to — when it mounts, when it is
 resized, and **when the component re-renders**.
 

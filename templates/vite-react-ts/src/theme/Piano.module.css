@@ -12,8 +12,8 @@
   touch-action: none;
   height: var(--height);
 
-  /* The width is the keyboard's own, so a filled piano stretches both ways. */
-  &[data-fill] {
+  /* The width is the keyboard's own, so a resizable piano stretches both ways. */
+  &[data-resizable] {
     --height: 100%;
   }
 }

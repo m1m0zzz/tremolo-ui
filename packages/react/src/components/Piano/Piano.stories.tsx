@@ -302,10 +302,10 @@ export const NaturalShortcuts: Story = {
   },
 }
 
-export const Fill: Story = {
+export const Resizable: Story = {
   args: {
     noteRange: { first: noteNumber('C3'), last: noteNumber('B3') },
-    fill: true,
+    resizable: true,
   },
   render: (args) => (
     <div

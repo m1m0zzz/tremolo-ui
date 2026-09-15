@@ -35,6 +35,10 @@ function oneLine(type: string): string {
  * The summary comes from `raw`, the type as it was written, and the detail
  * from `propTypes`, where the checker has resolved what the names stand for.
  * A summary set by the story itself is left alone.
+ *
+ * When the props are a union (`AnimationCanvas`), react-docgen records no type
+ * at all for a prop found in every member, only its default. The checker still
+ * knows it, so the resolved type becomes the summary.
  */
 export function applyPropTypes(
   argTypes: StrictArgTypes,
@@ -50,8 +54,23 @@ export function applyPropTypes(
     Object.entries(argTypes).map(([name, argType]) => {
       const tsType = props[name]?.tsType
       const written = argType.table?.type?.summary
+
+      if (!tsType) {
+        if (written || !resolved[name]) return [name, argType]
+        return [
+          name,
+          {
+            ...argType,
+            table: {
+              ...argType.table,
+              type: { ...argType.table?.type, summary: resolved[name] },
+            },
+          },
+        ]
+      }
+
       // The story set this one, or Storybook printed the type in full already.
-      if (!tsType?.raw || written !== tsType.name) return [name, argType]
+      if (!tsType.raw || written !== tsType.name) return [name, argType]
 
       const summary = oneLine(tsType.raw)
       const detail = resolved[name] !== summary ? resolved[name] : undefined

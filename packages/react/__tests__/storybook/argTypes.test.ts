@@ -145,4 +145,27 @@ describe('applyPropTypes', () => {
 
     expect(result.size.table?.type).toEqual({ summary: 'number | string' })
   })
+
+  describe('a prop react-docgen recorded no type for', () => {
+    // What react-docgen leaves for a prop of a union: its default, no tsType.
+    const subject = { __docgenInfo: { props: { width: {} } } }
+    const untyped = () => ({ width: { name: 'width' } }) as StrictArgTypes
+
+    test('takes the resolved type as the summary', () => {
+      const result = applyPropTypes(
+        untyped(),
+        subject,
+        propTypes(subject, { width: 'number' }),
+      )
+
+      expect(result.width.table?.type).toEqual({ summary: 'number' })
+    })
+
+    test('stays as it is when the checker did not resolve it either', () => {
+      const given = untyped()
+      const result = applyPropTypes(given, subject, propTypes(subject))
+
+      expect(result.width).toBe(given.width)
+    })
+  })
 })

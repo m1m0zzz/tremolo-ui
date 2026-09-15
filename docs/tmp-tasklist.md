@@ -24,7 +24,3 @@
   - SpectrumAnalyzer
   - Knob with NumberInput
 - site: Playground の iframe 化
-- AnimationCanvas relativeSize -> resizable
-- Piano fill -> resizable
-- AnimationCanvasの RelativeSizing と AbsoluteSizing は css の position Resizable と Fixed にする
-- resizable に合わせ AnimationCanvas の型を切り替える (現在の型指定は曖昧)

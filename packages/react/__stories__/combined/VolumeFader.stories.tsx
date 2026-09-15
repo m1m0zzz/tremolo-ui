@@ -102,7 +102,7 @@ export const VolumeFader = () => {
           }}
         >
           <AnimationCanvas
-            relativeSize={true}
+            resizable
             init={(ctx) => {
               ctx.fillStyle = '#42eb53'
             }}
