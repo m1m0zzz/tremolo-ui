@@ -6,12 +6,15 @@ import {
   StepperButtonProps,
 } from './StepperButton'
 
-export type IncrementStepperProps = StepperButtonProps
+export type NumberInputIncrementStepperProps = StepperButtonProps
 
 /** Raises the value by one `step`, repeating while held. */
 export function IncrementStepper(
-  props: IncrementStepperProps &
-    Omit<ComponentPropsWithoutRef<'div'>, keyof IncrementStepperProps>,
+  props: NumberInputIncrementStepperProps &
+    Omit<
+      ComponentPropsWithoutRef<'div'>,
+      keyof NumberInputIncrementStepperProps
+    >,
 ) {
   return (
     <StepperButton

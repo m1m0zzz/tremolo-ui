@@ -347,4 +347,4 @@ export const Knob = {
   Thumb,
 }
 
-export { useKnobContext } from './context'
+export { useKnobContext, type KnobContextValue } from './context'

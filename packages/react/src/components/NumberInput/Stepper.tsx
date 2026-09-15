@@ -19,15 +19,15 @@ import { useDrag } from '../../hooks/useDrag'
 
 import { StepperProvider, useNumberInputContext } from './context'
 
-export interface StepperProps {
+export interface NumberInputStepperProps {
   className?: string
   style?: CSSProperties
   /** `<NumberInput.IncrementStepper />` and `<NumberInput.DecrementStepper />` go here. */
   children?: ReactNode
 }
 
-type Props = StepperProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof StepperProps>
+type Props = NumberInputStepperProps &
+  Omit<ComponentPropsWithoutRef<'div'>, keyof NumberInputStepperProps>
 
 /**
  * The area the steppers sit in, and a drag handle in its own right: dragging it

@@ -39,7 +39,7 @@ export function clampPoint(
   return { x: newX, y: newY }
 }
 
-export interface PointProps<T extends PointBaseType> {
+export interface PointsEditorPointProps<T extends PointBaseType> {
   value: T
   /** Drawn inside the point: the theme's own dot stands when it is left out. */
   children?: ReactNode
@@ -129,7 +129,8 @@ export function Point<T extends PointBaseType>({
   onKeyDown,
   onFocus,
   ...props
-}: PointProps<T> & Omit<ComponentPropsWithoutRef<'div'>, keyof PointProps<T>>) {
+}: PointsEditorPointProps<T> &
+  Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorPointProps<T>>) {
   const {
     containerRef,
     externalStyles,

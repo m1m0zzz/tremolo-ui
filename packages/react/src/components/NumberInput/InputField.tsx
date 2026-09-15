@@ -12,15 +12,15 @@ import { useComposedRefs } from '../../compose-refs'
 
 import { useNumberInputContext } from './context'
 
-export interface NumberInputFieldProps {
+export interface NumberInputInputFieldProps {
   className?: string
   style?: CSSProperties
 }
 
-type Props = NumberInputFieldProps &
+type Props = NumberInputInputFieldProps &
   Omit<
     ComponentPropsWithoutRef<'input'>,
-    keyof NumberInputFieldProps | 'type' | 'value' | 'defaultValue'
+    keyof NumberInputInputFieldProps | 'type' | 'value' | 'defaultValue'
   >
 
 /** The leading number of the displayed text, whatever the format put around it. */

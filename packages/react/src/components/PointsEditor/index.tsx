@@ -547,4 +547,8 @@ export {
 export { type PointsEditorBackgroundProps } from './Background'
 export { type PointsEditorContainerProps } from './Container'
 export { type PointsEditorSelectionBoxProps } from './SelectionBox'
-export { clampPoint, type PointBaseType, type PointProps } from './Point'
+export {
+  clampPoint,
+  type PointBaseType,
+  type PointsEditorPointProps,
+} from './Point'

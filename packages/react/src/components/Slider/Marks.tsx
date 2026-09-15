@@ -9,7 +9,7 @@ import { useSliderContext } from './context'
 import { MarksOption } from './MarksOption'
 import { generateOptionsList, MarksOptions } from './type'
 
-export interface MarksProps {
+export interface SliderMarksProps {
   /**
    * Space between the marks and the track. Sets `--gap`; the theme's own
    * spacing stands when this is omitted.
@@ -26,7 +26,8 @@ export function Marks({
   className,
   style,
   ...props
-}: MarksProps & Omit<ComponentPropsWithoutRef<'div'>, keyof MarksProps>) {
+}: SliderMarksProps &
+  Omit<ComponentPropsWithoutRef<'div'>, keyof SliderMarksProps>) {
   const min = useSliderContext((s) => s.min)
   const max = useSliderContext((s) => s.max)
   const step = useSliderContext((s) => s.step)
