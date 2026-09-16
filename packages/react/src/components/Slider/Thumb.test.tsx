@@ -20,6 +20,33 @@ function Subject({ children, ...props }: ComponentProps<typeof Slider.Thumb>) {
 const thumb = () => screen.getByTestId('thumb')
 
 describe('Slider.Thumb', () => {
+  test('the ARIA lands on the range input, not on the thumb', () => {
+    // Nothing in `SliderThumbProps` says so — the destructuring in `Thumb` is
+    // what routes them.
+    render(
+      <Subject
+        aria-label="Level"
+        aria-labelledby="level-label"
+        aria-describedby="level-hint"
+        aria-valuetext="25 percent"
+      />,
+    )
+
+    const input = screen.getByRole('slider')
+    expect(input).toHaveAttribute('aria-label', 'Level')
+    expect(input).toHaveAttribute('aria-labelledby', 'level-label')
+    expect(input).toHaveAttribute('aria-describedby', 'level-hint')
+    expect(input).toHaveAttribute('aria-valuetext', '25 percent')
+    for (const name of [
+      'aria-label',
+      'aria-labelledby',
+      'aria-describedby',
+      'aria-valuetext',
+    ]) {
+      expect(thumb()).not.toHaveAttribute(name)
+    }
+  })
+
   test('is a single element, and children go inside it', () => {
     render(
       <Subject>
