@@ -145,10 +145,6 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - 鍵盤まわりを `KeyboardSection` に切り出した。octave は `noteRange` を 12 半音ずつずらす（Z / X でも動く）。velocity はマウスと PC キーボードで弾いたときの値で、MIDI キーボードは自分の velocity を使う（C / V で ±20）。どちらも `AmplitudeEnvelope.triggerAttack` の velocity に渡す
   - **MIDI は `Piano.playNote` を経由させた。** 鍵盤が光り、マウスと MIDI で同じノートを押しても 1 回だけ鳴る。Piano のコアは `noteRange` の外のノートも拒まないので、表示範囲の外を MIDI で弾いても鳴る。そのためエンベロープと音源は `noteRange` からの添字ではなくノート番号で持ち、初めて弾いたときに作る
 
-## 8. コードベース
-
-- [ ] **コード内のコメントとテストの説明（`describe` / `it`）を日本語にする。** 内部向けの文書と揃える。ただし公開 API の JSDoc は typedoc の API ページと IDE の補完に出て、公開ドキュメント（英語）の一部になるので、対象に含めるかを先に決める
-
 ## 1.0 の基準
 
 以下が揃った時点で 1.0 とする。
