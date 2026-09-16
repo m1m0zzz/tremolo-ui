@@ -9,8 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@tremolo-ui/functions": "^0.5.0",
-    "@tremolo-ui/react": "^0.5.0",
+    "@tremolo-ui/functions": "^0.6.0",
+    "@tremolo-ui/react": "^0.6.0",
     "next": "16.3.5",
     "react": "19.3.0",
     "react-dom": "19.3.0"
