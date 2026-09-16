@@ -6,22 +6,25 @@
 `children` are no longer declared on these types, because they had the same
 types the element attributes already give them:
 
-- `NumberInputProps`, `NumberInputInputFieldProps`, `NumberInputStepperProps`,
-  `NumberInputIncrementStepperProps`, `NumberInputDecrementStepperProps`
-- `PointsEditorBackgroundProps`, `PointsEditorContainerProps`,
-  `PointsEditorSelectionBoxProps`, `PointsEditorPointProps`
+- `NumberInputProps`, `PointsEditorPointProps`
 - `SliderProps`, `SliderTrackProps`, `SliderThumbProps`, `SliderMarksProps`
 - `XYPadAreaProps`, `XYPadThumbProps`
 
-Every part still takes them, and they still go where they went. Only the named
-types changed. If you typed props with one of them directly, use the props of
-the component instead:
+**A part that adds nothing has no props type any more.** These are removed:
+
+- `NumberInputInputFieldProps`, `NumberInputStepperProps`,
+  `NumberInputIncrementStepperProps`, `NumberInputDecrementStepperProps`
+- `PointsEditorBackgroundProps`, `PointsEditorContainerProps`,
+  `PointsEditorSelectionBoxProps`
+
+Every part still takes the same attributes, and they still go where they went.
+If you typed props with one of the names, take the props of the component
+instead:
 
 ```ts
 - const props: SliderThumbProps = { className: 'thumb' }
 + const props: ComponentProps<typeof Slider.Thumb> = { className: 'thumb' }
-```
 
-A type that is left with nothing of its own, such as
-`NumberInputInputFieldProps`, is kept as an empty interface so that existing
-imports still resolve.
+- const props: NumberInputStepperProps = { className: 'stepper' }
++ const props: ComponentProps<typeof NumberInput.Stepper> = { className: 'stepper' }
+```

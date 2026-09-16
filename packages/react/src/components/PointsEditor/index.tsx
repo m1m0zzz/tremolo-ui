@@ -551,9 +551,6 @@ export {
   usePointsEditorContext,
   type PointsEditorContextValue,
 } from './context'
-export { type PointsEditorBackgroundProps } from './Background'
-export { type PointsEditorContainerProps } from './Container'
-export { type PointsEditorSelectionBoxProps } from './SelectionBox'
 export {
   clampPoint,
   type PointBaseType,

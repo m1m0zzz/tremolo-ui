@@ -1,14 +1,11 @@
 import { ComponentPropsWithoutRef } from 'react'
 
-export interface PointsEditorBackgroundProps {}
-
 export function Background({
   className,
   children,
   style,
   ...props
-}: PointsEditorBackgroundProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorBackgroundProps>) {
+}: ComponentPropsWithoutRef<'div'>) {
   return (
     <div
       className={className}

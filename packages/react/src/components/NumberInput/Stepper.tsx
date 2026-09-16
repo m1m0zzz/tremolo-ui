@@ -12,10 +12,7 @@ import { useDrag } from '../../hooks/useDrag'
 
 import { StepperProvider, useNumberInputContext } from './context'
 
-export interface NumberInputStepperProps {}
-
-type Props = NumberInputStepperProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof NumberInputStepperProps>
+type Props = ComponentPropsWithoutRef<'div'>
 
 /**
  * The area the steppers sit in, and a drag handle in its own right: dragging it

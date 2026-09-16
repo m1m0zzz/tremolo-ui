@@ -8,10 +8,7 @@ import { Placement } from '../_util/Placement'
 import { usePointsEditorContext } from './context'
 import { AXIS } from './Point'
 
-export interface PointsEditorContainerProps {}
-
-type Props = PointsEditorContainerProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorContainerProps>
+type Props = ComponentPropsWithoutRef<'div'>
 
 export const Container = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   function Container({ children, className, style, ...props }, forwardedRef) {

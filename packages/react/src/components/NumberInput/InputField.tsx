@@ -11,13 +11,11 @@ import { useComposedRefs } from '../../compose-refs'
 
 import { useNumberInputContext } from './context'
 
-export interface NumberInputInputFieldProps {}
-
-type Props = NumberInputInputFieldProps &
-  Omit<
-    ComponentPropsWithoutRef<'input'>,
-    keyof NumberInputInputFieldProps | 'type' | 'value' | 'defaultValue'
-  >
+// The value belongs to `NumberInput.Root`, and the field is always text.
+type Props = Omit<
+  ComponentPropsWithoutRef<'input'>,
+  'type' | 'value' | 'defaultValue'
+>
 
 /** The leading number of the displayed text, whatever the format put around it. */
 const NUMBER_PREFIX = /^\s*-?[\d.,]*/

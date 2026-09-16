@@ -1,22 +1,9 @@
 import { ComponentPropsWithoutRef } from 'react'
 
-import {
-  StepperArrow,
-  StepperButton,
-  StepperButtonProps,
-} from './StepperButton'
-
-// An interface rather than an alias; see `NumberInputIncrementStepperProps`.
-export interface NumberInputDecrementStepperProps extends StepperButtonProps {}
+import { StepperArrow, StepperButton } from './StepperButton'
 
 /** Lowers the value by one `step`, repeating while held. */
-export function DecrementStepper(
-  props: NumberInputDecrementStepperProps &
-    Omit<
-      ComponentPropsWithoutRef<'div'>,
-      keyof NumberInputDecrementStepperProps
-    >,
-) {
+export function DecrementStepper(props: ComponentPropsWithoutRef<'div'>) {
   return (
     <StepperButton
       direction={-1}

@@ -1,23 +1,9 @@
 import { ComponentPropsWithoutRef } from 'react'
 
-import {
-  StepperArrow,
-  StepperButton,
-  StepperButtonProps,
-} from './StepperButton'
-
-// An interface rather than an alias, so that typedoc lists the props: the
-// shared `StepperButtonProps` is not exported for it to follow.
-export interface NumberInputIncrementStepperProps extends StepperButtonProps {}
+import { StepperArrow, StepperButton } from './StepperButton'
 
 /** Raises the value by one `step`, repeating while held. */
-export function IncrementStepper(
-  props: NumberInputIncrementStepperProps &
-    Omit<
-      ComponentPropsWithoutRef<'div'>,
-      keyof NumberInputIncrementStepperProps
-    >,
-) {
+export function IncrementStepper(props: ComponentPropsWithoutRef<'div'>) {
   return (
     <StepperButton
       direction={1}
