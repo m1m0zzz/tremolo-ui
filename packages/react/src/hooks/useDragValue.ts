@@ -51,9 +51,19 @@ export interface UseDragValueOptions {
    */
   sensitivity?: (state: DragState) => number
 
-  /** @see DragValueOptions.updateOnPointerDown */
+  /**
+   * Move the value on pointerdown, before the pointer has moved at all. With
+   * `baseElementRef` that makes a press jump the value to where it landed.
+   *
+   * @see DragValueOptions.updateOnPointerDown
+   */
   updateOnPointerDown?: boolean
-  /** @default 0 */
+  /**
+   * Pixels the pointer has to travel before the drag counts as one. The
+   * default is 0, so the value follows the very first move.
+   *
+   * @default 0
+   */
   threshold?: number
   /** CSS cursor to show while dragging. Applied to the element itself. */
   cursor?: string
@@ -75,11 +85,16 @@ export interface UseDragValueOptions {
   shouldStart?: (event: PointerEvent) => boolean
 
   /**
+   * Called with the new value whenever the drag moves it. The hook holds no
+   * value of its own, so this is where it is stored.
+   *
    * @param state the whole drag, for anything the value leaves out — the
    * pointer event and its modifier keys, most of all.
    */
   onChange?: (value: XY<number>, state: DragState) => void
+  /** Called once the drag starts, with the value it starts from. */
   onDragStart?: (value: XY<number>, state: DragState) => void
+  /** Called when the pointer is released, with the value it ends on. */
   onDragEnd?: (value: XY<number>, state: DragState) => void
 }
 

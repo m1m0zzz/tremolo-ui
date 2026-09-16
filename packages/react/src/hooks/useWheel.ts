@@ -4,7 +4,10 @@ import { createWheel, type WheelOptions } from '@tremolo-ui/dom'
 
 import { useCallbackRef } from './_internal/useCallbackRef'
 
-export interface UseWheelOptions extends WheelOptions {
+// `onWheel` is left out: `createWheel` takes it so that `update()` can replace
+// the callback, but this hook takes the handler as its first argument and the
+// option would be silently ignored.
+export interface UseWheelOptions extends Omit<WheelOptions, 'onWheel'> {
   /**
    * Listen on this element rather than on the one the returned ref callback is
    * attached to, and ignore that callback.

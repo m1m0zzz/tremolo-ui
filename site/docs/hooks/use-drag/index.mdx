@@ -1,0 +1,70 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/hooks/use-drag/basic'
+
+# useDrag
+
+Track a pointer drag on an element, and report how far it has moved.
+
+<GitHubLink
+  path='packages/react/src/hooks/useDrag.ts'
+/>
+
+The hook returns a ref callback. Put it on the element the drag starts from,
+and the handlers do the rest — there is no state to hold and nothing to clean
+up.
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/hooks/use-drag/basic.tsx'
+>{basic}</CodeBlock>
+
+## Import
+
+```jsx
+import { useDrag } from '@tremolo-ui/react'
+```
+
+## What it handles for you
+
+**The pointer is captured, so the drag keeps going outside the element.**
+A drag that leaves the box, the window, or the page still reports, and still
+ends on the release. Listening for `pointermove` on the element itself gives up
+as soon as the pointer leaves it.
+
+**`threshold` keeps a click from counting as a drag.** A click moves the
+pointer by a pixel or two; without a threshold the two presses of a double
+click report a drag between them. Movement below the threshold is carried over
+rather than discarded, so a slow drag still reports once it adds up.
+
+**`onDragStart` fires when the drag starts, not on pointerdown.** It is the
+moment the threshold is passed, which is also when `cursor` is applied.
+
+Set `touch-action: none` on the element in CSS. Without it the browser scrolls
+the page instead of letting the drag through.
+
+## Reading the modifier keys
+
+Every handler is given the whole `DragState` as its last argument, and the
+pointer event is on it. That is where the modifier keys are:
+
+```jsx
+useDrag({
+  onDrag: (x, y, deltaX, deltaY, state) => {
+    const step = state.event.shiftKey ? 0.1 : 1
+  },
+})
+```
+
+## Moving a value rather than a pointer
+
+`useDrag` reports pixels. When what you want is a number with a range, a step
+and a scale, use [`useDragValue`](/docs/hooks/use-drag-value) instead — it is
+built on this hook and does the mapping.
+
+## Options {#options}
+
+<PropsTable of="UseDragOptions" />

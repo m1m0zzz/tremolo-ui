@@ -77,7 +77,7 @@ export {
 
 // hooks
 export { useAnimationFrame } from './hooks/useAnimationFrame'
-export { useDrag } from './hooks/useDrag'
+export { useDrag, type UseDragOptions } from './hooks/useDrag'
 export { useDragValue, type UseDragValueOptions } from './hooks/useDragValue'
 export { useEventListener } from './hooks/useEventListener'
 export { useInterval } from './hooks/useInterval'

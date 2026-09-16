@@ -690,5 +690,93 @@
   "XYPadThumbProps.aria-valuetext": {
     "message": "数字だけでは伝わらないときに、各軸の値が何を意味するか。`[x, y]` か、両軸に共通の値 1 つで指定します。",
     "source": "19032897"
+  },
+  "UseDragOptions.threshold": {
+    "message": "ドラッグとみなすまでにポインタが動く必要のあるピクセル数です。\n\nクリックでもポインタは 1〜2 ピクセル動くので、しきい値が無いとダブルクリックの 2 回の押下の間がドラッグとして報告されます。",
+    "source": "bf375ef8"
+  },
+  "UseDragOptions.cursor": {
+    "message": "ドラッグ中に表示する CSS のカーソルです。要素自体に当たります。",
+    "source": "c5e2bff0"
+  },
+  "UseDragOptions.pointerLock": {
+    "message": "ポインタを隠して、画面上を追いかける代わりに移動量だけを読みます。",
+    "source": "affa9c8b"
+  },
+  "UseDragOptions.onDrag": {
+    "message": "ドラッグが始まったあと、動くたびに呼ばれます。要素に対するポインタの位置と、前回からの移動量を受け取ります。",
+    "source": "07ba844e"
+  },
+  "UseDragOptions.onDragStart": {
+    "message": "ポインタが `threshold` を超えて動いた時点で呼ばれます。pointerdown では呼ばれません。",
+    "source": "0d5c7b8b"
+  },
+  "UseDragOptions.onDragEnd": {
+    "message": "ポインタが離されたときに呼ばれます。ドラッグが始まっていた場合だけです。",
+    "source": "bebecc63"
+  },
+  "UseWheelOptions.requireFocus": {
+    "message": "要素の中にフォーカスがある間だけイベントを報告します。\n\nホバーしただけでホイールに反応するコントロールはページのスクロールを奪うので、長いフォームの中で通り過ぎるだけで値が黙って変わります。フォーカスを要求すれば、それが明示的な操作になります。\n\n判定は同一性ではなく `contains` です。実際にフォーカスを取るのは thumb や `<input>` のような子孫であることが多く、利用者が独自のマークアップに置き換えていることもあるためです。",
+    "source": "c0ab8afa"
+  },
+  "UseWheelOptions.target": {
+    "message": "返された ref callback を付けた要素ではなく、この要素で購読します。ref callback は無視されます。\n\n複数の可動パートからなるコントロールのためのものです。ホイールイベントはカーソルの下にある要素にしか届かないので、パートごとにリスナを置くと、そのパートの上にカーソルがあるときしか反応しません。共有する要素で購読すれば全てのパートがイベントを見られ、どれが反応するかをそれぞれが決められます。\n\n要素はリスナを付けるときに読むので、親が埋める ref でも、その親がツリーの上にある限り問題ありません。",
+    "source": "e06b8851"
+  },
+  "UseDragValueOptions.axis": {
+    "message": "各軸のスケーリングです。1 つだけ渡すと両方に当たります。",
+    "source": "c87527ad"
+  },
+  "UseDragValueOptions.baseElementRef": {
+    "message": "この要素の bounding rect に対してポインタを正規化します。値が、指している位置そのものになります。\n\nこれか `getValue` のどちらかを渡します。",
+    "source": "462dbe35"
+  },
+  "UseDragValueOptions.getValue": {
+    "message": "ドラッグを始めたときの値から、動かした距離だけ値を動かします。ポインタの位置自体には意味がありません。\n\nこれか `baseElementRef` のどちらかを渡します。",
+    "source": "6b1e6712"
+  },
+  "UseDragValueOptions.pixelRange": {
+    "message": "`getValue` を使うとき、範囲全体に相当する移動量のピクセル数です。",
+    "source": "5c0195f3"
+  },
+  "UseDragValueOptions.sensitivity": {
+    "message": "移動をどれだけ効かせるかを、動くたびに読みます。`0.1` なら同じ移動で範囲の 10 分の 1 しか動きません。微調整の修飾キーが欲しがるものです。\n\n`baseElementRef` では値は普通「指している位置」なので、`1` 以外にするとマッピングが相対的になり、そのドラッグの間はポインタと値が離れたままになります。",
+    "source": "7c41383a"
+  },
+  "UseDragValueOptions.updateOnPointerDown": {
+    "message": "ポインタが動く前、pointerdown の時点で値を動かします。`baseElementRef` と一緒なら、押した位置に値が飛びます。",
+    "source": "b28ecc96"
+  },
+  "UseDragValueOptions.threshold": {
+    "message": "ドラッグとみなすまでにポインタが動く必要のあるピクセル数です。既定は 0 なので、最初の移動から値が追随します。",
+    "source": "e59d49f7"
+  },
+  "UseDragValueOptions.cursor": {
+    "message": "ドラッグ中に表示する CSS のカーソルです。要素自体に当たります。",
+    "source": "c5e2bff0"
+  },
+  "UseDragValueOptions.pointerLock": {
+    "message": "ポインタを隠して、画面上を追いかける代わりに移動量だけを読みます。`getValue` のときだけです。ポインタがロックされている間は、`baseElementRef` に対して正規化する位置が存在しません。",
+    "source": "2c4ba422"
+  },
+  "UseDragValueOptions.shouldStart": {
+    "message": "pointerdown でそもそもドラッグを始めるかどうかを、ポインタを捕捉する前に決めます。",
+    "source": "d0800c21"
+  },
+  "UseDragValueOptions.onChange": {
+    "message": "ドラッグが値を動かすたびに、新しい値と一緒に呼ばれます。この hook 自体は値を持たないので、保存するのはここです。",
+    "source": "81e23187"
+  },
+  "UseDragValueOptions.onDragStart": {
+    "message": "ドラッグが始まったときに、開始時の値と一緒に呼ばれます。",
+    "source": "55e8ccb4"
+  },
+  "UseDragValueOptions.onDragEnd": {
+    "message": "ポインタが離されたときに、最終的な値と一緒に呼ばれます。",
+    "source": "b3edc4b6"
+  },
+  "MIDIAccessOptions.sysex": {
+    "message": "システムエクスクルーシブメッセージも要求します。\n\nブラウザはこれをより慎重な、別の権限として扱います。アプリが実際に sysex を読み書きするのでなければ off のままにしてください。",
+    "source": "418b2283"
   }
 }

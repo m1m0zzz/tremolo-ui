@@ -1,0 +1,57 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/hooks/use-drag/basic'
+
+# useDrag
+
+要素の上のポインタのドラッグを追跡し、どれだけ動いたかを報告します。
+
+<GitHubLink
+  path='packages/react/src/hooks/useDrag.ts'
+/>
+
+この hook は ref callback を返します。ドラッグの起点になる要素に付ければ、あとはハンドラが受け取ります。持つべき state も、後片付けもありません。
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/hooks/use-drag/basic.tsx'
+>{basic}</CodeBlock>
+
+## インポート {#import}
+
+```jsx
+import { useDrag } from '@tremolo-ui/react'
+```
+
+## この hook が引き受けること {#what-it-handles-for-you}
+
+**ポインタを捕捉するので、要素の外へ出てもドラッグは続きます。** ボックスの外、ウィンドウの外、ページの外へ出ても報告は続き、離したところで終わります。要素自身で `pointermove` を購読すると、ポインタが出た時点で終わってしまいます。
+
+**`threshold` が、クリックをドラッグとして数えないようにします。** クリックでもポインタは 1〜2 ピクセル動くので、しきい値が無いとダブルクリックの 2 回の押下の間がドラッグとして報告されます。しきい値に満たない移動は捨てずに次へ繰り越すので、ゆっくりしたドラッグも積み上がれば報告されます。
+
+**`onDragStart` は pointerdown ではなく、ドラッグが始まった時点で呼ばれます。** しきい値を超えた瞬間で、`cursor` が当たるのも同じタイミングです。
+
+CSS で要素に `touch-action: none` を付けてください。付けないと、ブラウザがドラッグを通す代わりにページをスクロールします。
+
+## 修飾キーを読む {#reading-the-modifier-keys}
+
+どのハンドラも最後の引数に `DragState` 全体を受け取り、その中にポインタイベントが入っています。修飾キーはそこにあります。
+
+```jsx
+useDrag({
+  onDrag: (x, y, deltaX, deltaY, state) => {
+    const step = state.event.shiftKey ? 0.1 : 1
+  },
+})
+```
+
+## ポインタではなく値を動かす {#moving-a-value-rather-than-a-pointer}
+
+`useDrag` が報告するのはピクセルです。範囲・step・スケールを持つ数値が欲しいときは [`useDragValue`](/docs/hooks/use-drag-value) を使ってください。この hook の上に作られていて、マッピングまで面倒を見ます。
+
+## オプション {#options}
+
+<PropsTable of="UseDragOptions" />

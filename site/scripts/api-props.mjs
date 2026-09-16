@@ -119,7 +119,11 @@ const output = {}
 for (const reflection of project.getReflectionsByKind(
   ReflectionKind.Interface | ReflectionKind.TypeAlias,
 )) {
-  if (!reflection.name.endsWith('Props')) continue
+  // The options of a hook are its API in the same way props are a component's,
+  // so `UseDragOptions` and the rest are listed the same way. A type alias that
+  // is not an object, such as `MarksOptions`, has no members and drops out on
+  // the next line.
+  if (!/(Props|Options)$/.test(reflection.name)) continue
   const props = reflection.children ?? []
   if (props.length === 0) continue
 

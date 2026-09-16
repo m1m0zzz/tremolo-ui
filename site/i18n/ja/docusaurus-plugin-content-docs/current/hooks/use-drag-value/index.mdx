@@ -1,0 +1,73 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/hooks/use-drag-value/basic'
+import relative from '!!raw-loader!@site/examples/hooks/use-drag-value/relative'
+
+# useDragValue
+
+ポインタのドラッグで数値を動かします。範囲・step・スケールをこの hook が持つので、ハンドラが受け取るのはピクセルではなく値です。
+
+<GitHubLink
+  path='packages/react/src/hooks/useDragValue.ts'
+/>
+
+`Knob` / `Slider` / `XYPad` はこの上に作られています。自作のコントロールに同じドラッグの挙動が要るときに使ってください。
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/hooks/use-drag-value/basic.tsx'
+>{basic}</CodeBlock>
+
+## インポート {#import}
+
+```jsx
+import { useDragValue } from '@tremolo-ui/react'
+```
+
+## 値を持つのは呼び出し側 {#the-value-is-yours-to-hold}
+
+**この hook は値を持ちません。** 保存するのは `onChange` で、現在の値は `getValue` から読み直します。`baseElementRef` のときはそもそも読みません。ポインタの位置が値そのものだからです。同じ値をテキストフィールドからも MIDI メッセージからもプリセットからも設定でき、ドラッグと state がずれない理由がこれです。
+
+## ドラッグの 2 つのマッピング {#mapping}
+
+どちらになるかは渡したオプションで決まります。ちょうど一方だけを渡してください。
+
+### `baseElementRef`: 値は「指している位置」
+
+ポインタを要素の bounding rect に対して正規化するので、値はポインタにぴったり追随します。`updateOnPointerDown` を付けると、ポインタが動く前に押した位置へ値が飛びます。`Slider` と `XYPad` の挙動です。
+
+### `getValue`: 値は「動かした距離」だけ動く
+
+ポインタの位置には意味がありません。値は元の位置から離れていき、`pixelRange` ピクセルが範囲全体に相当します。ノブがドラッグに追随するときの挙動で、値がポインタへ飛ばないのはこのためです。
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/hooks/use-drag-value/relative.tsx'
+>{relative}</CodeBlock>
+
+## 微調整 {#fine-adjustment}
+
+`sensitivity` は動くたびに読まれるので、ドラッグの途中で押された修飾キーにも答えられます。
+
+```jsx
+useDragValue({
+  sensitivity: (state) => (state.event.shiftKey ? 0.1 : 1),
+})
+```
+
+`baseElementRef` では値は普通「指している位置」なので、`1` 以外にするとマッピングが相対的になり、そのドラッグの間はポインタと値が離れたままになります。
+
+## 軸 {#axes}
+
+`axis` は両方の軸に効く 1 つの `AxisOptions` か、軸ごとの `[x, y]` を取ります。`min` / `max` / `step` / `scale` のほかに `reverse` があり、y 軸を上向きに伸ばすのに使います。画面の y は下向きに伸びるためです。
+
+1 軸しか動かないコントロールでも値は両軸ぶん来ます。上の相対マッピングの例のように、使わない方は無視してください。
+
+## オプション {#options}
+
+<PropsTable of="UseDragValueOptions" />

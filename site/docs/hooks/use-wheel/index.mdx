@@ -1,0 +1,67 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/hooks/use-wheel/basic'
+
+# useWheel
+
+Listen to wheel events on an element, with a listener that may cancel them.
+
+<GitHubLink
+  path='packages/react/src/hooks/useWheel.ts'
+/>
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/hooks/use-wheel/basic.tsx'
+>{basic}</CodeBlock>
+
+## Import
+
+```jsx
+import { useWheel } from '@tremolo-ui/react'
+```
+
+## Why not `onWheel`
+
+**The listener is registered with `passive: false`.** React attaches its own
+wheel listener passively, so `preventDefault()` inside `onWheel` does nothing
+and the page scrolls underneath the control. This hook is the reason a knob can
+answer the wheel without the page moving.
+
+The handler is the first argument, not an option, and it is read on every
+event — an inline arrow function is fine and does not re-attach the listener.
+
+## Not stealing the page scroll
+
+A control that reacts to the wheel on hover alone takes the scroll away from
+the page, so passing over one in a long form silently changes its value.
+`requireFocus` makes it an explicit act:
+
+```jsx
+const ref = useWheel(handler, { requireFocus: true })
+```
+
+The check is `contains`, not an identity test: the element that actually takes
+focus is usually a descendant, such as a thumb or an `<input>`.
+
+## Listening on a shared element
+
+A wheel event only reaches what the cursor is over, so a control made of
+several movable parts responds only while the cursor is over the part that
+holds the listener. `target` listens on the element they share instead, and
+each part decides whether it is the one to act:
+
+```jsx
+useWheel(handler, { target: trackRef })
+```
+
+The returned ref callback is unused when `target` is given.
+
+## Options {#options}
+
+The handler is the first argument. These are the second.
+
+<PropsTable of="UseWheelOptions" />
