@@ -1,0 +1,82 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/components/file-input/basic'
+
+# FileInput
+
+Picks files, and hands them over as `File`s.
+
+Reading them is yours: an audio file goes to `decodeAudioData`, a preset to
+`JSON.parse`. The component stops at the point where the browser has handed
+over the bytes.
+
+<GitHubLink
+  path='packages/react/src/components/FileInput/index.tsx'
+/>
+<StyleGitHubLink
+  path='shared/css/FileInput.module.css'
+/>
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/file-input/basic.tsx'
+>{basic}</CodeBlock>
+
+## Import
+
+```jsx
+import { FileInput } from '@tremolo-ui/react'
+```
+
+## What it handles for you
+
+**`accept` is checked again on the way in.** The browser treats the attribute
+as a hint to the picker: a person can switch it to "All Files" and choose
+anything. Whatever does not match arrives at `onReject` rather than `onChange`,
+so the reason can be shown instead of a silent no-op.
+
+**Picking the same file twice works.** A file input fires no `change` event
+when the selection has not changed, so re-picking the file you just picked
+would do nothing. The value is cleared as soon as it has been read.
+
+**The native input is still the control.** It is in the tree, out of sight but
+in the tab order, so it takes the focus, opens the picker on Enter, and carries
+the accessible name. `FileInput.Trigger` is a `<label>` for it, which is why a
+click reaches the picker with no JavaScript of its own.
+
+Since the focus lands on something invisible, draw the focus ring from the
+parent — `:focus-within` on `.root` is what the demo theme does.
+
+## API Reference {#api-reference}
+
+Each part lists the props of its own. It also takes the attributes of the
+element it renders, such as `className` and `style`.
+
+State is on the element as a data attribute, so it is a selector away — see
+[Styling](/docs/tutorials/styling). An attribute is only there while its state
+is on.
+
+### Root
+
+Holds the settings and the hidden `<input type="file">`, and reports what was
+picked.
+
+<PropsTable of="FileInputProps" />
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | Present when `disabled` is set |
+
+### Trigger
+
+Opens the picker, and names the input for a screen reader. Rendered as a
+`<label>`.
+
+<PropsTable of="FileInputTriggerProps" />
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | Present when `disabled` is set on `Root` |

@@ -778,5 +778,37 @@
   "MIDIAccessOptions.sysex": {
     "message": "システムエクスクルーシブメッセージも要求します。\n\nブラウザはこれをより慎重な、別の権限として扱います。アプリが実際に sysex を読み書きするのでなければ off のままにしてください。",
     "source": "418b2283"
+  },
+  "FileInputProps.accept": {
+    "message": "受け取るファイルの種類を、HTML の属性と同じ書き方で指定します。拡張子（`.wav`）・MIME タイプ（`audio/wav`）・タイプのグループ（`audio/*`）をカンマ区切りで並べます。\n\n**ブラウザはこれをピッカーへのヒントとして扱い、規則としては扱いません。** 「すべてのファイル」に切り替えられるので、届いたものをここでもう一度照合し、一致しないものは `onReject` に回します。",
+    "source": "a7845f75"
+  },
+  "FileInputProps.multiple": {
+    "message": "一度に複数のファイルを選べるようにします。",
+    "source": "aaa85502"
+  },
+  "FileInputProps.disabled": {
+    "message": "ピッカーを開かないようにし、すべてのパートに `[data-disabled]` を付けます。",
+    "source": "38394628"
+  },
+  "FileInputProps.onChange": {
+    "message": "選ばれたファイルのうち、`accept` に一致したものを受け取ります。\n\nピッカーが閉じられただけのときや、選ばれたファイルが全て弾かれたときは呼ばれません。空の配列が来ることは無いので、「何も選ばれなかった」と「選択が消された」を区別する必要はありません。",
+    "source": "fa1740ee"
+  },
+  "FileInputProps.onReject": {
+    "message": "選ばれたファイルのうち、`accept` に一致しなかったものを受け取ります。理由を表示するためのものです。両方が混ざった選択では `onChange` と一緒に呼ばれます。",
+    "source": "01032dcc"
+  },
+  "FileInputProps.children": {
+    "message": "通常は `FileInput.Trigger` と、選ばれたものを表示する要素です。",
+    "source": "bc6d7504"
+  },
+  "FileInputProps.aria-label": {
+    "message": "`FileInput.Trigger` が無く、そこから名前を取れないときに、スクリーンリーダー向けにファイル入力へ名前を付けます。",
+    "source": "abb98b70"
+  },
+  "FileInputTriggerProps.children": {
+    "message": "トリガーに表示する内容です。そのままファイル入力のアクセシブルな名前になります。",
+    "source": "e3ab686c"
   }
 }

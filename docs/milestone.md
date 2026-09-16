@@ -147,7 +147,11 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 ## 7. コンポーネントと story の追加
 
-- [ ] `FileInput` コンポーネント
+- [x] **`FileInput` コンポーネント。** 選ばれたファイルを `File[]` として渡すところまでを持ち、読み込みとデコードは利用者に任せる
+  - **`accept` は受け取るときにもう一度照合する。** ブラウザはこの属性をピッカーへのヒントとしてしか扱わず、「すべてのファイル」に切り替えられる。一致しないものは `onReject` へ回すので、黙って何も起きない代わりに理由を出せる
+  - 同じファイルを 2 回選んでも動く。ファイル入力は選択が変わらないと `change` を発火しないので、読み取った時点で value を空にする
+  - **コントロールはネイティブの `<input type="file">` のまま。** 見えない位置に置くがタブ順には残し、`Trigger` をその `<label>` にした。クリックがピッカーへ届くのも名前が付くのもブラウザの仕事になる
+  - `accept` の照合（`matchesAccept`）は `dom` に置いた。DropZone と共有する
 - [ ] `DropZone` コンポーネント
 - [x] **WavetableSynth の story を作り込む**（`packages/react/__stories__/combined/WavetableSynth/`）
   - [x] octave のコントロール

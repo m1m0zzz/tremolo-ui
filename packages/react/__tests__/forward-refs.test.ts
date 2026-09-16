@@ -1,5 +1,6 @@
 import {
   AnimationCanvas,
+  FileInput,
   NumberInput,
   PointsEditor,
   Slider,
@@ -9,6 +10,8 @@ import {
 describe('React 18 ref support', () => {
   test.each([
     ['AnimationCanvas', AnimationCanvas],
+    ['FileInput.Root', FileInput.Root],
+    ['FileInput.Trigger', FileInput.Trigger],
     ['NumberInput.InputField', NumberInput.InputField],
     ['NumberInput.Stepper', NumberInput.Stepper],
     ['PointsEditor.Container', PointsEditor.Container],

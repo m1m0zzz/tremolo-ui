@@ -1,0 +1,66 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/components/file-input/basic'
+
+# FileInput
+
+選ばれたファイルを `File` として渡すコンポーネント。
+
+読み込むのは呼び出し側の仕事です。音声ファイルなら `decodeAudioData`、プリセットなら `JSON.parse` へ。このコンポーネントは、ブラウザがバイト列を渡してきたところで止まります。
+
+<GitHubLink
+  path='packages/react/src/components/FileInput/index.tsx'
+/>
+<StyleGitHubLink
+  path='shared/css/FileInput.module.css'
+/>
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/file-input/basic.tsx'
+>{basic}</CodeBlock>
+
+## インポート {#import}
+
+```jsx
+import { FileInput } from '@tremolo-ui/react'
+```
+
+## このコンポーネントが引き受けること {#what-it-handles-for-you}
+
+**`accept` は受け取るときにもう一度照合します。** ブラウザはこの属性をピッカーへのヒントとして扱うので、「すべてのファイル」に切り替えれば何でも選べます。一致しなかったものは `onChange` ではなく `onReject` に届くので、黙って何も起きない代わりに理由を表示できます。
+
+**同じファイルを 2 回選べます。** ファイル入力は選択が変わらないと `change` イベントを発火しないので、直前に選んだファイルをもう一度選んでも何も起きないはずでした。読み取った時点で value を空にしています。
+
+**コントロールは今もネイティブの input です。** ツリーの中に、見えないけれどタブ順には残る形で置いてあります。フォーカスを取り、Enter でピッカーを開き、アクセシブルな名前を持つのはこの要素です。`FileInput.Trigger` はその `<label>` なので、独自の JavaScript 無しにクリックがピッカーへ届きます。
+
+フォーカスが当たるのは見えない要素なので、フォーカスリングは親から描いてください。デモのテーマは `.root` の `:focus-within` でそうしています。
+
+## API リファレンス {#api-reference}
+
+各パートには、そのパート固有の props があります。描画する要素の属性（`className` や `style` など）も受け取ります。
+
+状態は data 属性として要素に付くので、セレクタひとつで届きます（[スタイリング](/docs/tutorials/styling)）。属性は、その状態が on のときだけ存在します。
+
+### Root
+
+設定と、隠された `<input type="file">` を持ち、選ばれたものを報告します。
+
+<PropsTable of="FileInputProps" />
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | `disabled` が設定されているときに存在します |
+
+### Trigger
+
+ピッカーを開き、スクリーンリーダー向けに input へ名前を付けます。`<label>` として描画されます。
+
+<PropsTable of="FileInputTriggerProps" />
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | `Root` に `disabled` が設定されているときに存在します |

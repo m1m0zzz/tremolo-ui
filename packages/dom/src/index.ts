@@ -13,6 +13,7 @@ export {
   type DrawingState,
   type DrawingStateValue,
 } from './canvas/context'
+export { matchesAccept, type AcceptCandidate } from './file/accept'
 export { applyDelta } from './input/apply-delta'
 export {
   mapModifier,
