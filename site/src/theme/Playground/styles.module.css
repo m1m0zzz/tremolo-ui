@@ -7,8 +7,11 @@
 
 .playgroundHeader {
   display: flex;
-  justify-content: end;
+  /* The tabs take the left of the bar and the buttons the right; when the two
+     no longer fit on one line, the buttons drop to the next. */
+  flex-wrap: wrap;
   align-items: center;
+  gap: 0.25rem;
   padding: 0.5rem 0.75rem;
   background: var(--ifm-color-emphasis-200);
   color: var(--ifm-color-content);
@@ -26,6 +29,47 @@
   border-radius: 0;
 }
 
+/* One tab per file the example is made of, in the bar above the code. */
+.fileTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.fileTab {
+  padding: 0.15rem 0.5rem;
+  border: solid 1px transparent;
+  border-radius: var(--ifm-global-radius);
+  background: none;
+  color: var(--ifm-color-content-secondary);
+  font: var(--ifm-code-font-size) / 1.6 var(--ifm-font-family-monospace);
+  cursor: pointer;
+}
+
+.fileTab:hover {
+  color: var(--ifm-color-content);
+}
+
+.fileTab:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+.fileTabActive {
+  background-color: var(--ifm-background-color);
+  color: var(--ifm-color-content);
+}
+
+/* A read-only file sits in the same box as the editor. A theme is a long file,
+   so it scrolls rather than stretching the playground down the page. */
+.fileView {
+  max-height: 30rem;
+  margin: 0;
+  padding: 0.75rem;
+  border-radius: 0;
+  overflow: auto;
+}
+
 .playgroundPreview {
   padding: 1rem;
   background-color: var(--ifm-pre-background);
@@ -35,6 +79,8 @@
   display: flex;
   gap: 2px;
   align-items: center;
+  /* Keeps the buttons on the right, with or without tabs beside them. */
+  margin-left: auto;
 }
 
 .iconButton {

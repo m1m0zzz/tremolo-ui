@@ -62,7 +62,13 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - **`format: md` を front matter に入れるのが要点。** Docusaurus 3 の既定は `.md` も MDX として読むので、changesets が書いた文章に `<` や `{` が 1 つ紛れ込むだけでビルドが落ちる。生成物にだけ効かせられるので、サイト全体の `markdown.format` は触っていない
 - [x] `format` に一本化するときに、`units` / `digit` を使っている example / story / ドキュメントを全部書き換えた
 - [x] **テンプレートをモノレポに移す。** 別リポジトリ（`m1m0zzz/tremolo-ui-example-next-ts` / `m1m0zzz/tremolo-ui-example-vite-react-ts`）にあったものを、0.5.0 の API で書き直して `templates/` に入れた（決まりごとは `templates/README.md`）。破壊的変更のたびに追随を忘れる場所が増えるので、`templates/` としてこのリポジトリに入れ、**ドキュメントでは `degit` などで取り出す形をアナウンスする**（`npx degit m1m0zzz/tremolo-ui/templates/vite-react-ts`）。CI で少なくともビルドは通しておくと、破壊的変更の当たり判定になる
-- [ ] **複数のタブ（ファイル）を持てる Playground を作る。** 現状の `site/src/theme/Playground/` は 1 ファイルの live code が前提で、CSS Module のような 2 つ目のファイルは `externalFiles` で外部 Playground に書き出すときにしか渡らない。Playground の iframe 化（一時タスクリストの「検討中」）と一緒に検討する
+- [x] **複数のタブ（ファイル）を持てる Playground を作った。** `externalFiles` に渡したファイルが Playground のタブになる。1 つ目は今までどおり編集できる live code で、2 つ目以降は読み取り専用
+  - **読み取り専用なのは、プレビューがページの中で動いているから。** iframe にしないと決めたので、CSS Module をその場でコンパイルする仕組みが無い。見た目を試すなら Stackblitz / CodeSandbox へ送る（ファイルは元から渡している）
+  - タブ名はファイル名。1 つ目は `sourcePath` のファイル名で、GitHub リンクの先と一致する
+  - **例が `./<Name>.module.css` を import していたら、デモのテーマをタブに出す。** コンポーネントのページの例は Styling ページからコピーしたテーマに繋いであるので、その中身も読めるようにした。import 行から拾うので、ページ側に書き足すものは無い
+  - タブはヘッダーの左側に置き、幅が足りなければ折り返す。テーマは長いので、読み取り専用の表示には高さの上限を付けた
+  - **エディタは隠すだけでアンマウントしない。** タブを切り替えても、読者が打った内容が残る
+  - styling ページで手書きしていた `<Tabs>` は外した。Playground のタブが同じことをする
 - [x] **bug: styling ページの CSS Modules の部分**（`site/docs/tutorials/styling.mdx`）。例のノブが 0×0 で表示されていなかった。コンポーネントが書くのは `--knob-size` だけで、`width` / `height` はテーマ側が持つのに、例の `my-knob.module.css` にそれが無かった。ダークモードの `.dark` も `:global` が無く、module にリネームされて効いていなかった
 - [x] **各コンポーネントのページに `data-*` の説明を置く。** あわせて styling ページの `data-*` の一覧表（`🚦State`）は消し、各ページへのリンクにした
 - [x] **API（props）の一部をコンポーネントのページへ移す。** typedoc の API ページは残したまま、主要な props の説明をコンポーネントのページでも読めるようにする

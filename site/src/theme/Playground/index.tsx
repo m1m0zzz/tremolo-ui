@@ -7,7 +7,8 @@ import {
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import useIsBrowser from '@docusaurus/useIsBrowser'
 import clsx from 'clsx'
-import React, { useCallback, useState, type ReactNode } from 'react'
+import { Highlight } from 'prism-react-renderer'
+import React, { useCallback, useMemo, useState, type ReactNode } from 'react'
 import { FiCodesandbox, FiGithub } from 'react-icons/fi'
 import {
   RiCodeSSlashLine,
@@ -22,6 +23,7 @@ import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live'
 import { CodePenForm } from './external/codepen'
 import { generateCodeSandboxUrl } from './external/codesandbox'
 import { openStackblitz } from './external/stackblitz'
+import { themeModules } from './external/theme'
 import { parse } from './parser'
 
 import type { ThemeConfig } from '@docusaurus/theme-live-codeblock'
@@ -52,6 +54,8 @@ function CopyButton({ copyCode }: { copyCode?: () => void }) {
 
 interface ControlsProps {
   code: string
+  /** The file tabs, which take the space to the left of the buttons. */
+  tabs?: ReactNode
   externalFiles?: Record<string, string>
   githubPath?: string
   tremoloUIVersion: string
@@ -65,6 +69,7 @@ interface ControlsProps {
 
 function Controls({
   code,
+  tabs,
   externalFiles,
   githubPath,
   tremoloUIVersion,
@@ -76,6 +81,7 @@ function Controls({
 }: ControlsProps) {
   return (
     <div className={clsx(styles.playgroundHeader)}>
+      {tabs}
       <div className={styles.iconButtons}>
         {showCode && (
           <button
@@ -167,6 +173,99 @@ function Result() {
   )
 }
 
+/** What the extension of a file says to highlight it as. */
+const LANGUAGES: Record<string, string> = {
+  css: 'css',
+  js: 'jsx',
+  json: 'json',
+  jsx: 'jsx',
+  ts: 'tsx',
+  tsx: 'tsx',
+}
+
+function languageOf(path: string) {
+  return LANGUAGES[path.split('.').pop() ?? ''] ?? 'markup'
+}
+
+function fileName(path: string) {
+  return path.split('/').pop() ?? path
+}
+
+/**
+ * The demo theme an example imports, read out of its own import lines. The
+ * examples on the component pages copy a file from the Styling page, so the
+ * stylesheet they are wired up to is part of what there is to read.
+ */
+function importedThemeFiles(code: string): Record<string, string> {
+  const files: Record<string, string> = {}
+  for (const [, name] of code.matchAll(
+    /from\s+'\.\/([\w.-]+\.module\.css)'/g,
+  )) {
+    const css = themeModules[name]
+    if (css) files[name] = css
+  }
+  return files
+}
+
+/**
+ * A file the example needs but does not run: read-only, since the preview is
+ * rendered in the page rather than in a sandbox of its own, and nothing here
+ * can compile a stylesheet. It is sent along to Stackblitz and CodeSandbox,
+ * where it can be edited.
+ */
+function FileView({ code, language }: { code: string; language: string }) {
+  const prismTheme = usePrismTheme()
+
+  return (
+    <Highlight code={code.trim()} language={language} theme={prismTheme}>
+      {({ className, style, tokens, getLineProps, getTokenProps }) => (
+        <pre
+          className={clsx(styles.playgroundEditor, styles.fileView, className)}
+          style={style}
+        >
+          {tokens.map((line, i) => (
+            <div key={i} {...getLineProps({ line })}>
+              {line.map((token, key) => (
+                <span key={key} {...getTokenProps({ token })} />
+              ))}
+            </div>
+          ))}
+        </pre>
+      )}
+    </Highlight>
+  )
+}
+
+function FileTabs({
+  files,
+  active,
+  setActive,
+}: {
+  files: string[]
+  active: number
+  setActive: (index: number) => void
+}) {
+  return (
+    <div className={styles.fileTabs} role="tablist">
+      {files.map((name, index) => (
+        <button
+          key={name}
+          type="button"
+          role="tab"
+          aria-selected={index === active}
+          className={clsx(
+            styles.fileTab,
+            index === active && styles.fileTabActive,
+          )}
+          onClick={() => setActive(index)}
+        >
+          {name}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 function ThemedLiveEditor({ code }: { code?: string }) {
   const isBrowser = useIsBrowser()
   return (
@@ -225,14 +324,37 @@ export default function Playground({
   const prismTheme = usePrismTheme()
   const [showCode, setShowCode] = useState(_showCode)
   const [expanded, setExpanded] = useState(_expand)
+  const [activeFile, setActiveFile] = useState(0)
 
   const noInline = props.metastring?.includes('noInline') ?? false
 
   const { expand, collapse } = parse(children?.replace(/\n$/, ''))
+  const mainCode = expanded ? expand : collapse
+
+  // The file the example is written in comes first and is the one that runs;
+  // whatever else it needs follows, by the name it is imported as.
+  const files = useMemo(
+    () => [
+      {
+        name: fileName(sourcePath) || 'App.tsx',
+        code: mainCode,
+        language: 'tsx',
+      },
+      ...Object.entries({
+        ...importedThemeFiles(expand),
+        ...externalFiles,
+      }).map(([path, code]) => ({
+        name: fileName(path),
+        code,
+        language: languageOf(path),
+      })),
+    ],
+    [sourcePath, mainCode, expand, externalFiles],
+  )
 
   const copyCode = useCallback(() => {
-    navigator.clipboard.writeText(expanded ? expand : collapse)
-  }, [expanded])
+    navigator.clipboard.writeText(files[activeFile].code)
+  }, [files, activeFile])
 
   return (
     <div className={styles.playgroundContainer}>
@@ -255,8 +377,31 @@ export default function Playground({
           copyCode={() => copyCode()}
           githubPath={githubPath}
           tremoloUIVersion={tremoloUIVersion}
+          tabs={
+            showCode &&
+            files.length > 1 && (
+              <FileTabs
+                files={files.map((file) => file.name)}
+                active={activeFile}
+                setActive={setActiveFile}
+              />
+            )
+          }
         />
-        {showCode && <ThemedLiveEditor code={expanded ? expand : collapse} />}
+        {showCode && (
+          <>
+            {/* Hidden rather than unmounted: the editor holds what the reader
+                has typed, and switching files would throw it away. */}
+            <div hidden={activeFile !== 0}>
+              <ThemedLiveEditor code={mainCode} />
+            </div>
+            {files.slice(1).map((file, index) => (
+              <div key={file.name} hidden={activeFile !== index + 1}>
+                <FileView code={file.code} language={file.language} />
+              </div>
+            ))}
+          </>
+        )}
       </LiveProvider>
     </div>
   )

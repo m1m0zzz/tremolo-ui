@@ -196,21 +196,14 @@ and once with Tailwind. Neither is special to the library — the parts take a
 
 <Tabs>
   <TabItem value="CSS Modules" default>
-    <Tabs>
-      <TabItem value="index.tsx" default>
-        <CodeBlock
-          jsx
-          live
-          expand
-          showCode
-          sourcePath="examples/tutorials/styling/css-module.tsx"
-          externalFiles={{'src/my-knob.module.css': myKnobCss}}
-        >{cssModule}</CodeBlock>
-      </TabItem>
-      <TabItem value="my-knob.module.css">
-        <CodeBlock language='css'>{myKnobCss}</CodeBlock>
-      </TabItem>
-    </Tabs>
+    <CodeBlock
+      jsx
+      live
+      expand
+      showCode
+      sourcePath="examples/tutorials/styling/css-module.tsx"
+      externalFiles={{'src/my-knob.module.css': myKnobCss}}
+    >{cssModule}</CodeBlock>
   </TabItem>
   <TabItem value="Tailwind">
     <CodeBlock

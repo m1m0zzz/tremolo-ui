@@ -21,9 +21,12 @@ function App() {
         onChange={(v) => setValue(v)}
       >
         <Knob.SVGRoot>
+          <Knob.InactiveLine className={myKnob.inactiveLine} />
           <Knob.ActiveLine className={myKnob.activeLine} />
-          <Knob.InactiveLine />
-          <Knob.Thumb />
+          <Knob.Thumb
+            className={myKnob.thumb}
+            classes={{ thumbLine: myKnob.thumbLine }}
+          />
         </Knob.SVGRoot>
       </Knob.Root>
       {value}
