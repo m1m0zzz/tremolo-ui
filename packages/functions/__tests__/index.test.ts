@@ -8,6 +8,6 @@ test('the public entry point exposes every runtime API group', () => {
     noteAt: expect.any(Function),
     selectModifier: expect.any(Function),
     unitFormat: expect.any(Function),
-    mod: expect.any(Function),
+    toPrecision: expect.any(Function),
   })
 })

@@ -53,6 +53,10 @@ describe('unit test', () => {
     expect(noteName(12)).toBe('C0')
     expect(noteName(0)).toBe('C-1')
     expect(noteName(-12)).toBe('C-2')
+    // Below C-1 the note number is negative and does not land on an octave
+    // boundary, so the octave table has to be indexed with a remainder that
+    // follows the sign of the divisor rather than of the dividend.
+    expect(noteName(-1)).toBe('B-2')
   })
 
   test.each([60.5, NaN, Infinity, Number.MAX_VALUE])(

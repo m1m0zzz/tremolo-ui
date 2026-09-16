@@ -3,7 +3,6 @@ import { ChangeEvent, CSSProperties, useRef, useState } from 'react'
 import {
   curveScale,
   curveWithCenterValue,
-  integerPart,
   linearScale,
   type Scale,
   toFixed,
@@ -55,7 +54,9 @@ const fmt = (freq: number) => {
   if (freq < 1000) {
     return `${toFixed(freq)}Hz`
   } else {
-    return `${toFixed(freq / 1000, 3 - (integerPart(freq / 1000)?.length ?? 0))}kHz`
+    // Three significant digits: 1.23kHz, 12.3kHz, 123kHz.
+    const kHz = freq / 1000
+    return `${toFixed(kHz, Math.max(0, 3 - String(Math.trunc(kHz)).length))}kHz`
   }
 }
 

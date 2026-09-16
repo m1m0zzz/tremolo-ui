@@ -50,16 +50,16 @@
 
 ## 公開をやめるもの
 
-| export | 状況 |
-| --- | --- |
-| `isEmpty` | **削除済み。** 使用箇所ゼロで、公開 API に紛れ込んだだけだった |
-| `mod` | **使用箇所ゼロ** |
-| `SIGNIFICANT_DIGITS` | `toPrecision` の既定値。外に出す必要がない |
-| `selectInputEvent` | `applyDelta` の内部からのみ |
-| `xor` | Slider の内部 4 箇所のみ。3 行の内部ヘルパー |
-| `decimalPart` / `integerPart` | Slider の目盛りと story のみ。`string \| undefined` を返す扱いにくい形で、指数表記で壊れる（`stepValue` の丸めバグの原因になったのと同じ問題） |
+| export | 状況 | 行き先 |
+| --- | --- | --- |
+| `isEmpty` | 使用箇所ゼロで、公開 API に紛れ込んだだけだった | **削除済み** |
+| `mod` | `midi.ts` が唯一の実コードの利用者。棚卸しの時点では「使用箇所ゼロ」と書いたが、その後 WavetableSynth の story が使い始めていた | **`midi.ts` の中の非公開関数へ。** `util.ts` は空になったので削除。story は自前で 3 行持つ |
+| `SIGNIFICANT_DIGITS` | `toPrecision` の既定値。外に出す必要がない | `math.ts` の中の定数へ |
+| `xor` | Slider の内部 4 箇所のみ | **`react` の `components/_util/xor.ts` へ。** `functions` 側に利用者がいない |
+| `decimalPart` / `integerPart` | Slider の目盛りと story のみ。`string \| undefined` を返す扱いにくい形で、指数表記で壊れる（`stepValue` の丸めバグの原因になったのと同じ問題） | **削除。** Slider は `react` の `components/_util/decimal-digits.ts` に置き換えた。`number` を返し、`1e-7` のような指数表記も数えるので、目盛りが整数に丸められるバグも直る |
+| `selectInputEvent` | `applyDelta` の内部と、`NumberInput` が `raw` かどうかを見るためだけに使っている | **手順 3 へ先送り。** modifier 一式ごと `dom` へ移るので、そこで非公開にする |
 
-`functions` 内の内部モジュールへ落とすか、削除する。
+`selectInputEvent` を手順 1 で外せないのは、`react` の `NumberInput` が今も呼んでいるため。**手順 3 で `dom` へ移すときに、そのまま re-export しなければ公開をやめられる。** ここだけ先に消すと、`NumberInput` のために別の公開 API を足すことになって本末転倒になる。
 
 ## 結果
 

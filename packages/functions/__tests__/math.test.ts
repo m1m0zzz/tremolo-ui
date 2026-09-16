@@ -1,10 +1,8 @@
 import {
   clamp,
   dbToGain,
-  decimalPart,
   degree,
   gainToDb,
-  integerPart,
   mapValue,
   normalizeValue,
   radian,
@@ -13,7 +11,6 @@ import {
   toFixed,
   toPrecision,
 } from '../src/math'
-import { mod, xor } from '../src/util'
 
 describe('unit', () => {
   test('clamp()', () => {
@@ -71,28 +68,6 @@ describe('unit', () => {
     expect(stepValue(2.5e-7, 1e-7)).toBe(3e-7)
   })
 
-  test('decimalPart', () => {
-    expect(decimalPart(3.14)).toBe('14')
-    expect(decimalPart('3.14')).toBe('14')
-    expect(decimalPart('-3.14')).toBe('14')
-    expect(decimalPart('3')).toBe(undefined)
-    expect(decimalPart(3.0)).toBe(undefined)
-    expect(decimalPart('3.00')).toBe('00')
-    expect(decimalPart(NaN)).toBe(undefined)
-    expect(decimalPart(Infinity)).toBe(undefined)
-    expect(decimalPart(-Infinity)).toBe(undefined)
-  })
-
-  test('integerPart', () => {
-    expect(integerPart(3.14)).toBe('3')
-    expect(integerPart(-Math.PI)).toBe('-3')
-    expect(integerPart(100)).toBe('100')
-    expect(integerPart(0.123)).toBe('0')
-    expect(integerPart(NaN)).toBe(undefined)
-    expect(integerPart(Infinity)).toBe('Infinity')
-    expect(integerPart(-Infinity)).toBe('-Infinity')
-  })
-
   test('toPrecision', () => {
     expect(toPrecision(5.1 + 0.1)).toBe(5.2)
     expect(toPrecision(0.1 + 0.2)).toBe(0.3)
@@ -133,16 +108,5 @@ describe('unit', () => {
     expect(dbToGain(0)).toBe(1)
     expect(gainToDb(1)).toBe(0)
     expect(gainToDb(dbToGain(-18))).toBeCloseTo(-18)
-  })
-
-  test('utility helpers keep their public contracts', () => {
-    expect(mod(-13, 12)).toBe(11)
-    expect(mod(-12, 12)).toBe(0)
-    expect([
-      xor(false, false),
-      xor(false, true),
-      xor(true, false),
-      xor(true, true),
-    ]).toEqual([false, true, true, false])
   })
 })

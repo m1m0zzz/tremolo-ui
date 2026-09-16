@@ -1,4 +1,6 @@
-import { decimalPart, toFixed } from '@tremolo-ui/functions'
+import { toFixed } from '@tremolo-ui/functions'
+
+import { decimalDigits } from '../_util/decimal-digits'
 
 /**
  * How `Slider.Marks` fills itself in when it is given no children: one option
@@ -36,7 +38,7 @@ export function generateOptionsList(
   for (let i = 0; i < count; i++) {
     const value = toFixed(
       interval * (Math.ceil(min / interval) + i),
-      decimalPart(interval)?.length,
+      decimalDigits(interval),
     )
     optionsList.push({ value: value, mark: mark, label: label })
   }

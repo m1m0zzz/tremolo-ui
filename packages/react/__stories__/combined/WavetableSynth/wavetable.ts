@@ -1,4 +1,14 @@
-import { clamp, mod } from '@tremolo-ui/functions'
+import { clamp } from '@tremolo-ui/functions'
+
+/**
+ * Wrap a phase into 0..1.
+ *
+ * `%` keeps the sign of the left operand, so a negative phase would come back
+ * negative and fall outside every branch below.
+ */
+export function mod(n: number, m: number) {
+  return ((n % m) + m) % m
+}
 
 export function generateWaveWithFunction(
   sampleLength: number,

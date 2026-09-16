@@ -1,15 +1,12 @@
 export {
   clamp,
   dbToGain,
-  decimalPart,
   degree,
   gainToDb,
-  integerPart,
   mapValue,
   normalizeValue,
   radian,
   rawValue,
-  SIGNIFICANT_DIGITS,
   stepValue,
   toFixed,
   toPrecision,
@@ -69,4 +66,3 @@ export {
   type UnitFormatter,
   unitFormat,
 } from './unit'
-export { mod, xor } from './util'

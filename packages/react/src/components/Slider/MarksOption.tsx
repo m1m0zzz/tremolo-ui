@@ -1,9 +1,10 @@
 import { ComponentPropsWithoutRef, CSSProperties, useCallback } from 'react'
 
-import { toFixed, xor } from '@tremolo-ui/functions'
+import { toFixed } from '@tremolo-ui/functions'
 
 import { cssLength } from '../_util/css-length'
 import { useCheckPlacement } from '../_util/Placement'
+import { xor } from '../_util/xor'
 
 import { useSliderContext } from './context'
 

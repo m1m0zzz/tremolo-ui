@@ -17,7 +17,6 @@ import {
   type InputEventOption,
   type ModifierValue,
   selectModifier,
-  xor,
   type Scale,
 } from '@tremolo-ui/functions'
 
@@ -30,6 +29,7 @@ import {
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
 } from '../../input-event'
+import { xor } from '../_util/xor'
 
 import { SliderProvider } from './context'
 import { Marks } from './Marks'
