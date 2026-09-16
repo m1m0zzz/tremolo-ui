@@ -1,4 +1,7 @@
 .playgroundContainer {
+  /* The header lays itself out against the playground's own width rather than
+     the page's: the same playground sits in a full page and in a narrow tab. */
+  container-type: inline-size;
   margin-bottom: var(--ifm-leading);
   border-radius: var(--ifm-global-radius);
   box-shadow: var(--ifm-global-shadow-lw);
@@ -7,9 +10,10 @@
 
 .playgroundHeader {
   display: flex;
-  justify-content: end;
+  /* The tabs take the left of the bar and the buttons the right. */
   align-items: center;
-  padding: 0.5rem 0.75rem;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
   background: var(--ifm-color-emphasis-200);
   color: var(--ifm-color-content);
   font-size: var(--ifm-code-font-size);
@@ -26,6 +30,47 @@
   border-radius: 0;
 }
 
+/*
+ * One tab per file the example is made of, in the bar above the code. The look
+ * is Infima's own tabs, at the size the bar has room for; `.tabs` already
+ * scrolls sideways when the names do not fit.
+ */
+.fileTabs {
+  --ifm-tabs-padding-vertical: 0.25rem;
+  --ifm-tabs-padding-horizontal: 0.75rem;
+
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--ifm-code-font-size);
+  list-style: none;
+}
+
+.fileTab {
+  white-space: nowrap;
+}
+
+/*
+ * Too narrow for the two to sit side by side: the buttons keep the top line,
+ * where they are on every other playground, and the tabs take the one below.
+ */
+@container (max-width: 576px) {
+  .playgroundHeader {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+}
+
+/* A read-only file sits in the same box as the editor. A theme is a long file,
+   so it scrolls rather than stretching the playground down the page. */
+.fileView {
+  max-height: 30rem;
+  margin: 0;
+  padding: 0.75rem;
+  border-radius: 0;
+  overflow: auto;
+}
+
 .playgroundPreview {
   padding: 1rem;
   background-color: var(--ifm-pre-background);
@@ -35,6 +80,9 @@
   display: flex;
   gap: 2px;
   align-items: center;
+  /* Keeps the buttons on the right, with or without tabs beside them. */
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .iconButton {

@@ -8,29 +8,33 @@ import { useCheckPlacement } from '../_util/Placement'
 import { useSliderContext } from './context'
 
 export interface SliderMarksOptionProps {
-  // required
+  /** Where the mark sits, on the same scale as the thumb. */
   value: number
 
-  // optional
-  /** Whether to draw the mark itself. */
+  /**
+   * Draw the mark itself. Turn it off to show the label alone.
+   * @default true
+   */
   mark?: boolean
   /**
-   * Text shown in place of the value. `null` leaves the label out; an empty
-   * string draws an empty label.
+   * Text shown next to the mark. Leave it out to show the value; `null` leaves
+   * the label out, and an empty string draws an empty one.
    */
   label?: number | string | null
-  /** Mark thickness. Sets `--thickness`. */
+  /** Thickness of the mark. Sets `--thickness`. */
   thickness?: number | string
-  /** Mark length. Sets `--length`. */
+  /** Length of the mark. Sets `--length`. */
   length?: number | string
-  /** Gap between mark and label. Sets `--gap`. */
+  /** Space between the mark and the label. Sets `--gap`. */
   gap?: number | string
-  /** Sets `--label-width`. */
+  /** Width of the label. Sets `--label-width`. */
   labelWidth?: number | string
+  /** Classes for the mark and the label inside the option. */
   classes?: {
     mark?: string
     label?: string
   }
+  /** Styles for the mark and the label inside the option. */
   styles?: {
     mark?: CSSProperties
     label?: CSSProperties

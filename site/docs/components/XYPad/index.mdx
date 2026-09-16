@@ -1,4 +1,5 @@
 import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
 import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/components/xy-pad/basic'
 
@@ -13,30 +14,64 @@ Two-dimensional slider component.
   path='shared/css/XYPad.module.css'
 />
 
-## Import
-
-```jsx
-import { XYPad } from '@tremolo-ui/react'
-```
-
-## Data attributes
-
-State is on the element as an attribute, so it is a selector away — see
-[Styling](/docs/tutorials/styling). An attribute is only there while its
-state is on.
-
-| Attribute | Part | Present when |
-| --- | --- | --- |
-| `data-disabled` | `XYPad.Root`, `XYPad.Thumb` | `disabled` is set |
-| `data-readonly` | `XYPad.Root`, `XYPad.Thumb` | `readonly` is set |
-
-## Examples
-
-### Basic
-
 <CodeBlock
   jsx
   live
   showCode
   sourcePath='examples/components/xy-pad/basic.tsx'
 >{basic}</CodeBlock>
+
+## Import
+
+```jsx
+import { XYPad } from '@tremolo-ui/react'
+```
+
+## API Reference {#api-reference}
+
+Each part lists the props of its own. It also takes the attributes of the
+element it renders, such as `className` and `style`.
+
+State is on the element as a data attribute, so it is a selector away — see
+[Styling](/docs/tutorials/styling). An attribute is only there while its state
+is on.
+
+### Root
+
+Holds the value of both axes and the settings, and passes them to the parts
+inside.
+
+<PropsTable of="XYPadProps" />
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | Present when `disabled` is set |
+| `[data-readonly]` | Present when `readonly` is set |
+
+### Area
+
+The surface the thumb moves across.
+
+<PropsTable of="XYPadAreaProps" />
+
+| Custom property | Written by | What it sets |
+| --- | --- | --- |
+| `--width` | `width` | Width of the area. |
+| `--height` | `height` | Height of the area. |
+| `--color` | `color` | Colour of the area. |
+
+### Thumb
+
+The handle. Two visually hidden range inputs inside it, one per axis, take the
+focus and carry the ARIA.
+
+<PropsTable of="XYPadThumbProps" />
+
+| Custom property | Written by | What it sets |
+| --- | --- | --- |
+| `--color` | `color` | Colour of the thumb. |
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | Present when `disabled` is set |
+| `[data-readonly]` | Present when `readonly` is set |

@@ -1,4 +1,5 @@
 import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
 import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/components/knob/basic'
 
@@ -13,31 +14,66 @@ Interactive rotary knob component implemented in SVG.
   path='shared/css/Knob.module.css'
 />
 
-## Import
-
-```jsx
-import { Knob } from '@tremolo-ui/react'
-```
-
-## Data attributes
-
-State is on the element as an attribute, so it is a selector away — see
-[Styling](/docs/tutorials/styling). An attribute is only there while its
-state is on.
-
-| Attribute | Part | Present when |
-| --- | --- | --- |
-| `data-disabled` | `Knob.Root` | `disabled` is set |
-| `data-readonly` | `Knob.Root` | `readonly` is set |
-| `data-dragging` | `Knob.Root` | a drag is in progress |
-
-## Examples
-
-### Basic
-
 <CodeBlock
   jsx
   live
   showCode
   sourcePath='examples/components/knob/basic.tsx'
 >{basic}</CodeBlock>
+
+## Import
+
+```jsx
+import { Knob } from '@tremolo-ui/react'
+```
+
+## API Reference {#api-reference}
+
+Each part lists the props of its own. It also takes the attributes of the
+element it renders, such as `className` and `style`.
+
+State is on the element as a data attribute, so it is a selector away — see
+[Styling](/docs/tutorials/styling). An attribute is only there while its state
+is on.
+
+### Root
+
+Holds the value and handles the drag, the wheel and the arrow keys. It is the
+control itself: it takes the focus and carries the ARIA.
+
+<PropsTable of="KnobProps" />
+
+| Custom property | Written by | What it sets |
+| --- | --- | --- |
+| `--knob-size` | `size` | The width and height of the knob. |
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | Present when `disabled` is set |
+| `[data-readonly]` | Present when `readonly` is set |
+| `[data-dragging]` | Present while a drag is in progress |
+
+### SVGRoot
+
+The `<svg>` the drawing parts go in. It sets the view box they are drawn
+against.
+
+<PropsTable of="KnobSVGRootProps" />
+
+### InactiveLine
+
+The arc outside the value. It has no props of its own and takes the attributes
+of an SVG `<path>`. The arc is kept inside the view box by the `strokeWidth`
+you give it.
+
+### ActiveLine
+
+The arc between `startValue` and the value. Like `Knob.InactiveLine`, it takes
+the attributes of an SVG `<path>`.
+
+### Thumb
+
+The circle that turns with the value, and the line on it that points at the
+value.
+
+<PropsTable of="KnobThumbProps" />

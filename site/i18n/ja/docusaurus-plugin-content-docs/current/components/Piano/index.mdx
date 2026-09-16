@@ -1,0 +1,70 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/components/piano/basic'
+
+# Piano
+
+カスタマイズできるピアノのコンポーネント。
+
+<GitHubLink
+  path='packages/react/src/components/Piano/index.tsx'
+/>
+<StyleGitHubLink
+  path='shared/css/Piano.module.css'
+/>
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/piano/basic.tsx'
+>{basic}</CodeBlock>
+
+## インポート {#import}
+
+```jsx
+import { noteNumber, noteName } from '@tremolo-ui/functions'
+import { Piano, SHORTCUTS } from '@tremolo-ui/react'
+```
+
+## API リファレンス {#api-reference}
+
+`Piano.Root` は、下の props に加えて、描画する要素の属性（`className` や `style` など）も受け取ります。
+
+状態は data 属性として要素に乗っているので、セレクタ 1 つで届きます（[スタイリング](/docs/tutorials/styling)を参照）。属性はその状態が on の間だけ付きます。
+
+### Root
+
+`noteRange` のノートごとに鍵盤を描きます。他のパートは無く、鍵盤は `label` と `keyProps` でカスタマイズします。
+
+<PropsTable of="PianoProps" />
+
+| カスタムプロパティ | 書き込む prop | 決めるもの |
+| --- | --- | --- |
+| `--height` | `height` | 鍵盤の高さ。 |
+
+鍵盤の色はテーマ側の取り決めです。[スタイリング](/docs/tutorials/styling)のページに
+あるテーマは鍵盤の種類ごとに変数を持っていて、鍵盤には `keyProps` から渡したものが
+そのまま付きます。
+
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-resizable]` | `resizable` のときに付きます |
+
+#### 鍵盤 {#keys}
+
+各鍵盤が持つ属性です。
+
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-note]` | `"0"` … `"127"` |
+| `[data-note-key]` | `"C" \| "C#" \| … \| "B"` |
+| `[data-active]` | ノートが鳴っている間に付きます |
+| `[data-disabled]` | ノートが `midiMax` より高いときに付きます |
+
+鍵盤には `keyProps` から属性を足せるので、自分で決めた状態も属性 1 つで表せます:
+
+```jsx
+keyProps={(note) => ({ 'data-in-scale': inScale(note, 0, 'major') ? '' : undefined })}
+```

@@ -1,4 +1,5 @@
 import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
 import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/components/number-input/basic'
 import unit from '!!raw-loader!@site/examples/components/number-input/unit'
@@ -14,35 +15,79 @@ Input with some useful functions for entering numerical values.
   path='shared/css/NumberInput.module.css'
 />
 
-## Import
-
-```jsx
-import { NumberInput } from '@tremolo-ui/react'
-```
-
-## Data attributes
-
-State is on the element as an attribute, so it is a selector away — see
-[Styling](/docs/tutorials/styling). An attribute is only there while its
-state is on.
-
-| Attribute | Part | Present when |
-| --- | --- | --- |
-| `data-disabled` | `NumberInput.Root`, `NumberInput.InputField` | `disabled` is set |
-| `data-disabled` | `NumberInput.IncrementStepper`, `NumberInput.DecrementStepper` | `disabled` is set, or the value is already at `max` (increment) / `min` (decrement) |
-| `data-readonly` | `NumberInput.Root`, `NumberInput.InputField`, both steppers | `readonly` is set |
-| `data-out-of-range` | `NumberInput.InputField` | the value is outside `min` / `max` |
-
-## Examples
-
-### Basic
-
 <CodeBlock
   jsx
   live
   showCode
   sourcePath='examples/components/number-input/basic.tsx'
 >{basic}</CodeBlock>
+
+## Import
+
+```jsx
+import { NumberInput } from '@tremolo-ui/react'
+```
+
+## API Reference {#api-reference}
+
+Each part lists the props of its own. It also takes the attributes of the
+element it renders, such as `className` and `style`.
+
+State is on the element as a data attribute, so it is a selector away — see
+[Styling](/docs/tutorials/styling). An attribute is only there while its state
+is on.
+
+### Root
+
+Holds the value, and how it is formatted, parsed and stepped. How every part
+behaves is set here.
+
+<PropsTable of="NumberInputProps" />
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | Present when `disabled` is set |
+| `[data-readonly]` | Present when `readonly` is set |
+
+### InputField
+
+The text field, and the only place the value can be typed. It is the control
+itself: it takes the focus and carries the ARIA.
+
+It has no props of its own and takes the attributes of an `<input>`. How it
+behaves on focus, Enter and the arrow keys is set on `NumberInput.Root`
+(`selectOnFocus`, `unformatOnFocus`, `keepCaretOnStep`, `blurOnEnter`).
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | Present when `disabled` is set |
+| `[data-readonly]` | Present when `readonly` is set |
+| `[data-out-of-range]` | Present while the value is outside `min` / `max` |
+
+### Stepper
+
+The area the steppers sit in, and a drag handle in its own right: dragging it
+up and down moves the value one `step` every `drag` pixels.
+
+<PropsTable of="NumberInputStepperProps" />
+
+### IncrementStepper / DecrementStepper
+
+Raise or lower the value by one `step`, repeating while held. The two take the
+same props.
+
+<PropsTable of="NumberInputIncrementStepperProps" />
+
+| Custom property | Read by | What it sets |
+| --- | --- | --- |
+| `--stepper-icon-size` | the component | Size of the default arrow. Set it in your own CSS; a `children` of your own is sized by you. |
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | Present when `disabled` is set, or when the value is already at `max` (increment) / `min` (decrement) |
+| `[data-readonly]` | Present when `readonly` is set |
+
+## Examples
 
 ### Units
 

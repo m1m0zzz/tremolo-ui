@@ -56,7 +56,7 @@ npm run test:watch -w packages/react
 ### スタイリング
 
 - **パッケージは CSS もクラス名も配らない。** 各パートが持つのは、利用者が渡した `className` / `style` と、状態を表す `data-*` 属性だけ。`tremolo-` のクラス名は廃止済み
-- **新しい状態を足したら必ず `data-*` 属性として出すこと。** 利用者にとって唯一のスタイリングの取っ掛かり。**真偽の状態は on のときだけ属性を出す**（`="false"` を書かない）。向きのような列挙は `data-orientation="horizontal|vertical"` の形で値を持たせる
+- **新しい状態を足したら必ず `data-*` 属性として出すこと。** 利用者にとって唯一のスタイリングの取っ掛かり。**真偽の状態は on のときだけ属性を出し、値は空文字にする**（`cond ? '' : undefined`）。`cond || undefined` と書くと React が `="true"` に変換してしまい、有無で選ぶという契約に値が紛れ込む（Radix / Base UI も空文字）。向きのような列挙は `data-orientation="horizontal|vertical"` の形で値を持たせる
 - **ARIA はそれ自体がコントロールである要素にだけ付ける**（`Knob` / `NumberInput.InputField` / ステッパー / thumb の中の range input）。ラッパーは `data-*` だけ
 - **パートの配置はコンポーネントが持つ。** `position` / `translate` / `inset` / `z-index` / `pointer-events` はインラインで書き、テーマ CSS には置かない。上書きの余地がある中央合わせは `--translate` で開ける
 - **デモのテーマは `shared/css/<Name>.module.css` の 1 セットしかない。** ドキュメントサイトと Storybook が同じファイルを読み、`site/docs/tutorials/styling.mdx` がその全文を載せている。**コンポーネントに新しいパートを足したらここに書き、story と例で `className` を配線する**
@@ -75,7 +75,8 @@ npm run test:watch -w packages/react
 - **lint-staged の `--no-error-on-unmatched-pattern` を外さないこと。** 渡されたパスが全て ignore に当たると「対象が無い」で非ゼロ終了し、`.md` だけのコミットが落ちる
 - `.cspell.json` を使用しているため、新しいドメイン用語は追加が必要になる場合がある
 - **vitest は `globals: true` で走らせる。** Testing Library の自動 cleanup が、グローバルの `afterEach` の有無で自分を仕込むかどうかを決めるため
-- **site のスクリプトで changelog の生成が要るものには、`npm run changelog &&` を直接書く。** npm の `pre*` に頼ると、`start:fast` のようにスクリプトが増えたときに付け忘れる
+- **site のスクリプトで生成物が要るものには、`npm run changelog &&` / `npm run api-props &&` を直接書く。** npm の `pre*` に頼ると、`start:fast` のようにスクリプトが増えたときに付け忘れる
+- **コンポーネントのページの props の表は、`site/scripts/api-props.mjs` が JSDoc から作る。** 説明を直すときは JSDoc を直す。日本語の説明は `site/i18n/ja/api-props.json` にあり、英語が変わると古い訳は使われず英語が出る（スクリプトが一覧を出すので訳し直す）
 
 ## デプロイ
 

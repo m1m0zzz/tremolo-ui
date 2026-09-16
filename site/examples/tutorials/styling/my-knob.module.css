@@ -16,12 +16,56 @@
   }
 }
 
+.inactiveLine {
+  color: oklch(92.2% 0 0);
+
+  :where(.knob:focus, .knob:hover) & {
+    color: oklch(87% 0 0);
+  }
+}
+
+.thumb {
+  color: oklch(87% 0 0);
+
+  :where(.knob:focus, .knob:hover) & {
+    color: oklch(70.8% 0 0);
+  }
+}
+
+/* The line on the thumb that points at the value. */
+.thumbLine {
+  color: oklch(98.5% 0 0);
+}
+
 /* `:global`, or the module renames `.dark` along with its own classes. */
 :global(.dark) .activeLine,
 :global([data-theme='dark']) .activeLine {
   :where(.knob:focus, .knob:hover) & {
     color: rgb(235, 91, 91);
   }
+}
+
+:global(.dark) .inactiveLine,
+:global([data-theme='dark']) .inactiveLine {
+  color: oklch(37.1% 0 0);
+
+  :where(.knob:focus, .knob:hover) & {
+    color: oklch(43.9% 0 0);
+  }
+}
+
+:global(.dark) .thumb,
+:global([data-theme='dark']) .thumb {
+  color: oklch(43.9% 0 0);
+
+  :where(.knob:focus, .knob:hover) & {
+    color: oklch(55.6% 0 0);
+  }
+}
+
+:global(.dark) .thumbLine,
+:global([data-theme='dark']) .thumbLine {
+  color: oklch(87% 0 0);
 }
 
 .container {

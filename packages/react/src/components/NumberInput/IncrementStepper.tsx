@@ -6,7 +6,9 @@ import {
   StepperButtonProps,
 } from './StepperButton'
 
-export type NumberInputIncrementStepperProps = StepperButtonProps
+// An interface rather than an alias, so that typedoc lists the props: the
+// shared `StepperButtonProps` is not exported for it to follow.
+export interface NumberInputIncrementStepperProps extends StepperButtonProps {}
 
 /** Raises the value by one `step`, repeating while held. */
 export function IncrementStepper(

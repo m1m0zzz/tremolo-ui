@@ -51,13 +51,13 @@ export します。上のように結びつけて使ってください。
 **off の状態では属性そのものが付かない**ので、属性名だけがセレクタになります（`="false"` に
 誤ってマッチすることがありません）。
 
-各コンポーネントが持つ属性は、それぞれのページの **Data attributes** に
-載せています（[Knob](/docs/components/Knob/#data-attributes)、
-[Slider](/docs/components/Slider/#data-attributes)、
-[XYPad](/docs/components/XYPad/#data-attributes)、
-[NumberInput](/docs/components/NumberInput/#data-attributes)、
-[Piano](/docs/components/Piano/#data-attributes)、
-[PointsEditor](/docs/components/PointsEditor/#data-attributes)）。よく使うのは
+各パートが持つ属性は、それぞれのページの **API リファレンス** に
+載せています（[Knob](/docs/components/Knob/#api-reference)、
+[Slider](/docs/components/Slider/#api-reference)、
+[XYPad](/docs/components/XYPad/#api-reference)、
+[NumberInput](/docs/components/NumberInput/#api-reference)、
+[Piano](/docs/components/Piano/#api-reference)、
+[PointsEditor](/docs/components/PointsEditor/#api-reference)）。よく使うのは
 `[data-disabled]` と `[data-readonly]` です。
 
 それ自体がコントロールである要素（`Knob`、`NumberInput.InputField`、ステッパー、
@@ -98,38 +98,17 @@ prop、スタイルシート、inline style は同じ値を指定する3つの�
 propへ渡した数値はpxとして扱われます。それ以外はそのまま書き込まれるため、
 `'3rem'`、`'100%'`、`'auto'` も使用できます。
 
-| コンポーネント | プロパティ |
-| --- | --- |
-| `Knob` | `--knob-size` |
-| `Slider.Track` | `--length`, `--thickness`, `--active`, `--inactive` |
-| `Slider.Thumb` | `--thumb-size`（`Slider`に指定）、`--color` |
-| `Slider.Marks` | `--gap` |
-| `Slider.MarksOption` | `--thickness`, `--length`, `--gap`, `--label-width` |
-| `XYPad.Area` | `--width`, `--height`, `--min-width`, `--min-height`, `--color` |
-| `XYPad.Thumb` | `--thumb-size`（`XYPad`に指定）、`--color` |
-| `PointsEditor` | `--width`, `--height` |
-| `PointsEditor.Point` | `--width`, `--height`, `--color` |
-| `PointsEditor.SelectionBox` | `--color` |
-| `Piano` | `--height`と、下記テーマの鍵盤ごとの色 |
+どのパートがどのプロパティを持つかは、それぞれのページの **API リファレンス** に
+載せています（[Knob](/docs/components/Knob/#api-reference)、
+[Slider](/docs/components/Slider/#api-reference)、
+[XYPad](/docs/components/XYPad/#api-reference)、
+[NumberInput](/docs/components/NumberInput/#api-reference)、
+[Piano](/docs/components/Piano/#api-reference)、
+[PointsEditor](/docs/components/PointsEditor/#api-reference)）。
 
-### `--percent`とfillの描画
-
-`Slider.Track` は現在値の位置を`--percent`でも公開します。CSSだけでは算出できない
-唯一の値であり、コンポーネント自身がfillを描画しない理由でもあります。fillは
-パッケージが描く要素ではなく、テーマのルールです。
-
-```css
-.track {
-  background: linear-gradient(
-    var(--axis),
-    var(--active) var(--percent),
-    var(--inactive) var(--percent)
-  );
-}
-```
-
-このルールを置き換えれば、別の色、画像、値に応じて埋まる目盛りなど、任意のtrackを
-描画できます。
+テーマはその上に自分の変数を足します。下のテーマには `--thumb-size`、track の
+`--axis`、鍵盤の種類ごとの色があります。これらはテーマが読むためにあるもので、
+名前を決めるのもテーマの側です。
 
 ## 📋このサイトで使っているテーマ
 
@@ -193,21 +172,14 @@ propへ渡した数値はpxとして扱われます。それ以外はそのま�
 
 <Tabs>
   <TabItem value="CSS Modules" default>
-    <Tabs>
-      <TabItem value="index.tsx" default>
-        <CodeBlock
-          jsx
-          live
-          expand
-          showCode
-          sourcePath="examples/tutorials/styling/css-module.tsx"
-          externalFiles={{'src/my-knob.module.css': myKnobCss}}
-        >{cssModule}</CodeBlock>
-      </TabItem>
-      <TabItem value="my-knob.module.css">
-        <CodeBlock language='css'>{myKnobCss}</CodeBlock>
-      </TabItem>
-    </Tabs>
+    <CodeBlock
+      jsx
+      live
+      expand
+      showCode
+      sourcePath="examples/tutorials/styling/css-module.tsx"
+      externalFiles={{'src/my-knob.module.css': myKnobCss}}
+    >{cssModule}</CodeBlock>
   </TabItem>
   <TabItem value="Tailwind">
     <CodeBlock

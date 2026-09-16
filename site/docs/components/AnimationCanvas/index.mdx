@@ -1,4 +1,5 @@
 import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
 import GitHubLink from '@site/src/components/GitHubLink'
 
 import basic from '!!raw-loader!@site/examples/components/animation-canvas/basic'
@@ -12,6 +13,13 @@ A simple animatable canvas with `requestAnimationFrame()`
 <GitHubLink
   path='packages/react/src/components/AnimationCanvas/index.tsx'
 />
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/animation-canvas/basic.tsx'
+>{basic}</CodeBlock>
 
 ## Import
 
@@ -27,25 +35,34 @@ import { AnimationCanvas } from '@tremolo-ui/react'
 - Observe the parent element's dimensions.
 - Simple ticker and timer
 
-## API
+## API Reference {#api-reference}
 
-ref: [AnimationCanvasProps](/docs/api/react/types/AnimationCanvasProps/)
+`AnimationCanvas` renders a `<canvas>` and takes its attributes, such as
+`className` and `style`. A ref reaches the `<canvas>`.
 
-### [Fixed](/docs/api/react/interfaces/AnimationCanvasFixedProps/) vs [Resizable](/docs/api/react/interfaces/AnimationCanvasResizableProps/)
+<PropsTable of="AnimationCanvasCommonProps" />
+
+### Fixed vs Resizable
 
 A canvas is fixed by default: `width` and `height` set its size in CSS pixels.
 With `resizable` it follows the size of its parent element instead, so the
 parent needs a size of its own. The two are exclusive, and passing `width` or
 `height` together with `resizable` is a type error.
 
+#### Fixed
+
+<PropsTable of="AnimationCanvasFixedProps" />
+
+#### Resizable
+
+<PropsTable of="AnimationCanvasResizableProps" />
 
 ### Reactive Canvas
 
 By default the canvas redraws on every animation frame. When the drawing is
-driven by state rather than by time, set
-[`animate={false}`](/docs/api/react/interfaces/AnimationCanvasCommonProps/#animate): the
-canvas then draws only when it has a reason to — when it mounts, when it is
-resized, and **when the component re-renders**.
+driven by state rather than by time, set `animate={false}`: the canvas then
+draws only when it has a reason to — when it mounts, when it is resized, and
+**when the component re-renders**.
 
 That last one is what makes `React.useState` work as the source of the
 drawing. Pass the new `draw` and the canvas repaints; there is nothing to
@@ -64,15 +81,6 @@ in `React.memo`, or holding `draw` in a `useCallback`, is not needed.
 
 
 ## Examples
-
-### Basic
-
-<CodeBlock
-  jsx
-  live
-  showCode
-  sourcePath='examples/components/animation-canvas/basic.tsx'
->{basic}</CodeBlock>
 
 ### Reactive
 

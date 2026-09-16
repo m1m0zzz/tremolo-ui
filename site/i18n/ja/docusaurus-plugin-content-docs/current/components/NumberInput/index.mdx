@@ -1,0 +1,156 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/components/number-input/basic'
+import unit from '!!raw-loader!@site/examples/components/number-input/unit'
+
+# NumberInput
+
+数値の入力に役立つ機能を持った入力欄。
+
+<GitHubLink
+  path='packages/react/src/components/NumberInput/index.tsx'
+/>
+<StyleGitHubLink
+  path='shared/css/NumberInput.module.css'
+/>
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/number-input/basic.tsx'
+>{basic}</CodeBlock>
+
+## インポート {#import}
+
+```jsx
+import { NumberInput } from '@tremolo-ui/react'
+```
+
+## API リファレンス {#api-reference}
+
+各パートには、そのパート独自の props を載せています。これに加えて、描画する要素の属性（`className` や `style` など）も受け取ります。
+
+状態は data 属性として要素に乗っているので、セレクタ 1 つで届きます（[スタイリング](/docs/tutorials/styling)を参照）。属性はその状態が on の間だけ付きます。
+
+### Root
+
+値と、その書式・読み取り・ステップの仕方を持ちます。各パートの振る舞いはここで決めます。
+
+<PropsTable of="NumberInputProps" />
+
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-disabled]` | `disabled` のときに付きます |
+| `[data-readonly]` | `readonly` のときに付きます |
+
+### InputField
+
+テキストの入力欄で、値を打ち込める唯一の場所。これ自体がコントロールで、フォーカスを受け取り ARIA を持ちます。
+
+独自の props は無く、`<input>` の属性を受け取ります。フォーカス・Enter・矢印キーでの振る舞いは `NumberInput.Root` で決めます（`selectOnFocus`、`unformatOnFocus`、`keepCaretOnStep`、`blurOnEnter`）。
+
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-disabled]` | `disabled` のときに付きます |
+| `[data-readonly]` | `readonly` のときに付きます |
+| `[data-out-of-range]` | 値が `min` / `max` の範囲外にある間に付きます |
+
+### Stepper
+
+ステッパーを入れる領域で、それ自体がドラッグのハンドルでもあります。上下にドラッグすると、`drag` ピクセルごとに値が 1 `step` 動きます。
+
+<PropsTable of="NumberInputStepperProps" />
+
+### IncrementStepper / DecrementStepper
+
+押している間繰り返しながら、値を 1 `step` 上げる / 下げるボタン。2 つは同じ props を取ります。
+
+<PropsTable of="NumberInputIncrementStepperProps" />
+
+| カスタムプロパティ | 読むもの | 決めるもの |
+| --- | --- | --- |
+| `--stepper-icon-size` | コンポーネント | 既定の矢印の大きさ。自分の CSS で指定します（`children` を渡した場合の大きさは自分で決めます）。 |
+
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-disabled]` | `disabled` のとき、または値が既に `max`（increment）/ `min`（decrement）にあるときに付きます |
+| `[data-readonly]` | `readonly` のときに付きます |
+
+## 例 {#examples}
+
+### 単位 {#units}
+
+入力欄は `format(value)` を表示し、`parse` で読み戻します。2 つは噛み合っている必要があるので、`unitFormat` は両方を一度に作り、組にして展開します。
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/number-input/unit.tsx'
+>{unit}</CodeBlock>
+
+`unitFormat` は値の大きさから SI 接頭辞を選びます。`1234` は `1.23kHz`、`0.0005` は `500µHz` と表示され、`0` は基本単位のままです。読み戻すときは `µ`・`μ`・`u` をどれもマイクロとして読みます。キーボードで打てるのは最後の 1 つだけだからです。
+
+それが望む形でない場合のために、オプションが 2 つあります。
+
+- `prefixes: false` は数字に手を付けず、単位記号を書いたとおりに付け足します。dB、%、セント、半音のような SI の量でないものに使います。dB に接頭辞を付けるのは珍しいどころか誤りです。`d` はデシなので、`-6dB` が -0.6B と読まれてしまいます。
+- `base` は、持っている値が既にどの接頭辞の単位かを指定します。ミリ秒で値を持つコントロールなら `unitFormat('s', { base: 'm' })` で、1500 は `1.5s` と表示され、`parse` は 1500 を返します。
+
+#### 表示で見せられるもの {#what-the-display-can-show}
+
+丸めた表示も細かい `step` も、それぞれ単独なら問題無く、互いに照らし合わせることもしません。`format` はいくら丸めても構いません。値は自分の精度を保ち、`unformatOnFocus` を使えばクリックしたときに素の数字が入力欄に出ます。
+
+避けたいのは、キーを押しても変化がまったく見えないほど粗い表示です。秒の値を小数 2 桁で表示すると 1 ミリ秒のステップは見えず、入力欄は壊れているように見えます。開発ビルドでは、それが起きたときに警告を出します:
+
+```
+[tremolo-ui] NumberInput: `keyboard` moves the value, but `format` shows the
+same text before and after, everywhere in the range. The display is too coarse
+for it to be seen.
+```
+
+`keyboard` や `wheel` の量が `step` より細かく、押すたびに元の位置へ丸め戻されてしまう場合も、同じ警告が出ます。本番ビルドには、検査もメッセージも含まれません。
+
+`format` と `parse` は普通の props なので、この形に合わない単位は自分で書けます。`parse` は読めないテキストに対して `NaN` を返してください。そうすると入力欄は、誰も打っていない数字を確定する代わりに、元の値を保ちます。
+
+### 書式付きの値を編集する {#editing-a-formatted-value}
+
+`format` はレンダーのたびに走るので、`1.23kHz` と表示している入力欄は、クリックしても `1.23kHz` のままです。これを編集するには、全体を打ち直すか、単位の文字列の中にキャレットを置くことになります。
+
+`NumberInput.Root` の `unformatOnFocus` は、入力欄にフォーカスがある間は書式を外し、代わりに素の値を表示します。
+
+```tsx
+<NumberInput.Root {...unitFormat('Hz', { digits: 2 })} value={1230} unformatOnFocus …>
+  <NumberInput.InputField />
+</NumberInput.Root>
+```
+
+```
+not focused   1.23kHz
+focused       1230
+```
+
+**表示されるのは値で、書式付きのテキストの中にある数字ではありません。**書式が桁を変える場合、この 2 つは食い違います。`1.23` を編集用に出すと 1.23 と読み戻され、1000 倍ずれてしまいます。
+
+丸めた表示が値に漏れなくなるのも、同じ理由です。`digits: 0` の入力欄は 1.6 という値を `2Hz` と表示しますが、フォーカスすると `1.6` を出すので、編集して確定しても値が 2 に丸められることはありません。
+
+`selectOnFocus` も効き、選択範囲は画面に出たテキストに対して測ります。書式を外していれば、テキスト全体が数字なので、`'number'` と `'all'` は同じことになります。
+
+どちらの props も既定では off なので、指定しない限り何も変わりません。
+
+### 桁をステップする {#stepping-a-digit}
+
+矢印キーは `value` 全体を差し替え、値を差し替えられた制御された `<input>` はキャレットを末尾に落とします。そのため押し続けると、2 回目以降は必ず最後の桁に効きます。
+
+`keepCaretOnStep` はキャレットを元に戻します。
+
+```tsx
+<NumberInput.Root value={value} keepCaretOnStep …>
+  <NumberInput.InputField />
+</NumberInput.Root>
+```
+
+位置はどちらかの端からではなく**小数点から**測るので、数字の桁数が変わってもずれません。`9` と `.9` の間にあったキャレットは、`10` と `.0` の間に来ます。先頭から測っていたら、桁が 1 つ増えたときに違う列へずれていたところです。
+
+戻すのはキャレットだけです。どの桁にあってもステップの大きさは変わりません。それを決めるのは `keyboard` です。既定では off です。

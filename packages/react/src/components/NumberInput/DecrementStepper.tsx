@@ -6,7 +6,8 @@ import {
   StepperButtonProps,
 } from './StepperButton'
 
-export type NumberInputDecrementStepperProps = StepperButtonProps
+// An interface rather than an alias; see `NumberInputIncrementStepperProps`.
+export interface NumberInputDecrementStepperProps extends StepperButtonProps {}
 
 /** Lowers the value by one `step`, repeating while held. */
 export function DecrementStepper(

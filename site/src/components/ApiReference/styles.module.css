@@ -1,0 +1,27 @@
+.table {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.name {
+  white-space: nowrap;
+}
+
+.required {
+  margin-left: 0.25em;
+  color: var(--ifm-color-danger);
+  font-size: 0.75em;
+}
+
+.info {
+  margin-left: 0.35em;
+}
+
+/* A long object type would otherwise stretch the table past the page. */
+.type {
+  word-break: break-word;
+}
+
+.more {
+  font-size: 0.9em;
+}

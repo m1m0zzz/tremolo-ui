@@ -15,8 +15,9 @@ import { toXY, useXYPadContext, type XYInput } from './context'
 
 export interface XYPadThumbProps {
   /**
-   * Size comes from the `--thumb-size` CSS variable on `XYPad.Root`, so that
-   * the root can reserve the matching amount of space around the area.
+   * Sets `--color`, for the theme to colour the thumb with. The size is not
+   * set here but by `--thumb-size` on `XYPad.Root`, so that the root can leave
+   * the matching room around the area.
    */
   color?: string
 
@@ -30,14 +31,19 @@ export interface XYPadThumbProps {
   children?: ReactNode
 
   /**
-   * The accessible name of each axis. There are two range inputs inside the
-   * thumb, so this takes one name per axis; a single string names them both,
-   * which is rarely what you want.
+   * The accessible name of each axis, as `[x, y]`. There are two range inputs
+   * inside the thumb, so each takes a name of its own; a single string names
+   * them both, which is rarely what you want.
    */
   'aria-label'?: XYInput<AriaAttributes['aria-label']>
+  /** The ids of what labels each axis, as `[x, y]` or one for both. */
   'aria-labelledby'?: XYInput<AriaAttributes['aria-labelledby']>
+  /** The ids of what describes each axis, as `[x, y]` or one for both. */
   'aria-describedby'?: XYInput<AriaAttributes['aria-describedby']>
-  /** What the value of each axis means, when the number does not say it. */
+  /**
+   * What the value of each axis means, when the number does not say it, as
+   * `[x, y]` or one for both.
+   */
   'aria-valuetext'?: XYInput<AriaAttributes['aria-valuetext']>
 }
 
@@ -104,8 +110,8 @@ export const Thumb = /* @__PURE__ */ forwardRef<XYPadThumbMethods, Props>(
     return (
       <div
         className={className}
-        data-disabled={disabled || undefined}
-        data-readonly={readonly || undefined}
+        data-disabled={disabled ? '' : undefined}
+        data-readonly={readonly ? '' : undefined}
         {...props}
         style={{
           ...{ '--color': color },

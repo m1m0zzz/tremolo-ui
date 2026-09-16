@@ -47,13 +47,23 @@ const defaultExternalStyles: XYPadProps['externalStyles'] = {
  * value applies to both axes.
  */
 export interface XYPadProps {
+  /** The current value as `[x, y]`. The pad shows only this, so update it from `onChange`. */
   value: XY<number>
+  /** The value at the start of each axis, as `[x, y]` or one number for both. */
   min: XYInput<number>
+  /** The value at the end of each axis, as `[x, y]` or one number for both. */
   max: XYInput<number>
 
+  /**
+   * Granularity of each axis, as `[x, y]` or one number for both. A drag, the
+   * wheel and the arrow keys snap the value to multiples of it.
+   *
+   * @default 1
+   */
   step?: XYInput<number>
   /**
-   * How the value of each axis is distributed across the travel.
+   * How the value of each axis is distributed across the travel, as `[x, y]`
+   * or one scale for both.
    *
    * Pick one of the scales from `@tremolo-ui/functions`: `linearScale`,
    * `exponentialScale`, `curveScale(n)`, `symmetricSkewScale(n)`, or
@@ -62,12 +72,25 @@ export interface XYPadProps {
    * @default linearScale
    */
   scale?: XYInput<Scale>
+  /**
+   * Grow an axis the other way, as `[x, y]` or one for both. By default x grows
+   * rightwards and y downwards. The arrow keys follow the direction on screen.
+   *
+   * @default false
+   */
   reverse?: XYInput<boolean>
 
   /**
-   * wheel control option. Scrolling sideways moves x, which is what a
-   * browser turns shift+wheel into.
-   * If null, no event will be triggered
+   * How much one notch of the wheel moves the value. It only acts while the
+   * focus is inside, so that scrolling the page past the pad leaves it alone.
+   * Scrolling sideways, or with shift held, moves x; otherwise it moves y.
+   *
+   * `['raw', n]` moves the value by `n`, and `['normalized', n]` by `n` of the
+   * range of that axis. The result is snapped to `step`, except for an amount
+   * set on a modifier key (`{ default: …, alt: … }`). `null` turns the wheel
+   * off.
+   *
+   * @default ['raw', 1]
    */
   wheel?: ModifierValue<InputEventOption> | null
   /**
@@ -89,17 +112,28 @@ export interface XYPadProps {
   dragSensitivity?: ModifierValue<number>
 
   /**
-   * How much one arrow key press moves the value.
+   * How much one arrow key press moves the value. Left and right move x, up
+   * and down move y.
    *
-   * Shift moves a tenth of a step by default. Name a modifier to change that,
-   * or pass a bare `['raw', 1]` to use no modifier at all. A modifier amount
-   * is not snapped to `step`.
+   * `['raw', n]` moves the value by `n`, and `['normalized', n]` by `n` of the
+   * range of that axis. The result is snapped to `step`, except for an amount
+   * set on a modifier key, which is what lets shift move off the grid. `null`
+   * turns the arrow keys off.
    *
-   * If null, no event will be triggered
+   * The default moves by 1, and by 0.1 with shift. With a `step` above 1, raise
+   * the amount to match: 1 would round straight back to where it started, and
+   * a development build warns about it.
+   *
+   * @default { default: ['raw', 1], shift: ['raw', 0.1] }
    */
   keyboard?: ModifierValue<InputEventOption> | null
 
-  /** CSS cursor applied while dragging. */
+  /**
+   * The cursor to show while dragging. It is set on the dragged element, so it
+   * stays while the pointer is outside the pad.
+   *
+   * @default { cursor: 'pointer' }
+   */
   externalStyles?: {
     cursor?: CSSProperties['cursor']
   }
@@ -115,8 +149,11 @@ export interface XYPadProps {
    */
   readonly?: boolean
 
+  /** Called with the new value when a drag, the wheel or an arrow key moves it. */
   onChange?: (value: XY<number>) => void
+  /** Called when a drag starts, with the value where the area was pressed. */
   onDragStart?: (value: XY<number>) => void
+  /** Called when the drag ends, with the value it ended on. */
   onDragEnd?: (value: XY<number>) => void
 
   /**
@@ -374,8 +411,8 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
           ref={rootRefCallback}
           role="group"
           tabIndex={-1}
-          data-disabled={disabled || undefined}
-          data-readonly={readonly || undefined}
+          data-disabled={disabled ? '' : undefined}
+          data-readonly={readonly ? '' : undefined}
           style={style}
           onPointerDown={onPointerDown}
           onKeyDown={(event) => {

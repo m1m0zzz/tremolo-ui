@@ -15,8 +15,9 @@ import { useSliderContext } from './context'
 
 export interface SliderThumbProps {
   /**
-   * Size comes from the `--thumb-size` CSS variable on `Slider.Root`, so that
-   * the root can reserve the matching amount of space around the track.
+   * Sets `--color`, for the theme to colour the thumb with. The size is not
+   * set here but by `--thumb-size` on `Slider.Root`, so that the root can
+   * leave the matching room around the track.
    */
   color?: string
 
@@ -90,8 +91,8 @@ export const Thumb = /* @__PURE__ */ forwardRef<SliderThumbMethods, Props>(
     return (
       <div
         className={className}
-        data-disabled={disabled || undefined}
-        data-readonly={readonly || undefined}
+        data-disabled={disabled ? '' : undefined}
+        data-readonly={readonly ? '' : undefined}
         {...props}
         style={{
           ...{ '--color': color },

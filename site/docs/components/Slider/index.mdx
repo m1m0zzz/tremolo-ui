@@ -1,4 +1,5 @@
 import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
 import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/components/slider/basic'
 
@@ -13,32 +14,124 @@ Customizable slider component.
   path='shared/css/Slider.module.css'
 />
 
-## Import
-
-```jsx
-import { Slider } from '@tremolo-ui/react'
-```
-
-## Data attributes
-
-State is on the element as an attribute, so it is a selector away — see
-[Styling](/docs/tutorials/styling). An attribute is only there while its
-state is on.
-
-| Attribute | Part | Present when |
-| --- | --- | --- |
-| `data-orientation="horizontal\|vertical"` | `Slider.Root`, `Slider.Track`, `Slider.Marks`, `Slider.MarksOption` and its mark | always; which way the slider runs |
-| `data-disabled` | `Slider.Root`, `Slider.Track`, `Slider.Thumb` | `disabled` is set |
-| `data-readonly` | `Slider.Root`, `Slider.Thumb` | `readonly` is set |
-| `data-flipped` | `Slider.Track` | the value grows from the far end (`vertical` or `reverse`, not both) |
-
-## Examples
-
-### Basic
-
 <CodeBlock
   jsx
   live
   showCode
   sourcePath='examples/components/slider/basic.tsx'
 >{basic}</CodeBlock>
+
+## Import
+
+```jsx
+import { Slider } from '@tremolo-ui/react'
+```
+
+## API Reference {#api-reference}
+
+Each part lists the props of its own. It also takes the attributes of the
+element it renders, such as `className` and `style`.
+
+State is on the element as a data attribute, so it is a selector away — see
+[Styling](/docs/tutorials/styling). An attribute is only there while its state
+is on.
+
+### Root
+
+Holds the value and the settings, and passes them to the parts inside.
+
+<PropsTable of="SliderProps" />
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-orientation]` | `"horizontal" \| "vertical"` |
+| `[data-disabled]` | Present when `disabled` is set |
+| `[data-readonly]` | Present when `readonly` is set |
+
+### Track
+
+The bar the value runs along. It sets `--percent` to where the value is, so
+the theme can fill the part below it.
+
+<PropsTable of="SliderTrackProps" />
+
+| Custom property | Written by | What it sets |
+| --- | --- | --- |
+| `--length` | `length` | How long the track is along the axis the slider runs. |
+| `--thickness` | `thickness` | How thick the track is across that axis. |
+| `--active` | `active` | Colour of the part from `min` to the value. |
+| `--inactive` | `inactive` | Colour of the rest of the track. |
+| `--percent` | the component | Where the value sits, as a percentage. |
+
+`--percent` is the one number CSS cannot work out on its own, and it is why the
+track draws nothing of its own: the fill is a rule in the theme rather than
+something the package paints for you.
+
+```css
+.track {
+  background: linear-gradient(
+    var(--axis),
+    var(--active) var(--percent),
+    var(--inactive) var(--percent)
+  );
+}
+```
+
+Replace that rule and the track can be anything — a second colour stop, an
+image, a dotted scale that fills in.
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-orientation]` | `"horizontal" \| "vertical"` |
+| `[data-disabled]` | Present when `disabled` is set |
+| `[data-flipped]` | Present when the value grows from the far end: `vertical` or `reverse`, but not both |
+
+### Thumb
+
+The handle. A visually hidden range input inside it takes the focus and
+carries the ARIA.
+
+<PropsTable of="SliderThumbProps" />
+
+| Custom property | Written by | What it sets |
+| --- | --- | --- |
+| `--color` | `color` | Colour of the thumb. |
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | Present when `disabled` is set |
+| `[data-readonly]` | Present when `readonly` is set |
+
+### Marks
+
+A row of marks along the track, built from `options` or from
+`Slider.MarksOption` children.
+
+<PropsTable of="SliderMarksProps" />
+
+| Custom property | Written by | What it sets |
+| --- | --- | --- |
+| `--gap` | `gap` | Space between the marks and the track. |
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-orientation]` | `"horizontal" \| "vertical"` |
+
+### MarksOption
+
+One mark and its label, placed at `value`.
+
+<PropsTable of="SliderMarksOptionProps" />
+
+| Custom property | Written by | What it sets |
+| --- | --- | --- |
+| `--thickness` | `thickness` | Thickness of the mark. |
+| `--length` | `length` | Length of the mark. |
+| `--gap` | `gap` | Space between the mark and the label. |
+| `--label-width` | `labelWidth` | Width of the label. |
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-orientation]` | `"horizontal" \| "vertical"` |
+
+The mark inside the option carries `[data-orientation]` too.

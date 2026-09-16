@@ -6,19 +6,38 @@ import { useCheckPlacement } from '../_util/Placement'
 
 import { useKnobContext, viewBoxSize } from './context'
 
-interface Props {
-  /** color */
+export interface KnobThumbProps {
+  /**
+   * Fill colour of the circle.
+   * @default 'currentColor'
+   */
   thumb?: string
-  /** color */
+  /**
+   * Colour of the line that points at the value.
+   * @default 'currentColor'
+   */
   thumbLine?: string
-  /** percent (0-100) */
+  /**
+   * Diameter of the circle, as a percentage of the knob.
+   * @default 84
+   */
   thumbSize?: number
-  /** percent (0-100) */
+  /**
+   * Thickness of the line, as a percentage of the knob.
+   * @default 6
+   */
   thumbLineWeight?: number
-  /** percent (0-100) */
+  /**
+   * How far down the line reaches, as a percentage of the knob from its top.
+   * The line starts at the edge of the circle.
+   * @default 35
+   */
   thumbLineLength?: number
 
-  /** The line that points at the value, inside the thumb. */
+  /**
+   * Classes for what the thumb draws inside itself: `thumbLine` is the line
+   * that points at the value.
+   */
   classes?: {
     thumbLine?: string
   }
@@ -35,7 +54,7 @@ export function Thumb({
   classes,
 
   ...props
-}: Props & Omit<SVGProps<SVGSVGElement>, 'd' | keyof Props>) {
+}: KnobThumbProps & Omit<SVGProps<SVGSVGElement>, 'd' | keyof KnobThumbProps>) {
   useCheckPlacement('Knob.Thumb', 'Knob.SVGRoot')
 
   const angleRange = useKnobContext((s) => s.angleRange)

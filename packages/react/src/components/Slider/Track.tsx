@@ -22,9 +22,9 @@ export interface SliderTrackProps {
   /** How thick the track is across that axis. Sets `--thickness`. */
   thickness?: number | string
 
-  /** Colour of the part below the value. Sets `--active`. */
+  /** Colour of the part from `min` to the value. Sets `--active`. */
   active?: string
-  /** Colour of the part above it. Sets `--inactive`. */
+  /** Colour of the rest of the track. Sets `--inactive`. */
   inactive?: string
 
   className?: string
@@ -61,11 +61,11 @@ export const Track = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       <div
         ref={composedRef}
         className={className}
-        data-disabled={disabled || undefined}
+        data-disabled={disabled ? '' : undefined}
         data-orientation={vertical ? 'vertical' : 'horizontal'}
         // Which end the value grows from. `percent` is already the position on
         // screen, so this only says which side of it is the filled one.
-        data-flipped={xor(vertical, reverse) || undefined}
+        data-flipped={xor(vertical, reverse) ? '' : undefined}
         style={
           {
             '--active': active,

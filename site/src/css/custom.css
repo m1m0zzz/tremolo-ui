@@ -132,3 +132,73 @@ html[data-theme='dark'] .navbar.navbar-sidebar--show {
   margin: 0 0.2em 0 0.1em;
   vertical-align: -0.1em;
 }
+
+/*
+ * Tables read as one panel: a rounded outline, the head as the only shaded
+ * row, and no stripes below it.
+ *
+ * Infima lays a table out as a scrolling block, which shrinks it to its
+ * content. `display: table` fills the column instead, and a table too wide for
+ * it wraps its cells rather than scrolling sideways.
+ */
+table {
+  display: table;
+  min-width: 100%;
+  /* A radius follows the outline only while the borders are kept apart. */
+  border-collapse: separate;
+  border-spacing: 0;
+  border: var(--ifm-table-border-width) solid var(--ifm-table-border-color);
+  border-radius: var(--ifm-global-radius);
+}
+
+/*
+ * One line between two cells rather than two: each cell draws the line to its
+ * right and below it, and the table itself draws the outside. Row borders are
+ * not painted once the borders are separated, so the cells carry them all.
+ */
+table th,
+table td {
+  border: 0;
+  border-bottom: var(--ifm-table-border-width) solid
+    var(--ifm-table-border-color);
+}
+
+table th:last-child,
+table td:last-child {
+  border-right: 0;
+}
+
+table tr:last-child td {
+  border-bottom: 0;
+}
+
+/* The rows keep the page's own background, including every second one. */
+table tr,
+table tr:nth-child(2n) {
+  background-color: transparent;
+}
+
+/* The head keeps the shading, and the heavier line Infima drew under it. */
+table thead {
+  background-color: transparent;
+}
+
+table thead th {
+  background-color: var(--ifm-table-stripe-background);
+  border-bottom-width: 1px;
+}
+
+/* A browser centres `th` by default, which reads as a different column to the
+   cells below it. */
+table th {
+  text-align: left;
+}
+
+/* The shading would otherwise square off the corners it sits in. */
+table thead tr:first-child th:first-child {
+  border-top-left-radius: var(--ifm-global-radius);
+}
+
+table thead tr:first-child th:last-child {
+  border-top-right-radius: var(--ifm-global-radius);
+}

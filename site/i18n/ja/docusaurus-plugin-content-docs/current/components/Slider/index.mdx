@@ -1,0 +1,130 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/components/slider/basic'
+
+# Slider
+
+カスタマイズできるスライダーのコンポーネント。
+
+<GitHubLink
+  path='packages/react/src/components/Slider/index.tsx'
+/>
+<StyleGitHubLink
+  path='shared/css/Slider.module.css'
+/>
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/slider/basic.tsx'
+>{basic}</CodeBlock>
+
+## インポート {#import}
+
+```jsx
+import { Slider } from '@tremolo-ui/react'
+```
+
+## API リファレンス {#api-reference}
+
+各パートには、そのパート独自の props を載せています。これに加えて、描画する要素の属性（`className` や `style` など）も受け取ります。
+
+状態は data 属性として要素に乗っているので、セレクタ 1 つで届きます（[スタイリング](/docs/tutorials/styling)を参照）。属性はその状態が on の間だけ付きます。
+
+### Root
+
+値と設定を持ち、中のパートに渡します。
+
+<PropsTable of="SliderProps" />
+
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-orientation]` | `"horizontal" \| "vertical"` |
+| `[data-disabled]` | `disabled` のときに付きます |
+| `[data-readonly]` | `readonly` のときに付きます |
+
+### Track
+
+値が動くバー。値の位置を `--percent` に書くので、テーマは値より下の部分を塗れます。
+
+<PropsTable of="SliderTrackProps" />
+
+| カスタムプロパティ | 書き込む prop | 決めるもの |
+| --- | --- | --- |
+| `--length` | `length` | スライダーの向きに沿ったトラックの長さ。 |
+| `--thickness` | `thickness` | それと直交する方向のトラックの太さ。 |
+| `--active` | `active` | `min` から値までの部分の色。 |
+| `--inactive` | `inactive` | トラックの残りの部分の色。 |
+| `--percent` | コンポーネント | 値の位置（パーセント）。 |
+
+`--percent` は CSS だけでは算出できない唯一の値で、トラックが自分では何も塗らない
+理由でもあります。塗りはパッケージが描くものではなく、テーマのルールです。
+
+```css
+.track {
+  background: linear-gradient(
+    var(--axis),
+    var(--active) var(--percent),
+    var(--inactive) var(--percent)
+  );
+}
+```
+
+このルールを置き換えれば、色を足す、画像を敷く、値に応じて埋まる目盛りにするなど、
+トラックは何にでもできます。
+
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-orientation]` | `"horizontal" \| "vertical"` |
+| `[data-disabled]` | `disabled` のときに付きます |
+| `[data-flipped]` | 値が向こう側の端から伸びるとき（`vertical` と `reverse` のどちらか一方）に付きます |
+
+### Thumb
+
+つまみ。中にある視覚的に隠れた range input が、フォーカスを受け取り ARIA を持ちます。
+
+<PropsTable of="SliderThumbProps" />
+
+| カスタムプロパティ | 書き込む prop | 決めるもの |
+| --- | --- | --- |
+| `--color` | `color` | つまみの色。 |
+
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-disabled]` | `disabled` のときに付きます |
+| `[data-readonly]` | `readonly` のときに付きます |
+
+### Marks
+
+トラックに沿って並ぶ目盛り。`options` か、子の `Slider.MarksOption` から作ります。
+
+<PropsTable of="SliderMarksProps" />
+
+| カスタムプロパティ | 書き込む prop | 決めるもの |
+| --- | --- | --- |
+| `--gap` | `gap` | 目盛りとトラックの間隔。 |
+
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-orientation]` | `"horizontal" \| "vertical"` |
+
+### MarksOption
+
+`value` の位置に置く、1 つの目盛りとそのラベル。
+
+<PropsTable of="SliderMarksOptionProps" />
+
+| カスタムプロパティ | 書き込む prop | 決めるもの |
+| --- | --- | --- |
+| `--thickness` | `thickness` | 目盛りの太さ。 |
+| `--length` | `length` | 目盛りの長さ。 |
+| `--gap` | `gap` | 目盛りとラベルの間隔。 |
+| `--label-width` | `labelWidth` | ラベルの幅。 |
+
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-orientation]` | `"horizontal" \| "vertical"` |
+
+中の目盛りにも `[data-orientation]` が付きます。

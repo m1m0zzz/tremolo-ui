@@ -1,4 +1,5 @@
 import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
 import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/components/points-editor/basic'
 
@@ -18,29 +19,6 @@ selected and moved together, with ctrl / meta or by dragging a
   path='shared/css/PointsEditor.module.css'
 />
 
-## Import
-
-```jsx
-import { PointsEditor } from '@tremolo-ui/react'
-```
-
-## Data attributes
-
-State is on the element as an attribute, so it is a selector away — see
-[Styling](/docs/tutorials/styling). An attribute is only there while its
-state is on.
-
-| Attribute | Part | Present when |
-| --- | --- | --- |
-| `data-disabled` | `PointsEditor.Root`, `PointsEditor.Point` | `disabled` is set |
-| `data-readonly` | `PointsEditor.Root`, `PointsEditor.Point` | `readonly` is set |
-| `data-dragging` | `PointsEditor.Point` | the point is being dragged |
-| `data-selected` | `PointsEditor.Point` | the point is in the selection |
-
-## Examples
-
-### Basic
-
 Drag a point, or click one and use the arrow keys. The wheel moves the focused
 point from anywhere over the editor, and shift switches it to the x axis.
 
@@ -50,3 +28,74 @@ point from anywhere over the editor, and shift switches it to the x axis.
   showCode
   sourcePath='examples/components/points-editor/basic.tsx'
 >{basic}</CodeBlock>
+
+## Import
+
+```jsx
+import { PointsEditor } from '@tremolo-ui/react'
+```
+
+## API Reference {#api-reference}
+
+Each part lists the props of its own. It also takes the attributes of the
+element it renders, such as `className` and `style`.
+
+State is on the element as a data attribute, so it is a selector away — see
+[Styling](/docs/tutorials/styling). An attribute is only there while its state
+is on.
+
+### Root
+
+Holds the selection and the settings every point shares.
+
+<PropsTable of="PointsEditorProps" />
+
+| Custom property | Written by | What it sets |
+| --- | --- | --- |
+| `--width` | `width` | Width of the editor. |
+| `--height` | `height` | Height of the editor. |
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | Present when `disabled` is set |
+| `[data-readonly]` | Present when `readonly` is set |
+
+### Background
+
+Drawn behind the points.
+
+<PropsTable of="PointsEditorBackgroundProps" />
+
+### Container
+
+The area the points are placed in. A drag on its empty space draws a
+selection.
+
+<PropsTable of="PointsEditorContainerProps" />
+
+### Point
+
+One point, moved by dragging, the arrow keys or the wheel. Two visually hidden
+range inputs inside it, one per axis, take the focus and carry the ARIA.
+
+<PropsTable of="PointsEditorPointProps" />
+
+| Custom property | Written by | What it sets |
+| --- | --- | --- |
+| `--width` | `width`, `size` | Width of the point. |
+| `--height` | `height`, `size` | Height of the point. |
+| `--color` | `color` | Colour of the point. |
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | Present when `disabled` is set, on the point or on `Root` |
+| `[data-readonly]` | Present when `readonly` is set, on the point or on `Root` |
+| `[data-dragging]` | Present while the point is being dragged |
+| `[data-selected]` | Present while the point is in the selection |
+
+### SelectionBox
+
+The box a drag on empty space draws; the points it covers are selected. Nothing
+is rendered while no drag is running.
+
+<PropsTable of="PointsEditorSelectionBoxProps" />

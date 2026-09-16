@@ -62,10 +62,25 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - **`format: md` を front matter に入れるのが要点。** Docusaurus 3 の既定は `.md` も MDX として読むので、changesets が書いた文章に `<` や `{` が 1 つ紛れ込むだけでビルドが落ちる。生成物にだけ効かせられるので、サイト全体の `markdown.format` は触っていない
 - [x] `format` に一本化するときに、`units` / `digit` を使っている example / story / ドキュメントを全部書き換えた
 - [x] **テンプレートをモノレポに移す。** 別リポジトリ（`m1m0zzz/tremolo-ui-example-next-ts` / `m1m0zzz/tremolo-ui-example-vite-react-ts`）にあったものを、0.5.0 の API で書き直して `templates/` に入れた（決まりごとは `templates/README.md`）。破壊的変更のたびに追随を忘れる場所が増えるので、`templates/` としてこのリポジトリに入れ、**ドキュメントでは `degit` などで取り出す形をアナウンスする**（`npx degit m1m0zzz/tremolo-ui/templates/vite-react-ts`）。CI で少なくともビルドは通しておくと、破壊的変更の当たり判定になる
-- [ ] **複数のタブ（ファイル）を持てる Playground を作る。** 現状の `site/src/theme/Playground/` は 1 ファイルの live code が前提で、CSS Module のような 2 つ目のファイルは `externalFiles` で外部 Playground に書き出すときにしか渡らない。Playground の iframe 化（一時タスクリストの「検討中」）と一緒に検討する
+- [x] **複数のタブ（ファイル）を持てる Playground を作った。** `externalFiles` に渡したファイルが Playground のタブになる。1 つ目は今までどおり編集できる live code で、2 つ目以降は読み取り専用
+  - **読み取り専用なのは、プレビューがページの中で動いているから。** iframe にしないと決めたので、CSS Module をその場でコンパイルする仕組みが無い。見た目を試すなら Stackblitz / CodeSandbox へ送る（ファイルは元から渡している）
+  - タブ名はファイル名。1 つ目は例によらず `index.tsx` で、残りは import した名前のまま
+  - **例が `./<Name>.module.css` を import していたら、デモのテーマをタブに出す。** コンポーネントのページの例は Styling ページからコピーしたテーマに繋いであるので、その中身も読めるようにした。import 行から拾うので、ページ側に書き足すものは無い
+  - タブはヘッダーの左側に置き、幅が足りなければ折り返す。テーマは長いので、読み取り専用の表示には高さの上限を付けた
+  - **エディタは隠すだけでアンマウントしない。** タブを切り替えても、読者が打った内容が残る
+  - styling ページで手書きしていた `<Tabs>` は外した。Playground のタブが同じことをする
 - [x] **bug: styling ページの CSS Modules の部分**（`site/docs/tutorials/styling.mdx`）。例のノブが 0×0 で表示されていなかった。コンポーネントが書くのは `--knob-size` だけで、`width` / `height` はテーマ側が持つのに、例の `my-knob.module.css` にそれが無かった。ダークモードの `.dark` も `:global` が無く、module にリネームされて効いていなかった
 - [x] **各コンポーネントのページに `data-*` の説明を置く。** あわせて styling ページの `data-*` の一覧表（`🚦State`）は消し、各ページへのリンクにした
-- [ ] **API（props）の一部をコンポーネントのページへ移す。** typedoc の API ページは残したまま、主要な props の説明をコンポーネントのページでも読めるようにする
+- [x] **API（props）の一部をコンポーネントのページへ移す。** typedoc の API ページは残したまま、主要な props の説明をコンポーネントのページでも読めるようにする
+  - Radix Primitives に倣い、各ページに **API Reference** を置いた。パートごとに、props の表（`<PropsTable of="SliderProps" />`）と data 属性の表（値と説明）を並べる。以前の「Data attributes」はここに統合した
+  - **props の表は手で書かず、`site/scripts/api-props.mjs` が typedoc で JSDoc から作る。** 型・既定値・説明が実装とずれない。載せるのは独自の props だけで、`className` / `style` と、説明の無い `children` / `aria-*` は除く
+  - typedoc は export された型しか拾わないので、`Knob.SVGRoot` / `Knob.Thumb` の props 型を公開し、ステッパーの props 型をエイリアスから interface にした
+  - **コンポーネントのページを ja に翻訳した**（7 ページ）。props の説明の訳は `site/i18n/ja/api-props.json` に、英語の hash と一緒に持つ。英語が変わった訳は使わずに英語を出し、スクリプトが一覧を出す
+  - data 属性の表は型から作れないので手書きのまま
+  - **表に出すにあたって JSDoc を補強した。** 説明の無かった `value` / `min` / `max` / `step` / コールバックなどを埋め、`wheel` / `keyboard` / `externalStyles` / `step` / `angleRange` などに `@default` を足した
+    - **`'raw'` の量は値の単位で、step の単位ではない。** 「shift で 1 step の 10 分の 1」と書いていたが、`step` が 1 のときしか正しくない。既定の `['raw', 1]` は `step` が 1 より大きいと丸め戻されて動かない（開発ビルドは警告する）ので、そのことも書いた
+    - `SliderThumbProps.color` / `XYPadThumbProps.color` の説明が大きさの話だけで、色に触れていなかった
+    - `KnobThumbProps` の「color」「percent (0-100)」のような、何の色・何の割合か分からない説明を書き直した
 
 ## 5. 開発基盤とホスティング
 
@@ -105,7 +120,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - `AnimationCanvas` の props は `resizable` で切り替わる判別可能ユニオンにした（`AnimationCanvasFixedProps` / `AnimationCanvasResizableProps`）。以前はオーバーロードが 2 つあっても、どちらも `width` と `relativeSize` を同時に受け付けていて、`width` は黙って無視されていた
   - `reduceFlickering` は `AnimationCanvasCommonProps` に移した。コアでは固定サイズで `width` / `height` が変わったときにも効いていて、relative 側だけに置くのは実装と合っていなかった
 
-- [ ] **`packages/react/AGENTS.md` の規約とずれている既存コードを揃える。** 規約を書き起こしたときに見つかったもの。規約の側を直すか、コードを揃えるかも含めて決める
+- [x] **`packages/react/AGENTS.md` の規約とずれている既存コードを揃える。** 規約を書き起こしたときに見つかったもの。規約の側を直すか、コードを揃えるかも含めて決める
   - [x] **公開する型がコンポーネント名で始まっていない。** 破壊的変更。`src/index.ts` に並べると、どのコンポーネントの型か分からない → **すべて揃えて**
     - `AnimationCanvas`: `CommonProps` / `AbsoluteSizingProps` / `RelativeSizingProps`
     - `NumberInput`: `StepperProps` / `IncrementStepperProps` / `DecrementStepperProps`。`NumberInputFieldProps` はパート名が `InputField` なので、規約どおりなら `NumberInputInputFieldProps` になる
