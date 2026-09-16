@@ -15,11 +15,9 @@ import {
   InputEventOption,
   ModifierState,
   type ModifierValue,
-  linearScale,
-  selectInputEvent,
-  type Scale,
-  type ValueRange,
-} from '@tremolo-ui/functions'
+  selectModifier,
+} from '@tremolo-ui/dom'
+import { linearScale, type Scale, type ValueRange } from '@tremolo-ui/functions'
 
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useWheel } from '../../hooks/useWheel'
@@ -404,7 +402,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         option: ModifierValue<InputEventOption>,
         modifiers?: ModifierState,
       ) => {
-        const [mode] = selectInputEvent(option, modifiers).option
+        const [mode] = selectModifier(option, modifiers).value
         changeValue(
           applyDelta(
             value,

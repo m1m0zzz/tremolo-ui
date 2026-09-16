@@ -14,7 +14,6 @@ export {
 export {
   type Scale,
   type ValueRange,
-  applyDelta,
   curveScale,
   curveWithCenterValue,
   exponentialScale,
@@ -40,17 +39,6 @@ export {
   scaleNotes,
   whiteKeys,
 } from './midi'
-export {
-  type InputEventOption,
-  type Modifier,
-  type ModifierMap,
-  type ModifierState,
-  type ModifierValue,
-  type SelectedInputEvent,
-  mapModifier,
-  selectInputEvent,
-  selectModifier,
-} from './modifiers'
 export {
   type SIPrefix,
   type UnitFormatOptions,

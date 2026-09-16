@@ -1,12 +1,11 @@
 import { createContext, RefObject, useContext } from 'react'
 
-import type {
-  InputEventOption,
-  ModifierState,
-  ModifierValue,
-  Scale,
-  ValueRange,
-} from '@tremolo-ui/functions'
+import {
+  type InputEventOption,
+  type ModifierState,
+  type ModifierValue,
+} from '@tremolo-ui/dom'
+import { type Scale, type ValueRange } from '@tremolo-ui/functions'
 
 export type NumberInputContextValue = {
   value: number

@@ -12,19 +12,16 @@ import {
 } from 'react'
 
 import {
+  applyDelta,
   createSelectionBox,
+  type InputEventOption,
+  type ModifierState,
+  type ModifierValue,
   type SelectionBoxInstance,
   type SelectionBoxRect,
   type XY,
 } from '@tremolo-ui/dom'
-import {
-  applyDelta,
-  clamp,
-  type InputEventOption,
-  type ModifierState,
-  type ModifierValue,
-  toPrecision,
-} from '@tremolo-ui/functions'
+import { clamp, toPrecision } from '@tremolo-ui/functions'
 
 import { DEFAULT_DRAG_SENSITIVITY } from '../../input-event'
 import { cssLength } from '../_util/css-length'

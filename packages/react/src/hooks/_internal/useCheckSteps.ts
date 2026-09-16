@@ -2,12 +2,11 @@ import { useEffect } from 'react'
 
 import {
   applyDelta,
-  linearScale,
   type InputEventOption,
   type ModifierState,
   type ModifierValue,
-  type ValueRange,
-} from '@tremolo-ui/functions'
+} from '@tremolo-ui/dom'
+import { linearScale, type ValueRange } from '@tremolo-ui/functions'
 
 /** Positions probed across the travel. The ends are left out so that the
  * clamp at `min` and `max` cannot be mistaken for a press that does nothing. */

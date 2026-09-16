@@ -9,16 +9,15 @@ import React, {
   useRef,
 } from 'react'
 
-import type { AxisOptions, XY } from '@tremolo-ui/dom'
 import {
   applyDelta,
-  linearScale,
-  toFixed,
+  type AxisOptions,
   type InputEventOption,
   type ModifierValue,
   selectModifier,
-  type Scale,
-} from '@tremolo-ui/functions'
+  type XY,
+} from '@tremolo-ui/dom'
+import { linearScale, type Scale, toFixed } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
