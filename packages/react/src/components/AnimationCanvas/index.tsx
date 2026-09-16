@@ -13,6 +13,7 @@ import {
 } from '@tremolo-ui/dom'
 
 import { useComposedRefs } from '../../compose-refs'
+import { type WithCSSVariables } from '../../css-variables'
 
 export type InitFunction = (
   context: CanvasRenderingContext2D,
@@ -104,9 +105,11 @@ export type AnimationCanvasProps = AnimationCanvasCommonProps &
   (AnimationCanvasFixedProps | AnimationCanvasResizableProps)
 
 type Props = AnimationCanvasProps &
-  Omit<
-    ComponentPropsWithoutRef<'canvas'>,
-    keyof AnimationCanvasCommonProps | 'resizable' | 'width' | 'height'
+  WithCSSVariables<
+    Omit<
+      ComponentPropsWithoutRef<'canvas'>,
+      keyof AnimationCanvasCommonProps | 'resizable' | 'width' | 'height'
+    >
   >
 
 /**

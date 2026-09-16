@@ -18,6 +18,7 @@ import {
 } from '@tremolo-ui/dom'
 import { linearScale, type Scale, type ValueRange } from '@tremolo-ui/functions'
 
+import { type WithCSSVariables } from '../../css-variables'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useWheel } from '../../hooks/useWheel'
 import {
@@ -259,7 +260,9 @@ const defaultParse = (text: string) => {
 }
 
 type Props = NumberInputProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof NumberInputProps>
+  WithCSSVariables<
+    Omit<ComponentPropsWithoutRef<'div'>, keyof NumberInputProps>
+  >
 
 export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
   (

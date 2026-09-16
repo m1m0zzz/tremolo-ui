@@ -6,6 +6,7 @@ import {
   useRef,
 } from 'react'
 
+import { type WithCSSVariables } from '../../css-variables'
 import { useCheckPlacement } from '../_util/Placement'
 import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
@@ -42,7 +43,10 @@ export interface XYPadThumbMethods {
 }
 
 type Props = XYPadThumbProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadThumbProps>
+  WithCSSVariables<
+    Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadThumbProps>,
+    '--color' | '--translate'
+  >
 
 export const Thumb = /* @__PURE__ */ forwardRef<XYPadThumbMethods, Props>(
   function Thumb(

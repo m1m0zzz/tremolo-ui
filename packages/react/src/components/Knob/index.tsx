@@ -20,6 +20,7 @@ import {
 import { linearScale, type Scale, type ValueRange } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
+import { type WithCSSVariables } from '../../css-variables'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
@@ -206,7 +207,11 @@ export interface KnobMethods {
   blur: () => void
 }
 
-type Props = KnobProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KnobProps>
+type Props = KnobProps &
+  WithCSSVariables<
+    Omit<ComponentPropsWithoutRef<'div'>, keyof KnobProps>,
+    '--knob-size'
+  >
 
 /**
  * The wheel only acts while the focus is inside, so that scrolling a page past

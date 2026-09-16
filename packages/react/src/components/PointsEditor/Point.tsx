@@ -18,6 +18,7 @@ import {
 import { clamp } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
+import { type WithCSSVariables } from '../../css-variables'
 import { useDragValue } from '../../hooks/useDragValue'
 import { cssLength } from '../_util/css-length'
 import { useCheckPlacement } from '../_util/Placement'
@@ -139,7 +140,10 @@ export function Point<T extends PointBaseType>({
   onFocus,
   ...props
 }: PointsEditorPointProps<T> &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorPointProps<T>>) {
+  WithCSSVariables<
+    Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorPointProps<T>>,
+    '--width' | '--height' | '--color' | '--translate'
+  >) {
   const {
     containerRef,
     externalStyles,

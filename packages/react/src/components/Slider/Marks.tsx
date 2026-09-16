@@ -1,5 +1,6 @@
 import { ComponentPropsWithoutRef, CSSProperties } from 'react'
 
+import { type WithCSSVariables } from '../../css-variables'
 import { cssLength } from '../_util/css-length'
 import { Placement } from '../_util/Placement'
 import { xor } from '../_util/xor'
@@ -33,7 +34,10 @@ export function Marks({
   style,
   ...props
 }: SliderMarksProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof SliderMarksProps>) {
+  WithCSSVariables<
+    Omit<ComponentPropsWithoutRef<'div'>, keyof SliderMarksProps>,
+    '--gap'
+  >) {
   const min = useSliderContext((s) => s.min)
   const max = useSliderContext((s) => s.max)
   const step = useSliderContext((s) => s.step)

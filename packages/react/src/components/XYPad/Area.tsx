@@ -1,6 +1,7 @@
 import { ComponentPropsWithoutRef, CSSProperties, forwardRef } from 'react'
 
 import { useComposedRefs } from '../../compose-refs'
+import { type WithCSSVariables } from '../../css-variables'
 import { cssLength } from '../_util/css-length'
 import { Placement } from '../_util/Placement'
 
@@ -16,7 +17,10 @@ export interface XYPadAreaProps {
 }
 
 type Props = XYPadAreaProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadAreaProps>
+  WithCSSVariables<
+    Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadAreaProps>,
+    '--width' | '--height' | '--color'
+  >
 
 export const Area = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   function Area(

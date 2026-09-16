@@ -1,5 +1,6 @@
 import { SVGProps } from 'react'
 
+import { type WithCSSVariables } from '../../css-variables'
 import { useCheckPlacement } from '../_util/Placement'
 
 import { arcPath, arcRadius, useKnobContext } from './context'
@@ -9,7 +10,7 @@ export function ActiveLine({
   strokeWidth = 6,
   className,
   ...props
-}: Omit<SVGProps<SVGPathElement>, 'd'>) {
+}: WithCSSVariables<Omit<SVGProps<SVGPathElement>, 'd'>>) {
   useCheckPlacement('Knob.ActiveLine', 'Knob.SVGRoot')
 
   const r2 = useKnobContext((s) => s.r2)

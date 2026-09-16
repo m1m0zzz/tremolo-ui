@@ -23,6 +23,7 @@ import {
 } from '@tremolo-ui/dom'
 import { clamp, toPrecision } from '@tremolo-ui/functions'
 
+import { type WithCSSVariables } from '../../css-variables'
 import { DEFAULT_DRAG_SENSITIVITY } from '../../input-event'
 import { cssLength } from '../_util/css-length'
 
@@ -213,7 +214,10 @@ export interface PointsEditorProps {
 }
 
 type Props = PointsEditorProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorProps>
+  WithCSSVariables<
+    Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorProps>,
+    '--width' | '--height'
+  >
 
 export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   (

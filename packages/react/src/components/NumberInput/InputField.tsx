@@ -8,13 +8,13 @@ import {
 } from 'react'
 
 import { useComposedRefs } from '../../compose-refs'
+import { type WithCSSVariables } from '../../css-variables'
 
 import { useNumberInputContext } from './context'
 
 // The value belongs to `NumberInput.Root`, and the field is always text.
-type Props = Omit<
-  ComponentPropsWithoutRef<'input'>,
-  'type' | 'value' | 'defaultValue'
+type Props = WithCSSVariables<
+  Omit<ComponentPropsWithoutRef<'input'>, 'type' | 'value' | 'defaultValue'>
 >
 
 /** The leading number of the displayed text, whatever the format put around it. */

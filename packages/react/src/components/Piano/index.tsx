@@ -23,6 +23,7 @@ import {
 } from '@tremolo-ui/dom'
 import { isWhiteKey, noteKey } from '@tremolo-ui/functions'
 
+import { type WithCSSVariables } from '../../css-variables'
 import { useEventListener } from '../../hooks/useEventListener'
 import { cssLength } from '../_util/css-length'
 
@@ -49,21 +50,14 @@ function shortcutKey(event: KeyboardEvent) {
 }
 
 /**
- * `style` that also takes CSS custom properties, which is how a key's colours
- * are set: see `index.css` for the ones each key type reads.
- */
-export type CSSVariables = Record<`--${string}`, string | number | undefined>
-
-/**
  * What {@link PianoProps.keyProps} may return for one key.
  *
  * `data-*` attributes are spelled out because TypeScript only allows them on
  * JSX syntax, not on an object type, and selecting on one is the usual way to
  * mark a key out.
  */
-export type KeyAttributes = Omit<ComponentPropsWithoutRef<'div'>, 'style'> & {
-  style?: CSSProperties & CSSVariables
-} & Record<`data-${string}`, string | number | boolean | undefined>
+export type KeyAttributes = WithCSSVariables<ComponentPropsWithoutRef<'div'>> &
+  Record<`data-${string}`, string | number | boolean | undefined>
 
 /** What a key is, when {@link PianoProps.label} or `keyProps` is asked about it. */
 export interface KeyState {
@@ -161,8 +155,6 @@ export interface PianoProps {
    */
   height?: number | string
 
-  style?: CSSProperties & CSSVariables
-
   /**
    * What to draw inside a key. `''`, `null` and `undefined` leave it bare, so
    * a layout with gaps — {@link SHORTCUTS.HOME_ROW_NATURAL}, say — needs no
@@ -202,7 +194,10 @@ export interface PianoMethods {
 }
 
 type Props = PianoProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof PianoProps>
+  WithCSSVariables<
+    Omit<ComponentPropsWithoutRef<'div'>, keyof PianoProps>,
+    '--height'
+  >
 
 export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
   function Root(

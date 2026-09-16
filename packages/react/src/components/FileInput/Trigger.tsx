@@ -1,5 +1,7 @@
 import { ComponentPropsWithoutRef, forwardRef, ReactNode } from 'react'
 
+import { type WithCSSVariables } from '../../css-variables'
+
 import { useFileInputContext } from './context'
 
 export interface FileInputTriggerProps {
@@ -8,9 +10,11 @@ export interface FileInputTriggerProps {
 }
 
 type Props = FileInputTriggerProps &
-  Omit<
-    ComponentPropsWithoutRef<'label'>,
-    keyof FileInputTriggerProps | 'htmlFor'
+  WithCSSVariables<
+    Omit<
+      ComponentPropsWithoutRef<'label'>,
+      keyof FileInputTriggerProps | 'htmlFor'
+    >
   >
 
 /**

@@ -20,6 +20,7 @@ import {
 import { linearScale, type Scale, toFixed } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
+import { type WithCSSVariables } from '../../css-variables'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
@@ -172,7 +173,7 @@ export interface SliderMethods {
 }
 
 type Props = SliderProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof SliderProps>
+  WithCSSVariables<Omit<ComponentPropsWithoutRef<'div'>, keyof SliderProps>>
 
 /**
  * The wheel only acts while the focus is inside, so that scrolling a page past

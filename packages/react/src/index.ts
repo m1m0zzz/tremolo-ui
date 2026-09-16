@@ -38,7 +38,6 @@ export {
   type PianoMethods,
   type KeyState,
   type KeyAttributes,
-  type CSSVariables,
   type KeyboardShortcuts,
 } from './components/Piano'
 export {
@@ -75,6 +74,8 @@ export {
   type XY,
   type XYInput,
 } from './components/XYPad'
+
+export { type CSSVariables } from './css-variables'
 
 // hooks
 export { useAnimationFrame } from './hooks/useAnimationFrame'

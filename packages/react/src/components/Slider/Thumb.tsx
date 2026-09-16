@@ -5,6 +5,7 @@ import {
   useRef,
 } from 'react'
 
+import { type WithCSSVariables } from '../../css-variables'
 import { useCheckPlacement } from '../_util/Placement'
 import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
@@ -25,7 +26,10 @@ export interface SliderThumbMethods {
 }
 
 type Props = SliderThumbProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof SliderThumbProps>
+  WithCSSVariables<
+    Omit<ComponentPropsWithoutRef<'div'>, keyof SliderThumbProps>,
+    '--color' | '--translate'
+  >
 
 export const Thumb = /* @__PURE__ */ forwardRef<SliderThumbMethods, Props>(
   function Thumb(

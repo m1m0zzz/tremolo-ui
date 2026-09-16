@@ -1,6 +1,7 @@
 import { ComponentPropsWithoutRef, forwardRef, ReactNode } from 'react'
 
 import { useComposedRefs } from '../../compose-refs'
+import { type WithCSSVariables } from '../../css-variables'
 import { useDropZone } from '../../hooks/useDropZone'
 
 export interface DropZoneProps {
@@ -48,7 +49,7 @@ export interface DropZoneProps {
 }
 
 type Props = DropZoneProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof DropZoneProps>
+  WithCSSVariables<Omit<ComponentPropsWithoutRef<'div'>, keyof DropZoneProps>>
 
 /**
  * An area that takes files dropped onto it.

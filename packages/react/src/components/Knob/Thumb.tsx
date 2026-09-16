@@ -2,6 +2,7 @@ import { SVGProps } from 'react'
 
 import { clamp } from '@tremolo-ui/functions'
 
+import { type WithCSSVariables } from '../../css-variables'
 import { useCheckPlacement } from '../_util/Placement'
 
 import { useKnobContext, viewBoxSize } from './context'
@@ -54,7 +55,8 @@ export function Thumb({
   classes,
 
   ...props
-}: KnobThumbProps & Omit<SVGProps<SVGSVGElement>, 'd' | keyof KnobThumbProps>) {
+}: KnobThumbProps &
+  WithCSSVariables<Omit<SVGProps<SVGSVGElement>, 'd' | keyof KnobThumbProps>>) {
   useCheckPlacement('Knob.Thumb', 'Knob.SVGRoot')
 
   const angleRange = useKnobContext((s) => s.angleRange)

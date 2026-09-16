@@ -2,6 +2,7 @@ import { ComponentPropsWithoutRef, CSSProperties, useCallback } from 'react'
 
 import { toFixed } from '@tremolo-ui/functions'
 
+import { type WithCSSVariables } from '../../css-variables'
 import { cssLength } from '../_util/css-length'
 import { useCheckPlacement } from '../_util/Placement'
 import { xor } from '../_util/xor'
@@ -56,7 +57,10 @@ export function MarksOption({
   style,
   ...props
 }: SliderMarksOptionProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof SliderMarksOptionProps>) {
+  WithCSSVariables<
+    Omit<ComponentPropsWithoutRef<'div'>, keyof SliderMarksOptionProps>,
+    '--thickness' | '--length' | '--gap' | '--label-width' | '--translate'
+  >) {
   useCheckPlacement('Slider.MarksOption', 'Slider.Marks')
 
   const min = useSliderContext((s) => s.min)

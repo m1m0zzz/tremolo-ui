@@ -21,6 +21,7 @@ import {
 import { linearScale, type Scale, toFixed } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
+import { type WithCSSVariables } from '../../css-variables'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
@@ -175,7 +176,7 @@ export interface XYPadMethods {
 }
 
 type Props = XYPadProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadProps>
+  WithCSSVariables<Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadProps>>
 
 /**
  * The wheel only acts while the focus is inside, so that scrolling a page past

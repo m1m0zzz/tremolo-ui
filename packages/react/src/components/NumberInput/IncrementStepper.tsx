@@ -1,9 +1,11 @@
-import { ComponentPropsWithoutRef } from 'react'
-
-import { StepperArrow, StepperButton } from './StepperButton'
+import {
+  StepperArrow,
+  StepperButton,
+  type StepperButtonProps,
+} from './StepperButton'
 
 /** Raises the value by one `step`, repeating while held. */
-export function IncrementStepper(props: ComponentPropsWithoutRef<'div'>) {
+export function IncrementStepper(props: StepperButtonProps) {
   return (
     <StepperButton
       direction={1}

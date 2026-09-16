@@ -9,6 +9,7 @@ import {
 
 import { matchesAccept } from '@tremolo-ui/dom'
 
+import { type WithCSSVariables } from '../../css-variables'
 import { visuallyHiddenStyle } from '../_util/visually-hidden'
 
 import { FileInputProvider } from './context'
@@ -56,7 +57,7 @@ export interface FileInputProps {
 }
 
 type Props = FileInputProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof FileInputProps>
+  WithCSSVariables<Omit<ComponentPropsWithoutRef<'div'>, keyof FileInputProps>>
 
 /**
  * Hands over the files a person picked.

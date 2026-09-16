@@ -1,11 +1,13 @@
 import { ComponentPropsWithoutRef } from 'react'
 
+import { type WithCSSVariables } from '../../css-variables'
+
 export function Background({
   className,
   children,
   style,
   ...props
-}: ComponentPropsWithoutRef<'div'>) {
+}: WithCSSVariables<ComponentPropsWithoutRef<'div'>>) {
   return (
     <div
       className={className}

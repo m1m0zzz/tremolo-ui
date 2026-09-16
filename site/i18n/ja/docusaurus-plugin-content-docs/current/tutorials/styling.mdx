@@ -100,6 +100,12 @@ prop、スタイルシート、inline style は同じ値を指定する3つの�
 propへ渡した数値はpxとして扱われます。それ以外はそのまま書き込まれるため、
 `'3rem'`、`'100%'`、`'auto'` も使用できます。
 
+**どのパートの `style` にも、キャスト無しでカスタムプロパティを書けます。** React の
+`CSSProperties` には `--` で始まるキーが無いので、本来 TypeScript は
+`style={{ '--thickness': '16px' }}` を弾きます。パートはこれを `CSSVariables` で広げて
+いて、そのパートが書き込む・読むプロパティはエディタが補完し、それ以外の `--` で始まる
+名前（テーマ独自のもの）もそのまま受け取ります。
+
 どのパートがどのプロパティを持つかは、それぞれのページの **API リファレンス** に
 載せています（[Knob](/docs/components/Knob/#api-reference)、
 [Slider](/docs/components/Slider/#api-reference)、

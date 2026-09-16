@@ -1,6 +1,7 @@
 import { ComponentPropsWithoutRef, CSSProperties, forwardRef } from 'react'
 
 import { useComposedRefs } from '../../compose-refs'
+import { type WithCSSVariables } from '../../css-variables'
 import { cssLength } from '../_util/css-length'
 import { Placement } from '../_util/Placement'
 import { xor } from '../_util/xor'
@@ -23,7 +24,10 @@ export interface SliderTrackProps {
 }
 
 type Props = SliderTrackProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof SliderTrackProps>
+  WithCSSVariables<
+    Omit<ComponentPropsWithoutRef<'div'>, keyof SliderTrackProps>,
+    '--length' | '--thickness' | '--active' | '--inactive' | '--percent'
+  >
 
 export const Track = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   function Track(

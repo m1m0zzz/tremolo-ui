@@ -1,5 +1,6 @@
 import { ComponentPropsWithoutRef, CSSProperties } from 'react'
 
+import { type WithCSSVariables } from '../../css-variables'
 import { useCheckPlacement } from '../_util/Placement'
 
 import { usePointsEditorContext } from './context'
@@ -15,7 +16,7 @@ export function SelectionBox({
   className,
   style,
   ...props
-}: ComponentPropsWithoutRef<'div'>) {
+}: WithCSSVariables<ComponentPropsWithoutRef<'div'>>) {
   useCheckPlacement('PointsEditor.SelectionBox', 'PointsEditor.Container')
 
   const selectionBox = usePointsEditorContext((s) => s.selectionBox)
