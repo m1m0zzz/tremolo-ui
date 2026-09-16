@@ -19,6 +19,16 @@ selected and moved together, with ctrl / meta or by dragging a
   path='shared/css/PointsEditor.module.css'
 />
 
+Drag a point, or click one and use the arrow keys. The wheel moves the focused
+point from anywhere over the editor, and shift switches it to the x axis.
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/points-editor/basic.tsx'
+>{basic}</CodeBlock>
+
 ## Import
 
 ```jsx
@@ -78,17 +88,3 @@ The box a drag on empty space draws; the points it covers are selected. Nothing
 is rendered while no drag is running.
 
 <PropsTable of="PointsEditorSelectionBoxProps" />
-
-## Examples
-
-### Basic
-
-Drag a point, or click one and use the arrow keys. The wheel moves the focused
-point from anywhere over the editor, and shift switches it to the x axis.
-
-<CodeBlock
-  jsx
-  live
-  showCode
-  sourcePath='examples/components/points-editor/basic.tsx'
->{basic}</CodeBlock>

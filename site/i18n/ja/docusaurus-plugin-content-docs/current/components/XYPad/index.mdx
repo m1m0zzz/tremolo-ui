@@ -14,6 +14,13 @@ import basic from '!!raw-loader!@site/examples/components/xy-pad/basic'
   path='shared/css/XYPad.module.css'
 />
 
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/xy-pad/basic.tsx'
+>{basic}</CodeBlock>
+
 ## インポート {#import}
 
 ```jsx
@@ -53,14 +60,3 @@ import { XYPad } from '@tremolo-ui/react'
 | --- | --- | --- |
 | `data-disabled` | `"true"` | `disabled` を設定している間だけ付きます。 |
 | `data-readonly` | `"true"` | `readonly` を設定している間だけ付きます。 |
-
-## 例 {#examples}
-
-### Basic {#basic}
-
-<CodeBlock
-  jsx
-  live
-  showCode
-  sourcePath='examples/components/xy-pad/basic.tsx'
->{basic}</CodeBlock>

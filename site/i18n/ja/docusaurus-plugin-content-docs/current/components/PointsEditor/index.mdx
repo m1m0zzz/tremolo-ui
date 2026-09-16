@@ -16,6 +16,15 @@ import basic from '!!raw-loader!@site/examples/components/points-editor/basic'
   path='shared/css/PointsEditor.module.css'
 />
 
+点をドラッグするか、クリックして矢印キーで動かします。ホイールは、エディタの上ならどこからでもフォーカス中の点を動かし、shift で x 軸に切り替わります。
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/points-editor/basic.tsx'
+>{basic}</CodeBlock>
+
 ## インポート {#import}
 
 ```jsx
@@ -69,16 +78,3 @@ import { PointsEditor } from '@tremolo-ui/react'
 空いている場所でのドラッグが描く枠で、枠が覆った点が選択されます。ドラッグしていない間は何も描きません。
 
 <PropsTable of="PointsEditorSelectionBoxProps" />
-
-## 例 {#examples}
-
-### Basic {#basic}
-
-点をドラッグするか、クリックして矢印キーで動かします。ホイールは、エディタの上ならどこからでもフォーカス中の点を動かし、shift で x 軸に切り替わります。
-
-<CodeBlock
-  jsx
-  live
-  showCode
-  sourcePath='examples/components/points-editor/basic.tsx'
->{basic}</CodeBlock>

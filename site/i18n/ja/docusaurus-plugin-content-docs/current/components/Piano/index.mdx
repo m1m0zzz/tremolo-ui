@@ -14,6 +14,13 @@ import basic from '!!raw-loader!@site/examples/components/piano/basic'
   path='shared/css/Piano.module.css'
 />
 
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/piano/basic.tsx'
+>{basic}</CodeBlock>
+
 ## インポート {#import}
 
 ```jsx
@@ -53,14 +60,3 @@ import { Piano, SHORTCUTS } from '@tremolo-ui/react'
 ```jsx
 keyProps={(note) => ({ 'data-in-scale': inScale(note, 0, 'major') || undefined })}
 ```
-
-## 例 {#examples}
-
-### Basic {#basic}
-
-<CodeBlock
-  jsx
-  live
-  showCode
-  sourcePath='examples/components/piano/basic.tsx'
->{basic}</CodeBlock>

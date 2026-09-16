@@ -14,6 +14,13 @@ import basic from '!!raw-loader!@site/examples/components/slider/basic'
   path='shared/css/Slider.module.css'
 />
 
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/slider/basic.tsx'
+>{basic}</CodeBlock>
+
 ## インポート {#import}
 
 ```jsx
@@ -80,14 +87,3 @@ import { Slider } from '@tremolo-ui/react'
 | Data 属性 | 値 | 説明 |
 | --- | --- | --- |
 | `data-orientation` | `"horizontal" \| "vertical"` | スライダーの向き。中の目盛りにも付きます。 |
-
-## 例 {#examples}
-
-### Basic {#basic}
-
-<CodeBlock
-  jsx
-  live
-  showCode
-  sourcePath='examples/components/slider/basic.tsx'
->{basic}</CodeBlock>

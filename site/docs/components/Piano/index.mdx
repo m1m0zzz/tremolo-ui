@@ -14,6 +14,13 @@ Customizable piano component.
   path='shared/css/Piano.module.css'
 />
 
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/piano/basic.tsx'
+>{basic}</CodeBlock>
+
 ## Import
 
 ```jsx
@@ -58,14 +65,3 @@ attribute:
 ```jsx
 keyProps={(note) => ({ 'data-in-scale': inScale(note, 0, 'major') || undefined })}
 ```
-
-## Examples
-
-### Basic
-
-<CodeBlock
-  jsx
-  live
-  showCode
-  sourcePath='examples/components/piano/basic.tsx'
->{basic}</CodeBlock>
