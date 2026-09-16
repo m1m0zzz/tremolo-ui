@@ -71,6 +71,6 @@
 
 依存の向きを一度に変えると壊れたときの切り分けが難しいので、3 つに分ける。
 
-1. **公開をやめる** — `functions` 内で完結。影響は `react` の import のみ
-2. **`piano.ts` を `dom` へ** — `react` の Piano の import 変更
-3. **modifier 一式 + `applyDelta` を `dom` へ** — `react` の 12 ファイルの import 変更。`ModifierValue<T extends number | InputEventOption>` の制約もここで入れる
+1. **公開をやめる** — `functions` 内で完結。影響は `react` の import のみ（完了）
+2. **`piano.ts` を `dom` へ** — `react` の Piano の import 変更（完了。`dom` の `src/piano/layout.ts` に置き、`createPianoInput` と同じディレクトリに揃えた）
+3. **modifier 一式 + `applyDelta` を `dom` へ** — `react` の 12 ファイルの import 変更。`ModifierValue<T extends number | InputEventOption>` の制約と、`selectInputEvent` の非公開化もここで入れる

@@ -1,6 +1,6 @@
-import { noteAt, type PianoLayout } from '@tremolo-ui/functions'
-
 import { createDrag } from '../pointer/drag'
+
+import { noteAt, type PianoLayout } from './layout'
 
 /**
  * What asked for a note to sound.

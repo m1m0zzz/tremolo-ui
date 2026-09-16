@@ -1,4 +1,10 @@
-import { isBlackKey, isWhiteKey, noteKey, noteKeys, type NoteKey } from './midi'
+import {
+  isBlackKey,
+  isWhiteKey,
+  noteKey,
+  noteKeys,
+  type NoteKey,
+} from '@tremolo-ui/functions'
 
 export type NoteRange = {
   first: number

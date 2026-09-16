@@ -41,15 +41,6 @@ export {
   whiteKeys,
 } from './midi'
 export {
-  type NoteRange,
-  type PianoLayout,
-  blackKeyWidth,
-  getNoteRangeArray,
-  noteAt,
-  notePosition,
-  pianoWidth,
-} from './piano'
-export {
   type InputEventOption,
   type Modifier,
   type ModifierMap,
