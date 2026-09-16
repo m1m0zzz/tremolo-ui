@@ -342,9 +342,9 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
           aria-valuemax={max}
           aria-disabled={disabled}
           aria-readonly={readonly}
-          data-disabled={disabled || undefined}
-          data-readonly={readonly || undefined}
-          data-dragging={dragging || undefined}
+          data-disabled={disabled ? '' : undefined}
+          data-readonly={readonly ? '' : undefined}
+          data-dragging={dragging ? '' : undefined}
           style={
             {
               '--knob-size': cssLength(size),

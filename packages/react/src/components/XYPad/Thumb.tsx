@@ -110,8 +110,8 @@ export const Thumb = /* @__PURE__ */ forwardRef<XYPadThumbMethods, Props>(
     return (
       <div
         className={className}
-        data-disabled={disabled || undefined}
-        data-readonly={readonly || undefined}
+        data-disabled={disabled ? '' : undefined}
+        data-readonly={readonly ? '' : undefined}
         {...props}
         style={{
           ...{ '--color': color },

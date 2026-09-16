@@ -57,8 +57,10 @@ export function StepperButton({
       aria-disabled={disabled || (direction > 0 ? atMax : atMin)}
       // `role="button"` does not take aria-readonly, so the state reaches the
       // styles through the data attribute alone.
-      data-disabled={disabled || (direction > 0 ? atMax : atMin) || undefined}
-      data-readonly={readonly || undefined}
+      data-disabled={
+        disabled || (direction > 0 ? atMax : atMin) ? '' : undefined
+      }
+      data-readonly={readonly ? '' : undefined}
       style={style}
       onPointerDown={(event) => {
         if (!disabled && !readonly) press(event)

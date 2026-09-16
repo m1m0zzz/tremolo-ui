@@ -48,23 +48,23 @@ import { Piano, SHORTCUTS } from '@tremolo-ui/react'
 あるテーマは鍵盤の種類ごとに変数を持っていて、鍵盤には `keyProps` から渡したものが
 そのまま付きます。
 
-| Data 属性 | 値 | 説明 |
-| --- | --- | --- |
-| `data-resizable` | `"true"` | `resizable` を設定している間だけ付きます。 |
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-resizable]` | `resizable` のときに付きます |
 
 #### 鍵盤 {#keys}
 
 各鍵盤が持つ属性です。
 
-| Data 属性 | 値 | 説明 |
-| --- | --- | --- |
-| `data-note` | `"0"` … `"127"` | 鍵盤のノート番号（例: `"60"`）。常に付きます。 |
-| `data-note-key` | `"C" \| "C#" \| … \| "B"` | 鍵盤の音名。常に付きます。 |
-| `data-active` | `"true"` | ノートが鳴っている間だけ付きます。 |
-| `data-disabled` | `"true"` | ノートが `midiMax` より高いときに付きます。 |
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-note]` | `"0"` … `"127"` |
+| `[data-note-key]` | `"C" \| "C#" \| … \| "B"` |
+| `[data-active]` | ノートが鳴っている間に付きます |
+| `[data-disabled]` | ノートが `midiMax` より高いときに付きます |
 
 鍵盤には `keyProps` から属性を足せるので、自分で決めた状態も属性 1 つで表せます:
 
 ```jsx
-keyProps={(note) => ({ 'data-in-scale': inScale(note, 0, 'major') || undefined })}
+keyProps={(note) => ({ 'data-in-scale': inScale(note, 0, 'major') ? '' : undefined })}
 ```

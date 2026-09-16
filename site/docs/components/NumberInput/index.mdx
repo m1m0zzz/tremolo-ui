@@ -44,10 +44,10 @@ behaves is set here.
 
 <PropsTable of="NumberInputProps" />
 
-| Data attribute | Values | Description |
-| --- | --- | --- |
-| `data-disabled` | `"true"` | Present while `disabled` is set. |
-| `data-readonly` | `"true"` | Present while `readonly` is set. |
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | Present when `disabled` is set |
+| `[data-readonly]` | Present when `readonly` is set |
 
 ### InputField
 
@@ -58,11 +58,11 @@ It has no props of its own and takes the attributes of an `<input>`. How it
 behaves on focus, Enter and the arrow keys is set on `NumberInput.Root`
 (`selectOnFocus`, `unformatOnFocus`, `keepCaretOnStep`, `blurOnEnter`).
 
-| Data attribute | Values | Description |
-| --- | --- | --- |
-| `data-disabled` | `"true"` | Present while `disabled` is set. |
-| `data-readonly` | `"true"` | Present while `readonly` is set. |
-| `data-out-of-range` | `"true"` | Present while the value is outside `min` / `max`. |
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | Present when `disabled` is set |
+| `[data-readonly]` | Present when `readonly` is set |
+| `[data-out-of-range]` | Present while the value is outside `min` / `max` |
 
 ### Stepper
 
@@ -82,10 +82,10 @@ same props.
 | --- | --- | --- |
 | `--stepper-icon-size` | the component | Size of the default arrow. Set it in your own CSS; a `children` of your own is sized by you. |
 
-| Data attribute | Values | Description |
-| --- | --- | --- |
-| `data-disabled` | `"true"` | Present while `disabled` is set, or while the value is already at `max` (increment) / `min` (decrement). |
-| `data-readonly` | `"true"` | Present while `readonly` is set. |
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | Present when `disabled` is set, or when the value is already at `max` (increment) / `min` (decrement) |
+| `[data-readonly]` | Present when `readonly` is set |
 
 ## Examples
 

@@ -52,24 +52,24 @@ The colour of a key is the theme's own business: the one on the
 [Styling](/docs/tutorials/styling) page names a variable per kind of key, and a
 key takes whatever you give it through `keyProps`.
 
-| Data attribute | Values | Description |
-| --- | --- | --- |
-| `data-resizable` | `"true"` | Present while `resizable` is set. |
+| Data attribute | Values |
+| --- | --- |
+| `[data-resizable]` | Present when `resizable` is set |
 
 #### Keys
 
 Each key carries these.
 
-| Data attribute | Values | Description |
-| --- | --- | --- |
-| `data-note` | `"0"` … `"127"` | The note number of the key, e.g. `"60"`. Always present. |
-| `data-note-key` | `"C" \| "C#" \| … \| "B"` | The pitch class of the key. Always present. |
-| `data-active` | `"true"` | Present while the note is sounding. |
-| `data-disabled` | `"true"` | Present when the note is past `midiMax`. |
+| Data attribute | Values |
+| --- | --- |
+| `[data-note]` | `"0"` … `"127"` |
+| `[data-note-key]` | `"C" \| "C#" \| … \| "B"` |
+| `[data-active]` | Present while the note is sounding |
+| `[data-disabled]` | Present when the note is past `midiMax` |
 
 A key takes more through `keyProps`, so a state of your own is one more
 attribute:
 
 ```jsx
-keyProps={(note) => ({ 'data-in-scale': inScale(note, 0, 'major') || undefined })}
+keyProps={(note) => ({ 'data-in-scale': inScale(note, 0, 'major') ? '' : undefined })}
 ```

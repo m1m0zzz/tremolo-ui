@@ -411,8 +411,8 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
           ref={rootRefCallback}
           role="group"
           tabIndex={-1}
-          data-disabled={disabled || undefined}
-          data-readonly={readonly || undefined}
+          data-disabled={disabled ? '' : undefined}
+          data-readonly={readonly ? '' : undefined}
           style={style}
           onPointerDown={onPointerDown}
           onKeyDown={(event) => {

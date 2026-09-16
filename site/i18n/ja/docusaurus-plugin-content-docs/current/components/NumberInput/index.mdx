@@ -40,10 +40,10 @@ import { NumberInput } from '@tremolo-ui/react'
 
 <PropsTable of="NumberInputProps" />
 
-| Data 属性 | 値 | 説明 |
-| --- | --- | --- |
-| `data-disabled` | `"true"` | `disabled` を設定している間だけ付きます。 |
-| `data-readonly` | `"true"` | `readonly` を設定している間だけ付きます。 |
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-disabled]` | `disabled` のときに付きます |
+| `[data-readonly]` | `readonly` のときに付きます |
 
 ### InputField
 
@@ -51,11 +51,11 @@ import { NumberInput } from '@tremolo-ui/react'
 
 独自の props は無く、`<input>` の属性を受け取ります。フォーカス・Enter・矢印キーでの振る舞いは `NumberInput.Root` で決めます（`selectOnFocus`、`unformatOnFocus`、`keepCaretOnStep`、`blurOnEnter`）。
 
-| Data 属性 | 値 | 説明 |
-| --- | --- | --- |
-| `data-disabled` | `"true"` | `disabled` を設定している間だけ付きます。 |
-| `data-readonly` | `"true"` | `readonly` を設定している間だけ付きます。 |
-| `data-out-of-range` | `"true"` | 値が `min` / `max` の範囲外にある間だけ付きます。 |
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-disabled]` | `disabled` のときに付きます |
+| `[data-readonly]` | `readonly` のときに付きます |
+| `[data-out-of-range]` | 値が `min` / `max` の範囲外にある間に付きます |
 
 ### Stepper
 
@@ -73,10 +73,10 @@ import { NumberInput } from '@tremolo-ui/react'
 | --- | --- | --- |
 | `--stepper-icon-size` | コンポーネント | 既定の矢印の大きさ。自分の CSS で指定します（`children` を渡した場合の大きさは自分で決めます）。 |
 
-| Data 属性 | 値 | 説明 |
-| --- | --- | --- |
-| `data-disabled` | `"true"` | `disabled` を設定している間と、値が既に `max`（increment）/ `min`（decrement）にある間だけ付きます。 |
-| `data-readonly` | `"true"` | `readonly` を設定している間だけ付きます。 |
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-disabled]` | `disabled` のとき、または値が既に `max`（increment）/ `min`（decrement）にあるときに付きます |
+| `[data-readonly]` | `readonly` のときに付きます |
 
 ## 例 {#examples}
 

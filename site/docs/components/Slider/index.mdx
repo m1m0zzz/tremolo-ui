@@ -42,11 +42,11 @@ Holds the value and the settings, and passes them to the parts inside.
 
 <PropsTable of="SliderProps" />
 
-| Data attribute | Values | Description |
-| --- | --- | --- |
-| `data-orientation` | `"horizontal" \| "vertical"` | Which way the slider runs. |
-| `data-disabled` | `"true"` | Present while `disabled` is set. |
-| `data-readonly` | `"true"` | Present while `readonly` is set. |
+| Data attribute | Values |
+| --- | --- |
+| `[data-orientation]` | `"horizontal" \| "vertical"` |
+| `[data-disabled]` | Present when `disabled` is set |
+| `[data-readonly]` | Present when `readonly` is set |
 
 ### Track
 
@@ -80,11 +80,11 @@ something the package paints for you.
 Replace that rule and the track can be anything — a second colour stop, an
 image, a dotted scale that fills in.
 
-| Data attribute | Values | Description |
-| --- | --- | --- |
-| `data-orientation` | `"horizontal" \| "vertical"` | Which way the slider runs. |
-| `data-disabled` | `"true"` | Present while `disabled` is set. |
-| `data-flipped` | `"true"` | Present while the value grows from the far end: `vertical` or `reverse`, but not both. |
+| Data attribute | Values |
+| --- | --- |
+| `[data-orientation]` | `"horizontal" \| "vertical"` |
+| `[data-disabled]` | Present when `disabled` is set |
+| `[data-flipped]` | Present when the value grows from the far end: `vertical` or `reverse`, but not both |
 
 ### Thumb
 
@@ -97,10 +97,10 @@ carries the ARIA.
 | --- | --- | --- |
 | `--color` | `color` | Colour of the thumb. |
 
-| Data attribute | Values | Description |
-| --- | --- | --- |
-| `data-disabled` | `"true"` | Present while `disabled` is set. |
-| `data-readonly` | `"true"` | Present while `readonly` is set. |
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | Present when `disabled` is set |
+| `[data-readonly]` | Present when `readonly` is set |
 
 ### Marks
 
@@ -113,9 +113,9 @@ A row of marks along the track, built from `options` or from
 | --- | --- | --- |
 | `--gap` | `gap` | Space between the marks and the track. |
 
-| Data attribute | Values | Description |
-| --- | --- | --- |
-| `data-orientation` | `"horizontal" \| "vertical"` | Which way the slider runs. |
+| Data attribute | Values |
+| --- | --- |
+| `[data-orientation]` | `"horizontal" \| "vertical"` |
 
 ### MarksOption
 
@@ -130,6 +130,8 @@ One mark and its label, placed at `value`.
 | `--gap` | `gap` | Space between the mark and the label. |
 | `--label-width` | `labelWidth` | Width of the label. |
 
-| Data attribute | Values | Description |
-| --- | --- | --- |
-| `data-orientation` | `"horizontal" \| "vertical"` | Which way the slider runs. The mark inside carries it too. |
+| Data attribute | Values |
+| --- | --- |
+| `[data-orientation]` | `"horizontal" \| "vertical"` |
+
+The mark inside the option carries `[data-orientation]` too.

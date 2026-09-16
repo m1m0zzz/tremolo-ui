@@ -180,7 +180,7 @@ export interface PianoProps {
    *
    * @example highlight the notes of a scale
    * ```tsx
-   * keyProps={(note) => ({ 'data-in-scale': inScale(note, root, 'major') })}
+   * keyProps={(note) => ({ 'data-in-scale': inScale(note, root, 'major') ? '' : undefined })}
    * ```
    */
   keyProps?: (note: number, state: KeyState) => KeyAttributes
@@ -417,7 +417,7 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
       <div
         ref={setNode}
         className={className}
-        data-resizable={resizable || undefined}
+        data-resizable={resizable ? '' : undefined}
         role="group"
         // The group can own keyboard shortcuts and must receive focus.
         // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
@@ -457,8 +457,8 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
               className={keyClassName}
               data-note={note}
               data-note-key={noteKey(note)}
-              data-active={state.active || undefined}
-              data-disabled={state.disabled || undefined}
+              data-active={state.active ? '' : undefined}
+              data-disabled={state.disabled ? '' : undefined}
               {...rest}
               style={{
                 // The key is placed and sized from the layout below, which

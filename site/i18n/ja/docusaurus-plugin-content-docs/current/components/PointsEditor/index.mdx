@@ -48,10 +48,10 @@ import { PointsEditor } from '@tremolo-ui/react'
 | `--width` | `width` | エディタの幅。 |
 | `--height` | `height` | エディタの高さ。 |
 
-| Data 属性 | 値 | 説明 |
-| --- | --- | --- |
-| `data-disabled` | `"true"` | `disabled` を設定している間だけ付きます。 |
-| `data-readonly` | `"true"` | `readonly` を設定している間だけ付きます。 |
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-disabled]` | `disabled` のときに付きます |
+| `[data-readonly]` | `readonly` のときに付きます |
 
 ### Background
 
@@ -77,12 +77,12 @@ import { PointsEditor } from '@tremolo-ui/react'
 | `--height` | `height`、`size` | 点の高さ。 |
 | `--color` | `color` | 点の色。 |
 
-| Data 属性 | 値 | 説明 |
-| --- | --- | --- |
-| `data-disabled` | `"true"` | 点が無効な間だけ付きます。自分の `disabled` でも `Root` のものでも付きます。 |
-| `data-readonly` | `"true"` | 点が読み取り専用の間だけ付きます。自分の `readonly` でも `Root` のものでも付きます。 |
-| `data-dragging` | `"true"` | 点をドラッグしている間だけ付きます。 |
-| `data-selected` | `"true"` | 点が選択に含まれている間だけ付きます。 |
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-disabled]` | 点か `Root` が `disabled` のときに付きます |
+| `[data-readonly]` | 点か `Root` が `readonly` のときに付きます |
+| `[data-dragging]` | 点をドラッグしている間に付きます |
+| `[data-selected]` | 点が選択に含まれている間に付きます |
 
 ### SelectionBox
 

@@ -290,15 +290,15 @@ export function Point<T extends PointBaseType>({
     <div
       ref={refCallback}
       className={className}
-      data-disabled={disabled || undefined}
-      data-readonly={readonly || undefined}
+      data-disabled={disabled ? '' : undefined}
+      data-readonly={readonly ? '' : undefined}
       // A press lands on the point, which cannot hold focus, and the browser
       // answers that by clearing the focus to the body — undoing the focus the
       // drag just gave the input. Taking the focus here keeps it inside, and
       // it is passed on to the input below.
       tabIndex={-1}
-      data-dragging={dragging || undefined}
-      data-selected={selected || undefined}
+      data-dragging={dragging ? '' : undefined}
+      data-selected={selected ? '' : undefined}
       style={
         {
           '--color': color,

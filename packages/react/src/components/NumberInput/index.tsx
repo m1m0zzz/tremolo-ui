@@ -508,8 +508,8 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         <div
           ref={wheelRefCallback}
           className={className}
-          data-disabled={disabled || undefined}
-          data-readonly={readonly || undefined}
+          data-disabled={disabled ? '' : undefined}
+          data-readonly={readonly ? '' : undefined}
           style={style}
           {...props}
         >

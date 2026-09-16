@@ -55,10 +55,10 @@ Holds the selection and the settings every point shares.
 | `--width` | `width` | Width of the editor. |
 | `--height` | `height` | Height of the editor. |
 
-| Data attribute | Values | Description |
-| --- | --- | --- |
-| `data-disabled` | `"true"` | Present while `disabled` is set. |
-| `data-readonly` | `"true"` | Present while `readonly` is set. |
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | Present when `disabled` is set |
+| `[data-readonly]` | Present when `readonly` is set |
 
 ### Background
 
@@ -86,12 +86,12 @@ range inputs inside it, one per axis, take the focus and carry the ARIA.
 | `--height` | `height`, `size` | Height of the point. |
 | `--color` | `color` | Colour of the point. |
 
-| Data attribute | Values | Description |
-| --- | --- | --- |
-| `data-disabled` | `"true"` | Present while the point is disabled, by its own `disabled` or by `Root`'s. |
-| `data-readonly` | `"true"` | Present while the point is read-only, by its own `readonly` or by `Root`'s. |
-| `data-dragging` | `"true"` | Present while the point is being dragged. |
-| `data-selected` | `"true"` | Present while the point is in the selection. |
+| Data attribute | Values |
+| --- | --- |
+| `[data-disabled]` | Present when `disabled` is set, on the point or on `Root` |
+| `[data-readonly]` | Present when `readonly` is set, on the point or on `Root` |
+| `[data-dragging]` | Present while the point is being dragged |
+| `[data-selected]` | Present while the point is in the selection |
 
 ### SelectionBox
 

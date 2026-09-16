@@ -39,11 +39,11 @@ import { Slider } from '@tremolo-ui/react'
 
 <PropsTable of="SliderProps" />
 
-| Data 属性 | 値 | 説明 |
-| --- | --- | --- |
-| `data-orientation` | `"horizontal" \| "vertical"` | スライダーの向き。 |
-| `data-disabled` | `"true"` | `disabled` を設定している間だけ付きます。 |
-| `data-readonly` | `"true"` | `readonly` を設定している間だけ付きます。 |
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-orientation]` | `"horizontal" \| "vertical"` |
+| `[data-disabled]` | `disabled` のときに付きます |
+| `[data-readonly]` | `readonly` のときに付きます |
 
 ### Track
 
@@ -75,11 +75,11 @@ import { Slider } from '@tremolo-ui/react'
 このルールを置き換えれば、色を足す、画像を敷く、値に応じて埋まる目盛りにするなど、
 トラックは何にでもできます。
 
-| Data 属性 | 値 | 説明 |
-| --- | --- | --- |
-| `data-orientation` | `"horizontal" \| "vertical"` | スライダーの向き。 |
-| `data-disabled` | `"true"` | `disabled` を設定している間だけ付きます。 |
-| `data-flipped` | `"true"` | 値が向こう側の端から伸びる間だけ付きます。`vertical` と `reverse` のどちらか一方を設定しているときです。 |
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-orientation]` | `"horizontal" \| "vertical"` |
+| `[data-disabled]` | `disabled` のときに付きます |
+| `[data-flipped]` | 値が向こう側の端から伸びるとき（`vertical` と `reverse` のどちらか一方）に付きます |
 
 ### Thumb
 
@@ -91,10 +91,10 @@ import { Slider } from '@tremolo-ui/react'
 | --- | --- | --- |
 | `--color` | `color` | つまみの色。 |
 
-| Data 属性 | 値 | 説明 |
-| --- | --- | --- |
-| `data-disabled` | `"true"` | `disabled` を設定している間だけ付きます。 |
-| `data-readonly` | `"true"` | `readonly` を設定している間だけ付きます。 |
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-disabled]` | `disabled` のときに付きます |
+| `[data-readonly]` | `readonly` のときに付きます |
 
 ### Marks
 
@@ -106,9 +106,9 @@ import { Slider } from '@tremolo-ui/react'
 | --- | --- | --- |
 | `--gap` | `gap` | 目盛りとトラックの間隔。 |
 
-| Data 属性 | 値 | 説明 |
-| --- | --- | --- |
-| `data-orientation` | `"horizontal" \| "vertical"` | スライダーの向き。 |
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-orientation]` | `"horizontal" \| "vertical"` |
 
 ### MarksOption
 
@@ -123,6 +123,8 @@ import { Slider } from '@tremolo-ui/react'
 | `--gap` | `gap` | 目盛りとラベルの間隔。 |
 | `--label-width` | `labelWidth` | ラベルの幅。 |
 
-| Data 属性 | 値 | 説明 |
-| --- | --- | --- |
-| `data-orientation` | `"horizontal" \| "vertical"` | スライダーの向き。中の目盛りにも付きます。 |
+| Data 属性 | 値 |
+| --- | --- |
+| `[data-orientation]` | `"horizontal" \| "vertical"` |
+
+中の目盛りにも `[data-orientation]` が付きます。

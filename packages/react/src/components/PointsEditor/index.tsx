@@ -519,8 +519,8 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         <div
           ref={forwardedRef}
           className={className}
-          data-disabled={disabled || undefined}
-          data-readonly={readonly || undefined}
+          data-disabled={disabled ? '' : undefined}
+          data-readonly={readonly ? '' : undefined}
           style={
             {
               '--width': cssLength(width),

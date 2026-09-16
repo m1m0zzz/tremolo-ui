@@ -360,8 +360,8 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
           // focus here keeps it inside, and `onFocus` passes it to the input.
           tabIndex={-1}
           data-orientation={vertical ? 'vertical' : 'horizontal'}
-          data-disabled={disabled || undefined}
-          data-readonly={readonly || undefined}
+          data-disabled={disabled ? '' : undefined}
+          data-readonly={readonly ? '' : undefined}
           style={style}
           onPointerDown={onPointerDown}
           onKeyDown={(event) => {
