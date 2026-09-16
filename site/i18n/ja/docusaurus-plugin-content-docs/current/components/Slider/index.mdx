@@ -51,6 +51,30 @@ import { Slider } from '@tremolo-ui/react'
 
 <PropsTable of="SliderTrackProps" />
 
+| カスタムプロパティ | 書き込む prop | 決めるもの |
+| --- | --- | --- |
+| `--length` | `length` | スライダーの向きに沿ったトラックの長さ。 |
+| `--thickness` | `thickness` | それと直交する方向のトラックの太さ。 |
+| `--active` | `active` | `min` から値までの部分の色。 |
+| `--inactive` | `inactive` | トラックの残りの部分の色。 |
+| `--percent` | コンポーネント | 値の位置（パーセント）。 |
+
+`--percent` は CSS だけでは算出できない唯一の値で、トラックが自分では何も塗らない
+理由でもあります。塗りはパッケージが描くものではなく、テーマのルールです。
+
+```css
+.track {
+  background: linear-gradient(
+    var(--axis),
+    var(--active) var(--percent),
+    var(--inactive) var(--percent)
+  );
+}
+```
+
+このルールを置き換えれば、色を足す、画像を敷く、値に応じて埋まる目盛りにするなど、
+トラックは何にでもできます。
+
 | Data 属性 | 値 | 説明 |
 | --- | --- | --- |
 | `data-orientation` | `"horizontal" \| "vertical"` | スライダーの向き。 |
@@ -63,6 +87,10 @@ import { Slider } from '@tremolo-ui/react'
 
 <PropsTable of="SliderThumbProps" />
 
+| カスタムプロパティ | 書き込む prop | 決めるもの |
+| --- | --- | --- |
+| `--color` | `color` | つまみの色。 |
+
 | Data 属性 | 値 | 説明 |
 | --- | --- | --- |
 | `data-disabled` | `"true"` | `disabled` を設定している間だけ付きます。 |
@@ -74,6 +102,10 @@ import { Slider } from '@tremolo-ui/react'
 
 <PropsTable of="SliderMarksProps" />
 
+| カスタムプロパティ | 書き込む prop | 決めるもの |
+| --- | --- | --- |
+| `--gap` | `gap` | 目盛りとトラックの間隔。 |
+
 | Data 属性 | 値 | 説明 |
 | --- | --- | --- |
 | `data-orientation` | `"horizontal" \| "vertical"` | スライダーの向き。 |
@@ -83,6 +115,13 @@ import { Slider } from '@tremolo-ui/react'
 `value` の位置に置く、1 つの目盛りとそのラベル。
 
 <PropsTable of="SliderMarksOptionProps" />
+
+| カスタムプロパティ | 書き込む prop | 決めるもの |
+| --- | --- | --- |
+| `--thickness` | `thickness` | 目盛りの太さ。 |
+| `--length` | `length` | 目盛りの長さ。 |
+| `--gap` | `gap` | 目盛りとラベルの間隔。 |
+| `--label-width` | `labelWidth` | ラベルの幅。 |
 
 | Data 属性 | 値 | 説明 |
 | --- | --- | --- |

@@ -99,39 +99,17 @@ not have to pass a prop to every instance.
 A number passed as a prop is taken as pixels; anything else is written through
 as-is, so `'3rem'`, `'100%'` and `'auto'` all work.
 
-| Component | Properties |
-| --- | --- |
-| `Knob` | `--knob-size` |
-| `Slider.Track` | `--length`, `--thickness`, `--active`, `--inactive` |
-| `Slider.Thumb` | `--thumb-size` (on `Slider`), `--color` |
-| `Slider.Marks` | `--gap` |
-| `Slider.MarksOption` | `--thickness`, `--length`, `--gap`, `--label-width` |
-| `XYPad.Area` | `--width`, `--height`, `--min-width`, `--min-height`, `--color` |
-| `XYPad.Thumb` | `--thumb-size` (on `XYPad`), `--color` |
-| `PointsEditor` | `--width`, `--height` |
-| `PointsEditor.Point` | `--width`, `--height`, `--color` |
-| `PointsEditor.SelectionBox` | `--color` |
-| `Piano` | `--height`, and the per-key colours in the theme below |
+Which properties a part has is listed on its own page, under **API
+Reference** — [Knob](/docs/components/Knob/#api-reference),
+[Slider](/docs/components/Slider/#api-reference),
+[XYPad](/docs/components/XYPad/#api-reference),
+[NumberInput](/docs/components/NumberInput/#api-reference),
+[Piano](/docs/components/Piano/#api-reference) and
+[PointsEditor](/docs/components/PointsEditor/#api-reference).
 
-### `--percent`, and drawing the fill yourself
-
-`Slider.Track` also publishes `--percent`, where the value currently sits. It
-is the one number CSS cannot work out on its own, and it is why the component
-draws nothing: the fill is a rule in the theme rather than something the
-package paints for you.
-
-```css
-.track {
-  background: linear-gradient(
-    var(--axis),
-    var(--active) var(--percent),
-    var(--inactive) var(--percent)
-  );
-}
-```
-
-Replace that rule and the track can be anything — a second colour stop, an
-image, a dotted scale that fills in.
+A theme adds variables of its own on top of those — the one below has
+`--thumb-size`, the track's `--axis`, and the colours of each kind of key.
+Those are the theme's to name, and they are only there because it reads them.
 
 ## 📋The theme used on this site
 

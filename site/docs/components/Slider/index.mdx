@@ -55,6 +55,31 @@ the theme can fill the part below it.
 
 <PropsTable of="SliderTrackProps" />
 
+| Custom property | Written by | What it sets |
+| --- | --- | --- |
+| `--length` | `length` | How long the track is along the axis the slider runs. |
+| `--thickness` | `thickness` | How thick the track is across that axis. |
+| `--active` | `active` | Colour of the part from `min` to the value. |
+| `--inactive` | `inactive` | Colour of the rest of the track. |
+| `--percent` | the component | Where the value sits, as a percentage. |
+
+`--percent` is the one number CSS cannot work out on its own, and it is why the
+track draws nothing of its own: the fill is a rule in the theme rather than
+something the package paints for you.
+
+```css
+.track {
+  background: linear-gradient(
+    var(--axis),
+    var(--active) var(--percent),
+    var(--inactive) var(--percent)
+  );
+}
+```
+
+Replace that rule and the track can be anything — a second colour stop, an
+image, a dotted scale that fills in.
+
 | Data attribute | Values | Description |
 | --- | --- | --- |
 | `data-orientation` | `"horizontal" \| "vertical"` | Which way the slider runs. |
@@ -68,6 +93,10 @@ carries the ARIA.
 
 <PropsTable of="SliderThumbProps" />
 
+| Custom property | Written by | What it sets |
+| --- | --- | --- |
+| `--color` | `color` | Colour of the thumb. |
+
 | Data attribute | Values | Description |
 | --- | --- | --- |
 | `data-disabled` | `"true"` | Present while `disabled` is set. |
@@ -80,6 +109,10 @@ A row of marks along the track, built from `options` or from
 
 <PropsTable of="SliderMarksProps" />
 
+| Custom property | Written by | What it sets |
+| --- | --- | --- |
+| `--gap` | `gap` | Space between the marks and the track. |
+
 | Data attribute | Values | Description |
 | --- | --- | --- |
 | `data-orientation` | `"horizontal" \| "vertical"` | Which way the slider runs. |
@@ -89,6 +122,13 @@ A row of marks along the track, built from `options` or from
 One mark and its label, placed at `value`.
 
 <PropsTable of="SliderMarksOptionProps" />
+
+| Custom property | Written by | What it sets |
+| --- | --- | --- |
+| `--thickness` | `thickness` | Thickness of the mark. |
+| `--length` | `length` | Length of the mark. |
+| `--gap` | `gap` | Space between the mark and the label. |
+| `--label-width` | `labelWidth` | Width of the label. |
 
 | Data attribute | Values | Description |
 | --- | --- | --- |
