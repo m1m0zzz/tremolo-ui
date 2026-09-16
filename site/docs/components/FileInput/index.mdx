@@ -55,6 +55,11 @@ wrapper it draws, so they reach the control: `aria-describedby` points a hint
 like "WAV or AIFF, up to 10 MB" at it, and `aria-label` names it where there is
 no `FileInput.Trigger` to take the name from.
 
+## Receiving a drop as well
+
+`FileInput` answers a click. To take a file dropped onto the page, see
+[`DropZone`](/docs/components/DropZone), which reports the same `File[]`.
+
 ## API Reference {#api-reference}
 
 Each part lists the props of its own. It also takes the attributes of the

@@ -1,0 +1,102 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/components/drop-zone/basic'
+
+# DropZone
+
+An area that takes files dropped onto it, and hands them over as `File`s.
+
+<GitHubLink
+  path='packages/react/src/components/DropZone/index.tsx'
+/>
+<StyleGitHubLink
+  path='shared/css/DropZone.module.css'
+/>
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/drop-zone/basic.tsx'
+>{basic}</CodeBlock>
+
+## Import
+
+```jsx
+import { DropZone } from '@tremolo-ui/react'
+```
+
+## What it handles for you
+
+**Leaving a child does not end the drag.** `dragenter` and `dragleave` fire for
+descendants too, so moving between two children of the zone leaves it before it
+enters. Counting the pairs is what keeps `[data-dragover]` from flickering off
+in the middle of the element.
+
+**The drop is cancelled even when it is refused.** A drop nothing handles makes
+the browser leave the page and open the file, which loses whatever the app was
+holding. The zone swallows it whether or not it takes the file.
+
+**A drag that ends elsewhere still clears the state.** Dropped on another
+element, cancelled with Escape, taken out of the window — none of those send a
+`dragleave`, and the element would stay marked as a drop target for good.
+
+## Refusing before the drop
+
+`accept` is checked twice. On the drop it decides which files go to `onDrop`
+and which go to `onReject`. While the drag is still in the air it sets
+`[data-invalid]`, so the zone can show it will not take what is being carried
+before the person lets go.
+
+**What can be told apart before the drop is limited.** The browser reports the
+type of what is being dragged but withholds the name, so a rule written as an
+extension (`.wav`) cannot be decided yet — it is not counted against the drag,
+and it is decided on the drop where the name is. Rules written as MIME types
+(`audio/*`, `audio/wav`) work either way.
+
+## Making any element a drop target
+
+`DropZone.Root` draws a `<div>`. When the element already exists — a waveform
+display, a track lane, a canvas — the `useDropZone` hook does the same job
+without wrapping it:
+
+```jsx
+const { refCallback, over, invalid } = useDropZone({
+  accept: 'audio/*',
+  onDrop: (files) => load(files[0]),
+})
+
+return <canvas ref={refCallback} data-dragover={over ? '' : undefined} />
+```
+
+It takes the same options, minus `children`, and returns the state that
+`DropZone.Root` renders its data attributes from.
+
+<PropsTable of="UseDropZoneOptions" />
+
+## Picking a file instead
+
+To open a file picker from a button, see
+[`FileInput`](/docs/components/FileInput), which reports the same `File[]`.
+
+## API Reference {#api-reference}
+
+Each part lists the props of its own. It also takes the attributes of the
+element it renders, such as `className` and `style`.
+
+State is on the element as a data attribute, so it is a selector away — see
+[Styling](/docs/tutorials/styling). An attribute is only there while its state
+is on.
+
+### Root
+
+The area itself. It holds the settings and reports what was dropped.
+
+<PropsTable of="DropZoneProps" />
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-dragover]` | Present while files are being dragged over the zone |
+| `[data-invalid]` | Present while what is being dragged matches no `accept` rule that can be decided yet |
+| `[data-disabled]` | Present when `disabled` is set |

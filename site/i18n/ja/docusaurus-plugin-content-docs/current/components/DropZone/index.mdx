@@ -1,0 +1,81 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/components/drop-zone/basic'
+
+# DropZone
+
+ドロップされたファイルを受け取り、`File` として渡す領域。
+
+<GitHubLink
+  path='packages/react/src/components/DropZone/index.tsx'
+/>
+<StyleGitHubLink
+  path='shared/css/DropZone.module.css'
+/>
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/components/drop-zone/basic.tsx'
+>{basic}</CodeBlock>
+
+## インポート {#import}
+
+```jsx
+import { DropZone } from '@tremolo-ui/react'
+```
+
+## このコンポーネントが引き受けること {#what-it-handles-for-you}
+
+**子要素から出てもドラッグは終わりません。** `dragenter` と `dragleave` は子孫でも発火するので、ゾーンの中で 2 つの子の間を移動すると、入る前に出ることになります。組になった回数を数えることで、要素の真ん中で `[data-dragover]` が点滅するのを防いでいます。
+
+**拒否するときもドロップはキャンセルします。** 誰も処理しないドロップは、ブラウザがページを離れてそのファイルを開いてしまい、アプリが抱えていたものが失われます。ファイルを受け取るかどうかに関わらず、ゾーンはドロップを飲み込みます。
+
+**別の場所で終わったドラッグでも状態は戻ります。** 他の要素にドロップされた、Escape でキャンセルされた、ウィンドウの外へ出た。いずれも `dragleave` を送らないので、そのままでは要素がドロップ先として印を付けられたままになります。
+
+## ドロップ前に拒否する {#refusing-before-the-drop}
+
+`accept` は 2 回照合されます。ドロップ時には、どのファイルが `onDrop` へ行き、どれが `onReject` へ行くかを決めます。ドラッグがまだ空中にある間は `[data-invalid]` を立てるので、**手を離す前に**「これは受け取らない」と示せます。
+
+**ドロップ前に見分けられる範囲には限りがあります。** ブラウザはドラッグされているもののタイプは報告しますが、名前は伏せます。そのため拡張子で書いた規則（`.wav`）はまだ判定できません。ドラッグに対して不利には数えず、名前が分かるドロップ時に判定します。MIME タイプで書いた規則（`audio/*` / `audio/wav`）はどちらでも働きます。
+
+## 任意の要素をドロップ先にする {#making-any-element-a-drop-target}
+
+`DropZone.Root` が描くのは `<div>` です。要素が既にある場合（波形表示、トラックのレーン、canvas）は、`useDropZone` hook が包まずに同じ仕事をします。
+
+```jsx
+const { refCallback, over, invalid } = useDropZone({
+  accept: 'audio/*',
+  onDrop: (files) => load(files[0]),
+})
+
+return <canvas ref={refCallback} data-dragover={over ? '' : undefined} />
+```
+
+オプションは `children` 以外同じで、`DropZone.Root` が data 属性を描くもとにしている状態を返します。
+
+<PropsTable of="UseDropZoneOptions" />
+
+## クリックで選ばせたいとき {#picking-a-file-instead}
+
+ボタンからファイルピッカーを開くには [`FileInput`](/docs/components/FileInput) を見てください。同じ `File[]` を報告します。
+
+## API リファレンス {#api-reference}
+
+各パートには、そのパート固有の props があります。描画する要素の属性（`className` や `style` など）も受け取ります。
+
+状態は data 属性として要素に付くので、セレクタひとつで届きます（[スタイリング](/docs/tutorials/styling)）。属性は、その状態が on のときだけ存在します。
+
+### Root
+
+領域そのもの。設定を持ち、ドロップされたものを報告します。
+
+<PropsTable of="DropZoneProps" />
+
+| Data attribute | Values |
+| --- | --- |
+| `[data-dragover]` | ファイルがゾーンの上にドラッグされている間、存在します |
+| `[data-invalid]` | ドラッグされているものが、今判定できる `accept` の規則のどれにも一致しない間、存在します |
+| `[data-disabled]` | `disabled` が設定されているときに存在します |
