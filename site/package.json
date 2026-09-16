@@ -45,7 +45,7 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "docusaurus-plugin-typedoc": "1.4.3",
-    "markdown-it": "^14.3.1",
+    "markdown-it": "14.3.2",
     "typedoc": "0.28.20",
     "typedoc-plugin-markdown": "4.13.0",
     "typescript": "5.9.3"
