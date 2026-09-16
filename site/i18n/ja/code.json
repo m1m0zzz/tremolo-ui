@@ -602,8 +602,9 @@
   "apiReference.props.default": {
     "message": "既定値"
   },
-  "apiReference.props.required": {
-    "message": "必須"
+  "apiReference.props.description": {
+    "message": "{prop} の説明",
+    "description": "The accessible name of the info icon beside a prop"
   },
   "apiReference.props.more": {
     "message": "すべての説明: {link}"

@@ -12,30 +12,18 @@
 }
 
 .required {
-  margin-left: 0.5em;
+  margin-left: 0.25em;
   color: var(--ifm-color-danger);
   font-size: 0.75em;
+}
+
+.info {
+  margin-left: 0.35em;
 }
 
 /* A long object type would otherwise stretch the table past the page. */
 .type {
   word-break: break-word;
-}
-
-/* The description row reads as part of the row above it. */
-.hasDescription td {
-  border-bottom: none;
-}
-
-.description td {
-  border-top: none;
-  padding-top: 0;
-  color: var(--ifm-color-emphasis-800);
-  font-size: 0.9em;
-}
-
-.description td > div > :last-child {
-  margin-bottom: 0;
 }
 
 .more {

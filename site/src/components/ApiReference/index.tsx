@@ -1,7 +1,8 @@
 import Link from '@docusaurus/Link'
-import Translate from '@docusaurus/Translate'
+import Translate, { translate } from '@docusaurus/Translate'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
-import { Fragment } from 'react'
+
+import { Popover } from '../Popover'
 
 import generated from './props.generated.json'
 
@@ -64,35 +65,37 @@ export function PropsTable({ of }: { of: string }) {
                 ? (prop.description.ja ?? prop.description.en)
                 : prop.description.en)
             return (
-              <Fragment key={prop.name}>
-                <tr className={description ? styles.hasDescription : undefined}>
-                  <td className={styles.name}>
-                    <code>{prop.name}</code>
-                    {prop.required && (
-                      <span className={styles.required}>
-                        <Translate id="apiReference.props.required">
-                          required
-                        </Translate>
-                      </span>
-                    )}
-                  </td>
-                  <td>
-                    <code className={styles.type}>{prop.type}</code>
-                  </td>
-                  <td>{prop.default ? <code>{prop.default}</code> : '—'}</td>
-                </tr>
-                {description && (
-                  <tr className={styles.description}>
-                    {/* oxlint-disable-next-line jsx-a11y/control-has-associated-label -- the text arrives through dangerouslySetInnerHTML, which the rule cannot see */}
-                    <td colSpan={3}>
-                      <div
-                        // Our own JSDoc and translations, rendered at build time.
-                        dangerouslySetInnerHTML={{ __html: description }}
-                      />
-                    </td>
-                  </tr>
-                )}
-              </Fragment>
+              <tr key={prop.name}>
+                <td className={styles.name}>
+                  <code>{prop.name}</code>
+                  {prop.required && <span className={styles.required}>*</span>}
+                  {description && (
+                    <span className={styles.info}>
+                      <Popover
+                        label={translate(
+                          {
+                            id: 'apiReference.props.description',
+                            message: 'What {prop} does',
+                            description:
+                              'The accessible name of the info icon beside a prop',
+                          },
+                          { prop: prop.name },
+                        )}
+                      >
+                        <div
+                          // Our own JSDoc and translations, rendered at build
+                          // time.
+                          dangerouslySetInnerHTML={{ __html: description }}
+                        />
+                      </Popover>
+                    </span>
+                  )}
+                </td>
+                <td>
+                  <code className={styles.type}>{prop.type}</code>
+                </td>
+                <td>{prop.default ? <code>{prop.default}</code> : '—'}</td>
+              </tr>
             )
           })}
         </tbody>
