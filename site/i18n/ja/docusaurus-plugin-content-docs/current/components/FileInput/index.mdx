@@ -39,6 +39,8 @@ import { FileInput } from '@tremolo-ui/react'
 
 フォーカスが当たるのは見えない要素なので、フォーカスリングは親から描いてください。デモのテーマは `.root` の `:focus-within` でそうしています。
 
+input の ARIA 属性は、`Root` が描くラッパーに残さず `Root` が受け取ってコントロールへ渡します。「WAV / AIFF、10 MB まで」のような補足は `aria-describedby` で指し、`FileInput.Trigger` を使わず名前を取れない場合は `aria-label` で付けられます。
+
 ## API リファレンス {#api-reference}
 
 各パートには、そのパート固有の props があります。描画する要素の属性（`className` や `style` など）も受け取ります。

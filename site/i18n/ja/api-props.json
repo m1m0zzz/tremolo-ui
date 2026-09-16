@@ -803,10 +803,6 @@
     "message": "通常は `FileInput.Trigger` と、選ばれたものを表示する要素です。",
     "source": "bc6d7504"
   },
-  "FileInputProps.aria-label": {
-    "message": "`FileInput.Trigger` が無く、そこから名前を取れないときに、スクリーンリーダー向けにファイル入力へ名前を付けます。",
-    "source": "abb98b70"
-  },
   "FileInputTriggerProps.children": {
     "message": "トリガーに表示する内容です。そのままファイル入力のアクセシブルな名前になります。",
     "source": "e3ab686c"

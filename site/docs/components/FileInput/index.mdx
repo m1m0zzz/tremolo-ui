@@ -50,6 +50,11 @@ click reaches the picker with no JavaScript of its own.
 Since the focus lands on something invisible, draw the focus ring from the
 parent — `:focus-within` on `.root` is what the demo theme does.
 
+The ARIA attributes of the input are taken by `Root` rather than left on the
+wrapper it draws, so they reach the control: `aria-describedby` points a hint
+like "WAV or AIFF, up to 10 MB" at it, and `aria-label` names it where there is
+no `FileInput.Trigger` to take the name from.
+
 ## API Reference {#api-reference}
 
 Each part lists the props of its own. It also takes the attributes of the

@@ -102,6 +102,22 @@ test('dismissing the picker reports nothing', () => {
   expect(onReject).not.toHaveBeenCalled()
 })
 
+test('the ARIA lands on the input, not on the wrapper', () => {
+  // Nothing in `FileInputProps` says so — the destructuring in `Root` is what
+  // routes them, and a name on the wrapper would be ignored anyway: a plain
+  // div is the `generic` role, which is not allowed to take one.
+  render(
+    <FileInput.Root aria-label="Sample" aria-describedby="hint">
+      <span>anything</span>
+    </FileInput.Root>,
+  )
+
+  const input = screen.getByLabelText('Sample')
+  expect(input.tagName).toBe('INPUT')
+  expect(input).toHaveAttribute('aria-describedby', 'hint')
+  expect(input.closest('div')).not.toHaveAttribute('aria-label')
+})
+
 test('disabled marks every part and turns the input off', () => {
   const input = setup({ disabled: true })
 

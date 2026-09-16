@@ -1,5 +1,4 @@
 import {
-  AriaAttributes,
   ChangeEvent,
   ComponentPropsWithoutRef,
   forwardRef,
@@ -54,14 +53,6 @@ export interface FileInputProps {
 
   /** Normally a `FileInput.Trigger`, and whatever shows what was picked. */
   children: ReactNode
-
-  /**
-   * Names the file input for a screen reader, when there is no
-   * `FileInput.Trigger` to take the name from.
-   */
-  'aria-label'?: AriaAttributes['aria-label']
-  'aria-labelledby'?: AriaAttributes['aria-labelledby']
-  'aria-describedby'?: AriaAttributes['aria-describedby']
 }
 
 type Props = FileInputProps &
@@ -84,6 +75,11 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       onChange,
       onReject,
       children,
+      // Pulled out of `props` so that they land on the input rather than on
+      // the wrapper: it is the control, and a description is only announced
+      // from the element that takes the focus. No declaration in
+      // `FileInputProps` is needed for this — they are already on the div
+      // attributes it is merged with, with the same types.
       'aria-label': ariaLabel,
       'aria-labelledby': ariaLabelledby,
       'aria-describedby': ariaDescribedby,
