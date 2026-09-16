@@ -1,8 +1,6 @@
 import {
   ComponentPropsWithoutRef,
-  CSSProperties,
   forwardRef,
-  ReactNode,
   useImperativeHandle,
   useRef,
 } from 'react'
@@ -19,15 +17,6 @@ export interface SliderThumbProps {
    * leave the matching room around the track.
    */
   color?: string
-
-  className?: string
-  style?: CSSProperties
-  /**
-   * Rendered inside the thumb. The thumb is one element either way, so what
-   * is passed here is decoration on top of it rather than a replacement for
-   * it — `className` and `style` are how its own appearance is changed.
-   */
-  children?: ReactNode
 }
 
 export interface SliderThumbMethods {

@@ -46,7 +46,7 @@ import { XYPad } from '@tremolo-ui/react'
 
 ### Area
 
-つまみが動く面。
+つまみが動く面。`XYPad.Thumb` はこの中に置きます。
 
 <PropsTable of="XYPadAreaProps" />
 
@@ -59,6 +59,8 @@ import { XYPad } from '@tremolo-ui/react'
 ### Thumb
 
 つまみ。中にある軸ごとの 2 つの視覚的に隠れた range input が、フォーカスを受け取り ARIA を持ちます。
+
+子はつまみの中に描かれます。つまみはどちらにしても 1 つの要素なので、子はつまみを置き換えるのではなく、その上に載る飾りです。つまみ自体の見た目は `className` と `style` で変えます。
 
 <PropsTable of="XYPadThumbProps" />
 

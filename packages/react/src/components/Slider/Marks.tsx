@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react'
+import { ComponentPropsWithoutRef, CSSProperties } from 'react'
 
 import { cssLength } from '../_util/css-length'
 import { Placement } from '../_util/Placement'
@@ -23,11 +23,6 @@ export interface SliderMarksProps {
    * `'step'` makes one per step, which is a great many for a fine `step`.
    */
   options?: MarksOptions
-  /**
-   * `<Slider.MarksOption />` goes here, one per mark. Ignored while `options`
-   * is set.
-   */
-  children?: ReactNode
 }
 
 export function Marks({

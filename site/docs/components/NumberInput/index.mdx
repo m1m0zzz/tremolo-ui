@@ -68,15 +68,16 @@ behaves on focus, Enter and the arrow keys is set on `NumberInput.Root`
 
 The area the steppers sit in, and a drag handle in its own right: dragging it
 up and down moves the value one `step` every `drag` pixels.
+`NumberInput.IncrementStepper` and `NumberInput.DecrementStepper` go inside it.
 
-<PropsTable of="NumberInputStepperProps" />
+It has no props of its own and takes the attributes of a `<div>`.
 
 ### IncrementStepper / DecrementStepper
 
-Raise or lower the value by one `step`, repeating while held. The two take the
-same props.
+Raise or lower the value by one `step`, repeating while held.
 
-<PropsTable of="NumberInputIncrementStepperProps" />
+They have no props of their own and take the attributes of a `<div>`. Children
+replace the default arrow.
 
 | Custom property | Read by | What it sets |
 | --- | --- | --- |

@@ -1,6 +1,5 @@
 import {
   ComponentPropsWithoutRef,
-  CSSProperties,
   forwardRef,
   ReactNode,
   useCallback,
@@ -217,8 +216,6 @@ export interface NumberInputProps {
    */
   readonly?: boolean
 
-  className?: string
-  style?: CSSProperties
   /**
    * Called with the new value. While the user types, it is called for every
    * entry that reads as a number, unclamped; committing the entry calls it

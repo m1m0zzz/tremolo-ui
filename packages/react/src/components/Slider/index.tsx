@@ -146,8 +146,6 @@ export interface SliderProps {
    * The parts carry `data-readonly` while it is set.
    */
   readonly?: boolean
-  className?: string
-  style?: CSSProperties
   /** Called with the new value when a drag, the wheel or an arrow key moves it. */
   onChange?: (value: number) => void
   /** Called when a drag starts, with the value where the track was pressed. */

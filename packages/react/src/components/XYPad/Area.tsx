@@ -1,9 +1,4 @@
-import {
-  ComponentPropsWithoutRef,
-  CSSProperties,
-  forwardRef,
-  ReactNode,
-} from 'react'
+import { ComponentPropsWithoutRef, CSSProperties, forwardRef } from 'react'
 
 import { useComposedRefs } from '../../compose-refs'
 import { cssLength } from '../_util/css-length'
@@ -18,10 +13,6 @@ export interface XYPadAreaProps {
   height?: number | string
   /** Sets `--color`, for the theme to colour the area with. */
   color?: string
-  className?: string
-  style?: CSSProperties
-  /** `<XYPad.Thumb />` goes here. */
-  children?: ReactNode
 }
 
 type Props = XYPadAreaProps &

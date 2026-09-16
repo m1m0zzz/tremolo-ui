@@ -1,13 +1,10 @@
-import { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react'
+import { ComponentPropsWithoutRef, CSSProperties } from 'react'
 
 import { useCheckPlacement } from '../_util/Placement'
 
 import { usePointsEditorContext } from './context'
 
-export interface PointsEditorSelectionBoxProps {
-  /** Drawn inside the box, which is only there while a drag is running. */
-  children?: ReactNode
-}
+export interface PointsEditorSelectionBoxProps {}
 
 /**
  * The box a drag on empty space draws, and what it covers is selected.

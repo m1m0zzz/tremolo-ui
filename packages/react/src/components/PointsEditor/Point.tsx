@@ -1,7 +1,6 @@
 import {
   ComponentPropsWithoutRef,
   CSSProperties,
-  ReactNode,
   useCallback,
   useEffect,
   useId,
@@ -45,8 +44,6 @@ export interface PointsEditorPointProps<T extends PointBaseType> {
    * growing downwards.
    */
   value: T
-  /** Drawn inside the point: the theme's own dot stands when it is left out. */
-  children?: ReactNode
   /**
    * How the selection refers to this point. One is generated when it is left
    * out, which lasts as long as the point is mounted — give your own if the

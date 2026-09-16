@@ -1,6 +1,5 @@
 import {
   ComponentPropsWithoutRef,
-  CSSProperties,
   forwardRef,
   useEffect,
   useLayoutEffect,
@@ -12,10 +11,7 @@ import { useComposedRefs } from '../../compose-refs'
 
 import { useNumberInputContext } from './context'
 
-export interface NumberInputInputFieldProps {
-  className?: string
-  style?: CSSProperties
-}
+export interface NumberInputInputFieldProps {}
 
 type Props = NumberInputInputFieldProps &
   Omit<

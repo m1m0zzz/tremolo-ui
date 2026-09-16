@@ -55,19 +55,19 @@ import { PointsEditor } from '@tremolo-ui/react'
 
 ### Background
 
-点の後ろに描くもの。
+点の後ろに描くもの。グラフ、キャンバス、画像など、点を重ねる下地をこの中に置きます。
 
-<PropsTable of="PointsEditorBackgroundProps" />
+独自の props は無く、`<div>` の属性を受け取ります。
 
 ### Container
 
-点を置く領域。空いている場所でドラッグすると、選択の枠を描きます。
+点を置く領域。空いている場所でドラッグすると、選択の枠を描きます。`PointsEditor.Point` はこの中に置きます。
 
-<PropsTable of="PointsEditorContainerProps" />
+独自の props は無く、`<div>` の属性を受け取ります。
 
 ### Point
 
-ドラッグ・矢印キー・ホイールで動かす 1 つの点。中にある軸ごとの 2 つの視覚的に隠れた range input が、フォーカスを受け取り ARIA を持ちます。
+ドラッグ・矢印キー・ホイールで動かす 1 つの点。中にある軸ごとの 2 つの視覚的に隠れた range input が、フォーカスを受け取り ARIA を持ちます。子は点の中に描かれ、省略するとテーマの点がそのまま出ます。
 
 <PropsTable of="PointsEditorPointProps" />
 
@@ -86,6 +86,6 @@ import { PointsEditor } from '@tremolo-ui/react'
 
 ### SelectionBox
 
-空いている場所でのドラッグが描く枠で、枠が覆った点が選択されます。ドラッグしていない間は何も描きません。
+空いている場所でのドラッグが描く枠で、枠が覆った点が選択されます。ドラッグしていない間は、子も含めて何も描きません。
 
-<PropsTable of="PointsEditorSelectionBoxProps" />
+独自の props は無く、`<div>` の属性を受け取ります。

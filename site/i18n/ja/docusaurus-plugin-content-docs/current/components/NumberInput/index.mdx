@@ -59,15 +59,15 @@ import { NumberInput } from '@tremolo-ui/react'
 
 ### Stepper
 
-ステッパーを入れる領域で、それ自体がドラッグのハンドルでもあります。上下にドラッグすると、`drag` ピクセルごとに値が 1 `step` 動きます。
+ステッパーを入れる領域で、それ自体がドラッグのハンドルでもあります。上下にドラッグすると、`drag` ピクセルごとに値が 1 `step` 動きます。`NumberInput.IncrementStepper` と `NumberInput.DecrementStepper` はこの中に置きます。
 
-<PropsTable of="NumberInputStepperProps" />
+独自の props は無く、`<div>` の属性を受け取ります。
 
 ### IncrementStepper / DecrementStepper
 
-押している間繰り返しながら、値を 1 `step` 上げる / 下げるボタン。2 つは同じ props を取ります。
+押している間繰り返しながら、値を 1 `step` 上げる / 下げるボタン。
 
-<PropsTable of="NumberInputIncrementStepperProps" />
+独自の props は無く、`<div>` の属性を受け取ります。子を渡すと既定の矢印を置き換えます。
 
 | カスタムプロパティ | 読むもの | 決めるもの |
 | --- | --- | --- |
