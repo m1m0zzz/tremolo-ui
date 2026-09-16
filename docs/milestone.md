@@ -64,7 +64,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 - [x] **テンプレートをモノレポに移す。** 別リポジトリ（`m1m0zzz/tremolo-ui-example-next-ts` / `m1m0zzz/tremolo-ui-example-vite-react-ts`）にあったものを、0.5.0 の API で書き直して `templates/` に入れた（決まりごとは `templates/README.md`）。破壊的変更のたびに追随を忘れる場所が増えるので、`templates/` としてこのリポジトリに入れ、**ドキュメントでは `degit` などで取り出す形をアナウンスする**（`npx degit m1m0zzz/tremolo-ui/templates/vite-react-ts`）。CI で少なくともビルドは通しておくと、破壊的変更の当たり判定になる
 - [x] **複数のタブ（ファイル）を持てる Playground を作った。** `externalFiles` に渡したファイルが Playground のタブになる。1 つ目は今までどおり編集できる live code で、2 つ目以降は読み取り専用
   - **読み取り専用なのは、プレビューがページの中で動いているから。** iframe にしないと決めたので、CSS Module をその場でコンパイルする仕組みが無い。見た目を試すなら Stackblitz / CodeSandbox へ送る（ファイルは元から渡している）
-  - タブ名はファイル名。1 つ目は `sourcePath` のファイル名で、GitHub リンクの先と一致する
+  - タブ名はファイル名。1 つ目は例によらず `index.tsx` で、残りは import した名前のまま
   - **例が `./<Name>.module.css` を import していたら、デモのテーマをタブに出す。** コンポーネントのページの例は Styling ページからコピーしたテーマに繋いであるので、その中身も読めるようにした。import 行から拾うので、ページ側に書き足すものは無い
   - タブはヘッダーの左側に置き、幅が足りなければ折り返す。テーマは長いので、読み取り専用の表示には高さの上限を付けた
   - **エディタは隠すだけでアンマウントしない。** タブを切り替えても、読者が打った内容が残る

@@ -236,6 +236,7 @@ function FileView({ code, language }: { code: string; language: string }) {
   )
 }
 
+/** The tabs of the site's own `<Tabs>`, which these are read as a kind of. */
 function FileTabs({
   files,
   active,
@@ -246,23 +247,29 @@ function FileTabs({
   setActive: (index: number) => void
 }) {
   return (
-    <div className={styles.fileTabs} role="tablist">
+    <ul className={clsx('tabs', styles.fileTabs)} role="tablist">
       {files.map((name, index) => (
-        <button
+        <li
           key={name}
-          type="button"
           role="tab"
+          tabIndex={index === active ? 0 : -1}
           aria-selected={index === active}
           className={clsx(
+            'tabs__item',
             styles.fileTab,
-            index === active && styles.fileTabActive,
+            index === active && 'tabs__item--active',
           )}
           onClick={() => setActive(index)}
+          onKeyDown={(event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return
+            event.preventDefault()
+            setActive(index)
+          }}
         >
           {name}
-        </button>
+        </li>
       ))}
-    </div>
+    </ul>
   )
 }
 
@@ -332,11 +339,14 @@ export default function Playground({
   const mainCode = expanded ? expand : collapse
 
   // The file the example is written in comes first and is the one that runs;
-  // whatever else it needs follows, by the name it is imported as.
+  // whatever else it needs follows, by the name it is imported as. The entry
+  // is named for what it is rather than for the file it was read from, since
+  // every example has one and they would otherwise each be called something
+  // different.
   const files = useMemo(
     () => [
       {
-        name: fileName(sourcePath) || 'App.tsx',
+        name: 'index.tsx',
         code: mainCode,
         language: 'tsx',
       },
@@ -349,7 +359,7 @@ export default function Playground({
         language: languageOf(path),
       })),
     ],
-    [sourcePath, mainCode, expand, externalFiles],
+    [mainCode, expand, externalFiles],
   )
 
   const copyCode = useCallback(() => {
