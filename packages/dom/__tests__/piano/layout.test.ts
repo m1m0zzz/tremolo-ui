@@ -1,4 +1,5 @@
-import { noteNumber } from '../src/midi'
+import { noteNumber } from '@tremolo-ui/functions'
+
 import {
   blackKeyWidth,
   getNoteRangeArray,
@@ -6,7 +7,7 @@ import {
   notePosition,
   pianoWidth,
   type PianoLayout,
-} from '../src/piano'
+} from '../../src/piano/layout'
 
 // The defaults of the drawn keyboard: 40px white keys, 1px gap, black keys
 // 0.65 as wide and 0.6 as tall.

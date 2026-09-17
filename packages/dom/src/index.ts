@@ -31,6 +31,15 @@ export {
 } from './midi/input'
 export { createMIDIMessage, type MIDIMessageInstance } from './midi/message'
 export {
+  blackKeyWidth,
+  getNoteRangeArray,
+  noteAt,
+  notePosition,
+  pianoWidth,
+  type NoteRange,
+  type PianoLayout,
+} from './piano/layout'
+export {
   createPianoInput,
   type NoteSource,
   type PianoInputInstance,

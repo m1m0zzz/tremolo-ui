@@ -11,17 +11,17 @@ import {
   useState,
 } from 'react'
 
-import { createPianoInput, type PianoInputInstance } from '@tremolo-ui/dom'
 import {
   blackKeyWidth,
+  createPianoInput,
   getNoteRangeArray,
-  isWhiteKey,
-  noteKey,
   notePosition,
   pianoWidth,
   type NoteRange,
+  type PianoInputInstance,
   type PianoLayout,
-} from '@tremolo-ui/functions'
+} from '@tremolo-ui/dom'
+import { isWhiteKey, noteKey } from '@tremolo-ui/functions'
 
 import { useEventListener } from '../../hooks/useEventListener'
 import { cssLength } from '../_util/css-length'
