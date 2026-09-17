@@ -51,7 +51,7 @@ Holds the value and the settings, and passes them to the parts inside.
 ### Track
 
 The bar the value runs along. It sets `--percent` to where the value is, so
-the theme can fill the part below it.
+the theme can fill the part below it. `Slider.Thumb` goes inside it.
 
 <PropsTable of="SliderTrackProps" />
 
@@ -91,6 +91,10 @@ image, a dotted scale that fills in.
 The handle. A visually hidden range input inside it takes the focus and
 carries the ARIA.
 
+Its children are drawn inside it. The thumb is one element either way, so what
+is passed there is decoration on top of it rather than a replacement for it —
+`className` and `style` are how its own appearance is changed.
+
 <PropsTable of="SliderThumbProps" />
 
 | Custom property | Written by | What it sets |
@@ -105,7 +109,8 @@ carries the ARIA.
 ### Marks
 
 A row of marks along the track, built from `options` or from
-`Slider.MarksOption` children.
+`Slider.MarksOption` children, one per mark. The children are ignored while
+`options` is set.
 
 <PropsTable of="SliderMarksProps" />
 

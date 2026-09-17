@@ -28,6 +28,9 @@
 
 - **公開する型はコンポーネント名で始める。** `Root` の props は `<Component>Props`、パートの props は `<Component><Part>Props`。ref で公開するメソッドは `<Component>Methods` / `<Component><Part>Methods`。`src/index.ts` に全コンポーネントの型が並ぶので、`ThumbProps` のような名前は衝突する
 - 公開する props の型には独自の props だけを書く。描く要素の属性はファイル内で `type Props = XProps & Omit<ComponentPropsWithoutRef<'div'>, keyof XProps>` と合わせる。ネイティブの属性を API ページや Controls に並べないため
+  - **要素の属性と同じ型のもの（`className` / `style` / `children` / `aria-*`）は、内側の別の要素へ渡すときでも宣言しない。** 行き先を変えているのは分割代入で、型ではない。宣言しても `Omit` で抜けて同じ型で戻ってくるだけになる。行き先はテストで固定する
+  - 宣言するのは型を変えるときだけ（`Root` の必須の `children`、軸ごとに受ける `aria-label`、`CSSVariables` を足した `style`）。**独自の props が無いパートは props の型を作らず、公開もしない。** 空の interface は何も言わない名前が公開 API に増えるだけで、利用者は `ComponentProps<typeof X.Part>` で型を取れる
+  - 説明したいことがあるなら JSDoc ではなくページの散文に書く
 - context は `<Component>ContextValue` を型にし、selector を受ける `use<Component>Context` と一緒に公開する。selector の引数の型として利用者が書くため
 - `useCheckPlacement` と `<Placement name>` に渡す名前は、利用者が JSX に書く形（`'Slider.Thumb'`）にする。警告にそのまま出る
 - **テストファイルの名前は、何のテストかで決める。** 1 つのコンポーネントのテストは `<Component>.test.tsx`、トピックで分けるときは `<Component>.<topic>.test.tsx`（トピックは kebab-case）。パートのテストは `<Part>.test.tsx`、hook のテストは hook と同じ名前にする。複数のコンポーネントにまたがる `__tests__/` のテストは kebab-case

@@ -231,18 +231,6 @@
     "message": "ここに組み立てたものがそのまま描画されます。フォールバックする既定のマークアップはありません。",
     "source": "0983e6bd"
   },
-  "NumberInputStepperProps.children": {
-    "message": "`<NumberInput.IncrementStepper />` と `<NumberInput.DecrementStepper />` をここに置きます。",
-    "source": "e89a419f"
-  },
-  "NumberInputIncrementStepperProps.children": {
-    "message": "既定の矢印を置き換えます。大きさは `--stepper-icon-size` 変数で指定します。",
-    "source": "08192f1f"
-  },
-  "NumberInputDecrementStepperProps.children": {
-    "message": "既定の矢印を置き換えます。大きさは `--stepper-icon-size` 変数で指定します。",
-    "source": "08192f1f"
-  },
   "PianoProps.classes": {
     "message": "鍵盤が中に描くもののクラス。`keyLabelWrapper` と、`label` が返したものを包む `keyLabel` です。鍵盤そのもののクラスは `keyProps` から渡します。ノートとその状態を受け取れるのもそちらです。",
     "source": "f9a2682b"
@@ -359,25 +347,9 @@
     "message": "ここに組み立てたものがそのまま描画されます。フォールバックする既定のマークアップはありません。",
     "source": "59ed6a48"
   },
-  "PointsEditorBackgroundProps.children": {
-    "message": "点を重ねる下地。グラフ、キャンバス、画像など。",
-    "source": "5edd27f8"
-  },
-  "PointsEditorContainerProps.children": {
-    "message": "`<PointsEditor.Point />` をここに置きます。",
-    "source": "5616a652"
-  },
-  "PointsEditorSelectionBoxProps.children": {
-    "message": "枠の中に描くもの。枠はドラッグしている間だけ存在します。",
-    "source": "d36c0223"
-  },
   "PointsEditorPointProps.value": {
     "message": "点の位置。各軸 0 から 1 の `{ x, y }` で、`y` は下に向かって増えます。",
     "source": "35116e6f"
-  },
-  "PointsEditorPointProps.children": {
-    "message": "点の中に描くもの。省略するとテーマの点がそのまま出ます。",
-    "source": "8ef51567"
   },
   "PointsEditorPointProps.id": {
     "message": "選択がこの点を指すための id。省略すると、点がマウントされている間だけ続く id を生成します。再マウントをまたいで選択を保ちたいときや、自分の state で見分けたいときは自分で渡します。",
@@ -487,10 +459,6 @@
     "message": "`Slider.MarksOption` を書き並べる代わりに、目盛りを作ります。数値ならその間隔ごとに、`'step'` なら `step` ごとに 1 つ作ります。`{ per, mark, label }` なら、すべての目盛りやラベルをまとめて off にもできます。設定している間、`children` は無視されます。\n\n`'step'` は刻みごとに 1 つ作るので、`step` が細かいと非常に多くなります。",
     "source": "fe677245"
   },
-  "SliderMarksProps.children": {
-    "message": "`<Slider.MarksOption />` を目盛りごとにここに置きます。`options` を設定している間は無視されます。",
-    "source": "c621ee9f"
-  },
   "SliderProps.value": {
     "message": "現在の値。スライダーはこの値だけを表示するので、`onChange` から更新します。",
     "source": "cb56a015"
@@ -563,10 +531,6 @@
     "message": "`--color` を設定します。テーマがつまみの色に使います。大きさはここではなく `Slider.Root` の `--thumb-size` で決まり、ルートはそれに合わせてトラックの周りに余白を取れます。",
     "source": "f0f8ae7e"
   },
-  "SliderThumbProps.children": {
-    "message": "つまみの中に描くもの。つまみはどちらにしても 1 つの要素なので、ここに渡すものはつまみを置き換えるのではなく、その上に載る飾りです。つまみ自体の見た目は `className` と `style` で変えます。",
-    "source": "46bb657d"
-  },
   "SliderTrackProps.length": {
     "message": "スライダーの向きに沿ったトラックの長さ。`--length` を設定します。省略するとテーマが与えた大きさになります。",
     "source": "8cbf1429"
@@ -582,10 +546,6 @@
   "SliderTrackProps.inactive": {
     "message": "トラックの残りの部分の色。`--inactive` を設定します。",
     "source": "f5919715"
-  },
-  "SliderTrackProps.children": {
-    "message": "`<Slider.Thumb />` をここに置きます。",
-    "source": "d2259cb9"
   },
   "XYPadProps.value": {
     "message": "現在の値（`[x, y]`）。パッドはこの値だけを表示するので、`onChange` から更新します。",
@@ -663,17 +623,9 @@
     "message": "`--color` を設定します。テーマがエリアの色に使います。",
     "source": "41383a28"
   },
-  "XYPadAreaProps.children": {
-    "message": "`<XYPad.Thumb />` をここに置きます。",
-    "source": "29eda733"
-  },
   "XYPadThumbProps.color": {
     "message": "`--color` を設定します。テーマがつまみの色に使います。大きさはここではなく `XYPad.Root` の `--thumb-size` で決まり、ルートはそれに合わせてエリアの周りに余白を取れます。",
     "source": "73f8585f"
-  },
-  "XYPadThumbProps.children": {
-    "message": "つまみの中に描くもの。つまみはどちらにしても 1 つの要素なので、ここに渡すものはつまみを置き換えるのではなく、その上に載る飾りです。つまみ自体の見た目は `className` と `style` で変えます。",
-    "source": "46bb657d"
   },
   "XYPadThumbProps.aria-label": {
     "message": "各軸のアクセシブルな名前（`[x, y]`）。つまみの中には range input が 2 つあるので、それぞれに名前を付けます。文字列 1 つなら両方に同じ名前が付きますが、それを望むことはまずありません。",

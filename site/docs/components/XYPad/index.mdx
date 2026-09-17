@@ -50,7 +50,7 @@ inside.
 
 ### Area
 
-The surface the thumb moves across.
+The surface the thumb moves across. `XYPad.Thumb` goes inside it.
 
 <PropsTable of="XYPadAreaProps" />
 
@@ -64,6 +64,10 @@ The surface the thumb moves across.
 
 The handle. Two visually hidden range inputs inside it, one per axis, take the
 focus and carry the ARIA.
+
+Its children are drawn inside it. The thumb is one element either way, so what
+is passed there is decoration on top of it rather than a replacement for it —
+`className` and `style` are how its own appearance is changed.
 
 <PropsTable of="XYPadThumbProps" />
 

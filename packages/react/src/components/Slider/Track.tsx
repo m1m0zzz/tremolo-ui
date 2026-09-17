@@ -1,9 +1,4 @@
-import {
-  ComponentPropsWithoutRef,
-  CSSProperties,
-  forwardRef,
-  ReactNode,
-} from 'react'
+import { ComponentPropsWithoutRef, CSSProperties, forwardRef } from 'react'
 
 import { useComposedRefs } from '../../compose-refs'
 import { cssLength } from '../_util/css-length'
@@ -25,11 +20,6 @@ export interface SliderTrackProps {
   active?: string
   /** Colour of the rest of the track. Sets `--inactive`. */
   inactive?: string
-
-  className?: string
-  style?: CSSProperties
-  /** `<Slider.Thumb />` goes here. */
-  children?: ReactNode
 }
 
 type Props = SliderTrackProps &

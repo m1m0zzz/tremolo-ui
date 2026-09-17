@@ -1,9 +1,7 @@
 import {
   AriaAttributes,
   ComponentPropsWithoutRef,
-  CSSProperties,
   forwardRef,
-  ReactNode,
   useImperativeHandle,
   useRef,
 } from 'react'
@@ -20,15 +18,6 @@ export interface XYPadThumbProps {
    * the matching room around the area.
    */
   color?: string
-
-  className?: string
-  style?: CSSProperties
-  /**
-   * Rendered inside the thumb. The thumb is one element either way, so what
-   * is passed here is decoration on top of it rather than a replacement for
-   * it — `className` and `style` are how its own appearance is changed.
-   */
-  children?: ReactNode
 
   /**
    * The accessible name of each axis, as `[x, y]`. There are two range inputs

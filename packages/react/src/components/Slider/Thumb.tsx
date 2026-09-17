@@ -1,9 +1,6 @@
 import {
-  AriaAttributes,
   ComponentPropsWithoutRef,
-  CSSProperties,
   forwardRef,
-  ReactNode,
   useImperativeHandle,
   useRef,
 } from 'react'
@@ -20,19 +17,6 @@ export interface SliderThumbProps {
    * leave the matching room around the track.
    */
   color?: string
-
-  className?: string
-  style?: CSSProperties
-  /**
-   * Rendered inside the thumb. The thumb is one element either way, so what
-   * is passed here is decoration on top of it rather than a replacement for
-   * it — `className` and `style` are how its own appearance is changed.
-   */
-  children?: ReactNode
-  'aria-label'?: AriaAttributes['aria-label']
-  'aria-labelledby'?: AriaAttributes['aria-labelledby']
-  'aria-describedby'?: AriaAttributes['aria-describedby']
-  'aria-valuetext'?: AriaAttributes['aria-valuetext']
 }
 
 export interface SliderThumbMethods {
@@ -50,6 +34,11 @@ export const Thumb = /* @__PURE__ */ forwardRef<SliderThumbMethods, Props>(
       children,
       className,
       style,
+      // Pulled out of `props` so that they land on the range input rather than
+      // on the thumb: the input is the control, it takes the focus, and a name
+      // on a plain div would be ignored. No declaration in `SliderThumbProps`
+      // is needed for this — they are already on the div attributes it is
+      // merged with, with the same types.
       'aria-label': ariaLabel,
       'aria-labelledby': ariaLabelledby,
       'aria-describedby': ariaDescribedby,

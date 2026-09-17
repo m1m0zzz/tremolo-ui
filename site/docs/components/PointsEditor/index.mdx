@@ -62,21 +62,24 @@ Holds the selection and the settings every point shares.
 
 ### Background
 
-Drawn behind the points.
+Drawn behind the points. Whatever they are placed over goes inside it: a
+graph, a canvas, an image.
 
-<PropsTable of="PointsEditorBackgroundProps" />
+It has no props of its own and takes the attributes of a `<div>`.
 
 ### Container
 
 The area the points are placed in. A drag on its empty space draws a
-selection.
+selection. `PointsEditor.Point` goes inside it.
 
-<PropsTable of="PointsEditorContainerProps" />
+It has no props of its own and takes the attributes of a `<div>`.
 
 ### Point
 
 One point, moved by dragging, the arrow keys or the wheel. Two visually hidden
 range inputs inside it, one per axis, take the focus and carry the ARIA.
+Children are drawn inside the point; the theme's own dot stands when there are
+none.
 
 <PropsTable of="PointsEditorPointProps" />
 
@@ -96,6 +99,6 @@ range inputs inside it, one per axis, take the focus and carry the ARIA.
 ### SelectionBox
 
 The box a drag on empty space draws; the points it covers are selected. Nothing
-is rendered while no drag is running.
+is rendered while no drag is running, children included.
 
-<PropsTable of="PointsEditorSelectionBoxProps" />
+It has no props of its own and takes the attributes of a `<div>`.

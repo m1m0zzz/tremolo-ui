@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef, forwardRef, ReactNode } from 'react'
+import { ComponentPropsWithoutRef, forwardRef } from 'react'
 
 import { useComposedRefs } from '../../compose-refs'
 import { useDragValue } from '../../hooks/useDragValue'
@@ -8,13 +8,7 @@ import { Placement } from '../_util/Placement'
 import { usePointsEditorContext } from './context'
 import { AXIS } from './Point'
 
-export interface PointsEditorContainerProps {
-  /** `<PointsEditor.Point />` goes here. */
-  children?: ReactNode
-}
-
-type Props = PointsEditorContainerProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorContainerProps>
+type Props = ComponentPropsWithoutRef<'div'>
 
 export const Container = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   function Container({ children, className, style, ...props }, forwardedRef) {

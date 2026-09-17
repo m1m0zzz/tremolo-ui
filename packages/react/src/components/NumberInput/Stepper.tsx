@@ -1,11 +1,4 @@
-import {
-  ComponentPropsWithoutRef,
-  CSSProperties,
-  forwardRef,
-  ReactNode,
-  useMemo,
-  useRef,
-} from 'react'
+import { ComponentPropsWithoutRef, forwardRef, useMemo, useRef } from 'react'
 
 import {
   applyDelta,
@@ -19,15 +12,7 @@ import { useDrag } from '../../hooks/useDrag'
 
 import { StepperProvider, useNumberInputContext } from './context'
 
-export interface NumberInputStepperProps {
-  className?: string
-  style?: CSSProperties
-  /** `<NumberInput.IncrementStepper />` and `<NumberInput.DecrementStepper />` go here. */
-  children?: ReactNode
-}
-
-type Props = NumberInputStepperProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof NumberInputStepperProps>
+type Props = ComponentPropsWithoutRef<'div'>
 
 /**
  * The area the steppers sit in, and a drag handle in its own right: dragging it

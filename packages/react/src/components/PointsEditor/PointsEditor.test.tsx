@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { createRef, useState } from 'react'
 
-import { PointBaseType, PointsEditor, PointsEditorPointProps } from '.'
+import { PointBaseType, PointsEditor } from '.'
 
 import type { Mock } from 'vitest'
 
@@ -44,7 +44,9 @@ type SubjectProps = Partial<
     'disabled' | 'readonly' | 'wheel' | 'keyboard'
   >
 > & {
-  point?: Partial<PointsEditorPointProps<PointBaseType>>
+  // The props the part takes, not only its own: `children` comes from the
+  // `<div>` it renders.
+  point?: Partial<React.ComponentProps<typeof PointsEditor.Point>>
   initial?: PointBaseType
   onChange?: (value: PointBaseType) => void
 }

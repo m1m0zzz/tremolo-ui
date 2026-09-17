@@ -47,7 +47,7 @@ import { Slider } from '@tremolo-ui/react'
 
 ### Track
 
-値が動くバー。値の位置を `--percent` に書くので、テーマは値より下の部分を塗れます。
+値が動くバー。値の位置を `--percent` に書くので、テーマは値より下の部分を塗れます。`Slider.Thumb` はこの中に置きます。
 
 <PropsTable of="SliderTrackProps" />
 
@@ -85,6 +85,8 @@ import { Slider } from '@tremolo-ui/react'
 
 つまみ。中にある視覚的に隠れた range input が、フォーカスを受け取り ARIA を持ちます。
 
+子はつまみの中に描かれます。つまみはどちらにしても 1 つの要素なので、子はつまみを置き換えるのではなく、その上に載る飾りです。つまみ自体の見た目は `className` と `style` で変えます。
+
 <PropsTable of="SliderThumbProps" />
 
 | カスタムプロパティ | 書き込む prop | 決めるもの |
@@ -98,7 +100,7 @@ import { Slider } from '@tremolo-ui/react'
 
 ### Marks
 
-トラックに沿って並ぶ目盛り。`options` か、子の `Slider.MarksOption` から作ります。
+トラックに沿って並ぶ目盛り。`options` か、目盛りごとに置いた子の `Slider.MarksOption` から作ります。`options` を設定している間、子は無視されます。
 
 <PropsTable of="SliderMarksProps" />
 

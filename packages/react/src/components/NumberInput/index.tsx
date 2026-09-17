@@ -1,6 +1,5 @@
 import {
   ComponentPropsWithoutRef,
-  CSSProperties,
   forwardRef,
   ReactNode,
   useCallback,
@@ -217,8 +216,6 @@ export interface NumberInputProps {
    */
   readonly?: boolean
 
-  className?: string
-  style?: CSSProperties
   /**
    * Called with the new value. While the user types, it is called for every
    * entry that reads as a number, unclamped; committing the entry calls it
@@ -530,7 +527,3 @@ export const NumberInput = {
 }
 
 export { useNumberInputContext, type NumberInputContextValue } from './context'
-export { type NumberInputInputFieldProps } from './InputField'
-export { type NumberInputStepperProps } from './Stepper'
-export { type NumberInputIncrementStepperProps } from './IncrementStepper'
-export { type NumberInputDecrementStepperProps } from './DecrementStepper'

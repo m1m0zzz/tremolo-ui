@@ -30,10 +30,6 @@ export {
   type NumberInputContextValue,
   type NumberInputProps,
   type NumberInputMethods,
-  type NumberInputInputFieldProps,
-  type NumberInputStepperProps,
-  type NumberInputIncrementStepperProps,
-  type NumberInputDecrementStepperProps,
 } from './components/NumberInput'
 export {
   Piano,
@@ -51,9 +47,6 @@ export {
   clampPoint,
   type PointsEditorProps,
   type PointsEditorContextValue,
-  type PointsEditorBackgroundProps,
-  type PointsEditorContainerProps,
-  type PointsEditorSelectionBoxProps,
   type PointsEditorPointProps,
   type PointBaseType,
 } from './components/PointsEditor'

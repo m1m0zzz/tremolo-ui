@@ -1,17 +1,11 @@
-import { ComponentPropsWithoutRef, ReactNode } from 'react'
-
-export interface PointsEditorBackgroundProps {
-  /** Whatever the points are placed over: a graph, a canvas, an image. */
-  children?: ReactNode
-}
+import { ComponentPropsWithoutRef } from 'react'
 
 export function Background({
   className,
   children,
   style,
   ...props
-}: PointsEditorBackgroundProps &
-  Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorBackgroundProps>) {
+}: ComponentPropsWithoutRef<'div'>) {
   return (
     <div
       className={className}
