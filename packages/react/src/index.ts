@@ -8,6 +8,13 @@ export {
   type InitFunction,
 } from './components/AnimationCanvas'
 export {
+  FileInput,
+  useFileInputContext,
+  type FileInputContextValue,
+  type FileInputProps,
+  type FileInputTriggerProps,
+} from './components/FileInput'
+export {
   Knob,
   useKnobContext,
   type KnobContextValue,

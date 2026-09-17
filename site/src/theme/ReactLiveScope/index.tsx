@@ -6,6 +6,7 @@ import * as tremoloUI from '@tremolo-ui/react'
 import { useComposedRefs } from '@tremolo-ui/react/compose-refs'
 
 import myKnob from '@site/examples/tutorials/styling/my-knob.module.css'
+import fileInputTheme from 'shared/css/FileInput.module.css'
 import knobTheme from 'shared/css/Knob.module.css'
 import numberInputTheme from 'shared/css/NumberInput.module.css'
 import pianoTheme from 'shared/css/Piano.module.css'
@@ -26,6 +27,7 @@ const ReactLiveScope: unknown = {
   myKnob,
   // The demo theme, which the examples wire up by hand. Their `import` line is
   // there to be read: the code runs against this scope.
+  fileInputTheme,
   knobTheme,
   numberInputTheme,
   pianoTheme,

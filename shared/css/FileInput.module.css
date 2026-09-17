@@ -1,0 +1,71 @@
+/*
+ * The demo theme for `FileInput`, as a CSS Module: one class per part, applied by
+ * the caller. Copy this file into your project and edit it.
+ */
+
+.root {
+  --active-color: oklch(59.5% 0.17548 266.373);
+  --border-color: oklch(81% 0 0);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  /* The `<input type="file">` is inside and visually hidden, so the focus ring
+     has to be drawn by something that can be seen. */
+  &:focus-within .trigger {
+    border-color: var(--active-color);
+    box-shadow: 0px 0px 0px 2px
+      color-mix(in srgb, var(--active-color) 10%, transparent);
+  }
+
+  &[data-disabled] {
+    --border-color: oklch(87% 0 0);
+
+    color: oklch(65.335% 0 0);
+  }
+}
+
+.trigger {
+  display: inline-block;
+  padding: 6px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.1s;
+
+  &:hover {
+    --border-color: oklch(65.335% 0 0);
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+
+    &:hover {
+      --border-color: oklch(87% 0 0);
+    }
+  }
+}
+
+/*
+ * Dark mode follows whatever marks the page — `.dark` and `[data-theme=dark]`
+ * are what this site and Storybook set.
+ */
+
+:global(.dark) .root,
+:global([data-theme='dark']) .root {
+  --border-color: oklch(52% 0 0);
+
+  &[data-disabled] {
+    --border-color: oklch(38% 0 0);
+  }
+
+  .trigger:hover {
+    --border-color: oklch(65.335% 0 0);
+  }
+
+  .trigger[data-disabled]:hover {
+    --border-color: oklch(38% 0 0);
+  }
+}
