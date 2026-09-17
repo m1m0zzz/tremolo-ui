@@ -112,7 +112,10 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
   移動後、`functions` は 値の分布 / 数値変換 / 音楽理論 / 表示 の 4 本になる。
 
-- [ ] **トップレベルの `types` が CJS 用の宣言ファイルを指している。** 3 パッケージとも `"types": "dist/index.d.cts"`。`exports` 側は require / import で分岐しているので実害は出にくいが、`exports` を見ない古いツールチェーンでは ESM の利用者に CJS の型が渡る。devDependencies にある `@arethetypeswrong/core` で検証してから直す
+- [x] **トップレベルの `types` が CJS 用の宣言ファイルを指しているのは、直さないのが正しかった。** 3 パッケージとも `"types": "dist/index.d.cts"`。`@arethetypeswrong/core` で node10 を含む全ての resolution を検証したところ、トップレベルの入口に問題は無い
+  - **`exports` を見ないツールチェーンは、実行時も `main`（`dist/index.cjs`）を取る。** 型だけが ESM 用に切り替わることは無いので、CJS の宣言ファイルが付いてくるのが対応として正しい。`types` を `dist/index.d.ts` に向けると、CJS の実体に ESM の型を貼ることになって今より悪くなる
+  - そもそも tsdown が出す `index.d.ts` と `index.d.cts` は、末尾の `sourceMappingURL` のコメント以外がバイト単位で同一。`export =` も default export も無いため、どちらを指しても利用者に渡る型は変わらない
+  - attw が唯一挙げるのは `@tremolo-ui/react` の `./compose-refs` が node10 で解決できないことだが、これは `packages/react/tsdown.config.ts` のコメントどおり対象外（公開サブパスは `exports` 前提）
 
 - [x] **`NumberInput` の `InputField` の props を `Root` に集めた。** 破壊的変更。
 
