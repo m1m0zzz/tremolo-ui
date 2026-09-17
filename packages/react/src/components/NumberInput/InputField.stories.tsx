@@ -1,11 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-import {
-  unitFormat,
-  type InputEventOption,
-  type ModifierValue,
-} from '@tremolo-ui/functions'
+import { type InputEventOption, type ModifierValue } from '@tremolo-ui/dom'
+import { unitFormat } from '@tremolo-ui/functions'
 
 import { NumberInput } from '.'
 

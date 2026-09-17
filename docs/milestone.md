@@ -106,11 +106,14 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - 入れたのは各コンポーネントの `Basic` だけ（`Knob` の 3 パート、`NumberInput` の `Stepper`、`Slider` の `Thumb` / `Marks`、`XYPad` の `Thumb`、`PointsEditor` の `Background`）。**argTypes を meta ではなく story 側に書いた**ので、主題が別にある story の Controls は汚れない
   - **`Slider.Marks` の `options` に `'step'` を渡してはいけない場面がある。** 目盛りは `max / per - min / per + 1` 本作られるので、`['step', …]` は `step` に比例して増える。0-100 で既定の `step` = 1 なら 101 本、Controls で `step` を 0.1 にされたら 1001 本。`Basic` では固定間隔（`[25, 'mark-number']`）にした
 
-- [ ] **`functions` を汎用な関数だけにする。** 破壊的変更。詳細: **[functions-scope.md](./functions-scope.md)**
+- [x] **`functions` を汎用な関数だけにした。** 破壊的変更。詳細: **[functions-scope.md](./functions-scope.md)**
 
-  全 63 export を「このライブラリを使わない人が使うか」で見直したところ、**入力イベントの解釈**（modifier 一式 + `applyDelta`）と**描画された鍵盤の幾何**（`piano.ts`）という汎用でない 2 つの塊が入っていた。どちらも `dom` へ移す。あわせて使用箇所ゼロの `isEmpty` / `mod` など 6 つの公開をやめる。
+  全 63 export を「このライブラリを使わない人が使うか」で見直したところ、**入力イベントの解釈**（modifier 一式 + `applyDelta`）と**描画された鍵盤の幾何**（`piano.ts`）という汎用でない 2 つの塊が入っていた。どちらも `dom` へ移し、実装の詳細だった 6 つは公開をやめた。
 
-  移動後、`functions` は 値の分布 / 数値変換 / 音楽理論 / 表示 の 4 本になる。
+  **`functions` は 値の分布（scales）・数値変換（math）・音楽理論（midi）・表示（unit）の 4 本になった。** `dom` は「入力の解釈」と「描画対象の幾何」を持つ層になり、`createDrag` / `createWheel` / `createPianoInput` と、それらが必要とする値の計算が同じ場所に揃った。
+
+  - `selectInputEvent` は `selectModifier` の返り値のキー名を変えて返すだけの関数だったので、非公開化ではなく削除した
+  - `decimalPart` を置き換えた過程で、指数表記の `step` を渡すと `Slider.Marks` のラベルが全て整数に丸められるバグも直った
 
 - [x] **トップレベルの `types` が CJS 用の宣言ファイルを指しているのは、直さないのが正しかった。** 3 パッケージとも `"types": "dist/index.d.cts"`。`@arethetypeswrong/core` で node10 を含む全ての resolution を検証したところ、トップレベルの入口に問題は無い
   - **`exports` を見ないツールチェーンは、実行時も `main`（`dist/index.cjs`）を取る。** 型だけが ESM 用に切り替わることは無いので、CJS の宣言ファイルが付いてくるのが対応として正しい。`types` を `dist/index.d.ts` に向けると、CJS の実体に ESM の型を貼ることになって今より悪くなる

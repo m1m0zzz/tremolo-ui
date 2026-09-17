@@ -57,9 +57,9 @@
 | `SIGNIFICANT_DIGITS` | `toPrecision` の既定値。外に出す必要がない | `math.ts` の中の定数へ |
 | `xor` | Slider の内部 4 箇所のみ | **`react` の `components/_util/xor.ts` へ。** `functions` 側に利用者がいない |
 | `decimalPart` / `integerPart` | Slider の目盛りと story のみ。`string \| undefined` を返す扱いにくい形で、指数表記で壊れる（`stepValue` の丸めバグの原因になったのと同じ問題） | **削除。** Slider は `react` の `components/_util/decimal-digits.ts` に置き換えた。`number` を返し、`1e-7` のような指数表記も数えるので、目盛りが整数に丸められるバグも直る |
-| `selectInputEvent` | `applyDelta` の内部と、`NumberInput` が `raw` かどうかを見るためだけに使っている | **手順 3 へ先送り。** modifier 一式ごと `dom` へ移るので、そこで非公開にする |
+| `selectInputEvent` | `applyDelta` の内部と、`NumberInput` が `raw` かどうかを見るためだけに使っている | **手順 3 で削除。** 中身は `selectModifier` の返り値の `value` を `option` に言い換えただけだった |
 
-`selectInputEvent` を手順 1 で外せないのは、`react` の `NumberInput` が今も呼んでいるため。**手順 3 で `dom` へ移すときに、そのまま re-export しなければ公開をやめられる。** ここだけ先に消すと、`NumberInput` のために別の公開 API を足すことになって本末転倒になる。
+`selectInputEvent` を手順 1 で外せなかったのは、`react` の `NumberInput` が呼んでいたため。手順 3 で読み直したところ **`selectModifier` と同じものを返り値のキー名だけ変えて返す関数**だったので、非公開にするのではなく削除し、`applyDelta` と `NumberInput` の両方が `selectModifier` を直接呼ぶようにした。
 
 ## 結果
 
@@ -73,4 +73,6 @@
 
 1. **公開をやめる** — `functions` 内で完結。影響は `react` の import のみ（完了）
 2. **`piano.ts` を `dom` へ** — `react` の Piano の import 変更（完了。`dom` の `src/piano/layout.ts` に置き、`createPianoInput` と同じディレクトリに揃えた）
-3. **modifier 一式 + `applyDelta` を `dom` へ** — `react` の 12 ファイルの import 変更。`ModifierValue<T extends number | InputEventOption>` の制約と、`selectInputEvent` の非公開化もここで入れる
+3. **modifier 一式 + `applyDelta` を `dom` へ** — `react` の 12 ファイルの import 変更（完了。`dom` の `src/input/` に `modifiers.ts` と `apply-delta.ts` を置いた）
+   - `ModifierValue<T extends number | InputEventOption>` の制約は既に入っていた（`ModifierSetting` という名前で書かれている）ので、この手順ですることは無かった
+   - `selectInputEvent` は非公開化ではなく削除した（上記）

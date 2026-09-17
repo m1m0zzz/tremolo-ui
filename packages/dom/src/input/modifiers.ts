@@ -36,12 +36,6 @@ export type ModifierMap<T extends ModifierSetting> = { default: T } & Partial<
  */
 export type ModifierValue<T extends ModifierSetting> = T | ModifierMap<T>
 
-export interface SelectedInputEvent {
-  option: InputEventOption
-  /** Which modifier entry was chosen, or `null` for `default`. */
-  modifier: Modifier | null
-}
-
 /**
  * Checked in this order, and the first one that is both held and configured
  * wins. Fixing an order is what keeps two modifiers held at once from
@@ -124,18 +118,4 @@ export function mapModifier<
     if (value !== undefined) mapped[modifier] = fn(value)
   }
   return mapped
-}
-
-/**
- * Pick the amount that applies, given the modifier keys being held.
- *
- * @example
- * selectInputEvent({ default: ['raw', 1], shift: ['raw', 0.1] }, event)
- */
-export function selectInputEvent(
-  options: ModifierValue<InputEventOption>,
-  modifiers?: ModifierState,
-): SelectedInputEvent {
-  const { value, modifier } = selectModifier(options, modifiers)
-  return { option: value, modifier }
 }

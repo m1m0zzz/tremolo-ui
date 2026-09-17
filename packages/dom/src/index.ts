@@ -13,6 +13,16 @@ export {
   type DrawingState,
   type DrawingStateValue,
 } from './canvas/context'
+export { applyDelta } from './input/apply-delta'
+export {
+  mapModifier,
+  selectModifier,
+  type InputEventOption,
+  type Modifier,
+  type ModifierMap,
+  type ModifierState,
+  type ModifierValue,
+} from './input/modifiers'
 export {
   createMIDIAccess,
   NOT_SUPPORTED,

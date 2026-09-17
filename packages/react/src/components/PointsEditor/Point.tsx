@@ -11,12 +11,12 @@ import {
 
 import {
   applyDelta,
-  clamp,
   type InputEventOption,
   type ModifierState,
   type ModifierValue,
   selectModifier,
-} from '@tremolo-ui/functions'
+} from '@tremolo-ui/dom'
+import { clamp } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
 import { useDragValue } from '../../hooks/useDragValue'

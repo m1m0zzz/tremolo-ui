@@ -9,10 +9,10 @@ import {
 
 import {
   applyDelta,
+  type InputEventOption,
   mapModifier,
   selectModifier,
-  type InputEventOption,
-} from '@tremolo-ui/functions'
+} from '@tremolo-ui/dom'
 
 import { useComposedRefs } from '../../compose-refs'
 import { useDrag } from '../../hooks/useDrag'

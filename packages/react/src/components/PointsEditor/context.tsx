@@ -1,11 +1,11 @@
 import { createContext, CSSProperties, RefObject, useContext } from 'react'
 
-import type { SelectionBoxRect } from '@tremolo-ui/dom'
-import type {
-  InputEventOption,
-  ModifierState,
-  ModifierValue,
-} from '@tremolo-ui/functions'
+import {
+  type InputEventOption,
+  type ModifierState,
+  type ModifierValue,
+  type SelectionBoxRect,
+} from '@tremolo-ui/dom'
 
 import type { PointBaseType } from './Point'
 
