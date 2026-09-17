@@ -4,7 +4,6 @@ import { toFixed } from '@tremolo-ui/functions'
 
 import { cssLength } from '../_util/css-length'
 import { useCheckPlacement } from '../_util/Placement'
-import { xor } from '../_util/xor'
 
 import { useSliderContext } from './context'
 
@@ -74,7 +73,7 @@ export function MarksOption({
     (value: number) => {
       // The marks have to sit on the same curve the thumb runs along.
       const percent = scale.normalize(value, min, max) * 100
-      return toFixed(xor(vertical, reverse) ? 100 - percent : percent)
+      return toFixed(vertical !== reverse ? 100 - percent : percent)
     },
     [vertical, reverse, max, min, scale],
   )

@@ -28,7 +28,6 @@ import {
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
 } from '../../input-event'
-import { xor } from '../_util/xor'
 
 import { SliderProvider } from './context'
 import { Marks } from './Marks'
@@ -228,10 +227,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
     // vertical -> rev (up)
     // reverse -> rev (left)
     // vertical & reverse -> normal (down)
-    const displayReversed = useMemo(
-      () => xor(vertical, reverse),
-      [vertical, reverse],
-    )
+    const displayReversed = vertical !== reverse
     const percent = displayReversed ? rev : p
 
     // --- internal functions ---

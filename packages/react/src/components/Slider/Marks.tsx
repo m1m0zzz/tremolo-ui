@@ -2,7 +2,6 @@ import { ComponentPropsWithoutRef, CSSProperties } from 'react'
 
 import { cssLength } from '../_util/css-length'
 import { Placement } from '../_util/Placement'
-import { xor } from '../_util/xor'
 
 import { useSliderContext } from './context'
 import { MarksOption } from './MarksOption'
@@ -47,7 +46,7 @@ export function Marks({
   const optionsList = options
     ? generateOptionsList(options, min, max, step)
     : []
-  if (xor(vertical, reverse)) optionsList.reverse()
+  if (vertical !== reverse) optionsList.reverse()
 
   return (
     <div
