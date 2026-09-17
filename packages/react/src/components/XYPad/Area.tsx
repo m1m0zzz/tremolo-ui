@@ -6,6 +6,8 @@ import { Placement } from '../_util/Placement'
 
 import { useXYPadContext } from './context'
 
+import type { CSSVariables } from '../../css-variables'
+
 export interface XYPadAreaProps {
   /** Sets `--width`; the size the theme gives it stands when omitted. */
   width?: number | string
@@ -13,6 +15,8 @@ export interface XYPadAreaProps {
   height?: number | string
   /** Sets `--color`, for the theme to colour the area with. */
   color?: string
+
+  style?: CSSProperties & CSSVariables<'width' | 'height' | 'color'>
 }
 
 type Props = XYPadAreaProps &

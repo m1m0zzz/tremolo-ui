@@ -32,6 +32,8 @@ import { type PointRegistration, PointsEditorProvider } from './context'
 import { AXIS, Point, type PointBaseType } from './Point'
 import { SelectionBox } from './SelectionBox'
 
+import type { CSSVariables } from '../../css-variables'
+
 /** One array for every editor with selection turned off, so memos hold still. */
 const EMPTY: readonly string[] = []
 
@@ -210,6 +212,8 @@ export interface PointsEditorProps {
    * </PointsEditor.Root>
    */
   children: ReactNode
+
+  style?: CSSProperties & CSSVariables<'width' | 'height'>
 }
 
 type Props = PointsEditorProps &

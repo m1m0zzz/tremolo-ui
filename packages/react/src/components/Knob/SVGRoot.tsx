@@ -1,8 +1,10 @@
-import { ReactNode, SVGProps } from 'react'
+import { ReactNode, SVGProps, CSSProperties } from 'react'
 
 import { Placement } from '../_util/Placement'
 
 import { viewBoxSize } from './context'
+
+import type { CSSVariables } from '../../css-variables'
 
 export interface KnobSVGRootProps {
   /**
@@ -10,6 +12,8 @@ export interface KnobSVGRootProps {
    * here, in the order you want them painted.
    */
   children: ReactNode
+
+  style?: CSSProperties & CSSVariables
 }
 
 export function SVGRoot({

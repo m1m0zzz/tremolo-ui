@@ -28,6 +28,8 @@ import { cssLength } from '../_util/css-length'
 
 import { KeyboardShortcuts } from './keyboard-shortcuts'
 
+import type { CSSVariables } from '../../css-variables'
+
 type KeyboardShortcutsScope = 'root' | 'window'
 
 function isEditableTarget(target: EventTarget | null) {
@@ -47,12 +49,6 @@ function isEditableTarget(target: EventTarget | null) {
 function shortcutKey(event: KeyboardEvent) {
   return event.code || event.key
 }
-
-/**
- * `style` that also takes CSS custom properties, which is how a key's colours
- * are set: see `index.css` for the ones each key type reads.
- */
-export type CSSVariables = Record<`--${string}`, string | number | undefined>
 
 /**
  * What {@link PianoProps.keyProps} may return for one key.
@@ -161,8 +157,6 @@ export interface PianoProps {
    */
   height?: number | string
 
-  style?: CSSProperties & CSSVariables
-
   /**
    * What to draw inside a key. `''`, `null` and `undefined` leave it bare, so
    * a layout with gaps — {@link SHORTCUTS.HOME_ROW_NATURAL}, say — needs no
@@ -194,6 +188,8 @@ export interface PianoProps {
   onPlayNote?: (note: number, velocity?: number) => void
   /** Called once everything holding a note has let go of it. */
   onStopNote?: (note: number) => void
+
+  style?: CSSProperties & CSSVariables<'height'>
 }
 
 export interface PianoMethods {

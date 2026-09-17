@@ -8,6 +8,8 @@ import { xor } from '../_util/xor'
 
 import { useSliderContext } from './context'
 
+import type { CSSVariables } from '../../css-variables'
+
 export interface SliderMarksOptionProps {
   /** Where the mark sits, on the same scale as the thumb. */
   value: number
@@ -40,6 +42,9 @@ export interface SliderMarksOptionProps {
     mark?: CSSProperties
     label?: CSSProperties
   }
+
+  style?: CSSProperties &
+    CSSVariables<'thickness' | 'length' | 'gap' | 'label-width' | 'translate'>
 }
 
 export function MarksOption({

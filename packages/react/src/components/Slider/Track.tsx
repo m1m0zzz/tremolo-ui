@@ -7,6 +7,8 @@ import { xor } from '../_util/xor'
 
 import { useSliderContext } from './context'
 
+import type { CSSVariables } from '../../css-variables'
+
 export interface SliderTrackProps {
   /**
    * How long the track is along the axis the slider runs. Sets `--length`;
@@ -20,6 +22,9 @@ export interface SliderTrackProps {
   active?: string
   /** Colour of the rest of the track. Sets `--inactive`. */
   inactive?: string
+
+  style?: CSSProperties &
+    CSSVariables<'length' | 'thickness' | 'active' | 'inactive' | 'percent'>
 }
 
 type Props = SliderTrackProps &

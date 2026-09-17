@@ -8,6 +8,8 @@ import { useSliderContext } from './context'
 import { MarksOption } from './MarksOption'
 import { generateOptionsList, MarksOptions } from './type'
 
+import type { CSSVariables } from '../../css-variables'
+
 export interface SliderMarksProps {
   /**
    * Space between the marks and the track. Sets `--gap`; the theme's own
@@ -23,6 +25,8 @@ export interface SliderMarksProps {
    * `'step'` makes one per step, which is a great many for a fine `step`.
    */
   options?: MarksOptions
+
+  style?: CSSProperties & CSSVariables<'gap'>
 }
 
 export function Marks({

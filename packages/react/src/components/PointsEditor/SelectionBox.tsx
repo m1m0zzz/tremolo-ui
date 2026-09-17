@@ -4,6 +4,8 @@ import { useCheckPlacement } from '../_util/Placement'
 
 import { usePointsEditorContext } from './context'
 
+import type { CSSVariables } from '../../css-variables'
+
 /**
  * The box a drag on empty space draws, and what it covers is selected.
  *
@@ -15,7 +17,9 @@ export function SelectionBox({
   className,
   style,
   ...props
-}: ComponentPropsWithoutRef<'div'>) {
+}: Omit<ComponentPropsWithoutRef<'div'>, 'style'> & {
+  style?: CSSProperties & CSSVariables
+}) {
   useCheckPlacement('PointsEditor.SelectionBox', 'PointsEditor.Container')
 
   const selectionBox = usePointsEditorContext((s) => s.selectionBox)

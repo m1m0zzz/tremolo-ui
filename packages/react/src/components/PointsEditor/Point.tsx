@@ -25,6 +25,8 @@ import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
 import { type PointRegistration, usePointsEditorContext } from './context'
 
+import type { CSSVariables } from '../../css-variables'
+
 export type PointBaseType = { x: number; y: number }
 
 export function clampPoint(
@@ -91,6 +93,9 @@ export interface PointsEditorPointProps<T extends PointBaseType> {
   onDragStart?: (value: PointBaseType) => void
   /** Called when that drag ends, with where the point is. */
   onDragEnd?: (value: PointBaseType) => void
+
+  style?: CSSProperties &
+    CSSVariables<'width' | 'height' | 'color' | 'translate'>
 }
 
 /**

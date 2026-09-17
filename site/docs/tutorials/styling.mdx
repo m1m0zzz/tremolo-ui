@@ -101,6 +101,12 @@ not have to pass a prop to every instance.
 A number passed as a prop is taken as pixels; anything else is written through
 as-is, so `'3rem'`, `'100%'` and `'auto'` all work.
 
+**`style` takes custom properties on every part, with no cast.** React's own
+`CSSProperties` has no key starting with `--`, so TypeScript would normally
+refuse `style={{ '--thickness': '16px' }}`. The parts widen it with
+`CSSVariables`: the properties a part writes or reads are suggested by your
+editor, and any other `--` name — a theme's own — is accepted as well.
+
 Which properties a part has is listed on its own page, under **API
 Reference** — [Knob](/docs/components/Knob/#api-reference),
 [Slider](/docs/components/Slider/#api-reference),

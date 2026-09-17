@@ -7,6 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
+  CSSProperties,
 } from 'react'
 
 import {
@@ -31,6 +32,8 @@ import { DecrementStepper } from './DecrementStepper'
 import { IncrementStepper } from './IncrementStepper'
 import { InputField } from './InputField'
 import { Stepper } from './Stepper'
+
+import type { CSSVariables } from '../../css-variables'
 
 export interface NumberInputProps {
   /**
@@ -237,6 +240,8 @@ export interface NumberInputProps {
    * </NumberInput.Root>
    */
   children: ReactNode
+
+  style?: CSSProperties & CSSVariables
 }
 
 export interface NumberInputMethods {

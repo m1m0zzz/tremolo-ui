@@ -4,12 +4,15 @@ import {
   forwardRef,
   useImperativeHandle,
   useRef,
+  CSSProperties,
 } from 'react'
 
 import { useCheckPlacement } from '../_util/Placement'
 import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
 import { toXY, useXYPadContext, type XYInput } from './context'
+
+import type { CSSVariables } from '../../css-variables'
 
 export interface XYPadThumbProps {
   /**
@@ -34,6 +37,8 @@ export interface XYPadThumbProps {
    * `[x, y]` or one for both.
    */
   'aria-valuetext'?: XYInput<AriaAttributes['aria-valuetext']>
+
+  style?: CSSProperties & CSSVariables<'color' | 'translate'>
 }
 
 export interface XYPadThumbMethods {

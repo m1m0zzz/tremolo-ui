@@ -36,6 +36,8 @@ import { InactiveLine } from './InactiveLine'
 import { SVGRoot } from './SVGRoot'
 import { Thumb } from './Thumb'
 
+import type { CSSVariables } from '../../css-variables'
+
 const defaultExternalStyles: KnobProps['externalStyles'] = {
   cursor: 'grabbing',
 }
@@ -199,6 +201,8 @@ export interface KnobProps {
    * </Knob.Root>
    */
   children: ReactNode
+
+  style?: CSSProperties & CSSVariables<'knob-size'>
 }
 
 export interface KnobMethods {

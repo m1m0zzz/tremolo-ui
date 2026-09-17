@@ -4,6 +4,7 @@ import {
   useEffect,
   useRef,
   useState,
+  CSSProperties,
 } from 'react'
 
 import {
@@ -13,6 +14,8 @@ import {
 } from '@tremolo-ui/dom'
 
 import { useComposedRefs } from '../../compose-refs'
+
+import type { CSSVariables } from '../../css-variables'
 
 export type InitFunction = (
   context: CanvasRenderingContext2D,
@@ -66,6 +69,8 @@ export interface AnimationCanvasCommonProps {
    * @default true
    */
   reduceFlickering?: boolean
+
+  style?: CSSProperties & CSSVariables
 }
 
 /** A canvas of the size given in CSS pixels. This is the default. */

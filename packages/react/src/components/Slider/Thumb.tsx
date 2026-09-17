@@ -3,12 +3,15 @@ import {
   forwardRef,
   useImperativeHandle,
   useRef,
+  CSSProperties,
 } from 'react'
 
 import { useCheckPlacement } from '../_util/Placement'
 import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
 import { useSliderContext } from './context'
+
+import type { CSSVariables } from '../../css-variables'
 
 export interface SliderThumbProps {
   /**
@@ -17,6 +20,8 @@ export interface SliderThumbProps {
    * leave the matching room around the track.
    */
   color?: string
+
+  style?: CSSProperties & CSSVariables<'color' | 'translate'>
 }
 
 export interface SliderThumbMethods {
