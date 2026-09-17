@@ -5,15 +5,17 @@ import {
   ReactNode,
   useId,
   useMemo,
+  CSSProperties,
 } from 'react'
 
 import { matchesAccept } from '@tremolo-ui/dom'
 
-import { type WithCSSVariables } from '../../css-variables'
 import { visuallyHiddenStyle } from '../_util/visually-hidden'
 
 import { FileInputProvider } from './context'
 import { Trigger } from './Trigger'
+
+import type { CSSVariables } from '../../css-variables'
 
 export interface FileInputProps {
   /**
@@ -54,10 +56,12 @@ export interface FileInputProps {
 
   /** Normally a `FileInput.Trigger`, and whatever shows what was picked. */
   children: ReactNode
+
+  style?: CSSProperties & CSSVariables
 }
 
 type Props = FileInputProps &
-  WithCSSVariables<Omit<ComponentPropsWithoutRef<'div'>, keyof FileInputProps>>
+  Omit<ComponentPropsWithoutRef<'div'>, keyof FileInputProps>
 
 /**
  * Hands over the files a person picked.

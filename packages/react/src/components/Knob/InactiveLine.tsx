@@ -1,16 +1,19 @@
-import { SVGProps } from 'react'
+import { SVGProps, CSSProperties } from 'react'
 
-import { type WithCSSVariables } from '../../css-variables'
 import { useCheckPlacement } from '../_util/Placement'
 
 import { arcPath, arcRadius, useKnobContext } from './context'
+
+import type { CSSVariables } from '../../css-variables'
 
 export function InactiveLine({
   stroke = 'currentColor',
   strokeWidth = 6,
   className,
   ...props
-}: WithCSSVariables<Omit<SVGProps<SVGPathElement>, 'd'>>) {
+}: Omit<Omit<SVGProps<SVGPathElement>, 'd'>, 'style'> & {
+  style?: CSSProperties & CSSVariables
+}) {
   useCheckPlacement('Knob.InactiveLine', 'Knob.SVGRoot')
 
   const min = useKnobContext((s) => s.min)

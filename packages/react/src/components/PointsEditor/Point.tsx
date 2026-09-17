@@ -18,13 +18,14 @@ import {
 import { clamp } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
-import { type WithCSSVariables } from '../../css-variables'
 import { useDragValue } from '../../hooks/useDragValue'
 import { cssLength } from '../_util/css-length'
 import { useCheckPlacement } from '../_util/Placement'
 import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
 import { type PointRegistration, usePointsEditorContext } from './context'
+
+import type { CSSVariables } from '../../css-variables'
 
 export type PointBaseType = { x: number; y: number }
 
@@ -92,6 +93,9 @@ export interface PointsEditorPointProps<T extends PointBaseType> {
   onDragStart?: (value: PointBaseType) => void
   /** Called when that drag ends, with where the point is. */
   onDragEnd?: (value: PointBaseType) => void
+
+  style?: CSSProperties &
+    CSSVariables<'width' | 'height' | 'color' | 'translate'>
 }
 
 /**
@@ -140,10 +144,7 @@ export function Point<T extends PointBaseType>({
   onFocus,
   ...props
 }: PointsEditorPointProps<T> &
-  WithCSSVariables<
-    Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorPointProps<T>>,
-    '--width' | '--height' | '--color' | '--translate'
-  >) {
+  Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorPointProps<T>>) {
   const {
     containerRef,
     externalStyles,

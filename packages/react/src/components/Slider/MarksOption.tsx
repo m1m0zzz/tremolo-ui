@@ -2,12 +2,13 @@ import { ComponentPropsWithoutRef, CSSProperties, useCallback } from 'react'
 
 import { toFixed } from '@tremolo-ui/functions'
 
-import { type WithCSSVariables } from '../../css-variables'
 import { cssLength } from '../_util/css-length'
 import { useCheckPlacement } from '../_util/Placement'
 import { xor } from '../_util/xor'
 
 import { useSliderContext } from './context'
+
+import type { CSSVariables } from '../../css-variables'
 
 export interface SliderMarksOptionProps {
   /** Where the mark sits, on the same scale as the thumb. */
@@ -41,6 +42,9 @@ export interface SliderMarksOptionProps {
     mark?: CSSProperties
     label?: CSSProperties
   }
+
+  style?: CSSProperties &
+    CSSVariables<'thickness' | 'length' | 'gap' | 'label-width' | 'translate'>
 }
 
 export function MarksOption({
@@ -57,10 +61,7 @@ export function MarksOption({
   style,
   ...props
 }: SliderMarksOptionProps &
-  WithCSSVariables<
-    Omit<ComponentPropsWithoutRef<'div'>, keyof SliderMarksOptionProps>,
-    '--thickness' | '--length' | '--gap' | '--label-width' | '--translate'
-  >) {
+  Omit<ComponentPropsWithoutRef<'div'>, keyof SliderMarksOptionProps>) {
   useCheckPlacement('Slider.MarksOption', 'Slider.Marks')
 
   const min = useSliderContext((s) => s.min)

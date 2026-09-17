@@ -20,7 +20,6 @@ import {
 import { linearScale, type Scale, type ValueRange } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
-import { type WithCSSVariables } from '../../css-variables'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
@@ -36,6 +35,8 @@ import { calcAngles, KnobProvider } from './context'
 import { InactiveLine } from './InactiveLine'
 import { SVGRoot } from './SVGRoot'
 import { Thumb } from './Thumb'
+
+import type { CSSVariables } from '../../css-variables'
 
 const defaultExternalStyles: KnobProps['externalStyles'] = {
   cursor: 'grabbing',
@@ -200,6 +201,8 @@ export interface KnobProps {
    * </Knob.Root>
    */
   children: ReactNode
+
+  style?: CSSProperties & CSSVariables<'knob-size'>
 }
 
 export interface KnobMethods {
@@ -207,11 +210,7 @@ export interface KnobMethods {
   blur: () => void
 }
 
-type Props = KnobProps &
-  WithCSSVariables<
-    Omit<ComponentPropsWithoutRef<'div'>, keyof KnobProps>,
-    '--knob-size'
-  >
+type Props = KnobProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KnobProps>
 
 /**
  * The wheel only acts while the focus is inside, so that scrolling a page past

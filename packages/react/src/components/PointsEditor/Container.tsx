@@ -1,7 +1,6 @@
-import { ComponentPropsWithoutRef, forwardRef } from 'react'
+import { ComponentPropsWithoutRef, forwardRef, CSSProperties } from 'react'
 
 import { useComposedRefs } from '../../compose-refs'
-import { type WithCSSVariables } from '../../css-variables'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 import { Placement } from '../_util/Placement'
@@ -9,7 +8,11 @@ import { Placement } from '../_util/Placement'
 import { usePointsEditorContext } from './context'
 import { AXIS } from './Point'
 
-type Props = WithCSSVariables<ComponentPropsWithoutRef<'div'>>
+import type { CSSVariables } from '../../css-variables'
+
+type Props = Omit<ComponentPropsWithoutRef<'div'>, 'style'> & {
+  style?: CSSProperties & CSSVariables
+}
 
 export const Container = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   function Container({ children, className, style, ...props }, forwardedRef) {

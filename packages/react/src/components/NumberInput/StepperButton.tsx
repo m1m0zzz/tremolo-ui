@@ -1,18 +1,21 @@
-import { ComponentPropsWithoutRef, ReactNode } from 'react'
+import { ComponentPropsWithoutRef, ReactNode, CSSProperties } from 'react'
 
-import { type WithCSSVariables } from '../../css-variables'
 import { useLongPress } from '../../hooks/useLongPress'
 
 import { useNumberInputContext, useStepperContext } from './context'
+
+import type { CSSVariables } from '../../css-variables'
 
 /**
  * `--stepper-icon-size` is read by the default arrow inside, and set on the
  * button so that it inherits there.
  */
-export type StepperButtonProps = WithCSSVariables<
+export type StepperButtonProps = Omit<
   ComponentPropsWithoutRef<'div'>,
-  '--stepper-icon-size'
->
+  'style'
+> & {
+  style?: CSSProperties & CSSVariables<'stepper-icon-size'>
+}
 
 type Props = StepperButtonProps
 

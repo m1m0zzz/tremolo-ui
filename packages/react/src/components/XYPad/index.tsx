@@ -21,7 +21,6 @@ import {
 import { linearScale, type Scale, toFixed } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
-import { type WithCSSVariables } from '../../css-variables'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
@@ -34,6 +33,8 @@ import {
 import { Area } from './Area'
 import { toXY, XY, XYInput, XYPadProvider } from './context'
 import { Thumb, XYPadThumbMethods } from './Thumb'
+
+import type { CSSVariables } from '../../css-variables'
 
 const defaultExternalStyles: XYPadProps['externalStyles'] = {
   cursor: 'pointer',
@@ -167,6 +168,8 @@ export interface XYPadProps {
    * </XYPad.Root>
    */
   children: ReactNode
+
+  style?: CSSProperties & CSSVariables
 }
 
 export interface XYPadMethods {
@@ -176,7 +179,7 @@ export interface XYPadMethods {
 }
 
 type Props = XYPadProps &
-  WithCSSVariables<Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadProps>>
+  Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadProps>
 
 /**
  * The wheel only acts while the focus is inside, so that scrolling a page past

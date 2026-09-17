@@ -23,7 +23,6 @@ import {
 } from '@tremolo-ui/dom'
 import { clamp, toPrecision } from '@tremolo-ui/functions'
 
-import { type WithCSSVariables } from '../../css-variables'
 import { DEFAULT_DRAG_SENSITIVITY } from '../../input-event'
 import { cssLength } from '../_util/css-length'
 
@@ -32,6 +31,8 @@ import { Container } from './Container'
 import { type PointRegistration, PointsEditorProvider } from './context'
 import { AXIS, Point, type PointBaseType } from './Point'
 import { SelectionBox } from './SelectionBox'
+
+import type { CSSVariables } from '../../css-variables'
 
 /** One array for every editor with selection turned off, so memos hold still. */
 const EMPTY: readonly string[] = []
@@ -211,13 +212,12 @@ export interface PointsEditorProps {
    * </PointsEditor.Root>
    */
   children: ReactNode
+
+  style?: CSSProperties & CSSVariables<'width' | 'height'>
 }
 
 type Props = PointsEditorProps &
-  WithCSSVariables<
-    Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorProps>,
-    '--width' | '--height'
-  >
+  Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorProps>
 
 export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   (

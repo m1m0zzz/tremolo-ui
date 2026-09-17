@@ -20,7 +20,6 @@ import {
 import { linearScale, type Scale, toFixed } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
-import { type WithCSSVariables } from '../../css-variables'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
@@ -36,6 +35,8 @@ import { Marks } from './Marks'
 import { MarksOption } from './MarksOption'
 import { Thumb, SliderThumbMethods } from './Thumb'
 import { Track } from './Track'
+
+import type { CSSVariables } from '../../css-variables'
 
 const defaultExternalStyles: SliderProps['externalStyles'] = {
   cursor: 'pointer',
@@ -165,6 +166,8 @@ export interface SliderProps {
    * </Slider.Root>
    */
   children: ReactNode
+
+  style?: CSSProperties & CSSVariables
 }
 
 export interface SliderMethods {
@@ -173,7 +176,7 @@ export interface SliderMethods {
 }
 
 type Props = SliderProps &
-  WithCSSVariables<Omit<ComponentPropsWithoutRef<'div'>, keyof SliderProps>>
+  Omit<ComponentPropsWithoutRef<'div'>, keyof SliderProps>
 
 /**
  * The wheel only acts while the focus is inside, so that scrolling a page past

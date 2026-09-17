@@ -32,9 +32,9 @@ test('a style takes the custom properties of the part, and any other', () => {
 })
 
 test('the value of a custom property is a string or a number', () => {
-  const ok: CSSVariables<'--gap'> = { '--gap': 4, '--other': '1rem' }
+  const ok: CSSVariables<'gap'> = { '--gap': 4, '--other': '1rem' }
   // @ts-expect-error a custom property holds text, not an object
-  const bad: CSSVariables<'--gap'> = { '--gap': { px: 4 } }
+  const bad: CSSVariables<'gap'> = { '--gap': { px: 4 } }
   expect([ok, bad]).toHaveLength(2)
 })
 

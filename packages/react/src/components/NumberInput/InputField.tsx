@@ -5,17 +5,22 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  CSSProperties,
 } from 'react'
 
 import { useComposedRefs } from '../../compose-refs'
-import { type WithCSSVariables } from '../../css-variables'
 
 import { useNumberInputContext } from './context'
 
+import type { CSSVariables } from '../../css-variables'
+
 // The value belongs to `NumberInput.Root`, and the field is always text.
-type Props = WithCSSVariables<
-  Omit<ComponentPropsWithoutRef<'input'>, 'type' | 'value' | 'defaultValue'>
->
+type Props = Omit<
+  Omit<ComponentPropsWithoutRef<'input'>, 'type' | 'value' | 'defaultValue'>,
+  'style'
+> & {
+  style?: CSSProperties & CSSVariables
+}
 
 /** The leading number of the displayed text, whatever the format put around it. */
 const NUMBER_PREFIX = /^\s*-?[\d.,]*/

@@ -1,11 +1,12 @@
 import { ComponentPropsWithoutRef, CSSProperties, forwardRef } from 'react'
 
 import { useComposedRefs } from '../../compose-refs'
-import { type WithCSSVariables } from '../../css-variables'
 import { cssLength } from '../_util/css-length'
 import { Placement } from '../_util/Placement'
 
 import { useXYPadContext } from './context'
+
+import type { CSSVariables } from '../../css-variables'
 
 export interface XYPadAreaProps {
   /** Sets `--width`; the size the theme gives it stands when omitted. */
@@ -14,13 +15,12 @@ export interface XYPadAreaProps {
   height?: number | string
   /** Sets `--color`, for the theme to colour the area with. */
   color?: string
+
+  style?: CSSProperties & CSSVariables<'width' | 'height' | 'color'>
 }
 
 type Props = XYPadAreaProps &
-  WithCSSVariables<
-    Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadAreaProps>,
-    '--width' | '--height' | '--color'
-  >
+  Omit<ComponentPropsWithoutRef<'div'>, keyof XYPadAreaProps>
 
 export const Area = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   function Area(

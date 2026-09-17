@@ -1,4 +1,10 @@
-import { ComponentPropsWithoutRef, forwardRef, useMemo, useRef } from 'react'
+import {
+  ComponentPropsWithoutRef,
+  forwardRef,
+  useMemo,
+  useRef,
+  CSSProperties,
+} from 'react'
 
 import {
   applyDelta,
@@ -8,12 +14,15 @@ import {
 } from '@tremolo-ui/dom'
 
 import { useComposedRefs } from '../../compose-refs'
-import { type WithCSSVariables } from '../../css-variables'
 import { useDrag } from '../../hooks/useDrag'
 
 import { StepperProvider, useNumberInputContext } from './context'
 
-type Props = WithCSSVariables<ComponentPropsWithoutRef<'div'>>
+import type { CSSVariables } from '../../css-variables'
+
+type Props = Omit<ComponentPropsWithoutRef<'div'>, 'style'> & {
+  style?: CSSProperties & CSSVariables
+}
 
 /**
  * The area the steppers sit in, and a drag handle in its own right: dragging it

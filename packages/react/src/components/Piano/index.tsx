@@ -23,11 +23,12 @@ import {
 } from '@tremolo-ui/dom'
 import { isWhiteKey, noteKey } from '@tremolo-ui/functions'
 
-import { type WithCSSVariables } from '../../css-variables'
 import { useEventListener } from '../../hooks/useEventListener'
 import { cssLength } from '../_util/css-length'
 
 import { KeyboardShortcuts } from './keyboard-shortcuts'
+
+import type { CSSVariables } from '../../css-variables'
 
 type KeyboardShortcutsScope = 'root' | 'window'
 
@@ -56,8 +57,9 @@ function shortcutKey(event: KeyboardEvent) {
  * JSX syntax, not on an object type, and selecting on one is the usual way to
  * mark a key out.
  */
-export type KeyAttributes = WithCSSVariables<ComponentPropsWithoutRef<'div'>> &
-  Record<`data-${string}`, string | number | boolean | undefined>
+export type KeyAttributes = Omit<ComponentPropsWithoutRef<'div'>, 'style'> & {
+  style?: CSSProperties & CSSVariables
+} & Record<`data-${string}`, string | number | boolean | undefined>
 
 /** What a key is, when {@link PianoProps.label} or `keyProps` is asked about it. */
 export interface KeyState {
@@ -186,6 +188,8 @@ export interface PianoProps {
   onPlayNote?: (note: number, velocity?: number) => void
   /** Called once everything holding a note has let go of it. */
   onStopNote?: (note: number) => void
+
+  style?: CSSProperties & CSSVariables<'height'>
 }
 
 export interface PianoMethods {
@@ -194,10 +198,7 @@ export interface PianoMethods {
 }
 
 type Props = PianoProps &
-  WithCSSVariables<
-    Omit<ComponentPropsWithoutRef<'div'>, keyof PianoProps>,
-    '--height'
-  >
+  Omit<ComponentPropsWithoutRef<'div'>, keyof PianoProps>
 
 export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
   function Root(

@@ -7,6 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
+  CSSProperties,
 } from 'react'
 
 import {
@@ -18,7 +19,6 @@ import {
 } from '@tremolo-ui/dom'
 import { linearScale, type Scale, type ValueRange } from '@tremolo-ui/functions'
 
-import { type WithCSSVariables } from '../../css-variables'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useWheel } from '../../hooks/useWheel'
 import {
@@ -32,6 +32,8 @@ import { DecrementStepper } from './DecrementStepper'
 import { IncrementStepper } from './IncrementStepper'
 import { InputField } from './InputField'
 import { Stepper } from './Stepper'
+
+import type { CSSVariables } from '../../css-variables'
 
 export interface NumberInputProps {
   /**
@@ -238,6 +240,8 @@ export interface NumberInputProps {
    * </NumberInput.Root>
    */
   children: ReactNode
+
+  style?: CSSProperties & CSSVariables
 }
 
 export interface NumberInputMethods {
@@ -260,9 +264,7 @@ const defaultParse = (text: string) => {
 }
 
 type Props = NumberInputProps &
-  WithCSSVariables<
-    Omit<ComponentPropsWithoutRef<'div'>, keyof NumberInputProps>
-  >
+  Omit<ComponentPropsWithoutRef<'div'>, keyof NumberInputProps>
 
 export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
   (

@@ -1,6 +1,5 @@
 import { ComponentPropsWithoutRef, CSSProperties } from 'react'
 
-import { type WithCSSVariables } from '../../css-variables'
 import { cssLength } from '../_util/css-length'
 import { Placement } from '../_util/Placement'
 import { xor } from '../_util/xor'
@@ -8,6 +7,8 @@ import { xor } from '../_util/xor'
 import { useSliderContext } from './context'
 import { MarksOption } from './MarksOption'
 import { generateOptionsList, MarksOptions } from './type'
+
+import type { CSSVariables } from '../../css-variables'
 
 export interface SliderMarksProps {
   /**
@@ -24,6 +25,8 @@ export interface SliderMarksProps {
    * `'step'` makes one per step, which is a great many for a fine `step`.
    */
   options?: MarksOptions
+
+  style?: CSSProperties & CSSVariables<'gap'>
 }
 
 export function Marks({
@@ -34,10 +37,7 @@ export function Marks({
   style,
   ...props
 }: SliderMarksProps &
-  WithCSSVariables<
-    Omit<ComponentPropsWithoutRef<'div'>, keyof SliderMarksProps>,
-    '--gap'
-  >) {
+  Omit<ComponentPropsWithoutRef<'div'>, keyof SliderMarksProps>) {
   const min = useSliderContext((s) => s.min)
   const max = useSliderContext((s) => s.max)
   const step = useSliderContext((s) => s.step)

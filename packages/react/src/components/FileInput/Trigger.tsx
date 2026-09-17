@@ -1,20 +1,25 @@
-import { ComponentPropsWithoutRef, forwardRef, ReactNode } from 'react'
-
-import { type WithCSSVariables } from '../../css-variables'
+import {
+  ComponentPropsWithoutRef,
+  forwardRef,
+  ReactNode,
+  CSSProperties,
+} from 'react'
 
 import { useFileInputContext } from './context'
+
+import type { CSSVariables } from '../../css-variables'
 
 export interface FileInputTriggerProps {
   /** What the trigger reads. It is the accessible name of the file input. */
   children: ReactNode
+
+  style?: CSSProperties & CSSVariables
 }
 
 type Props = FileInputTriggerProps &
-  WithCSSVariables<
-    Omit<
-      ComponentPropsWithoutRef<'label'>,
-      keyof FileInputTriggerProps | 'htmlFor'
-    >
+  Omit<
+    ComponentPropsWithoutRef<'label'>,
+    keyof FileInputTriggerProps | 'htmlFor'
   >
 
 /**

@@ -15,10 +15,7 @@ editor:
 
 Any other `--` name is still accepted, for the variables a theme reads.
 
-`CSSVariables` takes those names as a parameter, `CSSVariables<'--gap'>`, and is
-exported from the package root rather than from `Piano`. Its default is the
-same as before, so `CSSVariables` on its own still means any custom property.
-
-`PianoProps` no longer declares `style`. `Piano.Root` still takes it, with
-`--height` suggested; if you typed props with `PianoProps` directly, use
-`ComponentProps<typeof Piano.Root>`.
+`CSSVariables` takes those names as a parameter, without the leading dashes —
+`CSSVariables<'gap'>` gives `'--gap'` — and is exported from the package root
+rather than from `Piano`. Its default is the same as before, so `CSSVariables`
+on its own still means any custom property.
