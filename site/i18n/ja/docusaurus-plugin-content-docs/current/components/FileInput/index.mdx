@@ -41,6 +41,10 @@ import { FileInput } from '@tremolo-ui/react'
 
 input の ARIA 属性は、`Root` が描くラッパーに残さず `Root` が受け取ってコントロールへ渡します。「WAV / AIFF、10 MB まで」のような補足は `aria-describedby` で指し、`FileInput.Trigger` を使わず名前を取れない場合は `aria-label` で付けられます。
 
+## ドロップも受け取る {#receiving-a-drop-as-well}
+
+`FileInput` が答えるのはクリックです。ページにドロップされたファイルを受け取るには [`DropZone`](/docs/components/DropZone) を見てください。同じ `File[]` を報告します。
+
 ## API リファレンス {#api-reference}
 
 各パートには、そのパート固有の props があります。描画する要素の属性（`className` や `style` など）も受け取ります。

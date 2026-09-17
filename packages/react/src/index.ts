@@ -7,6 +7,7 @@ export {
   type DrawFunction,
   type InitFunction,
 } from './components/AnimationCanvas'
+export { DropZone, type DropZoneProps } from './components/DropZone'
 export {
   FileInput,
   useFileInputContext,
@@ -86,6 +87,7 @@ export {
 export { useAnimationFrame } from './hooks/useAnimationFrame'
 export { useDrag, type UseDragOptions } from './hooks/useDrag'
 export { useDragValue, type UseDragValueOptions } from './hooks/useDragValue'
+export { useDropZone, type UseDropZoneOptions } from './hooks/useDropZone'
 export { useEventListener } from './hooks/useEventListener'
 export { useInterval } from './hooks/useInterval'
 export { useLongPress } from './hooks/useLongPress'

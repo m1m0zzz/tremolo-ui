@@ -152,7 +152,12 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - 同じファイルを 2 回選んでも動く。ファイル入力は選択が変わらないと `change` を発火しないので、読み取った時点で value を空にする
   - **コントロールはネイティブの `<input type="file">` のまま。** 見えない位置に置くがタブ順には残し、`Trigger` をその `<label>` にした。クリックがピッカーへ届くのも名前が付くのもブラウザの仕事になる
   - `accept` の照合（`matchesAccept`）は `dom` に置いた。DropZone と共有する
-- [ ] `DropZone` コンポーネント
+- [x] **`DropZone` コンポーネント。** ドロップされたファイルを `File[]` として渡す領域。`FileInput` と同じところで止まる
+  - **ドロップを受け取る仕事は `dom` の `createDropZone` に置いた。** `packages/react/AGENTS.md` の「新しいインタラクションもまずコアに書く」に沿う。Svelte の DropZone が enter/leave のカウントと `accept` の照合を書き直さずに済む
+  - **`useDropZone` を公開 hook にした。** 描くものは `div` 1 つなので、波形表示や canvas をそのままドロップ先にできる形が要る。`DropZone.Root` はこの hook を包んで `data-*` を出すだけ
+  - 子要素をまたぐと `dragleave` が誤発火するので enter/leave を数える。別の場所で終わったドラッグ（Esc、ウィンドウ外）は `dragleave` を送らないので、document の `dragend` / `drop` で状態を戻す
+  - **拒否するときもドロップはキャンセルする。** 処理されないドロップはブラウザがページを離れてファイルを開いてしまう
+  - ドラッグ中はファイル名が読めない（`DataTransferItem` はタイプだけ）ので、拡張子で書いた `accept` は `[data-invalid]` の判定に使えない。判定不能として扱い、ドロップ時に判定する
 - [x] **WavetableSynth の story を作り込む**（`packages/react/__stories__/combined/WavetableSynth/`）
   - [x] octave のコントロール
   - [x] velocity のコントロール

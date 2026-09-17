@@ -806,5 +806,49 @@
   "FileInputTriggerProps.children": {
     "message": "トリガーに表示する内容です。そのままファイル入力のアクセシブルな名前になります。",
     "source": "e3ab686c"
+  },
+  "DropZoneProps.accept": {
+    "message": "受け取るファイルの種類を、ファイル入力の `accept` 属性と同じ書き方で指定します。拡張子（`.wav`）・MIME タイプ（`audio/wav`）・タイプのグループ（`audio/*`）をカンマ区切りで並べます。\n\n一致しなかったものは `onDrop` ではなく `onReject` へ届きます。ドラッグ中でも、ブラウザが見分けさせてくれる範囲で要素に `[data-invalid]` が付きます。拡張子で書いた規則はドロップされるまで判定できません。",
+    "source": "b101925c"
+  },
+  "DropZoneProps.multiple": {
+    "message": "1 回のドロップで複数のファイルを受け取ります。off のときは、`multiple` の無いファイル入力と同じく、最初に受理されたファイルだけを報告します。",
+    "source": "7ce7002f"
+  },
+  "DropZoneProps.disabled": {
+    "message": "ドロップを拒否します。それでもドラッグは飲み込みます。処理されないドロップは、ブラウザがページを離れてそのファイルを開いてしまうためです。",
+    "source": "6eb48f99"
+  },
+  "DropZoneProps.onDrop": {
+    "message": "ドロップされたファイルのうち、`accept` に一致したものを受け取ります。",
+    "source": "49a56984"
+  },
+  "DropZoneProps.onReject": {
+    "message": "ドロップされたファイルのうち、`accept` に一致しなかったものを受け取ります。理由を表示するためのものです。",
+    "source": "55837923"
+  },
+  "DropZoneProps.children": {
+    "message": "ゾーンに表示する内容です。",
+    "source": "a26cf410"
+  },
+  "UseDropZoneOptions.accept": {
+    "message": "受け取るファイルの種類を、ファイル入力の `accept` 属性と同じ書き方で指定します。拡張子（`.wav`）・MIME タイプ（`audio/wav`）・タイプのグループ（`audio/*`）をカンマ区切りで並べます。\n\n一致しなかったものは `onDrop` ではなく `onReject` へ届きます。ドラッグ中でも、ブラウザが見分けさせてくれる範囲で要素に `[data-invalid]` が付きます。拡張子で書いた規則はドロップされるまで判定できません。",
+    "source": "8ad7f0fc"
+  },
+  "UseDropZoneOptions.multiple": {
+    "message": "1 回のドロップで複数のファイルを受け取ります。off のときは、`multiple` の無いファイル入力と同じく、最初に受理されたファイルだけを報告します。",
+    "source": "7ce7002f"
+  },
+  "UseDropZoneOptions.disabled": {
+    "message": "ドロップを拒否します。それでもドラッグは飲み込みます。処理されないドロップは、ブラウザがページを離れてそのファイルを開いてしまうためです。",
+    "source": "6eb48f99"
+  },
+  "UseDropZoneOptions.onDrop": {
+    "message": "ドロップされたファイルのうち、`accept` に一致したものを受け取ります。",
+    "source": "49a56984"
+  },
+  "UseDropZoneOptions.onReject": {
+    "message": "ドロップされたファイルのうち、`accept` に一致しなかったものを受け取ります。理由を表示するためのものです。",
+    "source": "55837923"
   }
 }

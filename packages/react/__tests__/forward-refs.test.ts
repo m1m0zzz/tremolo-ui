@@ -1,5 +1,6 @@
 import {
   AnimationCanvas,
+  DropZone,
   FileInput,
   NumberInput,
   PointsEditor,
@@ -10,6 +11,7 @@ import {
 describe('React 18 ref support', () => {
   test.each([
     ['AnimationCanvas', AnimationCanvas],
+    ['DropZone.Root', DropZone.Root],
     ['FileInput.Root', FileInput.Root],
     ['FileInput.Trigger', FileInput.Trigger],
     ['NumberInput.InputField', NumberInput.InputField],
