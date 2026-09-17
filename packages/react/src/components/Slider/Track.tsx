@@ -3,7 +3,6 @@ import { ComponentPropsWithoutRef, CSSProperties, forwardRef } from 'react'
 import { useComposedRefs } from '../../compose-refs'
 import { cssLength } from '../_util/css-length'
 import { Placement } from '../_util/Placement'
-import { xor } from '../_util/xor'
 
 import { useSliderContext } from './context'
 
@@ -59,7 +58,7 @@ export const Track = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         data-orientation={vertical ? 'vertical' : 'horizontal'}
         // Which end the value grows from. `percent` is already the position on
         // screen, so this only says which side of it is the filled one.
-        data-flipped={xor(vertical, reverse) ? '' : undefined}
+        data-flipped={vertical !== reverse ? '' : undefined}
         style={
           {
             '--active': active,

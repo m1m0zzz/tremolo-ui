@@ -55,7 +55,7 @@
 | `isEmpty` | 使用箇所ゼロで、公開 API に紛れ込んだだけだった | **削除済み** |
 | `mod` | `midi.ts` が唯一の実コードの利用者。棚卸しの時点では「使用箇所ゼロ」と書いたが、その後 WavetableSynth の story が使い始めていた | **`midi.ts` の中の非公開関数へ。** `util.ts` は空になったので削除。story は自前で 3 行持つ |
 | `SIGNIFICANT_DIGITS` | `toPrecision` の既定値。外に出す必要がない | `math.ts` の中の定数へ |
-| `xor` | Slider の内部 4 箇所のみ | **`react` の `components/_util/xor.ts` へ。** `functions` 側に利用者がいない |
+| `xor` | Slider の内部 4 箇所のみ | **削除。** いったん `react` の `components/_util/xor.ts` へ移したが、4 箇所とも `vertical !== reverse` に置き換えた。どちらも既定値を持つ `boolean` なので、`undefined` を `false` に読み替える関数は要らなかった |
 | `decimalPart` / `integerPart` | Slider の目盛りと story のみ。`string \| undefined` を返す扱いにくい形で、指数表記で壊れる（`stepValue` の丸めバグの原因になったのと同じ問題） | **削除。** Slider は `react` の `components/_util/decimal-digits.ts` に置き換えた。`number` を返し、`1e-7` のような指数表記も数えるので、目盛りが整数に丸められるバグも直る |
 | `selectInputEvent` | `applyDelta` の内部と、`NumberInput` が `raw` かどうかを見るためだけに使っている | **手順 3 で削除。** 中身は `selectModifier` の返り値の `value` を `option` に言い換えただけだった |
 
