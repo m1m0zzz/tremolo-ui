@@ -1,0 +1,90 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/hooks/use-drag-value/basic'
+import relative from '!!raw-loader!@site/examples/hooks/use-drag-value/relative'
+
+# useDragValue
+
+Drive a number with a pointer drag: the range, the step and the scale are the
+hook's, so the handler receives a value rather than pixels.
+
+<GitHubLink
+  path='packages/react/src/hooks/useDragValue.ts'
+/>
+
+This is what `Knob`, `Slider` and `XYPad` are built on. Reach for it when a
+control of your own needs the same drag behaviour.
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/hooks/use-drag-value/basic.tsx'
+>{basic}</CodeBlock>
+
+## Import
+
+```jsx
+import { useDragValue } from '@tremolo-ui/react'
+```
+
+## The value is yours to hold
+
+**The hook keeps no value.** `onChange` is where it is stored, and the current
+value is read back through `getValue` — or, with `baseElementRef`, not read at
+all because the pointer position says what it is. That is what lets the same
+value be set from a text field, a MIDI message or a preset without the drag
+and the state drifting apart.
+
+## Two ways to map a drag {#mapping}
+
+Which one applies is decided by the option you pass. Give exactly one of them.
+
+### `baseElementRef`: the value is the position pointed at
+
+The pointer is normalized against the bounding rect of the element, so the
+value follows the pointer exactly. `updateOnPointerDown` makes a press jump the
+value there before the pointer moves at all. This is how `Slider` and `XYPad`
+behave.
+
+### `getValue`: the value moves by the distance dragged
+
+Where the pointer is carries no meaning — the value moves away from where it
+stood, with `pixelRange` pixels covering the whole range. This is how a knob
+follows a drag, and why the value does not jump to the pointer.
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/hooks/use-drag-value/relative.tsx'
+>{relative}</CodeBlock>
+
+## Fine adjustment
+
+`sensitivity` is read on every move, so it can answer to a modifier key held
+part way through a drag:
+
+```jsx
+useDragValue({
+  sensitivity: (state) => (state.event.shiftKey ? 0.1 : 1),
+})
+```
+
+With `baseElementRef` the value is normally the position pointed at, so
+anything but `1` turns the mapping relative and leaves the pointer and the
+value apart for the rest of the drag.
+
+## Axes
+
+`axis` takes one `AxisOptions` for both axes, or `[x, y]` for one each. Besides
+`min`, `max`, `step` and `scale` it takes `reverse`, which is how the y axis is
+made to grow upwards — the screen's y grows downwards.
+
+A control that moves on one axis only still gets a value for both; ignore the
+one you do not use, as the relative example above does.
+
+## Options {#options}
+
+<PropsTable of="UseDragValueOptions" />

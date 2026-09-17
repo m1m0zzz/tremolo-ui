@@ -54,7 +54,12 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 - [x] **`@tremolo-ui/dom` のドキュメントを追加する。** typedoc の 3 つ目の plugin として追加し、サイドバーに `@tremolo-ui/dom` のカテゴリを足した。
 - [x] **CSS のデモを公開する形に作り替えた。** `site/docs/tutorials/styling.mdx` を書き直し、`shared/css/` の 6 ファイルを `raw-loader` で全文タブ表示している。コピー元と、サイト / Storybook が実際に読み込むファイルは同一
 - [x] **`PointsEditor` のドキュメントページを書く。** `site/docs/components/PointsEditor/` に追加した。複数選択と `SelectionBox` にも触れている
-- [ ] **hooks のドキュメントを充実させる。** 現在 `site/docs/hooks/` には `web-midi-api` しかない。`useDrag` / `useWheel` / `useDragValue` は typedoc の自動生成のみ
+- [x] **hooks のドキュメントを充実させた。** `site/docs/hooks/` に `useDrag` / `useWheel` / `useDragValue` のページを live example 付きで追加し、ja も書いた
+  - **オプションの表もコンポーネントと同じ `<PropsTable />` で出す。** `site/scripts/api-props.mjs` の対象を `*Props` から `*Props` と `*Options` に広げた。hook にとってオプションは props と同じ意味を持つ
+  - `UseDragProps` は公開していなかったので、`UseDragOptions` の名前で公開した（`UseWheelOptions` / `UseDragValueOptions` と揃う）
+  - **`UseWheelOptions` が `onWheel` を継承していた。** `createWheel` は `update()` で差し替えるために持っているが、hook はハンドラを第 1 引数で受けるので、オプションで渡しても黙って無視されていた。`Omit` で外した
+  - 表に出すにあたって、説明の無かったコールバックや `threshold` / `updateOnPointerDown` の JSDoc を埋めた
+  - `useAnimationFrame` / `useEventListener` / `useInterval` / `useLongPress` はページを作っていない。典型的な実装以上に書くことが無く、typedoc の API ページで足りる
 - [ ] **Vue / Svelte を足したときのドキュメント構成を決める。** 現在の `site/docs/components/<Name>/index.mdx` は React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）。フレームワークごとにタブを分けるのか、サイト自体を分けるのか
 - [x] **`site/i18n` の typedoc サイドバー翻訳キーを掃除した。** `sidebar.typedocSidebar.*` を en / ja とも**全て削除**した（114 キー → 7 キー）。
 - [x] `site/docs/support/CHANGELOG.md` の二重管理をやめた。中身は「TODO: record from version 1.0.0」のスタブのままだったので、各パッケージの `CHANGELOG.md` と GitHub リリース、移行ガイドへのリンクに置き換えた

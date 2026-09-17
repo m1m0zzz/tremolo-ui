@@ -3,6 +3,7 @@ import * as Tone from 'tone'
 
 import * as functions from '@tremolo-ui/functions'
 import * as tremoloUI from '@tremolo-ui/react'
+import { useComposedRefs } from '@tremolo-ui/react/compose-refs'
 
 import myKnob from '@site/examples/tutorials/styling/my-knob.module.css'
 import knobTheme from 'shared/css/Knob.module.css'
@@ -18,6 +19,9 @@ const ReactLiveScope: unknown = {
   ...React,
   ...tremoloUI,
   ...functions,
+  // Published as a subpath rather than from the main entry, so it is not in
+  // `tremoloUI`. The `useDragValue` example needs it.
+  useComposedRefs,
   Tone,
   myKnob,
   // The demo theme, which the examples wire up by hand. Their `import` line is

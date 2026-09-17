@@ -1,0 +1,57 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/hooks/use-wheel/basic'
+
+# useWheel
+
+要素の上のホイールイベントを、キャンセルできるリスナで購読します。
+
+<GitHubLink
+  path='packages/react/src/hooks/useWheel.ts'
+/>
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/hooks/use-wheel/basic.tsx'
+>{basic}</CodeBlock>
+
+## インポート {#import}
+
+```jsx
+import { useWheel } from '@tremolo-ui/react'
+```
+
+## `onWheel` ではいけない理由 {#why-not-onwheel}
+
+**リスナは `passive: false` で登録されます。** React は自前のホイールリスナを passive で付けるので、`onWheel` の中の `preventDefault()` は何もせず、コントロールの下でページがスクロールしてしまいます。ノブがページを動かさずにホイールへ反応できるのは、この hook があるからです。
+
+ハンドラはオプションではなく第 1 引数で、イベントのたびに読み直されます。インラインのアロー関数で書いてもリスナは付け直されません。
+
+## ページのスクロールを奪わない {#not-stealing-the-page-scroll}
+
+ホバーしただけでホイールに反応するコントロールはページのスクロールを奪うので、長いフォームの中で通り過ぎるだけで値が黙って変わります。`requireFocus` は、それを明示的な操作にします。
+
+```jsx
+const ref = useWheel(handler, { requireFocus: true })
+```
+
+判定は同一性ではなく `contains` です。実際にフォーカスを取るのは thumb や `<input>` のような子孫であることが多いためです。
+
+## 共有する要素で購読する {#listening-on-a-shared-element}
+
+ホイールイベントはカーソルの下にある要素にしか届かないので、複数の可動パートからなるコントロールは、リスナを持つパートの上にカーソルがあるときしか反応しません。`target` を使うと共有する要素で購読でき、どのパートが反応するかをそれぞれが決められます。
+
+```jsx
+useWheel(handler, { target: trackRef })
+```
+
+`target` を渡したとき、返される ref callback は使いません。
+
+## オプション {#options}
+
+ハンドラは第 1 引数です。以下は第 2 引数のものです。
+
+<PropsTable of="UseWheelOptions" />
