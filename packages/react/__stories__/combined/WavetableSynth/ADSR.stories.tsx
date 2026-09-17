@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai'
 
-import { clamp, gainToDb, mapValue, mod } from '@tremolo-ui/functions'
+import { clamp, gainToDb, mapValue } from '@tremolo-ui/functions'
 
 import { AnimationCanvas } from '../../../src/components/AnimationCanvas'
 import { Knob } from '../../../src/components/Knob'
@@ -20,6 +20,7 @@ import {
   releaseAtom,
   sustainAtom,
 } from './atoms'
+import { mod } from './wavetable'
 
 import styles from './ADSR.module.css'
 import knobTheme from 'shared/css/Knob.module.css'

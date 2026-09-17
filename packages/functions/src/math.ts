@@ -55,7 +55,7 @@ export function toFixed(x: number, fractionDigits?: number) {
  * little under 16, so anything past this is the binary representation showing
  * through rather than information.
  */
-export const SIGNIFICANT_DIGITS = 15
+const SIGNIFICANT_DIGITS = 15
 
 /**
  * Drop the binary artefact from a computed value.
@@ -85,17 +85,6 @@ export function toPrecision(x: number, significantDigits = SIGNIFICANT_DIGITS) {
   // Rounding up at the very top of the range overflows to Infinity, which is
   // a worse answer than the artefact.
   return Number.isFinite(rounded) ? rounded : x
-}
-
-export function integerPart(x: number | string): string | undefined {
-  if (Number.isNaN(x)) {
-    return undefined
-  }
-  return String(x).split('.')[0]
-}
-
-export function decimalPart(x: number | string): string | undefined {
-  return String(x).split('.')[1]
 }
 
 export function radian(degree: number) {

@@ -1,9 +1,8 @@
 import { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react'
 
-import { xor } from '@tremolo-ui/functions'
-
 import { cssLength } from '../_util/css-length'
 import { Placement } from '../_util/Placement'
+import { xor } from '../_util/xor'
 
 import { useSliderContext } from './context'
 import { MarksOption } from './MarksOption'

@@ -5,11 +5,10 @@ import {
   ReactNode,
 } from 'react'
 
-import { xor } from '@tremolo-ui/functions'
-
 import { useComposedRefs } from '../../compose-refs'
 import { cssLength } from '../_util/css-length'
 import { Placement } from '../_util/Placement'
+import { xor } from '../_util/xor'
 
 import { useSliderContext } from './context'
 

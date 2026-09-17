@@ -1,4 +1,13 @@
-import { mod } from './util'
+/**
+ * Remainder that follows the sign of the divisor, rather than of the dividend.
+ *
+ * `%` in JavaScript keeps the sign of the left operand, so `-13 % 12` is `-1`
+ * and cannot index a 12-element table. Every note here is placed by its
+ * position within the octave, and note numbers below C-1 are negative.
+ */
+function mod(n: number, m: number) {
+  return ((n % m) + m) % m
+}
 
 export const whiteKeys = ['A', 'B', 'C', 'D', 'E', 'F', 'G'] as const
 
