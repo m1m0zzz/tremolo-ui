@@ -13,9 +13,6 @@ export default defineConfig([
     },
     dts: true,
     sourcemap: true,
-    css: {
-      fileName: 'index.css',
-    },
     publint: {
       level: 'error',
     },
