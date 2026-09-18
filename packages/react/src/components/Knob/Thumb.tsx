@@ -1,12 +1,10 @@
-import { SVGProps, CSSProperties } from 'react'
+import { SVGProps } from 'react'
 
 import { clamp } from '@tremolo-ui/functions'
 
 import { useCheckPlacement } from '../_util/Placement'
 
 import { useKnobContext, viewBoxSize } from './context'
-
-import type { CSSVariables } from '../../css-variables'
 
 export interface KnobThumbProps {
   /**
@@ -43,8 +41,6 @@ export interface KnobThumbProps {
   classes?: {
     thumbLine?: string
   }
-
-  style?: CSSProperties & CSSVariables
 }
 
 export function Thumb({

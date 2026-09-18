@@ -1,10 +1,4 @@
-import {
-  ComponentPropsWithoutRef,
-  forwardRef,
-  useMemo,
-  useRef,
-  CSSProperties,
-} from 'react'
+import { ComponentPropsWithoutRef, forwardRef, useMemo, useRef } from 'react'
 
 import {
   applyDelta,
@@ -18,11 +12,7 @@ import { useDrag } from '../../hooks/useDrag'
 
 import { StepperProvider, useNumberInputContext } from './context'
 
-import type { CSSVariables } from '../../css-variables'
-
-type Props = Omit<ComponentPropsWithoutRef<'div'>, 'style'> & {
-  style?: CSSProperties & CSSVariables
-}
+type Props = ComponentPropsWithoutRef<'div'>
 
 /**
  * The area the steppers sit in, and a drag handle in its own right: dragging it

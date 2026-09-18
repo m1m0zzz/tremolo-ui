@@ -58,7 +58,8 @@ function shortcutKey(event: KeyboardEvent) {
  * mark a key out.
  */
 export type KeyAttributes = Omit<ComponentPropsWithoutRef<'div'>, 'style'> & {
-  style?: CSSProperties & CSSVariables
+  style?: CSSProperties &
+    CSSVariables<'color' | 'bg' | 'active-color' | 'active-bg'>
 } & Record<`data-${string}`, string | number | boolean | undefined>
 
 /** What a key is, when {@link PianoProps.label} or `keyProps` is asked about it. */

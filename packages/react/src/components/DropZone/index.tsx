@@ -1,14 +1,7 @@
-import {
-  ComponentPropsWithoutRef,
-  forwardRef,
-  ReactNode,
-  CSSProperties,
-} from 'react'
+import { ComponentPropsWithoutRef, forwardRef, ReactNode } from 'react'
 
 import { useComposedRefs } from '../../compose-refs'
 import { useDropZone } from '../../hooks/useDropZone'
-
-import type { CSSVariables } from '../../css-variables'
 
 export interface DropZoneProps {
   /**
@@ -52,8 +45,6 @@ export interface DropZoneProps {
 
   /** What the zone shows. */
   children: ReactNode
-
-  style?: CSSProperties & CSSVariables
 }
 
 type Props = DropZoneProps &
