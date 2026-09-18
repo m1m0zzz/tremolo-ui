@@ -18,7 +18,7 @@
     "tsc": "tsc"
   },
   "dependencies": {
-    "@base-ui-components/react": "^1.0.0-rc.0",
+    "@base-ui/react": "^1.0.0-rc.0",
     "@docusaurus/core": "3.10.2",
     "@docusaurus/preset-classic": "3.10.2",
     "@docusaurus/remark-plugin-npm2yarn": "3.10.2",
