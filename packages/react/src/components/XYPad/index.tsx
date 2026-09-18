@@ -34,8 +34,6 @@ import { Area } from './Area'
 import { toXY, XY, XYInput, XYPadProvider } from './context'
 import { Thumb, XYPadThumbMethods } from './Thumb'
 
-import type { CSSVariables } from '../../css-variables'
-
 const defaultExternalStyles: XYPadProps['externalStyles'] = {
   cursor: 'pointer',
 }
@@ -168,8 +166,6 @@ export interface XYPadProps {
    * </XYPad.Root>
    */
   children: ReactNode
-
-  style?: CSSProperties & CSSVariables
 }
 
 export interface XYPadMethods {

@@ -35,8 +35,6 @@ import { MarksOption } from './MarksOption'
 import { Thumb, SliderThumbMethods } from './Thumb'
 import { Track } from './Track'
 
-import type { CSSVariables } from '../../css-variables'
-
 const defaultExternalStyles: SliderProps['externalStyles'] = {
   cursor: 'pointer',
 }
@@ -165,8 +163,6 @@ export interface SliderProps {
    * </Slider.Root>
    */
   children: ReactNode
-
-  style?: CSSProperties & CSSVariables
 }
 
 export interface SliderMethods {
