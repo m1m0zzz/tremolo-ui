@@ -4,7 +4,7 @@ import { join, dirname, resolve } from 'path'
 
 import { type InlineConfig, type UserConfig } from 'vite'
 
-import { collectPropTypes, propTypesModule } from './propTypes'
+import { collectPropTypes, propTypesModule } from './propTypes.ts'
 
 import type { StorybookConfig } from '@storybook/react-vite'
 
