@@ -1,5 +1,210 @@
 # @tremolo-ui/react
 
+## 0.7.0
+
+### Minor Changes
+
+- [#305](https://github.com/m1m0zzz/tremolo-ui/pull/305) [`63ea333`](https://github.com/m1m0zzz/tremolo-ui/commit/63ea333fbf431887c9389f270e77516bda1a419c) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **`DropZone` is new.** It takes files dropped onto an area and hands them over
+  as `File`s, stopping where `FileInput` does.
+  
+  ```jsx
+  <DropZone.Root accept="audio/*" onDrop={(files) => load(files[0])}>
+    Drop an audio file here
+  </DropZone.Root>
+  ```
+  
+  - `[data-dragover]` while files are over it, and `[data-invalid]` when it can
+    already tell it will not take them — the browser reports the type of what is
+    being dragged, so `audio/*` decides before the drop while `.wav` cannot
+  - **Leaving a child does not end the drag.** `dragenter` and `dragleave` fire
+    for descendants too, so the pairs are counted
+  - **The drop is cancelled even when it is refused.** An unhandled drop makes
+    the browser leave the page and open the file
+  - A drag that ends elsewhere — dropped on another element, cancelled with
+    Escape, taken out of the window — sends no `dragleave`, and is cleared anyway
+  
+  **`useDropZone` is new**, and is what the component is built on. It makes any
+  element a drop target without wrapping it:
+  
+  ```jsx
+  const { refCallback, over, invalid } = useDropZone({ accept: 'audio/*', onDrop })
+  return <canvas ref={refCallback} />
+  ```
+  
+  **`createDropZone` is new in `@tremolo-ui/dom`**, where the reading of the drag
+  lives so that a wrapper for another framework uses the same one.
+  
+  The demo theme has a `DropZone.module.css` to go with it.
+
+- [#304](https://github.com/m1m0zzz/tremolo-ui/pull/304) [`490ed19`](https://github.com/m1m0zzz/tremolo-ui/commit/490ed19f81b3ffa555f482aa68c195678eccd4af) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **`FileInput` is new.** It picks files and hands them over as `File`s; reading
+  them is yours.
+  
+  ```jsx
+  <FileInput.Root accept="audio/*" multiple onChange={(files) => load(files)}>
+    <FileInput.Trigger>Choose audio</FileInput.Trigger>
+  </FileInput.Root>
+  ```
+  
+  - **`accept` is checked again on the way in.** The browser treats the attribute
+    as a hint to the picker, which a person can switch to "All Files". What does
+    not match arrives at `onReject` rather than `onChange`
+  - **Picking the same file twice works.** A file input fires no `change` event
+    while the selection is unchanged, so the value is cleared as soon as it has
+    been read
+  - The native `<input type="file">` is still the control: out of sight, in the
+    tab order, and named by `FileInput.Trigger`, which is a `<label>` for it
+  
+  `matchesAccept` is new in `@tremolo-ui/dom`. It answers whether a file
+  satisfies an `accept` attribute, with the same extension, MIME type and type
+  group syntax the attribute has.
+  
+  The demo theme has a `FileInput.module.css` to go with it.
+
+- [#306](https://github.com/m1m0zzz/tremolo-ui/pull/306) [`75537d1`](https://github.com/m1m0zzz/tremolo-ui/commit/75537d1cef230399bd8744d3d7159cd311c55964) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **The props types list only what a part adds.** `className`, `style` and
+  `children` are no longer declared on these types, because they had the same
+  types the element attributes already give them:
+  
+  - `NumberInputProps`, `PointsEditorPointProps`
+  - `SliderProps`, `SliderTrackProps`, `SliderThumbProps`, `SliderMarksProps`
+  - `XYPadAreaProps`, `XYPadThumbProps`
+  
+  **A part that adds nothing has no props type any more.** These are removed:
+  
+  - `NumberInputInputFieldProps`, `NumberInputStepperProps`,
+    `NumberInputIncrementStepperProps`, `NumberInputDecrementStepperProps`
+  - `PointsEditorBackgroundProps`, `PointsEditorContainerProps`,
+    `PointsEditorSelectionBoxProps`
+  
+  Every part still takes the same attributes, and they still go where they went.
+  If you typed props with one of the names, take the props of the component
+  instead:
+  
+  ```ts
+  - const props: SliderThumbProps = { className: 'thumb' }
+  + const props: ComponentProps<typeof Slider.Thumb> = { className: 'thumb' }
+  
+  - const props: NumberInputStepperProps = { className: 'stepper' }
+  + const props: ComponentProps<typeof NumberInput.Stepper> = { className: 'stepper' }
+  ```
+
+- [#306](https://github.com/m1m0zzz/tremolo-ui/pull/306) [`75537d1`](https://github.com/m1m0zzz/tremolo-ui/commit/75537d1cef230399bd8744d3d7159cd311c55964) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **`SliderThumbProps` no longer lists `aria-label`, `aria-labelledby`,
+  `aria-describedby` and `aria-valuetext`.** `Slider.Thumb` still takes all four
+  and still puts them on the range input inside it; only the named type changed.
+  
+  They were declared with the same types the `div` attributes already give them,
+  so they added nothing to what `Slider.Thumb` accepts. If you built props with
+  the type directly, add the attributes back yourself:
+  
+  ```ts
+  const props: SliderThumbProps & Pick<AriaAttributes, 'aria-label'> = {
+    'aria-label': 'Level',
+  }
+  ```
+
+- [#307](https://github.com/m1m0zzz/tremolo-ui/pull/307) [`7ec3ffa`](https://github.com/m1m0zzz/tremolo-ui/commit/7ec3ffaac816e89a3ac7d9a2606a9b56bc21d9f3) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **Every part's `style` takes CSS custom properties, and suggests its own.**
+  React's `CSSProperties` has no key starting with `--`, so TypeScript refused
+  `style={{ '--thickness': '16px' }}` everywhere but on `Piano`. It is accepted on
+  every part now, and the properties a part writes or reads come up in your
+  editor:
+  
+  ```tsx
+  <Slider.Track style={{ '--thickness': '16px' }} />
+  //                      ^ --active --inactive --length --percent --thickness
+  ```
+  
+  Any other `--` name is still accepted, for the variables a theme reads.
+  
+  `CSSVariables` takes those names as a parameter, without the leading dashes —
+  `CSSVariables<'gap'>` gives `'--gap'` — and is exported from the package root
+  rather than from `Piano`. Its default is the same as before, so `CSSVariables`
+  on its own still means any custom property.
+
+- [#303](https://github.com/m1m0zzz/tremolo-ui/pull/303) [`106d86c`](https://github.com/m1m0zzz/tremolo-ui/commit/106d86c8413b95a2922e62b10d41eb7ca984f349) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **`UseDragOptions` is exported.** The options of `useDrag` had no name you
+  could import, unlike `useWheel` and `useDragValue`.
+  
+  ```ts
+  import { useDrag, type UseDragOptions } from '@tremolo-ui/react'
+  ```
+  
+  **`UseWheelOptions` no longer has `onWheel`.** It inherited the option from
+  `WheelOptions`, where it exists so that `createWheel` can replace the callback
+  through `update()`. `useWheel` takes the handler as its first argument, so
+  anything passed in the options was silently ignored.
+  
+  The options of all three hooks are documented on their own pages now, with the
+  descriptions coming from the JSDoc.
+
+### Patch Changes
+
+- [#299](https://github.com/m1m0zzz/tremolo-ui/pull/299) [`a2301ee`](https://github.com/m1m0zzz/tremolo-ui/commit/a2301ee00e3a304217c049e372cd36393d60c3f9) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **`@tremolo-ui/functions` drops five exports that were never meant for you.**
+  The package is for general-purpose functions — the ones worth having whether or
+  not you use the rest of this library — and these were implementation details
+  that became public by being pure.
+  
+  | Removed | Instead |
+  | --- | --- |
+  | `mod` | `((n % m) + m) % m`, three characters longer than the import |
+  | `xor` | `a !== b`, or `!!a !== !!b` when either side may be `undefined` |
+  | `integerPart` | `String(Math.trunc(x))` |
+  | `decimalPart` | `String(x).split('.')[1]`, though see below |
+  | `SIGNIFICANT_DIGITS` | nothing. It was only ever the default of `toPrecision`, which still applies on its own |
+  
+  `integerPart` and `decimalPart` returned `string | undefined` and both broke on
+  the exponent form: `String(1e-7)` is `'1e-7'`, which has no decimal point, so
+  `decimalPart` reported no digits at all.
+  
+  **`Slider.Marks` labels an interval written in exponent form correctly.** It
+  used `decimalPart` to decide how far to round each label back, so a `step` or
+  `per` of `1e-7` rounded every label to a whole number. It now counts the digits
+  the exponent stands for.
+
+- [#302](https://github.com/m1m0zzz/tremolo-ui/pull/302) [`67be12f`](https://github.com/m1m0zzz/tremolo-ui/commit/67be12f45eff46babe37ef416d539dbf0cdd73e7) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **Reading the modifier keys of an input event moves to `@tremolo-ui/dom`.**
+  `applyDelta`, `selectModifier`, `mapModifier` and the types `InputEventOption`,
+  `Modifier`, `ModifierMap`, `ModifierState` and `ModifierValue` are no longer
+  exported by `@tremolo-ui/functions`; import them from `@tremolo-ui/dom`
+  instead.
+  
+  ```diff
+  - import { applyDelta, type ModifierValue } from '@tremolo-ui/functions'
+  + import { applyDelta, type ModifierValue } from '@tremolo-ui/dom'
+  ```
+  
+  `ModifierState` is the shape of the modifier flags on a DOM event, and
+  `applyDelta` decides how far one wheel notch or one key press moves a value —
+  the same job `createDragValue` already does for a drag. They now sit together,
+  which is also what a Vue or Svelte wrapper needs in order to implement keyboard
+  control without reading the React components.
+  
+  **`selectInputEvent` is gone.** It returned what `selectModifier` returns, with
+  `value` renamed to `option`, and nothing else:
+  
+  ```diff
+  - const { option, modifier } = selectInputEvent(keyboard, event)
+  + const { value: option, modifier } = selectModifier(keyboard, event)
+  ```
+  
+  With this, `@tremolo-ui/functions` is four groups of general-purpose functions:
+  value distributions, numeric conversion, music theory and display formatting.
+
+- [#301](https://github.com/m1m0zzz/tremolo-ui/pull/301) [`6fbc117`](https://github.com/m1m0zzz/tremolo-ui/commit/6fbc11775b225a6369d1090b9c3b9f8aa9f14643) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **The geometry of a drawn keyboard moves to `@tremolo-ui/dom`.** `noteAt`,
+  `notePosition`, `pianoWidth`, `blackKeyWidth`, `getNoteRangeArray`,
+  `PianoLayout` and `NoteRange` are no longer exported by
+  `@tremolo-ui/functions`; import them from `@tremolo-ui/dom` instead. Nothing
+  about them changed.
+  
+  ```diff
+  - import { noteAt, type PianoLayout } from '@tremolo-ui/functions'
+  + import { noteAt, type PianoLayout } from '@tremolo-ui/dom'
+  ```
+  
+  They are pixel positions and hit testing for a keyboard that has been drawn,
+  which is the layer `@tremolo-ui/dom` is for. `@tremolo-ui/functions` keeps the
+  music theory — `noteNumber`, `noteName`, `noteToFrequency`, the scales — which
+  is useful whether or not anything is on screen.
+- Updated dependencies [[`63ea333`](https://github.com/m1m0zzz/tremolo-ui/commit/63ea333fbf431887c9389f270e77516bda1a419c), [`490ed19`](https://github.com/m1m0zzz/tremolo-ui/commit/490ed19f81b3ffa555f482aa68c195678eccd4af), [`a2301ee`](https://github.com/m1m0zzz/tremolo-ui/commit/a2301ee00e3a304217c049e372cd36393d60c3f9), [`67be12f`](https://github.com/m1m0zzz/tremolo-ui/commit/67be12f45eff46babe37ef416d539dbf0cdd73e7), [`6fbc117`](https://github.com/m1m0zzz/tremolo-ui/commit/6fbc11775b225a6369d1090b9c3b9f8aa9f14643)]:
+  - @tremolo-ui/dom@0.7.0
+  - @tremolo-ui/functions@0.7.0
+
 ## 0.6.0
 
 ### Minor Changes

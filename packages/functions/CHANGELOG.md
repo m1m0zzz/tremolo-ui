@@ -1,5 +1,75 @@
 # @tremolo-ui/functions
 
+## 0.7.0
+
+### Minor Changes
+
+- [#299](https://github.com/m1m0zzz/tremolo-ui/pull/299) [`a2301ee`](https://github.com/m1m0zzz/tremolo-ui/commit/a2301ee00e3a304217c049e372cd36393d60c3f9) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **`@tremolo-ui/functions` drops five exports that were never meant for you.**
+  The package is for general-purpose functions — the ones worth having whether or
+  not you use the rest of this library — and these were implementation details
+  that became public by being pure.
+  
+  | Removed | Instead |
+  | --- | --- |
+  | `mod` | `((n % m) + m) % m`, three characters longer than the import |
+  | `xor` | `a !== b`, or `!!a !== !!b` when either side may be `undefined` |
+  | `integerPart` | `String(Math.trunc(x))` |
+  | `decimalPart` | `String(x).split('.')[1]`, though see below |
+  | `SIGNIFICANT_DIGITS` | nothing. It was only ever the default of `toPrecision`, which still applies on its own |
+  
+  `integerPart` and `decimalPart` returned `string | undefined` and both broke on
+  the exponent form: `String(1e-7)` is `'1e-7'`, which has no decimal point, so
+  `decimalPart` reported no digits at all.
+  
+  **`Slider.Marks` labels an interval written in exponent form correctly.** It
+  used `decimalPart` to decide how far to round each label back, so a `step` or
+  `per` of `1e-7` rounded every label to a whole number. It now counts the digits
+  the exponent stands for.
+
+- [#302](https://github.com/m1m0zzz/tremolo-ui/pull/302) [`67be12f`](https://github.com/m1m0zzz/tremolo-ui/commit/67be12f45eff46babe37ef416d539dbf0cdd73e7) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **Reading the modifier keys of an input event moves to `@tremolo-ui/dom`.**
+  `applyDelta`, `selectModifier`, `mapModifier` and the types `InputEventOption`,
+  `Modifier`, `ModifierMap`, `ModifierState` and `ModifierValue` are no longer
+  exported by `@tremolo-ui/functions`; import them from `@tremolo-ui/dom`
+  instead.
+  
+  ```diff
+  - import { applyDelta, type ModifierValue } from '@tremolo-ui/functions'
+  + import { applyDelta, type ModifierValue } from '@tremolo-ui/dom'
+  ```
+  
+  `ModifierState` is the shape of the modifier flags on a DOM event, and
+  `applyDelta` decides how far one wheel notch or one key press moves a value —
+  the same job `createDragValue` already does for a drag. They now sit together,
+  which is also what a Vue or Svelte wrapper needs in order to implement keyboard
+  control without reading the React components.
+  
+  **`selectInputEvent` is gone.** It returned what `selectModifier` returns, with
+  `value` renamed to `option`, and nothing else:
+  
+  ```diff
+  - const { option, modifier } = selectInputEvent(keyboard, event)
+  + const { value: option, modifier } = selectModifier(keyboard, event)
+  ```
+  
+  With this, `@tremolo-ui/functions` is four groups of general-purpose functions:
+  value distributions, numeric conversion, music theory and display formatting.
+
+- [#301](https://github.com/m1m0zzz/tremolo-ui/pull/301) [`6fbc117`](https://github.com/m1m0zzz/tremolo-ui/commit/6fbc11775b225a6369d1090b9c3b9f8aa9f14643) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - **The geometry of a drawn keyboard moves to `@tremolo-ui/dom`.** `noteAt`,
+  `notePosition`, `pianoWidth`, `blackKeyWidth`, `getNoteRangeArray`,
+  `PianoLayout` and `NoteRange` are no longer exported by
+  `@tremolo-ui/functions`; import them from `@tremolo-ui/dom` instead. Nothing
+  about them changed.
+  
+  ```diff
+  - import { noteAt, type PianoLayout } from '@tremolo-ui/functions'
+  + import { noteAt, type PianoLayout } from '@tremolo-ui/dom'
+  ```
+  
+  They are pixel positions and hit testing for a keyboard that has been drawn,
+  which is the layer `@tremolo-ui/dom` is for. `@tremolo-ui/functions` keeps the
+  music theory — `noteNumber`, `noteName`, `noteToFrequency`, the scales — which
+  is useful whether or not anything is on screen.
+
 ## 0.6.0
 
 ### Minor Changes
