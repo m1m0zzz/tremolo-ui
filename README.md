@@ -14,14 +14,14 @@ Centered around `dom`, it supports multiple libraries and frameworks including `
 - [x] Completely headless CSS
 - [ ] Added some pre-built components
 - [x] Full mobile device support
-- [x] minimal dependences (clsx, zustand) → **No dependences**
+- [x] Minimal dependencies (clsx, zustand) → **No dependencies**
 
 ## ✨ Features
 
 - Headless
 - Touch Device Support
 - Accessible
-- No Dependences
+- No Dependencies
 - Tree Shaking
 
 ## 📚 Links
