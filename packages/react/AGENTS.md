@@ -31,7 +31,7 @@
   - **要素の属性と同じ型のもの（`className` / `style` / `children` / `aria-*`）は、内側の別の要素へ渡すときでも宣言しない。** 行き先を変えているのは分割代入で、型ではない。宣言しても `Omit` で抜けて同じ型で戻ってくるだけになる。行き先はテストで固定する
   - 宣言するのは型を変えるときだけ（`Root` の必須の `children`、軸ごとに受ける `aria-label`、カスタムプロパティを受ける `style`）。**独自の props が無いパートは props の型を作らず、公開もしない。** 空の interface は何も言わない名前が公開 API に増えるだけで、利用者は `ComponentProps<typeof X.Part>` で型を取れる
   - 説明したいことがあるなら JSDoc ではなくページの散文に書く
-- **どのパートの `style` も `CSSProperties & CSSVariables<…>` にする。** props の型があるパートはその型に `style?: CSSProperties & CSSVariables<'width' | 'height'>` と書き、無いパートはファイル内の `Props` で `Omit<…, 'style'>` と合わせる。型引数はそのパートが**書き込む・読む**カスタムプロパティで、`--` を付けずに書く（付けると `----width` になり、型は何も言わない）。エディタの補完に出るので、`...style` の位置や書き込むプロパティを変えたらここも見直すこと
+- **パッケージ内では `CSSVariables` の型引数を省略せず、`never` も使わない。** パートが**書き込む・読む**カスタムプロパティがある場合だけ `style` を `CSSProperties & CSSVariables<'width' | 'height'>` のように宣言する。props の型があるパートはその型に書き、無いパートはファイル内の `Props` で `Omit<…, 'style'>` と合わせる。カスタムプロパティが無いパートは `style` を宣言せず、描く要素の属性から受け取る。型引数には `--` を付けない（付けると `----width` になり、型は何も言わない）。エディタの補完に出るので、`...style` の位置や書き込むプロパティを変えたらここも見直すこと。公開する `CSSVariables` 型の既定の型引数は維持し、利用者には型引数なしの使用も許可する
 - context は `<Component>ContextValue` を型にし、selector を受ける `use<Component>Context` と一緒に公開する。selector の引数の型として利用者が書くため
 - `useCheckPlacement` と `<Placement name>` に渡す名前は、利用者が JSX に書く形（`'Slider.Thumb'`）にする。警告にそのまま出る
 - **テストファイルの名前は、何のテストかで決める。** 1 つのコンポーネントのテストは `<Component>.test.tsx`、トピックで分けるときは `<Component>.<topic>.test.tsx`（トピックは kebab-case）。パートのテストは `<Part>.test.tsx`、hook のテストは hook と同じ名前にする。複数のコンポーネントにまたがる `__tests__/` のテストは kebab-case

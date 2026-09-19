@@ -130,37 +130,37 @@ export const VolumeFader = () => {
             className={sliderTheme.marksOption}
             classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
             value={6}
-            labelWidth={30}
+            styles={{ label: { width: 30 } }}
           />
           <Slider.MarksOption
             className={sliderTheme.marksOption}
             classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
             value={0}
-            labelWidth={30}
+            styles={{ label: { width: 30 } }}
           />
           <Slider.MarksOption
             className={sliderTheme.marksOption}
             classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
             value={-6}
-            labelWidth={30}
+            styles={{ label: { width: 30 } }}
           />
           <Slider.MarksOption
             className={sliderTheme.marksOption}
             classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
             value={-12}
-            labelWidth={30}
+            styles={{ label: { width: 30 } }}
           />
           <Slider.MarksOption
             className={sliderTheme.marksOption}
             classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
             value={-24}
-            labelWidth={30}
+            styles={{ label: { width: 30 } }}
           />
           <Slider.MarksOption
             className={sliderTheme.marksOption}
             classes={{ mark: sliderTheme.mark, label: sliderTheme.label }}
             value={-100}
-            labelWidth={30}
+            styles={{ label: { width: 30 } }}
             label="-inf"
           />
         </Slider.Marks>

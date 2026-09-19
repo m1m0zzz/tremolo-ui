@@ -24,11 +24,8 @@ import {
 import { isWhiteKey, noteKey } from '@tremolo-ui/functions'
 
 import { useEventListener } from '../../hooks/useEventListener'
-import { cssLength } from '../_util/css-length'
 
 import { KeyboardShortcuts } from './keyboard-shortcuts'
-
-import type { CSSVariables } from '../../css-variables'
 
 type KeyboardShortcutsScope = 'root' | 'window'
 
@@ -57,10 +54,8 @@ function shortcutKey(event: KeyboardEvent) {
  * JSX syntax, not on an object type, and selecting on one is the usual way to
  * mark a key out.
  */
-export type KeyAttributes = Omit<ComponentPropsWithoutRef<'div'>, 'style'> & {
-  style?: CSSProperties &
-    CSSVariables<'color' | 'bg' | 'active-color' | 'active-bg'>
-} & Record<`data-${string}`, string | number | boolean | undefined>
+export type KeyAttributes = ComponentPropsWithoutRef<'div'> &
+  Record<`data-${string}`, string | number | boolean | undefined>
 
 /** What a key is, when {@link PianoProps.label} or `keyProps` is asked about it. */
 export interface KeyState {
@@ -152,13 +147,6 @@ export interface PianoProps {
   blackKeyHeightRatio?: number
 
   /**
-   * Height of the keyboard. Sets `--height`; when it is omitted, the height
-   * the theme gives stands, and the theme can tell `resizable` apart through
-   * `data-resizable`.
-   */
-  height?: number | string
-
-  /**
    * What to draw inside a key. `''`, `null` and `undefined` leave it bare, so
    * a layout with gaps — {@link SHORTCUTS.HOME_ROW_NATURAL}, say — needs no
    * special casing.
@@ -189,8 +177,6 @@ export interface PianoProps {
   onPlayNote?: (note: number, velocity?: number) => void
   /** Called once everything holding a note has let go of it. */
   onStopNote?: (note: number) => void
-
-  style?: CSSProperties & CSSVariables<'height'>
 }
 
 export interface PianoMethods {
@@ -214,7 +200,6 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
       keyGap = 1,
       blackKeyWidthRatio = 0.65,
       blackKeyHeightRatio = 0.6,
-      height,
       style,
       className,
       label,
@@ -423,7 +408,6 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
           {
             // Computed from the layout rather than chosen, so it stays inline.
             width: resizable ? '100%' : pianoWidth(layout),
-            '--height': cssLength(height),
             // The keys inside are placed against this box.
             position: 'relative',
             ...style,

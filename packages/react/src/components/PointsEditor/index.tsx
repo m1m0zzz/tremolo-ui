@@ -24,15 +24,12 @@ import {
 import { clamp, toPrecision } from '@tremolo-ui/functions'
 
 import { DEFAULT_DRAG_SENSITIVITY } from '../../input-event'
-import { cssLength } from '../_util/css-length'
 
 import { Background } from './Background'
 import { Container } from './Container'
 import { type PointRegistration, PointsEditorProvider } from './context'
 import { AXIS, Point, type PointBaseType } from './Point'
 import { SelectionBox } from './SelectionBox'
-
-import type { CSSVariables } from '../../css-variables'
 
 /** One array for every editor with selection turned off, so memos hold still. */
 const EMPTY: readonly string[] = []
@@ -90,11 +87,6 @@ const DEFAULT_KEYBOARD: ModifierValue<InputEventOption> = {
 }
 
 export interface PointsEditorProps {
-  /** Sets `--width`; the size the theme gives it stands when omitted. */
-  width?: number | string
-  /** Sets `--height`; the size the theme gives it stands when omitted. */
-  height?: number | string
-
   /**
    * Make the points unchangeable and remove them from the tab order.
    * The parts carry `data-disabled` while it is set.
@@ -212,8 +204,6 @@ export interface PointsEditorProps {
    * </PointsEditor.Root>
    */
   children: ReactNode
-
-  style?: CSSProperties & CSSVariables<'width' | 'height'>
 }
 
 type Props = PointsEditorProps &
@@ -222,8 +212,6 @@ type Props = PointsEditorProps &
 export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   (
     {
-      width,
-      height,
       disabled = false,
       readonly = false,
       wheel = DEFAULT_WHEEL,
@@ -524,8 +512,6 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
           data-readonly={readonly ? '' : undefined}
           style={
             {
-              '--width': cssLength(width),
-              '--height': cssLength(height),
               // The layers inside are placed against this box.
               position: 'relative',
               ...style,

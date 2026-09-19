@@ -8,23 +8,18 @@ import xyPadTheme from 'shared/css/XYPad.module.css'
 export default {
   title: 'Components/XYPad/Area',
   component: XYPad.Area,
-  argTypes: {
-    color: { control: 'color' },
-  },
 } satisfies Meta<typeof XYPad.Area>
 
 type Story = StoryObj<typeof XYPad.Area>
 
 /**
  * The area is the surface the thumb is placed on, and what the pointer is
- * normalized against: a press anywhere in it is a position on both axes. Its
- * props write the custom properties the theme reads — `color` is the surface
- * itself, so the theme's near-white stands unless Controls says otherwise.
+ * normalized against: a press anywhere in it is a position on both axes.
+ * Its size can be set directly through CSS or `style`.
  */
-export const Basic: Story = {
+export const Sizing: Story = {
   args: {
-    width: 200,
-    height: 140,
+    style: { width: 200, height: 140 },
   },
   render: (args) => {
     const [value, setValue] = useState<[number, number]>([32, 56])
@@ -59,8 +54,7 @@ export const Basic: Story = {
  */
 export const WithBackdrop: Story = {
   args: {
-    width: 200,
-    height: 140,
+    style: { width: 200, height: 140 },
   },
   render: (args) => {
     const [value, setValue] = useState<[number, number]>([50, 50])

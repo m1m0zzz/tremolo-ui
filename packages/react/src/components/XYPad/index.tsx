@@ -444,7 +444,6 @@ export const XYPad = {
 }
 
 export { type XYPadThumbProps, type XYPadThumbMethods } from './Thumb'
-export { type XYPadAreaProps } from './Area'
 export {
   useXYPadContext,
   type XYPadContextValue,

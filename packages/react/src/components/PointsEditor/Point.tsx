@@ -19,7 +19,6 @@ import { clamp } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
 import { useDragValue } from '../../hooks/useDragValue'
-import { cssLength } from '../_util/css-length'
 import { useCheckPlacement } from '../_util/Placement'
 import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
@@ -57,12 +56,6 @@ export interface PointsEditorPointProps<T extends PointBaseType> {
   /** The highest position the point can take, per axis. An axis left out is 1. */
   max?: Partial<PointBaseType>
 
-  /** Width and height at once. Sets both `--width` and `--height`. */
-  size?: number | string
-  /** Sets `--width`; the size the theme gives it stands when omitted. */
-  width?: number | string
-  /** Sets `--height`; the size the theme gives it stands when omitted. */
-  height?: number | string
   /** Sets `--color`, for the theme to colour the point with. */
   color?: string
 
@@ -94,8 +87,7 @@ export interface PointsEditorPointProps<T extends PointBaseType> {
   /** Called when that drag ends, with where the point is. */
   onDragEnd?: (value: PointBaseType) => void
 
-  style?: CSSProperties &
-    CSSVariables<'width' | 'height' | 'color' | 'translate'>
+  style?: CSSProperties & CSSVariables<'color' | 'translate'>
 }
 
 /**
@@ -121,9 +113,6 @@ export function Point<T extends PointBaseType>({
   id: idProp,
   min,
   max,
-  size,
-  width,
-  height,
   color,
 
   disabled: _disabled,
@@ -304,8 +293,6 @@ export function Point<T extends PointBaseType>({
       style={
         {
           '--color': color,
-          '--width': cssLength(size ?? width),
-          '--height': cssLength(size ?? height),
           // The mechanics of the position below: a point is placed by its
           // position in the container, measured from its own centre.
           position: 'absolute',

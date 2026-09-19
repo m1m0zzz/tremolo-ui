@@ -161,15 +161,15 @@ export const Styling: Story = {
         keyLabel: pianoTheme.keyLabel,
       }}
       {...args}
-      keyProps={(_, { keyType }) =>
+      keyProps={(_, { keyType, active }) =>
         keyType === 'white'
           ? {
               className: pianoTheme.whiteKey,
-              style: { '--bg': '#83888a', '--active-bg': '#5acee8' },
+              style: { backgroundColor: active ? '#5acee8' : '#83888a' },
             }
           : {
               className: pianoTheme.blackKey,
-              style: { '--bg': '#333536', '--active-bg': '#5acee8' },
+              style: { backgroundColor: active ? '#5acee8' : '#333536' },
             }
       }
       label={(note, { keyType }) =>
@@ -186,9 +186,8 @@ export const Styling: Story = {
  * reach the keys. A scale is a set of pitch classes that CSS cannot compute on
  * its own.
  *
- * Playing a highlighted key gives a colour of its own: `--active-bg` is set
- * alongside `--bg`, so the key CSS does the switching and the callback does
- * not have to look at `state.active`.
+ * `keyProps` also receives whether the note is sounding, so a highlighted
+ * key can change its colour while played without a theme variable.
  */
 export const ScaleHighlight: Story = {
   args: {
@@ -246,18 +245,17 @@ export const ScaleHighlight: Story = {
             keyLabel: pianoTheme.keyLabel,
           }}
           {...args}
-          keyProps={(note, { keyType }) => ({
+          keyProps={(note, { keyType, active }) => ({
             className:
               keyType === 'white' ? pianoTheme.whiteKey : pianoTheme.blackKey,
             ...(inScale(note, root, scale)
               ? {
                   style:
                     keyType === 'white'
-                      ? { '--bg': '#bfe3ff', '--active-bg': '#3f9ae0' }
+                      ? { backgroundColor: active ? '#3f9ae0' : '#bfe3ff' }
                       : {
-                          '--bg': '#2f5d84',
-                          '--active-bg': '#3f9ae0',
-                          '--active-color': '#04121d',
+                          backgroundColor: active ? '#3f9ae0' : '#2f5d84',
+                          color: active ? '#04121d' : undefined,
                         },
                 }
               : {}),
