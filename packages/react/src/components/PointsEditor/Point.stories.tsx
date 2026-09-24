@@ -22,7 +22,6 @@ type Story = StoryObj<typeof PointsEditor.Point>
  */
 export const Basic: Story = {
   args: {
-    size: 16,
     color: '#4e76e5',
   },
   render: (args) => {
@@ -57,7 +56,6 @@ export const Basic: Story = {
  */
 export const Limited: Story = {
   args: {
-    size: 16,
     min: { y: 0.5 },
     max: { y: 0.5 },
   },
@@ -90,9 +88,8 @@ export const Limited: Story = {
  */
 export const WithChildren: Story = {
   args: {
-    size: 24,
     children: <span style={{ fontSize: 10 }}>1</span>,
-    style: { display: 'grid', placeItems: 'center' },
+    style: { display: 'grid', placeItems: 'center', width: 24, height: 24 },
   },
   render: (args) => {
     const [point, setPoint] = useState<PointBaseType>({ x: 0.5, y: 0.5 })

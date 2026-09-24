@@ -439,14 +439,14 @@ describe('Piano', () => {
     const { piano, onPlayNote } = setup({
       keyProps: () => ({
         className: 'mine',
-        style: { left: 999, width: 5, '--bg': 'red' },
+        style: { left: 999, width: 5, '--key-accent': 'red' },
       }),
     })
 
     const c3 = key(noteNumber('C3'))
     expect(c3.className).toBe('mine')
     // The custom property survives; the geometry is the layout's.
-    expect(c3.style.getPropertyValue('--bg')).toBe('red')
+    expect(c3.style.getPropertyValue('--key-accent')).toBe('red')
     expect(c3.style.left).toBe('0px')
     expect(c3.style.width).toBe('40px')
 

@@ -126,7 +126,6 @@
   --thickness: 1px;
   --length: 0.5rem;
   --gap: 2px;
-  --label-width: auto;
 
   display: flex;
   color: oklch(25.197% 0.00003 271.152);
@@ -155,7 +154,6 @@
 
 .label {
   text-align: right;
-  width: var(--label-width);
 }
 
 /*

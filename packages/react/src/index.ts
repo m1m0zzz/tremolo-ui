@@ -68,7 +68,6 @@ export {
   type XYPadContextValue,
   type XYPadProps,
   type XYPadMethods,
-  type XYPadAreaProps,
   type XYPadThumbProps,
   type XYPadThumbMethods,
   type XY,

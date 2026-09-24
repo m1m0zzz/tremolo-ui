@@ -191,7 +191,7 @@ export function KeyboardSection({
         keyboardShortcutsScope={'window'}
         keyboardShortcuts={SHORTCUTS.HOME_ROW}
         label={(_, { index }) => SHORTCUTS.HOME_ROW.keys[index]?.toUpperCase()}
-        height={120}
+        style={{ height: 120 }}
         // Only the MIDI keyboard carries a velocity; the mouse and the computer
         // keyboard play at the knob's.
         onPlayNote={(note, v) => onPlayNote?.(note, v ?? velocity / 127)}

@@ -4,20 +4,14 @@
  */
 
 .root {
-  --width: 200px;
-  --height: 100px;
-
-  width: var(--width);
-  height: var(--height);
+  width: 200px;
+  height: 100px;
 }
 
 .point {
   --color: oklch(59.5% 0.17548 266.373);
-  --width: 16px;
-  --height: 16px;
-
-  width: var(--width);
-  height: var(--height);
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   outline: none;
   cursor: grab;

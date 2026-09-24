@@ -237,8 +237,7 @@ function toRaw(target: 'A' | 'D' | 'S' | 'R', normalizedValue: number) {
 
 export const ADSRWithSlope: Story = {
   args: {
-    width: 300,
-    height: 100,
+    style: { width: 300, height: 100 },
   },
   render: (args) => {
     const [A, setA] = useState(toNorm('A', 100))
@@ -250,13 +249,13 @@ export const ADSRWithSlope: Story = {
     const [rSlope, setRSlope] = useState(0.5)
 
     const pointProps: Partial<Parameters<typeof PointsEditor.Point>[0]> = {
-      size: 30,
+      style: { width: 30, height: 30 },
       className: styles.point,
       children: <div className={styles.pointInner} />,
     }
 
     const subPointProps: Partial<Parameters<typeof PointsEditor.Point>[0]> = {
-      size: 30,
+      style: { width: 30, height: 30 },
       className: styles.point,
       children: (
         <div className={`${styles.pointInner} ${styles.subPointInner}`} />

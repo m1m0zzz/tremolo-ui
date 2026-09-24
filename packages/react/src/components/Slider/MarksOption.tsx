@@ -29,8 +29,6 @@ export interface SliderMarksOptionProps {
   length?: number | string
   /** Space between the mark and the label. Sets `--gap`. */
   gap?: number | string
-  /** Width of the label. Sets `--label-width`. */
-  labelWidth?: number | string
   /** Classes for the mark and the label inside the option. */
   classes?: {
     mark?: string
@@ -43,7 +41,7 @@ export interface SliderMarksOptionProps {
   }
 
   style?: CSSProperties &
-    CSSVariables<'thickness' | 'length' | 'gap' | 'label-width' | 'translate'>
+    CSSVariables<'thickness' | 'length' | 'gap' | 'translate'>
 }
 
 export function MarksOption({
@@ -53,7 +51,6 @@ export function MarksOption({
   thickness,
   length,
   gap,
-  labelWidth,
   classes,
   styles,
   className,
@@ -87,7 +84,6 @@ export function MarksOption({
           '--thickness': cssLength(thickness),
           '--length': cssLength(length),
           '--gap': cssLength(gap),
-          '--label-width': cssLength(labelWidth),
           // The mechanics of the position below, as on the thumb.
           position: 'absolute',
           translate: vertical

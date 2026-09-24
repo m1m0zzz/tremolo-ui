@@ -4,37 +4,30 @@
  */
 
 .root {
-  --height: 160px;
-
   display: inline-block;
   box-sizing: border-box;
   user-select: none;
   touch-action: none;
-  height: var(--height);
+  height: 160px;
 
   /* The width is the keyboard's own, so a resizable piano stretches both ways. */
   &[data-resizable] {
-    --height: 100%;
+    height: 100%;
   }
 }
 
 .whiteKey {
-  --bg: oklch(100% 0 0);
-  --color: oklch(0% 0 0);
-  --active-bg: oklch(92% 0 0);
-  --active-color: oklch(0% 0 0);
-
   box-sizing: border-box;
-  background-color: var(--bg);
+  background-color: oklch(100% 0 0);
   -webkit-tap-highlight-color: transparent;
-  color: var(--color);
+  color: oklch(0% 0 0);
   border: 1px solid #555;
   border-radius: 0px 0px 8px 8px;
   cursor: pointer;
 
   &[data-active] {
-    background-color: var(--active-bg);
-    color: var(--active-color);
+    background-color: oklch(92% 0 0);
+    color: oklch(0% 0 0);
   }
 
   &[data-disabled] {
@@ -43,22 +36,17 @@
 }
 
 .blackKey {
-  --color: oklch(100% 0 0);
-  --bg: oklch(32% 0 0);
-  --active-color: oklch(100% 0 0);
-  --active-bg: oklch(44% 0 0);
-
   box-sizing: border-box;
-  background-color: var(--bg);
+  background-color: oklch(32% 0 0);
   -webkit-tap-highlight-color: transparent;
-  color: var(--color);
+  color: oklch(100% 0 0);
   border: 1px solid #555;
   border-radius: 0px 0px 8px 8px;
   cursor: pointer;
 
   &[data-active] {
-    background-color: var(--active-bg);
-    color: var(--active-color);
+    background-color: oklch(44% 0 0);
+    color: oklch(100% 0 0);
   }
 
   &[data-disabled] {
@@ -95,8 +83,11 @@
 
 :global(.dark) .whiteKey,
 :global([data-theme='dark']) .whiteKey {
-  --bg: oklch(80% 0 0);
-  --color: oklch(0% 0 0);
-  --active-bg: oklch(72% 0 0);
-  --active-color: oklch(0% 0 0);
+  background-color: oklch(80% 0 0);
+  color: oklch(0% 0 0);
+
+  &[data-active] {
+    background-color: oklch(72% 0 0);
+    color: oklch(0% 0 0);
+  }
 }

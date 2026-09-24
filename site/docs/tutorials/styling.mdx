@@ -78,8 +78,8 @@ focusable element is a real one.
 
 ## 📐Custom properties
 
-Anything about a component that is a matter of appearance is a custom property,
-and the prop that goes with it does nothing but write that property.
+Style single CSS declarations directly, through a class or `style`. Some props
+write custom properties when the same value serves several declarations:
 
 ```jsx
 <Slider.Track thickness={16} />
@@ -87,10 +87,10 @@ and the prop that goes with it does nothing but write that property.
 <Slider.Track style={{ '--thickness': '16px' }} />
 ```
 
-So the prop, a stylesheet and an inline style are three ways to say one thing,
-and the usual cascade decides between them. **The default is in the CSS, not in
-the component**, so a rule of yours is enough to change it everywhere — you do
-not have to pass a prop to every instance.
+For these props, a stylesheet and an inline style are other ways to set the
+same value, and the usual cascade decides between them. **The default is in
+the CSS, not in the component**, so a rule of yours is enough to change it
+everywhere.
 
 ```css
 .track {
@@ -116,8 +116,8 @@ Reference** — [Knob](/docs/components/Knob/#api-reference),
 [PointsEditor](/docs/components/PointsEditor/#api-reference).
 
 A theme adds variables of its own on top of those — the one below has
-`--thumb-size`, the track's `--axis`, and the colours of each kind of key.
-Those are the theme's to name, and they are only there because it reads them.
+`--thumb-size` and the track's `--axis`. Those are the theme's to name, and
+they are only there because it reads them.
 
 ## 📋The theme used on this site
 
@@ -125,9 +125,9 @@ Every example in these docs is styled by the files below. They are the starting
 point rather than a dependency: copy the ones you need into your own project
 and edit them.
 
-Each is plain CSS with no build step, and each one leans on custom properties
-(`--knob-size`, `--thumb-size`, `--active-color` …) so the common changes are a
-one-line override.
+Each is plain CSS with no build step. Custom properties such as `--knob-size`
+and `--thumb-size` keep values used in several places together; a size or
+colour used once is a regular CSS declaration.
 
 **They say what the parts look like, not where they go.** A component places
 its own parts — a thumb is taken out of flow and centred on the value by the

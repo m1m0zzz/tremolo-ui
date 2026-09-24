@@ -275,10 +275,6 @@
     "message": "黒鍵の高さ。鍵盤全体の高さに対する割合で指定します。",
     "source": "c86e4cad"
   },
-  "PianoProps.height": {
-    "message": "鍵盤の高さ。`--height` を設定します。省略するとテーマが与えた高さになり、テーマは `data-resizable` で `resizable` かどうかを見分けられます。",
-    "source": "62e13a9a"
-  },
   "PianoProps.label": {
     "message": "鍵盤の中に描くもの。`''`、`null`、`undefined` は何も描かないので、`HOME_ROW_NATURAL` のように歯抜けのある配列でも特別扱いは要りません。",
     "source": "3d3b3d02"
@@ -294,14 +290,6 @@
   "PianoProps.onStopNote": {
     "message": "ノートを押していたすべての入力元が離したときに呼ばれます。",
     "source": "fd1cf17a"
-  },
-  "PointsEditorProps.width": {
-    "message": "`--width` を設定します。省略するとテーマが与えた大きさになります。",
-    "source": "cb49b3ed"
-  },
-  "PointsEditorProps.height": {
-    "message": "`--height` を設定します。省略するとテーマが与えた大きさになります。",
-    "source": "8257fc59"
   },
   "PointsEditorProps.disabled": {
     "message": "点を変更できなくし、タブ順から外します。設定している間、パートは `data-disabled` を持ちます。",
@@ -362,18 +350,6 @@
   "PointsEditorPointProps.max": {
     "message": "点が取れる最大の位置（軸ごと）。省略した軸は 1 です。",
     "source": "b0f9d9df"
-  },
-  "PointsEditorPointProps.size": {
-    "message": "幅と高さをまとめて指定します。`--width` と `--height` の両方を設定します。",
-    "source": "be69c11a"
-  },
-  "PointsEditorPointProps.width": {
-    "message": "`--width` を設定します。省略するとテーマが与えた大きさになります。",
-    "source": "cb49b3ed"
-  },
-  "PointsEditorPointProps.height": {
-    "message": "`--height` を設定します。省略するとテーマが与えた大きさになります。",
-    "source": "8257fc59"
   },
   "PointsEditorPointProps.color": {
     "message": "`--color` を設定します。テーマが点の色に使います。",
@@ -438,10 +414,6 @@
   "SliderMarksOptionProps.gap": {
     "message": "目盛りとラベルの間隔。`--gap` を設定します。",
     "source": "492045ac"
-  },
-  "SliderMarksOptionProps.labelWidth": {
-    "message": "ラベルの幅。`--label-width` を設定します。",
-    "source": "bfa58a3d"
   },
   "SliderMarksOptionProps.classes": {
     "message": "オプションの中の、目盛りとラベルのクラス。",
@@ -610,18 +582,6 @@
   "XYPadProps.children": {
     "message": "ここに組み立てたものがそのまま描画されます。フォールバックする既定のマークアップはありません。",
     "source": "76b82a66"
-  },
-  "XYPadAreaProps.width": {
-    "message": "`--width` を設定します。省略するとテーマが与えた大きさになります。",
-    "source": "cb49b3ed"
-  },
-  "XYPadAreaProps.height": {
-    "message": "`--height` を設定します。省略するとテーマが与えた大きさになります。",
-    "source": "8257fc59"
-  },
-  "XYPadAreaProps.color": {
-    "message": "`--color` を設定します。テーマがエリアの色に使います。",
-    "source": "41383a28"
   },
   "XYPadThumbProps.color": {
     "message": "`--color` を設定します。テーマがつまみの色に使います。大きさはここではなく `XYPad.Root` の `--thumb-size` で決まり、ルートはそれに合わせてエリアの周りに余白を取れます。",

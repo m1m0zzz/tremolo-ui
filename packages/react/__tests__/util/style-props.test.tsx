@@ -21,7 +21,7 @@ function renderSlider(
   return container.querySelector('[data-testid="track"]')!
 }
 
-describe('appearance props write custom properties', () => {
+describe('appearance props and styles', () => {
   test('a number is written as pixels', () => {
     const { container } = render(
       <Slider.Root value={25} min={0} max={100}>
@@ -77,41 +77,48 @@ describe('appearance props write custom properties', () => {
     expect((renderSlider() as HTMLElement).style.background).toBe('')
   })
 
-  test('XYPad.Area', () => {
+  test('XYPad.Area accepts native CSS properties', () => {
     const { container } = render(
       <XYPad.Root value={[0, 0]} min={[0, 0]} max={[10, 10]}>
-        <XYPad.Area data-testid="area" width={300} height="10rem" color="red">
+        <XYPad.Area
+          data-testid="area"
+          style={{ width: 300, height: '10rem', backgroundColor: 'red' }}
+        >
           <XYPad.Thumb />
         </XYPad.Area>
       </XYPad.Root>,
     )
-    const area = container.querySelector('[data-testid="area"]')!
+    const area = container.querySelector<HTMLElement>('[data-testid="area"]')!
 
-    expect(variable(area, '--width')).toBe('300px')
-    expect(variable(area, '--height')).toBe('10rem')
-    expect(variable(area, '--color')).toBe('red')
+    expect(area.style.width).toBe('300px')
+    expect(area.style.height).toBe('10rem')
+    expect(area.style.backgroundColor).toBe('red')
   })
 
   test('PointsEditor and its points', () => {
     const { container } = render(
-      <PointsEditor.Root data-testid="editor" width={400} height={200}>
+      <PointsEditor.Root
+        data-testid="editor"
+        style={{ width: 400, height: 200 }}
+      >
         <PointsEditor.Container>
           <PointsEditor.Point
             data-testid="point"
             value={{ x: 0.5, y: 0.5 }}
-            size={24}
+            style={{ width: 24, height: 24 }}
           />
         </PointsEditor.Container>
       </PointsEditor.Root>,
     )
-    const editor = container.querySelector('[data-testid="editor"]')!
-    const point = container.querySelector('[data-testid="point"]')!
+    const editor = container.querySelector<HTMLElement>(
+      '[data-testid="editor"]',
+    )!
+    const point = container.querySelector<HTMLElement>('[data-testid="point"]')!
 
-    expect(variable(editor, '--width')).toBe('400px')
-    expect(variable(editor, '--height')).toBe('200px')
-    // `size` is both at once.
-    expect(variable(point, '--width')).toBe('24px')
-    expect(variable(point, '--height')).toBe('24px')
+    expect(editor.style.width).toBe('400px')
+    expect(editor.style.height).toBe('200px')
+    expect(point.style.width).toBe('24px')
+    expect(point.style.height).toBe('24px')
     // Where the point is stays an inline position: it is the value.
     expect((point as HTMLElement).style.left).toBe('50%')
   })

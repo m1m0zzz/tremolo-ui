@@ -40,13 +40,8 @@ import { Piano, SHORTCUTS } from '@tremolo-ui/react'
 
 <PropsTable of="PianoProps" />
 
-| カスタムプロパティ | 書き込む prop | 決めるもの |
-| --- | --- | --- |
-| `--height` | `height` | 鍵盤の高さ。 |
-
-鍵盤の色はテーマ側の取り決めです。[スタイリング](/docs/tutorials/styling)のページに
-あるテーマは鍵盤の種類ごとに変数を持っていて、鍵盤には `keyProps` から渡したものが
-そのまま付きます。
+鍵盤の高さと各キーの色は CSS で指定します。キーごとにクラス、スタイル、
+`data-*` 属性を付けるには `keyProps` を使います。
 
 | Data 属性 | 値 |
 | --- | --- |
