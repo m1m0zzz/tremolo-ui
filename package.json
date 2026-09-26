@@ -11,7 +11,7 @@
     "format:check": "oxfmt --check && prettier --check --no-error-on-unmatched-pattern \"**/*.{svelte,vue}\"",
     "test": "npm run test --workspaces --if-present",
     "build:package": "npm run build:package --workspaces --if-present",
-    "build:sb": "npm run build:package && npm run build:sb -w packages/react -w packages/svelte",
+    "build:sb": "npm run build:package && npm run build:sb -w packages/react -w packages/svelte -w packages/vue",
     "release": "npm run build:package && changeset publish",
     "changeset": "changeset",
     "docs": "npm run start -w site",
