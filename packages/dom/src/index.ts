@@ -92,8 +92,9 @@ export {
 export {
   caretAtDecimalOffset,
   caretDecimalOffset,
-  leadingNumberLength,
-  parseLeadingNumber,
+  numberSpan,
+  parseNumberText,
+  type NumberSpan,
 } from './number-input/text'
 export { replaceOptions } from './options/replace'
 export {

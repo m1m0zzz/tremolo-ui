@@ -1,4 +1,4 @@
-import { parseLeadingNumber } from '../../src/number-input/text'
+import { parseNumberText } from '../../src/number-input/text'
 import {
   commitNumberInputText,
   numberInputBounds,
@@ -56,14 +56,14 @@ describe('numberInputBounds', () => {
 describe('commitNumberInputText', () => {
   test('clamps what was typed', () => {
     const opts = { min: 0, max: 100 }
-    expect(commitNumberInputText('1500', parseLeadingNumber, opts)).toBe(100)
-    expect(commitNumberInputText('-5 Hz', parseLeadingNumber, opts)).toBe(0)
-    expect(commitNumberInputText('42', parseLeadingNumber, opts)).toBe(42)
+    expect(commitNumberInputText('1500', parseNumberText, opts)).toBe(100)
+    expect(commitNumberInputText('-5 Hz', parseNumberText, opts)).toBe(0)
+    expect(commitNumberInputText('42', parseNumberText, opts)).toBe(42)
   })
 
   test('leaves it alone without clamping', () => {
     expect(
-      commitNumberInputText('1500', parseLeadingNumber, {
+      commitNumberInputText('1500', parseNumberText, {
         max: 100,
         clampValue: false,
       }),
@@ -71,6 +71,6 @@ describe('commitNumberInputText', () => {
   })
 
   test('text with no number commits nothing', () => {
-    expect(commitNumberInputText('Hz', parseLeadingNumber, {})).toBeNull()
+    expect(commitNumberInputText('Hz', parseNumberText, {})).toBeNull()
   })
 })

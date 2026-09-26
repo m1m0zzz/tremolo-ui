@@ -7,7 +7,7 @@
     numberInputBounds,
     numberInputRanges,
     nudgeNumberInput,
-    parseLeadingNumber,
+    parseNumberText,
     wheelDirection,
   } from '@tremolo-ui/dom'
   import { linearScale } from '@tremolo-ui/functions'
@@ -30,7 +30,7 @@
     step = 1,
     scale = linearScale,
     format = String,
-    parse = parseLeadingNumber,
+    parse = parseNumberText,
     clampValue = true,
     wheel = DEFAULT_WHEEL_OPTIONS,
     keyboard = DEFAULT_KEYBOARD_OPTIONS,

@@ -2,7 +2,7 @@
   import {
     caretAtDecimalOffset,
     caretDecimalOffset,
-    leadingNumberLength,
+    numberSpan,
   } from '@tremolo-ui/dom'
   import { tick } from 'svelte'
 
@@ -48,12 +48,11 @@
     await tick()
     const input = ref
     if (!input || !focused) return
-    input.setSelectionRange(
-      0,
+    const span =
       field.selectOnFocus === 'all'
-        ? input.value.length
-        : leadingNumberLength(input.value),
-    )
+        ? { start: 0, end: input.value.length }
+        : numberSpan(input.value)
+    if (span) input.setSelectionRange(span.start, span.end)
   }
 
   async function step(direction: number, event: KeyboardEvent) {

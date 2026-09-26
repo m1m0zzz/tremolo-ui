@@ -5,7 +5,7 @@ import {
   numberInputBounds,
   numberInputRanges,
   nudgeNumberInput,
-  parseLeadingNumber,
+  parseNumberText,
   wheelDirection,
 } from '@tremolo-ui/dom'
 import { linearScale, type Scale } from '@tremolo-ui/functions'
@@ -38,7 +38,7 @@ export const NumberInput = /* @__PURE__ */ defineComponent({
     /** Read a value back out of the text. Has to undo `format`. */
     parse: {
       type: Function as PropType<(text: string) => number>,
-      default: parseLeadingNumber,
+      default: parseNumberText,
     },
     /** Keep the value within `min` and `max` when committed or stepped. */
     clampValue: { type: Boolean, default: true },

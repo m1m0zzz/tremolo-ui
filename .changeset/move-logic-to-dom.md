@@ -8,7 +8,7 @@ wheel notch moves a value (`arrowKeyDirection`, `arrowKeyMove`,
 `wheelDirection`, `wheelMove`), where a value sits along a track
 (`valuePercent`), the knob geometry (`knobAngles`, `knobArcPath`, …), the
 slider marks (`sliderMarks`), reading a number input's text
-(`parseLeadingNumber`, `caretDecimalOffset`, …), the step check behind the
+(`parseNumberText`, `caretDecimalOffset`, …), the step check behind the
 development warnings (`checkSteps`), the default input options
 (`DEFAULT_KEYBOARD_OPTIONS`, `DEFAULT_WHEEL_OPTIONS`,
 `DEFAULT_DRAG_SENSITIVITY`), `cssLength`, `visuallyHiddenStyle` and

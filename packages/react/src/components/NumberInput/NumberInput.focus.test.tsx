@@ -155,6 +155,26 @@ describe('selectOnFocus', () => {
     expect(input().selectionEnd).toBe('1.23'.length)
   })
 
+  test('number takes the sign in front of it', () => {
+    render(
+      <Subject initial={6} format={(v) => `+${v} dB`} selectOnFocus="number" />,
+    )
+
+    fireEvent.focus(input())
+
+    expect([input().selectionStart, input().selectionEnd]).toEqual([0, 2])
+  })
+
+  test('number leaves out a unit in front', () => {
+    render(
+      <Subject initial={30} format={(v) => `L ${v}`} selectOnFocus="number" />,
+    )
+
+    fireEvent.focus(input())
+
+    expect([input().selectionStart, input().selectionEnd]).toEqual([2, 4])
+  })
+
   test('selects the plain value when the format is dropped', () => {
     // The selection is applied after the text is swapped, so it covers the
     // number that is actually there rather than the formatted one.
