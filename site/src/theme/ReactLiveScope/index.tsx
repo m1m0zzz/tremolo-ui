@@ -1,6 +1,7 @@
 import React from 'react'
 import * as Tone from 'tone'
 
+import * as dom from '@tremolo-ui/dom'
 import * as functions from '@tremolo-ui/functions'
 import * as tremoloUI from '@tremolo-ui/react'
 import { useComposedRefs } from '@tremolo-ui/react/compose-refs'
@@ -20,6 +21,7 @@ const ReactLiveScope: unknown = {
   React,
   ...React,
   ...tremoloUI,
+  ...dom,
   ...functions,
   // Published as a subpath rather than from the main entry, so it is not in
   // `tremoloUI`. The `useDragValue` example needs it.

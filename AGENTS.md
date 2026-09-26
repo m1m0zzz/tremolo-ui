@@ -64,6 +64,7 @@ npm run test:watch -w packages/react
 ### 公開 API とバンドル
 
 - `src/index.ts` から re-export しなければ公開 API には入らない
+- **ラッパー（`react` など）は `dom` / `functions` のものを re-export しない。** props に出てくる型や既定値でも、利用者には `@tremolo-ui/dom` / `@tremolo-ui/functions` から直接 import してもらう。同じものが複数のパッケージから出ていると、どれから import すべきかが分からず、ラッパーごとに公開範囲がずれていく
 - **モジュールのトップレベルで関数を呼ぶときは `/* @__PURE__ */` を付けること**（`forwardRef(...)` / `createContext(...)`）。注釈が無いとバンドラは副作用があるかもしれないと見なして残すので、**`Knob` だけを import しても Piano も Slider も落ちてこない**
 
 ## 規約

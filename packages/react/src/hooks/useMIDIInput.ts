@@ -2,12 +2,9 @@ import { useEffect, useRef } from 'react'
 
 import {
   createMIDIInput,
-  PITCH_BEND_CENTER,
   type MIDIInputHandlers,
   type MIDIInputInstance,
 } from '@tremolo-ui/dom'
-
-export { PITCH_BEND_CENTER, type MIDIInputHandlers }
 
 /**
  * Handle MIDI input events. To be used with {@link useMIDIAccess}.
