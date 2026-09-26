@@ -62,7 +62,7 @@ jobs:
       run: npm run build -w templates/vite-react-ts -w templates/next-ts
 
     - name: Build Storybook
-      run: npm run build:sb -w packages/react
+      run: npm run build:sb -w packages/react -w packages/svelte
 
     - name: Build docs site
       run: npm run build -w site
@@ -76,3 +76,4 @@ jobs:
       run: |
         npx wrangler deploy --config site/wrangler.jsonc
         npx wrangler deploy --config packages/react/wrangler.jsonc
+        npx wrangler deploy --config packages/svelte/wrangler.jsonc

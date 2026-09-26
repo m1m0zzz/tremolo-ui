@@ -28,7 +28,7 @@ npm run build:package         # src を変えたら必要。site / Storybook は
 npm run build:sb              # 全パッケージをビルドしてから Storybook をビルド
 npm run lint                  # oxlint（自動修正は lint:fix）
 npm run format                # oxfmt（差分だけ見るなら format:check）
-npm run sb -w packages/react  # Storybook 開発サーバ
+npm run sb -w packages/react  # Storybook 開発サーバ（-w packages/svelte も）
 npm run typecheck -w packages/react
 npm run typecheck -w packages/svelte  # svelte-check
 npm run build:docs
