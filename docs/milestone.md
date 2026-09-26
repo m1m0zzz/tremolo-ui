@@ -36,16 +36,16 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
     - [x] Piano のキーボードショートカット: `createPianoInput` の `keyboardShortcuts` / `keyboardShortcutsScope`。`SHORTCUTS` も dom へ
     - [x] NumberInput の下書きと確定、ステッパーのドラッグ: `numberInputRanges` / `nudgeNumberInput` / `numberInputBounds` / `commitNumberInputText` / `createStepperDrag`。下書きの文字列そのものは各ラッパーの state に置く
     - [x] PointsEditor の選択とまとめての移動: `createPointsEditor`。選択そのもの（controlled / uncontrolled）は各ラッパーの state に置き、`update({ selection })` で押し戻す
-- [ ] `@tremolo-ui/svelte`
+- [x] `@tremolo-ui/svelte`
   - [x] パッケージの器（`svelte-package` / `svelte-check` / vitest）と、actions（`drag` / `dragValue` / `wheel` / `longPress` / `dropZone`）、MIDI（`useMIDIAccess` / `useMIDIInput` / `useMIDIMessage`）
   - [x] コンポーネント（Knob / Slider / XYPad / NumberInput / Piano / PointsEditor / AnimationCanvas / FileInput / DropZone）。`.svelte` は prettier で整形する
   - [x] Storybook と Worker（`tremolo-ui-sb-svelte`、`/i/storybook-svelte`）。story は Svelte CSF（`@storybook/addon-svelte-csf`）で書く
-  - [ ] **main に入れる前に** npm へ手動 publish し、trusted publisher を登録する（下の「新パッケージを追加する際の手順」）
-- [ ] `@tremolo-ui/vue`
+  - [x] **main に入れる前に** npm へ手動 publish し、trusted publisher を登録する（下の「新パッケージを追加する際の手順」）。手動で出した 0.7.0 は名前を確保するための版で、npm の dom 0.7.0 にはこのスタックで足した関数が無く動かないので deprecate してある。動く版はマージ後の Version Packages で出る 0.8.0
+- [x] `@tremolo-ui/vue`
   - [x] パッケージの器（tsdown / vitest）と composables（`useDrag` / `useDragValue` / `useWheel` / `useLongPress` / `useDropZone` / MIDI）。コンポーネントは SFC ではなく `defineComponent` + `h()` で書く
   - [x] コンポーネント（名前はフラット、Root はコンポーネント名そのもの。値は `v-model`、React の `InputField` は `NumberInputField`）
   - [x] Storybook と Worker（`tremolo-ui-sb-vue`、`/i/storybook-vue`）。story は render 関数で書く
-  - [ ] **main に入れる前に** npm へ手動 publish し、trusted publisher を登録する
+  - [x] **main に入れる前に** npm へ手動 publish し、trusted publisher を登録する（Svelte と同じく 0.7.0 は deprecate 済み）
 
 **どちらも React と同等のコンポーネント一式を最初から揃える。** Root + パート + `data-*` の契約を同じにするので、`shared/css/` のテーマがそのまま使える。hook 相当（Svelte の action、Vue の composable）もあわせて出す。
 
@@ -86,7 +86,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - **`UseWheelOptions` が `onWheel` を継承していた。** `createWheel` は `update()` で差し替えるために持っているが、hook はハンドラを第 1 引数で受けるので、オプションで渡しても黙って無視されていた。`Omit` で外した
   - 表に出すにあたって、説明の無かったコールバックや `threshold` / `updateOnPointerDown` の JSDoc を埋めた
   - `useAnimationFrame` / `useEventListener` / `useInterval` / `useLongPress` はページを作っていない。典型的な実装以上に書くことが無く、typedoc の API ページで足りる
-- [ ] **Vue / Svelte のドキュメントを同じページにタブで載せる。**（Svelte は済み: 各コンポーネントの例と import を `groupId="framework"` のタブにし、書き方の違いは `tutorials/svelte.mdx` にまとめた。例は `site/examples/svelte/` にあり、`packages/svelte` の `typecheck` が型検査する。API Reference の props の表は React から作ったものを共有する） `site/docs/components/<Name>/` を共通にし、例と API Reference だけを React / Svelte / Vue のタブで切り替える。`data-*` とテーマは共通なので説明も共有する。現在のページは React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）
+- [x] **Vue / Svelte のドキュメントを同じページにタブで載せる。**（各コンポーネントの例と import を `groupId="framework"` のタブにし、書き方の違いは `tutorials/svelte.mdx` にまとめた。例は `site/examples/svelte/` と `site/examples/vue/`（SFC）にあり、それぞれ `packages/svelte` / `packages/vue` の `typecheck` が型検査する。Vue の書き方の違いは `tutorials/vue.mdx`。API Reference の props の表は React から作ったものを共有する） `site/docs/components/<Name>/` を共通にし、例と API Reference だけを React / Svelte / Vue のタブで切り替える。`data-*` とテーマは共通なので説明も共有する。現在のページは React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）
   - Storybook は各パッケージに持たせ、別の Worker で配信する（上の「新パッケージを追加する際の手順」）
 - [x] **`site/i18n` の typedoc サイドバー翻訳キーを掃除した。** `sidebar.typedocSidebar.*` を en / ja とも**全て削除**した（114 キー → 7 キー）。
 - [x] `site/docs/support/CHANGELOG.md` の二重管理をやめた。中身は「TODO: record from version 1.0.0」のスタブのままだったので、各パッケージの `CHANGELOG.md` と GitHub リリース、移行ガイドへのリンクに置き換えた

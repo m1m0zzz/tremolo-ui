@@ -1,0 +1,17 @@
+{
+  // Only for vue-tsc: these examples are shown on the component pages as
+  // text and never built by the site, so this is what keeps them in step
+  // with the API. `packages/vue` runs it from `typecheck`.
+  "extends": ["../../../tsconfig.json"],
+  "compilerOptions": {
+    "rootDir": "../../..",
+    "verbatimModuleSyntax": true,
+    // The source rather than dist, which may not exist yet when it runs.
+    "paths": {
+      "@tremolo-ui/vue": ["../../../packages/vue/src/index.ts"],
+    },
+    // `./Knob.module.css` is the theme copied next to the example.
+    "types": ["vite/client", "node"],
+  },
+  "include": ["."],
+}
