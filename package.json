@@ -36,6 +36,7 @@
     "packages/dom",
     "packages/react",
     "packages/svelte",
+    "packages/vue",
     "shared",
     "site",
     "templates/vite-react-ts",
