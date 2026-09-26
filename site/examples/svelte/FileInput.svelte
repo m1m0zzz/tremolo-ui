@@ -24,7 +24,7 @@
   <span>{files.length > 0 ? `${files.length} selected` : 'No file'}</span>
 </FileInput.Root>
 <ul>
-  {#each files as file (file.name)}
+  {#each files as file}
     <li>{file.name} ({file.type || 'unknown type'})</li>
   {/each}
 </ul>
