@@ -22,5 +22,9 @@
   "item.label.React": {
     "message": "React",
     "description": "Navbar item with label React"
+  },
+  "item.label.Svelte": {
+    "message": "Svelte",
+    "description": "Navbar item with label Svelte"
   }
 }

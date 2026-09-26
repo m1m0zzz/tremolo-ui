@@ -1,0 +1,18 @@
+{
+  // Only for svelte-check: these examples are shown on the component pages
+  // as text and never built by the site, so this is what keeps them in step
+  // with the API. `packages/svelte` runs it from `build:package`.
+  "extends": ["../../../tsconfig.json"],
+  "compilerOptions": {
+    "rootDir": "../../..",
+    "verbatimModuleSyntax": true,
+    // The source rather than dist, which does not exist yet when the check
+    // runs, before `svelte-package`.
+    "paths": {
+      "@tremolo-ui/svelte": ["../../../packages/svelte/src/index.ts"],
+    },
+    // `./Knob.module.css` is the theme copied next to the example.
+    "types": ["vite/client"],
+  },
+  "include": ["."],
+}
