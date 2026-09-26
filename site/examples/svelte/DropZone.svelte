@@ -21,7 +21,7 @@
   Drop an audio file here
 </DropZone.Root>
 <ul>
-  {#each files as file (file.name)}
+  {#each files as file}
     <li>{file.name} ({file.type || 'unknown type'})</li>
   {/each}
 </ul>
