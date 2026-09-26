@@ -134,9 +134,11 @@
     requireFocus: true,
     onWheel: (event: WheelEvent) => {
       if (!wheel || inactive) return
-      event.preventDefault()
+      // A notch the knob does not read — a sideways scroll — is left to the
+      // page rather than swallowed.
       const direction = wheelDirection(event)
       if (direction === null) return
+      event.preventDefault()
       change(applyDelta(value, direction, wheel, range, event))
     },
   })
