@@ -114,6 +114,11 @@ export {
   type MappingContext,
 } from './pointer/drag-value'
 export {
+  createLongPress,
+  type LongPressInstance,
+  type LongPressOptions,
+} from './pointer/long-press'
+export {
   createWheel,
   type WheelInstance,
   type WheelOptions,

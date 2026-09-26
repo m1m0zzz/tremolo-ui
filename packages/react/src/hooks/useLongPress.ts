@@ -1,65 +1,46 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
-import { useEventListener } from './useEventListener'
-import { useInterval } from './useInterval'
+import { createLongPress, type LongPressInstance } from '@tremolo-ui/dom'
 
+/**
+ * Repeat `callback` while a pointer is held down: once on the press, then
+ * every `interval` after `initialDelay`. The repeat itself is
+ * `createLongPress` in `@tremolo-ui/dom`.
+ *
+ * Returns the function that starts a press, for an `onPointerDown`.
+ */
 export function useLongPress(
   callback: () => void,
   initialDelay = 500,
   interval = 40,
 ) {
-  const [pressed, setPressed] = useState(false)
-  const [delay, setDelay] = useState(initialDelay)
-  const activePointerId = useRef<number | null>(null)
-  const isPressed = useRef(false)
+  const callbackRef = useRef(callback)
+  const instanceRef = useRef<LongPressInstance | null>(null)
 
-  useInterval(
-    () => {
-      callback()
-      setDelay(interval)
-    },
-    pressed ? delay : null,
-  )
-
-  const stop = useCallback(
-    (pointerId?: number) => {
-      if (!isPressed.current) return
-      if (
-        pointerId !== undefined &&
-        activePointerId.current !== null &&
-        activePointerId.current !== pointerId
-      )
-        return
-
-      isPressed.current = false
-      activePointerId.current = null
-      setPressed(false)
-      setDelay(initialDelay)
-    },
-    [initialDelay],
-  )
-
-  useEventListener(globalThis.window, 'pointerup', (event) => {
-    stop(event.pointerId)
+  useEffect(() => {
+    callbackRef.current = callback
+    instanceRef.current?.update({ delay: initialDelay, interval })
   })
 
-  useEventListener(globalThis.window, 'pointercancel', (event) => {
-    stop(event.pointerId)
-  })
-
-  useEventListener(globalThis.window, 'blur', () => {
-    stop()
-  })
+  useEffect(() => {
+    const instance = createLongPress({
+      onPress: () => callbackRef.current(),
+      delay: initialDelay,
+      interval,
+    })
+    instanceRef.current = instance
+    return () => {
+      instanceRef.current = null
+      instance.destroy()
+    }
+    // Created once: the options are pushed with update() above, so that a new
+    // delay does not end a press in progress.
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return useCallback(
-    (event?: Pick<PointerEvent, 'button' | 'pointerId'>) => {
-      if (isPressed.current || (event && event.button !== 0)) return
-
-      isPressed.current = true
-      activePointerId.current = event?.pointerId ?? null
-      callback()
-      setPressed(true)
-    },
-    [callback],
+    (event?: Pick<PointerEvent, 'button' | 'pointerId'>) =>
+      instanceRef.current?.start(event),
+    [],
   )
 }

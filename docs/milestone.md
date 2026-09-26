@@ -31,7 +31,11 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 - [ ] **準備: React に残っている framework 非依存のロジックを `dom` へ移す。** ラッパーを書く前に済ませ、3 つのフレームワークで同じロジックを重複させない
   - [x] 純粋な関数と定数。キー / ホイールの向き（`arrowKeyDirection` / `arrowKeyMove` / `wheelDirection` / `wheelMove`）、値の位置（`valuePercent`）、Knob の幾何、Slider の目盛り、NumberInput の読み取りとキャレット、`checkSteps`、入力の既定値、`cssLength` / `visuallyHiddenStyle`、`partitionByAccept`
     - **`checkSteps` は警告の文言を返すだけで、出すのはラッパー。** `process.env.NODE_ENV` の判定をラッパー側にインラインで書けば、本番では呼び出しごと `checkSteps` がバンドルから落ちる
-  - [ ] 状態を持つもの。長押しの繰り返し（`useLongPress`）、NumberInput の下書きと確定・ステッパーのドラッグ、Piano のキーボードショートカット、PointsEditor の選択とまとめての移動
+  - [ ] 状態を持つもの
+    - [x] 長押しの繰り返し: `createLongPress`（`useLongPress` と NumberInput のステッパー）
+    - [ ] Piano のキーボードショートカット
+    - [ ] NumberInput の下書きと確定、ステッパーのドラッグ
+    - [ ] PointsEditor の選択とまとめての移動
 - [ ] `@tremolo-ui/svelte`
 - [ ] `@tremolo-ui/vue`
 
