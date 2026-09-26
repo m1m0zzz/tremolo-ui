@@ -73,6 +73,19 @@ describe('Knob', () => {
     expect(onChange).toHaveBeenLastCalledWith(51)
   })
 
+  test('a sideways scroll is left to the page', async () => {
+    const { knob, onChange } = await setup()
+    knob.focus()
+    const event = new WheelEvent('wheel', {
+      deltaX: 100,
+      bubbles: true,
+      cancelable: true,
+    })
+    knob.dispatchEvent(event)
+    expect(event.defaultPrevented).toBe(false)
+    expect(onChange).not.toHaveBeenCalled()
+  })
+
   test('dragging up raises the value and marks the drag', async () => {
     const { knob, onChange } = await setup()
     knob.dispatchEvent(pointerEvent('pointerdown', { screenY: 100 }))
