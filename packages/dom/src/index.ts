@@ -116,6 +116,17 @@ export {
   type PianoInputOptions,
 } from './piano'
 export {
+  clampPoint,
+  createPointsEditor,
+  POINT_AXIS,
+  POINTS_EDITOR_DEFAULT_KEYBOARD,
+  POINTS_EDITOR_DEFAULT_WHEEL,
+  type PointPosition,
+  type PointsEditorInstance,
+  type PointsEditorOptions,
+  type PointsEditorPoint,
+} from './points-editor'
+export {
   createDrag,
   type DragInstance,
   type DragOptions,

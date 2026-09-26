@@ -1,7 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-import { PointBaseType, PointsEditor } from '.'
+import { type PointPosition } from '@tremolo-ui/dom'
+
+import { PointsEditor } from '.'
 
 import pointsEditorTheme from 'shared/css/PointsEditor.module.css'
 
@@ -16,7 +18,7 @@ function Subject({
   children,
   ...props
 }: React.ComponentProps<typeof PointsEditor.SelectionBox>) {
-  const [points, setPoints] = useState<Record<string, PointBaseType>>({
+  const [points, setPoints] = useState<Record<string, PointPosition>>({
     a: { x: 0.2, y: 0.3 },
     b: { x: 0.5, y: 0.6 },
     c: { x: 0.8, y: 0.4 },

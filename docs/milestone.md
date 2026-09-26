@@ -28,14 +28,14 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 **Svelte → Vue の順に進める。** コアのシグネチャと最も同型な Svelte でラッパーの形とコアに足りないものを洗い出してから Vue に進む。1.0 の基準は片方で満たせる。
 
-- [ ] **準備: React に残っている framework 非依存のロジックを `dom` へ移す。** ラッパーを書く前に済ませ、3 つのフレームワークで同じロジックを重複させない
+- [x] **準備: React に残っている framework 非依存のロジックを `dom` へ移す。** ラッパーを書く前に済ませ、3 つのフレームワークで同じロジックを重複させない
   - [x] 純粋な関数と定数。キー / ホイールの向き（`arrowKeyDirection` / `arrowKeyMove` / `wheelDirection` / `wheelMove`）、値の位置（`valuePercent`）、Knob の幾何、Slider の目盛り、NumberInput の読み取りとキャレット、`checkSteps`、入力の既定値、`cssLength` / `visuallyHiddenStyle`、`partitionByAccept`
     - **`checkSteps` は警告の文言を返すだけで、出すのはラッパー。** `process.env.NODE_ENV` の判定をラッパー側にインラインで書けば、本番では呼び出しごと `checkSteps` がバンドルから落ちる
-  - [ ] 状態を持つもの
+  - [x] 状態を持つもの
     - [x] 長押しの繰り返し: `createLongPress`（`useLongPress` と NumberInput のステッパー）
     - [x] Piano のキーボードショートカット: `createPianoInput` の `keyboardShortcuts` / `keyboardShortcutsScope`。`SHORTCUTS` も dom へ
     - [x] NumberInput の下書きと確定、ステッパーのドラッグ: `numberInputRanges` / `nudgeNumberInput` / `numberInputBounds` / `commitNumberInputText` / `createStepperDrag`。下書きの文字列そのものは各ラッパーの state に置く
-    - [ ] PointsEditor の選択とまとめての移動
+    - [x] PointsEditor の選択とまとめての移動: `createPointsEditor`。選択そのもの（controlled / uncontrolled）は各ラッパーの state に置き、`update({ selection })` で押し戻す
 - [ ] `@tremolo-ui/svelte`
 - [ ] `@tremolo-ui/vue`
 
