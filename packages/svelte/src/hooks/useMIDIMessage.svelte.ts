@@ -1,3 +1,5 @@
+import { untrack } from 'svelte'
+
 import { createMIDIMessage, type MIDIMessageInstance } from '@tremolo-ui/dom'
 
 /**
@@ -14,7 +16,7 @@ export function useMIDIMessage(
   let instance: MIDIMessageInstance | null = null
 
   $effect(() => {
-    const current = createMIDIMessage(midiAccess(), onMIDIMessage())
+    const current = createMIDIMessage(midiAccess(), untrack(onMIDIMessage))
     instance = current
     return () => {
       current.destroy()

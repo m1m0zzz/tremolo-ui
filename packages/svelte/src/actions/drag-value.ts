@@ -1,5 +1,7 @@
 import { createDragValue, type DragValueOptions } from '@tremolo-ui/dom'
 
+import { replacing } from './replacing.js'
+
 import type { Action } from 'svelte/action'
 
 /**
@@ -22,8 +24,12 @@ import type { Action } from 'svelte/action'
  */
 export const dragValue: Action<Element, DragValueOptions> = (node, options) => {
   const instance = createDragValue(node, options)
+  let current = options
   return {
-    update: (next) => instance.update(next),
+    update: (next) => {
+      instance.update(replacing(current, next))
+      current = next
+    },
     destroy: () => instance.destroy(),
   }
 }

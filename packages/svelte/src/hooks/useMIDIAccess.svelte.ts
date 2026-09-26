@@ -21,14 +21,16 @@ const INITIAL_STATE: MIDIAccessState = {
  *
  * @param requestOnMount ask for access as soon as the component mounts. Leave
  * it off to ask from a click instead, so that opening a page does not bring
- * up a permission prompt.
+ * up a permission prompt. Pass a getter to ask once it turns true later.
  *
  * @example
  * const midi = useMIDIAccess(false)
  * // <button onclick={() => midi.request()}>Connect</button>
  * // {#each midi.inputs as input}{input.name}{/each}
  */
-export function useMIDIAccess(requestOnMount = true) {
+export function useMIDIAccess(
+  requestOnMount: boolean | (() => boolean) = true,
+) {
   let state = $state.raw<MIDIAccessState>(INITIAL_STATE)
   let instance: MIDIAccessInstance | null = null
 
@@ -39,13 +41,18 @@ export function useMIDIAccess(requestOnMount = true) {
     const unsubscribe = current.subscribe(() => {
       state = current.getState()
     })
-    if (requestOnMount) current.request()
     return () => {
       unsubscribe()
       current.destroy()
       instance = null
       state = INITIAL_STATE
     }
+  })
+
+  $effect(() => {
+    const request =
+      typeof requestOnMount === 'function' ? requestOnMount() : requestOnMount
+    if (request) instance?.request()
   })
 
   return {

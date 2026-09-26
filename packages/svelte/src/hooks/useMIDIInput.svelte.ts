@@ -1,3 +1,5 @@
+import { untrack } from 'svelte'
+
 import {
   createMIDIInput,
   type MIDIInputHandlers,
@@ -26,7 +28,7 @@ export function useMIDIInput(
   let instance: MIDIInputInstance | null = null
 
   $effect(() => {
-    const current = createMIDIInput(midiAccess(), handlers())
+    const current = createMIDIInput(midiAccess(), untrack(handlers))
     instance = current
     return () => {
       current.destroy()

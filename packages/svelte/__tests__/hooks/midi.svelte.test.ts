@@ -24,10 +24,10 @@ afterEach(() => {
 /** A MIDIAccess with one input that can be made to send a message. */
 function fakeAccess() {
   const listeners = new Set<(event: Event) => void>()
+  const subscribe = vi.fn((fn: (event: Event) => void) => listeners.add(fn))
   const input = {
     name: 'keys',
-    addEventListener: (_: string, fn: (event: Event) => void) =>
-      listeners.add(fn),
+    addEventListener: (_: string, fn: (event: Event) => void) => subscribe(fn),
     removeEventListener: (_: string, fn: (event: Event) => void) =>
       listeners.delete(fn),
   }
@@ -42,7 +42,7 @@ function fakeAccess() {
     })
     for (const fn of [...listeners]) fn(event)
   }
-  return { access, send, listeners }
+  return { access, send, listeners, subscribe }
 }
 
 test('useMIDIAccess requests on mount and follows the access', async () => {
@@ -76,8 +76,25 @@ test('useMIDIAccess waits for request() when told to', async () => {
   cleanup()
 })
 
+test('useMIDIAccess asks once a getter turns true', async () => {
+  const { access } = fakeAccess()
+  mockRequestMIDIAccess(access)
+
+  let auto = $state(false)
+  let midi!: ReturnType<typeof useMIDIAccess>
+  const cleanup = $effect.root(() => {
+    midi = useMIDIAccess(() => auto)
+  })
+  flushSync()
+  expect(navigator.requestMIDIAccess).not.toHaveBeenCalled()
+  auto = true
+  flushSync()
+  await vi.waitFor(() => expect(midi.midiAccess).toBe(access))
+  cleanup()
+})
+
 test('useMIDIInput decodes the messages and swaps handlers in place', () => {
-  const { access, send, listeners } = fakeAccess()
+  const { access, send, listeners, subscribe } = fakeAccess()
   const first = vi.fn()
   const second = vi.fn()
   let handler = $state(first)
@@ -96,7 +113,8 @@ test('useMIDIInput decodes the messages and swaps handlers in place', () => {
   flushSync()
   send([0x90, 62, 90])
   expect(second).toHaveBeenCalledWith(62, 90, 0)
-  // Swapping the handler does not subscribe a second time.
+  // Swapping the handler does not subscribe again.
+  expect(subscribe).toHaveBeenCalledTimes(1)
   expect(listeners.size).toBe(1)
 
   cleanup()

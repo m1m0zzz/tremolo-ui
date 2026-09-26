@@ -1,5 +1,7 @@
 import { createDropZone, type DropZoneOptions } from '@tremolo-ui/dom'
 
+import { replacing } from './replacing.js'
+
 import type { Action } from 'svelte/action'
 
 /**
@@ -15,8 +17,12 @@ export const dropZone: Action<Element, DropZoneOptions | undefined> = (
   options,
 ) => {
   const instance = createDropZone(node, options)
+  let current = options
   return {
-    update: (next) => instance.update(next ?? {}),
+    update: (next) => {
+      instance.update(replacing(current, next))
+      current = next
+    },
     destroy: () => instance.destroy(),
   }
 }

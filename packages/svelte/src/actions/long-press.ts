@@ -1,5 +1,7 @@
 import { createLongPress, type LongPressOptions } from '@tremolo-ui/dom'
 
+import { replacing } from './replacing.js'
+
 import type { Action } from 'svelte/action'
 
 /**
@@ -16,8 +18,12 @@ export const longPress: Action<HTMLElement, LongPressOptions> = (
   const instance = createLongPress(options)
   const onPointerDown = (event: PointerEvent) => instance.start(event)
   node.addEventListener('pointerdown', onPointerDown)
+  let current = options
   return {
-    update: (next) => instance.update(next),
+    update: (next) => {
+      instance.update(replacing(current, next))
+      current = next
+    },
     destroy: () => {
       node.removeEventListener('pointerdown', onPointerDown)
       instance.destroy()

@@ -40,6 +40,29 @@ test('drag reports the movement, and update swaps the handler in place', () => {
   action.destroy?.()
 })
 
+test('an option taken out of the argument stops applying', () => {
+  const node = element()
+  const onDrag = vi.fn()
+  const action = handle(drag(node, { onDrag }))
+  action.update?.(undefined)
+  node.dispatchEvent(pointerEvent('pointerdown', { screenX: 0 }))
+  node.dispatchEvent(pointerEvent('pointermove', { screenX: 5 }))
+  expect(onDrag).not.toHaveBeenCalled()
+  action.destroy?.()
+})
+
+test('wheel falls back to its default when an option is left out', () => {
+  const node = element()
+  const onWheel = vi.fn()
+  const action = handle(wheel(node, { onWheel, requireFocus: true }))
+  node.dispatchEvent(new WheelEvent('wheel', { deltaY: 100 }))
+  expect(onWheel).not.toHaveBeenCalled()
+  action.update?.({ onWheel })
+  node.dispatchEvent(new WheelEvent('wheel', { deltaY: 100 }))
+  expect(onWheel).toHaveBeenCalledTimes(1)
+  action.destroy?.()
+})
+
 test('dragValue drives a value', () => {
   const node = element()
   let value = 50
