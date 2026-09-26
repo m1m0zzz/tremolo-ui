@@ -1,6 +1,4 @@
-import { createWheel, type WheelOptions } from '@tremolo-ui/dom'
-
-import { replacing } from './replacing.js'
+import { createWheel, replaceOptions, type WheelOptions } from '@tremolo-ui/dom'
 
 import type { Action } from 'svelte/action'
 
@@ -22,7 +20,7 @@ export const wheel: Action<Element, WheelActionOptions> = (node, options) => {
   let current = options
   return {
     update: (next) => {
-      instance.update(replacing(current, next))
+      instance.update(replaceOptions(current, next))
       current = next
     },
     destroy: () => instance.destroy(),

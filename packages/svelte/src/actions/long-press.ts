@@ -1,6 +1,8 @@
-import { createLongPress, type LongPressOptions } from '@tremolo-ui/dom'
-
-import { replacing } from './replacing.js'
+import {
+  createLongPress,
+  replaceOptions,
+  type LongPressOptions,
+} from '@tremolo-ui/dom'
 
 import type { Action } from 'svelte/action'
 
@@ -21,7 +23,7 @@ export const longPress: Action<HTMLElement, LongPressOptions> = (
   let current = options
   return {
     update: (next) => {
-      instance.update(replacing(current, next))
+      instance.update(replaceOptions(current, next))
       current = next
     },
     destroy: () => {
