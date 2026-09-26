@@ -7,10 +7,12 @@ import {
   CSSProperties,
 } from 'react'
 
+import { toXY, type XYInput } from '@tremolo-ui/dom'
+
 import { useCheckPlacement } from '../_util/Placement'
 import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
-import { toXY, useXYPadContext, type XYInput } from './context'
+import { useXYPadContext } from './context'
 
 import type { CSSVariables } from '../../css-variables'
 

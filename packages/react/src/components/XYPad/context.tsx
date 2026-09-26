@@ -1,11 +1,9 @@
 import { createContext, RefObject, useContext } from 'react'
 
-import { toXY, type XY, type XYInput } from '@tremolo-ui/dom'
+import { type XY } from '@tremolo-ui/dom'
 import type { Scale } from '@tremolo-ui/functions'
 
 import type { XYPadThumbMethods } from './Thumb'
-
-export { toXY, type XY, type XYInput }
 
 export type XYPadContextValue = {
   value: XY<number>

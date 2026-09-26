@@ -54,7 +54,6 @@ export {
   useSliderContext,
   type SliderContextValue,
   type SliderMarksOptionProps,
-  type MarksOptions,
   type SliderMarksProps,
   type SliderMethods,
   type SliderProps,
@@ -70,8 +69,6 @@ export {
   type XYPadMethods,
   type XYPadThumbProps,
   type XYPadThumbMethods,
-  type XY,
-  type XYInput,
 } from './components/XYPad'
 
 export { type CSSVariables } from './css-variables'
@@ -84,24 +81,7 @@ export { useDropZone, type UseDropZoneOptions } from './hooks/useDropZone'
 export { useEventListener } from './hooks/useEventListener'
 export { useInterval } from './hooks/useInterval'
 export { useLongPress } from './hooks/useLongPress'
-export {
-  useMIDIAccess,
-  NOT_SUPPORTED,
-  PERMISSION_DENIED,
-  UNAVAILABLE,
-  type MIDIAccessError,
-  type MIDIAccessOptions,
-} from './hooks/useMIDIAccess'
-export {
-  useMIDIInput,
-  PITCH_BEND_CENTER,
-  type MIDIInputHandlers,
-} from './hooks/useMIDIInput'
+export { useMIDIAccess } from './hooks/useMIDIAccess'
+export { useMIDIInput } from './hooks/useMIDIInput'
 export { useMIDIMessage } from './hooks/useMIDIMessage'
 export { useWheel, type UseWheelOptions } from './hooks/useWheel'
-
-export {
-  DEFAULT_DRAG_SENSITIVITY,
-  DEFAULT_KEYBOARD_OPTIONS,
-  DEFAULT_WHEEL_OPTIONS,
-} from '@tremolo-ui/dom'

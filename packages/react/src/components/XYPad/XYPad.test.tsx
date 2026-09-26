@@ -1,9 +1,10 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { createRef, useState } from 'react'
 
+import { type XY } from '@tremolo-ui/dom'
 import { exponentialScale, linearScale } from '@tremolo-ui/functions'
 
-import { XYPad, XYPadMethods, type XY } from '.'
+import { XYPad, XYPadMethods } from '.'
 
 // jsdom has no PointerEvent and no pointer capture, so both are faked here.
 function pointerEvent(

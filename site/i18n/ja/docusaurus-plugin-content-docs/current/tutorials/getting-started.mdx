@@ -28,6 +28,15 @@ npm install react react-dom
 import { Knob } from '@tremolo-ui/react'
 ```
 
+`@tremolo-ui/react` が公開するのはコンポーネントと hooks だけです。スケールや
+MIDI のノート名などの関数は `@tremolo-ui/functions` に、他のフレームワークと共通の
+値や型（`XY`、入力の既定値、MIDI のエラーコードなど）は `@tremolo-ui/dom` にあります。
+これらから import するときは、依存に追加してください。
+
+```bash npm2yarn
+npm install @tremolo-ui/functions @tremolo-ui/dom
+```
+
 tremolo-ui は CSS を配りません。コンポーネントはマークアップだけを描画し、
 見た目は利用者に委ねます。[Styling](/docs/tutorials/styling) にスタイルの当て方と、
 このドキュメントの例で使っているテーマを載せてあります。

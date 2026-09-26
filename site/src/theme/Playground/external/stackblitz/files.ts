@@ -97,6 +97,8 @@ const packageJson = (tremoloUIVersion: string) => `{
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tremolo-ui/dom": "^${tremoloUIVersion}",
+    "@tremolo-ui/functions": "^${tremoloUIVersion}",
     "@tremolo-ui/react": "^${tremoloUIVersion}",
     "react": "^19",
     "react-dom": "^19",
