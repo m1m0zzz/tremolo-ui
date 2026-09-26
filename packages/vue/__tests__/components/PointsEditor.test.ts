@@ -11,7 +11,10 @@ import {
 } from '../../src'
 import { pointerEvent, withPointerCapture } from '../helpers'
 
-async function setup(props: Record<string, unknown> = {}) {
+async function setup(
+  props: Record<string, unknown> = {},
+  pointProps: Record<string, unknown> = {},
+) {
   const onChange = vi.fn()
   const points = reactive<Record<string, PointPosition>>({
     a: { x: 0.2, y: 0.5 },
@@ -33,6 +36,7 @@ async function setup(props: Record<string, unknown> = {}) {
                 },
                 'data-testid': `point-${id}`,
                 ariaLabel: { x: `${id} x`, y: `${id} y` },
+                ...pointProps,
               }),
             ),
             h(PointsEditorSelectionBox, { 'data-testid': 'box' }),
@@ -80,6 +84,14 @@ describe('PointsEditor', () => {
     const { a, onChange } = await setup()
     await fireEvent.keyDown(a, { key: 'ArrowUp' })
     expect(onChange).toHaveBeenLastCalledWith('a', { x: 0.2, y: 0.49 })
+  })
+
+  test('a keydown of your own runs alongside the move', async () => {
+    const onKeydown = vi.fn()
+    const { a, onChange } = await setup({}, { onKeydown })
+    await fireEvent.keyDown(a, { key: 'ArrowUp' })
+    expect(onChange).toHaveBeenLastCalledWith('a', { x: 0.2, y: 0.49 })
+    expect(onKeydown).toHaveBeenCalledTimes(1)
   })
 
   test('with selection, a selected group moves as one', async () => {

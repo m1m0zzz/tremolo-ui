@@ -2,6 +2,7 @@ import {
   computed,
   defineComponent,
   h,
+  mergeProps,
   ref,
   useId,
   watch,
@@ -194,7 +195,7 @@ export const PointsEditorPoint = /* @__PURE__ */ defineComponent({
     // range inputs inside it. tabindex -1 keeps the focus inside when a press
     // lands on the point itself.
     return () => {
-      const { style, ...rest } = attrs
+      const { style, onFocus, onKeydown, ...rest } = attrs
       return h(
         'div',
         {
@@ -217,27 +218,33 @@ export const PointsEditorPoint = /* @__PURE__ */ defineComponent({
               top: `${props.modelValue.y * 100}%`,
             },
           ],
-          onFocus: (event: FocusEvent) => {
-            // The point is not the control: what reaches it goes to the input.
-            if (!disabled.value && event.target === event.currentTarget) {
-              x.value?.focus()
-            }
-          },
-          onKeydown: (event: KeyboardEvent) => {
-            // The key picks the axis, whichever input holds the focus. y grows
-            // downwards, so ArrowUp moves the point towards 0.
-            const move = arrowKeyMove(event.key)
-            if (!move) return
-            event.preventDefault()
-            if (inactive.value || !keyboard.value) return
-            points.editor.nudgePoint(
-              id.value,
-              move.axis === 0 ? 'x' : 'y',
-              move.direction,
-              keyboard.value,
-              event,
-            )
-          },
+          // Merged with the caller's own, which run after these.
+          ...mergeProps(
+            {
+              onFocus: (event: FocusEvent) => {
+                // The point is not the control: what reaches it goes to the input.
+                if (!disabled.value && event.target === event.currentTarget) {
+                  x.value?.focus()
+                }
+              },
+              onKeydown: (event: KeyboardEvent) => {
+                // The key picks the axis, whichever input holds the focus. y grows
+                // downwards, so ArrowUp moves the point towards 0.
+                const move = arrowKeyMove(event.key)
+                if (!move) return
+                event.preventDefault()
+                if (inactive.value || !keyboard.value) return
+                points.editor.nudgePoint(
+                  id.value,
+                  move.axis === 0 ? 'x' : 'y',
+                  move.direction,
+                  keyboard.value,
+                  event,
+                )
+              },
+            },
+            { onFocus, onKeydown },
+          ),
         },
         [input('x'), input('y'), slots.default?.()],
       )
