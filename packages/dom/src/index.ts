@@ -77,6 +77,19 @@ export {
 } from './midi/input'
 export { createMIDIMessage, type MIDIMessageInstance } from './midi/message'
 export {
+  createStepperDrag,
+  type StepperDragInstance,
+  type StepperDragOptions,
+} from './number-input/stepper-drag'
+export {
+  commitNumberInputText,
+  numberInputBounds,
+  numberInputRanges,
+  nudgeNumberInput,
+  type NumberInputRanges,
+  type NumberInputValueOptions,
+} from './number-input/value'
+export {
   caretAtDecimalOffset,
   caretDecimalOffset,
   leadingNumberLength,
