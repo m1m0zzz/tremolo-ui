@@ -24,6 +24,12 @@ export type {
   SliderThumbProps,
   SliderTrackProps,
 } from './components/Slider/types.js'
+export * as XYPad from './components/XYPad/index.js'
+export {
+  useXYPadContext,
+  type XYPadContextValue,
+} from './components/XYPad/context.js'
+export type { XYPadProps, XYPadThumbProps } from './components/XYPad/types.js'
 
 // hooks
 export { useMIDIAccess } from './hooks/useMIDIAccess.svelte.js'
