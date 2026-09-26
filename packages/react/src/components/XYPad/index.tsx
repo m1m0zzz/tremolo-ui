@@ -21,8 +21,11 @@ import {
   ModifierState,
   type ModifierValue,
   selectModifier,
+  toXY,
   valuePercent,
   wheelMove,
+  type XY,
+  type XYInput,
 } from '@tremolo-ui/dom'
 import { linearScale, type Scale } from '@tremolo-ui/functions'
 
@@ -32,7 +35,7 @@ import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
 
 import { Area } from './Area'
-import { toXY, XY, XYInput, XYPadProvider } from './context'
+import { XYPadProvider } from './context'
 import { Thumb, XYPadThumbMethods } from './Thumb'
 
 const defaultExternalStyles: XYPadProps['externalStyles'] = {
@@ -434,9 +437,4 @@ export const XYPad = {
 }
 
 export { type XYPadThumbProps, type XYPadThumbMethods } from './Thumb'
-export {
-  useXYPadContext,
-  type XYPadContextValue,
-  type XY,
-  type XYInput,
-} from './context'
+export { useXYPadContext, type XYPadContextValue } from './context'

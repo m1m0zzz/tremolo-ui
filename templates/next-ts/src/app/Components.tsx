@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
+import { type XY } from '@tremolo-ui/dom'
 import { noteName, noteNumber } from '@tremolo-ui/functions'
 import {
   AnimationCanvas,
@@ -10,7 +11,6 @@ import {
   Piano,
   Slider,
   XYPad,
-  type XY,
 } from '@tremolo-ui/react'
 
 import { Card } from '@/components/Card'

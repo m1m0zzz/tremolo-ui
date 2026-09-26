@@ -7,14 +7,6 @@ import {
   type MIDIAccessState,
 } from '@tremolo-ui/dom'
 
-export {
-  NOT_SUPPORTED,
-  PERMISSION_DENIED,
-  UNAVAILABLE,
-  type MIDIAccessError,
-  type MIDIAccessOptions,
-} from '@tremolo-ui/dom'
-
 const INITIAL_STATE: MIDIAccessState = {
   midiAccess: null,
   error: null,

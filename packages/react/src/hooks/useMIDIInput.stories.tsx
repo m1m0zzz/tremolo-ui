@@ -1,12 +1,13 @@
 import { useRef, useState } from 'react'
 import * as Tone from 'tone'
 
+import { PITCH_BEND_CENTER } from '@tremolo-ui/dom'
 import { noteName, noteNumber } from '@tremolo-ui/functions'
 
 import { Piano, PianoMethods } from '../components/Piano'
 
 import { useMIDIAccess } from './useMIDIAccess'
-import { PITCH_BEND_CENTER, useMIDIInput } from './useMIDIInput'
+import { useMIDIInput } from './useMIDIInput'
 
 import pianoTheme from 'shared/css/Piano.module.css'
 

@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tremolo-ui/dom": "^0.7.0",
     "@tremolo-ui/functions": "^0.7.0",
     "@tremolo-ui/react": "^0.7.0",
     "react": "^19.3.0",

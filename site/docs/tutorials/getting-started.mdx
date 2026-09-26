@@ -28,6 +28,16 @@ npm install react react-dom
 import { Knob } from '@tremolo-ui/react'
 ```
 
+`@tremolo-ui/react` exports the components and hooks only. The scales and the
+MIDI note helpers are in `@tremolo-ui/functions`, and the values and types the
+components share with the other frameworks — `XY`, the default input options,
+the MIDI error codes — are in `@tremolo-ui/dom`. Add them to your dependencies
+when you import from them:
+
+```bash npm2yarn
+npm install @tremolo-ui/functions @tremolo-ui/dom
+```
+
 tremolo-ui ships no CSS: a component renders its markup and leaves the
 appearance to you. [Styling](/docs/tutorials/styling) covers how to give it one, and
 publishes the theme these examples use so you can start from it.
