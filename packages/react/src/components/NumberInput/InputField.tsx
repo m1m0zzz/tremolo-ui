@@ -34,7 +34,7 @@ type Props = Omit<
  */
 export const InputField = /* @__PURE__ */ forwardRef<HTMLInputElement, Props>(
   function InputField(
-    { className, style, onFocus, onBlur, onKeyDown, ...props },
+    { className, style, onChange, onFocus, onBlur, onKeyDown, ...props },
     forwardedRef,
   ) {
     const {
@@ -138,6 +138,7 @@ export const InputField = /* @__PURE__ */ forwardRef<HTMLInputElement, Props>(
           // stepped one no longer means anything.
           caretAfterStep.current = null
           setDraft(event.currentTarget.value)
+          onChange?.(event)
         }}
         onFocus={(event) => {
           setFocused(true)
