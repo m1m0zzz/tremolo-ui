@@ -103,7 +103,8 @@ export function useNumberInputContext<T>(
 
 /** Set by `Stepper` once a drag has actually moved, so the steppers stand down. */
 export type StepperContextValue = {
-  draggingRef: RefObject<boolean>
+  /** Whether the drag in progress has moved the value. */
+  moved: () => boolean
 }
 
 const StepperContext =
