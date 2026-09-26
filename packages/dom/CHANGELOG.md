@@ -1,5 +1,71 @@
 # @tremolo-ui/dom
 
+## 0.8.0
+
+### Minor Changes
+
+- [#336](https://github.com/m1m0zzz/tremolo-ui/pull/336) [`4a7b743`](https://github.com/m1m0zzz/tremolo-ui/commit/4a7b743cc5f0f17ae851ea56f0616ea3c92f4793) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Add `createLongPress`, the press-and-hold repeat behind `useLongPress` and the
+  `NumberInput` steppers: it fires once on the press, then every `interval`
+  after `delay`, until the pointer that started it is released.
+
+- [#340](https://github.com/m1m0zzz/tremolo-ui/pull/340) [`63d750f`](https://github.com/m1m0zzz/tremolo-ui/commit/63d750fe331756ee733a39a8fef029f61f3e8790) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Add `replaceOptions`, which turns a whole new set of options into the
+  `update()` argument that leaves an instance with exactly those — clearing
+  what the new set leaves out instead of keeping the old value.
+
+- [#333](https://github.com/m1m0zzz/tremolo-ui/pull/333) [`a3bb088`](https://github.com/m1m0zzz/tremolo-ui/commit/a3bb08865ab21f37f08b64d025519421778b395f) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Add the framework-independent pieces the components were computing on their
+  own, so that every wrapper gives the same answer: which way an arrow key or a
+  wheel notch moves a value (`arrowKeyDirection`, `arrowKeyMove`,
+  `wheelDirection`, `wheelMove`), where a value sits along a track
+  (`valuePercent`), the knob geometry (`knobAngles`, `knobArcPath`, …), the
+  slider marks (`sliderMarks`), reading a number input's text
+  (`parseNumberText`, `caretDecimalOffset`, …), the step check behind the
+  development warnings (`checkSteps`), the default input options
+  (`DEFAULT_KEYBOARD_OPTIONS`, `DEFAULT_WHEEL_OPTIONS`,
+  `DEFAULT_DRAG_SENSITIVITY`), `cssLength`, `visuallyHiddenStyle` and
+  `partitionByAccept`.
+
+- [#338](https://github.com/m1m0zzz/tremolo-ui/pull/338) [`8309125`](https://github.com/m1m0zzz/tremolo-ui/commit/8309125b79d36073721d1d93f9c0d15e48692268) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Add the pieces of a number input that do not depend on a framework:
+  `numberInputRanges`, `nudgeNumberInput`, `numberInputBounds` and
+  `commitNumberInputText` for the value, and `createStepperDrag` for dragging
+  the steppers up and down.
+
+- [#360](https://github.com/m1m0zzz/tremolo-ui/pull/360) [`221b3ef`](https://github.com/m1m0zzz/tremolo-ui/commit/221b3efa6f25722f32243cc7038feef1043708dd) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Treat everything in a number input's text that is not the unit as the number.
+  `selectOnFocus="number"` and `keepCaretOnStep` now cover a signed number
+  (`+6.0 dB`, `−6.0 dB`), an exponent (`1e+21`) and a number after a unit
+  (`L 30`), where they used to select nothing or stop part way.
+  
+  The default `parse` reads the same number, and gives `NaN`, which leaves the
+  value alone, for one it cannot read whole instead of the digits in front:
+  `1,000 Hz` and `1:30` no longer commit 1, and a number with a unit in front is
+  left to a `parse` of your own.
+
+- [#337](https://github.com/m1m0zzz/tremolo-ui/pull/337) [`6a1710f`](https://github.com/m1m0zzz/tremolo-ui/commit/6a1710fc41b5e6c48dd1c8751f43bcb54ec2494b) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - `createPianoInput` now plays notes from the computer keyboard itself, with the
+  new `keyboardShortcuts` and `keyboardShortcutsScope` options, so that every
+  wrapper's Piano handles held keys, focus loss and changes to the mapping the
+  same way. `SHORTCUTS` and `KeyboardShortcuts` moved to `@tremolo-ui/dom`:
+  import them from there instead of `@tremolo-ui/react`.
+
+- [#339](https://github.com/m1m0zzz/tremolo-ui/pull/339) [`b7dec12`](https://github.com/m1m0zzz/tremolo-ui/commit/b7dec12a1c9674c55617fbaaac4a2122b2ca83e2) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Add `createPointsEditor`, the selection and the moves behind
+  `PointsEditor`: which points a press or a selection box selects, and how a
+  selection moves as one and stops together at the edge. `clampPoint` and the
+  point type moved to `@tremolo-ui/dom`; import `clampPoint` and `PointPosition`
+  (formerly `PointBaseType`) from there. `PointsEditorContextValue` now carries
+  the editor instance instead of its individual functions.
+
+- [#346](https://github.com/m1m0zzz/tremolo-ui/pull/346) [`479f29e`](https://github.com/m1m0zzz/tremolo-ui/commit/479f29ec2a651bc01c4f0fcd03cd90abb6402453) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Add `Piano` to `@tremolo-ui/svelte`, with `playNote` / `stopNote` on the
+  component and `label` as a snippet. `@tremolo-ui/dom` gains
+  `fitWhiteKeyWidth`, the key width a `resizable` piano fills its container
+  with.
+
+### Patch Changes
+
+- [#362](https://github.com/m1m0zzz/tremolo-ui/pull/362) [`eaeeb6f`](https://github.com/m1m0zzz/tremolo-ui/commit/eaeeb6f5ae404fdc3dd4337359446848b71e7b9c) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - `FileInput` and `DropZone` report the rejected files after the accepted ones
+  for the same selection or drop. A list of rejected files cleared in
+  `onChange` / `onDrop` and filled in `onReject` now shows what a mixed
+  selection left out, where it used to be cleared straight away.
+- Updated dependencies []:
+  - @tremolo-ui/functions@0.8.0
+
 ## 0.7.0
 
 ### Minor Changes
