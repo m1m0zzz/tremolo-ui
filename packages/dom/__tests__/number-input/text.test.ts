@@ -118,6 +118,10 @@ describe('the caret stays at the same digit', () => {
     expect(step('+6.0 dB', 2, '+7.0 dB')).toBe(2)
     // 1|e+21 -> 2|e+21
     expect(step('1e+21', 1, '2e+21')).toBe(1)
+    // 9|e+9 -> 1|e+10: the exponent gaining a digit moves nothing in front
+    expect(step('9e+9', 1, '1e+10')).toBe(1)
+    // 1.|5e-7 -> 1.|6e-7
+    expect(step('1.5e-7', 2, '1.6e-7')).toBe(2)
     // L 3|0 -> L 3|1, and never into the L
     expect(step('L 30', 3, 'L 31')).toBe(3)
     expect(step('L 30', 0, 'L 31')).toBe(2)

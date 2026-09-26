@@ -57,15 +57,19 @@ export function parseNumberText(text: string): number {
 
 /**
  * The index the caret is measured against: the decimal point, or where one
- * would go if the number has none.
+ * would go if the number has none — in front of an exponent, if there is one.
  *
  * Measuring from an end instead would slide the caret across a digit whenever
  * the number changed length — `9.9` to `10.0` gains a character in front, `10`
- * to `9` loses one — which is exactly what stepping does.
+ * to `9` loses one, and so does `9e+9` to `1e+10` behind — which is exactly
+ * what stepping does.
  */
 function decimalAnchor(text: string, span: NumberSpan) {
-  const dot = text.indexOf('.', span.start)
-  return dot !== -1 && dot < span.end ? dot : span.end
+  const number = text.slice(span.start, span.end)
+  const exponent = number.search(/[eE][+\-\u2212]?\d/)
+  const mantissa = exponent === -1 ? number : number.slice(0, exponent)
+  const dot = mantissa.indexOf('.')
+  return span.start + (dot === -1 ? mantissa.length : dot)
 }
 
 const NO_NUMBER: NumberSpan = { start: 0, end: 0 }
