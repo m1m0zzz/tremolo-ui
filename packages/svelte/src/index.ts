@@ -6,6 +6,20 @@ export { longPress } from './actions/long-press.js'
 export { wheel, type WheelActionOptions } from './actions/wheel.js'
 
 // components
+export { default as AnimationCanvas } from './components/AnimationCanvas/AnimationCanvas.svelte'
+export type {
+  AnimationCanvasProps,
+  DrawFunction,
+  InitFunction,
+} from './components/AnimationCanvas/types.js'
+export * as DropZone from './components/DropZone/index.js'
+export type { DropZoneProps } from './components/DropZone/types.js'
+export * as FileInput from './components/FileInput/index.js'
+export {
+  useFileInputContext,
+  type FileInputContextValue,
+} from './components/FileInput/context.js'
+export type { FileInputProps } from './components/FileInput/types.js'
 export * as Knob from './components/Knob/index.js'
 export {
   useKnobContext,
