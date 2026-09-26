@@ -173,6 +173,9 @@ function allowedDelta(
   let loY = -Infinity
   let hiY = Infinity
   for (const { start, point } of entries) {
+    // A point that cannot move stays where it is, so its range says nothing
+    // about how far the rest may go.
+    if (point.readonly) continue
     loX = Math.max(loX, (point.min?.x ?? 0) - start.x)
     hiX = Math.min(hiX, (point.max?.x ?? 1) - start.x)
     loY = Math.max(loY, (point.min?.y ?? 0) - start.y)
@@ -322,13 +325,14 @@ export function createPointsEditor(
     nudgeSelection,
     nudgePoint,
     nudgeFocusedPoint: (axis, direction, modifiers) => {
-      const active = globalThis.document?.activeElement
-      if (!active) return false
       for (const [id, read] of points) {
         const { element, wheel, readonly, onChange } = read()
+        // The document the point is in, which need not be the one this script
+        // runs in — an editor rendered into an iframe has its own focus.
+        const active = element?.ownerDocument.activeElement
         // A point answers only for the focus inside its own inputs, so both
         // axes stay part of the same interaction.
-        if (!element?.contains(active)) continue
+        if (!active || !element?.contains(active)) continue
         if (!wheel || readonly || !onChange) return false
         nudgePoint(id, axis, direction, wheel, modifiers)
         return true

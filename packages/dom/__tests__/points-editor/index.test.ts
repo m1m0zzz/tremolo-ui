@@ -119,6 +119,29 @@ describe('with selection', () => {
     expect(values.b.x).toBe(0.6)
   })
 
+  test('a readonly point stays put without holding the rest back', () => {
+    const editor = createPointsEditor({
+      selectable: true,
+      selection: ['a', 'b'],
+    })
+    const values: Record<string, PointPosition> = {
+      a: { x: 0.2, y: 0.5 },
+      b: { x: 1, y: 0.5 },
+    }
+    for (const id of ['a', 'b']) {
+      editor.registerPoint(id, () => ({
+        value: values[id],
+        readonly: id === 'b',
+        onChange: (v) => {
+          values[id] = v
+        },
+      }))
+    }
+    editor.nudgeSelection('a', { x: 0.1, y: 0 })
+    expect(values.a.x).toBe(0.3)
+    expect(values.b.x).toBe(1)
+  })
+
   test('a nudge moves the selection from where it is now', () => {
     const { editor, values } = setup({
       selectable: true,
@@ -162,6 +185,26 @@ test('the wheel moves the focused point with its own option', () => {
   elements.b.focus()
   expect(editor.nudgeFocusedPoint('x', 1, NONE)).toBe(true)
   expect(values.b.x).toBe(0.7)
+})
+
+test('the wheel follows the focus in the document the point is in', () => {
+  const frame = document.createElement('iframe')
+  document.body.appendChild(frame)
+  const doc = frame.contentDocument!
+  const element = doc.createElement('div')
+  element.tabIndex = -1
+  doc.body.appendChild(element)
+  const editor = createPointsEditor()
+  const onChange = vi.fn()
+  editor.registerPoint('a', () => ({
+    value: { x: 0.5, y: 0.5 },
+    element,
+    wheel: ['normalized', 0.1],
+    onChange,
+  }))
+  element.focus()
+  expect(editor.nudgeFocusedPoint('x', 1, NONE)).toBe(true)
+  expect(onChange).toHaveBeenCalledWith({ x: 0.6, y: 0.5 })
 })
 
 test('isPointElement recognises a point and what is inside it', () => {
