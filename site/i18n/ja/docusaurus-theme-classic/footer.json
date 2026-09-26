@@ -55,12 +55,16 @@
     "message": "Copyright © 2025 mimoz.",
     "description": "The footer copyright"
   },
-  "link.item.label.Storybook": {
-    "message": "Storybook",
-    "description": "The label of footer link with label=Storybook linking to https://tremolo-ui.mimoz.dev/i/storybook-react/"
-  },
   "link.item.label.dom": {
     "message": "dom",
     "description": "The label of footer link with label=dom linking to /docs/api/dom"
+  },
+  "link.item.label.Storybook (React)": {
+    "message": "Storybook (React)",
+    "description": "The label of footer link with label=Storybook (React) linking to https://tremolo-ui.mimoz.dev/i/storybook-react/"
+  },
+  "link.item.label.Storybook (Svelte)": {
+    "message": "Storybook (Svelte)",
+    "description": "The label of footer link with label=Storybook (Svelte) linking to https://tremolo-ui.mimoz.dev/i/storybook-svelte/"
   }
 }
