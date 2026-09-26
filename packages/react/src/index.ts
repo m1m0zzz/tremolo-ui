@@ -33,12 +33,10 @@ export {
 } from './components/NumberInput'
 export {
   Piano,
-  SHORTCUTS,
   type PianoProps,
   type PianoMethods,
   type KeyState,
   type KeyAttributes,
-  type KeyboardShortcuts,
 } from './components/Piano'
 export {
   PointsEditor,

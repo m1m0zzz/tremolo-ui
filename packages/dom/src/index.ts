@@ -92,6 +92,11 @@ export {
   type PianoLayout,
 } from './piano/layout'
 export {
+  SHORTCUTS,
+  type KeyboardShortcuts,
+  type KeyboardShortcutsScope,
+} from './piano/shortcuts'
+export {
   createPianoInput,
   type NoteSource,
   type PianoInputInstance,
