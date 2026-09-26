@@ -1,5 +1,7 @@
 import { toValue, watch, type MaybeRefOrGetter } from 'vue'
 
+import { replaceOptions } from '@tremolo-ui/dom'
+
 /**
  * Create an instance for the element `target` holds, and destroy it when the
  * element goes away or changes. Options are pushed to the instance with
@@ -10,13 +12,13 @@ import { toValue, watch, type MaybeRefOrGetter } from 'vue'
  */
 export function useInstance<
   E extends Element,
-  O,
+  O extends object,
   I extends { destroy: () => void },
 >(
   target: MaybeRefOrGetter<E | null | undefined>,
   options: MaybeRefOrGetter<O>,
   create: (element: E, options: O) => I,
-  update: (instance: I, options: O) => void,
+  update: (instance: I, options: Partial<O>) => void,
 ): { current: () => I | null } {
   let instance: I | null = null
 
@@ -34,10 +36,14 @@ export function useInstance<
     { immediate: true, flush: 'post' },
   )
 
+  // A copy, so that the watch reads every property: a `reactive()` object
+  // whose `requireFocus` changes is then seen, not only a new object. The
+  // copy is what the instance is left with — what it no longer carries is
+  // cleared rather than kept.
   watch(
-    () => toValue(options),
-    (next) => {
-      if (instance) update(instance, next)
+    () => ({ ...toValue(options) }),
+    (next, previous) => {
+      if (instance) update(instance, replaceOptions(previous, next))
     },
     { flush: 'post' },
   )

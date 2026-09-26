@@ -11,7 +11,8 @@
 ## dom との関係
 
 - **ロジックは dom に書き、ここには Vue への橋渡しだけを置く。** React の実装を読んで書き写さないこと。足りないものがあれば、先に dom に足して React / Svelte からも使う
-- composables は dom の `create*` を包むだけ。要素は `MaybeRefOrGetter` で受けて、変わったら作り直す。オプションの変化は `update()` で渡し、作り直さない（ドラッグの途中で切れる）。共通の形は `composables/useInstance.ts`
+- composables は dom の `create*` を包むだけ。要素は `MaybeRefOrGetter` で受けて、変わったら作り直す。オプションの変化は `update()` で渡し、作り直さない（ドラッグの途中で切れる）。渡すときは dom の `replaceOptions()` を通し、外したオプションを残さない。共通の形は `composables/useInstance.ts`
+- **ブラウザにしか無いものには `setup` の中で触らない。** SSR では `setup` がサーバーでも走る。MIDI のリクエストのようなものは `onMounted` 以降に置く
 
 ## テスト
 

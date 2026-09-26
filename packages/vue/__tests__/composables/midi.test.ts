@@ -1,5 +1,6 @@
 import { render } from '@testing-library/vue'
-import { defineComponent, h, nextTick, ref } from 'vue'
+import { createSSRApp, defineComponent, h, nextTick, ref } from 'vue'
+import { renderToString } from 'vue/server-renderer'
 
 import { useMIDIAccess } from '../../src/composables/useMIDIAccess'
 import { useMIDIInput } from '../../src/composables/useMIDIInput'
@@ -55,6 +56,51 @@ test('useMIDIAccess requests access and follows the state', async () => {
   )
   await vi.waitFor(() => expect(midi.state.value.midiAccess).toBe(access))
   expect(midi.state.value.inputs.map((i) => i.name)).toEqual(['keys'])
+  view.unmount()
+})
+
+test('useMIDIAccess does not ask while rendering on the server', async () => {
+  const request = vi.fn(async () => fakeAccess().access)
+  Object.defineProperty(navigator, 'requestMIDIAccess', {
+    value: request,
+    configurable: true,
+    writable: true,
+  })
+  const html = await renderToString(
+    createSSRApp(
+      defineComponent({
+        setup() {
+          const midi = useMIDIAccess()
+          return () => h('div', String(midi.state.value.error))
+        },
+      }),
+    ),
+  )
+  expect(html).toBe('<div>null</div>')
+  expect(request).not.toHaveBeenCalled()
+})
+
+test('useMIDIAccess asks once a ref turns true', async () => {
+  const { access } = fakeAccess()
+  Object.defineProperty(navigator, 'requestMIDIAccess', {
+    value: vi.fn(async () => access),
+    configurable: true,
+    writable: true,
+  })
+  const auto = ref(false)
+  let midi!: ReturnType<typeof useMIDIAccess>
+  const view = render(
+    defineComponent({
+      setup() {
+        midi = useMIDIAccess(auto)
+        return () => h('div')
+      },
+    }),
+  )
+  await nextTick()
+  expect(navigator.requestMIDIAccess).not.toHaveBeenCalled()
+  auto.value = true
+  await vi.waitFor(() => expect(midi.state.value.midiAccess).toBe(access))
   view.unmount()
 })
 
