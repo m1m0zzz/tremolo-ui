@@ -20,7 +20,7 @@ import { linearScale, type Scale } from '@tremolo-ui/functions'
 
 import { useDragValue } from '../../composables/useDragValue'
 import { useWheel } from '../../composables/useWheel'
-import { inputProps } from '../_util/props'
+import { dragSensitivityProp, keyboardProp, wheelProp } from '../_util/props'
 import { useCheckSteps } from '../_util/useCheckSteps'
 
 import { XYPadKey } from './context'
@@ -61,7 +61,9 @@ export const XYPad = /* @__PURE__ */ defineComponent({
     },
     /** The cursor to show while dragging. @default { cursor: 'pointer' } */
     externalStyles: Object as PropType<{ cursor?: string }>,
-    ...inputProps,
+    wheel: wheelProp,
+    keyboard: keyboardProp,
+    dragSensitivity: dragSensitivityProp,
     /** Make the pad unchangeable and remove it from the tab order. */
     disabled: Boolean,
     /** Make the value unchangeable. */
