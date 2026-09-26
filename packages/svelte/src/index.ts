@@ -24,6 +24,15 @@ export type {
   KeyState,
   PianoProps,
 } from './components/Piano/types.js'
+export * as PointsEditor from './components/PointsEditor/index.js'
+export {
+  usePointsEditorContext,
+  type PointsEditorContextValue,
+} from './components/PointsEditor/context.js'
+export type {
+  PointsEditorPointProps,
+  PointsEditorProps,
+} from './components/PointsEditor/types.js'
 export * as Slider from './components/Slider/index.js'
 export {
   useSliderContext,
