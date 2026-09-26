@@ -42,11 +42,21 @@ const knob = () =>
   ])
 
 export const Basic: Story = {
-  render: (args) => withModel(Knob, { class: knobTheme.root, ...args }, knob),
+  render: (args) =>
+    withModel(
+      Knob,
+      { class: knobTheme.root, 'aria-label': 'Level', ...args },
+      knob,
+    ),
 }
 
 /** The active arc grows from the middle, for a pan or a detune. */
 export const Bipolar: Story = {
   args: { min: -50, max: 50, modelValue: 0, startValue: 0 },
-  render: (args) => withModel(Knob, { class: knobTheme.root, ...args }, knob),
+  render: (args) =>
+    withModel(
+      Knob,
+      { class: knobTheme.root, 'aria-label': 'Level', ...args },
+      knob,
+    ),
 }

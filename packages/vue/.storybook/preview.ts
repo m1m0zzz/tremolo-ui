@@ -15,7 +15,8 @@ const preview: Preview = {
     // The demo theme reads `.dark` on <html>, as it does in the React
     // Storybook and on the documentation site.
     (story, context) => {
-      const dark = context.globals.backgrounds?.value === '#333'
+      // The background global holds the option's name, not its colour.
+      const dark = context.globals.backgrounds?.value === 'dark'
       document.documentElement.classList.toggle('dark', dark)
       return story()
     },
