@@ -36,16 +36,16 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
     - [x] Piano のキーボードショートカット: `createPianoInput` の `keyboardShortcuts` / `keyboardShortcutsScope`。`SHORTCUTS` も dom へ
     - [x] NumberInput の下書きと確定、ステッパーのドラッグ: `numberInputRanges` / `nudgeNumberInput` / `numberInputBounds` / `commitNumberInputText` / `createStepperDrag`。下書きの文字列そのものは各ラッパーの state に置く
     - [x] PointsEditor の選択とまとめての移動: `createPointsEditor`。選択そのもの（controlled / uncontrolled）は各ラッパーの state に置き、`update({ selection })` で押し戻す
-- [ ] `@tremolo-ui/svelte`
+- [x] `@tremolo-ui/svelte`
   - [x] パッケージの器（`svelte-package` / `svelte-check` / vitest）と、actions（`drag` / `dragValue` / `wheel` / `longPress` / `dropZone`）、MIDI（`useMIDIAccess` / `useMIDIInput` / `useMIDIMessage`）
   - [x] コンポーネント（Knob / Slider / XYPad / NumberInput / Piano / PointsEditor / AnimationCanvas / FileInput / DropZone）。`.svelte` は prettier で整形する
   - [x] Storybook と Worker（`tremolo-ui-sb-svelte`、`/i/storybook-svelte`）。story は Svelte CSF（`@storybook/addon-svelte-csf`）で書く
-  - [ ] **main に入れる前に** npm へ手動 publish し、trusted publisher を登録する（下の「新パッケージを追加する際の手順」）
-- [ ] `@tremolo-ui/vue`
+  - [x] **main に入れる前に** npm へ手動 publish し、trusted publisher を登録する（下の「新パッケージを追加する際の手順」）。手動で出した 0.7.0 は名前を確保するための版で、npm の dom 0.7.0 にはこのスタックで足した関数が無く動かないので deprecate してある。動く版はマージ後の Version Packages で出る 0.8.0
+- [x] `@tremolo-ui/vue`
   - [x] パッケージの器（tsdown / vitest）と composables（`useDrag` / `useDragValue` / `useWheel` / `useLongPress` / `useDropZone` / MIDI）。コンポーネントは SFC ではなく `defineComponent` + `h()` で書く
   - [x] コンポーネント（名前はフラット、Root はコンポーネント名そのもの。値は `v-model`、React の `InputField` は `NumberInputField`）
   - [x] Storybook と Worker（`tremolo-ui-sb-vue`、`/i/storybook-vue`）。story は render 関数で書く
-  - [ ] **main に入れる前に** npm へ手動 publish し、trusted publisher を登録する
+  - [x] **main に入れる前に** npm へ手動 publish し、trusted publisher を登録する（Svelte と同じく 0.7.0 は deprecate 済み）
 
 **どちらも React と同等のコンポーネント一式を最初から揃える。** Root + パート + `data-*` の契約を同じにするので、`shared/css/` のテーマがそのまま使える。hook 相当（Svelte の action、Vue の composable）もあわせて出す。
 
