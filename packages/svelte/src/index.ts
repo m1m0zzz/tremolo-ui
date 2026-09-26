@@ -12,6 +12,12 @@ export {
   type KnobContextValue,
 } from './components/Knob/context.js'
 export type { KnobProps, KnobThumbProps } from './components/Knob/types.js'
+export * as NumberInput from './components/NumberInput/index.js'
+export {
+  useNumberInputContext,
+  type NumberInputContextValue,
+} from './components/NumberInput/context.js'
+export type { NumberInputProps } from './components/NumberInput/types.js'
 export * as Slider from './components/Slider/index.js'
 export {
   useSliderContext,
