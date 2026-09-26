@@ -18,6 +18,7 @@
   let {
     ref = $bindable(null),
     onfocus,
+    oninput,
     onblur,
     onkeydown,
     ...rest
@@ -76,7 +77,10 @@
   parses itself, neither of which survives a unit suffix. The ARIA value text
   is the formatted text even while the plain number is shown: it is the one
   that says what the value means. -->
+<!-- The caller's attributes go first, so that the field's own state —
+  disabled, readonly, the ARIA — cannot be overridden by them. -->
 <input
+  {...rest}
   bind:this={ref}
   type="text"
   inputmode="decimal"
@@ -94,7 +98,10 @@
   data-disabled={field.disabled ? '' : undefined}
   data-readonly={field.readonly ? '' : undefined}
   data-out-of-range={field.outOfRange ? '' : undefined}
-  oninput={(event) => field.setDraft(event.currentTarget.value)}
+  oninput={(event) => {
+    field.setDraft(event.currentTarget.value)
+    oninput?.(event)
+  }}
   onfocus={(event) => {
     focused = true
     select()
@@ -125,5 +132,4 @@
     }
     onkeydown?.(event)
   }}
-  {...rest}
 />

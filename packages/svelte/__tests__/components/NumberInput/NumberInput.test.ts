@@ -38,6 +38,14 @@ describe('NumberInput', () => {
     expect(input).toHaveValue('100')
   })
 
+  test('an oninput of your own runs alongside the typing', async () => {
+    const oninput = vi.fn()
+    const { input, onChange } = setup({ fieldProps: { oninput } })
+    await fireEvent.input(input, { target: { value: '70' } })
+    expect(onChange).toHaveBeenLastCalledWith(70)
+    expect(oninput).toHaveBeenCalledTimes(1)
+  })
+
   test('text with no number goes back to what was shown', async () => {
     const { input } = setup()
     await fireEvent.input(input, { target: { value: 'abc' } })

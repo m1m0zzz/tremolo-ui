@@ -5,13 +5,14 @@
 
   type Props = Omit<NumberInputProps, 'children' | 'value'> & {
     value?: number
+    fieldProps?: Record<string, unknown>
   }
 
-  let { value = $bindable(50), ...rest }: Props = $props()
+  let { value = $bindable(50), fieldProps = {}, ...rest }: Props = $props()
 </script>
 
 <NumberInput.Root bind:value data-testid="root" {...rest}>
-  <NumberInput.InputField />
+  <NumberInput.InputField {...fieldProps} />
   <NumberInput.Stepper data-testid="stepper">
     <NumberInput.IncrementStepper />
     <NumberInput.DecrementStepper />
