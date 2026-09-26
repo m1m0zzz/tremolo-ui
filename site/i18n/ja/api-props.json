@@ -276,8 +276,8 @@
     "source": "c86e4cad"
   },
   "PianoProps.label": {
-    "message": "鍵盤の中に描くもの。`''`、`null`、`undefined` は何も描かないので、`HOME_ROW_NATURAL` のように歯抜けのある配列でも特別扱いは要りません。",
-    "source": "3d3b3d02"
+    "message": "鍵盤の中に描くもの。`''`、`null`、`undefined` は何も描かないので、`SHORTCUTS.HOME_ROW_NATURAL` のように歯抜けのある配列でも特別扱いは要りません。",
+    "source": "2cfb1ba0"
   },
   "PianoProps.keyProps": {
     "message": "ノートごとに鍵盤へ足す props。クラスやスタイル、セレクタに使う `data-*` 属性などです。\n\n鍵盤の幾何（`left`、`width`、`height`）は返した `style` のあとに当てられ、上書きできません。反応する場所と違うところに鍵盤が描かれることはありません。",

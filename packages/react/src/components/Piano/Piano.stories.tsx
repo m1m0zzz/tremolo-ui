@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react-vite'
 import { useRef, useState } from 'react'
 import * as Tone from 'tone'
 
+import { SHORTCUTS } from '@tremolo-ui/dom'
 import {
   inScale,
   noteKey,
@@ -13,7 +14,7 @@ import {
 import { useMIDIAccess } from '../../hooks/useMIDIAccess'
 import { useMIDIInput } from '../../hooks/useMIDIInput'
 
-import { Piano, PianoMethods, SHORTCUTS } from '.'
+import { Piano, PianoMethods } from '.'
 
 import pianoTheme from 'shared/css/Piano.module.css'
 

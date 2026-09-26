@@ -1,9 +1,10 @@
 import { act, render, screen } from '@testing-library/react'
 import { createRef, useState } from 'react'
 
+import { SHORTCUTS } from '@tremolo-ui/dom'
 import { inScale, noteNumber } from '@tremolo-ui/functions'
 
-import { Piano, PianoMethods, PianoProps, SHORTCUTS } from '.'
+import { Piano, PianoMethods, PianoProps } from '.'
 
 const range = { first: noteNumber('C3'), last: noteNumber('B4') }
 

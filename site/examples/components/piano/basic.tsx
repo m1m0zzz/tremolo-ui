@@ -2,8 +2,9 @@
 import { useEffect, useRef } from 'react'
 import * as Tone from 'tone'
 
+import { SHORTCUTS } from '@tremolo-ui/dom'
 import { noteName, noteNumber } from '@tremolo-ui/functions'
-import { Piano, SHORTCUTS } from '@tremolo-ui/react'
+import { Piano } from '@tremolo-ui/react'
 
 // Copy this file from the Styling page into your own project.
 import pianoTheme from './Piano.module.css'

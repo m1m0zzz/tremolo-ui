@@ -2,15 +2,12 @@ import { useAtom } from 'jotai'
 import { useMemo, useRef } from 'react'
 import { start } from 'tone'
 
+import { SHORTCUTS } from '@tremolo-ui/dom'
 import { clamp, noteName, noteNumber } from '@tremolo-ui/functions'
 
 import { Knob } from '../../../src/components/Knob'
 import { NumberInput } from '../../../src/components/NumberInput'
-import {
-  Piano,
-  SHORTCUTS,
-  type PianoMethods,
-} from '../../../src/components/Piano'
+import { Piano, type PianoMethods } from '../../../src/components/Piano'
 import { useEventListener } from '../../../src/hooks/useEventListener'
 import { useMIDIAccess } from '../../../src/hooks/useMIDIAccess'
 import { useMIDIInput } from '../../../src/hooks/useMIDIInput'
