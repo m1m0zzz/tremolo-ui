@@ -1,6 +1,9 @@
 import { render } from '@testing-library/svelte'
+import { tick } from 'svelte'
 
 import { AnimationCanvas } from '../../../src/index.js'
+
+import StateDrivenCanvas from './StateDrivenCanvas.svelte'
 
 /** jsdom has no 2D context and no animation frames, so both are faked. */
 beforeEach(() => {
@@ -61,4 +64,17 @@ test('the context menu is suppressed by default', () => {
   })
   container.querySelector('canvas')!.dispatchEvent(event)
   expect(event.defaultPrevented).toBe(true)
+})
+
+test('without animating, a new draw is painted at once', async () => {
+  const onDraw = vi.fn()
+  const { component } = render(StateDrivenCanvas, { props: { onDraw } })
+  flush()
+  expect(onDraw).toHaveBeenLastCalledWith('first:1')
+  ;(component as unknown as { relabel: (label: string) => void }).relabel(
+    'second',
+  )
+  await tick()
+  // Drawn again by the same canvas: the frame count carries on.
+  expect(onDraw).toHaveBeenLastCalledWith('second:2')
 })

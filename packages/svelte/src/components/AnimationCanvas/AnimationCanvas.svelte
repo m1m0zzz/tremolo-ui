@@ -35,9 +35,11 @@
     const canvas = ref
     const wired = resizable
     if (!canvas) return
-    const current = createAnimationCanvas(
-      canvas,
-      untrack(() => ({
+    // All of it untracked, the call included: without animating, the core
+    // draws the first frame right here, and reading `draw` would make every
+    // state it reads tear the canvas down.
+    const current = untrack(() =>
+      createAnimationCanvas(canvas, {
         draw: (context, frame) => draw(context, frame),
         init: (context, size) => init?.(context, size),
         animate,
@@ -45,7 +47,7 @@
         reduceFlickering,
         resizable: wired,
         contextAttributes: options,
-      })),
+      }),
     )
     instance = current
     return () => {
@@ -54,7 +56,12 @@
     }
   })
 
+  // Also run when `draw` or `init` change: without a loop running, update()
+  // is what paints a new handler's frame, so a canvas driven by state rather
+  // than by time shows the change.
   $effect(() => {
+    void draw
+    void init
     instance?.update({ animate, size: { width, height }, reduceFlickering })
   })
 </script>
