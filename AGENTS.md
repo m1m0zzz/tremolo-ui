@@ -10,7 +10,7 @@ tremolo-ui は Web Audio アプリ向けの headless なコンポーネントラ
 | `packages/dom` | `@tremolo-ui/dom` | DOM 依存・framework 非依存のコア。`destroy()` を持つ命令的インスタンスを返す |
 | `packages/react` | `@tremolo-ui/react` | 全コンポーネント + hooks |
 | `packages/svelte` | `@tremolo-ui/svelte` | Svelte 5 の全コンポーネント + actions |
-| `packages/vue` | `@tremolo-ui/vue` | Vue 3 のコンポーネント + composables（作成中） |
+| `packages/vue` | `@tremolo-ui/vue` | Vue 3 の全コンポーネント + composables |
 | `site` | private | Docusaurus ドキュメントサイト（en / ja） |
 
 **`functions` に置くのは汎用な関数だけ。** 目的は、このライブラリ群で使っている汎用な関数を利用者が使いやすい形で公開すること。判定は「純粋かどうか」ではなく「このライブラリを使わない人が使うか」で、実装の都合で必要になっただけのものは `dom` に置く（棚卸しの結果は `docs/functions-scope.md`）。
