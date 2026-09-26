@@ -150,17 +150,22 @@ export const Piano = /* @__PURE__ */ defineComponent({
           props.noteRange.first,
           props.noteRange.last,
           props.keyGap,
+          props.blackKeyWidthRatio,
         ] as const,
-      ([element, resizable, first, last, keyGap], _, onCleanup) => {
+      (
+        [element, resizable, first, last, keyGap, blackKeyWidthRatio],
+        _,
+        onCleanup,
+      ) => {
         if (!resizable || !element) return
         const parent = element.parentElement
         if (!parent) throw new Error("doesn't have a parent element.")
         const observer = new ResizeObserver(() => {
-          resizedKeyWidth.value = fitWhiteKeyWidth(
-            element.clientWidth,
-            { first, last },
+          resizedKeyWidth.value = fitWhiteKeyWidth(element.clientWidth, {
+            noteRange: { first, last },
             keyGap,
-          )
+            blackKeyWidthRatio,
+          })
         })
         observer.observe(parent)
         onCleanup(() => observer.disconnect())
