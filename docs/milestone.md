@@ -39,7 +39,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 - [ ] `@tremolo-ui/svelte`
   - [x] パッケージの器（`svelte-package` / `svelte-check` / vitest）と、actions（`drag` / `dragValue` / `wheel` / `longPress` / `dropZone`）、MIDI（`useMIDIAccess` / `useMIDIInput` / `useMIDIMessage`）
   - [x] コンポーネント（Knob / Slider / XYPad / NumberInput / Piano / PointsEditor / AnimationCanvas / FileInput / DropZone）。`.svelte` は prettier で整形する
-  - [ ] Storybook と Worker
+  - [x] Storybook と Worker（`tremolo-ui-sb-svelte`、`/i/storybook-svelte`）。story は Svelte CSF（`@storybook/addon-svelte-csf`）で書く
   - [ ] **main に入れる前に** npm へ手動 publish し、trusted publisher を登録する（下の「新パッケージを追加する際の手順」）
 - [ ] `@tremolo-ui/vue`
 
