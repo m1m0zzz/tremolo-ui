@@ -3,7 +3,6 @@ import {
   CSSProperties,
   forwardRef,
   ReactNode,
-  useCallback,
   useEffect,
   useImperativeHandle,
   useMemo,
@@ -15,6 +14,8 @@ import {
   blackKeyWidth,
   createPianoInput,
   getNoteRangeArray,
+  type KeyboardShortcuts,
+  type KeyboardShortcutsScope,
   notePosition,
   pianoWidth,
   type NoteRange,
@@ -22,30 +23,6 @@ import {
   type PianoLayout,
 } from '@tremolo-ui/dom'
 import { isWhiteKey, noteKey } from '@tremolo-ui/functions'
-
-import { useEventListener } from '../../hooks/useEventListener'
-
-import { KeyboardShortcuts } from './keyboard-shortcuts'
-
-type KeyboardShortcutsScope = 'root' | 'window'
-
-function isEditableTarget(target: EventTarget | null) {
-  if (!(target instanceof HTMLElement)) return false
-  if (target.matches('input, textarea, select')) return true
-
-  for (let element: HTMLElement | null = target; element;) {
-    const contentEditable = element.getAttribute('contenteditable')
-    if (contentEditable !== null)
-      return contentEditable.toLowerCase() !== 'false'
-    element = element.parentElement
-  }
-
-  return false
-}
-
-function shortcutKey(event: KeyboardEvent) {
-  return event.code || event.key
-}
 
 /**
  * What {@link PianoProps.keyProps} may return for one key.
@@ -148,7 +125,7 @@ export interface PianoProps {
 
   /**
    * What to draw inside a key. `''`, `null` and `undefined` leave it bare, so
-   * a layout with gaps — {@link SHORTCUTS.HOME_ROW_NATURAL}, say — needs no
+   * a layout with gaps — `SHORTCUTS.HOME_ROW_NATURAL`, say — needs no
    * special casing.
    */
   label?: (note: number, state: KeyState) => ReactNode
@@ -249,21 +226,12 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
       layout,
       glissando,
       midiMax,
+      keyboardShortcuts,
+      keyboardShortcutsScope,
       onPlayNote,
       onStopNote,
     })
     const instanceRef = useRef<PianoInputInstance | null>(null)
-    const shortcutNotes = useRef(
-      new Map<string, { note: number; source: string }>(),
-    )
-
-    const releaseShortcutNotes = useCallback(() => {
-      for (const { note, source } of shortcutNotes.current.values()) {
-        instanceRef.current?.noteOff(note, { source })
-      }
-      shortcutNotes.current.clear()
-    }, [])
-
     useEffect(() => {
       if (!node) return
 
@@ -271,6 +239,8 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
         layout: latest.current.layout,
         glissando: latest.current.glissando,
         midiMax: latest.current.midiMax,
+        keyboardShortcuts: latest.current.keyboardShortcuts,
+        keyboardShortcutsScope: latest.current.keyboardShortcutsScope,
         onPlayNote: (note, velocity) =>
           latest.current.onPlayNote?.(note, velocity),
         onStopNote: (note) => latest.current.onStopNote?.(note),
@@ -289,8 +259,22 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
 
     // Runs after every render.
     useEffect(() => {
-      latest.current = { layout, glissando, midiMax, onPlayNote, onStopNote }
-      instanceRef.current?.update({ layout, glissando, midiMax })
+      latest.current = {
+        layout,
+        glissando,
+        midiMax,
+        keyboardShortcuts,
+        keyboardShortcutsScope,
+        onPlayNote,
+        onStopNote,
+      }
+      instanceRef.current?.update({
+        layout,
+        glissando,
+        midiMax,
+        keyboardShortcuts,
+        keyboardShortcutsScope,
+      })
     })
 
     useEffect(() => {
@@ -306,83 +290,6 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
       resizeObserver.observe(parent)
       return () => resizeObserver.disconnect()
     }, [resizable, node, whiteKeyCount, keyGap])
-
-    const shortcutKeys = keyboardShortcuts?.keys
-    const hasShortcuts = shortcutKeys !== undefined
-    // What the held keys were started against, as a value rather than the
-    // identity of the array: a caller who writes the keys inline hands over a
-    // new array on every render, and releasing on that would stop a note as
-    // soon as anything else re-renders — including the state change that
-    // playing the note caused.
-    const shortcutMapping = shortcutKeys?.join('\u0000')
-
-    useEffect(
-      () => releaseShortcutNotes,
-      [
-        releaseShortcutNotes,
-        shortcutMapping,
-        keyboardShortcutsScope,
-        noteRange.first,
-        noteRange.last,
-      ],
-    )
-
-    /** The note a shortcut key plays, or null when it has none. */
-    function shortcutNote(key: string) {
-      if (!shortcutKeys || key === '') return null
-      const index = shortcutKeys.indexOf(key)
-      const note = noteRange.first + index
-      return index === -1 || note > noteRange.last ? null : note
-    }
-
-    const shortcutTarget = useMemo(
-      () => () => {
-        if (!hasShortcuts) return null
-        return keyboardShortcutsScope === 'window' ? globalThis.window : node
-      },
-      [hasShortcuts, keyboardShortcutsScope, node],
-    )
-
-    const focusOutTarget = useMemo(
-      () => () =>
-        hasShortcuts && keyboardShortcutsScope === 'root' ? node : null,
-      [hasShortcuts, keyboardShortcutsScope, node],
-    )
-
-    const windowBlurTarget = useMemo(
-      () => () => (hasShortcuts ? globalThis.window : null),
-      [hasShortcuts],
-    )
-
-    useEventListener(shortcutTarget, 'keydown', (e) => {
-      const key = shortcutKey(e)
-      if (e.repeat || shortcutNotes.current.has(key)) return
-      if (isEditableTarget(e.target)) return
-
-      const note = shortcutNote(e.key)
-      if (note === null) return
-
-      const source = `keyboard:${key}`
-      shortcutNotes.current.set(key, { note, source })
-      instanceRef.current?.noteOn(note, { source })
-    })
-
-    useEventListener(shortcutTarget, 'keyup', (e) => {
-      const key = shortcutKey(e)
-      const shortcut = shortcutNotes.current.get(key)
-      if (!shortcut) return
-
-      shortcutNotes.current.delete(key)
-      instanceRef.current?.noteOff(shortcut.note, { source: shortcut.source })
-    })
-
-    useEventListener(focusOutTarget, 'focusout', (e) => {
-      if (e.relatedTarget instanceof Node && node?.contains(e.relatedTarget))
-        return
-      releaseShortcutNotes()
-    })
-
-    useEventListener(windowBlurTarget, 'blur', releaseShortcutNotes)
 
     useImperativeHandle(
       forwardedRef,
@@ -476,5 +383,3 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
  * Customizable piano component.
  */
 export const Piano = { Root }
-
-export { type KeyboardShortcuts, SHORTCUTS } from './keyboard-shortcuts'

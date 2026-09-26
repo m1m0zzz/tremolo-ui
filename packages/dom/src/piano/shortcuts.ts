@@ -59,3 +59,28 @@ export const SHORTCUTS = {
     ],
   },
 }
+
+/**
+ * Where keyboard shortcuts listen. `root` handles keys only while the piano
+ * or one of its descendants has focus; `window` handles them anywhere on the
+ * page except in editable elements.
+ */
+export type KeyboardShortcutsScope = 'root' | 'window'
+
+/**
+ * Whether a key press was typed into something: shortcuts must not play a
+ * note for a letter that is going into a text field.
+ */
+export function isEditableTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) return false
+  if (target.matches('input, textarea, select')) return true
+
+  for (let element: HTMLElement | null = target; element;) {
+    const contentEditable = element.getAttribute('contenteditable')
+    if (contentEditable !== null)
+      return contentEditable.toLowerCase() !== 'false'
+    element = element.parentElement
+  }
+
+  return false
+}

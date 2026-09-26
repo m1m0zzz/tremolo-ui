@@ -33,7 +33,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
     - **`checkSteps` は警告の文言を返すだけで、出すのはラッパー。** `process.env.NODE_ENV` の判定をラッパー側にインラインで書けば、本番では呼び出しごと `checkSteps` がバンドルから落ちる
   - [ ] 状態を持つもの
     - [x] 長押しの繰り返し: `createLongPress`（`useLongPress` と NumberInput のステッパー）
-    - [ ] Piano のキーボードショートカット
+    - [x] Piano のキーボードショートカット: `createPianoInput` の `keyboardShortcuts` / `keyboardShortcutsScope`。`SHORTCUTS` も dom へ
     - [ ] NumberInput の下書きと確定、ステッパーのドラッグ
     - [ ] PointsEditor の選択とまとめての移動
 - [ ] `@tremolo-ui/svelte`
