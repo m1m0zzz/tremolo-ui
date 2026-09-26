@@ -34,7 +34,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - [ ] 状態を持つもの
     - [x] 長押しの繰り返し: `createLongPress`（`useLongPress` と NumberInput のステッパー）
     - [x] Piano のキーボードショートカット: `createPianoInput` の `keyboardShortcuts` / `keyboardShortcutsScope`。`SHORTCUTS` も dom へ
-    - [ ] NumberInput の下書きと確定、ステッパーのドラッグ
+    - [x] NumberInput の下書きと確定、ステッパーのドラッグ: `numberInputRanges` / `nudgeNumberInput` / `numberInputBounds` / `commitNumberInputText` / `createStepperDrag`。下書きの文字列そのものは各ラッパーの state に置く
     - [ ] PointsEditor の選択とまとめての移動
 - [ ] `@tremolo-ui/svelte`
 - [ ] `@tremolo-ui/vue`

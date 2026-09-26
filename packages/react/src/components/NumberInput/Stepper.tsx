@@ -1,14 +1,15 @@
-import { ComponentPropsWithoutRef, forwardRef, useMemo, useRef } from 'react'
-
 import {
-  applyDelta,
-  type InputEventOption,
-  mapModifier,
-  selectModifier,
-} from '@tremolo-ui/dom'
+  ComponentPropsWithoutRef,
+  forwardRef,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+
+import { createStepperDrag, type StepperDragInstance } from '@tremolo-ui/dom'
 
 import { useComposedRefs } from '../../compose-refs'
-import { useDrag } from '../../hooks/useDrag'
 
 import { StepperProvider, useNumberInputContext } from './context'
 
@@ -16,7 +17,8 @@ type Props = ComponentPropsWithoutRef<'div'>
 
 /**
  * The area the steppers sit in, and a drag handle in its own right: dragging it
- * up and down moves the value one `step` every `drag` pixels.
+ * up and down moves the value one `step` every `drag` pixels. The counting is
+ * `createStepperDrag` in the core.
  *
  * The drag lives here rather than on `InputField` because `createDrag` turns
  * off text selection on whatever element it is attached to.
@@ -25,7 +27,6 @@ export const Stepper = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   function Stepper({ className, style, children, ...props }, forwardedRef) {
     const {
       value,
-      step,
       disabled,
       readonly,
       drag,
@@ -34,99 +35,50 @@ export const Stepper = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       rawRange,
       changeValue,
     } = useNumberInputContext()
-    const inactive = disabled || readonly
+    // Only attached while it can do something: `createDrag` puts
+    // `touch-action: none` on the element, and a stepper that cannot be
+    // dragged has no reason to stop the page scrolling under a finger.
+    const enabled = drag !== null && !disabled && !readonly
 
-    /**
-     * The sensitivity as an amount per `drag` pixels, so that the drag goes
-     * through the same `applyDelta` the wheel and the arrow keys do. Carrying
-     * the modifier map over rather than resolving it here is what keeps `step`
-     * out of the pipeline for a modifier entry — naming one is a request to move
-     * off the grid.
-     */
-    const dragOptions = useMemo(
-      () =>
-        mapModifier(dragSensitivity, (factor): InputEventOption => [
-          'raw',
-          step * factor,
-        ]),
-      [dragSensitivity, step],
-    )
+    // See useDrag for why the node is held in state rather than a ref.
+    const [node, setNode] = useState<HTMLDivElement | null>(null)
+    const instanceRef = useRef<StepperDragInstance | null>(null)
+    const latest = useRef({ value, changeValue })
+    const options = {
+      range: rawRange,
+      pixels: drag ?? 1,
+      sensitivity: dragSensitivity,
+      pointerLock,
+    }
+    const optionsRef = useRef(options)
 
-    /**
-     * Set once the drag has actually moved the value, so that the press-and-hold
-     * repeat of a stepper stands down and leaves the value to the drag. A ref,
-     * because it is read from inside the repeat rather than rendered.
-     */
-    const draggingRef = useRef(false)
-    /**
-     * Where the drag started, taken on the first move rather than on pointer
-     * down: the steppers act on pointer down, so by then the value may already
-     * have been nudged once, and the drag should carry on from there.
-     */
-    const originRef = useRef<{ y: number; value: number } | null>(null)
-    /**
-     * Which modifier the drag is currently counting at, and where the previous
-     * event was — a key produces no pointer event of its own, so a change is
-     * only seen on the next move and has to be dated back to the one before it.
-     */
-    const factorRef = useRef<number>(1)
-    const previousYRef = useRef(0)
-
-    const dragRefCallback = useDrag<HTMLDivElement>({
-      threshold: 1,
-      cursor: inactive ? undefined : 'ns-resize',
-      pointerLock: inactive ? false : pointerLock,
-      onDragStart: (state) => {
-        originRef.current = null
-        draggingRef.current = false
-        factorRef.current = selectModifier(dragSensitivity, state.event).value
-      },
-      onDrag: (_x, y, _dx, _dy, state) => {
-        if (inactive || drag === null) return
-        if (!originRef.current) {
-          originRef.current = { y, value }
-          previousYRef.current = y
-          return
-        }
-
-        // Pressing or releasing the key mid-drag must not move the value, so the
-        // travel so far is folded into the origin and measuring starts again
-        // from the previous event: that event's own distance belongs to the new
-        // sensitivity.
-        const factor = selectModifier(dragSensitivity, state.event).value
-        if (factor !== factorRef.current) {
-          originRef.current = { y: previousYRef.current, value }
-          factorRef.current = factor
-        }
-        previousYRef.current = y
-
-        // Dragging up raises the value, as on a knob.
-        const steps = Math.round(-(y - originRef.current.y) / drag)
-        if (steps === 0) return
-        draggingRef.current = true
-        // The same pipeline the wheel and the arrow keys use. Counting from where
-        // the drag started keeps it from accumulating a rounding error.
-        changeValue(
-          applyDelta(
-            originRef.current.value,
-            steps,
-            dragOptions,
-            rawRange,
-            state.event,
-          ),
-        )
-      },
-      onDragEnd: () => {
-        draggingRef.current = false
-      },
+    // Runs after every render.
+    useEffect(() => {
+      latest.current = { value, changeValue }
+      optionsRef.current = options
+      instanceRef.current?.update(options)
     })
 
-    const composedRef = useComposedRefs<HTMLDivElement>(
-      forwardedRef,
-      drag !== null && !inactive ? dragRefCallback : undefined,
-    )
+    useEffect(() => {
+      if (!node || !enabled) return
+      const instance = createStepperDrag(node, {
+        ...optionsRef.current,
+        getValue: () => latest.current.value,
+        onChange: (next) => latest.current.changeValue(next),
+      })
+      instanceRef.current = instance
+      return () => {
+        instanceRef.current = null
+        instance.destroy()
+      }
+    }, [node, enabled])
 
-    const context = useMemo(() => ({ draggingRef }), [])
+    const composedRef = useComposedRefs<HTMLDivElement>(forwardedRef, setNode)
+
+    const context = useMemo(
+      () => ({ moved: () => instanceRef.current?.moved() ?? false }),
+      [],
+    )
 
     return (
       <StepperProvider value={context}>

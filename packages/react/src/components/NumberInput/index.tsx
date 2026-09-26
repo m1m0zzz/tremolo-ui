@@ -10,18 +10,20 @@ import {
 } from 'react'
 
 import {
-  applyDelta,
   DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
+  commitNumberInputText,
   InputEventOption,
   ModifierState,
   type ModifierValue,
+  numberInputBounds,
+  numberInputRanges,
+  nudgeNumberInput,
   parseLeadingNumber,
-  selectModifier,
   wheelDirection,
 } from '@tremolo-ui/dom'
-import { linearScale, type Scale, type ValueRange } from '@tremolo-ui/functions'
+import { linearScale, type Scale } from '@tremolo-ui/functions'
 
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useWheel } from '../../hooks/useWheel'
@@ -292,30 +294,13 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
     const format = formatProp ?? defaultFormat
     const parse = parseProp ?? parseLeadingNumber
 
-    // Normalized input needs a finite span even when an end is unbounded or
-    // the caller opted out of clamping. Safe integers provide one without
-    // overflowing the span calculation used by a scale.
-    const range: ValueRange = useMemo(
-      () => ({
-        min: (clampValue ? min : undefined) ?? Number.MIN_SAFE_INTEGER,
-        max: (clampValue ? max : undefined) ?? Number.MAX_SAFE_INTEGER,
-        step,
-        scale,
-      }),
+    const { normalized: range, raw: rawRange } = useMemo(
+      () => numberInputRanges({ min, max, step, scale, clampValue }),
       [clampValue, min, max, step, scale],
     )
-
-    // Raw input does not need a finite span for normalization, so its open
-    // ends can cover every finite JavaScript number instead of stopping at the
-    // safe-integer range.
-    const rawRange: ValueRange = useMemo(
-      () => ({
-        min: (clampValue ? min : undefined) ?? -Number.MAX_VALUE,
-        max: (clampValue ? max : undefined) ?? Number.MAX_VALUE,
-        step,
-        scale,
-      }),
-      [clampValue, min, max, step, scale],
+    const ranges = useMemo(
+      () => ({ normalized: range, raw: rawRange }),
+      [range, rawRange],
     )
 
     // The pipeline range stands in the safe-integer range when an end is
@@ -339,9 +324,9 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
 
     const text = draft ?? format(value)
     const editing = draft !== null
-    const outOfRange =
-      !editing &&
-      ((min !== undefined && value < min) || (max !== undefined && value > max))
+    const bounds = numberInputBounds(value, { min, max, clampValue })
+    const { atMin, atMax } = bounds
+    const outOfRange = !editing && bounds.outOfRange
 
     // --- internal functions ---
     const handleDraft = useCallback(
@@ -367,18 +352,15 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
 
     const commitDraft = useCallback(() => {
       if (draft === null || inactive) return
-      const parsed = parse(draft)
+      const committed = commitNumberInputText(draft, parse, {
+        min,
+        max,
+        clampValue,
+      })
       // Text with no number in it is not a value. Dropping the draft puts the
-      // input back to what it was showing, rather than committing a zero the
-      // user never typed.
-      if (!Number.isFinite(parsed)) {
-        setDraft(null)
-        return
-      }
-      let committed = parsed
-      if (clampValue && min !== undefined) committed = Math.max(committed, min)
-      if (clampValue && max !== undefined) committed = Math.min(committed, max)
-      changeValue(committed)
+      // input back to what it was showing.
+      if (committed === null) setDraft(null)
+      else changeValue(committed)
     }, [draft, inactive, parse, clampValue, min, max, changeValue])
 
     const nudge = useCallback(
@@ -387,18 +369,11 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         option: ModifierValue<InputEventOption>,
         modifiers?: ModifierState,
       ) => {
-        const [mode] = selectModifier(option, modifiers).value
         changeValue(
-          applyDelta(
-            value,
-            direction,
-            option,
-            mode === 'raw' ? rawRange : range,
-            modifiers,
-          ),
+          nudgeNumberInput(value, direction, option, ranges, modifiers),
         )
       },
-      [changeValue, value, rawRange, range],
+      [changeValue, value, ranges],
     )
 
     // --- hooks ---
@@ -434,8 +409,8 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         unformatOnFocus,
         keepCaretOnStep,
         blurOnEnter,
-        atMin: clampValue && min !== undefined && value <= min,
-        atMax: clampValue && max !== undefined && value >= max,
+        atMin,
+        atMax,
         drag,
         format,
         parse,
@@ -460,6 +435,8 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         text,
         editing,
         outOfRange,
+        atMin,
+        atMax,
         drag,
         dragSensitivity,
         pointerLock,

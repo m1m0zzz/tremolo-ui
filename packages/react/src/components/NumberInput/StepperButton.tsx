@@ -41,13 +41,12 @@ export function StepperButton({
     useNumberInputContext()
   const stepper = useStepperContext()
 
-  // Not memoized: the callback reads `draggingRef.current`, which the compiler
-  // cannot line up with a manual dependency list. `useLongPress` only ever
-  // calls it through a ref, so a fresh identity per render costs nothing.
+  // Not memoized: `useLongPress` only ever calls it through a ref, so a fresh
+  // identity per render costs nothing.
   const press = useLongPress(() => {
     // Once the pointer has actually travelled, the drag on `Stepper` owns the
     // value; repeating on top of it would move it twice.
-    if (stepper?.draggingRef.current) return
+    if (stepper?.moved()) return
     nudge(direction, ['raw', step])
   })
 
