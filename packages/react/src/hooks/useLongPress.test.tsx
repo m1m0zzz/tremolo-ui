@@ -1,4 +1,5 @@
 import { act, render, screen } from '@testing-library/react'
+import { useLayoutEffect } from 'react'
 
 import { useLongPress } from './useLongPress'
 
@@ -90,5 +91,21 @@ describe('useLongPress', () => {
     act(() => window.dispatchEvent(pointerEvent('pointerup', 1)))
     act(() => vi.advanceTimersByTime(200))
     expect(callback).toHaveBeenCalledTimes(4)
+  })
+
+  test('a press started from a layout effect calls the new callback', () => {
+    const first = vi.fn()
+    const second = vi.fn()
+    function Starter({ callback }: { callback: () => void }) {
+      const press = useLongPress(callback, 100, 20)
+      useLayoutEffect(() => {
+        if (callback === second) press()
+      })
+      return null
+    }
+    const { rerender } = render(<Starter callback={first} />)
+    rerender(<Starter callback={second} />)
+    expect(second).toHaveBeenCalledTimes(1)
+    expect(first).not.toHaveBeenCalled()
   })
 })
