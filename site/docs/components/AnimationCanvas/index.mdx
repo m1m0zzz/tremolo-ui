@@ -8,6 +8,7 @@ import saveRestore from '!!raw-loader!@site/examples/components/animation-canvas
 import Tabs from '@theme/Tabs'
 import TabItem from '@theme/TabItem'
 import svelteBasic from '!!raw-loader!@site/examples/svelte/AnimationCanvas.svelte'
+import vueBasic from '!!raw-loader!@site/examples/vue/AnimationCanvas.vue'
 
 # AnimationCanvas
 
@@ -33,6 +34,11 @@ A simple animatable canvas with `requestAnimationFrame()`
 <CodeBlock language="html" title="App.svelte">{svelteBasic}</CodeBlock>
 
 </TabItem>
+<TabItem value="vue" label="Vue">
+
+<CodeBlock language="html" title="App.vue">{vueBasic}</CodeBlock>
+
+</TabItem>
 </Tabs>
 
 ## Import
@@ -52,6 +58,13 @@ import { AnimationCanvas } from '@tremolo-ui/svelte'
 ```
 
 </TabItem>
+<TabItem value="vue" label="Vue">
+
+```js
+import { AnimationCanvas } from '@tremolo-ui/vue'
+```
+
+</TabItem>
 </Tabs>
 
 
@@ -67,9 +80,9 @@ import { AnimationCanvas } from '@tremolo-ui/svelte'
 `AnimationCanvas` renders a `<canvas>` and takes its attributes, such as
 `className` and `style`. A ref reaches the `<canvas>`.
 
-In Svelte the props are the same, written the Svelte way — `class` rather
-than `className`, `bind:value`, snippets for content. See
-[Svelte](/docs/tutorials/svelte).
+In Svelte and Vue the props are the same, written their way — `class` rather
+than `className`, `bind:value` or `v-model`, snippets or slots for content. See
+[Svelte](/docs/tutorials/svelte) and [Vue](/docs/tutorials/vue).
 
 <PropsTable of="AnimationCanvasCommonProps" />
 

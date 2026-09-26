@@ -234,6 +234,10 @@ const config: Config = {
               href: 'https://tremolo-ui.mimoz.dev/i/storybook-svelte/',
               label: 'Svelte',
             },
+            {
+              href: 'https://tremolo-ui.mimoz.dev/i/storybook-vue/',
+              label: 'Vue',
+            },
           ],
         },
         {
@@ -310,6 +314,10 @@ const config: Config = {
             {
               label: 'Storybook (Svelte)',
               href: 'https://tremolo-ui.mimoz.dev/i/storybook-svelte/',
+            },
+            {
+              label: 'Storybook (Vue)',
+              href: 'https://tremolo-ui.mimoz.dev/i/storybook-vue/',
             },
             {
               label: 'npm',

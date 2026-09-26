@@ -10,10 +10,10 @@
   "scripts": {
     "sb": "storybook dev",
     "build:sb": "storybook build -o storybook-static/i/storybook-vue && cp .storybook/_headers storybook-static/_headers",
-    "typecheck": "tsc",
+    "typecheck": "tsc && vue-tsc --noEmit -p ../../site/examples/vue/tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
-    "build:package": "tsc && tsdown",
+    "build:package": "npm run typecheck && tsdown",
     "clean": "npm run clean:build && npm run clean:sb",
     "clean:build": "rimraf ./dist",
     "clean:sb": "rimraf ./storybook-static"
@@ -28,6 +28,7 @@
     "@vue/test-utils": "2.5.1",
     "esbuild": "0.28.1",
     "storybook": "10.6.0",
+    "vue-tsc": "3.3.11",
     "vue": "3.5.43"
   },
   "peerDependencies": {

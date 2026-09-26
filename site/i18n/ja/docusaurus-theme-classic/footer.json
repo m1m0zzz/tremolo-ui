@@ -66,5 +66,9 @@
   "link.item.label.Storybook (Svelte)": {
     "message": "Storybook (Svelte)",
     "description": "The label of footer link with label=Storybook (Svelte) linking to https://tremolo-ui.mimoz.dev/i/storybook-svelte/"
+  },
+  "link.item.label.Storybook (Vue)": {
+    "message": "Storybook (Vue)",
+    "description": "The label of footer link with label=Storybook (Vue) linking to https://tremolo-ui.mimoz.dev/i/storybook-vue/"
   }
 }

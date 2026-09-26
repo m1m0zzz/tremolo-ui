@@ -1,0 +1,106 @@
+---
+sidebar_position: 5
+title: Vue
+---
+
+# Vue
+
+`@tremolo-ui/vue` has the same components as `@tremolo-ui/react`, with the
+same props, `data-*` attributes and [theme](/docs/tutorials/styling). Each
+component page shows the Vue version of its example under the **Vue** tab.
+This page covers what is written differently.
+
+It needs Vue 3.5 or later.
+
+```bash npm2yarn
+npm install @tremolo-ui/vue
+```
+
+## Components
+
+The parts have names of their own, with the root named after the component,
+so that they work however components are registered — globally, through
+Nuxt's auto-import, or in in-DOM templates:
+
+```html
+<script setup lang="ts">
+import { ref } from 'vue'
+import {
+  Knob,
+  KnobActiveLine,
+  KnobInactiveLine,
+  KnobSVGRoot,
+  KnobThumb,
+} from '@tremolo-ui/vue'
+
+const value = ref(50)
+</script>
+
+<template>
+  <Knob v-model="value" :min="0" :max="100">
+    <KnobSVGRoot>
+      <KnobInactiveLine />
+      <KnobActiveLine />
+      <KnobThumb />
+    </KnobSVGRoot>
+  </Knob>
+</template>
+```
+
+| React | Vue |
+| --- | --- |
+| `Knob.Root`, `Knob.Thumb`, … | `Knob`, `KnobThumb`, … |
+| `NumberInput.InputField` | `NumberInputField` |
+| `value` + `onChange` | `v-model` |
+| `onDragStart`, `onPlayNote`, … | `@drag-start`, `@play-note`, … |
+| `className` | `class` |
+| `ref` methods (`focus`, `playNote`, …) | a template ref to the component |
+| Content given as a function (`Piano`'s `label`) | a slot (`#label="{ note, state }"`) |
+| `useKnobContext(selector)` | `useKnobContext()`, whose fields follow the value |
+
+`PointsEditor`'s selection is bound with `v-model:selection`.
+
+## Composables
+
+The React hooks have composables of the same names. They take the element as
+a ref (or a getter), and the options of the matching function in
+`@tremolo-ui/dom`. Changing the options does not interrupt a drag in
+progress.
+
+```html
+<script setup lang="ts">
+import { ref, useTemplateRef } from 'vue'
+import { relativeMapping } from '@tremolo-ui/dom'
+import { useDragValue } from '@tremolo-ui/vue'
+
+const value = ref(50)
+const el = useTemplateRef<HTMLDivElement>('el')
+
+useDragValue(el, () => ({
+  axis: { min: 0, max: 100 },
+  mapping: relativeMapping({ pixelRange: 200 }),
+  getValue: () => [value.value, value.value],
+  onChange: ([x]) => (value.value = x),
+}))
+</script>
+
+<template>
+  <div ref="el">{{ value }}</div>
+</template>
+```
+
+`useMIDIAccess` returns the state as a ref, and `useMIDIInput` takes the
+access as a ref or a getter:
+
+```ts
+const midi = useMIDIAccess(false)
+useMIDIInput(
+  () => midi.state.value.midiAccess,
+  () => ({ onNoteOnEvent: (note, velocity) => play(note, velocity) }),
+)
+// <button @click="midi.request()">Connect MIDI</button>
+```
+
+## Storybook
+
+The Vue components have a [Storybook of their own](https://tremolo-ui.mimoz.dev/i/storybook-vue/).

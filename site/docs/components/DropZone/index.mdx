@@ -5,6 +5,7 @@ import basic from '!!raw-loader!@site/examples/components/drop-zone/basic'
 import Tabs from '@theme/Tabs'
 import TabItem from '@theme/TabItem'
 import svelteBasic from '!!raw-loader!@site/examples/svelte/DropZone.svelte'
+import vueBasic from '!!raw-loader!@site/examples/vue/DropZone.vue'
 
 # DropZone
 
@@ -33,6 +34,11 @@ An area that takes files dropped onto it, and hands them over as `File`s.
 <CodeBlock language="html" title="App.svelte">{svelteBasic}</CodeBlock>
 
 </TabItem>
+<TabItem value="vue" label="Vue">
+
+<CodeBlock language="html" title="App.vue">{vueBasic}</CodeBlock>
+
+</TabItem>
 </Tabs>
 
 ## Import
@@ -49,6 +55,13 @@ import { DropZone } from '@tremolo-ui/react'
 
 ```js
 import { DropZone } from '@tremolo-ui/svelte'
+```
+
+</TabItem>
+<TabItem value="vue" label="Vue">
+
+```js
+import { DropZone } from '@tremolo-ui/vue'
 ```
 
 </TabItem>
@@ -112,9 +125,9 @@ To open a file picker from a button, see
 Each part lists the props of its own. It also takes the attributes of the
 element it renders, such as `className` and `style`.
 
-In Svelte the props are the same, written the Svelte way — `class` rather
-than `className`, `bind:value`, snippets for content. See
-[Svelte](/docs/tutorials/svelte).
+In Svelte and Vue the props are the same, written their way — `class` rather
+than `className`, `bind:value` or `v-model`, snippets or slots for content. See
+[Svelte](/docs/tutorials/svelte) and [Vue](/docs/tutorials/vue).
 
 State is on the element as a data attribute, so it is a selector away — see
 [Styling](/docs/tutorials/styling). An attribute is only there while its state

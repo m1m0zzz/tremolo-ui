@@ -1,0 +1,97 @@
+---
+sidebar_position: 5
+title: Vue
+---
+
+# Vue
+
+`@tremolo-ui/vue` には `@tremolo-ui/react` と同じコンポーネントがあり、props・`data-*` 属性・[テーマ](/docs/tutorials/styling)も同じです。各コンポーネントのページでは、**Vue** タブに Vue 版の例を載せています。このページでは、書き方が違うところをまとめます。
+
+Vue 3.5 以降が必要です。
+
+```bash npm2yarn
+npm install @tremolo-ui/vue
+```
+
+## コンポーネント
+
+パーツはそれぞれ名前を持ち、Root はコンポーネント名そのものです。グローバル登録・Nuxt の auto-import・DOM に直接書くテンプレートのどれでも使えるようにするためです。
+
+```html
+<script setup lang="ts">
+import { ref } from 'vue'
+import {
+  Knob,
+  KnobActiveLine,
+  KnobInactiveLine,
+  KnobSVGRoot,
+  KnobThumb,
+} from '@tremolo-ui/vue'
+
+const value = ref(50)
+</script>
+
+<template>
+  <Knob v-model="value" :min="0" :max="100">
+    <KnobSVGRoot>
+      <KnobInactiveLine />
+      <KnobActiveLine />
+      <KnobThumb />
+    </KnobSVGRoot>
+  </Knob>
+</template>
+```
+
+| React | Vue |
+| --- | --- |
+| `Knob.Root`、`Knob.Thumb` など | `Knob`、`KnobThumb` など |
+| `NumberInput.InputField` | `NumberInputField` |
+| `value` + `onChange` | `v-model` |
+| `onDragStart`、`onPlayNote` など | `@drag-start`、`@play-note` など |
+| `className` | `class` |
+| `ref` のメソッド（`focus`、`playNote` など） | コンポーネントへのテンプレート参照 |
+| 関数で渡す中身（`Piano` の `label`） | スロット（`#label="{ note, state }"`） |
+| `useKnobContext(selector)` | `useKnobContext()`。各フィールドが値に追従する |
+
+`PointsEditor` の選択は `v-model:selection` で受けます。
+
+## composables
+
+React の hooks と同じ名前の composables があります。要素を ref（または getter）で、オプションを `@tremolo-ui/dom` の対応する関数と同じ形で受け取ります。オプションを変えてもドラッグの途中で切れません。
+
+```html
+<script setup lang="ts">
+import { ref, useTemplateRef } from 'vue'
+import { relativeMapping } from '@tremolo-ui/dom'
+import { useDragValue } from '@tremolo-ui/vue'
+
+const value = ref(50)
+const el = useTemplateRef<HTMLDivElement>('el')
+
+useDragValue(el, () => ({
+  axis: { min: 0, max: 100 },
+  mapping: relativeMapping({ pixelRange: 200 }),
+  getValue: () => [value.value, value.value],
+  onChange: ([x]) => (value.value = x),
+}))
+</script>
+
+<template>
+  <div ref="el">{{ value }}</div>
+</template>
+```
+
+`useMIDIAccess` は状態を ref で返し、`useMIDIInput` はアクセスを ref か getter で受け取ります。
+
+```ts
+const midi = useMIDIAccess(false)
+useMIDIInput(
+  () => midi.state.value.midiAccess,
+  () => ({ onNoteOnEvent: (note, velocity) => play(note, velocity) }),
+)
+// <button @click="midi.request()">MIDI に接続</button>
+```
+
+## Storybook
+
+Vue のコンポーネントには[専用の Storybook](https://tremolo-ui.mimoz.dev/i/storybook-vue/)があります。

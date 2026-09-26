@@ -5,6 +5,7 @@ import basic from '!!raw-loader!@site/examples/components/slider/basic'
 import Tabs from '@theme/Tabs'
 import TabItem from '@theme/TabItem'
 import svelteBasic from '!!raw-loader!@site/examples/svelte/Slider.svelte'
+import vueBasic from '!!raw-loader!@site/examples/vue/Slider.vue'
 
 # Slider
 
@@ -33,6 +34,11 @@ import svelteBasic from '!!raw-loader!@site/examples/svelte/Slider.svelte'
 <CodeBlock language="html" title="App.svelte">{svelteBasic}</CodeBlock>
 
 </TabItem>
+<TabItem value="vue" label="Vue">
+
+<CodeBlock language="html" title="App.vue">{vueBasic}</CodeBlock>
+
+</TabItem>
 </Tabs>
 
 ## インポート {#import}
@@ -52,13 +58,26 @@ import { Slider } from '@tremolo-ui/svelte'
 ```
 
 </TabItem>
+<TabItem value="vue" label="Vue">
+
+```js
+import {
+  Slider,
+  SliderMarks,
+  SliderMarksOption,
+  SliderThumb,
+  SliderTrack,
+} from '@tremolo-ui/vue'
+```
+
+</TabItem>
 </Tabs>
 
 ## API リファレンス {#api-reference}
 
 各パートには、そのパート独自の props を載せています。これに加えて、描画する要素の属性（`className` や `style` など）も受け取ります。
 
-Svelte でも props は同じで、書き方だけが Svelte 流になります（`className` ではなく `class`、`bind:value`、中身は snippet など）。[Svelte](/docs/tutorials/svelte) を参照してください。
+Svelte / Vue でも props は同じで、書き方だけがそれぞれの流儀になります（`className` ではなく `class`、`bind:value` や `v-model`、中身は snippet やスロットなど）。[Svelte](/docs/tutorials/svelte) と [Vue](/docs/tutorials/vue) を参照してください。
 
 状態は data 属性として要素に乗っているので、セレクタ 1 つで届きます（[スタイリング](/docs/tutorials/styling)を参照）。属性はその状態が on の間だけ付きます。
 
