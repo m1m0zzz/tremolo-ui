@@ -61,7 +61,7 @@ jobs:
     - name: Build templates
       run: npm run build -w templates/vite-react-ts -w templates/next-ts
 
-    - run: npm run build:sb -w packages/react
+    - run: npm run build:sb -w packages/react -w packages/svelte
 
     - run: npm run build -w site
 
@@ -75,12 +75,12 @@ jobs:
         BRANCH: ${{ github.head_ref }}
       run: |
         # alias に使えるのは小文字・数字・ハイフンのみで、先頭は小文字。
-        # さらに alias + Worker 名が 63 文字以内（DNS の制約）。長い方の
-        # tremolo-ui-sb-react が 19 文字 + ハイフンなので 43 文字で切る。
+        # さらに alias + Worker 名が 63 文字以内（DNS の制約）。一番長い
+        # tremolo-ui-sb-svelte が 20 文字 + ハイフンなので 42 文字で切る。
         alias=$(printf '%s' "$BRANCH" \
           | tr '[:upper:]' '[:lower:]' \
           | tr -cs 'a-z0-9' '-' \
-          | cut -c1-43 \
+          | cut -c1-42 \
           | sed 's/^-*//; s/-*$//')
         case "$alias" in
           [a-z]*) ;;
@@ -98,6 +98,7 @@ jobs:
       run: |
         npx wrangler versions upload --config site/wrangler.jsonc --preview-alias "$ALIAS"
         npx wrangler versions upload --config packages/react/wrangler.jsonc --preview-alias "$ALIAS"
+        npx wrangler versions upload --config packages/svelte/wrangler.jsonc --preview-alias "$ALIAS"
 
     - name: ステータスとタイムスタンプを算出
       if: always()
@@ -128,5 +129,6 @@ jobs:
           |---|---|---|
           | ${{ steps.upload.outcome == 'success' && format('[Docs](https://{0}-tremolo-ui-docs.{1}.workers.dev/)', steps.preview.outputs.alias, vars.CLOUDFLARE_WORKERS_SUBDOMAIN) || 'Docs' }} | [${{ steps.status.outputs.text }}](${{ steps.status.outputs.run_url }}) | ${{ steps.status.outputs.timestamp }} |
           | ${{ steps.upload.outcome == 'success' && format('[Storybook](https://{0}-tremolo-ui-sb-react.{1}.workers.dev/i/storybook-react/)', steps.preview.outputs.alias, vars.CLOUDFLARE_WORKERS_SUBDOMAIN) || 'Storybook' }} | [${{ steps.status.outputs.text }}](${{ steps.status.outputs.run_url }}) | ${{ steps.status.outputs.timestamp }} |
+          | ${{ steps.upload.outcome == 'success' && format('[Storybook (Svelte)](https://{0}-tremolo-ui-sb-svelte.{1}.workers.dev/i/storybook-svelte/)', steps.preview.outputs.alias, vars.CLOUDFLARE_WORKERS_SUBDOMAIN) || 'Storybook (Svelte)' }} | [${{ steps.status.outputs.text }}](${{ steps.status.outputs.run_url }}) | ${{ steps.status.outputs.timestamp }} |
 
           *このコメントは新しいコミットごとに更新されます。*

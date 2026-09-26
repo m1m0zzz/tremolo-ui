@@ -6,5 +6,5 @@
     // a type has to say so or it is kept and fails at runtime.
     "verbatimModuleSyntax": true,
   },
-  "include": ["src", "__tests__", "vitest.d.ts", "vitest.setup.ts"],
+  "include": ["src", "__tests__", "__stories__", ".storybook", "vitest.d.ts", "vitest.setup.ts", "vite-env.d.ts", "vite.config.ts"],
 }
