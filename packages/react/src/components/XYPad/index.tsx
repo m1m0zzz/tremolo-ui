@@ -12,23 +12,24 @@ import {
 
 import {
   applyDelta,
+  arrowKeyMove,
   type AxisOptions,
+  DEFAULT_DRAG_SENSITIVITY,
+  DEFAULT_KEYBOARD_OPTIONS,
+  DEFAULT_WHEEL_OPTIONS,
   InputEventOption,
   ModifierState,
   type ModifierValue,
   selectModifier,
+  valuePercent,
+  wheelMove,
 } from '@tremolo-ui/dom'
-import { linearScale, type Scale, toFixed } from '@tremolo-ui/functions'
+import { linearScale, type Scale } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
-import {
-  DEFAULT_DRAG_SENSITIVITY,
-  DEFAULT_KEYBOARD_OPTIONS,
-  DEFAULT_WHEEL_OPTIONS,
-} from '../../input-event'
 
 import { Area } from './Area'
 import { toXY, XY, XYInput, XYPadProvider } from './context'
@@ -227,14 +228,17 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
     const scale = useMemo(() => toXY(_scale), [_scale])
     const reverse = useMemo(() => toXY(_reverse), [_reverse])
 
-    const percent = useMemo((): XY<number> => {
-      const normalized = [0, 1].map((i) =>
-        scale[i].normalize(value[i], min[i], max[i]),
-      )
-      return [0, 1].map((i) =>
-        toFixed((reverse[i] ? 1 - normalized[i] : normalized[i]) * 100),
-      ) as XY<number>
-    }, [value, min, max, scale, reverse])
+    const percent = useMemo(
+      (): XY<number> =>
+        [0, 1].map((i) =>
+          valuePercent(
+            value[i],
+            { min: min[i], max: max[i], scale: scale[i] },
+            reverse[i],
+          ),
+        ) as XY<number>,
+      [value, min, max, scale, reverse],
+    )
 
     // --- internal functions ---
     // `AxisOptions` extends `ValueRange`, so the same pair also describes the
@@ -291,21 +295,15 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
 
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
-        const key = event.key
-        if (!['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key))
-          return
-
         // The key picks the axis, whichever of the two inputs holds the
-        // focus: the pad is one control to the person moving it, and the focus
-        // lands on the x input, so reading the axis off the input would leave
-        // the y axis with no keys at all.
-        const i: 0 | 1 = key === 'ArrowRight' || key === 'ArrowLeft' ? 0 : 1
+        // focus: the focus lands on the x input, so reading the axis off the
+        // input would leave the y axis with no keys at all.
+        const move = arrowKeyMove(event.key)
+        if (!move) return
         event.preventDefault()
         if (!onChange || inactive || !keyboard) return
-        let direction = 1
-        if (key === 'ArrowLeft' || key === 'ArrowUp') direction *= -1
-        if (reverse[i]) direction *= -1
-        onChange(nudge(i, direction, keyboard, event))
+        const { axis: i, direction } = move
+        onChange(nudge(i, reverse[i] ? -direction : direction, keyboard, event))
       },
       [onChange, inactive, keyboard, reverse, nudge],
     )
@@ -337,19 +335,11 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
 
     const wheelRefCallback = useWheel<HTMLDivElement>((event) => {
       if (!onChange || inactive || !wheel) return
-      // Browsers turn shift+wheel into horizontal scrolling: `deltaY` comes
-      // out empty and `deltaX` carries the movement. Reading whichever axis
-      // moved keeps shift working as the x-axis modifier — and picks up a
-      // trackpad's own horizontal gesture, which never had a modifier.
-      const horizontal = event.deltaX !== 0
-      const delta = horizontal ? event.deltaX : event.deltaY
-      if (delta === 0) return
-      const i: 0 | 1 = horizontal || event.shiftKey ? 0 : 1
+      const move = wheelMove(event)
+      if (!move) return
       event.preventDefault()
-      let direction = 1
-      if (delta < 0) direction *= -1
-      if (reverse[i]) direction *= -1
-      onChange(nudge(i, direction, wheel, event))
+      const { axis: i, direction } = move
+      onChange(nudge(i, reverse[i] ? -direction : direction, wheel, event))
     }, WHEEL_OPTIONS)
 
     // Composed once, so React attaches the refs a single time instead of

@@ -7,6 +7,12 @@ import {
   useState,
 } from 'react'
 
+import {
+  caretAtDecimalOffset,
+  caretDecimalOffset,
+  leadingNumberLength,
+} from '@tremolo-ui/dom'
+
 import { useComposedRefs } from '../../compose-refs'
 
 import { useNumberInputContext } from './context'
@@ -16,25 +22,6 @@ type Props = Omit<
   ComponentPropsWithoutRef<'input'>,
   'type' | 'value' | 'defaultValue'
 >
-
-/** The leading number of the displayed text, whatever the format put around it. */
-const NUMBER_PREFIX = /^\s*-?[\d.,]*/
-
-const numberEnd = (text: string) =>
-  text.match(NUMBER_PREFIX)?.[0].length ?? text.length
-
-/**
- * The index the caret is measured against: the decimal point, or where one
- * would go if the number has none.
- *
- * Measuring from an end instead would slide the caret across a digit whenever
- * the number changed length — `9.9` to `10.0` gains a character in front, `10`
- * to `9` loses one — which is exactly what stepping does.
- */
-const decimalAnchor = (text: string) => {
-  const dot = text.indexOf('.')
-  return dot === -1 ? numberEnd(text) : dot
-}
 
 /**
  * The text field of a `NumberInput`, and the only place the value can be typed.
@@ -87,10 +74,7 @@ export const InputField = /* @__PURE__ */ forwardRef<HTMLInputElement, Props>(
       if (selectOnFocus === 'all') {
         input.setSelectionRange(0, input.value.length)
       } else {
-        input.setSelectionRange(
-          0,
-          input.value.match(NUMBER_PREFIX)?.[0].length ?? 0,
-        )
+        input.setSelectionRange(0, leadingNumberLength(input.value))
       }
       // Deliberately not re-run as the text changes: that would drag the
       // selection back over what the user is typing.
@@ -114,8 +98,7 @@ export const InputField = /* @__PURE__ */ forwardRef<HTMLInputElement, Props>(
       // caret has not moved either, since the key press was prevented.
       if (!input || input.value === pending.from) return
 
-      const place = decimalAnchor(input.value) + pending.offset
-      const caret = Math.max(0, Math.min(place, numberEnd(input.value)))
+      const caret = caretAtDecimalOffset(input.value, pending.offset)
       input.setSelectionRange(caret, caret)
     })
 
@@ -185,7 +168,7 @@ export const InputField = /* @__PURE__ */ forwardRef<HTMLInputElement, Props>(
             const input = event.currentTarget
             if (keepCaretOnStep && input.selectionStart !== null) {
               caretAfterStep.current = {
-                offset: input.selectionStart - decimalAnchor(input.value),
+                offset: caretDecimalOffset(input.value, input.selectionStart),
                 from: input.value,
               }
             }

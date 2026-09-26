@@ -172,6 +172,21 @@ describe('Slider wheel direction', () => {
 
     expect(onChange).toHaveBeenLastCalledWith(value)
   })
+
+  test('a vertical slider leaves a sideways scroll to the page', () => {
+    const { root, input, onChange } = setup({ vertical: true })
+    act(() => input.focus())
+
+    const event = new WheelEvent('wheel', {
+      deltaX: 1,
+      bubbles: true,
+      cancelable: true,
+    })
+    root.dispatchEvent(event)
+
+    expect(event.defaultPrevented).toBe(false)
+    expect(onChange).not.toHaveBeenCalled()
+  })
 })
 
 describe('Slider accessibility', () => {

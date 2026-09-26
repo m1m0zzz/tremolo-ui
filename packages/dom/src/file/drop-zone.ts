@@ -1,4 +1,4 @@
-import { matchesAccept } from './accept'
+import { matchesAccept, partitionByAccept } from './accept'
 
 /** What is in the air over the element. */
 export interface DropZoneState {
@@ -146,13 +146,10 @@ export function createDropZone(
     setState({ over: false, invalid: false })
     if (opts.disabled) return
 
-    const dropped = Array.from(event.dataTransfer?.files ?? [])
-    const accepted: File[] = []
-    const rejected: File[] = []
-    for (const file of dropped) {
-      if (matchesAccept(file, opts.accept)) accepted.push(file)
-      else rejected.push(file)
-    }
+    const { accepted, rejected } = partitionByAccept(
+      event.dataTransfer?.files ?? [],
+      opts.accept,
+    )
 
     if (rejected.length > 0) opts.onReject?.(rejected, event)
     const taken = opts.multiple ? accepted : accepted.slice(0, 1)

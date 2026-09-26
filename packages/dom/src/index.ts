@@ -13,7 +13,11 @@ export {
   type DrawingState,
   type DrawingStateValue,
 } from './canvas/context'
-export { matchesAccept, type AcceptCandidate } from './file/accept'
+export {
+  matchesAccept,
+  partitionByAccept,
+  type AcceptCandidate,
+} from './file/accept'
 export {
   createDropZone,
   type DropZoneInstance,
@@ -21,6 +25,22 @@ export {
   type DropZoneState,
 } from './file/drop-zone'
 export { applyDelta } from './input/apply-delta'
+export { checkSteps, type CheckStepsOptions } from './input/check-steps'
+export {
+  DEFAULT_DRAG_SENSITIVITY,
+  DEFAULT_KEYBOARD_OPTIONS,
+  DEFAULT_WHEEL_OPTIONS,
+} from './input/defaults'
+export {
+  arrowKeyDirection,
+  arrowKeyMove,
+  isArrowKey,
+  wheelDirection,
+  wheelMove,
+  type ArrowKey,
+  type AxisMove,
+  type WheelDirectionOptions,
+} from './input/direction'
 export {
   mapModifier,
   selectModifier,
@@ -30,6 +50,15 @@ export {
   type ModifierState,
   type ModifierValue,
 } from './input/modifiers'
+export {
+  KNOB_VIEWBOX_SIZE,
+  knobAngles,
+  knobArcPath,
+  knobArcPoint,
+  knobArcRadius,
+  type KnobAngleOptions,
+  type KnobAngles,
+} from './knob/geometry'
 export {
   createMIDIAccess,
   NOT_SUPPORTED,
@@ -47,6 +76,12 @@ export {
   type MIDIInputInstance,
 } from './midi/input'
 export { createMIDIMessage, type MIDIMessageInstance } from './midi/message'
+export {
+  caretAtDecimalOffset,
+  caretDecimalOffset,
+  leadingNumberLength,
+  parseLeadingNumber,
+} from './number-input/text'
 export {
   blackKeyWidth,
   getNoteRangeArray,
@@ -83,6 +118,7 @@ export {
   type WheelInstance,
   type WheelOptions,
 } from './pointer/wheel'
+export { valuePercent } from './position'
 export {
   createSelectionBox,
   selectionBoxCovers,
@@ -91,4 +127,6 @@ export {
   type SelectionBoxOptions,
   type SelectionBoxRect,
 } from './selection/box'
+export { sliderMarks, type MarksOptions, type SliderMark } from './slider/marks'
+export { cssLength, visuallyHiddenStyle } from './style'
 export { toXY, type XY, type XYInput } from './xy'

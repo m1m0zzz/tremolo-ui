@@ -1,7 +1,8 @@
 import { ComponentPropsWithoutRef, CSSProperties, forwardRef } from 'react'
 
+import { cssLength } from '@tremolo-ui/dom'
+
 import { useComposedRefs } from '../../compose-refs'
-import { cssLength } from '../_util/css-length'
 import { Placement } from '../_util/Placement'
 
 import { useSliderContext } from './context'

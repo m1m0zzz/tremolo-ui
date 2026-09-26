@@ -11,10 +11,17 @@ import {
 
 import {
   applyDelta,
+  arrowKeyDirection,
   type AxisOptions,
+  cssLength,
+  DEFAULT_DRAG_SENSITIVITY,
+  DEFAULT_KEYBOARD_OPTIONS,
+  DEFAULT_WHEEL_OPTIONS,
   type InputEventOption,
+  knobAngles,
   type ModifierValue,
   selectModifier,
+  wheelDirection,
   type XY,
 } from '@tremolo-ui/dom'
 import { linearScale, type Scale, type ValueRange } from '@tremolo-ui/functions'
@@ -23,15 +30,9 @@ import { useComposedRefs } from '../../compose-refs'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
-import {
-  DEFAULT_DRAG_SENSITIVITY,
-  DEFAULT_KEYBOARD_OPTIONS,
-  DEFAULT_WHEEL_OPTIONS,
-} from '../../input-event'
-import { cssLength } from '../_util/css-length'
 
 import { ActiveLine } from './ActiveLine'
-import { calcAngles, KnobProvider } from './context'
+import { KnobProvider } from './context'
 import { InactiveLine } from './InactiveLine'
 import { SVGRoot } from './SVGRoot'
 import { Thumb } from './Thumb'
@@ -265,12 +266,10 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLOrSVGElement>) => {
         if (!keyboard || !onChange || inactive) return
-        const key = event.key
-        if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key)) {
-          event.preventDefault()
-          const direction = key === 'ArrowRight' || key === 'ArrowUp' ? 1 : -1
-          onChange(applyDelta(value, direction, keyboard, range, event))
-        }
+        const direction = arrowKeyDirection(event.key)
+        if (direction === null) return
+        event.preventDefault()
+        onChange(applyDelta(value, direction, keyboard, range, event))
       },
       [keyboard, onChange, inactive, value, range],
     )
@@ -304,9 +303,13 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
 
     const wheelRefCallback = useWheel<HTMLElement>((event) => {
       if (!wheel || inactive) return
+      // A notch the knob does not read — a sideways scroll — is left to the
+      // page rather than swallowed.
+      const direction = wheelDirection(event)
+      if (direction === null) return
       event.preventDefault()
-      if (!onChange || event.deltaY === 0) return
-      onChange(applyDelta(value, -Math.sign(event.deltaY), wheel, range, event))
+      if (!onChange) return
+      onChange(applyDelta(value, direction, wheel, range, event))
     }, WHEEL_OPTIONS)
 
     // Composed once, so React attaches the refs a single time instead of
@@ -319,7 +322,7 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
 
     const context = useMemo(() => {
       const config = { value, min, max, step, scale, startValue, angleRange }
-      return { ...config, ...calcAngles(config) }
+      return { ...config, ...knobAngles(config) }
     }, [value, min, max, step, scale, startValue, angleRange])
 
     useImperativeHandle(forwardedRef, () => {
