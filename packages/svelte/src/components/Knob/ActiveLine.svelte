@@ -9,8 +9,11 @@
 
   type Props = Omit<SVGAttributes<SVGPathElement>, 'd'>
 
-  let { stroke = 'currentColor', 'stroke-width': strokeWidth = 6, ...rest }: Props =
-    $props()
+  let {
+    stroke = 'currentColor',
+    'stroke-width': strokeWidth = 6,
+    ...rest
+  }: Props = $props()
 
   checkPlacement('Knob.ActiveLine', 'Knob.SVGRoot')
   const knob = useKnobContext()

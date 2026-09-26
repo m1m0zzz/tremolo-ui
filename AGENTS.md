@@ -73,6 +73,7 @@ npm run test:watch -w packages/react
 
 - **コンポーネントまたは hook を export しない TypeScript の実装ファイルは kebab-case にする。** コンポーネントの PascalCase と、hook の `use...` camelCase だけを例外とする
 - **`packages/dom` / `packages/functions` のテストは `__tests__/` に `src` と同じ構成で置き、実装のファイル名に合わせる。** 1 つのファイルのテストをトピックで分けるときは `<file>.<topic>.test.ts`（トピックは kebab-case）。`packages/react` はテストを実装の隣に置くので、規約は `packages/react/AGENTS.md` にある
+- **`.svelte` / `.vue` だけは prettier で整形する。** oxfmt が読めないため。`format` / `format:check` / lint-staged がファイルの種類で振り分けている。設定（`.prettierrc.json`）は `.oxfmtrc.json` と同じ見た目に揃え、`.ts` などを prettier で整形しないこと
 - **import の並び順は lint ではなく formatter が持つ**（oxlint に `import/order` が無いため）。並びとその理由は `.oxfmtrc.json` のコメント
 - **`eslint-disable` ではなく `oxlint-disable` に統一する。** oxlint は両方読むが、ルール名の名前空間が違う（`@typescript-eslint/x` → `typescript/x`）ので、揃えておかないと後でルールを有効にしたときに黙って効かなくなる
 - **lint-staged の `--no-error-on-unmatched-pattern` を外さないこと。** 渡されたパスが全て ignore に当たると「対象が無い」で非ゼロ終了し、`.md` だけのコミットが落ちる

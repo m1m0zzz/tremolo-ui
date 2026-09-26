@@ -1,0 +1,8 @@
+# prettier は .svelte / .vue だけに使う（それ以外は oxfmt）。対象は package.json の
+# format / format:check と lint-staged でファイルの種類ごとに絞ってあり、ここは
+# 生成物を避けるためだけのもの。
+node_modules
+dist
+build
+.svelte-kit
+storybook-static
