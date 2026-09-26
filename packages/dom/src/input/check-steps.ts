@@ -1,0 +1,144 @@
+import { linearScale, type ValueRange } from '@tremolo-ui/functions'
+
+import { applyDelta } from './apply-delta'
+import {
+  type InputEventOption,
+  type ModifierState,
+  type ModifierValue,
+} from './modifiers'
+
+/** Positions probed across the travel. The ends are left out so that the
+ * clamp at `min` and `max` cannot be mistaken for a press that does nothing. */
+const PROBES = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+
+const NONE: ModifierState = {
+  shiftKey: false,
+  altKey: false,
+  ctrlKey: false,
+  metaKey: false,
+}
+
+const MODIFIER_STATE: Record<string, ModifierState> = {
+  shift: { ...NONE, shiftKey: true },
+  alt: { ...NONE, altKey: true },
+  ctrl: { ...NONE, ctrlKey: true },
+  meta: { ...NONE, metaKey: true },
+}
+
+/** The held keys that select each entry of a modifier-aware input option. */
+function entries(options: ModifierValue<InputEventOption>): ModifierState[] {
+  if (Array.isArray(options)) return [NONE]
+  return Object.keys(options).map((key) => MODIFIER_STATE[key] ?? NONE)
+}
+
+interface Outcome {
+  /** The press changed the value at least once across the travel. */
+  moved: boolean
+  /** The change reached the displayed text at least once. */
+  visible: boolean
+}
+
+/**
+ * Press every entry of `options` at nine points along the travel and report
+ * whether anything came of it.
+ *
+ * Run against `applyDelta` itself rather than against a reading of `step`:
+ * the whole point is that the amount, the step and the scale interact, and
+ * the pipeline is the only thing that knows how.
+ */
+function probe(
+  options: ModifierValue<InputEventOption>,
+  range: ValueRange,
+  format?: (value: number) => string,
+): Outcome {
+  const { min, max, scale = linearScale } = range
+  const outcome: Outcome = { moved: false, visible: false }
+  for (const modifiers of entries(options)) {
+    for (const position of PROBES) {
+      const value = scale.denormalize(position, min, max)
+      const up = applyDelta(value, 1, options, range, modifiers)
+      const down = applyDelta(value, -1, options, range, modifiers)
+      if (up !== value || down !== value) outcome.moved = true
+      if (!format) continue
+      const shown = format(value)
+      if (format(up) !== shown || format(down) !== shown) outcome.visible = true
+    }
+  }
+  return outcome
+}
+
+export interface CheckStepsOptions {
+  /** The component, for the message. */
+  component: string
+  /** The axis, for a component that has more than one. */
+  axis?: string
+  /**
+   * The range to probe, or `null` to check nothing. An unbounded input has no
+   * travel to sample, so `NumberInput` passes `null` when `min` and `max` are
+   * not both there.
+   */
+  range: ValueRange | null
+  keyboard?: ModifierValue<InputEventOption> | null
+  wheel?: ModifierValue<InputEventOption> | null
+  /**
+   * How the value is displayed, where the component shows one. Called with
+   * probe values only.
+   */
+  format?: (value: number) => string
+}
+
+/**
+ * The warnings to show when a key press or a wheel notch cannot produce a
+ * change the user can see. Empty when there is nothing to say.
+ *
+ * Two settings that are each fine on their own can cancel out, and nothing
+ * fails when they do — the control simply sits there:
+ *
+ * - **`step` coarser than the amount.** `keyboard={['raw', 0.1]}` with
+ *   `step={1}` rounds every press straight back to where it started
+ * - **the display coarser than the amount.** A `format` showing two decimals
+ *   of a kHz value cannot show a press worth 1 Hz
+ *
+ * The second is only reported when the press is invisible at *every* point
+ * along the travel. A display that rounds is a deliberate choice and is
+ * normally right — it is being too coarse everywhere that makes it a mistake.
+ *
+ * **Meant for development builds only.** It probes the whole travel, so call
+ * it behind an inline `process.env.NODE_ENV` check: the bundler then drops
+ * the call, and this function and its messages with it.
+ */
+export function checkSteps({
+  component,
+  axis,
+  range,
+  keyboard,
+  wheel,
+  format,
+}: CheckStepsOptions): string[] {
+  if (!range || !(range.min < range.max)) return []
+  const where = axis ? `${component} (${axis})` : component
+  const warnings: string[] = []
+  for (const [name, options] of [
+    ['keyboard', keyboard],
+    ['wheel', wheel],
+  ] as const) {
+    if (!options) continue
+    const { moved, visible } = probe(options, range, format)
+    if (!moved) {
+      warnings.push(
+        `[tremolo-ui] ${where}: \`${name}\` cannot move the value.` +
+          (range.step !== undefined
+            ? ` Each press is smaller than \`step\` (${range.step}), so it rounds`
+            : ' Each press rounds') +
+          ' straight back to where it started.',
+      )
+    } else if (format && !visible) {
+      warnings.push(
+        `[tremolo-ui] ${where}: \`${name}\` moves the value, but \`format\`` +
+          ' shows the same text before and after, everywhere in the range.' +
+          ' The display is too coarse for it to be seen.',
+      )
+    }
+  }
+  return warnings
+}

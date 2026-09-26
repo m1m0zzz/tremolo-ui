@@ -14,6 +14,7 @@ import {
 import {
   applyDelta,
   createSelectionBox,
+  DEFAULT_DRAG_SENSITIVITY,
   type InputEventOption,
   type ModifierState,
   type ModifierValue,
@@ -22,8 +23,6 @@ import {
   type XY,
 } from '@tremolo-ui/dom'
 import { clamp, toPrecision } from '@tremolo-ui/functions'
-
-import { DEFAULT_DRAG_SENSITIVITY } from '../../input-event'
 
 import { Background } from './Background'
 import { Container } from './Container'

@@ -11,20 +11,20 @@ import {
 
 import {
   applyDelta,
+  DEFAULT_DRAG_SENSITIVITY,
+  DEFAULT_KEYBOARD_OPTIONS,
+  DEFAULT_WHEEL_OPTIONS,
   InputEventOption,
   ModifierState,
   type ModifierValue,
+  parseLeadingNumber,
   selectModifier,
+  wheelDirection,
 } from '@tremolo-ui/dom'
 import { linearScale, type Scale, type ValueRange } from '@tremolo-ui/functions'
 
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useWheel } from '../../hooks/useWheel'
-import {
-  DEFAULT_DRAG_SENSITIVITY,
-  DEFAULT_KEYBOARD_OPTIONS,
-  DEFAULT_WHEEL_OPTIONS,
-} from '../../input-event'
 
 import { NumberInputProvider } from './context'
 import { DecrementStepper } from './DecrementStepper'
@@ -244,19 +244,7 @@ export interface NumberInputMethods {
   blur: () => void
 }
 
-/**
- * A number at the start of the text, and nothing read after it. A half-typed
- * entry still yields the number in front of it, but text with no number is
- * `NaN` rather than 0, so that "unreadable" and "the user typed 0" stay apart.
- */
-const LEADING_NUMBER = /^\s*([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)/
-
 const defaultFormat = (value: number) => String(value)
-
-const defaultParse = (text: string) => {
-  const match = text.match(LEADING_NUMBER)
-  return match ? Number(match[1]) : NaN
-}
 
 type Props = NumberInputProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof NumberInputProps>
@@ -302,7 +290,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
 
     // --- interpret props ---
     const format = formatProp ?? defaultFormat
-    const parse = parseProp ?? defaultParse
+    const parse = parseProp ?? parseLeadingNumber
 
     // Normalized input needs a finite span even when an end is unbounded or
     // the caller opted out of clamping. Safe integers provide one without
@@ -416,9 +404,10 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
     // --- hooks ---
     const wheelRefCallback = useWheel<HTMLDivElement>(
       (event) => {
-        if (!wheel || inactive || event.deltaY === 0) return
+        const direction = wheelDirection(event)
+        if (!wheel || inactive || direction === null) return
         event.preventDefault()
-        nudge(-Math.sign(event.deltaY), wheel, event)
+        nudge(direction, wheel, event)
       },
       { requireFocus: true },
     )

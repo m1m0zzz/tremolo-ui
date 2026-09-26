@@ -1,10 +1,11 @@
 import { SVGProps } from 'react'
 
+import { KNOB_VIEWBOX_SIZE } from '@tremolo-ui/dom'
 import { clamp } from '@tremolo-ui/functions'
 
 import { useCheckPlacement } from '../_util/Placement'
 
-import { useKnobContext, viewBoxSize } from './context'
+import { useKnobContext } from './context'
 
 export interface KnobThumbProps {
   /**
@@ -68,7 +69,7 @@ export function Thumb({
       <line
         className={classes?.thumbLine}
         x1="50%"
-        y1={`${(viewBoxSize - clamp(thumbSize, 0, 100)) / 2}%`}
+        y1={`${(KNOB_VIEWBOX_SIZE - clamp(thumbSize, 0, 100)) / 2}%`}
         x2="50%"
         y2={`${thumbLineLength}%`}
         stroke={thumbLine}

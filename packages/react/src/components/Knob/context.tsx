@@ -1,9 +1,7 @@
 import { createContext, useContext } from 'react'
 
-import { radian, type Scale } from '@tremolo-ui/functions'
-
-export const viewBoxSize = 100
-export const center = viewBoxSize / 2
+import { type KnobAngles } from '@tremolo-ui/dom'
+import { type Scale } from '@tremolo-ui/functions'
 
 export type KnobConfig = {
   value: number
@@ -16,76 +14,7 @@ export type KnobConfig = {
   angleRange: number
 }
 
-export type KnobContextValue = KnobConfig & {
-  /** normalized value */
-  p: number
-  /** ロータリー開始位置 */
-  r1: number
-  /** activeLine の開始位置 */
-  r2: number
-  /** activeLine の終了位置 */
-  r3: number
-  /** ロータリー終了位置 */
-  r4: number
-}
-
-/**
- * 角度から円弧上の点を求める。
- *
- * 半径は線の太さの分だけ内側に取る必要があるが、太さは ActiveLine / InactiveLine が
- * それぞれ持つため、座標はストアで先に計算せず各コンポーネント側で求める。
- */
-export function pointOnArc(angle: number, radius: number) {
-  return {
-    x: center + radius * Math.cos(radian(angle - 90)),
-    y: center + radius * Math.sin(radian(angle - 90)),
-  }
-}
-
-/** 線の太さが viewBox からはみ出さないようにした半径 */
-export function arcRadius(strokeWidth: number | string | undefined) {
-  const width =
-    typeof strokeWidth === 'number'
-      ? strokeWidth
-      : Number.parseFloat(String(strokeWidth))
-  return Number.isFinite(width) ? center - width / 2 : center
-}
-
-/** Build an SVG path for an arc, splitting full turns into drawable segments. */
-export function arcPath(startAngle: number, endAngle: number, radius: number) {
-  const start = pointOnArc(startAngle, radius)
-  const sweep = endAngle - startAngle
-  const segmentCount = Math.max(1, Math.ceil(Math.abs(sweep) / 180))
-  const segmentSweep = sweep / segmentCount
-  let path = `M ${start.x} ${start.y}`
-
-  for (let i = 1; i <= segmentCount; i += 1) {
-    const end = pointOnArc(startAngle + segmentSweep * i, radius)
-    path += ` A ${radius} ${radius} 0 0 ${segmentSweep >= 0 ? 1 : 0} ${end.x} ${end.y}`
-  }
-
-  return path
-}
-
-/** 設定から描画に必要な角度を導出する。レンダー中に呼ぶ。 */
-export function calcAngles({
-  value,
-  min,
-  max,
-  scale,
-  startValue,
-  angleRange,
-}: KnobConfig) {
-  const p = scale.normalize(value, min, max)
-  const s = scale.normalize(startValue, min, max)
-
-  const r1 = -angleRange / 2
-  const r2 = r1 + Math.min(p, s) * angleRange
-  const r3 = r1 + Math.max(p, s) * angleRange
-  const r4 = angleRange / 2
-
-  return { p, r1, r2, r3, r4 }
-}
+export type KnobContextValue = KnobConfig & KnobAngles
 
 const KnobContext = /* @__PURE__ */ createContext<KnobContextValue | null>(null)
 

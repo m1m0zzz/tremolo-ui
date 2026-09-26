@@ -7,9 +7,7 @@ import {
   useMemo,
 } from 'react'
 
-import { matchesAccept } from '@tremolo-ui/dom'
-
-import { visuallyHiddenStyle } from '../_util/visually-hidden'
+import { partitionByAccept, visuallyHiddenStyle } from '@tremolo-ui/dom'
 
 import { FileInputProvider } from './context'
 import { Trigger } from './Trigger'
@@ -92,19 +90,15 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
     const context = useMemo(() => ({ inputId, disabled }), [inputId, disabled])
 
     function handleChange(event: ChangeEvent<HTMLInputElement>) {
-      const picked = Array.from(event.target.files ?? [])
+      const { accepted, rejected } = partitionByAccept(
+        Array.from(event.target.files ?? []),
+        accept,
+      )
 
       // Picking the same file twice fires no second change event while the
       // value is still on the input, so it is cleared as soon as it is read.
       // Nothing is lost: the files are already in hand.
       event.target.value = ''
-
-      const accepted: File[] = []
-      const rejected: File[] = []
-      for (const file of picked) {
-        if (matchesAccept(file, accept)) accepted.push(file)
-        else rejected.push(file)
-      }
 
       if (rejected.length > 0) onReject?.(rejected)
       if (accepted.length > 0) onChange?.(accepted)

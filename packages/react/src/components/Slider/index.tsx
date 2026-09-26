@@ -11,23 +11,24 @@ import React, {
 
 import {
   applyDelta,
+  arrowKeyDirection,
   type AxisOptions,
+  DEFAULT_DRAG_SENSITIVITY,
+  DEFAULT_KEYBOARD_OPTIONS,
+  DEFAULT_WHEEL_OPTIONS,
   type InputEventOption,
   type ModifierValue,
   selectModifier,
+  valuePercent,
+  wheelDirection,
   type XY,
 } from '@tremolo-ui/dom'
-import { linearScale, type Scale, toFixed } from '@tremolo-ui/functions'
+import { linearScale, type Scale } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
-import {
-  DEFAULT_DRAG_SENSITIVITY,
-  DEFAULT_KEYBOARD_OPTIONS,
-  DEFAULT_WHEEL_OPTIONS,
-} from '../../input-event'
 
 import { SliderProvider } from './context'
 import { Marks } from './Marks'
@@ -216,15 +217,13 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
     const externalStyles = { ...defaultExternalStyles, ..._externalStyles }
     const inactive = disabled || readonly
 
-    const p = toFixed(scale.normalize(value, min, max) * 100)
-    const rev = toFixed(100 - p)
-    // NOTE
+    // Measured from the left or the top, as CSS places things:
     // normal -> normal (right)
-    // vertical -> rev (up)
-    // reverse -> rev (left)
+    // vertical -> reversed (up)
+    // reverse -> reversed (left)
     // vertical & reverse -> normal (down)
     const displayReversed = vertical !== reverse
-    const percent = displayReversed ? rev : p
+    const percent = valuePercent(value, { min, max, scale }, displayReversed)
 
     // --- internal functions ---
     // The pointer is normalized against the track on both axes; only the one
@@ -239,14 +238,19 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
 
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
-        const key = event.key
-        if (!['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key))
-          return
+        const direction = arrowKeyDirection(event.key)
+        if (direction === null) return
         event.preventDefault()
         if (!keyboard || !onChange || inactive) return
-        let direction = key === 'ArrowRight' || key === 'ArrowUp' ? 1 : -1
-        if (reverse) direction *= -1
-        onChange(applyDelta(value, direction, keyboard, axis, event))
+        onChange(
+          applyDelta(
+            value,
+            reverse ? -direction : direction,
+            keyboard,
+            axis,
+            event,
+          ),
+        )
       },
       [keyboard, onChange, inactive, reverse, value, axis],
     )
@@ -280,15 +284,11 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
     const wheelRefCallback = useWheel<HTMLDivElement>((event) => {
       if (!wheel || !onChange || inactive) return
       event.preventDefault()
-      let direction
-      if (!vertical && event.deltaX !== 0) {
-        direction = event.deltaX > 0 ? 1 : -1
-      } else {
-        if (event.deltaY === 0) return
-        direction = event.deltaY > 0 ? -1 : 1
-      }
-      if (reverse) direction *= -1
-      onChange(applyDelta(value, direction, wheel, axis, event))
+      const direction = wheelDirection(event, { horizontal: !vertical })
+      if (direction === null) return
+      onChange(
+        applyDelta(value, reverse ? -direction : direction, wheel, axis, event),
+      )
     }, WHEEL_OPTIONS)
 
     // Composed once, so React attaches the refs a single time instead of
@@ -394,4 +394,4 @@ export { type SliderThumbMethods, type SliderThumbProps } from './Thumb'
 export { type SliderTrackProps } from './Track'
 export { type SliderMarksProps } from './Marks'
 export { type SliderMarksOptionProps } from './MarksOption'
-export { type MarksOptions } from './type'
+export { type MarksOptions } from '@tremolo-ui/dom'

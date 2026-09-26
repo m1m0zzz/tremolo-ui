@@ -10,6 +10,7 @@ import {
 
 import {
   applyDelta,
+  arrowKeyMove,
   type InputEventOption,
   type ModifierState,
   type ModifierValue,
@@ -257,19 +258,15 @@ export function Point<T extends PointBaseType>({
   )
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    const key = event.key
-    if (!['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(key))
-      return
-    // The key picks the axis, whichever of the two inputs holds the focus: a
-    // point is one control to the person moving it, and the focus lands on the
-    // x input, so reading the axis off the input would leave the y axis with
-    // no keys at all.
-    const axis = key === 'ArrowRight' || key === 'ArrowLeft' ? 'x' : 'y'
+    // The key picks the axis, whichever of the two inputs holds the focus:
+    // the focus lands on the x input, so reading the axis off the input would
+    // leave the y axis with no keys at all. y grows downwards, so ArrowUp
+    // moves the point towards 0.
+    const move = arrowKeyMove(event.key)
+    if (!move) return
     event.preventDefault()
     if (!onChange || inactive || !keyboard) return
-    // y grows downwards, so ArrowUp moves the point towards 0.
-    const direction = key === 'ArrowLeft' || key === 'ArrowUp' ? -1 : 1
-    nudge(axis, direction, keyboard, event)
+    nudge(move.axis === 0 ? 'x' : 'y', move.direction, keyboard, event)
   }
 
   const current = clampPoint(value, min, max)
