@@ -1,0 +1,68 @@
+{
+  "name": "@tremolo-ui/vue",
+  "version": "0.7.0",
+  "description": "Vue component library for audio app",
+  "type": "module",
+  "sideEffects": false,
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.cts",
+  "scripts": {
+    "typecheck": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build:package": "tsc && tsdown",
+    "clean": "npm run clean:build",
+    "clean:build": "rimraf ./dist"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/vue": "8.1.0",
+    "@vue/test-utils": "2.5.1",
+    "vue": "3.5.43"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "dependencies": {
+    "@tremolo-ui/dom": "^0.7.0",
+    "@tremolo-ui/functions": "^0.7.0"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "mimoz",
+    "email": "contact.m1m0zzz@gmail.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/m1m0zzz/tremolo-ui",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m1m0zzz/tremolo-ui.git",
+    "directory": "packages/vue"
+  },
+  "keywords": [
+    "vue",
+    "vue-components",
+    "ui",
+    "components",
+    "web-audio"
+  ],
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  }
+}
