@@ -12,6 +12,18 @@ export {
   type KnobContextValue,
 } from './components/Knob/context.js'
 export type { KnobProps, KnobThumbProps } from './components/Knob/types.js'
+export * as Slider from './components/Slider/index.js'
+export {
+  useSliderContext,
+  type SliderContextValue,
+} from './components/Slider/context.js'
+export type {
+  SliderMarksOptionProps,
+  SliderMarksProps,
+  SliderProps,
+  SliderThumbProps,
+  SliderTrackProps,
+} from './components/Slider/types.js'
 
 // hooks
 export { useMIDIAccess } from './hooks/useMIDIAccess.svelte.js'

@@ -1,0 +1,5 @@
+export { default as Marks } from './Marks.svelte'
+export { default as MarksOption } from './MarksOption.svelte'
+export { default as Root } from './Root.svelte'
+export { default as Thumb } from './Thumb.svelte'
+export { default as Track } from './Track.svelte'
