@@ -34,6 +34,9 @@ test('a composable brings no component with it', async () => {
   expect(await componentsBundledWith('useDrag')).toEqual([])
 })
 
-test('a component brings only itself', async () => {
-  expect(await componentsBundledWith('Slider')).toEqual(['Slider'])
-})
+test.each(['Slider', 'NumberInput'])(
+  'a component brings only itself: %s',
+  async (name) => {
+    expect(await componentsBundledWith(name)).toEqual([name])
+  },
+)
