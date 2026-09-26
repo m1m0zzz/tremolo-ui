@@ -8,6 +8,22 @@ export {
   useKnobContext,
   type KnobContextValue,
 } from './components/Knob'
+export {
+  Slider,
+  SliderMarks,
+  SliderMarksOption,
+  SliderThumb,
+  SliderTrack,
+  useSliderContext,
+  type SliderContextValue,
+} from './components/Slider'
+export {
+  XYPad,
+  XYPadArea,
+  XYPadThumb,
+  useXYPadContext,
+  type XYPadContextValue,
+} from './components/XYPad'
 
 // composables
 export { useDrag } from './composables/useDrag'
