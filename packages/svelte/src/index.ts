@@ -5,6 +5,14 @@ export { dropZone } from './actions/drop-zone.js'
 export { longPress } from './actions/long-press.js'
 export { wheel, type WheelActionOptions } from './actions/wheel.js'
 
+// components
+export * as Knob from './components/Knob/index.js'
+export {
+  useKnobContext,
+  type KnobContextValue,
+} from './components/Knob/context.js'
+export type { KnobProps, KnobThumbProps } from './components/Knob/types.js'
+
 // hooks
 export { useMIDIAccess } from './hooks/useMIDIAccess.svelte.js'
 export { useMIDIInput } from './hooks/useMIDIInput.svelte.js'
