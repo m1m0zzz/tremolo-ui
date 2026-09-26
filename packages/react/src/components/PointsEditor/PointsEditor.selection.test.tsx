@@ -1,7 +1,9 @@
 import { act, render, screen } from '@testing-library/react'
 import { useState } from 'react'
 
-import { PointBaseType, PointsEditor } from '.'
+import { type PointPosition } from '@tremolo-ui/dom'
+
+import { PointsEditor } from '.'
 
 /** jsdom has no PointerEvent and no pointer capture, so both are faked here. */
 function pointerEvent(
@@ -36,7 +38,7 @@ function fakeLayout(container: Element) {
   }
 }
 
-type Handlers = { onChange?: (id: string, value: PointBaseType) => void }
+type Handlers = { onChange?: (id: string, value: PointPosition) => void }
 
 function Subject({
   onChange,
@@ -48,9 +50,9 @@ function Subject({
   onSelectionChange?: (ids: string[]) => void
   selection?: string[]
   selectable?: boolean
-  limits?: Partial<Record<'a' | 'b', { max?: Partial<PointBaseType> }>>
+  limits?: Partial<Record<'a' | 'b', { max?: Partial<PointPosition> }>>
 }) {
-  const [values, setValues] = useState<Record<string, PointBaseType>>({
+  const [values, setValues] = useState<Record<string, PointPosition>>({
     a: { x: 0.2, y: 0.2 },
     b: { x: 0.4, y: 0.4 },
     c: { x: 0.9, y: 0.9 },

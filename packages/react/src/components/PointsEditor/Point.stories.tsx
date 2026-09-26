@@ -1,7 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-import { PointBaseType, PointsEditor } from '.'
+import { type PointPosition } from '@tremolo-ui/dom'
+
+import { PointsEditor } from '.'
 
 import pointsEditorTheme from 'shared/css/PointsEditor.module.css'
 
@@ -25,7 +27,7 @@ export const Basic: Story = {
     color: '#4e76e5',
   },
   render: (args) => {
-    const [point, setPoint] = useState<PointBaseType>({ x: 0.5, y: 0.5 })
+    const [point, setPoint] = useState<PointPosition>({ x: 0.5, y: 0.5 })
 
     return (
       <>
@@ -60,7 +62,7 @@ export const Limited: Story = {
     max: { y: 0.5 },
   },
   render: (args) => {
-    const [point, setPoint] = useState<PointBaseType>({ x: 0.25, y: 0.5 })
+    const [point, setPoint] = useState<PointPosition>({ x: 0.25, y: 0.5 })
 
     return (
       <>
@@ -92,7 +94,7 @@ export const WithChildren: Story = {
     style: { display: 'grid', placeItems: 'center', width: 24, height: 24 },
   },
   render: (args) => {
-    const [point, setPoint] = useState<PointBaseType>({ x: 0.5, y: 0.5 })
+    const [point, setPoint] = useState<PointPosition>({ x: 0.5, y: 0.5 })
 
     return (
       <PointsEditor.Root className={pointsEditorTheme.root}>

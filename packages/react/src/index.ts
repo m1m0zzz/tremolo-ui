@@ -41,11 +41,9 @@ export {
 export {
   PointsEditor,
   usePointsEditorContext,
-  clampPoint,
   type PointsEditorProps,
   type PointsEditorContextValue,
   type PointsEditorPointProps,
-  type PointBaseType,
 } from './components/PointsEditor'
 export {
   Slider,

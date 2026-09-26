@@ -1,12 +1,13 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { ComponentProps, useState } from 'react'
 
+import { type PointPosition } from '@tremolo-ui/dom'
 import { mapValue, unitFormat } from '@tremolo-ui/functions'
 
 import { AnimationCanvas } from '../AnimationCanvas'
 import { NumberInput } from '../NumberInput'
 
-import { PointBaseType, PointsEditor } from '.'
+import { PointsEditor } from '.'
 
 import styles from '../../../__stories__/styles/PointsEditor.module.css'
 import pointsEditorTheme from 'shared/css/PointsEditor.module.css'
@@ -46,7 +47,7 @@ export const Basic: Story = {
   argTypes: partsArgTypes,
   args: { selectable: true, background: true },
   render: ({ background, ...args }) => {
-    const initialPoints: Record<string, PointBaseType> = {
+    const initialPoints: Record<string, PointPosition> = {
       'p-0': { x: 0, y: 0.5 },
       'p-1': { x: 0.25, y: 0 },
       'p-2': { x: 0.75, y: 1 },
@@ -126,8 +127,8 @@ export const KeyboardAndWheel: Story = {
     keyboard: ['normalized', 0.05],
   },
   render: (args) => {
-    const [coarse, setCoarse] = useState<PointBaseType>({ x: 0.25, y: 0.5 })
-    const [fine, setFine] = useState<PointBaseType>({ x: 0.75, y: 0.5 })
+    const [coarse, setCoarse] = useState<PointPosition>({ x: 0.25, y: 0.5 })
+    const [fine, setFine] = useState<PointPosition>({ x: 0.75, y: 0.5 })
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -167,7 +168,7 @@ export const KeyboardAndWheel: Story = {
   },
 }
 
-function add(a: PointBaseType, b: PointBaseType): PointBaseType {
+function add(a: PointPosition, b: PointPosition): PointPosition {
   return { x: a.x + b.x, y: a.y + b.y }
 }
 

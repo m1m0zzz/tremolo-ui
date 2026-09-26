@@ -1,6 +1,6 @@
 import { ComponentPropsWithoutRef, forwardRef } from 'react'
 
-import { wheelMove } from '@tremolo-ui/dom'
+import { POINT_AXIS, wheelMove } from '@tremolo-ui/dom'
 
 import { useComposedRefs } from '../../compose-refs'
 import { useDragValue } from '../../hooks/useDragValue'
@@ -8,35 +8,26 @@ import { useWheel } from '../../hooks/useWheel'
 import { Placement } from '../_util/Placement'
 
 import { usePointsEditorContext } from './context'
-import { AXIS } from './Point'
 
 type Props = ComponentPropsWithoutRef<'div'>
 
 export const Container = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   function Container({ children, className, style, ...props }, forwardedRef) {
-    const {
-      containerRef,
-      disabled,
-      selectable,
-      isPointElement,
-      nudgeFocusedPoint,
-      beginSelectionBox,
-      moveSelectionBox,
-      endSelectionBox,
-    } = usePointsEditorContext()
+    const { containerRef, disabled, selectable, editor } =
+      usePointsEditorContext()
     const { refCallback: dragRefCallback } = useDragValue<HTMLDivElement>({
-      axis: AXIS,
+      axis: POINT_AXIS,
       baseElementRef: containerRef,
       // A press that landed on a point belongs to that point. Declining here
       // rather than in onDragStart matters: by then the container would already
       // have taken the pointer capture away from the point.
       shouldStart: (event) =>
-        !disabled && !isPointElement(event.target as Element | null),
+        !disabled && !editor.isPointElement(event.target as Element | null),
       onDragStart: ([x, y], state) => {
-        beginSelectionBox({ x, y }, state.event)
+        editor.beginSelectionBox({ x, y }, state.event)
       },
-      onChange: ([x, y]) => moveSelectionBox({ x, y }),
-      onDragEnd: endSelectionBox,
+      onChange: ([x, y]) => editor.moveSelectionBox({ x, y }),
+      onDragEnd: () => editor.endSelectionBox(),
     })
 
     // One listener for the whole editor rather than one per point: a wheel
@@ -49,7 +40,7 @@ export const Container = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         const move = wheelMove(event)
         if (!move) return
         const axis = move.axis === 0 ? 'x' : 'y'
-        if (nudgeFocusedPoint(axis, move.direction, event)) {
+        if (editor.nudgeFocusedPoint(axis, move.direction, event)) {
           event.preventDefault()
         }
       },

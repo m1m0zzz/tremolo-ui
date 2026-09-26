@@ -1,7 +1,9 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { createRef, useState } from 'react'
 
-import { PointBaseType, PointsEditor } from '.'
+import { type PointPosition } from '@tremolo-ui/dom'
+
+import { PointsEditor } from '.'
 
 import type { Mock } from 'vitest'
 
@@ -47,8 +49,8 @@ type SubjectProps = Partial<
   // The props the part takes, not only its own: `children` comes from the
   // `<div>` it renders.
   point?: Partial<React.ComponentProps<typeof PointsEditor.Point>>
-  initial?: PointBaseType
-  onChange?: (value: PointBaseType) => void
+  initial?: PointPosition
+  onChange?: (value: PointPosition) => void
 }
 
 function Subject({
@@ -79,8 +81,8 @@ function Subject({
 
 /** Two points, to pin down which one an event reaches. */
 function TwoPoints({ onA, onB }: { onA: Mock; onB: Mock }) {
-  const [a, setA] = useState<PointBaseType>({ x: 0.25, y: 0.5 })
-  const [b, setB] = useState<PointBaseType>({ x: 0.75, y: 0.5 })
+  const [a, setA] = useState<PointPosition>({ x: 0.25, y: 0.5 })
+  const [b, setB] = useState<PointPosition>({ x: 0.75, y: 0.5 })
 
   return (
     <PointsEditor.Root data-testid="editor">

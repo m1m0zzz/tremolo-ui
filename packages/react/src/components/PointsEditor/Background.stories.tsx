@@ -1,7 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-import { PointBaseType, PointsEditor } from '.'
+import { type PointPosition } from '@tremolo-ui/dom'
+
+import { PointsEditor } from '.'
 
 import pointsEditorTheme from 'shared/css/PointsEditor.module.css'
 
@@ -19,7 +21,7 @@ type Story = StoryObj<typeof PointsEditor.Background>
  */
 export const Graph: Story = {
   render: (args) => {
-    const [points, setPoints] = useState<Record<string, PointBaseType>>({
+    const [points, setPoints] = useState<Record<string, PointPosition>>({
       a: { x: 0, y: 0.8 },
       b: { x: 0.5, y: 0.2 },
       c: { x: 1, y: 0.6 },

@@ -1,7 +1,6 @@
 import {
   ComponentPropsWithoutRef,
   CSSProperties,
-  useCallback,
   useEffect,
   useId,
   useRef,
@@ -9,38 +8,26 @@ import {
 } from 'react'
 
 import {
-  applyDelta,
   arrowKeyMove,
+  clampPoint,
   type InputEventOption,
-  type ModifierState,
   type ModifierValue,
+  POINT_AXIS,
+  type PointPosition,
+  type PointsEditorPoint,
   selectModifier,
 } from '@tremolo-ui/dom'
-import { clamp } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useCheckPlacement } from '../_util/Placement'
 import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
 
-import { type PointRegistration, usePointsEditorContext } from './context'
+import { usePointsEditorContext } from './context'
 
 import type { CSSVariables } from '../../css-variables'
 
-export type PointBaseType = { x: number; y: number }
-
-export function clampPoint(
-  point: PointBaseType,
-  min?: Partial<PointBaseType>,
-  max?: Partial<PointBaseType>,
-) {
-  const { x, y } = point
-  const newX = clamp(x, min?.x ?? 0, max?.x ?? 1)
-  const newY = clamp(y, min?.y ?? 0, max?.y ?? 1)
-  return { x: newX, y: newY }
-}
-
-export interface PointsEditorPointProps<T extends PointBaseType> {
+export interface PointsEditorPointProps<T extends PointPosition> {
   /**
    * Where the point is, as `{ x, y }` from 0 to 1 on each axis, with `y`
    * growing downwards.
@@ -53,9 +40,9 @@ export interface PointsEditorPointProps<T extends PointBaseType> {
    */
   id?: string
   /** The lowest position the point can take, per axis. An axis left out is 0. */
-  min?: Partial<PointBaseType>
+  min?: Partial<PointPosition>
   /** The highest position the point can take, per axis. An axis left out is 1. */
-  max?: Partial<PointBaseType>
+  max?: Partial<PointPosition>
 
   /** Sets `--color`, for the theme to colour the point with. */
   color?: string
@@ -82,20 +69,14 @@ export interface PointsEditorPointProps<T extends PointBaseType> {
    * Called with the new position when the point is dragged or moved by the
    * arrow keys or the wheel, including when it moves along with a selection.
    */
-  onChange?: (value: PointBaseType) => void
+  onChange?: (value: PointPosition) => void
   /** Called when a drag on this point starts, with where the point is. */
-  onDragStart?: (value: PointBaseType) => void
+  onDragStart?: (value: PointPosition) => void
   /** Called when that drag ends, with where the point is. */
-  onDragEnd?: (value: PointBaseType) => void
+  onDragEnd?: (value: PointPosition) => void
 
   style?: CSSProperties & CSSVariables<'color' | 'translate'>
 }
-
-/**
- * A point is placed by its position within the container, so its value is a
- * position: 0..1 on each axis, with y growing downwards.
- */
-export const AXIS = { min: 0, max: 1 }
 
 /**
  * One setting for both axes, or one per axis. The point holds a range input
@@ -108,7 +89,7 @@ function perAxis(
   return typeof value === 'string' ? value : value?.[axis]
 }
 
-export function Point<T extends PointBaseType>({
+export function Point<T extends PointPosition>({
   value,
   children,
   id: idProp,
@@ -144,10 +125,7 @@ export function Point<T extends PointBaseType>({
     keyboard: rootKeyboard,
     dragSensitivity,
     selection,
-    registerPoint,
-    beginPointDrag,
-    movePointDrag,
-    nudgeSelection,
+    editor,
   } = usePointsEditorContext()
 
   const generatedId = useId()
@@ -172,7 +150,7 @@ export function Point<T extends PointBaseType>({
   // What the editor needs to move this point along with the rest of a
   // selection. Rewritten after every render rather than kept in the registry
   // itself: the value changes on every frame of a drag.
-  const registration = useRef<PointRegistration>({
+  const registration = useRef<PointsEditorPoint>({
     value,
     min,
     max,
@@ -193,15 +171,18 @@ export function Point<T extends PointBaseType>({
     }
   })
 
-  useEffect(() => registerPoint(id, registration), [id, registerPoint])
+  useEffect(
+    () => editor.registerPoint(id, () => registration.current),
+    [id, editor],
+  )
 
   /** Where the pointer was when the drag started, to measure the move from. */
-  const pointerOrigin = useRef<PointBaseType | null>(null)
+  const pointerOrigin = useRef<PointPosition | null>(null)
 
   // The value is the position itself: no scaling, and no rounding to a step.
   const { refCallback: dragRefCallback, dragging } =
     useDragValue<HTMLDivElement>({
-      axis: AXIS,
+      axis: POINT_AXIS,
       baseElementRef: containerRef,
       sensitivity: (state) =>
         selectModifier(dragSensitivity, state.event).value,
@@ -213,13 +194,13 @@ export function Point<T extends PointBaseType>({
       onChange: ([x, y]) => {
         const origin = pointerOrigin.current
         if (!origin) return
-        movePointDrag({ x: x - origin.x, y: y - origin.y })
+        editor.movePointDrag({ x: x - origin.x, y: y - origin.y })
       },
       onDragStart: ([x, y], state) => {
         // The press decides the selection before the snapshot is taken, so it
         // happens here rather than in an onPointerDown: a native listener on
         // the element runs before React's, and the two would disagree.
-        beginPointDrag(id, state.event)
+        editor.beginPointDrag(id, state.event)
         pointerOrigin.current = { x, y }
         xInputRef.current?.focus()
 
@@ -233,24 +214,6 @@ export function Point<T extends PointBaseType>({
         onDragEnd?.(clampPoint(value, min, max))
       },
     })
-
-  const nudge = useCallback(
-    (
-      axis: 'x' | 'y',
-      direction: number,
-      option: ModifierValue<InputEventOption>,
-      modifiers: ModifierState,
-    ) => {
-      const next = applyDelta(value[axis], direction, option, AXIS, modifiers)
-      // As a move, so that the rest of the selection comes along and the whole
-      // group stops together at the edge.
-      nudgeSelection(id, {
-        x: axis === 'x' ? next - value.x : 0,
-        y: axis === 'y' ? next - value.y : 0,
-      })
-    },
-    [value, id, nudgeSelection],
-  )
 
   const refCallback = useComposedRefs<HTMLDivElement>(
     dragRefCallback,
@@ -266,7 +229,13 @@ export function Point<T extends PointBaseType>({
     if (!move) return
     event.preventDefault()
     if (!onChange || inactive || !keyboard) return
-    nudge(move.axis === 0 ? 'x' : 'y', move.direction, keyboard, event)
+    editor.nudgePoint(
+      id,
+      move.axis === 0 ? 'x' : 'y',
+      move.direction,
+      keyboard,
+      event,
+    )
   }
 
   const current = clampPoint(value, min, max)
@@ -335,7 +304,7 @@ export function Point<T extends PointBaseType>({
               return
             }
             const delta = event.currentTarget.valueAsNumber - value[axis]
-            nudgeSelection(id, {
+            editor.nudgeSelection(id, {
               x: axis === 'x' ? delta : 0,
               y: axis === 'y' ? delta : 0,
             })
