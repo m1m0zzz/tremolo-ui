@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef } from 'react'
 
 import { createLongPress, type LongPressInstance } from '@tremolo-ui/dom'
 
+import { useCallbackRef } from './_internal/useCallbackRef'
+
 /**
  * Repeat `callback` while a pointer is held down: once on the press, then
  * every `interval` after `initialDelay`. The repeat itself is
@@ -14,17 +16,18 @@ export function useLongPress(
   initialDelay = 500,
   interval = 40,
 ) {
-  const callbackRef = useRef(callback)
+  // Updated before layout effects run, so that a press started from one
+  // right after a re-render already calls the new callback.
+  const onPress = useCallbackRef(callback)
   const instanceRef = useRef<LongPressInstance | null>(null)
 
   useEffect(() => {
-    callbackRef.current = callback
     instanceRef.current?.update({ delay: initialDelay, interval })
   })
 
   useEffect(() => {
     const instance = createLongPress({
-      onPress: () => callbackRef.current(),
+      onPress: () => onPress(),
       delay: initialDelay,
       interval,
     })
