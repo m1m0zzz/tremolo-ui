@@ -2,6 +2,9 @@ import CodeBlock from '@theme/CodeBlock'
 import { PropsTable } from '@site/src/components/ApiReference'
 import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/components/file-input/basic'
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import svelteBasic from '!!raw-loader!@site/examples/svelte/FileInput.svelte'
 
 # FileInput
 
@@ -16,6 +19,9 @@ import basic from '!!raw-loader!@site/examples/components/file-input/basic'
   path='shared/css/FileInput.module.css'
 />
 
+<Tabs groupId="framework" queryString>
+<TabItem value="react" label="React">
+
 <CodeBlock
   jsx
   live
@@ -23,11 +29,32 @@ import basic from '!!raw-loader!@site/examples/components/file-input/basic'
   sourcePath='examples/components/file-input/basic.tsx'
 >{basic}</CodeBlock>
 
+</TabItem>
+<TabItem value="svelte" label="Svelte">
+
+<CodeBlock language="html" title="App.svelte">{svelteBasic}</CodeBlock>
+
+</TabItem>
+</Tabs>
+
 ## インポート {#import}
+
+<Tabs groupId="framework" queryString>
+<TabItem value="react" label="React">
 
 ```jsx
 import { FileInput } from '@tremolo-ui/react'
 ```
+
+</TabItem>
+<TabItem value="svelte" label="Svelte">
+
+```js
+import { FileInput } from '@tremolo-ui/svelte'
+```
+
+</TabItem>
+</Tabs>
 
 ## このコンポーネントが引き受けること {#what-it-handles-for-you}
 
@@ -48,6 +75,8 @@ input の ARIA 属性は、`Root` が描くラッパーに残さず `Root` が�
 ## API リファレンス {#api-reference}
 
 各パートには、そのパート固有の props があります。描画する要素の属性（`className` や `style` など）も受け取ります。
+
+Svelte でも props は同じで、書き方だけが Svelte 流になります（`className` ではなく `class`、`bind:value`、中身は snippet など）。[Svelte](/docs/tutorials/svelte) を参照してください。
 
 状態は data 属性として要素に付くので、セレクタひとつで届きます（[スタイリング](/docs/tutorials/styling)）。属性は、その状態が on のときだけ存在します。
 

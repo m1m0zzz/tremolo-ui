@@ -3,6 +3,9 @@ import { PropsTable } from '@site/src/components/ApiReference'
 import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/components/number-input/basic'
 import unit from '!!raw-loader!@site/examples/components/number-input/unit'
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import svelteBasic from '!!raw-loader!@site/examples/svelte/NumberInput.svelte'
 
 # NumberInput
 
@@ -15,6 +18,9 @@ import unit from '!!raw-loader!@site/examples/components/number-input/unit'
   path='shared/css/NumberInput.module.css'
 />
 
+<Tabs groupId="framework" queryString>
+<TabItem value="react" label="React">
+
 <CodeBlock
   jsx
   live
@@ -22,15 +28,38 @@ import unit from '!!raw-loader!@site/examples/components/number-input/unit'
   sourcePath='examples/components/number-input/basic.tsx'
 >{basic}</CodeBlock>
 
+</TabItem>
+<TabItem value="svelte" label="Svelte">
+
+<CodeBlock language="html" title="App.svelte">{svelteBasic}</CodeBlock>
+
+</TabItem>
+</Tabs>
+
 ## インポート {#import}
+
+<Tabs groupId="framework" queryString>
+<TabItem value="react" label="React">
 
 ```jsx
 import { NumberInput } from '@tremolo-ui/react'
 ```
 
+</TabItem>
+<TabItem value="svelte" label="Svelte">
+
+```js
+import { NumberInput } from '@tremolo-ui/svelte'
+```
+
+</TabItem>
+</Tabs>
+
 ## API リファレンス {#api-reference}
 
 各パートには、そのパート独自の props を載せています。これに加えて、描画する要素の属性（`className` や `style` など）も受け取ります。
+
+Svelte でも props は同じで、書き方だけが Svelte 流になります（`className` ではなく `class`、`bind:value`、中身は snippet など）。[Svelte](/docs/tutorials/svelte) を参照してください。
 
 状態は data 属性として要素に乗っているので、セレクタ 1 つで届きます（[スタイリング](/docs/tutorials/styling)を参照）。属性はその状態が on の間だけ付きます。
 

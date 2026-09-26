@@ -222,9 +222,19 @@ const config: Config = {
           position: 'right',
         },
         {
-          href: 'https://tremolo-ui.mimoz.dev/i/storybook-react/',
+          type: 'dropdown',
           label: 'Storybook',
           position: 'right',
+          items: [
+            {
+              href: 'https://tremolo-ui.mimoz.dev/i/storybook-react/',
+              label: 'React',
+            },
+            {
+              href: 'https://tremolo-ui.mimoz.dev/i/storybook-svelte/',
+              label: 'Svelte',
+            },
+          ],
         },
         {
           href: 'https://github.com/m1m0zzz/tremolo-ui',
@@ -294,8 +304,12 @@ const config: Config = {
               href: 'https://github.com/m1m0zzz/tremolo-ui',
             },
             {
-              label: 'Storybook',
+              label: 'Storybook (React)',
               href: 'https://tremolo-ui.mimoz.dev/i/storybook-react/',
+            },
+            {
+              label: 'Storybook (Svelte)',
+              href: 'https://tremolo-ui.mimoz.dev/i/storybook-svelte/',
             },
             {
               label: 'npm',

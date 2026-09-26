@@ -2,6 +2,9 @@ import CodeBlock from '@theme/CodeBlock'
 import { PropsTable } from '@site/src/components/ApiReference'
 import GitHubLink, { StyleGitHubLink } from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/components/drop-zone/basic'
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import svelteBasic from '!!raw-loader!@site/examples/svelte/DropZone.svelte'
 
 # DropZone
 
@@ -14,6 +17,9 @@ An area that takes files dropped onto it, and hands them over as `File`s.
   path='shared/css/DropZone.module.css'
 />
 
+<Tabs groupId="framework" queryString>
+<TabItem value="react" label="React">
+
 <CodeBlock
   jsx
   live
@@ -21,11 +27,32 @@ An area that takes files dropped onto it, and hands them over as `File`s.
   sourcePath='examples/components/drop-zone/basic.tsx'
 >{basic}</CodeBlock>
 
+</TabItem>
+<TabItem value="svelte" label="Svelte">
+
+<CodeBlock language="html" title="App.svelte">{svelteBasic}</CodeBlock>
+
+</TabItem>
+</Tabs>
+
 ## Import
+
+<Tabs groupId="framework" queryString>
+<TabItem value="react" label="React">
 
 ```jsx
 import { DropZone } from '@tremolo-ui/react'
 ```
+
+</TabItem>
+<TabItem value="svelte" label="Svelte">
+
+```js
+import { DropZone } from '@tremolo-ui/svelte'
+```
+
+</TabItem>
+</Tabs>
 
 ## What it handles for you
 
@@ -84,6 +111,10 @@ To open a file picker from a button, see
 
 Each part lists the props of its own. It also takes the attributes of the
 element it renders, such as `className` and `style`.
+
+In Svelte the props are the same, written the Svelte way — `class` rather
+than `className`, `bind:value`, snippets for content. See
+[Svelte](/docs/tutorials/svelte).
 
 State is on the element as a data attribute, so it is a selector away — see
 [Styling](/docs/tutorials/styling). An attribute is only there while its state

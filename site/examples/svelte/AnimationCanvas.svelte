@@ -1,0 +1,26 @@
+<script lang="ts">
+  import { AnimationCanvas } from '@tremolo-ui/svelte'
+</script>
+
+<AnimationCanvas
+  width={200}
+  height={200}
+  init={(ctx) => {
+    ctx.font = '16px sans-serif'
+  }}
+  draw={(ctx, { width, height, count }) => {
+    ctx.clearRect(0, 0, width, height)
+    ctx.fillText(`frame: ${count}`, 0, 16)
+    // draw sine wave
+    const halfH = height / 2
+    ctx.strokeStyle = '#29bbf0'
+    ctx.beginPath()
+    for (let i = 0; i < width; i++) {
+      const y =
+        halfH + halfH * 0.5 * Math.sin((4 * Math.PI * (i + count * 2)) / width)
+      if (i === 0) ctx.moveTo(i, y)
+      else ctx.lineTo(i, y)
+    }
+    ctx.stroke()
+  }}
+/>

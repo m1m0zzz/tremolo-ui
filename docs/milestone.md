@@ -82,7 +82,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - **`UseWheelOptions` が `onWheel` を継承していた。** `createWheel` は `update()` で差し替えるために持っているが、hook はハンドラを第 1 引数で受けるので、オプションで渡しても黙って無視されていた。`Omit` で外した
   - 表に出すにあたって、説明の無かったコールバックや `threshold` / `updateOnPointerDown` の JSDoc を埋めた
   - `useAnimationFrame` / `useEventListener` / `useInterval` / `useLongPress` はページを作っていない。典型的な実装以上に書くことが無く、typedoc の API ページで足りる
-- [ ] **Vue / Svelte のドキュメントを同じページにタブで載せる。** `site/docs/components/<Name>/` を共通にし、例と API Reference だけを React / Svelte / Vue のタブで切り替える。`data-*` とテーマは共通なので説明も共有する。現在のページは React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）
+- [ ] **Vue / Svelte のドキュメントを同じページにタブで載せる。**（Svelte は済み: 各コンポーネントの例と import を `groupId="framework"` のタブにし、書き方の違いは `tutorials/svelte.mdx` にまとめた。例は `site/examples/svelte/` にあり、`packages/svelte` の `typecheck` が型検査する。API Reference の props の表は React から作ったものを共有する） `site/docs/components/<Name>/` を共通にし、例と API Reference だけを React / Svelte / Vue のタブで切り替える。`data-*` とテーマは共通なので説明も共有する。現在のページは React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）
   - Storybook は各パッケージに持たせ、別の Worker で配信する（上の「新パッケージを追加する際の手順」）
 - [x] **`site/i18n` の typedoc サイドバー翻訳キーを掃除した。** `sidebar.typedocSidebar.*` を en / ja とも**全て削除**した（114 キー → 7 キー）。
 - [x] `site/docs/support/CHANGELOG.md` の二重管理をやめた。中身は「TODO: record from version 1.0.0」のスタブのままだったので、各パッケージの `CHANGELOG.md` と GitHub リリース、移行ガイドへのリンクに置き換えた
