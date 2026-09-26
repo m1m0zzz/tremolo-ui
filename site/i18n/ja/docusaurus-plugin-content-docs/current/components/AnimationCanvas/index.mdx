@@ -8,6 +8,7 @@ import saveRestore from '!!raw-loader!@site/examples/components/animation-canvas
 import Tabs from '@theme/Tabs'
 import TabItem from '@theme/TabItem'
 import svelteBasic from '!!raw-loader!@site/examples/svelte/AnimationCanvas.svelte'
+import vueBasic from '!!raw-loader!@site/examples/vue/AnimationCanvas.vue'
 
 # AnimationCanvas
 
@@ -33,6 +34,11 @@ import svelteBasic from '!!raw-loader!@site/examples/svelte/AnimationCanvas.svel
 <CodeBlock language="html" title="App.svelte">{svelteBasic}</CodeBlock>
 
 </TabItem>
+<TabItem value="vue" label="Vue">
+
+<CodeBlock language="html" title="App.vue">{vueBasic}</CodeBlock>
+
+</TabItem>
 </Tabs>
 
 ## インポート {#import}
@@ -52,6 +58,13 @@ import { AnimationCanvas } from '@tremolo-ui/svelte'
 ```
 
 </TabItem>
+<TabItem value="vue" label="Vue">
+
+```js
+import { AnimationCanvas } from '@tremolo-ui/vue'
+```
+
+</TabItem>
 </Tabs>
 
 
@@ -66,7 +79,7 @@ import { AnimationCanvas } from '@tremolo-ui/svelte'
 
 `AnimationCanvas` は `<canvas>` を描画し、その属性（`className` や `style` など）を受け取ります。ref は `<canvas>` に届きます。
 
-Svelte でも props は同じで、書き方だけが Svelte 流になります（`className` ではなく `class`、`bind:value`、中身は snippet など）。[Svelte](/docs/tutorials/svelte) を参照してください。
+Svelte / Vue でも props は同じで、書き方だけがそれぞれの流儀になります（`className` ではなく `class`、`bind:value` や `v-model`、中身は snippet やスロットなど）。[Svelte](/docs/tutorials/svelte) と [Vue](/docs/tutorials/vue) を参照してください。
 
 <PropsTable of="AnimationCanvasCommonProps" />
 

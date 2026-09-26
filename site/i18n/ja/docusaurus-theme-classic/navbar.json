@@ -26,5 +26,9 @@
   "item.label.Svelte": {
     "message": "Svelte",
     "description": "Navbar item with label Svelte"
+  },
+  "item.label.Vue": {
+    "message": "Vue",
+    "description": "Navbar item with label Vue"
   }
 }
