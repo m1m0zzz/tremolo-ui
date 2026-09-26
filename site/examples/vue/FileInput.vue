@@ -29,7 +29,7 @@ function onChange(picked: File[]) {
     <span>{{ files.length > 0 ? `${files.length} selected` : 'No file' }}</span>
   </FileInput>
   <ul>
-    <li v-for="file in files" :key="file.name">
+    <li v-for="(file, i) in files" :key="i">
       {{ file.name }} ({{ file.type || 'unknown type' }})
     </li>
   </ul>

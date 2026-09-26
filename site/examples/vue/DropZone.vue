@@ -26,7 +26,7 @@ function onDrop(dropped: File[]) {
     Drop an audio file here
   </DropZone>
   <ul>
-    <li v-for="file in files" :key="file.name">
+    <li v-for="(file, i) in files" :key="i">
       {{ file.name }} ({{ file.type || 'unknown type' }})
     </li>
   </ul>
