@@ -95,6 +95,7 @@ export {
   leadingNumberLength,
   parseLeadingNumber,
 } from './number-input/text'
+export { replaceOptions } from './options/replace'
 export {
   blackKeyWidth,
   getNoteRangeArray,

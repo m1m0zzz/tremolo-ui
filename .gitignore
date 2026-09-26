@@ -1,6 +1,9 @@
 .rollup.cache/
 storybook-static/
 
+# svelte-package の作業ディレクトリ
+.svelte-kit/
+
 # wrangler dev の local state
 .wrangler/
 
