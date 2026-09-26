@@ -27,7 +27,8 @@
   },
   "dependencies": {
     "@tremolo-ui/dom": "^0.7.0",
-    "@tremolo-ui/functions": "^0.7.0"
+    "@tremolo-ui/functions": "^0.7.0",
+    "esm-env": "^1.2.2"
   },
   "files": [
     "dist"
