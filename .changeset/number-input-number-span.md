@@ -13,5 +13,4 @@ Treat everything in a number input's text that is not the unit as the number.
 The default `parse` reads the same number, and gives `NaN`, which leaves the
 value alone, for one it cannot read whole instead of the digits in front:
 `1,000 Hz` and `1:30` no longer commit 1, and a number with a unit in front is
-left to a `parse` of your own. `parseLeadingNumber` and `leadingNumberLength`
-in `@tremolo-ui/dom` become `parseNumberText` and `numberSpan`.
+left to a `parse` of your own.
