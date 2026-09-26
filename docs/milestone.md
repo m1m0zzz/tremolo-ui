@@ -43,7 +43,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - [ ] **main に入れる前に** npm へ手動 publish し、trusted publisher を登録する（下の「新パッケージを追加する際の手順」）
 - [ ] `@tremolo-ui/vue`
   - [x] パッケージの器（tsdown / vitest）と composables（`useDrag` / `useDragValue` / `useWheel` / `useLongPress` / `useDropZone` / MIDI）。コンポーネントは SFC ではなく `defineComponent` + `h()` で書く
-  - [ ] コンポーネント
+  - [x] コンポーネント（名前はフラット、Root はコンポーネント名そのもの。値は `v-model`、React の `InputField` は `NumberInputField`）
   - [ ] Storybook と Worker
   - [ ] **main に入れる前に** npm へ手動 publish し、trusted publisher を登録する
 
