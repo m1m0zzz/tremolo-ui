@@ -3,6 +3,7 @@ import {
   defineComponent,
   h,
   nextTick,
+  reactive,
   ref,
   useTemplateRef,
   type ShallowRef,
@@ -49,6 +50,31 @@ test('useDrag reports the movement, following new options in place', async () =>
   await nextTick()
   element.dispatchEvent(pointerEvent('pointermove', { screenX: 10 }))
   expect(second).toHaveBeenCalled()
+})
+
+test('useDrag stops using an option taken out of the options', async () => {
+  const onDrag = vi.fn()
+  const enabled = ref(true)
+  const { element } = await mount((el) =>
+    useDrag(el, () => (enabled.value ? { onDrag } : {})),
+  )
+  enabled.value = false
+  await nextTick()
+  element.dispatchEvent(pointerEvent('pointerdown', { screenX: 0 }))
+  element.dispatchEvent(pointerEvent('pointermove', { screenX: 5 }))
+  expect(onDrag).not.toHaveBeenCalled()
+})
+
+test('useWheel follows a property of reactive options', async () => {
+  const onWheel = vi.fn()
+  const options = reactive({ requireFocus: true })
+  const { element } = await mount((el) => useWheel(el, onWheel, options))
+  element.dispatchEvent(new WheelEvent('wheel', { deltaY: 100 }))
+  expect(onWheel).not.toHaveBeenCalled()
+  options.requireFocus = false
+  await nextTick()
+  element.dispatchEvent(new WheelEvent('wheel', { deltaY: 100 }))
+  expect(onWheel).toHaveBeenCalledTimes(1)
 })
 
 test('useDragValue drives a value', async () => {
