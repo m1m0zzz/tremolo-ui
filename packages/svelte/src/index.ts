@@ -18,6 +18,12 @@ export {
   type NumberInputContextValue,
 } from './components/NumberInput/context.js'
 export type { NumberInputProps } from './components/NumberInput/types.js'
+export * as Piano from './components/Piano/index.js'
+export type {
+  KeyAttributes,
+  KeyState,
+  PianoProps,
+} from './components/Piano/types.js'
 export * as Slider from './components/Slider/index.js'
 export {
   useSliderContext,
