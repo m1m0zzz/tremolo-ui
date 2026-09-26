@@ -183,14 +183,20 @@ export function noteAt(
 }
 
 /**
- * The white key width that makes the keyboard fill `width`, for a keyboard
- * that follows the size of its container.
+ * The white key width that makes the keyboard exactly `width` wide, for a
+ * keyboard that follows the size of its container.
+ *
+ * Solved from {@link pianoWidth} rather than by dividing among the white
+ * keys, so that a range that starts or ends on a black key — which sticks out
+ * by a fraction of a white key — still fills the container. The width grows
+ * linearly with the white key width, so two samples pin it down.
  */
 export function fitWhiteKeyWidth(
   width: number,
-  noteRange: NoteRange,
-  keyGap = 1,
+  layout: Omit<PianoLayout, 'whiteKeyWidth'>,
 ): number {
-  const whiteKeys = getNoteRangeArray(noteRange).filter(isWhiteKey).length
-  return width / Math.max(whiteKeys, 1) - keyGap
+  const at = (whiteKeyWidth: number) => pianoWidth({ ...layout, whiteKeyWidth })
+  const slope = at(2) - at(1)
+  if (slope <= 0) return 0
+  return (width - (at(1) - slope)) / slope
 }

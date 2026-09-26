@@ -147,8 +147,20 @@ describe('unit test', () => {
   })
 })
 
-test('fitWhiteKeyWidth fills the width with the white keys', () => {
-  // C3..B4 has 14 white keys, each taking its width plus the gap.
-  expect(fitWhiteKeyWidth(14 * 41, layout.noteRange)).toBe(40)
-  expect(fitWhiteKeyWidth(14 * 12, layout.noteRange, 2)).toBe(10)
+describe('fitWhiteKeyWidth', () => {
+  test('fills the width with the white keys', () => {
+    // C3..B4 has 14 white keys, each taking its width plus the gap.
+    expect(fitWhiteKeyWidth(14 * 41, layout)).toBeCloseTo(40)
+    expect(fitWhiteKeyWidth(14 * 12, { ...layout, keyGap: 2 })).toBeCloseTo(10)
+  })
+
+  test.each([
+    ['a lone black key', { first: 61, last: 61 }],
+    ['a black key at the start', { first: 61, last: 64 }],
+    ['a black key at the end', { first: 60, last: 63 }],
+  ])('makes the keyboard exactly as wide, with %s', (_, noteRange) => {
+    const fit = { noteRange, keyGap: 1, blackKeyWidthRatio: 0.65 }
+    const whiteKeyWidth = fitWhiteKeyWidth(200, fit)
+    expect(pianoWidth({ ...fit, whiteKeyWidth })).toBeCloseTo(200)
+  })
 })

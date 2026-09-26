@@ -284,12 +284,16 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
 
       const resizeObserver = new ResizeObserver(() => {
         setResizedKeyWidth(
-          fitWhiteKeyWidth(node.clientWidth, { first, last }, keyGap),
+          fitWhiteKeyWidth(node.clientWidth, {
+            noteRange: { first, last },
+            keyGap,
+            blackKeyWidthRatio,
+          }),
         )
       })
       resizeObserver.observe(parent)
       return () => resizeObserver.disconnect()
-    }, [resizable, node, first, last, keyGap])
+    }, [resizable, node, first, last, keyGap, blackKeyWidthRatio])
 
     useImperativeHandle(
       forwardedRef,

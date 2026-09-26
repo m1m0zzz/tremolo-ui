@@ -99,9 +99,13 @@
     const node = ref
     const parent = node.parentElement
     if (!parent) throw new Error("doesn't have a parent element.")
-    const range = { first: noteRange.first, last: noteRange.last }
+    const fit = {
+      noteRange: { first: noteRange.first, last: noteRange.last },
+      keyGap,
+      blackKeyWidthRatio,
+    }
     const observer = new ResizeObserver(() => {
-      resizedKeyWidth = fitWhiteKeyWidth(node.clientWidth, range, keyGap)
+      resizedKeyWidth = fitWhiteKeyWidth(node.clientWidth, fit)
     })
     observer.observe(parent)
     return () => observer.disconnect()
