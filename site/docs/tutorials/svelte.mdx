@@ -1,0 +1,107 @@
+---
+sidebar_position: 4
+title: Svelte
+---
+
+# Svelte
+
+`@tremolo-ui/svelte` has the same components as `@tremolo-ui/react`, with the
+same parts, props, `data-*` attributes and [theme](/docs/tutorials/styling).
+Each component page shows the Svelte version of its example under the
+**Svelte** tab. This page covers what is written differently.
+
+It needs Svelte 5.40 or later.
+
+```bash npm2yarn
+npm install @tremolo-ui/svelte
+```
+
+## Components
+
+A component is a set of parts under one name, written with a dot:
+
+```html
+<script lang="ts">
+  import { Knob } from '@tremolo-ui/svelte'
+
+  let value = $state(50)
+</script>
+
+<Knob.Root bind:value min={0} max={100}>
+  <Knob.SVGRoot>
+    <Knob.InactiveLine />
+    <Knob.ActiveLine />
+    <Knob.Thumb />
+  </Knob.SVGRoot>
+</Knob.Root>
+```
+
+What differs from React:
+
+| | React | Svelte |
+| --- | --- | --- |
+| The value | `value` + `onChange` | `bind:value`, or `value` + `onChange` |
+| A class | `className` | `class` |
+| A style | an object | a string, as for any element |
+| The element | `ref` | `bind:ref` |
+| Methods (`focus`, `playNote`, …) | through `ref` | through `bind:this` |
+| Content given as a function (`Piano`'s `label`) | a function returning JSX | a snippet |
+| A part of your own | `useKnobContext(selector)` | `useKnobContext()`, whose fields follow the value |
+
+## Actions
+
+The React hooks that attach an interaction to an element are actions here.
+They take the options of the matching function in `@tremolo-ui/dom`, and
+changing the options does not interrupt a drag in progress.
+
+| React | Svelte | Options |
+| --- | --- | --- |
+| `useDrag` | `use:drag` | `createDrag` |
+| `useDragValue` | `use:dragValue` | `createDragValue` |
+| `useWheel` | `use:wheel` | `createWheel`, with `onWheel` |
+| `useLongPress` | `use:longPress` | `createLongPress` |
+| `useDropZone` | `use:dropZone` | `createDropZone` |
+
+```html
+<script lang="ts">
+  import { relativeMapping } from '@tremolo-ui/dom'
+  import { dragValue } from '@tremolo-ui/svelte'
+
+  let value = $state(50)
+</script>
+
+<div
+  use:dragValue={{
+    axis: { min: 0, max: 100 },
+    mapping: relativeMapping({ pixelRange: 200 }),
+    getValue: () => [value, value],
+    onChange: ([x]) => (value = x),
+  }}
+>
+  {value}
+</div>
+```
+
+## MIDI
+
+`useMIDIAccess`, `useMIDIInput` and `useMIDIMessage` are called while a
+component initialises. What can change is passed as a function, so that it is
+read reactively:
+
+```html
+<script lang="ts">
+  import { useMIDIAccess, useMIDIInput } from '@tremolo-ui/svelte'
+
+  const midi = useMIDIAccess(false)
+  useMIDIInput(
+    () => midi.midiAccess,
+    () => ({ onNoteOnEvent: (note, velocity) => play(note, velocity) }),
+  )
+</script>
+
+<button onclick={() => midi.request()}>Connect MIDI</button>
+```
+
+## Storybook
+
+The Svelte components have a [Storybook of their own](https://tremolo-ui.mimoz.dev/i/storybook-svelte/).

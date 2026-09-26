@@ -5,6 +5,9 @@ import GitHubLink from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/components/animation-canvas/basic'
 import reactive from '!!raw-loader!@site/examples/components/animation-canvas/reactive'
 import saveRestore from '!!raw-loader!@site/examples/components/animation-canvas/save-restore'
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import svelteBasic from '!!raw-loader!@site/examples/svelte/AnimationCanvas.svelte'
 
 # AnimationCanvas
 
@@ -14,6 +17,9 @@ A simple animatable canvas with `requestAnimationFrame()`
   path='packages/react/src/components/AnimationCanvas/index.tsx'
 />
 
+<Tabs groupId="framework" queryString>
+<TabItem value="react" label="React">
+
 <CodeBlock
   jsx
   live
@@ -21,11 +27,32 @@ A simple animatable canvas with `requestAnimationFrame()`
   sourcePath='examples/components/animation-canvas/basic.tsx'
 >{basic}</CodeBlock>
 
+</TabItem>
+<TabItem value="svelte" label="Svelte">
+
+<CodeBlock language="html" title="App.svelte">{svelteBasic}</CodeBlock>
+
+</TabItem>
+</Tabs>
+
 ## Import
+
+<Tabs groupId="framework" queryString>
+<TabItem value="react" label="React">
 
 ```jsx
 import { AnimationCanvas } from '@tremolo-ui/react'
 ```
+
+</TabItem>
+<TabItem value="svelte" label="Svelte">
+
+```js
+import { AnimationCanvas } from '@tremolo-ui/svelte'
+```
+
+</TabItem>
+</Tabs>
 
 
 ## Features
@@ -39,6 +66,10 @@ import { AnimationCanvas } from '@tremolo-ui/react'
 
 `AnimationCanvas` renders a `<canvas>` and takes its attributes, such as
 `className` and `style`. A ref reaches the `<canvas>`.
+
+In Svelte the props are the same, written the Svelte way — `class` rather
+than `className`, `bind:value`, snippets for content. See
+[Svelte](/docs/tutorials/svelte).
 
 <PropsTable of="AnimationCanvasCommonProps" />
 

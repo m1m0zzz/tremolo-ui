@@ -1,0 +1,100 @@
+---
+sidebar_position: 4
+title: Svelte
+---
+
+# Svelte
+
+`@tremolo-ui/svelte` には `@tremolo-ui/react` と同じコンポーネントがあり、パーツ・props・`data-*` 属性・[テーマ](/docs/tutorials/styling)も同じです。各コンポーネントのページでは、**Svelte** タブに Svelte 版の例を載せています。このページでは、書き方が違うところをまとめます。
+
+Svelte 5.40 以降が必要です。
+
+```bash npm2yarn
+npm install @tremolo-ui/svelte
+```
+
+## コンポーネント
+
+1 つのコンポーネントは、1 つの名前の下にパーツをまとめたもので、ドットで書きます。
+
+```html
+<script lang="ts">
+  import { Knob } from '@tremolo-ui/svelte'
+
+  let value = $state(50)
+</script>
+
+<Knob.Root bind:value min={0} max={100}>
+  <Knob.SVGRoot>
+    <Knob.InactiveLine />
+    <Knob.ActiveLine />
+    <Knob.Thumb />
+  </Knob.SVGRoot>
+</Knob.Root>
+```
+
+React との違い:
+
+| | React | Svelte |
+| --- | --- | --- |
+| 値 | `value` + `onChange` | `bind:value`、または `value` + `onChange` |
+| クラス | `className` | `class` |
+| スタイル | オブジェクト | 文字列（ふつうの要素と同じ） |
+| 要素 | `ref` | `bind:ref` |
+| メソッド（`focus`、`playNote` など） | `ref` から | `bind:this` から |
+| 関数で渡す中身（`Piano` の `label`） | JSX を返す関数 | snippet |
+| 自分で作るパーツ | `useKnobContext(selector)` | `useKnobContext()`。各フィールドが値に追従する |
+
+## actions
+
+要素にインタラクションを付ける React の hooks は、Svelte では actions です。`@tremolo-ui/dom` の対応する関数と同じオプションを受け取り、オプションを変えてもドラッグの途中で切れません。
+
+| React | Svelte | オプション |
+| --- | --- | --- |
+| `useDrag` | `use:drag` | `createDrag` |
+| `useDragValue` | `use:dragValue` | `createDragValue` |
+| `useWheel` | `use:wheel` | `createWheel`（と `onWheel`） |
+| `useLongPress` | `use:longPress` | `createLongPress` |
+| `useDropZone` | `use:dropZone` | `createDropZone` |
+
+```html
+<script lang="ts">
+  import { relativeMapping } from '@tremolo-ui/dom'
+  import { dragValue } from '@tremolo-ui/svelte'
+
+  let value = $state(50)
+</script>
+
+<div
+  use:dragValue={{
+    axis: { min: 0, max: 100 },
+    mapping: relativeMapping({ pixelRange: 200 }),
+    getValue: () => [value, value],
+    onChange: ([x]) => (value = x),
+  }}
+>
+  {value}
+</div>
+```
+
+## MIDI
+
+`useMIDIAccess`、`useMIDIInput`、`useMIDIMessage` はコンポーネントの初期化中に呼びます。変わりうるものは関数で渡すので、リアクティブに読まれます。
+
+```html
+<script lang="ts">
+  import { useMIDIAccess, useMIDIInput } from '@tremolo-ui/svelte'
+
+  const midi = useMIDIAccess(false)
+  useMIDIInput(
+    () => midi.midiAccess,
+    () => ({ onNoteOnEvent: (note, velocity) => play(note, velocity) }),
+  )
+</script>
+
+<button onclick={() => midi.request()}>MIDI に接続</button>
+```
+
+## Storybook
+
+Svelte のコンポーネントには[専用の Storybook](https://tremolo-ui.mimoz.dev/i/storybook-svelte/)があります。
