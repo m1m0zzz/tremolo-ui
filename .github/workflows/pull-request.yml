@@ -61,7 +61,7 @@ jobs:
     - name: Build templates
       run: npm run build -w templates/vite-react-ts -w templates/next-ts
 
-    - run: npm run build:sb -w packages/react -w packages/svelte
+    - run: npm run build:sb -w packages/react -w packages/svelte -w packages/vue
 
     - run: npm run build -w site
 
@@ -88,32 +88,72 @@ jobs:
         esac
         echo "alias=$alias" >> "$GITHUB_OUTPUT"
 
-    - name: Upload preview
-      id: upload
+    # Worker ごとにステップを分け、1 つが落ちても残りは上げる。コメントも行ごとに
+    # 結果を出す。落ちたことは最後のステップでジョブの失敗にする。
+    - name: Upload docs preview
+      id: upload-docs
       if: ${{ !github.event.pull_request.head.repo.fork }}
+      continue-on-error: true
       env:
         CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         ALIAS: ${{ steps.preview.outputs.alias }}
-      run: |
-        npx wrangler versions upload --config site/wrangler.jsonc --preview-alias "$ALIAS"
-        npx wrangler versions upload --config packages/react/wrangler.jsonc --preview-alias "$ALIAS"
-        npx wrangler versions upload --config packages/svelte/wrangler.jsonc --preview-alias "$ALIAS"
+      run: npx wrangler versions upload --config site/wrangler.jsonc --preview-alias "$ALIAS"
+
+    - name: Upload Storybook (React) preview
+      id: upload-react
+      if: ${{ !github.event.pull_request.head.repo.fork }}
+      continue-on-error: true
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        ALIAS: ${{ steps.preview.outputs.alias }}
+      run: npx wrangler versions upload --config packages/react/wrangler.jsonc --preview-alias "$ALIAS"
+
+    - name: Upload Storybook (Svelte) preview
+      id: upload-svelte
+      if: ${{ !github.event.pull_request.head.repo.fork }}
+      continue-on-error: true
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        ALIAS: ${{ steps.preview.outputs.alias }}
+      run: npx wrangler versions upload --config packages/svelte/wrangler.jsonc --preview-alias "$ALIAS"
+
+    - name: Upload Storybook (Vue) preview
+      id: upload-vue
+      if: ${{ !github.event.pull_request.head.repo.fork }}
+      continue-on-error: true
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        ALIAS: ${{ steps.preview.outputs.alias }}
+      run: npx wrangler versions upload --config packages/vue/wrangler.jsonc --preview-alias "$ALIAS"
 
     - name: ステータスとタイムスタンプを算出
       if: always()
       id: status
       shell: bash
+      env:
+        DOCS: ${{ steps.upload-docs.outcome }}
+        REACT: ${{ steps.upload-react.outcome }}
+        SVELTE: ${{ steps.upload-svelte.outcome }}
+        VUE: ${{ steps.upload-vue.outcome }}
       run: |
-        case "${{ steps.upload.outcome }}" in
-          success)   STATUS="✅ Success"   ;;
-          cancelled) STATUS="⚠️ Cancelled" ;;
-          *)         STATUS="❌ Failed"    ;;
-        esac
+        status() {
+          case "$1" in
+            success)   echo "✅ Success"   ;;
+            cancelled) echo "⚠️ Cancelled" ;;
+            *)         echo "❌ Failed"    ;;
+          esac
+        }
         TIMESTAMP=$(TZ=Asia/Tokyo date '+%Y/%m/%d %H:%M')
         RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         {
-          echo "text=${STATUS}"
+          echo "docs=$(status "$DOCS")"
+          echo "react=$(status "$REACT")"
+          echo "svelte=$(status "$SVELTE")"
+          echo "vue=$(status "$VUE")"
           echo "timestamp=${TIMESTAMP}"
           echo "run_url=${RUN_URL}"
         } >> "$GITHUB_OUTPUT"
@@ -127,8 +167,20 @@ jobs:
         message: |
           | Preview URL | Status | Timestamp (JST) |
           |---|---|---|
-          | ${{ steps.upload.outcome == 'success' && format('[Docs](https://{0}-tremolo-ui-docs.{1}.workers.dev/)', steps.preview.outputs.alias, vars.CLOUDFLARE_WORKERS_SUBDOMAIN) || 'Docs' }} | [${{ steps.status.outputs.text }}](${{ steps.status.outputs.run_url }}) | ${{ steps.status.outputs.timestamp }} |
-          | ${{ steps.upload.outcome == 'success' && format('[Storybook (React)](https://{0}-tremolo-ui-sb-react.{1}.workers.dev/i/storybook-react/)', steps.preview.outputs.alias, vars.CLOUDFLARE_WORKERS_SUBDOMAIN) || 'Storybook (React)' }} | [${{ steps.status.outputs.text }}](${{ steps.status.outputs.run_url }}) | ${{ steps.status.outputs.timestamp }} |
-          | ${{ steps.upload.outcome == 'success' && format('[Storybook (Svelte)](https://{0}-tremolo-ui-sb-svelte.{1}.workers.dev/i/storybook-svelte/)', steps.preview.outputs.alias, vars.CLOUDFLARE_WORKERS_SUBDOMAIN) || 'Storybook (Svelte)' }} | [${{ steps.status.outputs.text }}](${{ steps.status.outputs.run_url }}) | ${{ steps.status.outputs.timestamp }} |
+          | ${{ steps.upload-docs.outcome == 'success' && format('[Docs](https://{0}-tremolo-ui-docs.{1}.workers.dev/)', steps.preview.outputs.alias, vars.CLOUDFLARE_WORKERS_SUBDOMAIN) || 'Docs' }} | [${{ steps.status.outputs.docs }}](${{ steps.status.outputs.run_url }}) | ${{ steps.status.outputs.timestamp }} |
+          | ${{ steps.upload-react.outcome == 'success' && format('[Storybook (React)](https://{0}-tremolo-ui-sb-react.{1}.workers.dev/i/storybook-react/)', steps.preview.outputs.alias, vars.CLOUDFLARE_WORKERS_SUBDOMAIN) || 'Storybook (React)' }} | [${{ steps.status.outputs.react }}](${{ steps.status.outputs.run_url }}) | ${{ steps.status.outputs.timestamp }} |
+          | ${{ steps.upload-svelte.outcome == 'success' && format('[Storybook (Svelte)](https://{0}-tremolo-ui-sb-svelte.{1}.workers.dev/i/storybook-svelte/)', steps.preview.outputs.alias, vars.CLOUDFLARE_WORKERS_SUBDOMAIN) || 'Storybook (Svelte)' }} | [${{ steps.status.outputs.svelte }}](${{ steps.status.outputs.run_url }}) | ${{ steps.status.outputs.timestamp }} |
+          | ${{ steps.upload-vue.outcome == 'success' && format('[Storybook (Vue)](https://{0}-tremolo-ui-sb-vue.{1}.workers.dev/i/storybook-vue/)', steps.preview.outputs.alias, vars.CLOUDFLARE_WORKERS_SUBDOMAIN) || 'Storybook (Vue)' }} | [${{ steps.status.outputs.vue }}](${{ steps.status.outputs.run_url }}) | ${{ steps.status.outputs.timestamp }} |
 
           *このコメントは新しいコミットごとに更新されます。*
+
+    # continue-on-error で先へ進めたアップロードの失敗を、ここでジョブの失敗にする。
+    - name: Fail if a preview upload failed
+      if: >-
+        steps.upload-docs.outcome == 'failure' ||
+        steps.upload-react.outcome == 'failure' ||
+        steps.upload-svelte.outcome == 'failure' ||
+        steps.upload-vue.outcome == 'failure'
+      run: |
+        echo "::error::A preview upload failed. See the upload steps."
+        exit 1
