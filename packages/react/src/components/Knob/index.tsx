@@ -303,9 +303,12 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
 
     const wheelRefCallback = useWheel<HTMLElement>((event) => {
       if (!wheel || inactive) return
-      event.preventDefault()
+      // A notch the knob does not read — a sideways scroll — is left to the
+      // page rather than swallowed.
       const direction = wheelDirection(event)
-      if (!onChange || direction === null) return
+      if (direction === null) return
+      event.preventDefault()
+      if (!onChange) return
       onChange(applyDelta(value, direction, wheel, range, event))
     }, WHEEL_OPTIONS)
 

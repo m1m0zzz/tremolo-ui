@@ -283,9 +283,11 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
 
     const wheelRefCallback = useWheel<HTMLDivElement>((event) => {
       if (!wheel || !onChange || inactive) return
-      event.preventDefault()
+      // A notch the slider does not read — a sideways scroll on a vertical
+      // slider — is left to the page rather than swallowed.
       const direction = wheelDirection(event, { horizontal: !vertical })
       if (direction === null) return
+      event.preventDefault()
       onChange(
         applyDelta(value, reverse ? -direction : direction, wheel, axis, event),
       )

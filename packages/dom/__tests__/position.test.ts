@@ -18,6 +18,12 @@ test('follows the scale', () => {
   expect(valuePercent(632, range)).toBe(50)
 })
 
+test('reversed before rounding, so both ends agree at a halfway value', () => {
+  // 0.5% from the start is 99.5% from the end, which rounds to 100.
+  expect(valuePercent(1, { min: 0, max: 200 })).toBe(1)
+  expect(valuePercent(1, { min: 0, max: 200 }, true)).toBe(100)
+})
+
 test('rounded to a whole percentage', () => {
   expect(valuePercent(1, { min: 0, max: 3 })).toBe(33)
   expect(valuePercent(1, { min: 0, max: 3 }, true)).toBe(67)

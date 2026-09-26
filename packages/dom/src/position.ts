@@ -13,6 +13,8 @@ export function valuePercent(
   { min, max, scale = linearScale }: Pick<ValueRange, 'min' | 'max' | 'scale'>,
   reversed = false,
 ): number {
-  const percent = toFixed(scale.normalize(value, min, max) * 100)
-  return reversed ? toFixed(100 - percent) : percent
+  // Reversed before rounding, so that a value halfway between two whole
+  // percentages lands on the same one whichever end it is measured from.
+  const normalized = scale.normalize(value, min, max)
+  return toFixed((reversed ? 1 - normalized : normalized) * 100)
 }
