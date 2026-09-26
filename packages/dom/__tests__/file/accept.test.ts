@@ -1,4 +1,4 @@
-import { matchesAccept } from '../../src/file/accept'
+import { matchesAccept, partitionByAccept } from '../../src/file/accept'
 
 const wav = { name: 'loop.wav', type: 'audio/wav' }
 const png = { name: 'cover.png', type: 'image/png' }
@@ -47,4 +47,15 @@ test('an extension rule says nothing about a file whose name is withheld', () =>
   // A rule that can be decided still decides.
   expect(matchesAccept({ type: 'image/png' }, 'audio/*')).toBe(false)
   expect(matchesAccept({ type: 'image/png' }, 'audio/*, .wav')).toBe(true)
+})
+
+test('partitionByAccept splits files and keeps their order', () => {
+  const files = [
+    new File([''], 'a.wav', { type: 'audio/wav' }),
+    new File([''], 'b.png', { type: 'image/png' }),
+    new File([''], 'c.mp3', { type: 'audio/mpeg' }),
+  ]
+  const { accepted, rejected } = partitionByAccept(files, 'audio/*')
+  expect(accepted.map((f) => f.name)).toEqual(['a.wav', 'c.mp3'])
+  expect(rejected.map((f) => f.name)).toEqual(['b.png'])
 })

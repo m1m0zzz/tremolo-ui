@@ -1,4 +1,4 @@
-import { decimalDigits } from './decimal-digits'
+import { decimalDigits } from '../../src/slider/decimal-digits'
 
 test('decimalDigits counts the digits written after the point', () => {
   expect(decimalDigits(3)).toBe(0)

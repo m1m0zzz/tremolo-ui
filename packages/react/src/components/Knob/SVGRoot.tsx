@@ -1,8 +1,8 @@
 import { ReactNode, SVGProps } from 'react'
 
-import { Placement } from '../_util/Placement'
+import { KNOB_VIEWBOX_SIZE } from '@tremolo-ui/dom'
 
-import { viewBoxSize } from './context'
+import { Placement } from '../_util/Placement'
 
 export interface KnobSVGRootProps {
   /**
@@ -19,7 +19,7 @@ export function SVGRoot({
 }: KnobSVGRootProps & Omit<SVGProps<SVGSVGElement>, keyof KnobSVGRootProps>) {
   return (
     <svg
-      viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
+      viewBox={`0 0 ${KNOB_VIEWBOX_SIZE} ${KNOB_VIEWBOX_SIZE}`}
       style={{
         display: 'block',
         ...style,

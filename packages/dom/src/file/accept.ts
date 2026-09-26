@@ -56,3 +56,20 @@ export function matchesAccept(
 
   return undecided
 }
+
+/**
+ * Split files into those that satisfy `accept` and those that do not, keeping
+ * their order. See {@link matchesAccept}.
+ */
+export function partitionByAccept(
+  files: Iterable<File>,
+  accept?: string,
+): { accepted: File[]; rejected: File[] } {
+  const accepted: File[] = []
+  const rejected: File[] = []
+  for (const file of files) {
+    if (matchesAccept(file, accept)) accepted.push(file)
+    else rejected.push(file)
+  }
+  return { accepted, rejected }
+}

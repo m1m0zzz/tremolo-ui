@@ -1,11 +1,11 @@
 import { ComponentPropsWithoutRef, CSSProperties } from 'react'
 
-import { cssLength } from '../_util/css-length'
+import { cssLength, type MarksOptions, sliderMarks } from '@tremolo-ui/dom'
+
 import { Placement } from '../_util/Placement'
 
 import { useSliderContext } from './context'
 import { MarksOption } from './MarksOption'
-import { generateOptionsList, MarksOptions } from './type'
 
 import type { CSSVariables } from '../../css-variables'
 
@@ -43,9 +43,7 @@ export function Marks({
   const vertical = useSliderContext((s) => s.vertical)
   const reverse = useSliderContext((s) => s.reverse)
 
-  const optionsList = options
-    ? generateOptionsList(options, min, max, step)
-    : []
+  const optionsList = options ? sliderMarks(options, min, max, step) : []
   if (vertical !== reverse) optionsList.reverse()
 
   return (

@@ -1,8 +1,10 @@
 import { SVGProps } from 'react'
 
+import { knobArcPath, knobArcRadius } from '@tremolo-ui/dom'
+
 import { useCheckPlacement } from '../_util/Placement'
 
-import { arcPath, arcRadius, useKnobContext } from './context'
+import { useKnobContext } from './context'
 
 export function InactiveLine({
   stroke = 'currentColor',
@@ -21,14 +23,14 @@ export function InactiveLine({
   const r3 = useKnobContext((s) => s.r3)
   const r4 = useKnobContext((s) => s.r4)
 
-  const radius = arcRadius(strokeWidth)
+  const radius = knobArcRadius(strokeWidth)
 
   return (
     <>
       {startValue > min && (
         <path
           className={className}
-          d={arcPath(r1, r2, radius)}
+          d={knobArcPath(r1, r2, radius)}
           fill="none"
           stroke={stroke}
           strokeWidth={strokeWidth}
@@ -38,7 +40,7 @@ export function InactiveLine({
       {startValue < max && (
         <path
           className={className}
-          d={arcPath(r3, r4, radius)}
+          d={knobArcPath(r3, r4, radius)}
           fill="none"
           stroke={stroke}
           strokeWidth={strokeWidth}

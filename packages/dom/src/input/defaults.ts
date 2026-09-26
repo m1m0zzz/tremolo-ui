@@ -1,13 +1,13 @@
-import { type InputEventOption, type ModifierValue } from '@tremolo-ui/dom'
+import { type InputEventOption, type ModifierValue } from './modifiers'
 
 /**
  * The keyboard amount used by Knob, NumberInput, Slider, and XYPad by default:
  * 1 per press in the units of the value, and 0.1 with shift held. That is one
  * `step` only while `step` is 1; a coarser `step` rounds 1 straight back, which
- * `useCheckSteps` warns about.
+ * `checkSteps` warns about.
  *
  * A modifier entry is not snapped to `step`, which is what lets the finer
- * amount move at all — see `applyDelta` in `@tremolo-ui/dom`.
+ * amount move at all — see `applyDelta`.
  */
 export const DEFAULT_KEYBOARD_OPTIONS: ModifierValue<InputEventOption> = {
   default: ['raw', 1],

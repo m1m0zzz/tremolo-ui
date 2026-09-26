@@ -1,8 +1,7 @@
-import { ComponentPropsWithoutRef, CSSProperties, useCallback } from 'react'
+import { ComponentPropsWithoutRef, CSSProperties } from 'react'
 
-import { toFixed } from '@tremolo-ui/functions'
+import { cssLength, valuePercent } from '@tremolo-ui/dom'
 
-import { cssLength } from '../_util/css-length'
 import { useCheckPlacement } from '../_util/Placement'
 
 import { useSliderContext } from './context'
@@ -66,14 +65,8 @@ export function MarksOption({
   const vertical = useSliderContext((s) => s.vertical)
   const reverse = useSliderContext((s) => s.reverse)
 
-  const calcPercent = useCallback(
-    (value: number) => {
-      // The marks have to sit on the same curve the thumb runs along.
-      const percent = scale.normalize(value, min, max) * 100
-      return toFixed(vertical !== reverse ? 100 - percent : percent)
-    },
-    [vertical, reverse, max, min, scale],
-  )
+  // The marks have to sit on the same curve the thumb runs along.
+  const percent = valuePercent(value, { min, max, scale }, vertical !== reverse)
 
   return (
     <div
@@ -92,8 +85,8 @@ export function MarksOption({
           zIndex: 10,
           ...style,
           // Where the mark belongs on the track: the value, not a style.
-          left: !vertical ? `${calcPercent(value)}%` : undefined,
-          top: vertical ? `${calcPercent(value)}%` : undefined,
+          left: !vertical ? `${percent}%` : undefined,
+          top: vertical ? `${percent}%` : undefined,
         } as CSSProperties
       }
       data-orientation={vertical ? 'vertical' : 'horizontal'}
