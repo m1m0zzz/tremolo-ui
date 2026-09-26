@@ -17,6 +17,16 @@ export {
   useNumberInputContext,
   type NumberInputContextValue,
 } from './components/NumberInput'
+export { Piano, type KeyAttributes, type KeyState } from './components/Piano'
+export {
+  PointsEditor,
+  PointsEditorBackground,
+  PointsEditorContainer,
+  PointsEditorPoint,
+  PointsEditorSelectionBox,
+  usePointsEditorContext,
+  type PointsEditorContextValue,
+} from './components/PointsEditor'
 export {
   Slider,
   SliderMarks,
