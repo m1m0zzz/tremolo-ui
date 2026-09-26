@@ -3,8 +3,6 @@ import {
   CSSProperties,
   forwardRef,
   ReactNode,
-  RefObject,
-  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -12,78 +10,23 @@ import {
 } from 'react'
 
 import {
-  applyDelta,
-  createSelectionBox,
+  createPointsEditor,
   DEFAULT_DRAG_SENSITIVITY,
   type InputEventOption,
-  type ModifierState,
   type ModifierValue,
-  type SelectionBoxInstance,
+  POINTS_EDITOR_DEFAULT_KEYBOARD,
+  POINTS_EDITOR_DEFAULT_WHEEL,
   type SelectionBoxRect,
-  type XY,
 } from '@tremolo-ui/dom'
-import { clamp, toPrecision } from '@tremolo-ui/functions'
 
 import { Background } from './Background'
 import { Container } from './Container'
-import { type PointRegistration, PointsEditorProvider } from './context'
-import { AXIS, Point, type PointBaseType } from './Point'
+import { PointsEditorProvider } from './context'
+import { Point } from './Point'
 import { SelectionBox } from './SelectionBox'
 
 /** One array for every editor with selection turned off, so memos hold still. */
 const EMPTY: readonly string[] = []
-
-/**
- * How far a point may move before something in the selection leaves its range.
- *
- * Clamping each point on its own would break the shape of the selection: the
- * one that reached the edge would stop while the rest carried on. One amount
- * for all of them means the whole selection stops together.
- */
-function allowedDelta(
-  delta: PointBaseType,
-  entries: { start: PointBaseType; registration: PointRegistration }[],
-): PointBaseType {
-  let loX = -Infinity
-  let hiX = Infinity
-  let loY = -Infinity
-  let hiY = Infinity
-
-  for (const { start, registration } of entries) {
-    loX = Math.max(loX, (registration.min?.x ?? 0) - start.x)
-    hiX = Math.min(hiX, (registration.max?.x ?? 1) - start.x)
-    loY = Math.max(loY, (registration.min?.y ?? 0) - start.y)
-    hiY = Math.min(hiY, (registration.max?.y ?? 1) - start.y)
-  }
-
-  // A point that started outside its own range leaves nothing to move within.
-  return {
-    x: hiX < loX ? 0 : clamp(delta.x, loX, hiX),
-    y: hiY < loY ? 0 : clamp(delta.y, loY, hiY),
-  }
-}
-
-/*
-TODO:
-
-- grid
-*/
-
-/**
- * A point moves over 0..1 in both axes, so a nudge of 0.01 crosses the editor
- * in a hundred steps whatever its pixel size.
- */
-const DEFAULT_WHEEL: ModifierValue<InputEventOption> = ['normalized', 0.01]
-
-/**
- * Shift is the fine-adjustment key everywhere else, so it is bound here too
- * — but only on the keyboard. On the wheel it already means the x axis, and
- * browsers hand shift+wheel over as horizontal scrolling anyway.
- */
-const DEFAULT_KEYBOARD: ModifierValue<InputEventOption> = {
-  default: ['normalized', 0.01],
-  shift: ['normalized', 0.001],
-}
 
 export interface PointsEditorProps {
   /**
@@ -213,8 +156,8 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
     {
       disabled = false,
       readonly = false,
-      wheel = DEFAULT_WHEEL,
-      keyboard = DEFAULT_KEYBOARD,
+      wheel = POINTS_EDITOR_DEFAULT_WHEEL,
+      keyboard = POINTS_EDITOR_DEFAULT_KEYBOARD,
       dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
       selectable = false,
       selection: selectionProp,
@@ -229,12 +172,13 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
     forwardedRef,
   ) => {
     const containerRef = useRef<HTMLDivElement>(null)
-
     // Picked apart so that the memo below depends on values rather than on the
     // object literal a caller writes inline, which is new on every render.
     const { cursor = 'grabbing' } = externalStyles ?? {}
 
     // --- selection ---
+    // The selection lives here, where React state can hold it; which points a
+    // press or a box selects, and how a selection moves, is the core's.
     const controlled = selectionProp !== undefined
     const [ownSelection, setOwnSelection] = useState<string[]>(
       defaultSelection ?? [],
@@ -243,220 +187,29 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
     // point it started on and `data-selected` never turns on.
     const selection = selectable ? (selectionProp ?? ownSelection) : EMPTY
 
-    // Drags read the selection from a native event handler, which runs after
-    // the commit, so a ref is current by the time it matters.
-    const selectionRef = useRef(selection)
-    const changeHandlerRef = useRef(onSelectionChange)
-    useEffect(() => {
-      selectionRef.current = selection
-      changeHandlerRef.current = onSelectionChange
-    })
-
-    const changeSelection = useCallback(
-      (next: string[]) => {
-        selectionRef.current = next
-        if (!controlled) setOwnSelection(next)
-        changeHandlerRef.current?.(next)
-      },
-      [controlled],
-    )
-
-    /**
-     * Every mounted point, by id. A registration is a ref rather than a value:
-     * the value inside changes on every frame of a drag, and a registry keyed
-     * on it would be rebuilt just as often.
-     */
-    const points = useRef(new Map<string, RefObject<PointRegistration>>())
-
-    const registerPoint = useCallback(
-      (id: string, entry: RefObject<PointRegistration>) => {
-        points.current.set(id, entry)
-        return () => {
-          points.current.delete(id)
-        }
-      },
-      [],
-    )
-
-    /** What the current drag picked up, and where those points started. */
-    const dragRef = useRef<{ id: string; start: PointBaseType }[]>([])
-
-    const snapshot = useCallback((ids: readonly string[]) => {
-      return ids.flatMap((id) => {
-        const registration = points.current.get(id)?.current
-        return registration ? [{ id, start: { ...registration.value } }] : []
-      })
-    }, [])
-
-    const applyDeltaTo = useCallback(
-      (
-        entries: { id: string; start: PointBaseType }[],
-        delta: PointBaseType,
-      ) => {
-        const withRegistration = entries.flatMap((entry) => {
-          const registration = points.current.get(entry.id)?.current
-          return registration ? [{ ...entry, registration }] : []
-        })
-        const allowed = allowedDelta(delta, withRegistration)
-        for (const { start, registration } of withRegistration) {
-          if (registration.readonly) continue
-          // Rounded here as well as in the pipeline: a move is a subtraction
-          // and an addition of its own, and that is enough to put the binary
-          // artefact back (0.2 + 0.1 lands on 0.30000000000000004).
-          registration.onChange?.({
-            x: toPrecision(start.x + allowed.x),
-            y: toPrecision(start.y + allowed.y),
-          })
-        }
-      },
-      [],
-    )
-
-    const beginPointDrag = useCallback(
-      (id: string, modifiers: ModifierState) => {
-        if (!selectable) {
-          dragRef.current = snapshot([id])
-          return
-        }
-        const current = selectionRef.current
-        // Ctrl / meta rather than shift: shift is the fine-adjustment key on
-        // every control here, and it cannot be both.
-        const additive = modifiers.ctrlKey || modifiers.metaKey
-        let next: readonly string[]
-        if (additive) {
-          next = current.includes(id)
-            ? current.filter((x) => x !== id)
-            : [...current, id]
-        } else if (current.includes(id)) {
-          // Already part of a group: keep it, so the group can be dragged.
-          next = current
-        } else {
-          next = [id]
-        }
-        changeSelection([...next])
-        // A press that took the point out of the selection was a deselect, not
-        // the start of a move, so there is nothing to drag.
-        dragRef.current = next.includes(id) ? snapshot(next) : []
-      },
-      [selectable, changeSelection, snapshot],
-    )
-
-    const movePointDrag = useCallback(
-      (delta: PointBaseType) => applyDeltaTo(dragRef.current, delta),
-      [applyDeltaTo],
-    )
-
-    const nudgeSelection = useCallback(
-      (id: string, delta: PointBaseType) => {
-        // From wherever the points are now: a key press is not a drag, so
-        // there is no earlier position to measure against.
-        const ids = selectionRef.current.includes(id)
-          ? selectionRef.current
-          : [id]
-        applyDeltaTo(snapshot(ids), delta)
-      },
-      [applyDeltaTo, snapshot],
-    )
-
-    const isPointElement = useCallback(
-      (element: Element | null | undefined) => {
-        if (!element) return false
-        for (const [, entry] of points.current) {
-          if (entry.current.element?.contains(element)) return true
-        }
-        return false
-      },
-      [],
-    )
-
-    const nudgeFocusedPoint = useCallback(
-      (axis: 'x' | 'y', direction: number, modifiers: ModifierState) => {
-        const container = containerRef.current
-        const active = container?.ownerDocument.activeElement
-        if (!container || !active || !container.contains(active)) return false
-        for (const [id, entry] of points.current) {
-          const { element, wheel, readonly, onChange, value } = entry.current
-          // A point answers only for the focus inside its own inputs, so both
-          // axes stay part of the same interaction.
-          if (!element?.contains(active)) continue
-          if (!wheel || readonly || !onChange) return false
-          const next = applyDelta(
-            value[axis],
-            direction,
-            wheel,
-            AXIS,
-            modifiers,
-          )
-          // As a move, so that the rest of the selection comes along and the
-          // whole group stops together at the edge.
-          nudgeSelection(id, {
-            x: axis === 'x' ? next - value.x : 0,
-            y: axis === 'y' ? next - value.y : 0,
-          })
-          return true
-        }
-        return false
-      },
-      [nudgeSelection],
-    )
-
-    // --- selection box ---
-    // The box itself lives in the core: which items a rectangle covers, and
-    // what a press adds to or replaces, are not React's to decide. What is
-    // left here is the registry it reads and the state the box is drawn from.
     const [selectionBox, setSelectionBox] = useState<SelectionBoxRect | null>(
       null,
     )
-    const selectionBoxRef = useRef<SelectionBoxInstance<string> | null>(null)
-    selectionBoxRef.current ??= createSelectionBox<string>({
-      *items(): Generator<readonly [string, XY<number>]> {
-        for (const [id, entry] of points.current) {
-          const { x, y } = entry.current.value
-          yield [id, [x, y]]
-        }
-      },
-      onBoxChange: setSelectionBox,
-    })
 
-    // The selection is reported to whoever owns it, and that handler is a new
-    // function whenever the caller's is, so it is handed over rather than
-    // closed over.
-    useEffect(() => {
-      selectionBoxRef.current?.update({ onSelectionChange: changeSelection })
-    }, [changeSelection])
-
-    useEffect(() => {
-      const box = selectionBoxRef.current
-      return () => box?.destroy()
-    }, [])
-
-    const beginSelectionBox = useCallback(
-      (at: PointBaseType, modifiers: ModifierState) => {
-        if (!selectable) return
-        selectionBoxRef.current?.begin([at.x, at.y], {
-          // Ctrl / meta rather than shift: shift is the fine-adjustment key on
-          // every control here, and it cannot be both.
-          additive: modifiers.ctrlKey || modifiers.metaKey,
-          selection: selectionRef.current,
-        })
-      },
-      [selectable],
+    const [editor] = useState(() =>
+      createPointsEditor({ onSelectionBoxChange: setSelectionBox }),
     )
 
-    const moveSelectionBox = useCallback((to: PointBaseType) => {
-      selectionBoxRef.current?.move([to.x, to.y])
-    }, [])
+    // Drags read the selection from a native event handler, which runs after
+    // the commit, so pushing it from an effect is current by the time it
+    // matters. The handler goes the same way: it closes over this render.
+    useEffect(() => {
+      editor.update({
+        selectable,
+        selection,
+        onSelectionChange: (next) => {
+          if (!controlled) setOwnSelection(next)
+          onSelectionChange?.(next)
+        },
+      })
+    })
 
-    const endSelectionBox = useCallback(() => {
-      if (!selectionBoxRef.current?.end()) return
-      // A selection box is drawn on the container, which is not a control and
-      // cannot hold focus, so the press that started it left the focus on
-      // nothing. The arrow keys and the wheel reach a point only through the
-      // focus, so it is handed to one of the points the box selected —
-      // whichever point takes it moves the whole selection.
-      const [first] = selectionRef.current
-      if (first) points.current.get(first)?.current.element?.focus()
-    }, [])
+    useEffect(() => () => editor.destroy(), [editor])
 
     const context = useMemo(
       () => ({
@@ -469,16 +222,8 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         containerRef,
         selectable,
         selection,
-        registerPoint,
-        isPointElement,
-        beginPointDrag,
-        movePointDrag,
-        nudgeSelection,
-        nudgeFocusedPoint,
+        editor,
         selectionBox,
-        beginSelectionBox,
-        moveSelectionBox,
-        endSelectionBox,
       }),
       [
         disabled,
@@ -489,16 +234,8 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         cursor,
         selectable,
         selection,
-        registerPoint,
-        isPointElement,
-        beginPointDrag,
-        movePointDrag,
-        nudgeSelection,
-        nudgeFocusedPoint,
+        editor,
         selectionBox,
-        beginSelectionBox,
-        moveSelectionBox,
-        endSelectionBox,
       ],
     )
 
@@ -540,8 +277,4 @@ export {
   usePointsEditorContext,
   type PointsEditorContextValue,
 } from './context'
-export {
-  clampPoint,
-  type PointBaseType,
-  type PointsEditorPointProps,
-} from './Point'
+export { type PointsEditorPointProps } from './Point'
