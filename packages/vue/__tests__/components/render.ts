@@ -31,12 +31,12 @@ export async function renderWithModel<T>(
       h(
         component,
         {
+          ...props,
           modelValue: model.value,
           'onUpdate:modelValue': (v: T) => {
             model.value = v
             onChange(v)
           },
-          ...props,
         },
         children,
       ),
