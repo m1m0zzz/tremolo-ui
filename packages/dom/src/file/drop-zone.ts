@@ -41,7 +41,8 @@ export interface DropZoneOptions {
   onDrop?: (files: File[], event: DragEvent) => void
   /**
    * Called with the dropped files that do not match `accept`, so that the
-   * reason can be shown.
+   * reason can be shown. It comes after `onDrop` for the same drop, so a list
+   * of rejected files can be cleared in `onDrop` and filled here.
    */
   onReject?: (files: File[], event: DragEvent) => void
   /** Called whenever {@link DropZoneInstance.state} would change. */
@@ -151,9 +152,9 @@ export function createDropZone(
       opts.accept,
     )
 
-    if (rejected.length > 0) opts.onReject?.(rejected, event)
     const taken = opts.multiple ? accepted : accepted.slice(0, 1)
     if (taken.length > 0) opts.onDrop?.(taken, event)
+    if (rejected.length > 0) opts.onReject?.(rejected, event)
   }
 
   /**

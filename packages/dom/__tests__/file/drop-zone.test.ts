@@ -107,7 +107,7 @@ test('the dropped files arrive, and the page is not navigated away', () => {
   instance.destroy()
 })
 
-test('accept splits the drop between onDrop and onReject', () => {
+test('accept splits the drop between onDrop and onReject, in that order', () => {
   const onDrop = vi.fn()
   const onReject = vi.fn()
   const instance = zone({ accept: 'audio/*', multiple: true, onDrop, onReject })
@@ -122,6 +122,10 @@ test('accept splits the drop between onDrop and onReject', () => {
   expect(onReject.mock.calls[0][0].map((f: File) => f.name)).toEqual([
     'cover.png',
   ])
+  // So a list of rejected files can be cleared in onDrop and filled after.
+  expect(onDrop.mock.invocationCallOrder[0]).toBeLessThan(
+    onReject.mock.invocationCallOrder[0],
+  )
   instance.destroy()
 })
 

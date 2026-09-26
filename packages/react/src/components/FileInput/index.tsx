@@ -45,7 +45,8 @@ export interface FileInputProps {
   /**
    * Called with the files that were picked and do not match `accept`, so that
    * the reason can be shown. Given alongside `onChange` when a selection held
-   * both.
+   * both, and after it, so a list of rejected files can be cleared in
+   * `onChange` and filled here.
    */
   onReject?: (files: File[]) => void
 
@@ -100,8 +101,8 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       // Nothing is lost: the files are already in hand.
       event.target.value = ''
 
-      if (rejected.length > 0) onReject?.(rejected)
       if (accepted.length > 0) onChange?.(accepted)
+      if (rejected.length > 0) onReject?.(rejected)
     }
 
     return (

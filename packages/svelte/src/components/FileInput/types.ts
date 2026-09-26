@@ -17,7 +17,10 @@ export interface FileInputProps {
   disabled?: boolean
   /** Called with the picked files that satisfy `accept`. */
   onChange?: (files: File[]) => void
-  /** Called with the picked files that do not satisfy `accept`. */
+  /**
+   * Called with the picked files that do not satisfy `accept`, after
+   * `onChange` for the same selection.
+   */
   onReject?: (files: File[]) => void
   /** The root element, bound with `bind:ref`. */
   ref?: HTMLDivElement | null

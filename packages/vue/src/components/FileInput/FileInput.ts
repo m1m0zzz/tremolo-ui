@@ -26,7 +26,7 @@ export const FileInput = /* @__PURE__ */ defineComponent({
   emits: {
     /** The picked files that satisfy `accept`. */
     change: (files: File[]) => Array.isArray(files),
-    /** The picked files that do not satisfy `accept`. */
+    /** The picked files that do not satisfy `accept`, after `change` for the same selection. */
     reject: (files: File[]) => Array.isArray(files),
   },
   setup(props, { slots, emit, attrs }) {
@@ -47,8 +47,8 @@ export const FileInput = /* @__PURE__ */ defineComponent({
       // Picking the same file twice fires no second change while the value
       // is still on the input, so it is cleared as soon as it is read.
       input.value = ''
-      if (rejected.length > 0) emit('reject', rejected)
       if (accepted.length > 0) emit('change', accepted)
+      if (rejected.length > 0) emit('reject', rejected)
     }
 
     return () => {

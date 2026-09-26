@@ -16,7 +16,7 @@ export const DropZone = /* @__PURE__ */ defineComponent({
   emits: {
     /** The dropped files that satisfy `accept`. */
     drop: (files: File[], _event: DragEvent) => Array.isArray(files),
-    /** The dropped files that do not satisfy `accept`. */
+    /** The dropped files that do not satisfy `accept`, after `drop` for the same drop. */
     reject: (files: File[], _event: DragEvent) => Array.isArray(files),
   },
   setup(props, { slots, emit }) {

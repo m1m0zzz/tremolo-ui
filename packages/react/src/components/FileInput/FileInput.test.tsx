@@ -56,7 +56,7 @@ test('the picked files arrive as an array', () => {
   ])
 })
 
-test('what accept refuses goes to onReject instead', () => {
+test('what accept refuses goes to onReject instead, after onChange', () => {
   const onChange = vi.fn()
   const onReject = vi.fn()
   const input = setup({ accept: 'audio/*', multiple: true, onChange, onReject })
@@ -67,6 +67,10 @@ test('what accept refuses goes to onReject instead', () => {
   expect(onReject.mock.calls[0][0].map((f: File) => f.name)).toEqual([
     'cover.png',
   ])
+  // So a list of rejected files can be cleared in onChange and filled after.
+  expect(onChange.mock.invocationCallOrder[0]).toBeLessThan(
+    onReject.mock.invocationCallOrder[0],
+  )
 })
 
 test('onChange is not called when every file was refused', () => {

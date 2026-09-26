@@ -8,7 +8,7 @@ test('the trigger names the file input', () => {
   expect(input).toHaveAttribute('type', 'file')
 })
 
-test('picked files are split by accept, and the input is cleared', async () => {
+test('picked files are split by accept, rejected last, and the input is cleared', async () => {
   const onChange = vi.fn()
   const onReject = vi.fn()
   render(FileInputFixture, { props: { accept: 'audio/*', onChange, onReject } })
@@ -22,6 +22,9 @@ test('picked files are split by accept, and the input is cleared', async () => {
   await fireEvent.change(input)
   expect(onChange).toHaveBeenCalledWith([wav])
   expect(onReject).toHaveBeenCalledWith([png])
+  expect(onChange.mock.invocationCallOrder[0]).toBeLessThan(
+    onReject.mock.invocationCallOrder[0],
+  )
   expect(input.value).toBe('')
 })
 
