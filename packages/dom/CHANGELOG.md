@@ -1,5 +1,12 @@
 # @tremolo-ui/dom
 
+## 0.8.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tremolo-ui/functions@0.8.0
+
 ## 0.7.0
 
 ### Minor Changes

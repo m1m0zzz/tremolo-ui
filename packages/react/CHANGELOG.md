@@ -1,5 +1,23 @@
 # @tremolo-ui/react
 
+## 0.8.0
+
+### Minor Changes
+
+- [#318](https://github.com/m1m0zzz/tremolo-ui/pull/318) [`e7e695b`](https://github.com/m1m0zzz/tremolo-ui/commit/e7e695b0cef4b628ffd0973b76107a6932cc9ad8) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Remove appearance props that only forwarded a value to one CSS declaration:
+  `Piano.Root.height`, `PointsEditor.Root.width` and `height`,
+  `PointsEditor.Point.size`, `width`, and `height`,
+  `Slider.MarksOption.labelWidth`, and `XYPad.Area.width`, `height`, and `color`.
+  Set those values through CSS or `style` instead. The demo theme also uses
+  ordinary CSS declarations for Piano key colours.
+  `XYPadAreaProps` is no longer exported; use `ComponentProps<typeof XYPad.Area>`.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tremolo-ui/dom@0.8.0
+  - @tremolo-ui/functions@0.8.0
+
 ## 0.7.0
 
 ### Minor Changes
