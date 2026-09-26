@@ -9,6 +9,15 @@ export {
   type KnobContextValue,
 } from './components/Knob'
 export {
+  NumberInput,
+  NumberInputDecrementStepper,
+  NumberInputField,
+  NumberInputIncrementStepper,
+  NumberInputStepper,
+  useNumberInputContext,
+  type NumberInputContextValue,
+} from './components/NumberInput'
+export {
   Slider,
   SliderMarks,
   SliderMarksOption,
