@@ -20,7 +20,7 @@ import {
   numberInputBounds,
   numberInputRanges,
   nudgeNumberInput,
-  parseLeadingNumber,
+  parseNumberText,
   wheelDirection,
 } from '@tremolo-ui/dom'
 import { linearScale, type Scale } from '@tremolo-ui/functions'
@@ -85,6 +85,9 @@ export interface NumberInputProps {
    * Read a value back out of the text. Has to undo `format`.
    *
    * Text with no number in it reads as `NaN`, which leaves the value alone.
+   * The default, `parseNumberText` from `@tremolo-ui/dom`, reads the number
+   * with the unit around it left out, and is `NaN` for one it cannot read
+   * whole: `1,000`, `1:30`, or a number with a unit in front, such as `L 30`.
    */
   parse?: (text: string) => number
 
@@ -162,7 +165,7 @@ export interface NumberInputProps {
 
   /**
    * Select the text when `InputField` takes focus: `'all'` selects all of it,
-   * `'number'` only the leading number, leaving whatever the format appended,
+   * `'number'` only the number, leaving the unit the format put around it,
    * and `'none'` leaves the caret where the click put it.
    * @default 'none'
    */
@@ -292,7 +295,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
 
     // --- interpret props ---
     const format = formatProp ?? defaultFormat
-    const parse = parseProp ?? parseLeadingNumber
+    const parse = parseProp ?? parseNumberText
 
     const { normalized: range, raw: rawRange } = useMemo(
       () => numberInputRanges({ min, max, step, scale, clampValue }),

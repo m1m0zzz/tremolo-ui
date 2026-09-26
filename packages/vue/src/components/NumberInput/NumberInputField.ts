@@ -11,7 +11,7 @@ import {
 import {
   caretAtDecimalOffset,
   caretDecimalOffset,
-  leadingNumberLength,
+  numberSpan,
 } from '@tremolo-ui/dom'
 
 import { useNumberInputContext } from './context'
@@ -44,12 +44,11 @@ export const NumberInputField = /* @__PURE__ */ defineComponent({
       await nextTick()
       const element = input.value
       if (!element || !focused.value) return
-      element.setSelectionRange(
-        0,
+      const span =
         field.selectOnFocus === 'all'
-          ? element.value.length
-          : leadingNumberLength(element.value),
-      )
+          ? { start: 0, end: element.value.length }
+          : numberSpan(element.value)
+      if (span) element.setSelectionRange(span.start, span.end)
     }
 
     async function step(direction: number, event: KeyboardEvent) {

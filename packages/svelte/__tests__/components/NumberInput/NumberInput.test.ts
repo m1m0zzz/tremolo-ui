@@ -71,7 +71,7 @@ describe('NumberInput', () => {
     expect(input.selectionStart).toBe(2)
   })
 
-  test('selectOnFocus number selects the leading number', async () => {
+  test('selectOnFocus number selects the number without its unit', async () => {
     const { input } = setup({
       selectOnFocus: 'number',
       format: (v: number) => `${v} Hz`,
@@ -80,6 +80,17 @@ describe('NumberInput', () => {
     await fireEvent.focus(input)
     await tick()
     expect([input.selectionStart, input.selectionEnd]).toEqual([0, 2])
+  })
+
+  test('selectOnFocus number takes the sign and leaves a unit in front', async () => {
+    const { input } = setup({
+      selectOnFocus: 'number',
+      format: (v: number) => `L +${v}`,
+    })
+    input.focus()
+    await fireEvent.focus(input)
+    await tick()
+    expect([input.selectionStart, input.selectionEnd]).toEqual([2, 5])
   })
 
   test('the stepper buttons repeat while held and stop at the ends', async () => {

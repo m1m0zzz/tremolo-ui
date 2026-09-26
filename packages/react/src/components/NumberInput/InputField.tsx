@@ -10,7 +10,7 @@ import {
 import {
   caretAtDecimalOffset,
   caretDecimalOffset,
-  leadingNumberLength,
+  numberSpan,
 } from '@tremolo-ui/dom'
 
 import { useComposedRefs } from '../../compose-refs'
@@ -74,7 +74,8 @@ export const InputField = /* @__PURE__ */ forwardRef<HTMLInputElement, Props>(
       if (selectOnFocus === 'all') {
         input.setSelectionRange(0, input.value.length)
       } else {
-        input.setSelectionRange(0, leadingNumberLength(input.value))
+        const span = numberSpan(input.value)
+        if (span) input.setSelectionRange(span.start, span.end)
       }
       // Deliberately not re-run as the text changes: that would drag the
       // selection back over what the user is typing.

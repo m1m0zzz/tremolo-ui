@@ -30,7 +30,7 @@ export interface NumberInputProps {
   /**
    * Read a value back out of the text. Has to undo `format`. Text with no
    * number in it reads as `NaN`, which leaves the value alone.
-   * @default parseLeadingNumber
+   * @default parseNumberText
    */
   parse?: (text: string) => number
   /**
@@ -69,7 +69,7 @@ export interface NumberInputProps {
   pointerLock?: boolean
   /**
    * Select the text when `InputField` takes focus: all of it, only the
-   * leading number, or nothing.
+   * number without its unit, or nothing.
    * @default 'none'
    */
   selectOnFocus?: 'all' | 'number' | 'none'

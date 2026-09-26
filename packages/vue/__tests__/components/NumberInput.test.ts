@@ -81,6 +81,17 @@ describe('NumberInput', () => {
     expect(input.selectionStart).toBe(2)
   })
 
+  test('selectOnFocus number selects the number without its unit', async () => {
+    const { input } = await setup({
+      selectOnFocus: 'number',
+      format: (v: number) => `L +${v} dB`,
+    })
+    input.focus()
+    await fireEvent.focus(input)
+    await nextTick()
+    expect([input.selectionStart, input.selectionEnd]).toEqual([2, 5])
+  })
+
   test('the stepper buttons repeat while held and stop at the ends', async () => {
     vi.useFakeTimers()
     const { up, onChange } = await setup({ max: 52 })
