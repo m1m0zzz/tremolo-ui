@@ -44,7 +44,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 - [ ] `@tremolo-ui/vue`
   - [x] パッケージの器（tsdown / vitest）と composables（`useDrag` / `useDragValue` / `useWheel` / `useLongPress` / `useDropZone` / MIDI）。コンポーネントは SFC ではなく `defineComponent` + `h()` で書く
   - [x] コンポーネント（名前はフラット、Root はコンポーネント名そのもの。値は `v-model`、React の `InputField` は `NumberInputField`）
-  - [ ] Storybook と Worker
+  - [x] Storybook と Worker（`tremolo-ui-sb-vue`、`/i/storybook-vue`）。story は render 関数で書く
   - [ ] **main に入れる前に** npm へ手動 publish し、trusted publisher を登録する
 
 **どちらも React と同等のコンポーネント一式を最初から揃える。** Root + パート + `data-*` の契約を同じにするので、`shared/css/` のテーマがそのまま使える。hook 相当（Svelte の action、Vue の composable）もあわせて出す。

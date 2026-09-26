@@ -1,0 +1,24 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  // The same setup as packages/react/wrangler.jsonc, under its own prefix.
+  "name": "tremolo-ui-sb-vue",
+  "compatibility_date": "2026-09-07",
+
+  "assets": {
+    // `build:sb` writes to storybook-static/i/storybook-vue so that the
+    // file paths match the request paths this Worker answers.
+    "directory": "./storybook-static",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none",
+  },
+
+  "routes": [
+    {
+      "pattern": "tremolo-ui.mimoz.dev/i/storybook-vue*",
+      "zone_name": "mimoz.dev",
+    },
+  ],
+
+  "workers_dev": true,
+  "preview_urls": true,
+}
