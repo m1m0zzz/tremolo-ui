@@ -22,7 +22,7 @@
 
 <Story name="Basic">
   {#snippet template({ children: _children, ...args })}
-    <Knob.Root class={knobTheme.root} {...args}>
+    <Knob.Root class={knobTheme.root} aria-label="Level" {...args}>
       <Knob.SVGRoot>
         <Knob.InactiveLine class={knobTheme.inactiveLine} />
         <Knob.ActiveLine class={knobTheme.activeLine} />
@@ -37,7 +37,7 @@
 
 <Story name="Bipolar" args={{ min: -50, max: 50, value: 0, startValue: 0 }}>
   {#snippet template({ children: _children, ...args })}
-    <Knob.Root class={knobTheme.root} {...args}>
+    <Knob.Root class={knobTheme.root} aria-label="Level" {...args}>
       <Knob.SVGRoot>
         <Knob.InactiveLine class={knobTheme.inactiveLine} />
         <Knob.ActiveLine class={knobTheme.activeLine} />

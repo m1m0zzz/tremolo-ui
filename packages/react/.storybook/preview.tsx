@@ -23,11 +23,10 @@ const preview: Preview = {
   tags: ['autodocs'],
   decorators: [
     (Story, context) => {
+      // The background global holds the option's name, not its colour.
       const bg: string | undefined = context.globals.backgrounds?.value
-      const dark = '#333'
-      // const light = '#F8F8F8'
       const html = document.documentElement
-      if (bg === dark) {
+      if (bg === 'dark') {
         html.classList.add('dark')
       } else {
         html.classList.remove('dark')
