@@ -39,7 +39,8 @@ export interface DropZoneProps {
   onDrop?: (files: File[], event: DragEvent) => void
   /**
    * Called with the dropped files that do not match `accept`, so that the
-   * reason can be shown.
+   * reason can be shown. It comes after `onDrop` for the same drop, so a list
+   * of rejected files can be cleared in `onDrop` and filled here.
    */
   onReject?: (files: File[], event: DragEvent) => void
 

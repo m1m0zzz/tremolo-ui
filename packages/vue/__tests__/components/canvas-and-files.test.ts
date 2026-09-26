@@ -117,7 +117,7 @@ describe('FileInput', () => {
     return screen.getByLabelText('Open a sample') as HTMLInputElement
   }
 
-  test('picked files are split by accept, and the input is cleared', async () => {
+  test('picked files are split by accept, rejected last, and the input is cleared', async () => {
     const onChange = vi.fn()
     const onReject = vi.fn()
     const input = setup({ accept: 'audio/*', onChange, onReject })
@@ -130,6 +130,9 @@ describe('FileInput', () => {
     await fireEvent.change(input)
     expect(onChange).toHaveBeenCalledWith([wav])
     expect(onReject).toHaveBeenCalledWith([png])
+    expect(onChange.mock.invocationCallOrder[0]).toBeLessThan(
+      onReject.mock.invocationCallOrder[0],
+    )
     expect(input.value).toBe('')
   })
 

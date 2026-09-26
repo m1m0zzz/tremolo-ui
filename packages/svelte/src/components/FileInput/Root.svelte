@@ -43,8 +43,8 @@
     // Picking the same file twice fires no second change while the value is
     // still on the input, so it is cleared as soon as it is read.
     input.value = ''
-    if (rejected.length > 0) onReject?.(rejected)
     if (accepted.length > 0) onChange?.(accepted)
+    if (rejected.length > 0) onReject?.(rejected)
   }
 </script>
 

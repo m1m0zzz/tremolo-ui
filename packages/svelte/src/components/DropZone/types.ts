@@ -15,7 +15,10 @@ export interface DropZoneProps {
   disabled?: boolean
   /** Called with the dropped files that satisfy `accept`. */
   onDrop?: (files: File[], event: DragEvent) => void
-  /** Called with the dropped files that do not satisfy `accept`. */
+  /**
+   * Called with the dropped files that do not satisfy `accept`, after `onDrop`
+   * for the same drop.
+   */
   onReject?: (files: File[], event: DragEvent) => void
   /** The root element, bound with `bind:ref`. */
   ref?: HTMLDivElement | null

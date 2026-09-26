@@ -704,8 +704,8 @@
     "source": "fa1740ee"
   },
   "FileInputProps.onReject": {
-    "message": "選ばれたファイルのうち、`accept` に一致しなかったものを受け取ります。理由を表示するためのものです。両方が混ざった選択では `onChange` と一緒に呼ばれます。",
-    "source": "01032dcc"
+    "message": "選ばれたファイルのうち、`accept` に一致しなかったものを受け取ります。理由を表示するためのものです。両方が混ざった選択では `onChange` のあとに呼ばれるので、拒否したファイルの一覧は `onChange` で空にしてここで埋められます。",
+    "source": "e95a6f0c"
   },
   "FileInputProps.children": {
     "message": "通常は `FileInput.Trigger` と、選ばれたものを表示する要素です。",
@@ -732,8 +732,8 @@
     "source": "49a56984"
   },
   "DropZoneProps.onReject": {
-    "message": "ドロップされたファイルのうち、`accept` に一致しなかったものを受け取ります。理由を表示するためのものです。",
-    "source": "55837923"
+    "message": "ドロップされたファイルのうち、`accept` に一致しなかったものを受け取ります。理由を表示するためのものです。同じドロップでは `onDrop` のあとに呼ばれるので、拒否したファイルの一覧は `onDrop` で空にしてここで埋められます。",
+    "source": "528c32c3"
   },
   "DropZoneProps.children": {
     "message": "ゾーンに表示する内容です。",
@@ -756,7 +756,7 @@
     "source": "49a56984"
   },
   "UseDropZoneOptions.onReject": {
-    "message": "ドロップされたファイルのうち、`accept` に一致しなかったものを受け取ります。理由を表示するためのものです。",
-    "source": "55837923"
+    "message": "ドロップされたファイルのうち、`accept` に一致しなかったものを受け取ります。理由を表示するためのものです。同じドロップでは `onDrop` のあとに呼ばれるので、拒否したファイルの一覧は `onDrop` で空にしてここで埋められます。",
+    "source": "528c32c3"
   }
 }
