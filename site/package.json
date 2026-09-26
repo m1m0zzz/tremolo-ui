@@ -48,7 +48,7 @@
     "markdown-it": "15.0.2",
     "typedoc": "0.28.20",
     "typedoc-plugin-markdown": "4.13.1",
-    "typescript": "5.9.3"
+    "typescript": "7.0.2"
   },
   "browserslist": {
     "production": [
