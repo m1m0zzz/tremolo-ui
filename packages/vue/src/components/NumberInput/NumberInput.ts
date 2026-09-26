@@ -11,7 +11,7 @@ import {
 import { linearScale, type Scale } from '@tremolo-ui/functions'
 
 import { useWheel } from '../../composables/useWheel'
-import { inputProps } from '../_util/props'
+import { dragSensitivityProp, keyboardProp, wheelProp } from '../_util/props'
 import { useCheckSteps } from '../_util/useCheckSteps'
 
 import { NumberInputKey } from './context'
@@ -42,7 +42,9 @@ export const NumberInput = /* @__PURE__ */ defineComponent({
     },
     /** Keep the value within `min` and `max` when committed or stepped. */
     clampValue: { type: Boolean, default: true },
-    ...inputProps,
+    wheel: wheelProp,
+    keyboard: keyboardProp,
+    dragSensitivity: dragSensitivityProp,
     /** Pixels of vertical drag on the stepper per `step`. `null` turns it off. */
     drag: { type: Number as PropType<number | null>, default: 1 },
     /** Hide the cursor while dragging the stepper. */
