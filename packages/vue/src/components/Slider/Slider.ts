@@ -14,7 +14,7 @@ import { linearScale, type Scale } from '@tremolo-ui/functions'
 
 import { useDragValue } from '../../composables/useDragValue'
 import { useWheel } from '../../composables/useWheel'
-import { inputProps } from '../_util/props'
+import { dragSensitivityProp, keyboardProp, wheelProp } from '../_util/props'
 import { useCheckSteps } from '../_util/useCheckSteps'
 
 import { SliderKey } from './context'
@@ -39,7 +39,9 @@ export const Slider = /* @__PURE__ */ defineComponent({
     reverse: Boolean,
     /** The cursor to show while dragging. @default { cursor: 'pointer' } */
     externalStyles: Object as PropType<{ cursor?: string }>,
-    ...inputProps,
+    wheel: wheelProp,
+    keyboard: keyboardProp,
+    dragSensitivity: dragSensitivityProp,
     /** Make the slider unchangeable and remove it from the tab order. */
     disabled: Boolean,
     /** Make the value unchangeable. */
@@ -155,9 +157,11 @@ export const Slider = /* @__PURE__ */ defineComponent({
       root,
       (event) => {
         if (!props.wheel || inactive.value) return
-        event.preventDefault()
+        // A notch the slider does not read — a sideways scroll on a vertical
+        // slider — is left to the page rather than swallowed.
         const direction = wheelDirection(event, { horizontal: !props.vertical })
         if (direction === null) return
+        event.preventDefault()
         change(
           applyDelta(
             props.modelValue,
