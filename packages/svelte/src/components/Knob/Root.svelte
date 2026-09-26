@@ -24,8 +24,7 @@
 
   import type { HTMLAttributes } from 'svelte/elements'
 
-  type Props = KnobProps &
-    Omit<HTMLAttributes<HTMLDivElement>, keyof KnobProps>
+  type Props = KnobProps & Omit<HTMLAttributes<HTMLDivElement>, keyof KnobProps>
 
   let {
     value = $bindable(),
