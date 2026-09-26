@@ -26,10 +26,24 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 ## 3. Vue / Svelte
 
-- [ ] `@tremolo-ui/svelte`（action ベース。`use:drag={handlers}`。コアのシグネチャとほぼ同型なので最も薄い）
-- [ ] `@tremolo-ui/vue`（composable または custom directive）
+**Svelte → Vue の順に進める。** コアのシグネチャと最も同型な Svelte でラッパーの形とコアに足りないものを洗い出してから Vue に進む。1.0 の基準は片方で満たせる。
 
-ラッパーの形はフレームワークごとに変えてよく、統一しない。
+- [ ] **準備: React に残っている framework 非依存のロジックを `dom` へ移す。** ラッパーを書く前に済ませ、3 つのフレームワークで同じロジックを重複させない
+  - [x] 純粋な関数と定数。キー / ホイールの向き（`arrowKeyDirection` / `arrowKeyMove` / `wheelDirection` / `wheelMove`）、値の位置（`valuePercent`）、Knob の幾何、Slider の目盛り、NumberInput の読み取りとキャレット、`checkSteps`、入力の既定値、`cssLength` / `visuallyHiddenStyle`、`partitionByAccept`
+    - **`checkSteps` は警告の文言を返すだけで、出すのはラッパー。** `process.env.NODE_ENV` の判定をラッパー側にインラインで書けば、本番では呼び出しごと `checkSteps` がバンドルから落ちる
+  - [ ] 状態を持つもの。長押しの繰り返し（`useLongPress`）、NumberInput の下書きと確定・ステッパーのドラッグ、Piano のキーボードショートカット、PointsEditor の選択とまとめての移動
+- [ ] `@tremolo-ui/svelte`
+- [ ] `@tremolo-ui/vue`
+
+**どちらも React と同等のコンポーネント一式を最初から揃える。** Root + パート + `data-*` の契約を同じにするので、`shared/css/` のテーマがそのまま使える。hook 相当（Svelte の action、Vue の composable）もあわせて出す。
+
+ラッパーの形はフレームワークごとに変えてよく、統一しない。名前の形は各フレームワークの慣習に合わせる。
+
+| | 書き方 | 理由 |
+| --- | --- | --- |
+| React | `<Knob.Root>` / `<Knob.Thumb>`（今のまま） | |
+| Svelte | `<Knob.Root>` / `<Knob.Thumb>` | `export * as Knob` の名前空間にする。Bits UI と同じ形で、パートの単位でも tree-shaking が効く。Root を `<Knob>` にするには Root にパートを生やす（`Object.assign`）しかなく、それをすると名前空間にできない |
+| Vue | `<Knob>` / `<KnobThumb>` | ドット付きの名前は `<script setup>` でしか使えず、グローバル登録・Nuxt の auto-import・in-DOM テンプレートでは使えない。Reka UI や Headless UI と同じくフラットにし、Root は `Root` を付けずコンポーネント名そのものにする |
 
 ### 新パッケージを追加する際の手順（Phase 1 で確立）
 
@@ -60,7 +74,8 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - **`UseWheelOptions` が `onWheel` を継承していた。** `createWheel` は `update()` で差し替えるために持っているが、hook はハンドラを第 1 引数で受けるので、オプションで渡しても黙って無視されていた。`Omit` で外した
   - 表に出すにあたって、説明の無かったコールバックや `threshold` / `updateOnPointerDown` の JSDoc を埋めた
   - `useAnimationFrame` / `useEventListener` / `useInterval` / `useLongPress` はページを作っていない。典型的な実装以上に書くことが無く、typedoc の API ページで足りる
-- [ ] **Vue / Svelte を足したときのドキュメント構成を決める。** 現在の `site/docs/components/<Name>/index.mdx` は React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）。フレームワークごとにタブを分けるのか、サイト自体を分けるのか
+- [ ] **Vue / Svelte のドキュメントを同じページにタブで載せる。** `site/docs/components/<Name>/` を共通にし、例と API Reference だけを React / Svelte / Vue のタブで切り替える。`data-*` とテーマは共通なので説明も共有する。現在のページは React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）
+  - Storybook は各パッケージに持たせ、別の Worker で配信する（上の「新パッケージを追加する際の手順」）
 - [x] **`site/i18n` の typedoc サイドバー翻訳キーを掃除した。** `sidebar.typedocSidebar.*` を en / ja とも**全て削除**した（114 キー → 7 キー）。
 - [x] `site/docs/support/CHANGELOG.md` の二重管理をやめた。中身は「TODO: record from version 1.0.0」のスタブのままだったので、各パッケージの `CHANGELOG.md` と GitHub リリース、移行ガイドへのリンクに置き換えた
 - [x] **その GitHub へのリンクをやめ、リリースノートをサイトに載せた。** `site/scripts/changelog.mjs` が `packages/*/CHANGELOG.md` を front matter 付きで `site/docs/changelog/<pkg>.md` に写す。typedoc の `docs/api/` と同じ扱いで、生成物はコミットしない（`site/.gitignore`。手書きの `index.md` だけ `!` で除外を戻す）
