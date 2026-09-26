@@ -149,9 +149,11 @@
     requireFocus: true,
     onWheel: (event: WheelEvent) => {
       if (!wheel || inactive) return
-      event.preventDefault()
+      // A notch the slider does not read — a sideways scroll on a vertical
+      // slider — is left to the page rather than swallowed.
       const direction = wheelDirection(event, { horizontal: !vertical })
       if (direction === null) return
+      event.preventDefault()
       change(
         applyDelta(value, reverse ? -direction : direction, wheel, axis, event),
       )

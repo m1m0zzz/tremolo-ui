@@ -69,6 +69,19 @@ describe('Slider', () => {
     expect(onChange).toHaveBeenLastCalledWith(51)
   })
 
+  test('a vertical slider leaves a sideways scroll to the page', () => {
+    const { root, input, onChange } = setup({ vertical: true })
+    input.focus()
+    const event = new WheelEvent('wheel', {
+      deltaX: 100,
+      bubbles: true,
+      cancelable: true,
+    })
+    root.dispatchEvent(event)
+    expect(event.defaultPrevented).toBe(false)
+    expect(onChange).not.toHaveBeenCalled()
+  })
+
   test('assistive technology can set the value through the input', async () => {
     const { input, onChange } = setup()
     await fireEvent.input(input, { target: { value: '70' } })
