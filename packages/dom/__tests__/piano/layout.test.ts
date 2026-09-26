@@ -2,6 +2,7 @@ import { noteNumber } from '@tremolo-ui/functions'
 
 import {
   blackKeyWidth,
+  fitWhiteKeyWidth,
   getNoteRangeArray,
   noteAt,
   notePosition,
@@ -144,4 +145,10 @@ describe('unit test', () => {
     }
     expect(noteAt(13 * slot - 1, 10, height, upToA4)).toBe(noteNumber('A4'))
   })
+})
+
+test('fitWhiteKeyWidth fills the width with the white keys', () => {
+  // C3..B4 has 14 white keys, each taking its width plus the gap.
+  expect(fitWhiteKeyWidth(14 * 41, layout.noteRange)).toBe(40)
+  expect(fitWhiteKeyWidth(14 * 12, layout.noteRange, 2)).toBe(10)
 })

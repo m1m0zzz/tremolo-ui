@@ -98,6 +98,7 @@ export {
 export { replaceOptions } from './options/replace'
 export {
   blackKeyWidth,
+  fitWhiteKeyWidth,
   getNoteRangeArray,
   noteAt,
   notePosition,

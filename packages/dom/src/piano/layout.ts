@@ -181,3 +181,16 @@ export function noteAt(
 
   return null
 }
+
+/**
+ * The white key width that makes the keyboard fill `width`, for a keyboard
+ * that follows the size of its container.
+ */
+export function fitWhiteKeyWidth(
+  width: number,
+  noteRange: NoteRange,
+  keyGap = 1,
+): number {
+  const whiteKeys = getNoteRangeArray(noteRange).filter(isWhiteKey).length
+  return width / Math.max(whiteKeys, 1) - keyGap
+}
