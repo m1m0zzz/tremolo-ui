@@ -108,6 +108,7 @@
     "**/build",
     "**/dist",
     "**/storybook-static",
+    "**/.svelte-kit",
     "**/.docusaurus",
     "**/*.cache",
     "**/*.config.*",

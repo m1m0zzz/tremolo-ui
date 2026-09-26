@@ -37,6 +37,10 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
     - [x] NumberInput の下書きと確定、ステッパーのドラッグ: `numberInputRanges` / `nudgeNumberInput` / `numberInputBounds` / `commitNumberInputText` / `createStepperDrag`。下書きの文字列そのものは各ラッパーの state に置く
     - [x] PointsEditor の選択とまとめての移動: `createPointsEditor`。選択そのもの（controlled / uncontrolled）は各ラッパーの state に置き、`update({ selection })` で押し戻す
 - [ ] `@tremolo-ui/svelte`
+  - [x] パッケージの器（`svelte-package` / `svelte-check` / vitest）と、actions（`drag` / `dragValue` / `wheel` / `longPress` / `dropZone`）、MIDI（`useMIDIAccess` / `useMIDIInput` / `useMIDIMessage`）
+  - [ ] コンポーネント（Knob / Slider / XYPad / NumberInput / Piano / PointsEditor / AnimationCanvas / FileInput / DropZone）
+  - [ ] Storybook と Worker
+  - [ ] **main に入れる前に** npm へ手動 publish し、trusted publisher を登録する（下の「新パッケージを追加する際の手順」）
 - [ ] `@tremolo-ui/vue`
 
 **どちらも React と同等のコンポーネント一式を最初から揃える。** Root + パート + `data-*` の契約を同じにするので、`shared/css/` のテーマがそのまま使える。hook 相当（Svelte の action、Vue の composable）もあわせて出す。

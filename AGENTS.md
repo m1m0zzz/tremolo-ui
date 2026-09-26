@@ -9,6 +9,7 @@ tremolo-ui は Web Audio アプリ向けの headless なコンポーネントラ
 | `packages/functions` | `@tremolo-ui/functions` | **汎用な関数だけ**を置く。依存を持たない |
 | `packages/dom` | `@tremolo-ui/dom` | DOM 依存・framework 非依存のコア。`destroy()` を持つ命令的インスタンスを返す |
 | `packages/react` | `@tremolo-ui/react` | 全コンポーネント + hooks |
+| `packages/svelte` | `@tremolo-ui/svelte` | Svelte 5 のコンポーネント + actions（作成中） |
 | `site` | private | Docusaurus ドキュメントサイト（en / ja） |
 
 **`functions` に置くのは汎用な関数だけ。** 目的は、このライブラリ群で使っている汎用な関数を利用者が使いやすい形で公開すること。判定は「純粋かどうか」ではなく「このライブラリを使わない人が使うか」で、実装の都合で必要になっただけのものは `dom` に置く（棚卸しの結果は `docs/functions-scope.md`）。
@@ -29,6 +30,7 @@ npm run lint                  # oxlint（自動修正は lint:fix）
 npm run format                # oxfmt（差分だけ見るなら format:check）
 npm run sb -w packages/react  # Storybook 開発サーバ
 npm run typecheck -w packages/react
+npm run typecheck -w packages/svelte  # svelte-check
 npm run build:docs
 npm run docs:ja               # --locale ja
 npm run docs:wtr:ja           # ja の翻訳スタブを再生成
