@@ -13,6 +13,7 @@ import {
 import {
   blackKeyWidth,
   createPianoInput,
+  fitWhiteKeyWidth,
   getNoteRangeArray,
   type KeyboardShortcuts,
   type KeyboardShortcutsScope,
@@ -196,10 +197,6 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
     const [resizedKeyWidth, setResizedKeyWidth] = useState(whiteKeyWidth)
 
     const notes = useMemo(() => getNoteRangeArray(noteRange), [noteRange])
-    const whiteKeyCount = useMemo(
-      () => notes.filter(isWhiteKey).length,
-      [notes],
-    )
 
     const layout: PianoLayout = useMemo(
       () => ({
@@ -277,6 +274,9 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
       })
     })
 
+    // By value, so that a range written inline does not reconnect the
+    // observer on every render.
+    const { first, last } = noteRange
     useEffect(() => {
       if (!resizable || !node) return
       const parent = node.parentElement
@@ -284,12 +284,16 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
 
       const resizeObserver = new ResizeObserver(() => {
         setResizedKeyWidth(
-          node.clientWidth / Math.max(whiteKeyCount, 1) - keyGap,
+          fitWhiteKeyWidth(node.clientWidth, {
+            noteRange: { first, last },
+            keyGap,
+            blackKeyWidthRatio,
+          }),
         )
       })
       resizeObserver.observe(parent)
       return () => resizeObserver.disconnect()
-    }, [resizable, node, whiteKeyCount, keyGap])
+    }, [resizable, node, first, last, keyGap, blackKeyWidthRatio])
 
     useImperativeHandle(
       forwardedRef,
