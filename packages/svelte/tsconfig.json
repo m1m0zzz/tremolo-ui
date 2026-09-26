@@ -1,0 +1,10 @@
+{
+  "extends": ["../../tsconfig.json"],
+  "compilerOptions": {
+    "rootDir": "./",
+    // The Svelte compiler reads each file on its own, so an import that is only
+    // a type has to say so or it is kept and fails at runtime.
+    "verbatimModuleSyntax": true,
+  },
+  "include": ["src", "__tests__", "vitest.d.ts", "vitest.setup.ts"],
+}
