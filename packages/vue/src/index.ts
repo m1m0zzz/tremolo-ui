@@ -1,3 +1,14 @@
+// components
+export {
+  Knob,
+  KnobActiveLine,
+  KnobInactiveLine,
+  KnobSVGRoot,
+  KnobThumb,
+  useKnobContext,
+  type KnobContextValue,
+} from './components/Knob'
+
 // composables
 export { useDrag } from './composables/useDrag'
 export { useDragValue } from './composables/useDragValue'
