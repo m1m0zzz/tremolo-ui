@@ -1,5 +1,17 @@
 // components
 export {
+  AnimationCanvas,
+  type DrawFunction,
+  type InitFunction,
+} from './components/AnimationCanvas'
+export { DropZone } from './components/DropZone'
+export {
+  FileInput,
+  FileInputTrigger,
+  useFileInputContext,
+  type FileInputContextValue,
+} from './components/FileInput'
+export {
   Knob,
   KnobActiveLine,
   KnobInactiveLine,
