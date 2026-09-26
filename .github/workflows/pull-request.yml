@@ -61,7 +61,7 @@ jobs:
     - name: Build templates
       run: npm run build -w templates/vite-react-ts -w templates/next-ts
 
-    - run: npm run build:sb -w packages/react -w packages/svelte
+    - run: npm run build:sb -w packages/react -w packages/svelte -w packages/vue
 
     - run: npm run build -w site
 
@@ -99,6 +99,7 @@ jobs:
         npx wrangler versions upload --config site/wrangler.jsonc --preview-alias "$ALIAS"
         npx wrangler versions upload --config packages/react/wrangler.jsonc --preview-alias "$ALIAS"
         npx wrangler versions upload --config packages/svelte/wrangler.jsonc --preview-alias "$ALIAS"
+        npx wrangler versions upload --config packages/vue/wrangler.jsonc --preview-alias "$ALIAS"
 
     - name: ステータスとタイムスタンプを算出
       if: always()
@@ -130,5 +131,6 @@ jobs:
           | ${{ steps.upload.outcome == 'success' && format('[Docs](https://{0}-tremolo-ui-docs.{1}.workers.dev/)', steps.preview.outputs.alias, vars.CLOUDFLARE_WORKERS_SUBDOMAIN) || 'Docs' }} | [${{ steps.status.outputs.text }}](${{ steps.status.outputs.run_url }}) | ${{ steps.status.outputs.timestamp }} |
           | ${{ steps.upload.outcome == 'success' && format('[Storybook](https://{0}-tremolo-ui-sb-react.{1}.workers.dev/i/storybook-react/)', steps.preview.outputs.alias, vars.CLOUDFLARE_WORKERS_SUBDOMAIN) || 'Storybook' }} | [${{ steps.status.outputs.text }}](${{ steps.status.outputs.run_url }}) | ${{ steps.status.outputs.timestamp }} |
           | ${{ steps.upload.outcome == 'success' && format('[Storybook (Svelte)](https://{0}-tremolo-ui-sb-svelte.{1}.workers.dev/i/storybook-svelte/)', steps.preview.outputs.alias, vars.CLOUDFLARE_WORKERS_SUBDOMAIN) || 'Storybook (Svelte)' }} | [${{ steps.status.outputs.text }}](${{ steps.status.outputs.run_url }}) | ${{ steps.status.outputs.timestamp }} |
+          | ${{ steps.upload.outcome == 'success' && format('[Storybook (Vue)](https://{0}-tremolo-ui-sb-vue.{1}.workers.dev/i/storybook-vue/)', steps.preview.outputs.alias, vars.CLOUDFLARE_WORKERS_SUBDOMAIN) || 'Storybook (Vue)' }} | [${{ steps.status.outputs.text }}](${{ steps.status.outputs.run_url }}) | ${{ steps.status.outputs.timestamp }} |
 
           *このコメントは新しいコミットごとに更新されます。*

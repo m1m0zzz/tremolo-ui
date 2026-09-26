@@ -2,7 +2,7 @@
 
 ## 概要
 
-tremolo-ui は Web Audio アプリ向けの headless なコンポーネントライブラリ。npm workspaces のモノレポから 3 つのパッケージを公開している
+tremolo-ui は Web Audio アプリ向けの headless なコンポーネントライブラリ。npm workspaces のモノレポから 5 つのパッケージを公開している
 
 | ワークスペース | パッケージ | 内容 |
 | --- | --- | --- |
@@ -29,9 +29,10 @@ npm run build:package         # src を変えたら必要。site / Storybook は
 npm run build:sb              # 全パッケージをビルドしてから Storybook をビルド
 npm run lint                  # oxlint（自動修正は lint:fix）
 npm run format                # oxfmt（差分だけ見るなら format:check）
-npm run sb -w packages/react  # Storybook 開発サーバ（-w packages/svelte も）
+npm run sb -w packages/react  # Storybook 開発サーバ（-w packages/svelte / packages/vue も）
 npm run typecheck -w packages/react
 npm run typecheck -w packages/svelte  # svelte-check
+npm run typecheck -w packages/vue
 npm run build:docs
 npm run docs:ja               # --locale ja
 npm run docs:wtr:ja           # ja の翻訳スタブを再生成
