@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/vue'
-import { defineComponent, h, nextTick } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 
 import {
   AnimationCanvas,
@@ -54,6 +54,53 @@ describe('AnimationCanvas', () => {
     flush()
     expect(draw.mock.calls.length).toBeGreaterThanOrEqual(2)
     expect(container.querySelector('canvas')!.style.width).toBe('120px')
+  })
+})
+
+describe('AnimationCanvas with state', () => {
+  test('without animating, a new draw is painted at once', async () => {
+    let frames: FrameRequestCallback[] = []
+    globalThis.requestAnimationFrame = (callback) => {
+      frames.push(callback)
+      return frames.length
+    }
+    globalThis.cancelAnimationFrame = () => {}
+    HTMLCanvasElement.prototype.getContext = vi.fn(() => ({
+      getLineDash: () => [],
+      getTransform: () => ({ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }),
+      setLineDash: () => {},
+      setTransform: () => {},
+      scale: () => {},
+      drawImage: () => {},
+    })) as unknown as HTMLCanvasElement['getContext']
+    const onDraw = vi.fn()
+    const label = ref('first')
+    render(
+      defineComponent({
+        setup: () => () =>
+          h(AnimationCanvas, {
+            animate: false,
+            draw: () => onDraw(label.value),
+          }),
+      }),
+    )
+    await nextTick()
+    for (const frame of frames.splice(0)) frame(performance.now())
+    label.value = 'second'
+    await nextTick()
+    await nextTick()
+    expect(onDraw).toHaveBeenLastCalledWith('second')
+    frames = []
+  })
+
+  test('a context menu handler of your own replaces the default', async () => {
+    const { container } = render(AnimationCanvas, {
+      props: { draw: vi.fn() },
+      attrs: { onContextmenu: () => {} },
+    })
+    const event = new MouseEvent('contextmenu', { cancelable: true })
+    container.querySelector('canvas')!.dispatchEvent(event)
+    expect(event.defaultPrevented).toBe(false)
   })
 })
 

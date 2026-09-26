@@ -1,4 +1,12 @@
-import { defineComponent, h, ref, watch, type PropType } from 'vue'
+import {
+  defineComponent,
+  h,
+  ref,
+  shallowRef,
+  watch,
+  watchEffect,
+  type PropType,
+} from 'vue'
 
 import {
   createAnimationCanvas,
@@ -21,6 +29,7 @@ export type DrawFunction = (
 /** A `<canvas>` drawn by `draw` on every animation frame. */
 export const AnimationCanvas = /* @__PURE__ */ defineComponent({
   name: 'AnimationCanvas',
+  inheritAttrs: false,
   props: {
     /** Draws a frame. */
     draw: { type: Function as PropType<DrawFunction>, required: true },
@@ -39,9 +48,9 @@ export const AnimationCanvas = /* @__PURE__ */ defineComponent({
     /** Height in CSS pixels, while not `resizable`. @default 100 */
     height: { type: Number, default: 100 },
   },
-  setup(props) {
+  setup(props, { attrs }) {
     const canvas = ref<HTMLCanvasElement | null>(null)
-    let instance: AnimationCanvasInstance | null = null
+    const instance = shallowRef<AnimationCanvasInstance | null>(null)
 
     // Only `resizable` decides how the instance is wired, so it is the one
     // setting that rebuilds it. The handlers are read at call time, and the
@@ -59,27 +68,38 @@ export const AnimationCanvas = /* @__PURE__ */ defineComponent({
           resizable,
           contextAttributes: props.options,
         })
-        instance = current
+        instance.value = current
         onCleanup(() => {
-          if (instance === current) instance = null
+          if (instance.value === current) instance.value = null
           current.destroy()
         })
       },
       { immediate: true, flush: 'post' },
     )
-    watch(
-      () => ({
-        animate: props.animate,
-        size: { width: props.width, height: props.height },
-        reduceFlickering: props.reduceFlickering,
-      }),
-      (next) => instance?.update(next),
+    // An effect rather than a watch: without a loop running, update() paints
+    // a frame right away, calling `draw` — so whatever state `draw` reads is
+    // tracked here, and a canvas driven by state rather than by time is
+    // painted again when it changes. A new `draw` or `init` counts too.
+    watchEffect(
+      () => {
+        void props.draw
+        void props.init
+        instance.value?.update({
+          animate: props.animate,
+          size: { width: props.width, height: props.height },
+          reduceFlickering: props.reduceFlickering,
+        })
+      },
+      { flush: 'post' },
     )
 
+    // The context menu is suppressed unless the caller handles it: a
+    // listener of their own replaces this one rather than running after it.
     return () =>
       h('canvas', {
-        ref: canvas,
         onContextmenu: (event: MouseEvent) => event.preventDefault(),
+        ...attrs,
+        ref: canvas,
       })
   },
 })
