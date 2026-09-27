@@ -197,33 +197,33 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 ## 8. 1.0 に向けた公開 API の見直し
 
-1.0 以降は破壊的変更に `major` が要るので、その前に公開範囲・フレームワーク間の過不足・API の形を洗い出した（0.8.0 時点）。各項目の `→` は推奨で、未決定。
+1.0 以降は破壊的変更に `major` が要るので、その前に公開範囲・フレームワーク間の過不足・API の形を洗い出し、方針を決めた（0.8.0 時点）。
 
 ### 公開範囲
 
-- [ ] **`dom` の export の半分近くが、ラッパーの実装のためだけに公開されている。** NumberInput のキャレットと下書き（`caretAtDecimalOffset` / `caretDecimalOffset` / `numberSpan` / `parseNumberText` / `commitNumberInputText` / `numberInputBounds` / `numberInputRanges` / `nudgeNumberInput`）、Knob の SVG 幾何（`KNOB_VIEWBOX_SIZE` / `knobArc*`）、`replaceOptions` / `checkSteps` / `cssLength` / `visuallyHiddenStyle` / `toXY` / `clampPoint` / `POINT_AXIS` / `valuePercent` / `sliderMarks` など。1.0 で出すとすべて semver の対象になる → **利用者向けの `create*` と型だけを `.` に残し、ラッパー向けは `@tremolo-ui/dom/internal` のようなサブパスへ分けて semver の対象外と明記する**
-- [ ] **ラッパーのどこからも使われず、実装の詳細でしかないものが公開されている。** `drawingState` / `isDrawingState` / `DrawingContext` / `DrawingState` / `DrawingStateValue` は `reduceFlickering` の実装。`knobArcPoint` / `isArrowKey` / `mapModifier` / `noteAt` / `createSelectionBox` / `selectionBoxCovers` / `matchesAccept` も要るかを 1 つずつ判断する → **少なくとも `drawingState` 一式は非公開に**
-- [ ] **`NOT_SUPPORTED` / `PERMISSION_DENIED` / `UNAVAILABLE` がパッケージのトップレベルにある。** 何のエラーか名前から分からない → **`MIDIAccessError` の文字列リテラル型だけを公開し、定数は外す**（比較は `error === 'NOT_SUPPORTED'` で書ける）
-- [ ] **`PITCH_BEND_CENTER` は MIDI の仕様の値で、DOM と関係が無い** → `functions` の midi へ
-- [ ] **React の `useAnimationFrame` / `useEventListener` / `useInterval` は、どのコンポーネントも使っていない汎用の hook。** Svelte / Vue に相当するものも無い。`functions` と同じ「このライブラリを使わない人が使うか」の基準なら、ここで配るものではない → **公開をやめる**
-- [ ] **3 つのラッパーの `DrawFunction` / `InitFunction` が、`dom` の `CanvasDrawFunction` / `CanvasInitFunction` と同じ形の別名になっている**（第 2 引数の名前が `option` と `frame` で違うだけ）。「ラッパーは `dom` のものを re-export しない」の規約に沿うなら、別名を作らず `dom` の型を使ってもらう → **ラッパー側の型を消す**
+- [ ] **`dom` のラッパー向けの export を `@tremolo-ui/dom/internal` に分ける。** NumberInput のキャレットと下書き（`caretAtDecimalOffset` / `caretDecimalOffset` / `numberSpan` / `parseNumberText` / `commitNumberInputText` / `numberInputBounds` / `numberInputRanges` / `nudgeNumberInput`）、Knob の SVG 幾何（`KNOB_VIEWBOX_SIZE` / `knobArc*`）、`replaceOptions` / `checkSteps` / `cssLength` / `visuallyHiddenStyle` / `toXY` / `clampPoint` / `POINT_AXIS` / `valuePercent` / `sliderMarks` など。`.` には利用者向けの `create*` と型だけを残し、`internal` は semver の対象外と明記する。1.0 で `.` に置いたものはすべて semver の対象になるため
+- [ ] **どのラッパーも使っていない export を外す。** `drawingState` / `isDrawingState` / `DrawingContext` / `DrawingState` / `DrawingStateValue` / `knobArcPoint` / `isArrowKey` / `mapModifier` / `noteAt` / `createSelectionBox` / `selectionBoxCovers` / `matchesAccept`。`dom` の中で使っているもの（`reduceFlickering` の `readDrawingState` など）は実装として残し、入口からの export だけをやめる
+  - `drawingState` 一式は、Phase 4.2 で rAF のループを `createAnimationCanvas` に移した時点でラッパーから使われなくなり、export だけが残っていた。`isDrawingState` は `dom` の中でも使われていない
+- [ ] **MIDI の定数を名前空間にまとめる。** トップレベルの `NOT_SUPPORTED` / `PERMISSION_DENIED` / `UNAVAILABLE` は何のエラーか名前から分からないので、`MIDIAccessError` の値を 1 つのオブジェクト（例: `MIDI_ACCESS_ERROR.NOT_SUPPORTED`）にまとめる。`PITCH_BEND_CENTER` は MIDI の仕様の値で DOM と関係が無いので、`functions` の midi へ移す
+- [ ] **React の `useAnimationFrame` / `useEventListener` / `useInterval` の公開をやめる。** どのコンポーネントも使っていない汎用の hook で、Svelte / Vue に相当するものも無い
+- [ ] **各ラッパーの `DrawFunction` / `InitFunction` を消す。** `dom` の `CanvasDrawFunction` / `CanvasInitFunction` と同じ形の別名（第 2 引数の名前が違うだけ）で、「ラッパーは `dom` のものを re-export しない」の規約どおり `dom` の型を使ってもらう
 
 ### React / Svelte / Vue の過不足
 
 props・パート・命令的メソッドは 3 つでほぼ揃っている（Svelte / Vue の `PointsEditor` に `defaultSelection` が無いのは `bind:` / `v-model:selection` があるためで、不足ではない）。
 
-- [ ] **React の Root の `ref` だけが要素を返さない。** `Knob` / `Slider` / `XYPad` / `NumberInput` / `Piano` の `ref` は `focus` / `blur` や `playNote` を持つオブジェクトで、DOM 要素には届かない。`XYPad` だけが `original` で要素を渡しているが、他には無い。Svelte は `bind:ref` と `bind:this`、Vue は `$el` と `expose` で両方に届く → **`ref` は全パートで要素にし、メソッドは Base UI の `actionsRef` のような別の prop に移す。`original` は消す**
-- [ ] **Vue だけが props の型を 1 つも公開していない。** React / Svelte は `KnobProps` などを出している → 出すか、`ComponentProps<typeof Knob>` で取る方針をドキュメントに書く
-- [ ] **Svelte の action の options 型が `WheelActionOptions` しか公開されていない**（他は `dom` の型をそのまま使う）。`wheel` だけハンドラを options に入れた形なので、名前を付けて出す必要があった。揃えるなら他の action も同じ形にするか、`wheel` の引数の形を他に合わせる
+- [ ] **React の `ref` を全パートで DOM 要素にし、メソッドは `actionsRef` に移す。** `Knob` / `Slider` / `XYPad` / `NumberInput` / `Piano` の `ref` は `focus` / `blur` や `playNote` を持つオブジェクトで、要素に届かない。`XYPad` だけが `original` で要素を渡していたので、これは消す。Svelte（`bind:ref` / `bind:this`）と Vue（`$el` / `expose`）は元から両方に届く
+- [ ] **Vue も props の型を公開する。** React / Svelte と同じ名前（`KnobProps` など）にする
+- [ ] **Svelte の `wheel` action の引数を他の action と同じ形にし、`WheelActionOptions` を消す。** `wheel` だけハンドラを options に入れていたので、名前付きの型が必要になっていた
 
 ### API の形
 
-- [ ] **`Knob` だけが drag の開始と終了を通知しない。** `Slider` / `XYPad` / `PointsEditor.Point` は 3 つのフレームワークとも `onDragStart` / `onDragEnd`（Vue は `dragStart` / `dragEnd`）を持つ。オートメーションの書き込み（DAW の touch）には開始と終了が要り、いちばん使われるのは Knob → **足す。`NumberInput` のステッパーのドラッグも同様**
-- [ ] **`Knob` の `defaultValue` が、React の慣習と同じライブラリの `defaultSelection` の両方と意味がずれている。** React では `default*` は非制御のときの初期値で、`PointsEditor` の `defaultSelection` もその意味。`Knob` の `defaultValue` はダブルクリックで戻す値 → **`resetValue` などに改名し、`enableDoubleClickDefault` も合わせる**（例: `resetOnDoubleClick`）。あわせて、`Slider` / `XYPad` / `NumberInput` にもダブルクリックで戻す機能を持たせるか決める
-- [ ] **`externalStyles: { cursor }` の名前から中身が分からない。** 実際はドラッグ中のカーソルだけ → `dragCursor` など
-- [ ] **色を受ける prop の名前が揃っていない。** `Slider.Thumb` / `XYPad.Thumb` は `color`、`Knob.Thumb` は `thumb` / `thumbLine`、`Knob.ActiveLine` / `InactiveLine` は `stroke`、`Slider.Track` は `active` / `inactive`。SVG の属性に直接渡るもの（`stroke`）と、それ以外で規則を決める
-- [ ] **向きの指定が `vertical`（真偽）で、出す属性は `data-orientation`。** Radix / Base UI は `orientation` の prop → 揃えるか決める
-- [ ] **React でも `readonly` と小文字。** React の DOM の属性は `readOnly` なので、React 利用者は `readOnly` と書く。Svelte / Vue は `readonly` のままでよい
+- [ ] **`Knob` と `NumberInput` に drag の開始と終了の通知を足す。** `Slider` / `XYPad` / `PointsEditor.Point` と同じく `onDragStart` / `onDragEnd`（Vue は `dragStart` / `dragEnd`）。オートメーションの書き込み（DAW の touch）には開始と終了が要る。`NumberInput` はステッパーのドラッグで出す
+- [ ] **`Knob` の `defaultValue` を `resetValue` に、`enableDoubleClickDefault` を `resetOnDoubleClick` に改名する。** React の慣習でも `PointsEditor` の `defaultSelection` でも、`default*` は非制御のときの初期値を指す。ダブルクリックで戻す機能は `Knob` だけのままにする
+- [ ] **`externalStyles: { cursor }` を `dragCursor: string` にする。** 中身はドラッグ中のカーソルだけ。既定は `'grabbing'`
+- [ ] **色を受ける prop の名前を `*Color` に揃える。** SVG の属性に直接渡るもの（`Knob.ActiveLine` / `InactiveLine` の `stroke` / `strokeWidth`）はそのまま。それ以外は `Slider.Thumb` / `XYPad.Thumb` の `color` に合わせ、`Knob.Thumb` の `thumb` / `thumbLine` と `Slider.Track` の `active` / `inactive` を `color` / `lineColor` / `activeColor` / `inactiveColor` のようにする
+- [ ] **`Slider` の `vertical` を `orientation: 'horizontal' | 'vertical'` にする。** 出している `data-orientation` と揃える（Radix / Base UI と同じ）。3 つのフレームワークとも
+- [ ] **React だけ `readonly` を `readOnly` にする。** React の DOM の属性の慣習に合わせる。Svelte / Vue は `readonly` のまま
 
 ## 1.0 の基準
 
