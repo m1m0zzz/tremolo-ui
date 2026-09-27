@@ -10,7 +10,7 @@ Centered around `dom`, it supports multiple libraries and frameworks including `
 ## 🚩 Milestone (v1.0)
 
 - [x] Package migration: `dom`, `react`
-- [ ] Added new support: `vue`, `svelte`
+- [x] Added new support: `vue`, `svelte`
 - [x] Completely headless CSS
 - [ ] Added some pre-built components
 - [x] Full mobile device support
