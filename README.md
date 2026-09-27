@@ -27,7 +27,7 @@ Centered around `dom`, it supports multiple libraries and frameworks including `
 ## 📚 Links
 
 - [Documentation](https://tremolo-ui.mimoz.dev/)
-- [Storybook](https://tremolo-ui.mimoz.dev/i/storybook-react/)
+- Storybook: [React](https://tremolo-ui.mimoz.dev/i/storybook-react/) / [Svelte](https://tremolo-ui.mimoz.dev/i/storybook-svelte/) / [Vue](https://tremolo-ui.mimoz.dev/i/storybook-vue/)
 - [npm](https://www.npmjs.com/org/tremolo-ui)
 - [Contribution Guide](https://tremolo-ui.mimoz.dev/docs/guides/CONTRIBUTING)
 - [Change Log](https://tremolo-ui.mimoz.dev/docs/support/CHANGELOG)
