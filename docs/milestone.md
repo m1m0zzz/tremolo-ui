@@ -2,7 +2,7 @@
 
 1.0 を出すために必要な作業をまとめる。詳細な手順は各リンク先で管理する。
 
-現在: 全パッケージ 0.5.0。破壊的変更を入れつつ 0.x に留まるため、changeset では `major` ではなく `minor` を選ぶ運用（ルートの `AGENTS.md`「リリース」）。
+現在: 全パッケージ 0.8.0。破壊的変更を入れつつ 0.x に留まるため、changeset では `major` ではなく `minor` を選ぶ運用（ルートの `AGENTS.md`「リリース」）。
 
 ## 1. dom 切り出し
 
@@ -69,10 +69,10 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 あわせて必要になるもの:
 
-- [ ] ローカル publish には npm へのログインが必要（普段の publish は CI の OIDC 経由なので、ローカルの authToken が失効していることがある。scoped パッケージでは未認証でも 401 ではなく E404 が返るため `npm whoami` で切り分ける）
+- ローカル publish には npm へのログインが必要（普段の publish は CI の OIDC 経由なので、ローカルの authToken が失効していることがある。scoped パッケージでは未認証でも 401 ではなく E404 が返るため `npm whoami` で切り分ける）
 - [x] `.changeset/config.json` の `fixed` は `[["@tremolo-ui/*"]]` のグロブなので**変更不要**
 - [x] `packages/<name>/LICENSE` を置く場合、`.oxfmtrc.json` の `ignorePatterns` に `LICENSE` があること（`.prettierignore` から移行済み。oxfmt は知らない拡張子を黙って飛ばすので、prettier のときのように pre-commit が落ちることは無いはず）
-- [ ] Storybook を持つパッケージなら、`packages/react/wrangler.jsonc` に倣って Worker と `tremolo-ui.mimoz.dev/i/storybook-<name>*` の Route を足し、`ci.yml` と `pull-request.yml` の**両方**にビルドとデプロイの手順を足す
+- [x] Storybook を持つパッケージなら、`packages/react/wrangler.jsonc` に倣って Worker と `tremolo-ui.mimoz.dev/i/storybook-<name>*` の Route を足し、`ci.yml` と `pull-request.yml` の**両方**にビルドとデプロイの手順を足す
 - [x] CSS の配布方法は決着した。**パッケージは CSS を配らない**ので、各パッケージで重複させるかという問題自体が無くなった。デモのテーマは `shared/css/` にあり、Vue / Svelte を足しても、各パートが `className` を受け取り同じ `data-*` 属性を出していれば同じものが使える
 
 ## 4. ドキュメント整備
@@ -86,7 +86,10 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - **`UseWheelOptions` が `onWheel` を継承していた。** `createWheel` は `update()` で差し替えるために持っているが、hook はハンドラを第 1 引数で受けるので、オプションで渡しても黙って無視されていた。`Omit` で外した
   - 表に出すにあたって、説明の無かったコールバックや `threshold` / `updateOnPointerDown` の JSDoc を埋めた
   - `useAnimationFrame` / `useEventListener` / `useInterval` / `useLongPress` はページを作っていない。典型的な実装以上に書くことが無く、typedoc の API ページで足りる
-- [x] **Vue / Svelte のドキュメントを同じページにタブで載せる。**（各コンポーネントの例と import を `groupId="framework"` のタブにし、書き方の違いは `tutorials/svelte.mdx` にまとめた。例は `site/examples/svelte/` と `site/examples/vue/`（SFC）にあり、それぞれ `packages/svelte` / `packages/vue` の `typecheck` が型検査する。Vue の書き方の違いは `tutorials/vue.mdx`。API Reference の props の表は React から作ったものを共有する） `site/docs/components/<Name>/` を共通にし、例と API Reference だけを React / Svelte / Vue のタブで切り替える。`data-*` とテーマは共通なので説明も共有する。現在のページは React 前提で、live code block も `@tremolo-ui/react` をスコープに入れている（`site/src/theme/ReactLiveScope/index.tsx`）
+- [x] **Vue / Svelte のドキュメントを同じページにタブで載せた。** `site/docs/components/<Name>/` を共通にし、各コンポーネントの例と import を `groupId="framework"` の React / Svelte / Vue のタブで切り替える。`data-*` とテーマは共通なので説明も共有する
+  - 例は `site/examples/svelte/` と `site/examples/vue/`（SFC）にあり、それぞれ `packages/svelte` / `packages/vue` の `typecheck` が型検査する
+  - 書き方の違いは `tutorials/svelte.mdx` / `tutorials/vue.mdx` にまとめた
+  - API Reference の props の表は React から作ったものを共有する
   - Storybook は各パッケージに持たせ、別の Worker で配信する（上の「新パッケージを追加する際の手順」）
 - [x] **`site/i18n` の typedoc サイドバー翻訳キーを掃除した。** `sidebar.typedocSidebar.*` を en / ja とも**全て削除**した（114 キー → 7 キー）。
 - [x] `site/docs/support/CHANGELOG.md` の二重管理をやめた。中身は「TODO: record from version 1.0.0」のスタブのままだったので、各パッケージの `CHANGELOG.md` と GitHub リリース、移行ガイドへのリンクに置き換えた
@@ -192,6 +195,36 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - 鍵盤まわりを `KeyboardSection` に切り出した。octave は `noteRange` を 12 半音ずつずらす（Z / X でも動く）。velocity はマウスと PC キーボードで弾いたときの値で、MIDI キーボードは自分の velocity を使う（C / V で ±20）。どちらも `AmplitudeEnvelope.triggerAttack` の velocity に渡す
   - **MIDI は `Piano.playNote` を経由させた。** 鍵盤が光り、マウスと MIDI で同じノートを押しても 1 回だけ鳴る。Piano のコアは `noteRange` の外のノートも拒まないので、表示範囲の外を MIDI で弾いても鳴る。そのためエンベロープと音源は `noteRange` からの添字ではなくノート番号で持ち、初めて弾いたときに作る
 
+## 8. 1.0 に向けた公開 API の見直し
+
+1.0 以降は破壊的変更に `major` が要るので、その前に公開範囲・フレームワーク間の過不足・API の形を洗い出した（0.8.0 時点）。各項目の `→` は推奨で、未決定。
+
+### 公開範囲
+
+- [ ] **`dom` の export の半分近くが、ラッパーの実装のためだけに公開されている。** NumberInput のキャレットと下書き（`caretAtDecimalOffset` / `caretDecimalOffset` / `numberSpan` / `parseNumberText` / `commitNumberInputText` / `numberInputBounds` / `numberInputRanges` / `nudgeNumberInput`）、Knob の SVG 幾何（`KNOB_VIEWBOX_SIZE` / `knobArc*`）、`replaceOptions` / `checkSteps` / `cssLength` / `visuallyHiddenStyle` / `toXY` / `clampPoint` / `POINT_AXIS` / `valuePercent` / `sliderMarks` など。1.0 で出すとすべて semver の対象になる → **利用者向けの `create*` と型だけを `.` に残し、ラッパー向けは `@tremolo-ui/dom/internal` のようなサブパスへ分けて semver の対象外と明記する**
+- [ ] **ラッパーのどこからも使われず、実装の詳細でしかないものが公開されている。** `drawingState` / `isDrawingState` / `DrawingContext` / `DrawingState` / `DrawingStateValue` は `reduceFlickering` の実装。`knobArcPoint` / `isArrowKey` / `mapModifier` / `noteAt` / `createSelectionBox` / `selectionBoxCovers` / `matchesAccept` も要るかを 1 つずつ判断する → **少なくとも `drawingState` 一式は非公開に**
+- [ ] **`NOT_SUPPORTED` / `PERMISSION_DENIED` / `UNAVAILABLE` がパッケージのトップレベルにある。** 何のエラーか名前から分からない → **`MIDIAccessError` の文字列リテラル型だけを公開し、定数は外す**（比較は `error === 'NOT_SUPPORTED'` で書ける）
+- [ ] **`PITCH_BEND_CENTER` は MIDI の仕様の値で、DOM と関係が無い** → `functions` の midi へ
+- [ ] **React の `useAnimationFrame` / `useEventListener` / `useInterval` は、どのコンポーネントも使っていない汎用の hook。** Svelte / Vue に相当するものも無い。`functions` と同じ「このライブラリを使わない人が使うか」の基準なら、ここで配るものではない → **公開をやめる**
+- [ ] **3 つのラッパーの `DrawFunction` / `InitFunction` が、`dom` の `CanvasDrawFunction` / `CanvasInitFunction` と同じ形の別名になっている**（第 2 引数の名前が `option` と `frame` で違うだけ）。「ラッパーは `dom` のものを re-export しない」の規約に沿うなら、別名を作らず `dom` の型を使ってもらう → **ラッパー側の型を消す**
+
+### React / Svelte / Vue の過不足
+
+props・パート・命令的メソッドは 3 つでほぼ揃っている（Svelte / Vue の `PointsEditor` に `defaultSelection` が無いのは `bind:` / `v-model:selection` があるためで、不足ではない）。
+
+- [ ] **React の Root の `ref` だけが要素を返さない。** `Knob` / `Slider` / `XYPad` / `NumberInput` / `Piano` の `ref` は `focus` / `blur` や `playNote` を持つオブジェクトで、DOM 要素には届かない。`XYPad` だけが `original` で要素を渡しているが、他には無い。Svelte は `bind:ref` と `bind:this`、Vue は `$el` と `expose` で両方に届く → **`ref` は全パートで要素にし、メソッドは Base UI の `actionsRef` のような別の prop に移す。`original` は消す**
+- [ ] **Vue だけが props の型を 1 つも公開していない。** React / Svelte は `KnobProps` などを出している → 出すか、`ComponentProps<typeof Knob>` で取る方針をドキュメントに書く
+- [ ] **Svelte の action の options 型が `WheelActionOptions` しか公開されていない**（他は `dom` の型をそのまま使う）。`wheel` だけハンドラを options に入れた形なので、名前を付けて出す必要があった。揃えるなら他の action も同じ形にするか、`wheel` の引数の形を他に合わせる
+
+### API の形
+
+- [ ] **`Knob` だけが drag の開始と終了を通知しない。** `Slider` / `XYPad` / `PointsEditor.Point` は 3 つのフレームワークとも `onDragStart` / `onDragEnd`（Vue は `dragStart` / `dragEnd`）を持つ。オートメーションの書き込み（DAW の touch）には開始と終了が要り、いちばん使われるのは Knob → **足す。`NumberInput` のステッパーのドラッグも同様**
+- [ ] **`Knob` の `defaultValue` が、React の慣習と同じライブラリの `defaultSelection` の両方と意味がずれている。** React では `default*` は非制御のときの初期値で、`PointsEditor` の `defaultSelection` もその意味。`Knob` の `defaultValue` はダブルクリックで戻す値 → **`resetValue` などに改名し、`enableDoubleClickDefault` も合わせる**（例: `resetOnDoubleClick`）。あわせて、`Slider` / `XYPad` / `NumberInput` にもダブルクリックで戻す機能を持たせるか決める
+- [ ] **`externalStyles: { cursor }` の名前から中身が分からない。** 実際はドラッグ中のカーソルだけ → `dragCursor` など
+- [ ] **色を受ける prop の名前が揃っていない。** `Slider.Thumb` / `XYPad.Thumb` は `color`、`Knob.Thumb` は `thumb` / `thumbLine`、`Knob.ActiveLine` / `InactiveLine` は `stroke`、`Slider.Track` は `active` / `inactive`。SVG の属性に直接渡るもの（`stroke`）と、それ以外で規則を決める
+- [ ] **向きの指定が `vertical`（真偽）で、出す属性は `data-orientation`。** Radix / Base UI は `orientation` の prop → 揃えるか決める
+- [ ] **React でも `readonly` と小文字。** React の DOM の属性は `readOnly` なので、React 利用者は `readOnly` と書く。Svelte / Vue は `readonly` のままでよい
+
 ## 1.0 の基準
 
 以下が揃った時点で 1.0 とする。
@@ -199,4 +232,4 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 - [x] コア切り出しが Phase 5 まで完了し、`@tremolo-ui/react` が薄いラッパーになっている
 - [x] Vue / Svelte のいずれかが公開されている（コアが framework-agnostic であることの実証）
 - [x] CSS の配布方法が確定し、移行ガイドがある（パッケージは CSS を配らず、テーマはドキュメントで公開する）
-- [ ] 公開 API が安定し、以降の破壊的変更に `major` を使う運用へ切り替えられる
+- [ ] 公開 API が安定し、以降の破壊的変更に `major` を使う運用へ切り替えられる（「8. 1.0 に向けた公開 API の見直し」が片付いた時点）
