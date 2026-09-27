@@ -197,6 +197,6 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 以下が揃った時点で 1.0 とする。
 
 - [x] コア切り出しが Phase 5 まで完了し、`@tremolo-ui/react` が薄いラッパーになっている
-- [ ] Vue / Svelte のいずれかが公開されている（コアが framework-agnostic であることの実証）
+- [x] Vue / Svelte のいずれかが公開されている（コアが framework-agnostic であることの実証）
 - [x] CSS の配布方法が確定し、移行ガイドがある（パッケージは CSS を配らず、テーマはドキュメントで公開する）
 - [ ] 公開 API が安定し、以降の破壊的変更に `major` を使う運用へ切り替えられる
