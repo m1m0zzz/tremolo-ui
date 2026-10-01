@@ -38,9 +38,6 @@ const BASE_LAST_NOTE = noteNumber('B4')
 /** How far C / V move the velocity, as in the computer keyboards of DAWs. */
 const VELOCITY_STEP = 20
 
-/** Outside the component, so the listener is not re-attached on every render. */
-const windowTarget = () => globalThis.window
-
 function isEditableTarget(target: EventTarget | null) {
   return (
     target instanceof HTMLElement &&
@@ -85,7 +82,7 @@ export function KeyboardSection({
 
   // The note shortcuts are on the home row, which leaves Z X C V free. They
   // listen where the piano's do, and like them stay out of the text fields.
-  useEventListener(windowTarget, 'keydown', (e) => {
+  useEventListener(window, 'keydown', (e) => {
     if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return
     if (isEditableTarget(e.target)) return
     switch (e.key) {

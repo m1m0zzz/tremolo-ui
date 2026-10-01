@@ -1,0 +1,69 @@
+import CodeBlock from '@theme/CodeBlock'
+import GitHubLink from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/hooks/use-event-listener/basic'
+
+# useEventListener
+
+`window` や `document` などの任意のターゲットのイベントを、コンポーネントがマウントされている間だけ購読します。
+
+<GitHubLink
+  path='packages/react/src/hooks/useEventListener.ts'
+/>
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/hooks/use-event-listener/basic.tsx'
+>{basic}</CodeBlock>
+
+## インポート {#import}
+
+```jsx
+import { useEventListener } from '@tremolo-ui/react'
+```
+
+## 使い方 {#usage}
+
+```jsx
+useEventListener(target, 'keydown', handler, options)
+```
+
+イベント名でハンドラの型が決まります。`'keydown'` なら `KeyboardEvent` を受け取ります。
+
+**引数はどれもインラインで書けます。** ハンドラはイベントのたびに読み直され、ターゲットとオプションは参照の同一性ではなく、解決した中身で比べます。リスナを付け直すのは、要素・イベント名・オプションのどれかが実際に変わったときだけです。
+
+## ターゲット {#the-target}
+
+ターゲットは `EventTarget`、`null`、またはそのどちらかを返す関数です。
+
+- `null` は何も購読しません。しばらく購読をやめたいときに渡します
+- **関数はレンダーのたびに、ブラウザで呼ばれます。** ref の先の要素を渡すときや、サーバーでもレンダーするページで `window` / `document` を渡すときに使います。どちらもレンダー中のサーバーには存在しません
+
+```jsx
+const ref = useRef(null)
+useEventListener(() => ref.current, 'pointerenter', handler)
+useEventListener(() => window, 'resize', handler)
+```
+
+既定のターゲットはありません。`document` や `window` も名前で渡してください。
+
+## オプション {#options}
+
+第 4 引数は `addEventListener` のオプションです。`capture` を表す真偽値か、`capture` / `once` / `passive` を持つオブジェクトを渡します。リスナを外すタイミングは hook が決めるので、`signal` は受け付けません。
+
+```jsx
+useEventListener(() => window, 'touchmove', handler, { passive: false })
+```
+
+## 途中でリスナを外す {#removing-the-listener-early}
+
+戻り値の関数はリスナを外します。ターゲット・イベント名・オプションが変わるまで外れたままなので、再レンダーしても戻りません。
+
+```jsx
+const stop = useEventListener(() => window, 'pointermove', (event) => {
+  if (done(event)) stop()
+})
+```
+
+オンとオフを切り替えるものなら、ターゲットを `null` にするほうを勧めます。リスナがあるかどうかがレンダーに書かれるためです。

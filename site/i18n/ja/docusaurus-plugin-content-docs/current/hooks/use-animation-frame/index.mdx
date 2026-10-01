@@ -1,0 +1,59 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/hooks/use-animation-frame/basic'
+
+# useAnimationFrame
+
+コンポーネントがマウントされている間、アニメーションフレームごとに関数を呼びます。
+
+<GitHubLink
+  path='packages/react/src/hooks/useAnimationFrame.ts'
+/>
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/hooks/use-animation-frame/basic.tsx'
+>{basic}</CodeBlock>
+
+## インポート {#import}
+
+```jsx
+import { useAnimationFrame } from '@tremolo-ui/react'
+```
+
+## コールバック {#the-callback}
+
+フレームのタイムスタンプと、前のフレームからの経過ミリ秒を受け取ります。
+
+```jsx
+useAnimationFrame((timestamp, delta) => {
+  position.current += speed * delta
+})
+```
+
+ループの最初のフレームでは `delta` は `0` です。1 フレームごとに決まった量ではなく `delta` に比例して動かせば、60 Hz と 120 Hz のディスプレイで速さが変わりません。
+
+コールバックはフレームのたびに読み直されるので、インラインで書けて、最新の props と state が見えます。再レンダーしてもループは張り直されません。
+
+## 一時停止 {#pausing}
+
+`disabled` でループを止めます。
+
+```jsx
+useAnimationFrame(update, { disabled: !playing })
+```
+
+戻すと新しいループが始まり、その最初のフレームの `delta` はまた `0` になります。止めていた時間が 1 つの長いフレームとして報告されないので、再開したときに先へ飛びません。
+
+## canvas に描く {#drawing-on-a-canvas}
+
+`<canvas>` に描くなら、代わりに [`AnimationCanvas`](/docs/components/AnimationCanvas) を使ってください。同じループを回したうえで、canvas の大きさを要素とデバイスピクセル比に合わせ続けます。ページの他の部分のために値を読むのも `draw` の中でできるので、ループを 2 本にせず 1 本で済みます。
+
+## オプション {#options}
+
+コールバックは第 1 引数です。以下は第 2 引数のものです。
+
+<PropsTable of="UseAnimationFrameOptions" />
