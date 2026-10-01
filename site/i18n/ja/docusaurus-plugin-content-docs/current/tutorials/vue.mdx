@@ -57,7 +57,7 @@ const value = ref(50)
 
 ## composables
 
-React の hooks と同じ名前の composables があります。要素を ref（または getter）で、オプションを `@tremolo-ui/dom` の対応する関数と同じ形で受け取ります。オプションを変えてもドラッグの途中で切れません。
+React の hooks と同じ名前の composables があります（[React だけのもの](#react-only)の 2 つを除く）。要素を ref（または getter）で、オプションを `@tremolo-ui/dom` の対応する関数と同じ形で受け取ります。オプションを変えてもドラッグの途中で切れません。
 
 ```html
 <script setup lang="ts">
@@ -91,6 +91,10 @@ useMIDIInput(
 )
 // <button @click="midi.request()">MIDI に接続</button>
 ```
+
+## React だけのもの {#react-only}
+
+[`useEventListener`](/docs/hooks/use-event-listener) と [`useAnimationFrame`](/docs/hooks/use-animation-frame) に対応するものはありません。`@tremolo-ui/dom` ではなくブラウザの API を包むもので、[VueUse](https://vueuse.org/) が既に同じことをできるためです。書き方はそれぞれのページにあります。
 
 ## Storybook
 

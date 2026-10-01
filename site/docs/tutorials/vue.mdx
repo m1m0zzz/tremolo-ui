@@ -62,10 +62,10 @@ const value = ref(50)
 
 ## Composables
 
-The React hooks have composables of the same names. They take the element as
-a ref (or a getter), and the options of the matching function in
-`@tremolo-ui/dom`. Changing the options does not interrupt a drag in
-progress.
+The React hooks have composables of the same names, apart from the two
+[React only](#react-only) ones. They take the element as a ref (or a getter),
+and the options of the matching function in `@tremolo-ui/dom`. Changing the
+options does not interrupt a drag in progress.
 
 ```html
 <script setup lang="ts">
@@ -100,6 +100,13 @@ useMIDIInput(
 )
 // <button @click="midi.request()">Connect MIDI</button>
 ```
+
+## React only {#react-only}
+
+[`useEventListener`](/docs/hooks/use-event-listener) and
+[`useAnimationFrame`](/docs/hooks/use-animation-frame) have no counterpart
+here. They wrap a browser API rather than something in `@tremolo-ui/dom`, and
+[VueUse](https://vueuse.org/) already covers them. Their pages show how.
 
 ## Storybook
 

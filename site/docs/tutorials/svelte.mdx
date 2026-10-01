@@ -102,6 +102,13 @@ read reactively:
 <button onclick={() => midi.request()}>Connect MIDI</button>
 ```
 
+## React only {#react-only}
+
+[`useEventListener`](/docs/hooks/use-event-listener) and
+[`useAnimationFrame`](/docs/hooks/use-animation-frame) have no counterpart
+here. They wrap a browser API rather than something in `@tremolo-ui/dom`, and
+Svelte itself already covers them. Their pages show how.
+
 ## Storybook
 
 The Svelte components have a [Storybook of their own](https://tremolo-ui.mimoz.dev/i/storybook-svelte/).

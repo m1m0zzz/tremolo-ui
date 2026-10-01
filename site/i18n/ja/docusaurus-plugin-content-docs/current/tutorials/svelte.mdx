@@ -95,6 +95,10 @@ React との違い:
 <button onclick={() => midi.request()}>MIDI に接続</button>
 ```
 
+## React だけのもの {#react-only}
+
+[`useEventListener`](/docs/hooks/use-event-listener) と [`useAnimationFrame`](/docs/hooks/use-animation-frame) に対応するものはありません。`@tremolo-ui/dom` ではなくブラウザの API を包むもので、Svelte 自体が既に同じことをできるためです。書き方はそれぞれのページにあります。
+
 ## Storybook
 
 Svelte のコンポーネントには[専用の Storybook](https://tremolo-ui.mimoz.dev/i/storybook-svelte/)があります。
