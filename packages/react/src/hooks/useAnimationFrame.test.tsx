@@ -2,7 +2,7 @@ import { act, render } from '@testing-library/react'
 
 import { useAnimationFrame } from './useAnimationFrame'
 
-let flush: () => void
+let flush: (timestamp?: number) => void
 let pending: () => number
 let cancels: () => number
 
@@ -21,10 +21,10 @@ function stubAnimationFrame() {
     if (queued.delete(id)) cancelled++
   }
 
-  flush = () => {
+  flush = (timestamp = performance.now()) => {
     const callbacks = [...queued.values()]
     queued.clear()
-    for (const callback of callbacks) callback(performance.now())
+    for (const callback of callbacks) callback(timestamp)
   }
   pending = () => queued.size
   cancels = () => cancelled
@@ -32,8 +32,14 @@ function stubAnimationFrame() {
 
 beforeEach(stubAnimationFrame)
 
-function Host({ callback, dep }: { callback: () => void; dep?: number }) {
-  useAnimationFrame(callback, dep === undefined ? [] : [dep])
+function Host({
+  callback,
+  disabled,
+}: {
+  callback: () => void
+  disabled?: boolean
+}) {
+  useAnimationFrame(callback, { disabled })
   return null
 }
 
@@ -86,20 +92,41 @@ describe('useAnimationFrame', () => {
     expect(seen).toEqual([1, 2])
   })
 
-  test('a dependency change swaps the callback without doubling the loop', () => {
-    const first = vi.fn()
-    const second = vi.fn()
+  test('passes the timestamp and the time since the previous frame', () => {
+    const callback = vi.fn()
+    render(<Host callback={callback} />)
 
-    const { rerender } = render(<Host callback={first} dep={0} />)
-    act(() => flush())
-    expect(first).toHaveBeenCalledTimes(1)
+    act(() => flush(1000))
+    act(() => flush(1016))
+    act(() => flush(1050))
 
-    rerender(<Host callback={second} dep={1} />)
-    act(() => flush())
+    expect(callback.mock.calls).toEqual([
+      [1000, 0],
+      [1016, 16],
+      [1050, 34],
+    ])
+  })
 
-    expect(second).toHaveBeenCalledTimes(1)
-    // The loop the old callback was closed over is gone, not left running.
-    expect(first).toHaveBeenCalledTimes(1)
+  test('disabled stops the loop, and turning it back on starts a new one', () => {
+    const callback = vi.fn()
+    const { rerender } = render(<Host callback={callback} />)
+    act(() => flush(1000))
+
+    rerender(<Host callback={callback} disabled />)
+    expect(pending()).toBe(0)
+
+    rerender(<Host callback={callback} />)
+    act(() => flush(5000))
+
+    // The time spent stopped is not reported as one long frame.
+    expect(callback).toHaveBeenLastCalledWith(5000, 0)
     expect(pending()).toBe(1)
+  })
+
+  test('starts with nothing scheduled when disabled', () => {
+    const callback = vi.fn()
+    render(<Host callback={callback} disabled />)
+
+    expect(pending()).toBe(0)
   })
 })

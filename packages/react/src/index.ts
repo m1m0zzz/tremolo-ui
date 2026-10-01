@@ -70,12 +70,18 @@ export {
 export { type CSSVariables } from './css-variables'
 
 // hooks
-export { useAnimationFrame } from './hooks/useAnimationFrame'
+export {
+  useAnimationFrame,
+  type UseAnimationFrameOptions,
+} from './hooks/useAnimationFrame'
 export { useDrag, type UseDragOptions } from './hooks/useDrag'
 export { useDragValue, type UseDragValueOptions } from './hooks/useDragValue'
 export { useDropZone, type UseDropZoneOptions } from './hooks/useDropZone'
-export { useEventListener } from './hooks/useEventListener'
-export { useInterval } from './hooks/useInterval'
+export {
+  useEventListener,
+  type UseEventListenerOptions,
+  type UseEventListenerTarget,
+} from './hooks/useEventListener'
 export { useLongPress } from './hooks/useLongPress'
 export { useMIDIAccess } from './hooks/useMIDIAccess'
 export { useMIDIInput } from './hooks/useMIDIInput'

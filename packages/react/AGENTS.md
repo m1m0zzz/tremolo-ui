@@ -27,6 +27,7 @@
 ## 命名
 
 - **公開する型はコンポーネント名で始める。** `Root` の props は `<Component>Props`、パートの props は `<Component><Part>Props`。ref で公開するメソッドは `<Component>Methods` / `<Component><Part>Methods`。`src/index.ts` に全コンポーネントの型が並ぶので、`ThumbProps` のような名前は衝突する
+- **hook の公開する型は hook 名を大文字で始めた形にする。** オプションは `Use<Hook>Options`、それ以外の引数は `Use<Hook><Name>`（`UseEventListenerTarget`）。コンポーネントの型と同じく、`src/index.ts` で衝突させないため
 - 公開する props の型には独自の props だけを書く。描く要素の属性はファイル内で `type Props = XProps & Omit<ComponentPropsWithoutRef<'div'>, keyof XProps>` と合わせる。ネイティブの属性を API ページや Controls に並べないため
   - **要素の属性と同じ型のもの（`className` / `style` / `children` / `aria-*`）は、内側の別の要素へ渡すときでも宣言しない。** 行き先を変えているのは分割代入で、型ではない。宣言しても `Omit` で抜けて同じ型で戻ってくるだけになる。行き先はテストで固定する
   - 宣言するのは型を変えるときだけ（`Root` の必須の `children`、軸ごとに受ける `aria-label`、カスタムプロパティを受ける `style`）。**独自の props が無いパートは props の型を作らず、公開もしない。** 空の interface は何も言わない名前が公開 API に増えるだけで、利用者は `ComponentProps<typeof X.Part>` で型を取れる
@@ -69,7 +70,7 @@
 
 ### hooks の story
 
-- **`src/index.ts` から公開している hook にだけ置く。** ただし全部には置かない。操作して挙動を確かめるもの（ドラッグ・長押し・MIDI など）に置き、ブラウザ API を薄く包むだけのもの（`useEventListener` / `useInterval` / `useAnimationFrame`）には置かない
+- **`src/index.ts` から公開している hook にだけ置く。** ただし全部には置かない。操作して挙動を確かめるもの（ドラッグ・長押し・MIDI など）に置き、ブラウザ API を薄く包むだけのもの（`useEventListener` / `useAnimationFrame`）には置かない
 - 描く component が無いので `Meta` / `StoryObj` は使わない。`export default { title }` と、関数の story（`export const Basic = () => ...`）で書く
 - **story を開いただけで権限プロンプトや音が出ないようにする。** ユーザーの操作から始める（`useMIDIAccess(false)` にしてボタンで `request` する、など）
 

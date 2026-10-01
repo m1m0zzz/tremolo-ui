@@ -1,0 +1,69 @@
+import CodeBlock from '@theme/CodeBlock'
+import { PropsTable } from '@site/src/components/ApiReference'
+import GitHubLink from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/hooks/use-animation-frame/basic'
+
+# useAnimationFrame
+
+Call a function on every animation frame, for as long as the component is
+mounted.
+
+<GitHubLink
+  path='packages/react/src/hooks/useAnimationFrame.ts'
+/>
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/hooks/use-animation-frame/basic.tsx'
+>{basic}</CodeBlock>
+
+## Import
+
+```jsx
+import { useAnimationFrame } from '@tremolo-ui/react'
+```
+
+## The callback
+
+It receives the frame's timestamp and the milliseconds since the previous
+frame:
+
+```jsx
+useAnimationFrame((timestamp, delta) => {
+  position.current += speed * delta
+})
+```
+
+`delta` is `0` on the first frame of a loop. Moving by `delta` rather than by
+a fixed amount per frame keeps the speed the same on a 60 Hz and a 120 Hz
+display.
+
+The callback is read on every frame, so it can be written inline and sees the
+latest props and state. Rendering does not restart the loop.
+
+## Pausing
+
+`disabled` stops the loop:
+
+```jsx
+useAnimationFrame(update, { disabled: !playing })
+```
+
+Turning it back on starts a new loop, whose first frame again has a `delta` of
+`0`. The time spent stopped is not reported as one long frame, so nothing
+jumps ahead on resume.
+
+## Drawing on a canvas
+
+To draw on a `<canvas>`, use [`AnimationCanvas`](/docs/components/AnimationCanvas)
+instead. It runs the same loop and also keeps the canvas sized to the element
+and to the device pixel ratio. Reading a value for the rest of the page can
+happen in its `draw` too, so that there is one loop rather than two.
+
+## Options {#options}
+
+The callback is the first argument. These are the second.
+
+<PropsTable of="UseAnimationFrameOptions" />

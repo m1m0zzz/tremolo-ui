@@ -1,0 +1,79 @@
+import CodeBlock from '@theme/CodeBlock'
+import GitHubLink from '@site/src/components/GitHubLink'
+import basic from '!!raw-loader!@site/examples/hooks/use-event-listener/basic'
+
+# useEventListener
+
+Listen to an event on any target, such as `window` or `document`, for as long
+as the component is mounted.
+
+<GitHubLink
+  path='packages/react/src/hooks/useEventListener.ts'
+/>
+
+<CodeBlock
+  jsx
+  live
+  showCode
+  sourcePath='examples/hooks/use-event-listener/basic.tsx'
+>{basic}</CodeBlock>
+
+## Import
+
+```jsx
+import { useEventListener } from '@tremolo-ui/react'
+```
+
+## Usage
+
+```jsx
+useEventListener(target, 'keydown', handler, options)
+```
+
+The event name types the handler: `'keydown'` gives it a `KeyboardEvent`.
+
+**All of the arguments can be written inline.** The handler is read on every
+event, and the target and the options are compared by what they resolve to,
+not by identity. The listener is re-attached only when the element, the event
+name or one of the options actually changes.
+
+## The target
+
+The target is an `EventTarget`, `null`, or a function returning either.
+
+- `null` listens on nothing. Pass it to stop listening for a while
+- **A function is called after every render**, in the browser. Use one to
+  reach an element through a ref, and for `window` and `document` on a page
+  that is also rendered on the server, where neither exists while rendering
+
+```jsx
+const ref = useRef(null)
+useEventListener(() => ref.current, 'pointerenter', handler)
+useEventListener(() => window, 'resize', handler)
+```
+
+There is no default target: pass `document` or `window` by name.
+
+## Options
+
+The fourth argument is the options of `addEventListener`: a boolean for
+`capture`, or an object with `capture`, `once` and `passive`. `signal` is left
+out, since the hook already decides when the listener goes.
+
+```jsx
+useEventListener(() => window, 'touchmove', handler, { passive: false })
+```
+
+## Removing the listener early
+
+The return value removes the listener. It stays removed until the target, the
+event name or the options change, so a rerender does not bring it back:
+
+```jsx
+const stop = useEventListener(() => window, 'pointermove', (event) => {
+  if (done(event)) stop()
+})
+```
+
+For something to switch on and off, prefer a `null` target: it says in the
+render whether the listener is there.

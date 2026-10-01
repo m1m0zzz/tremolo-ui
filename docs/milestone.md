@@ -205,7 +205,9 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 - [ ] **どのラッパーも使っていない export を外す。** `drawingState` / `isDrawingState` / `DrawingContext` / `DrawingState` / `DrawingStateValue` / `knobArcPoint` / `isArrowKey` / `mapModifier` / `noteAt` / `createSelectionBox` / `selectionBoxCovers` / `matchesAccept`。`dom` の中で使っているもの（`reduceFlickering` の `readDrawingState` など）は実装として残し、入口からの export だけをやめる
   - `drawingState` 一式は、Phase 4.2 で rAF のループを `createAnimationCanvas` に移した時点でラッパーから使われなくなり、export だけが残っていた。`isDrawingState` は `dom` の中でも使われていない
 - [ ] **MIDI の定数を名前空間にまとめる。** トップレベルの `NOT_SUPPORTED` / `PERMISSION_DENIED` / `UNAVAILABLE` は何のエラーか名前から分からないので、`MIDIAccessError` の値を 1 つのオブジェクト（例: `MIDI_ACCESS_ERROR.NOT_SUPPORTED`）にまとめる。`PITCH_BEND_CENTER` は MIDI の仕様の値で DOM と関係が無いので、`functions` の midi へ移す
-- [ ] **React の `useAnimationFrame` / `useEventListener` / `useInterval` の公開をやめる。** どのコンポーネントも使っていない汎用の hook で、Svelte / Vue に相当するものも無い
+- [x] **React の `useInterval` を消す。** どのコンポーネントも story も使っていなかった。`useAnimationFrame` / `useEventListener` は残し、形を直してドキュメントのページを作った
+  - `useEventListener`: `null` と `() => null` で挙動が違った（前者は `document` を購読していた）ので、どちらも何も購読しないに揃え、既定のターゲットを無くした。インラインの `target` / `options` でも、解決した要素と options の中身が変わったときだけ付け直す。型を `UseEventListenerTarget` / `UseEventListenerOptions` として公開した
+  - `useAnimationFrame`: `callback` を必須にし、`(timestamp, delta)` を渡す。callback は ref から読むので意味の無かった `deps` をやめ、`{ disabled }` で止められるようにした。`UseAnimationFrameOptions` を公開した
 - [ ] **各ラッパーの `DrawFunction` / `InitFunction` を消す。** `dom` の `CanvasDrawFunction` / `CanvasInitFunction` と同じ形の別名（第 2 引数の名前が違うだけ）で、「ラッパーは `dom` のものを re-export しない」の規約どおり `dom` の型を使ってもらう
 
 ### React / Svelte / Vue の過不足
