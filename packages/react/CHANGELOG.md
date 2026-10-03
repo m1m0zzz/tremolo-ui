@@ -1,5 +1,30 @@
 # @tremolo-ui/react
 
+## 0.9.0
+
+### Minor Changes
+
+- [#376](https://github.com/m1m0zzz/tremolo-ui/pull/376) [`f1fd2b9`](https://github.com/m1m0zzz/tremolo-ui/commit/f1fd2b97665ee7f7bbed3e38c7c6c800d499447e) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Remove `useInterval`, and rework `useEventListener` and `useAnimationFrame`.
+  
+  `useEventListener` no longer listens on `document` when the target is `null`:
+  `null` and a function returning `null` both listen on nothing, so pass
+  `document` by name. A target and options written inline are compared by what
+  they resolve to, and the listener is re-attached only when the element, the
+  event or an option changes. `signal` is no longer accepted, and the argument
+  types are exported as `UseEventListenerTarget` and `UseEventListenerOptions`.
+  
+  `useAnimationFrame` requires its callback and passes it the frame's timestamp
+  and the milliseconds since the previous frame. The `deps` argument is replaced
+  by `{ disabled }`, which stops the loop; the callback was already read on every
+  frame, so `deps` only restarted it. The options are exported as
+  `UseAnimationFrameOptions`.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tremolo-ui/dom@0.9.0
+  - @tremolo-ui/functions@0.9.0
+
 ## 0.8.0
 
 ### Minor Changes
