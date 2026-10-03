@@ -1,6 +1,8 @@
 import CodeBlock from '@theme/CodeBlock'
 import GitHubLink from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/hooks/use-event-listener/basic'
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
 # useEventListener
 
@@ -55,6 +57,44 @@ useEventListener(() => window, 'resize', handler)
 ```jsx
 useEventListener(() => window, 'touchmove', handler, { passive: false })
 ```
+
+## Svelte と Vue {#svelte-and-vue}
+
+この hook は React だけのものです。どちらのフレームワークにも同じことをする手段が既にあるので、`@tremolo-ui/svelte` と `@tremolo-ui/vue` には置いていません。
+
+<Tabs groupId="framework" queryString>
+<TabItem value="svelte" label="Svelte">
+
+`<svelte:window>` と `<svelte:document>` は、コンポーネントがマウントされている間だけ購読します。
+
+```html
+<svelte:window onkeydown={(event) => (key = event.key)} />
+```
+
+それ以外のターゲットや、条件が成り立つ間だけ購読したいときは、`svelte/events` の `on()` を `$effect` から返します。`on()` はリスナを外す関数を返すので、それがそのまま effect の cleanup になります。
+
+```ts
+import { on } from 'svelte/events'
+
+$effect(() => {
+  if (!listening) return
+  return on(window, 'keydown', (event) => (key = event.key))
+})
+```
+
+</TabItem>
+<TabItem value="vue" label="Vue">
+
+[VueUse](https://vueuse.org/core/useEventListener/) に同じ形の `useEventListener` があります。ターゲットを ref か getter で受け、ターゲットが変わると付け直します。この hook と違い、ターゲットを省略すると `window` を購読します。
+
+```ts
+import { useEventListener } from '@vueuse/core'
+
+useEventListener(window, 'keydown', (event) => (key.value = event.key))
+```
+
+</TabItem>
+</Tabs>
 
 ## 途中でリスナを外す {#removing-the-listener-early}
 

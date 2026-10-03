@@ -2,6 +2,8 @@ import CodeBlock from '@theme/CodeBlock'
 import { PropsTable } from '@site/src/components/ApiReference'
 import GitHubLink from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/hooks/use-animation-frame/basic'
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
 # useAnimationFrame
 
@@ -51,6 +53,47 @@ useAnimationFrame(update, { disabled: !playing })
 ## canvas に描く {#drawing-on-a-canvas}
 
 `<canvas>` に描くなら、代わりに [`AnimationCanvas`](/docs/components/AnimationCanvas) を使ってください。同じループを回したうえで、canvas の大きさを要素とデバイスピクセル比に合わせ続けます。ページの他の部分のために値を読むのも `draw` の中でできるので、ループを 2 本にせず 1 本で済みます。
+
+## Svelte と Vue {#svelte-and-vue}
+
+この hook は React だけのものです。どちらのフレームワークにも同じことをする手段が既にあるので、`@tremolo-ui/svelte` と `@tremolo-ui/vue` には置いていません。
+
+<Tabs groupId="framework" queryString>
+<TabItem value="svelte" label="Svelte">
+
+`$effect` の中でループを回し、cleanup で止めます。
+
+```ts
+$effect(() => {
+  if (paused) return
+
+  let previous: number | undefined
+  let frame = requestAnimationFrame(function loop(timestamp) {
+    frame = requestAnimationFrame(loop)
+    update(timestamp, previous === undefined ? 0 : timestamp - previous)
+    previous = timestamp
+  })
+  return () => cancelAnimationFrame(frame)
+})
+```
+
+ループを張り直すのは、effect が最初のフレームより前に読んだもの（ここでは `paused`）だけです。`update` が読むものはフレームのコールバックの中で読まれ、effect は追跡しないので、state を自由に読めます。
+
+</TabItem>
+<TabItem value="vue" label="Vue">
+
+[VueUse](https://vueuse.org/core/useRafFn/) に `useRafFn` があります。コールバックは `{ delta, timestamp }` を受け取り、戻り値の `pause()` / `resume()` が `disabled` の代わりになります。
+
+```ts
+import { useRafFn } from '@vueuse/core'
+
+const { pause, resume } = useRafFn(({ delta, timestamp }) =>
+  update(timestamp, delta),
+)
+```
+
+</TabItem>
+</Tabs>
 
 ## オプション {#options}
 

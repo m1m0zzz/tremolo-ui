@@ -1,6 +1,8 @@
 import CodeBlock from '@theme/CodeBlock'
 import GitHubLink from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/hooks/use-event-listener/basic'
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
 # useEventListener
 
@@ -63,6 +65,51 @@ out, since the hook already decides when the listener goes.
 ```jsx
 useEventListener(() => window, 'touchmove', handler, { passive: false })
 ```
+
+## Svelte and Vue {#svelte-and-vue}
+
+This hook is React only. Both frameworks already have a way to do the same, so
+`@tremolo-ui/svelte` and `@tremolo-ui/vue` do not repeat it.
+
+<Tabs groupId="framework" queryString>
+<TabItem value="svelte" label="Svelte">
+
+`<svelte:window>` and `<svelte:document>` listen for as long as the component
+is mounted:
+
+```html
+<svelte:window onkeydown={(event) => (key = event.key)} />
+```
+
+For any other target, or to listen only while something holds, return `on()`
+from `svelte/events` out of an `$effect`. It gives back the function that
+removes the listener, which is what the effect's cleanup wants:
+
+```ts
+import { on } from 'svelte/events'
+
+$effect(() => {
+  if (!listening) return
+  return on(window, 'keydown', (event) => (key = event.key))
+})
+```
+
+</TabItem>
+<TabItem value="vue" label="Vue">
+
+[VueUse](https://vueuse.org/core/useEventListener/) has a `useEventListener` of
+the same shape. It takes the target as a ref or a getter and re-registers when
+the target changes. Unlike this hook, it listens on `window` when the target is
+left out.
+
+```ts
+import { useEventListener } from '@vueuse/core'
+
+useEventListener(window, 'keydown', (event) => (key.value = event.key))
+```
+
+</TabItem>
+</Tabs>
 
 ## Removing the listener early
 

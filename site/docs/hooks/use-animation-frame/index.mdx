@@ -2,6 +2,8 @@ import CodeBlock from '@theme/CodeBlock'
 import { PropsTable } from '@site/src/components/ApiReference'
 import GitHubLink from '@site/src/components/GitHubLink'
 import basic from '!!raw-loader!@site/examples/hooks/use-animation-frame/basic'
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
 # useAnimationFrame
 
@@ -61,6 +63,52 @@ To draw on a `<canvas>`, use [`AnimationCanvas`](/docs/components/AnimationCanva
 instead. It runs the same loop and also keeps the canvas sized to the element
 and to the device pixel ratio. Reading a value for the rest of the page can
 happen in its `draw` too, so that there is one loop rather than two.
+
+## Svelte and Vue {#svelte-and-vue}
+
+This hook is React only. Both frameworks already have a way to do the same, so
+`@tremolo-ui/svelte` and `@tremolo-ui/vue` do not repeat it.
+
+<Tabs groupId="framework" queryString>
+<TabItem value="svelte" label="Svelte">
+
+Run the loop in an `$effect` and cancel it in the cleanup:
+
+```ts
+$effect(() => {
+  if (paused) return
+
+  let previous: number | undefined
+  let frame = requestAnimationFrame(function loop(timestamp) {
+    frame = requestAnimationFrame(loop)
+    update(timestamp, previous === undefined ? 0 : timestamp - previous)
+    previous = timestamp
+  })
+  return () => cancelAnimationFrame(frame)
+})
+```
+
+Only what the effect reads before the first frame — `paused` here — restarts
+the loop. What `update` reads runs inside the frame callback, which the effect
+does not track, so it can read state freely.
+
+</TabItem>
+<TabItem value="vue" label="Vue">
+
+[VueUse](https://vueuse.org/core/useRafFn/) has `useRafFn`. Its callback
+receives `{ delta, timestamp }`, and the `pause()` / `resume()` it returns take
+the place of `disabled`:
+
+```ts
+import { useRafFn } from '@vueuse/core'
+
+const { pause, resume } = useRafFn(({ delta, timestamp }) =>
+  update(timestamp, delta),
+)
+```
+
+</TabItem>
+</Tabs>
 
 ## Options {#options}
 
