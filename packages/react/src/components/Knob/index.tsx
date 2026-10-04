@@ -11,21 +11,23 @@ import {
 } from 'react'
 
 import {
-  applyDelta,
-  arrowKeyDirection,
   type AxisOptions,
   type ChangeSource,
-  cssLength,
   DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
   type InputEventOption,
   knobAngles,
   type ModifierValue,
-  selectModifier,
-  wheelDirection,
   type XY,
 } from '@tremolo-ui/dom'
+import {
+  applyDelta,
+  arrowKeyDirection,
+  cssLength,
+  selectModifier,
+  wheelDirection,
+} from '@tremolo-ui/dom/internal'
 import { linearScale, type Scale, type ValueRange } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'

@@ -205,7 +205,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 ### 公開範囲
 
-- [ ] **`dom` のラッパー向けの export を `@tremolo-ui/dom/internal` に分ける。** `.` に置いたものは 1.0 以降すべて semver の対象になるので、ラッパーの実装のためだけにあるものは `internal` に移し、semver の対象外と明記する
+- [x] **`dom` のラッパー向けの export を `@tremolo-ui/dom/internal` に分ける。** `.` に置いたものは 1.0 以降すべて semver の対象になるので、ラッパーの実装のためだけにあるものは `internal` に移し、semver の対象外と明記する
   - **`.` に残すのは、利用者が書くものと `create*`。** 型、既定値（`DEFAULT_KEYBOARD_OPTIONS` などは `getting-started` が dom から import するよう案内している）、`SHORTCUTS`、`relativeMapping` / `elementMapping`、`create*`。ただし `createStepperDrag` は NumberInput のステッパーの外で使う場面が無いので `internal`
   - **自作のパートを描くときに要る幾何も `.` に残す。** `useKnobContext` で円弧のパートを足すなら Knob の SVG 幾何（`KNOB_VIEWBOX_SIZE` / `knobArcPath` / `knobArcRadius` / `knobAngles`）、Slider のパートなら `valuePercent`、Piano の上に重ねて描くなら `notePosition` が要る。`internal` に置くと semver の保証の無いものに頼ってもらうことになり、context に計算済みの値を足すより変更も小さい
   - **`internal` に移すもの:** NumberInput のキャレットと下書き（`caretAtDecimalOffset` / `caretDecimalOffset` / `numberSpan` / `parseNumberText` / `commitNumberInputText` / `numberInputBounds` / `numberInputRanges` / `nudgeNumberInput`）、`createStepperDrag`、`replaceOptions` / `checkSteps` / `cssLength` / `visuallyHiddenStyle` / `toXY` / `clampPoint` / `POINT_AXIS` / `sliderMarks`、`applyDelta` / `selectModifier` / `arrowKey*` / `wheel*` / `partitionByAccept`、Piano のレイアウトのうち `notePosition` 以外（`pianoWidth` / `blackKeyWidth` / `fitWhiteKeyWidth` / `getNoteRangeArray`）、`POINTS_EDITOR_DEFAULT_*`
@@ -213,6 +213,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - サブパスを足すと `tsdown.config.ts` の `entry` と `package.json` の `exports` を両方直す（react の `compose-refs` と同じ）。typedoc の entryPoints は `.` だけなので、API ページからは自然に消える
   - サイトの例と story が dom から import しているものは、どれも `.` に残る側（`SHORTCUTS` / `relativeMapping` / `XY` / `PointPosition` など）なので、移しても壊れない
   - 下の「使っていない export を外す」「MIDI の定数」「`DrawFunction` / `InitFunction`」を先に済ませると、仕分けるものが減る
+  - 線引きと完全一致の依存の決まりは、ルートの `AGENTS.md` の「公開 API とバンドル」に書いた。共通のコードは tsdown が 1 つのチャンクにまとめるので、2 つの入口に重複しない
 - [x] **どのラッパーも使っていない export を外す。** `drawingState` / `isDrawingState` / `DrawingContext` / `DrawingState` / `DrawingStateValue` / `knobArcPoint` / `isArrowKey` / `mapModifier` / `noteAt` / `createSelectionBox` / `selectionBoxCovers` / `matchesAccept`。`dom` の中で使っているもの（`reduceFlickering` の `readDrawingState` など）は実装として残し、入口からの export だけをやめる
   - `drawingState` 一式は、Phase 4.2 で rAF のループを `createAnimationCanvas` に移した時点でラッパーから使われなくなり、export だけが残っていた。`isDrawingState` は `dom` の中でも使われていない
   - **関数を外すと、それにしか出てこない型が残る。** `isArrowKey` の `ArrowKey`、`createSelectionBox` の `SelectionBoxBeginOptions` / `SelectionBoxInstance` / `SelectionBoxOptions` も一緒に外す。`SelectionBoxRect` は `createPointsEditor` と 3 つのラッパーの context に出てくるので残す。`mapModifier` を外しても、`Modifier` / `ModifierMap` は `ModifierValue` の一部なので残す

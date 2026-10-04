@@ -12,18 +12,20 @@ import {
 } from 'react'
 
 import {
-  blackKeyWidth,
   createPianoInput,
-  fitWhiteKeyWidth,
-  getNoteRangeArray,
   type KeyboardShortcuts,
   type KeyboardShortcutsScope,
   notePosition,
-  pianoWidth,
   type NoteRange,
   type PianoInputInstance,
   type PianoLayout,
 } from '@tremolo-ui/dom'
+import {
+  blackKeyWidth,
+  fitWhiteKeyWidth,
+  getNoteRangeArray,
+  pianoWidth,
+} from '@tremolo-ui/dom/internal'
 import { isWhiteKey, noteKey } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'

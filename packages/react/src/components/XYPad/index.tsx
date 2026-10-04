@@ -11,8 +11,6 @@ import {
 } from 'react'
 
 import {
-  applyDelta,
-  arrowKeyMove,
   type AxisOptions,
   type ChangeSource,
   DEFAULT_DRAG_SENSITIVITY,
@@ -21,13 +19,17 @@ import {
   InputEventOption,
   ModifierState,
   type ModifierValue,
-  selectModifier,
-  toXY,
   valuePercent,
-  wheelMove,
   type XY,
   type XYInput,
 } from '@tremolo-ui/dom'
+import {
+  applyDelta,
+  arrowKeyMove,
+  selectModifier,
+  toXY,
+  wheelMove,
+} from '@tremolo-ui/dom/internal'
 import { linearScale, type Scale } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'

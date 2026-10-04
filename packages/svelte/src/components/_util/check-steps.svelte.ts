@@ -1,6 +1,6 @@
 import { DEV } from 'esm-env'
 
-import { checkSteps, type CheckStepsOptions } from '@tremolo-ui/dom'
+import { checkSteps, type CheckStepsOptions } from '@tremolo-ui/dom/internal'
 
 /**
  * Warn, in development only, when a key press or a wheel notch cannot produce

@@ -24,8 +24,9 @@ export default defineConfig([
       // entry, so nothing here would catch the top-level `types` in
       // package.json being pointed elsewhere. It has to stay on `index.d.cts`:
       // a toolchain that ignores `exports` reads `main` for the runtime too,
-      // and `main` is the CJS build. The other two packages run attw on the
-      // default profile, which does cover node10.
+      // and `main` is the CJS build. dom narrows its profile the same way for
+      // its `internal` subpath; functions runs attw on the default profile,
+      // which does cover node10.
       profile: 'node16',
       level: 'error',
     },

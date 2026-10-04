@@ -9,15 +9,15 @@ import {
   ref,
 } from 'vue'
 
+import { type ChangeSource } from '@tremolo-ui/dom'
 import {
-  type ChangeSource,
   commitNumberInputText,
   numberInputBounds,
   numberInputRanges,
   nudgeNumberInput,
   parseNumberText,
   wheelDirection,
-} from '@tremolo-ui/dom'
+} from '@tremolo-ui/dom/internal'
 import { linearScale, type Scale } from '@tremolo-ui/functions'
 
 import { useWheel } from '../../composables/useWheel'

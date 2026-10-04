@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { partitionByAccept } from '@tremolo-ui/dom'
+  import { partitionByAccept } from '@tremolo-ui/dom/internal'
 
   import { visuallyHidden } from '../_util/style.js'
 

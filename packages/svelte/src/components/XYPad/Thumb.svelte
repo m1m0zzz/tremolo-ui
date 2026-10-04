@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { toXY } from '@tremolo-ui/dom'
+  import { toXY } from '@tremolo-ui/dom/internal'
 
   import { checkPlacement } from '../_util/placement.js'
   import VisuallyHiddenRangeInput from '../_util/VisuallyHiddenRangeInput.svelte'

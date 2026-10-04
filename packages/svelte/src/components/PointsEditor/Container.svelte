@@ -1,10 +1,6 @@
 <script lang="ts">
-  import {
-    createDragValue,
-    elementMapping,
-    POINT_AXIS,
-    wheelMove,
-  } from '@tremolo-ui/dom'
+  import { createDragValue, elementMapping } from '@tremolo-ui/dom'
+  import { POINT_AXIS, wheelMove } from '@tremolo-ui/dom/internal'
 
   import { wheel as wheelAction } from '../../actions/wheel.js'
   import { setPlacement } from '../_util/placement.js'

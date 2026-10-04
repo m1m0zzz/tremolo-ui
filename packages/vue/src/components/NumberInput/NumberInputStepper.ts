@@ -1,6 +1,9 @@
 import { computed, defineComponent, h, inject, provide, ref, watch } from 'vue'
 
-import { createStepperDrag, type StepperDragInstance } from '@tremolo-ui/dom'
+import {
+  createStepperDrag,
+  type StepperDragInstance,
+} from '@tremolo-ui/dom/internal'
 
 import {
   NumberInputGestureKey,

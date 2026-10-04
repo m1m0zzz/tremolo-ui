@@ -1,8 +1,5 @@
-import {
-  createDragValue,
-  replaceOptions,
-  type DragValueOptions,
-} from '@tremolo-ui/dom'
+import { createDragValue, type DragValueOptions } from '@tremolo-ui/dom'
+import { replaceOptions } from '@tremolo-ui/dom/internal'
 
 import type { Action } from 'svelte/action'
 

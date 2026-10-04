@@ -8,7 +8,8 @@ import {
   useRef,
 } from 'react'
 
-import { toXY, type XYInput } from '@tremolo-ui/dom'
+import { type XYInput } from '@tremolo-ui/dom'
+import { toXY } from '@tremolo-ui/dom/internal'
 
 import { useCheckPlacement } from '../_util/Placement'
 import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'

@@ -1,11 +1,7 @@
 import { computed, defineComponent, h, ref, watch, watchEffect } from 'vue'
 
-import {
-  createDragValue,
-  elementMapping,
-  POINT_AXIS,
-  wheelMove,
-} from '@tremolo-ui/dom'
+import { createDragValue, elementMapping } from '@tremolo-ui/dom'
+import { POINT_AXIS, wheelMove } from '@tremolo-ui/dom/internal'
 
 import { useWheel } from '../../composables/useWheel'
 import { providePlacement } from '../_util/placement'

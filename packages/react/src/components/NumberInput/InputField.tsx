@@ -11,7 +11,7 @@ import {
   caretAtDecimalOffset,
   caretDecimalOffset,
   numberSpan,
-} from '@tremolo-ui/dom'
+} from '@tremolo-ui/dom/internal'
 
 import { useComposedRefs } from '../../compose-refs'
 

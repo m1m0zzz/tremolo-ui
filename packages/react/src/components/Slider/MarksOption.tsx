@@ -1,6 +1,7 @@
 import { ComponentPropsWithoutRef, CSSProperties } from 'react'
 
-import { cssLength, valuePercent } from '@tremolo-ui/dom'
+import { valuePercent } from '@tremolo-ui/dom'
+import { cssLength } from '@tremolo-ui/dom/internal'
 
 import { useCheckPlacement } from '../_util/Placement'
 

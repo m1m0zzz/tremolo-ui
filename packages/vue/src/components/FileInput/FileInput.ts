@@ -7,7 +7,10 @@ import {
   useId,
 } from 'vue'
 
-import { partitionByAccept, visuallyHiddenStyle } from '@tremolo-ui/dom'
+import {
+  partitionByAccept,
+  visuallyHiddenStyle,
+} from '@tremolo-ui/dom/internal'
 
 import { FileInputKey } from './context'
 

@@ -1,4 +1,5 @@
-import { createWheel, replaceOptions, type WheelOptions } from '@tremolo-ui/dom'
+import { createWheel, type WheelOptions } from '@tremolo-ui/dom'
+import { replaceOptions } from '@tremolo-ui/dom/internal'
 
 import type { Action } from 'svelte/action'
 

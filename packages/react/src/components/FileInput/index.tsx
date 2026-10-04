@@ -7,7 +7,10 @@ import {
   useMemo,
 } from 'react'
 
-import { partitionByAccept, visuallyHiddenStyle } from '@tremolo-ui/dom'
+import {
+  partitionByAccept,
+  visuallyHiddenStyle,
+} from '@tremolo-ui/dom/internal'
 
 import { FileInputProvider } from './context'
 import { Trigger } from './Trigger'

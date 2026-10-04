@@ -1,6 +1,6 @@
 import { toValue, watch, type MaybeRefOrGetter } from 'vue'
 
-import { replaceOptions } from '@tremolo-ui/dom'
+import { replaceOptions } from '@tremolo-ui/dom/internal'
 
 /**
  * Create an instance for the element `target` holds, and destroy it when the

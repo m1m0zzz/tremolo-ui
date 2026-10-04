@@ -8,16 +8,18 @@ import {
 } from 'react'
 
 import {
-  arrowKeyMove,
   type ChangeSource,
-  clampPoint,
   type InputEventOption,
   type ModifierValue,
-  POINT_AXIS,
   type PointPosition,
   type PointsEditorPoint,
-  selectModifier,
 } from '@tremolo-ui/dom'
+import {
+  arrowKeyMove,
+  clampPoint,
+  POINT_AXIS,
+  selectModifier,
+} from '@tremolo-ui/dom/internal'
 
 import { useComposedRefs } from '../../compose-refs'
 import { useChangeGesture } from '../../hooks/_internal/useChangeGesture'

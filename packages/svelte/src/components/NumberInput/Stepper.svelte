@@ -1,5 +1,8 @@
 <script lang="ts">
-  import { createStepperDrag, type StepperDragInstance } from '@tremolo-ui/dom'
+  import {
+    createStepperDrag,
+    type StepperDragInstance,
+  } from '@tremolo-ui/dom/internal'
   import { untrack } from 'svelte'
 
   import {

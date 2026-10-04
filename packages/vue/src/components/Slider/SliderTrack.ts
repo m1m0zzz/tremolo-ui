@@ -8,7 +8,7 @@ import {
   watchEffect,
 } from 'vue'
 
-import { cssLength } from '@tremolo-ui/dom'
+import { cssLength } from '@tremolo-ui/dom/internal'
 
 import { providePlacement } from '../_util/placement'
 

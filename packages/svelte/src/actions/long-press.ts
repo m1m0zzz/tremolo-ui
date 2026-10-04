@@ -1,8 +1,5 @@
-import {
-  createLongPress,
-  replaceOptions,
-  type LongPressOptions,
-} from '@tremolo-ui/dom'
+import { createLongPress, type LongPressOptions } from '@tremolo-ui/dom'
+import { replaceOptions } from '@tremolo-ui/dom/internal'
 
 import type { Action } from 'svelte/action'
 
