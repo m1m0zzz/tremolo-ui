@@ -207,6 +207,24 @@ test('the wheel follows the focus in the document the point is in', () => {
   expect(onChange).toHaveBeenCalledWith({ x: 0.6, y: 0.5 })
 })
 
+test('the wheel tells the focused point before it moves it', () => {
+  const element = document.createElement('div')
+  element.tabIndex = -1
+  document.body.appendChild(element)
+  const editor = createPointsEditor()
+  const order: string[] = []
+  editor.registerPoint('a', () => ({
+    value: { x: 0.5, y: 0.5 },
+    element,
+    wheel: ['normalized', 0.1],
+    onChange: () => order.push('change'),
+    beforeWheel: () => order.push('before'),
+  }))
+  element.focus()
+  editor.nudgeFocusedPoint('x', 1, NONE)
+  expect(order).toEqual(['before', 'change'])
+})
+
 test('isPointElement recognises a point and what is inside it', () => {
   const { editor, elements } = setup()
   const child = document.createElement('span')

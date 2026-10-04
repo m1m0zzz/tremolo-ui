@@ -1,18 +1,30 @@
 <script lang="ts">
   import { PointsEditor } from '../../../src/index.js'
 
-  import type { PointPosition } from '@tremolo-ui/dom'
+  import type { ChangeSource, PointPosition } from '@tremolo-ui/dom'
 
   type Props = {
     selectable?: boolean
     selection?: string[]
     onChange?: (id: string, value: PointPosition) => void
+    onChangeStart?: (
+      id: string,
+      value: PointPosition,
+      source: ChangeSource,
+    ) => void
+    onChangeEnd?: (
+      id: string,
+      value: PointPosition,
+      source: ChangeSource,
+    ) => void
   }
 
   let {
     selectable = false,
     selection = $bindable([]),
     onChange,
+    onChangeStart,
+    onChangeEnd,
   }: Props = $props()
 
   let points: Record<string, PointPosition> = $state({
@@ -34,6 +46,8 @@
           points[id] = v
           onChange?.(id, v)
         }}
+        onChangeStart={(v, source) => onChangeStart?.(id, v, source)}
+        onChangeEnd={(v, source) => onChangeEnd?.(id, v, source)}
       />
     {/each}
     <PointsEditor.SelectionBox data-testid="box" />

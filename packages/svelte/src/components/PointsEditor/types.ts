@@ -1,4 +1,5 @@
 import type {
+  ChangeSource,
   InputEventOption,
   ModifierValue,
   PointPosition,
@@ -82,7 +83,23 @@ export interface PointsEditorPointProps {
    * moves along with a selection.
    */
   onChange?: (value: PointPosition) => void
-  onDragStart?: (value: PointPosition) => void
-  onDragEnd?: (value: PointPosition) => void
+  /**
+   * Called when a change of this point starts — a drag on it, the first wheel
+   * notch or arrow key while it has the focus — with where it is and what the
+   * change is made with. The points that move along with a selection report
+   * through `onChange` only.
+   */
+  onChangeStart?: (value: PointPosition, source: ChangeSource) => void
+  /**
+   * Called when that change ends, with where the point is: on release, or
+   * `changeEndDelay` after the last wheel notch or arrow key.
+   */
+  onChangeEnd?: (value: PointPosition, source: ChangeSource) => void
+  /**
+   * How long after the last wheel notch or arrow key the change counts as
+   * over, in milliseconds.
+   * @default 500
+   */
+  changeEndDelay?: number
   children?: Snippet
 }

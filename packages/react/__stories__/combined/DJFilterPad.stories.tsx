@@ -214,7 +214,7 @@ export const DJFilterPad = () => {
                 // `keyboard={null}` only stops the arrow keys: Home, End and
                 // the page keys still reach the thumb's range inputs. Only a
                 // press moves this pad, so anything else is dropped here. The
-                // press itself arrives through `onDragStart`.
+                // press itself arrives through `onChangeStart`.
                 if (!pressedRef.current) return
                 setSweep(x)
                 setQ(y)

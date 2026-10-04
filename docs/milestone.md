@@ -242,13 +242,13 @@ props・パート・命令的メソッドは 3 つでほぼ揃っている（Sve
 
 ### API の形
 
-- [ ] **全コンポーネントに、値を変える操作の開始と終了の通知 `onChangeStart` / `onChangeEnd` を足し、`onDragStart` / `onDragEnd` を置き換える。** オートメーションの書き込み（DAW の touch）には開始と終了が要る。Vue は `change-start` / `change-end`。何で操作したか（ドラッグ・ホイール・キーなど）は引数で渡す
+- [x] **全コンポーネントに、値を変える操作の開始と終了の通知 `onChangeStart` / `onChangeEnd` を足し、`onDragStart` / `onDragEnd` を置き換える。** オートメーションの書き込み（DAW の touch）には開始と終了が要る。Vue は `change-start` / `change-end`。何で操作したか（ドラッグ・ホイール・キーなど）は引数で渡す
   - **ドラッグだけでは足りない。** `Knob` のダブルクリックでの復帰、ホイール、矢印キーも値を変える。DAW のプラグイン（JUCE の `beginChangeGesture` など）はホイールでも開始と終了を送る。ドラッグは操作の 1 つになるので、`Slider` / `XYPad` / `PointsEditor.Point` の `onDragStart` / `onDragEnd` は消す。通知が 2 組あると、どちらを使うべきか迷わせる
   - **NumberInput はステッパーを押してから離すまでを 1 つの操作にする。** ステッパーは押した瞬間に 1 step 動かし、押し続けると繰り返し、ドラッグはそのあと 1px 動いてから始まる（`createStepperDrag` の `threshold: 1`）。ドラッグの開始で通知すると、押下で動いた分が通知の外に出る
   - **ホイールとキーには終わりのイベントが無いので、待ち時間で判定する。** 最後の入力から待ち時間のあいだ次が来なければ終わり。合う値は DAW ごとに違うので、待ち時間は prop で渡せるようにする（既定値は持つ）
   - ダブルクリックでの復帰は、変える前に開始、変えた後に終了を続けて送る
   - 開始と終了の判定は 3 つのフレームワークで同じでなければならないので、`dom` に書く。`createStepperDrag` には今 `onDragStart` / `onDragEnd` のオプションも無い
-  - `dom` の `createChangeGesture` と、`Knob` / `Slider` / `XYPad` / `NumberInput` は済んだ。`NumberInput` は入力した文字も操作に数え（打ち始めで始まり、確定で終わる）、ステッパーの押下の開始は長押しの `onPress` の先頭で送る（Svelte の委譲されたイベントは、要素に直接付いた長押しの listener より後に走るため）。`createDragValue` は `updateOnPointerDown` の押下で `onDragStart` を `onChange` より先に呼ぶようにした（記録する側がドラッグの始まりを最初の値より先に聞くため）
+  - `dom` の `createChangeGesture` を足し、`Knob` / `Slider` / `XYPad` / `NumberInput` / `PointsEditor.Point` に入れた。`NumberInput` は入力した文字も操作に数え（打ち始めで始まり、確定で終わる）、ステッパーの押下の開始は長押しの `onPress` の先頭で送る（Svelte の委譲されたイベントは、要素に直接付いた長押しの listener より後に走るため）。`PointsEditor.Point` は操作している点だけが送り、選択と一緒に動く点は `onChange` だけで知らせる。ホイールは `Container` が受けてフォーカスのある点を動かすので、`PointsEditorPoint` の登録に `beforeWheel` を足し、コアが点を動かす直前に呼ぶ`createDragValue` は `updateOnPointerDown` の押下で `onDragStart` を `onChange` より先に呼ぶようにした（記録する側がドラッグの始まりを最初の値より先に聞くため）
 - [x] **`Knob` の `defaultValue` と `enableDoubleClickDefault` を、`resetValue?: number | null` の 1 つにする。** React の慣習でも `PointsEditor` の `defaultSelection` でも、`default*` は非制御のときの初期値を指す。ダブルクリックで戻す機能は `Knob` だけのままにする
   - **`null` でダブルクリックの復帰を切る。** ほかの入力も `wheel={null}` / `keyboard={null}` / `drag={null}` のように `null` で切るので、`resetOnDoubleClick` は作らない
   - **既定を `min` から `startValue` にする（`startValue` の既定が `min`）。** `startValue` を中央に置く両極のノブ（パンなど）が、ダブルクリックで端に飛ばなくなる

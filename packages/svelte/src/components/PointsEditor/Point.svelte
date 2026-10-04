@@ -11,6 +11,7 @@
   } from '@tremolo-ui/dom'
   import { untrack } from 'svelte'
 
+  import { useChangeGesture } from '../_util/change-gesture.svelte.js'
   import { checkPlacement } from '../_util/placement.js'
   import VisuallyHiddenRangeInput from '../_util/VisuallyHiddenRangeInput.svelte'
 
@@ -35,8 +36,9 @@
     'aria-label': ariaLabel,
     'aria-valuetext': ariaValuetext,
     onChange,
-    onDragStart,
-    onDragEnd,
+    onChangeStart,
+    onChangeEnd,
+    changeEndDelay,
     children,
     style,
     onfocus,
@@ -61,6 +63,14 @@
   const selected = $derived(points.selection.includes(id))
   const current = $derived(clampPoint(value, min, max))
 
+  const gesture = useChangeGesture(() => ({
+    value: current,
+    inactive,
+    onChangeStart,
+    onChangeEnd,
+    changeEndDelay,
+  }))
+
   let element: HTMLDivElement | null = $state(null)
   let xInput: HTMLInputElement | null = $state(null)
   let dragging = $state(false)
@@ -75,6 +85,7 @@
     onChange,
     element,
     wheel,
+    beforeWheel: () => gesture.pulse('wheel'),
   })
 
   $effect(() => points.editor.registerPoint(id, read))
@@ -105,12 +116,12 @@
         origin = { x, y }
         dragging = true
         xInput?.focus()
-        if (!inactive) onDragStart?.(clampPoint(value, min, max))
+        if (!inactive) gesture.hold('pointer')
       },
       onDragEnd: () => {
         origin = null
         dragging = false
-        if (!inactive) onDragEnd?.(clampPoint(value, min, max))
+        gesture.end()
       },
     })
     $effect(() => {
@@ -170,6 +181,7 @@
     if (move) {
       event.preventDefault()
       if (onChange && !inactive && keyboard) {
+        gesture.pulse('keyboard')
         points.editor.nudgePoint(
           id,
           move.axis === 0 ? 'x' : 'y',
