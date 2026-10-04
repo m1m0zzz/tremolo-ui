@@ -211,7 +211,7 @@ export const CustomImage: Story = {
           <Slider.Track
             className={sliderTheme.track}
             length={200}
-            active="rgb(149,234,231)"
+            activeColor="rgb(149,234,231)"
             style={{
               borderRadius: 0,
             }}

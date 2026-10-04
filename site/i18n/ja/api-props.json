@@ -119,29 +119,29 @@
     "message": "`<Knob.InactiveLine />`、`<Knob.ActiveLine />`、`<Knob.Thumb />` をここに、描きたい順に置きます。",
     "source": "1c1d6ce0"
   },
-  "KnobThumbProps.thumb": {
+  "KnobThumbProps.color": {
     "message": "円の塗りの色。",
     "source": "96f7a0f5"
   },
-  "KnobThumbProps.thumbLine": {
+  "KnobThumbProps.lineColor": {
     "message": "値を指す線の色。",
     "source": "b787807a"
   },
-  "KnobThumbProps.thumbSize": {
+  "KnobThumbProps.size": {
     "message": "円の直径。ノブに対するパーセントで指定します。",
     "source": "341cbee4"
   },
-  "KnobThumbProps.thumbLineWeight": {
+  "KnobThumbProps.lineWeight": {
     "message": "線の太さ。ノブに対するパーセントで指定します。",
     "source": "165c7469"
   },
-  "KnobThumbProps.thumbLineLength": {
+  "KnobThumbProps.lineLength": {
     "message": "線が下へどこまで伸びるか。ノブの上端からのパーセントで指定します。線は円の縁から始まります。",
     "source": "1b6a5c34"
   },
   "KnobThumbProps.classes": {
-    "message": "つまみが中に描くもののクラス。`thumbLine` は値を指す線です。",
-    "source": "38a8d1b7"
+    "message": "つまみが中に描くもののクラス。`line` は値を指す線です。",
+    "source": "72f20295"
   },
   "NumberInputProps.value": {
     "message": "値。入力欄には `format(value)` が表示されます。ただし入力中は、確定するまで利用者が打ったテキストがそのまま残ります。",
@@ -511,13 +511,13 @@
     "message": "それと直交する方向のトラックの太さ。`--thickness` を設定します。",
     "source": "379c69cd"
   },
-  "SliderTrackProps.active": {
-    "message": "`min` から値までの部分の色。`--active` を設定します。",
-    "source": "74df5c15"
+  "SliderTrackProps.activeColor": {
+    "message": "`min` から値までの部分の色。`--active-color` を設定します。",
+    "source": "514e2f66"
   },
-  "SliderTrackProps.inactive": {
-    "message": "トラックの残りの部分の色。`--inactive` を設定します。",
-    "source": "f5919715"
+  "SliderTrackProps.inactiveColor": {
+    "message": "トラックの残りの部分の色。`--inactive-color` を設定します。",
+    "source": "cf7d1374"
   },
   "XYPadProps.value": {
     "message": "現在の値（`[x, y]`）。パッドはこの値だけを表示するので、`onChange` から更新します。",

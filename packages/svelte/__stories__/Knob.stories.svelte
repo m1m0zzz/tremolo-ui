@@ -28,7 +28,7 @@
         <Knob.ActiveLine class={knobTheme.activeLine} />
         <Knob.Thumb
           class={knobTheme.thumb}
-          classes={{ thumbLine: knobTheme.thumbLine }}
+          classes={{ line: knobTheme.thumbLine }}
         />
       </Knob.SVGRoot>
     </Knob.Root>
@@ -43,7 +43,7 @@
         <Knob.ActiveLine class={knobTheme.activeLine} />
         <Knob.Thumb
           class={knobTheme.thumb}
-          classes={{ thumbLine: knobTheme.thumbLine }}
+          classes={{ line: knobTheme.thumbLine }}
         />
       </Knob.SVGRoot>
     </Knob.Root>

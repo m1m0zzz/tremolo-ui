@@ -55,10 +55,10 @@ export const PaintOrder: Story = {
             />
             <Knob.Thumb
               className={knobTheme.thumb}
-              classes={{ thumbLine: knobTheme.thumbLine }}
-              thumbSize={88}
-              thumb="#e0699f"
-              thumbLine="#fff"
+              classes={{ line: knobTheme.thumbLine }}
+              size={88}
+              color="#e0699f"
+              lineColor="#fff"
             />
           </Knob.SVGRoot>
         </Knob.Root>
@@ -74,10 +74,10 @@ export const PaintOrder: Story = {
           <Knob.SVGRoot>
             <Knob.Thumb
               className={knobTheme.thumb}
-              classes={{ thumbLine: knobTheme.thumbLine }}
-              thumbSize={88}
-              thumb="#e0699f"
-              thumbLine="#fff"
+              classes={{ line: knobTheme.thumbLine }}
+              size={88}
+              color="#e0699f"
+              lineColor="#fff"
             />
             <Knob.InactiveLine
               className={knobTheme.inactiveLine}

@@ -58,8 +58,8 @@
 }
 
 .track {
-  --active: oklch(69.212% 0.12903 267.633);
-  --inactive: oklch(95% 0 0);
+  --active-color: oklch(69.212% 0.12903 267.633);
+  --inactive-color: oklch(95% 0 0);
   --length: 140px;
   --thickness: 10px;
   /* Which way the fill runs. `--percent` is where the thumb sits on screen,
@@ -73,15 +73,15 @@
      yours to change: a second colour stop, a gradient, an image. */
   background: linear-gradient(
     var(--axis),
-    var(--active) var(--percent),
-    var(--inactive) var(--percent)
+    var(--active-color) var(--percent),
+    var(--inactive-color) var(--percent)
   );
 
   &[data-flipped] {
     background: linear-gradient(
       var(--axis),
-      var(--inactive) var(--percent),
-      var(--active) var(--percent)
+      var(--inactive-color) var(--percent),
+      var(--active-color) var(--percent)
     );
   }
 
@@ -98,13 +98,13 @@
   }
 
   &:hover {
-    --active: oklch(64.276% 0.15244 266.932);
-    --inactive: #e0e0e0;
+    --active-color: oklch(64.276% 0.15244 266.932);
+    --inactive-color: #e0e0e0;
   }
 
   &[data-disabled] {
-    --active: oklch(75.327% 0.01237 264.547);
-    --inactive: oklch(89.755% 0.0001 271.152);
+    --active-color: oklch(75.327% 0.01237 264.547);
+    --inactive-color: oklch(89.755% 0.0001 271.152);
   }
 }
 
@@ -172,16 +172,16 @@
 
 :global(.dark) .track,
 :global([data-theme='dark']) .track {
-  --active: oklch(59.5% 0.17548 266.373);
-  --inactive: oklch(41.7% 0 0);
+  --active-color: oklch(59.5% 0.17548 266.373);
+  --inactive-color: oklch(41.7% 0 0);
 
   &:hover {
-    --active: oklch(62.5% 0.17548 266.373);
-    --inactive: oklch(44.7% 0 0);
+    --active-color: oklch(62.5% 0.17548 266.373);
+    --inactive-color: oklch(44.7% 0 0);
   }
 
   &[data-disabled] {
-    --active: oklch(75.327% 0.01237 264.547);
-    --inactive: oklch(89.755% 0.0001 271.152);
+    --active-color: oklch(75.327% 0.01237 264.547);
+    --inactive-color: oklch(89.755% 0.0001 271.152);
   }
 }

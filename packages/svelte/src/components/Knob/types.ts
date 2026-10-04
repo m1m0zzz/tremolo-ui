@@ -106,27 +106,27 @@ export interface KnobThumbProps {
    * Fill colour of the circle.
    * @default 'currentColor'
    */
-  thumb?: string
+  color?: string
   /**
    * Colour of the line that points at the value.
    * @default 'currentColor'
    */
-  thumbLine?: string
+  lineColor?: string
   /**
    * Diameter of the circle, as a percentage of the knob.
    * @default 84
    */
-  thumbSize?: number
+  size?: number
   /**
    * Thickness of the line, as a percentage of the knob.
    * @default 6
    */
-  thumbLineWeight?: number
+  lineWeight?: number
   /**
    * How far down the line reaches, as a percentage of the knob from its top.
    * @default 35
    */
-  thumbLineLength?: number
+  lineLength?: number
   /** Classes for the line that points at the value. */
-  classes?: { thumbLine?: string }
+  classes?: { line?: string }
 }

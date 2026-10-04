@@ -85,7 +85,7 @@ export const Basic: Story = {
             {thumb && (
               <Knob.Thumb
                 className={knobTheme.thumb}
-                classes={{ thumbLine: knobTheme.thumbLine }}
+                classes={{ line: knobTheme.thumbLine }}
               />
             )}
           </Knob.SVGRoot>
@@ -127,7 +127,7 @@ export const FineAdjustment: Story = {
             <Knob.ActiveLine className={knobTheme.activeLine} />
             <Knob.Thumb
               className={knobTheme.thumb}
-              classes={{ thumbLine: knobTheme.thumbLine }}
+              classes={{ line: knobTheme.thumbLine }}
             />
           </Knob.SVGRoot>
         </Knob.Root>
@@ -183,7 +183,7 @@ export const Logarithmic: Story = {
                 <Knob.ActiveLine className={knobTheme.activeLine} />
                 <Knob.Thumb
                   className={knobTheme.thumb}
-                  classes={{ thumbLine: knobTheme.thumbLine }}
+                  classes={{ line: knobTheme.thumbLine }}
                 />
               </Knob.SVGRoot>
             </Knob.Root>
@@ -204,7 +204,7 @@ export const Logarithmic: Story = {
                 <Knob.ActiveLine className={knobTheme.activeLine} />
                 <Knob.Thumb
                   className={knobTheme.thumb}
-                  classes={{ thumbLine: knobTheme.thumbLine }}
+                  classes={{ line: knobTheme.thumbLine }}
                 />
               </Knob.SVGRoot>
             </Knob.Root>

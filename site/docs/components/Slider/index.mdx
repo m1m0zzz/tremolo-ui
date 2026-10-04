@@ -109,8 +109,8 @@ the theme can fill the part below it. `Slider.Thumb` goes inside it.
 | --- | --- | --- |
 | `--length` | `length` | How long the track is along the axis the slider runs. |
 | `--thickness` | `thickness` | How thick the track is across that axis. |
-| `--active` | `active` | Colour of the part from `min` to the value. |
-| `--inactive` | `inactive` | Colour of the rest of the track. |
+| `--active-color` | `activeColor` | Colour of the part from `min` to the value. |
+| `--inactive-color` | `inactiveColor` | Colour of the rest of the track. |
 | `--percent` | the component | Where the value sits, as a percentage. |
 
 `--percent` is the one number CSS cannot work out on its own, and it is why the
@@ -121,8 +121,8 @@ something the package paints for you.
 .track {
   background: linear-gradient(
     var(--axis),
-    var(--active) var(--percent),
-    var(--inactive) var(--percent)
+    var(--active-color) var(--percent),
+    var(--inactive-color) var(--percent)
   );
 }
 ```

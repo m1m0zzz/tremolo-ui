@@ -86,10 +86,10 @@ export interface SliderTrackProps {
   length?: number | string
   /** How thick the track is across that axis. Sets `--thickness`. */
   thickness?: number | string
-  /** Colour of the part from `min` to the value. Sets `--active`. */
-  active?: string
-  /** Colour of the rest of the track. Sets `--inactive`. */
-  inactive?: string
+  /** Colour of the part from `min` to the value. Sets `--active-color`. */
+  activeColor?: string
+  /** Colour of the rest of the track. Sets `--inactive-color`. */
+  inactiveColor?: string
   ref?: HTMLDivElement | null
   children?: Snippet
 }

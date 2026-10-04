@@ -14,8 +14,8 @@
   let {
     length,
     thickness,
-    active,
-    inactive,
+    activeColor,
+    inactiveColor,
     ref = $bindable(null),
     children,
     style,
@@ -40,8 +40,8 @@
   data-orientation={slider.vertical ? 'vertical' : 'horizontal'}
   data-flipped={slider.vertical !== slider.reverse ? '' : undefined}
   style="position: relative; {style ?? ''}"
-  style:--active={active}
-  style:--inactive={inactive}
+  style:--active-color={activeColor}
+  style:--inactive-color={inactiveColor}
   style:--length={cssLength(length)}
   style:--thickness={cssLength(thickness)}
   style:--percent="{slider.percent}%"

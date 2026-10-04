@@ -103,8 +103,8 @@ Svelte / Vue でも props は同じで、書き方だけがそれぞれの流儀
 | --- | --- | --- |
 | `--length` | `length` | スライダーの向きに沿ったトラックの長さ。 |
 | `--thickness` | `thickness` | それと直交する方向のトラックの太さ。 |
-| `--active` | `active` | `min` から値までの部分の色。 |
-| `--inactive` | `inactive` | トラックの残りの部分の色。 |
+| `--active-color` | `activeColor` | `min` から値までの部分の色。 |
+| `--inactive-color` | `inactiveColor` | トラックの残りの部分の色。 |
 | `--percent` | コンポーネント | 値の位置（パーセント）。 |
 
 `--percent` は CSS だけでは算出できない唯一の値で、トラックが自分では何も塗らない
@@ -114,8 +114,8 @@ Svelte / Vue でも props は同じで、書き方だけがそれぞれの流儀
 .track {
   background: linear-gradient(
     var(--axis),
-    var(--active) var(--percent),
-    var(--inactive) var(--percent)
+    var(--active-color) var(--percent),
+    var(--inactive-color) var(--percent)
   );
 }
 ```

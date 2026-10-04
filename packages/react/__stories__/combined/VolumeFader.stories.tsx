@@ -95,8 +95,8 @@ export const VolumeFader = () => {
       >
         <Slider.Track
           className={sliderTheme.track}
-          active="#555"
-          inactive="#555"
+          activeColor="#555"
+          inactiveColor="#555"
           style={{
             border: '1px solid #aaa',
           }}

@@ -12,46 +12,46 @@ export interface KnobThumbProps {
    * Fill colour of the circle.
    * @default 'currentColor'
    */
-  thumb?: string
+  color?: string
   /**
    * Colour of the line that points at the value.
    * @default 'currentColor'
    */
-  thumbLine?: string
+  lineColor?: string
   /**
    * Diameter of the circle, as a percentage of the knob.
    * @default 84
    */
-  thumbSize?: number
+  size?: number
   /**
    * Thickness of the line, as a percentage of the knob.
    * @default 6
    */
-  thumbLineWeight?: number
+  lineWeight?: number
   /**
    * How far down the line reaches, as a percentage of the knob from its top.
    * The line starts at the edge of the circle.
    * @default 35
    */
-  thumbLineLength?: number
+  lineLength?: number
 
   /**
-   * Classes for what the thumb draws inside itself: `thumbLine` is the line
-   * that points at the value.
+   * Classes for what the thumb draws inside itself: `line` is the line that
+   * points at the value.
    */
   classes?: {
-    thumbLine?: string
+    line?: string
   }
 }
 
 export function Thumb({
   className,
 
-  thumb = 'currentColor',
-  thumbLine = 'currentColor',
-  thumbSize = 84,
-  thumbLineWeight = 6,
-  thumbLineLength = 35,
+  color = 'currentColor',
+  lineColor = 'currentColor',
+  size = 84,
+  lineWeight = 6,
+  lineLength = 35,
   classes,
 
   ...props
@@ -65,15 +65,15 @@ export function Thumb({
 
   return (
     <svg className={className} {...props}>
-      <circle cx="50%" cy="50%" r={`${thumbSize / 2}%`} fill={thumb} />
+      <circle cx="50%" cy="50%" r={`${size / 2}%`} fill={color} />
       <line
-        className={classes?.thumbLine}
+        className={classes?.line}
         x1="50%"
-        y1={`${(KNOB_VIEWBOX_SIZE - clamp(thumbSize, 0, 100)) / 2}%`}
+        y1={`${(KNOB_VIEWBOX_SIZE - clamp(size, 0, 100)) / 2}%`}
         x2="50%"
-        y2={`${thumbLineLength}%`}
-        stroke={thumbLine}
-        strokeWidth={`${thumbLineWeight}%`}
+        y2={`${lineLength}%`}
+        stroke={lineColor}
+        strokeWidth={`${lineWeight}%`}
         // NOTE
         // https://bugs.webkit.org/show_bug.cgi?id=201854
         // https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/transform-origin#browser_compatibility

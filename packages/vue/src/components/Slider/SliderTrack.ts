@@ -14,10 +14,10 @@ export const SliderTrack = /* @__PURE__ */ defineComponent({
     length: [Number, String],
     /** How thick the track is across that axis. Sets `--thickness`. */
     thickness: [Number, String],
-    /** Colour of the part from `min` to the value. Sets `--active`. */
-    active: String,
-    /** Colour of the rest of the track. Sets `--inactive`. */
-    inactive: String,
+    /** Colour of the part from `min` to the value. Sets `--active-color`. */
+    activeColor: String,
+    /** Colour of the rest of the track. Sets `--inactive-color`. */
+    inactiveColor: String,
   },
   setup(props, { slots }) {
     const slider = useSliderContext()
@@ -36,8 +36,8 @@ export const SliderTrack = /* @__PURE__ */ defineComponent({
           'data-orientation': slider.vertical ? 'vertical' : 'horizontal',
           'data-flipped': slider.vertical !== slider.reverse ? '' : undefined,
           style: {
-            '--active': props.active,
-            '--inactive': props.inactive,
+            '--active-color': props.activeColor,
+            '--inactive-color': props.inactiveColor,
             '--length': cssLength(props.length),
             '--thickness': cssLength(props.thickness),
             '--percent': `${slider.percent}%`,

@@ -9,10 +9,10 @@ export default {
   title: 'Components/Knob/Thumb',
   component: Knob.Thumb,
   argTypes: {
-    thumb: {
+    color: {
       control: 'color',
     },
-    thumbLine: {
+    lineColor: {
       control: 'color',
     },
   },
@@ -40,7 +40,7 @@ export const Basic: Story = {
             <Knob.InactiveLine className={knobTheme.inactiveLine} />
             <Knob.Thumb
               className={knobTheme.thumb}
-              classes={{ thumbLine: knobTheme.thumbLine }}
+              classes={{ line: knobTheme.thumbLine }}
               {...args}
             />
           </Knob.SVGRoot>

@@ -25,7 +25,7 @@ function App() {
           <Knob.ActiveLine className={myKnob.activeLine} />
           <Knob.Thumb
             className={myKnob.thumb}
-            classes={{ thumbLine: myKnob.thumbLine }}
+            classes={{ line: myKnob.thumbLine }}
           />
         </Knob.SVGRoot>
       </Knob.Root>
