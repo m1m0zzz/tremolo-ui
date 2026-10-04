@@ -63,9 +63,9 @@
     "message": "値を移動量にどう配分するか。\n\n`@tremolo-ui/functions` のスケールから選びます: `linearScale`、`exponentialScale`、`curveScale(n)`、`symmetricSkewScale(n)`。JUCE のパラメータと値を一致させる必要があるときは `skewScale(n)` を使います。",
     "source": "f48cfb3c"
   },
-  "KnobProps.defaultValue": {
-    "message": "`enableDoubleClickDefault` が on の間、ダブルクリックで戻す値。",
-    "source": "a4a17d42"
+  "KnobProps.resetValue": {
+    "message": "ダブルクリックで戻す値。`null` にするとダブルクリックでは戻りません。",
+    "source": "0c228623"
   },
   "KnobProps.startValue": {
     "message": "アクティブな円弧の起点。パンのような双極性のコントロールでは中央に置くと、円弧がそこから両側へ伸びます。",
@@ -94,10 +94,6 @@
   "KnobProps.keyboard": {
     "message": "矢印キーを 1 回押したときに値が動く量。\n\n`['raw', n]` は値を `n` だけ、`['normalized', n]` は `min` から `max` までの範囲の `n` だけ動かします。結果は `step` に丸められますが、修飾キーに設定した量は丸められず、そのおかげで shift で刻みの間の値へ動かせます。`null` にすると矢印キーを無効にします。\n\n既定では 1 ずつ、shift を押すと 0.1 ずつ動きます。`step` が 1 より大きいときは、量もそれに合わせてください。1 のままだと元の値に丸め戻されてしまい、開発ビルドでは警告が出ます。",
     "source": "f7833cda"
-  },
-  "KnobProps.enableDoubleClickDefault": {
-    "message": "ダブルクリックで `defaultValue` に戻します。",
-    "source": "bad0f20a"
   },
   "KnobProps.disabled": {
     "message": "ノブを変更できなくし、タブ順から外します。設定している間、パートは `data-disabled` を持ちます。",

@@ -127,7 +127,7 @@ export function KeyboardSection({
             value={velocity}
             min={MIN_VELOCITY}
             max={MAX_VELOCITY}
-            defaultValue={100}
+            resetValue={100}
             onChange={(v) => setVelocity(v)}
             size={30}
           >

@@ -136,7 +136,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             value={attack}
             min={MIN_ATTACK}
             max={MAX_ATTACK}
-            defaultValue={10}
+            resetValue={10}
             onChange={(v) => setAttack(v)}
             size={40}
           >
@@ -162,7 +162,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             value={decay}
             min={MIN_DECAY}
             max={MAX_DECAY}
-            defaultValue={200}
+            resetValue={200}
             onChange={(v) => setDecay(v)}
             size={40}
           >
@@ -187,7 +187,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             value={sustain}
             min={MIN_SUSTAIN}
             max={MAX_SUSTAIN}
-            defaultValue={50}
+            resetValue={50}
             onChange={(v) => setSustain(v)}
             size={40}
           >
@@ -217,7 +217,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
             value={release}
             min={MIN_RELEASE}
             max={MAX_RELEASE}
-            defaultValue={200}
+            resetValue={200}
             onChange={(v) => setRelease(v)}
             size={40}
           >

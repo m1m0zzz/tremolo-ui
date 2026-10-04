@@ -21,7 +21,6 @@ function Subject({
       value={value}
       min={0}
       max={100}
-      defaultValue={0}
       data-testid="knob"
       {...props}
       onChange={(next) => {
@@ -63,6 +62,32 @@ function useEveryInput(knob: HTMLElement) {
   fireEvent.wheel(knob, { deltaY: -1 })
   fireEvent.doubleClick(knob)
 }
+
+describe('Knob double click', () => {
+  test('restores resetValue', () => {
+    const { knob, onChange } = setup({ resetValue: 20 })
+
+    fireEvent.doubleClick(knob)
+
+    expect(onChange).toHaveBeenLastCalledWith(20)
+  })
+
+  test('resetValue defaults to startValue', () => {
+    const { knob, onChange } = setup({ startValue: 30 })
+
+    fireEvent.doubleClick(knob)
+
+    expect(onChange).toHaveBeenLastCalledWith(30)
+  })
+
+  test('resetValue null turns it off', () => {
+    const { knob, onChange } = setup({ resetValue: null })
+
+    fireEvent.doubleClick(knob)
+
+    expect(onChange).not.toHaveBeenCalled()
+  })
+})
 
 describe('Knob input guards', () => {
   test('disabled blocks every input and removes the knob from the tab order', () => {

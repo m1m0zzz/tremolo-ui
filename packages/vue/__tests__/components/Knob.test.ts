@@ -98,10 +98,26 @@ describe('Knob', () => {
     expect(knob).not.toHaveAttribute('data-dragging')
   })
 
-  test('a double click restores the default value', async () => {
-    const { knob, onChange } = await setup({ defaultValue: 20 })
+  test('a double click restores resetValue', async () => {
+    const { knob, onChange } = await setup({ resetValue: 20 })
     await fireEvent.dblClick(knob)
     expect(onChange).toHaveBeenLastCalledWith(20)
+  })
+
+  test('resetValue defaults to startValue', async () => {
+    const { knob, onChange } = await setup({
+      min: -50,
+      max: 50,
+      startValue: 0,
+    })
+    await fireEvent.dblClick(knob)
+    expect(onChange).toHaveBeenLastCalledWith(0)
+  })
+
+  test('resetValue null turns the double click off', async () => {
+    const { knob, onChange } = await setup({ resetValue: null })
+    await fireEvent.dblClick(knob)
+    expect(onChange).not.toHaveBeenCalled()
   })
 
   test('disabled blocks every input and leaves the tab order', async () => {

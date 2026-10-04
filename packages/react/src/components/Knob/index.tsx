@@ -69,10 +69,10 @@ export interface KnobProps {
    */
   scale?: Scale
   /**
-   * The value a double click restores, while `enableDoubleClickDefault` is on.
-   * @default min
+   * The value a double click restores. `null` turns the double click off.
+   * @default startValue
    */
-  defaultValue?: number
+  resetValue?: number | null
 
   /**
    * Where the active arc starts. Put it at the centre of a bipolar control,
@@ -158,11 +158,6 @@ export interface KnobProps {
    * @default { default: ['raw', 1], shift: ['raw', 0.1] }
    */
   keyboard?: ModifierValue<InputEventOption> | null
-  /**
-   * Restore `defaultValue` on a double click.
-   * @default true
-   */
-  enableDoubleClickDefault?: boolean
 
   /**
    * Make the knob unchangeable and remove it from the tab order.
@@ -227,7 +222,7 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
       max,
       step = 1,
       scale = linearScale,
-      defaultValue = min,
+      resetValue,
       startValue = min,
       size,
       externalStyles: _externalStyles,
@@ -235,7 +230,6 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
       keyboard = DEFAULT_KEYBOARD_OPTIONS,
       dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
       pointerLock = false,
-      enableDoubleClickDefault = true,
       disabled = false,
       readonly = false,
       angleRange = 270,
@@ -359,8 +353,8 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
           }
           onPointerDown={onPointerDown}
           onDoubleClick={(event) => {
-            if (!inactive && enableDoubleClickDefault && onChange) {
-              onChange(defaultValue)
+            if (!inactive && resetValue !== null && onChange) {
+              onChange(resetValue ?? startValue)
             }
             onDoubleClick?.(event)
           }}
