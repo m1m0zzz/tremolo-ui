@@ -6,7 +6,9 @@ import {
   noteName,
   noteNumber,
   noteToFrequency,
+  normalizePitchBend,
   parseNoteName,
+  PITCH_BEND_CENTER,
   scaleIntervals,
   scaleNotes,
 } from '../src/midi'
@@ -162,4 +164,17 @@ describe('unit test', () => {
       expect(() => scaleNotes('C3', 'major', octaves)).toThrow(RangeError)
     },
   )
+})
+
+describe('normalizePitchBend', () => {
+  test('the centre is 0 and both ends are reached exactly', () => {
+    expect(normalizePitchBend(PITCH_BEND_CENTER)).toBe(0)
+    expect(normalizePitchBend(0)).toBe(-1)
+    expect(normalizePitchBend(16383)).toBe(1)
+  })
+
+  test('each side is scaled by its own length', () => {
+    expect(normalizePitchBend(4096)).toBe(-0.5)
+    expect(normalizePitchBend(PITCH_BEND_CENTER + 8191 / 2)).toBe(0.5)
+  })
 })

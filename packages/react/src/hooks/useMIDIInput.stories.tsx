@@ -1,8 +1,12 @@
 import { useRef, useState } from 'react'
 import * as Tone from 'tone'
 
-import { PITCH_BEND_CENTER } from '@tremolo-ui/dom'
-import { noteName, noteNumber } from '@tremolo-ui/functions'
+import {
+  normalizePitchBend,
+  noteName,
+  noteNumber,
+  PITCH_BEND_CENTER,
+} from '@tremolo-ui/functions'
 
 import { Piano, PianoMethods } from '../components/Piano'
 
@@ -67,10 +71,7 @@ export const Basic = () => {
       setPressure(`channel: ${value} (${channelLabel(channel)})`),
   })
 
-  // 0-16383 centred at 8192, so -1 to 1 either side of the centre.
-  const bendRatio =
-    (bend - PITCH_BEND_CENTER) /
-    (bend < PITCH_BEND_CENTER ? PITCH_BEND_CENTER : PITCH_BEND_CENTER - 1)
+  const bendRatio = normalizePitchBend(bend)
 
   return (
     <div>

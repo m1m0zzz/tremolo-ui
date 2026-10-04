@@ -12,14 +12,6 @@ const STATUS = {
 }
 
 /**
- * Centre of the 14-bit pitch bend range: no bend.
- *
- * The range is not symmetric — 0 is 8192 below centre and 16383 is 8191 above
- * — so a wheel at rest reports exactly this rather than half of the maximum.
- */
-export const PITCH_BEND_CENTER = 8192
-
-/**
  * Every handler is given the channel last, as 0-15. MIDI channels are written
  * 1-16 on hardware, so add one before showing it to anyone.
  */
@@ -27,7 +19,8 @@ export type MIDIInputHandlers = {
   onNoteOnEvent?: (note: number, velocity: number, channel: number) => void
   onNoteOffEvent?: (note: number, channel: number) => void
   /**
-   * The 14-bit bend, 0-16383, centred at {@link PITCH_BEND_CENTER}.
+   * The 14-bit bend, 0-16383, centred at 8192. `normalizePitchBend` in
+   * `@tremolo-ui/functions` turns it into -1 to 1.
    *
    * The two data bytes are little-endian — the first carries the low 7 bits —
    * which is the other way round from every other message.

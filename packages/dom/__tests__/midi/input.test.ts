@@ -1,8 +1,6 @@
-import {
-  createMIDIInput,
-  PITCH_BEND_CENTER,
-  type MIDIInputHandlers,
-} from '../../src/midi/input'
+import { PITCH_BEND_CENTER } from '@tremolo-ui/functions'
+
+import { createMIDIInput, type MIDIInputHandlers } from '../../src/midi/input'
 
 function setup(handlers: MIDIInputHandlers) {
   let listener!: (event: MIDIMessageEvent) => void

@@ -37,9 +37,10 @@ return (
 `inputs` is the list of connected devices, and it changes as they come and go,
 so a device list needs no `statechange` listener of its own.
 
-`error` is one of `NOT_SUPPORTED` (the browser has no Web MIDI API),
-`PERMISSION_DENIED` (the user said no — asking again is worthwhile) or
-`UNAVAILABLE` (anything else). A failed request leaves any access already
+`error` is one of the strings `'NOT_SUPPORTED'` (the browser has no Web MIDI
+API), `'PERMISSION_DENIED'` (the user said no — asking again is worthwhile) or
+`'UNAVAILABLE'` (anything else). Its type, `MIDIAccessError` from
+`@tremolo-ui/dom`, catches a misspelt comparison. A failed request leaves any access already
 granted in place.
 
 Pass `{ sysex: true }` to `request` for system exclusive messages. Browsers
@@ -64,10 +65,8 @@ useMIDIInput(midiAccess, {
   onControlChangeEvent: (controller, value) => {
     if (controller === 1) setModulation(value / 127)
   },
-  onPitchBendEvent: (value) => {
-    // 0-16383, centred at PITCH_BEND_CENTER (8192)
-    setBend((value - PITCH_BEND_CENTER) / PITCH_BEND_CENTER)
-  },
+  // 0-16383 centred at 8192, as -1 to 1
+  onPitchBendEvent: (value) => setBend(normalizePitchBend(value)),
 })
 ```
 
@@ -83,6 +82,10 @@ useMIDIInput(midiAccess, {
 
 A note on with a velocity of 0 is how most devices say note off, so it arrives
 as `onNoteOffEvent`.
+
+The pitch bend is the raw 14-bit value, which is not symmetric around its
+centre. `normalizePitchBend` from `@tremolo-ui/functions` turns it into -1 to
+1 with both ends reached, and `PITCH_BEND_CENTER` (8192) is the wheel at rest.
 
 Writing the handlers inline is fine: they are read fresh on every event, so a
 re-render never detaches anything.

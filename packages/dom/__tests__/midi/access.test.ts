@@ -1,9 +1,4 @@
-import {
-  createMIDIAccess,
-  NOT_SUPPORTED,
-  PERMISSION_DENIED,
-  UNAVAILABLE,
-} from '../../src/midi/access'
+import { createMIDIAccess } from '../../src/midi/access'
 
 const originalRequestMIDIAccess = navigator.requestMIDIAccess
 
@@ -75,7 +70,7 @@ describe('createMIDIAccess', () => {
     instance.request()
     expect(instance.getState()).toEqual({
       midiAccess: null,
-      error: NOT_SUPPORTED,
+      error: 'NOT_SUPPORTED',
       inputs: [],
     })
   })
@@ -141,12 +136,12 @@ describe('createMIDIAccess', () => {
   })
 
   test.each([
-    ['SecurityError', PERMISSION_DENIED],
-    ['NotAllowedError', PERMISSION_DENIED],
-    ['NotSupportedError', NOT_SUPPORTED],
-    ['TypeError', NOT_SUPPORTED],
-    ['AbortError', UNAVAILABLE],
-    ['SomethingNewError', UNAVAILABLE],
+    ['SecurityError', 'PERMISSION_DENIED'],
+    ['NotAllowedError', 'PERMISSION_DENIED'],
+    ['NotSupportedError', 'NOT_SUPPORTED'],
+    ['TypeError', 'NOT_SUPPORTED'],
+    ['AbortError', 'UNAVAILABLE'],
+    ['SomethingNewError', 'UNAVAILABLE'],
   ])('%s becomes %s', async (name, expected) => {
     mockRequestMIDIAccess(() => Promise.reject(rejection(name)))
     const instance = createMIDIAccess()
@@ -172,7 +167,7 @@ describe('createMIDIAccess', () => {
 
     expect(instance.getState()).toEqual({
       midiAccess: access,
-      error: PERMISSION_DENIED,
+      error: 'PERMISSION_DENIED',
       inputs: [a],
     })
   })

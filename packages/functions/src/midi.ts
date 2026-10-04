@@ -119,6 +119,28 @@ export function noteToFrequency(note: number | string, detune = 0, a4 = 440) {
 }
 
 /**
+ * Centre of the 14-bit pitch bend range: no bend.
+ *
+ * The range is not symmetric — 0 is 8192 below centre and 16383 is 8191 above
+ * — so a wheel at rest reports exactly this rather than half of the maximum.
+ */
+export const PITCH_BEND_CENTER = 8192
+
+/**
+ * A 14-bit pitch bend (0-16383) as -1 to 1, with 0 at rest.
+ *
+ * Each side of the centre is divided by its own length, since there is one
+ * more step below it than above: 0 gives -1 and 16383 gives 1 exactly.
+ * Dividing both sides by 8192 would never quite reach 1.
+ *
+ * @param value pitch bend: 0 ~ 16383
+ */
+export function normalizePitchBend(value: number) {
+  const offset = value - PITCH_BEND_CENTER
+  return offset / (offset < 0 ? PITCH_BEND_CENTER : PITCH_BEND_CENTER - 1)
+}
+
+/**
  * Semitones above the root, for each supported scale.
  *
  * Every entry starts at 0 and stays inside one octave, so a scale is a set of
