@@ -33,12 +33,12 @@ It receives the frame's timestamp and the milliseconds since the previous
 frame:
 
 ```jsx
-useAnimationFrame((timestamp, delta) => {
-  position.current += speed * delta
+useAnimationFrame((timestamp, deltaTime) => {
+  position.current += speed * deltaTime
 })
 ```
 
-`delta` is `0` on the first frame of a loop. Moving by `delta` rather than by
+`deltaTime` is `0` on the first frame of a loop. Moving by `deltaTime` rather than by
 a fixed amount per frame keeps the speed the same on a 60 Hz and a 120 Hz
 display.
 
@@ -53,7 +53,7 @@ latest props and state. Rendering does not restart the loop.
 useAnimationFrame(update, { disabled: !playing })
 ```
 
-Turning it back on starts a new loop, whose first frame again has a `delta` of
+Turning it back on starts a new loop, whose first frame again has a `deltaTime` of
 `0`. The time spent stopped is not reported as one long frame, so nothing
 jumps ahead on resume.
 

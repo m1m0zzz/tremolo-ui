@@ -31,12 +31,12 @@ import { useAnimationFrame } from '@tremolo-ui/react'
 フレームのタイムスタンプと、前のフレームからの経過ミリ秒を受け取ります。
 
 ```jsx
-useAnimationFrame((timestamp, delta) => {
-  position.current += speed * delta
+useAnimationFrame((timestamp, deltaTime) => {
+  position.current += speed * deltaTime
 })
 ```
 
-ループの最初のフレームでは `delta` は `0` です。1 フレームごとに決まった量ではなく `delta` に比例して動かせば、60 Hz と 120 Hz のディスプレイで速さが変わりません。
+ループの最初のフレームでは `deltaTime` は `0` です。1 フレームごとに決まった量ではなく `deltaTime` に比例して動かせば、60 Hz と 120 Hz のディスプレイで速さが変わりません。
 
 コールバックはフレームのたびに読み直されるので、インラインで書けて、最新の props と state が見えます。再レンダーしてもループは張り直されません。
 
@@ -48,7 +48,7 @@ useAnimationFrame((timestamp, delta) => {
 useAnimationFrame(update, { disabled: !playing })
 ```
 
-戻すと新しいループが始まり、その最初のフレームの `delta` はまた `0` になります。止めていた時間が 1 つの長いフレームとして報告されないので、再開したときに先へ飛びません。
+戻すと新しいループが始まり、その最初のフレームの `deltaTime` はまた `0` になります。止めていた時間が 1 つの長いフレームとして報告されないので、再開したときに先へ飛びません。
 
 ## canvas に描く {#drawing-on-a-canvas}
 

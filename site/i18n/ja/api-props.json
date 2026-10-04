@@ -604,8 +604,8 @@
     "source": "19032897"
   },
   "UseAnimationFrameOptions.disabled": {
-    "message": "ループを止めます。戻すと新しいループが始まり、その最初のフレームの `delta` は `0` になります。",
-    "source": "3d62124e"
+    "message": "ループを止めます。戻すと新しいループが始まり、その最初のフレームの `deltaTime` は `0` になります。",
+    "source": "f2bcfb3e"
   },
   "UseDragOptions.threshold": {
     "message": "ドラッグとみなすまでにポインタが動く必要のあるピクセル数です。\n\nクリックでもポインタは 1〜2 ピクセル動くので、しきい値が無いとダブルクリックの 2 回の押下の間がドラッグとして報告されます。",

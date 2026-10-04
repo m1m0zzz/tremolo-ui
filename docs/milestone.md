@@ -262,7 +262,7 @@ props・パート・命令的メソッドは 3 つでほぼ揃っている（Sve
   - `reverse` との組み合わせ（`data-flipped`）はそのまま。Radix では同じものを `inverted` と呼ぶ
 - [ ] **React だけ `readonly` を `readOnly` にする。** React の DOM の属性の慣習に合わせる。Svelte / Vue は `readonly` のまま
   - context の `readonly`（`NumberInput` / `PointsEditor` / `Slider` / `XYPad` の `*ContextValue`）も公開しているので一緒に直す。`data-readonly` は属性の契約なのでそのまま
-- [ ] **`useAnimationFrame` の第 2 引数を `deltaTime` と呼ぶ。** `AnimationCanvas` の `draw` が受ける `AnimationFrame` は同じものを `deltaTime`（と `elapsedTime`）と呼んでいるので、そちらに揃える。位置引数なので利用者のコードは壊れず、変わるのは JSDoc とドキュメント
+- [x] **`useAnimationFrame` の第 2 引数を `deltaTime` と呼ぶ。** `AnimationCanvas` の `draw` が受ける `AnimationFrame` は同じものを `deltaTime`（と `elapsedTime`）と呼んでいるので、そちらに揃える。位置引数なので利用者のコードは壊れず、変わるのは JSDoc とドキュメント
 
 ## 1.0 の基準
 
