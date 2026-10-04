@@ -6,18 +6,7 @@ export {
   type CanvasDrawFunction,
   type CanvasInitFunction,
 } from './canvas/animation'
-export {
-  drawingState,
-  isDrawingState,
-  type DrawingContext,
-  type DrawingState,
-  type DrawingStateValue,
-} from './canvas/context'
-export {
-  matchesAccept,
-  partitionByAccept,
-  type AcceptCandidate,
-} from './file/accept'
+export { partitionByAccept, type AcceptCandidate } from './file/accept'
 export {
   createDropZone,
   type DropZoneInstance,
@@ -34,15 +23,12 @@ export {
 export {
   arrowKeyDirection,
   arrowKeyMove,
-  isArrowKey,
   wheelDirection,
   wheelMove,
-  type ArrowKey,
   type AxisMove,
   type WheelDirectionOptions,
 } from './input/direction'
 export {
-  mapModifier,
   selectModifier,
   type InputEventOption,
   type Modifier,
@@ -54,7 +40,6 @@ export {
   KNOB_VIEWBOX_SIZE,
   knobAngles,
   knobArcPath,
-  knobArcPoint,
   knobArcRadius,
   type KnobAngleOptions,
   type KnobAngles,
@@ -101,7 +86,6 @@ export {
   blackKeyWidth,
   fitWhiteKeyWidth,
   getNoteRangeArray,
-  noteAt,
   notePosition,
   pianoWidth,
   type NoteRange,
@@ -156,14 +140,7 @@ export {
   type WheelOptions,
 } from './pointer/wheel'
 export { valuePercent } from './position'
-export {
-  createSelectionBox,
-  selectionBoxCovers,
-  type SelectionBoxBeginOptions,
-  type SelectionBoxInstance,
-  type SelectionBoxOptions,
-  type SelectionBoxRect,
-} from './selection/box'
+export { type SelectionBoxRect } from './selection/box'
 export { sliderMarks, type MarksOptions, type SliderMark } from './slider/marks'
 export { cssLength, visuallyHiddenStyle } from './style'
 export { toXY, type XY, type XYInput } from './xy'
