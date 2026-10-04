@@ -18,7 +18,7 @@ import { useXYPadContext } from './context'
 
 type PerAxis = XYInput<string | undefined>
 
-const xYPadThumbProps = {
+const xyPadThumbProps = {
   /** Sets `--color`, for the theme to colour the thumb with. */
   color: String,
   /** The accessible name of each axis, as `[x, y]`. */
@@ -31,13 +31,13 @@ const xYPadThumbProps = {
   ariaValuetext: [String, Array] as PropType<PerAxis>,
 } satisfies ComponentObjectPropsOptions
 
-export type XYPadThumbProps = ExtractPublicPropTypes<typeof xYPadThumbProps>
+export type XYPadThumbProps = ExtractPublicPropTypes<typeof xyPadThumbProps>
 
 /** The thumb, placed at the value, with one range input per axis inside. */
 export const XYPadThumb = /* @__PURE__ */ defineComponent({
   name: 'XYPadThumb',
   inheritAttrs: false,
-  props: xYPadThumbProps,
+  props: xyPadThumbProps,
   setup(props, { slots, attrs, expose }) {
     const pad = useXYPadContext()
     checkPlacement('XYPadThumb', 'XYPadArea')

@@ -34,7 +34,7 @@ import { useCheckSteps } from '../_util/useCheckSteps'
 
 import { XYPadKey } from './context'
 
-const xYPadProps = {
+const xyPadProps = {
   /** The current value as `[x, y]`. Bind it with `v-model`. */
   modelValue: {
     type: Array as unknown as PropType<XY<number>>,
@@ -73,7 +73,7 @@ const xYPadProps = {
   readonly: Boolean,
 } satisfies ComponentObjectPropsOptions
 
-export type XYPadProps = ExtractPublicPropTypes<typeof xYPadProps>
+export type XYPadProps = ExtractPublicPropTypes<typeof xyPadProps>
 
 /**
  * Two-dimensional slider. The per-axis settings are `[x, y]` tuples, and a
@@ -81,7 +81,7 @@ export type XYPadProps = ExtractPublicPropTypes<typeof xYPadProps>
  */
 export const XYPad = /* @__PURE__ */ defineComponent({
   name: 'XYPad',
-  props: xYPadProps,
+  props: xyPadProps,
   emits: {
     'update:modelValue': (value: XY<number>) => Array.isArray(value),
     dragStart: (value: XY<number>) => Array.isArray(value),
