@@ -10,14 +10,8 @@ import {
 } from 'vue'
 
 import {
-  applyDelta,
-  arrowKeyMove,
   elementMapping,
-  selectModifier,
-  toXY,
   valuePercent,
-  wheelMove,
-  type AxisMove,
   type AxisOptions,
   type ChangeSource,
   type InputEventOption,
@@ -26,6 +20,14 @@ import {
   type XY,
   type XYInput,
 } from '@tremolo-ui/dom'
+import {
+  applyDelta,
+  arrowKeyMove,
+  selectModifier,
+  toXY,
+  wheelMove,
+  type AxisMove,
+} from '@tremolo-ui/dom/internal'
 import { linearScale, type Scale } from '@tremolo-ui/functions'
 
 import { useDragValue } from '../../composables/useDragValue'

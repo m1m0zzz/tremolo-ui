@@ -13,7 +13,7 @@ import {
   caretAtDecimalOffset,
   caretDecimalOffset,
   numberSpan,
-} from '@tremolo-ui/dom'
+} from '@tremolo-ui/dom/internal'
 
 import { NumberInputGestureKey, useNumberInputContext } from './context'
 

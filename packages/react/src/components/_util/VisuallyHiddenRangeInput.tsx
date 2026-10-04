@@ -1,6 +1,6 @@
 import { ComponentPropsWithoutRef, forwardRef } from 'react'
 
-import { visuallyHiddenStyle } from '@tremolo-ui/dom'
+import { visuallyHiddenStyle } from '@tremolo-ui/dom/internal'
 
 type Props = Omit<ComponentPropsWithoutRef<'input'>, 'type' | 'style'>
 

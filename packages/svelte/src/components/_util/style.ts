@@ -1,4 +1,4 @@
-import { visuallyHiddenStyle } from '@tremolo-ui/dom'
+import { visuallyHiddenStyle } from '@tremolo-ui/dom/internal'
 
 /** A style object as the text of a `style` attribute. */
 export function styleText(style: Record<string, string>): string {

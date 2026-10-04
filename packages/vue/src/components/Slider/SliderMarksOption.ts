@@ -7,7 +7,8 @@ import {
   type PropType,
 } from 'vue'
 
-import { cssLength, valuePercent } from '@tremolo-ui/dom'
+import { valuePercent } from '@tremolo-ui/dom'
+import { cssLength } from '@tremolo-ui/dom/internal'
 
 import { checkPlacement } from '../_util/placement'
 

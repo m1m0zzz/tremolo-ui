@@ -41,7 +41,7 @@
     "react-dom": "^18 || ^19"
   },
   "dependencies": {
-    "@tremolo-ui/dom": "^0.8.0",
+    "@tremolo-ui/dom": "0.8.0",
     "@tremolo-ui/functions": "^0.8.0"
   },
   "files": [

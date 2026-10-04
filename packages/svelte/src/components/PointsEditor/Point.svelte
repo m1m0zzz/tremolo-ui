@@ -1,14 +1,16 @@
 <script lang="ts">
   import {
-    arrowKeyMove,
-    clampPoint,
     createDragValue,
     elementMapping,
-    POINT_AXIS,
-    selectModifier,
     type PointPosition,
     type PointsEditorPoint,
   } from '@tremolo-ui/dom'
+  import {
+    arrowKeyMove,
+    clampPoint,
+    POINT_AXIS,
+    selectModifier,
+  } from '@tremolo-ui/dom/internal'
   import { untrack } from 'svelte'
 
   import { useChangeGesture } from '../_util/change-gesture.svelte.js'

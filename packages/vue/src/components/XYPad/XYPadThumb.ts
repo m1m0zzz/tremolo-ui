@@ -9,7 +9,8 @@ import {
   watchEffect,
 } from 'vue'
 
-import { toXY, type XYInput } from '@tremolo-ui/dom'
+import { type XYInput } from '@tremolo-ui/dom'
+import { toXY } from '@tremolo-ui/dom/internal'
 
 import { checkPlacement } from '../_util/placement'
 import { visuallyHiddenRangeInput } from '../_util/visually-hidden-range-input'

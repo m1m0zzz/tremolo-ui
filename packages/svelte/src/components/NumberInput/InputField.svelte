@@ -3,7 +3,7 @@
     caretAtDecimalOffset,
     caretDecimalOffset,
     numberSpan,
-  } from '@tremolo-ui/dom'
+  } from '@tremolo-ui/dom/internal'
   import { tick } from 'svelte'
 
   import { useNumberInputContext, useNumberInputGesture } from './context.js'

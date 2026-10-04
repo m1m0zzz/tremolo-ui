@@ -1,6 +1,6 @@
 import { ComponentPropsWithoutRef, forwardRef } from 'react'
 
-import { POINT_AXIS, wheelMove } from '@tremolo-ui/dom'
+import { POINT_AXIS, wheelMove } from '@tremolo-ui/dom/internal'
 
 import { useComposedRefs } from '../../compose-refs'
 import { useDragValue } from '../../hooks/useDragValue'

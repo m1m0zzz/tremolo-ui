@@ -7,7 +7,10 @@ import {
   useState,
 } from 'react'
 
-import { createStepperDrag, type StepperDragInstance } from '@tremolo-ui/dom'
+import {
+  createStepperDrag,
+  type StepperDragInstance,
+} from '@tremolo-ui/dom/internal'
 
 import { useComposedRefs } from '../../compose-refs'
 

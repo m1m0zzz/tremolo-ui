@@ -1,15 +1,17 @@
 <script lang="ts">
   import {
-    commitNumberInputText,
     DEFAULT_DRAG_SENSITIVITY,
     DEFAULT_KEYBOARD_OPTIONS,
     DEFAULT_WHEEL_OPTIONS,
+  } from '@tremolo-ui/dom'
+  import {
+    commitNumberInputText,
     numberInputBounds,
     numberInputRanges,
     nudgeNumberInput,
     parseNumberText,
     wheelDirection,
-  } from '@tremolo-ui/dom'
+  } from '@tremolo-ui/dom/internal'
   import { linearScale } from '@tremolo-ui/functions'
 
   import { wheel as wheelAction } from '../../actions/wheel.js'

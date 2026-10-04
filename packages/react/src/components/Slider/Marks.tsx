@@ -1,6 +1,7 @@
 import { ComponentPropsWithoutRef, CSSProperties } from 'react'
 
-import { cssLength, type MarksOptions, sliderMarks } from '@tremolo-ui/dom'
+import { type MarksOptions } from '@tremolo-ui/dom'
+import { cssLength, sliderMarks } from '@tremolo-ui/dom/internal'
 
 import { Placement } from '../_util/Placement'
 

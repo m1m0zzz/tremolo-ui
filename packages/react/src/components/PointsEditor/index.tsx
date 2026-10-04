@@ -14,10 +14,12 @@ import {
   DEFAULT_DRAG_SENSITIVITY,
   type InputEventOption,
   type ModifierValue,
-  POINTS_EDITOR_DEFAULT_KEYBOARD,
-  POINTS_EDITOR_DEFAULT_WHEEL,
   type SelectionBoxRect,
 } from '@tremolo-ui/dom'
+import {
+  POINTS_EDITOR_DEFAULT_KEYBOARD,
+  POINTS_EDITOR_DEFAULT_WHEEL,
+} from '@tremolo-ui/dom/internal'
 
 import { Background } from './Background'
 import { Container } from './Container'

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cssLength } from '@tremolo-ui/dom'
+  import { cssLength } from '@tremolo-ui/dom/internal'
 
   import { setPlacement } from '../_util/placement.js'
 

@@ -2,10 +2,12 @@
   import {
     createPointsEditor,
     DEFAULT_DRAG_SENSITIVITY,
-    POINTS_EDITOR_DEFAULT_KEYBOARD,
-    POINTS_EDITOR_DEFAULT_WHEEL,
     type SelectionBoxRect,
   } from '@tremolo-ui/dom'
+  import {
+    POINTS_EDITOR_DEFAULT_KEYBOARD,
+    POINTS_EDITOR_DEFAULT_WHEEL,
+  } from '@tremolo-ui/dom/internal'
 
   import { setPointsEditorContext } from './context.js'
   import type { PointsEditorProps } from './types.js'

@@ -1,6 +1,6 @@
 import { h, type VNodeProps } from 'vue'
 
-import { visuallyHiddenStyle } from '@tremolo-ui/dom'
+import { visuallyHiddenStyle } from '@tremolo-ui/dom/internal'
 
 /**
  * The control underneath a headless part: out of sight, but in the

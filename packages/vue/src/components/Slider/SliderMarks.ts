@@ -7,7 +7,8 @@ import {
   type PropType,
 } from 'vue'
 
-import { cssLength, sliderMarks, type MarksOptions } from '@tremolo-ui/dom'
+import { type MarksOptions } from '@tremolo-ui/dom'
+import { cssLength, sliderMarks } from '@tremolo-ui/dom/internal'
 
 import { providePlacement } from '../_util/placement'
 

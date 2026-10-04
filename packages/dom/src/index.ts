@@ -1,3 +1,7 @@
+// What users of the components and of this package write: the `create*`
+// interactions, the values and types that show up in props, and the geometry a
+// part of your own needs to draw. Everything here follows semver. What only
+// the wrappers need is in `./internal`, which does not.
 export {
   createAnimationCanvas,
   type AnimationCanvasInstance,
@@ -6,36 +10,24 @@ export {
   type CanvasDrawFunction,
   type CanvasInitFunction,
 } from './canvas/animation'
-export { partitionByAccept, type AcceptCandidate } from './file/accept'
 export {
   createDropZone,
   type DropZoneInstance,
   type DropZoneOptions,
   type DropZoneState,
 } from './file/drop-zone'
-export { applyDelta } from './input/apply-delta'
 export {
   createChangeGesture,
   type ChangeGestureInstance,
   type ChangeGestureOptions,
   type ChangeSource,
 } from './input/change-gesture'
-export { checkSteps, type CheckStepsOptions } from './input/check-steps'
 export {
   DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
 } from './input/defaults'
 export {
-  arrowKeyDirection,
-  arrowKeyMove,
-  wheelDirection,
-  wheelMove,
-  type AxisMove,
-  type WheelDirectionOptions,
-} from './input/direction'
-export {
-  selectModifier,
   type InputEventOption,
   type Modifier,
   type ModifierMap,
@@ -63,36 +55,7 @@ export {
   type MIDIInputInstance,
 } from './midi/input'
 export { createMIDIMessage, type MIDIMessageInstance } from './midi/message'
-export {
-  createStepperDrag,
-  type StepperDragInstance,
-  type StepperDragOptions,
-} from './number-input/stepper-drag'
-export {
-  commitNumberInputText,
-  numberInputBounds,
-  numberInputRanges,
-  nudgeNumberInput,
-  type NumberInputRanges,
-  type NumberInputValueOptions,
-} from './number-input/value'
-export {
-  caretAtDecimalOffset,
-  caretDecimalOffset,
-  numberSpan,
-  parseNumberText,
-  type NumberSpan,
-} from './number-input/text'
-export { replaceOptions } from './options/replace'
-export {
-  blackKeyWidth,
-  fitWhiteKeyWidth,
-  getNoteRangeArray,
-  notePosition,
-  pianoWidth,
-  type NoteRange,
-  type PianoLayout,
-} from './piano/layout'
+export { notePosition, type NoteRange, type PianoLayout } from './piano/layout'
 export {
   SHORTCUTS,
   type KeyboardShortcuts,
@@ -105,11 +68,7 @@ export {
   type PianoInputOptions,
 } from './piano'
 export {
-  clampPoint,
   createPointsEditor,
-  POINT_AXIS,
-  POINTS_EDITOR_DEFAULT_KEYBOARD,
-  POINTS_EDITOR_DEFAULT_WHEEL,
   type PointPosition,
   type PointsEditorInstance,
   type PointsEditorOptions,
@@ -143,6 +102,5 @@ export {
 } from './pointer/wheel'
 export { valuePercent } from './position'
 export { type SelectionBoxRect } from './selection/box'
-export { sliderMarks, type MarksOptions, type SliderMark } from './slider/marks'
-export { cssLength, visuallyHiddenStyle } from './style'
-export { toXY, type XY, type XYInput } from './xy'
+export { type MarksOptions } from './slider/marks'
+export { type XY, type XYInput } from './xy'

@@ -1,18 +1,20 @@
 <script lang="ts">
   import {
-    applyDelta,
-    arrowKeyDirection,
-    cssLength,
     DEFAULT_DRAG_SENSITIVITY,
     DEFAULT_KEYBOARD_OPTIONS,
     DEFAULT_WHEEL_OPTIONS,
     knobAngles,
     relativeMapping,
-    selectModifier,
-    wheelDirection,
     type AxisOptions,
     type XY,
   } from '@tremolo-ui/dom'
+  import {
+    applyDelta,
+    arrowKeyDirection,
+    cssLength,
+    selectModifier,
+    wheelDirection,
+  } from '@tremolo-ui/dom/internal'
   import { linearScale, type ValueRange } from '@tremolo-ui/functions'
 
   import { dragValue } from '../../actions/drag-value.js'

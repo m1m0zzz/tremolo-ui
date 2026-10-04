@@ -10,16 +10,18 @@ import {
 } from 'vue'
 
 import {
-  applyDelta,
-  arrowKeyDirection,
   elementMapping,
-  selectModifier,
   valuePercent,
-  wheelDirection,
   type AxisOptions,
   type ChangeSource,
   type XY,
 } from '@tremolo-ui/dom'
+import {
+  applyDelta,
+  arrowKeyDirection,
+  selectModifier,
+  wheelDirection,
+} from '@tremolo-ui/dom/internal'
 import { linearScale, type Scale } from '@tremolo-ui/functions'
 
 import { useDragValue } from '../../composables/useDragValue'

@@ -1,14 +1,16 @@
 <script lang="ts">
   import {
-    blackKeyWidth,
     createPianoInput,
-    fitWhiteKeyWidth,
-    getNoteRangeArray,
     notePosition,
-    pianoWidth,
     type PianoInputInstance,
     type PianoLayout,
   } from '@tremolo-ui/dom'
+  import {
+    blackKeyWidth,
+    fitWhiteKeyWidth,
+    getNoteRangeArray,
+    pianoWidth,
+  } from '@tremolo-ui/dom/internal'
   import { isWhiteKey, noteKey } from '@tremolo-ui/functions'
   import { untrack } from 'svelte'
 

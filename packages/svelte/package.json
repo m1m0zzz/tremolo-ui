@@ -34,7 +34,7 @@
     "svelte": "^5.40.0"
   },
   "dependencies": {
-    "@tremolo-ui/dom": "^0.8.0",
+    "@tremolo-ui/dom": "0.8.0",
     "@tremolo-ui/functions": "^0.8.0",
     "esm-env": "^1.2.2"
   },

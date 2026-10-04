@@ -1,6 +1,6 @@
 import { ComponentPropsWithoutRef, CSSProperties, forwardRef } from 'react'
 
-import { cssLength } from '@tremolo-ui/dom'
+import { cssLength } from '@tremolo-ui/dom/internal'
 
 import { useComposedRefs } from '../../compose-refs'
 import { Placement } from '../_util/Placement'

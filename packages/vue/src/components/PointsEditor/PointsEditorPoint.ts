@@ -12,18 +12,20 @@ import {
 } from 'vue'
 
 import {
-  arrowKeyMove,
-  clampPoint,
   createDragValue,
   elementMapping,
-  POINT_AXIS,
-  selectModifier,
   type InputEventOption,
   type ModifierValue,
   type ChangeSource,
   type PointPosition,
   type PointsEditorPoint as PointRegistration,
 } from '@tremolo-ui/dom'
+import {
+  arrowKeyMove,
+  clampPoint,
+  POINT_AXIS,
+  selectModifier,
+} from '@tremolo-ui/dom/internal'
 
 import { useChangeGesture } from '../_util/change-gesture'
 import { checkPlacement } from '../_util/placement'
