@@ -9,6 +9,7 @@ import {
 
 import {
   arrowKeyMove,
+  type ChangeSource,
   clampPoint,
   type InputEventOption,
   type ModifierValue,
@@ -19,6 +20,7 @@ import {
 } from '@tremolo-ui/dom'
 
 import { useComposedRefs } from '../../compose-refs'
+import { useChangeGesture } from '../../hooks/_internal/useChangeGesture'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useCheckPlacement } from '../_util/Placement'
 import { VisuallyHiddenRangeInput } from '../_util/VisuallyHiddenRangeInput'
@@ -70,10 +72,25 @@ export interface PointsEditorPointProps<T extends PointPosition> {
    * arrow keys or the wheel, including when it moves along with a selection.
    */
   onChange?: (value: PointPosition) => void
-  /** Called when a drag on this point starts, with where the point is. */
-  onDragStart?: (value: PointPosition) => void
-  /** Called when that drag ends, with where the point is. */
-  onDragEnd?: (value: PointPosition) => void
+  /**
+   * Called when a change of this point starts — a drag on it, the first wheel
+   * notch or arrow key while it has the focus — with where it is and what the
+   * change is made with. The points that move along with a selection report
+   * through `onChange` only: the change belongs to the point being operated.
+   */
+  onChangeStart?: (value: PointPosition, source: ChangeSource) => void
+  /**
+   * Called when that change ends, with where the point is: on release, or
+   * `changeEndDelay` after the last wheel notch or arrow key.
+   */
+  onChangeEnd?: (value: PointPosition, source: ChangeSource) => void
+  /**
+   * How long after the last wheel notch or arrow key the change counts as
+   * over, in milliseconds. Neither has an event that says it is done.
+   *
+   * @default 500
+   */
+  changeEndDelay?: number
 
   style?: CSSProperties & CSSVariables<'color' | 'translate'>
 }
@@ -105,8 +122,9 @@ export function Point<T extends PointPosition>({
   'aria-valuetext': ariaValuetext,
 
   onChange,
-  onDragStart,
-  onDragEnd,
+  onChangeStart,
+  onChangeEnd,
+  changeEndDelay,
 
   className,
   style,
@@ -142,6 +160,19 @@ export function Point<T extends PointPosition>({
 
   useCheckPlacement('PointsEditor.Point', 'PointsEditor.Container')
 
+  const current = clampPoint(value, min, max)
+  const gesture = useChangeGesture(
+    current,
+    { onChangeStart, onChangeEnd, changeEndDelay },
+    inactive,
+  )
+  // Every move reaches the point through here, whatever moved it, so the
+  // last one is what `onChangeEnd` gives.
+  const handleChange = (next: PointPosition) => {
+    gesture.changed(next)
+    onChange?.(next)
+  }
+
   // Compared against the focus below, so the point needs its own element.
   const [element, setElement] = useState<HTMLDivElement | null>(null)
   const xInputRef = useRef<HTMLInputElement>(null)
@@ -155,9 +186,10 @@ export function Point<T extends PointPosition>({
     min,
     max,
     readonly: inactive,
-    onChange,
+    onChange: onChange ? handleChange : undefined,
     element,
     wheel,
+    beforeWheel: () => gesture.pulse('wheel'),
   })
   useEffect(() => {
     registration.current = {
@@ -165,9 +197,10 @@ export function Point<T extends PointPosition>({
       min,
       max,
       readonly: inactive,
-      onChange,
+      onChange: onChange ? handleChange : undefined,
       element,
       wheel,
+      beforeWheel: () => gesture.pulse('wheel'),
     }
   })
 
@@ -204,14 +237,11 @@ export function Point<T extends PointPosition>({
         pointerOrigin.current = { x, y }
         xInputRef.current?.focus()
 
-        if (inactive) return
-        onDragStart?.(clampPoint(value, min, max))
+        if (!inactive) gesture.hold('pointer')
       },
       onDragEnd: () => {
         pointerOrigin.current = null
-
-        if (inactive) return
-        onDragEnd?.(clampPoint(value, min, max))
+        gesture.end()
       },
     })
 
@@ -229,6 +259,7 @@ export function Point<T extends PointPosition>({
     if (!move) return
     event.preventDefault()
     if (!onChange || inactive || !keyboard) return
+    gesture.pulse('keyboard')
     editor.nudgePoint(
       id,
       move.axis === 0 ? 'x' : 'y',
@@ -237,8 +268,6 @@ export function Point<T extends PointPosition>({
       event,
     )
   }
-
-  const current = clampPoint(value, min, max)
 
   return (
     // The visual point has two values, so its semantics live on the two range

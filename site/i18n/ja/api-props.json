@@ -419,13 +419,17 @@
     "message": "点をドラッグしたとき、矢印キーやホイールで動かしたとき、選択と一緒に動いたときに、新しい位置を渡して呼ばれます。",
     "source": "3d00d344"
   },
-  "PointsEditorPointProps.onDragStart": {
-    "message": "この点のドラッグが始まったときに、点の位置を渡して呼ばれます。",
-    "source": "06694965"
+  "PointsEditorPointProps.onChangeStart": {
+    "message": "この点の変更が始まったとき（点のドラッグ、フォーカスがある間の最初のホイールのノッチや矢印キー）に、点の位置と何で操作したかを受け取って呼ばれます。選択と一緒に動く点は `onChange` だけで知らせます。変更は操作している点のものです。",
+    "source": "2f42c9e5"
   },
-  "PointsEditorPointProps.onDragEnd": {
-    "message": "そのドラッグが終わったときに、点の位置を渡して呼ばれます。",
-    "source": "2b7d8c2c"
+  "PointsEditorPointProps.onChangeEnd": {
+    "message": "その変更が終わったときに、点の位置を受け取って呼ばれます。離したとき、または最後のホイールのノッチや矢印キーから `changeEndDelay` が経ったときです。",
+    "source": "2cd38bd0"
+  },
+  "PointsEditorPointProps.changeEndDelay": {
+    "message": "最後のホイールのノッチや矢印キーから、変更が終わったとみなすまでのミリ秒。どちらにも終わりを知らせるイベントがありません。",
+    "source": "1d45e100"
   },
   "SliderMarksOptionProps.value": {
     "message": "目盛りを置く位置。つまみと同じスケールで置かれます。",

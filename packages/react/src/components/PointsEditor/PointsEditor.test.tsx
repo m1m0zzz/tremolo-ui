@@ -479,3 +479,68 @@ describe('PointsEditor', () => {
     spy.mockRestore()
   })
 })
+
+describe('PointsEditor.Point change gesture', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  test('a drag starts before its first value and ends on release', () => {
+    const onChangeStart = vi.fn()
+    const onChangeEnd = vi.fn()
+    const { point, onChange } = setup({
+      point: { onChangeStart, onChangeEnd },
+    })
+
+    drag(point, { clientX: 120, clientY: 50 }, { clientX: 100, clientY: 50 })
+    act(() => {
+      point.dispatchEvent(
+        pointerEvent('pointerup', { clientX: 120, clientY: 50 }),
+      )
+    })
+
+    expect(onChangeStart).toHaveBeenCalledWith({ x: 0.5, y: 0.5 }, 'pointer')
+    expect(onChangeStart.mock.invocationCallOrder[0]).toBeLessThan(
+      onChange.mock.invocationCallOrder[0],
+    )
+    expect(onChangeEnd).toHaveBeenCalledWith(
+      onChange.mock.lastCall?.[0],
+      'pointer',
+    )
+  })
+
+  test('the wheel starts on the focused point before it moves', () => {
+    vi.useFakeTimers()
+    const onChangeStart = vi.fn()
+    const onChangeEnd = vi.fn()
+    const { point, onChange } = setup({
+      point: { onChangeStart, onChangeEnd, changeEndDelay: 200 },
+    })
+    act(() => pointInput(point, 'x').focus())
+
+    wheel(point, { deltaY: -1 })
+    expect(onChangeStart).toHaveBeenCalledWith({ x: 0.5, y: 0.5 }, 'wheel')
+    expect(onChangeStart.mock.invocationCallOrder[0]).toBeLessThan(
+      onChange.mock.invocationCallOrder[0],
+    )
+
+    act(() => vi.advanceTimersByTime(200))
+    expect(onChangeEnd).toHaveBeenCalledWith(
+      onChange.mock.lastCall?.[0],
+      'wheel',
+    )
+  })
+
+  test('the arrow keys are a keyboard gesture', () => {
+    vi.useFakeTimers()
+    const onChangeStart = vi.fn()
+    const onChangeEnd = vi.fn()
+    const { point } = setup({ point: { onChangeStart, onChangeEnd } })
+
+    keyDown(point, 'ArrowRight')
+    act(() => vi.advanceTimersByTime(500))
+
+    expect(onChangeStart).toHaveBeenCalledWith({ x: 0.5, y: 0.5 }, 'keyboard')
+    expect(onChangeEnd).toHaveBeenCalledTimes(1)
+  })
+})

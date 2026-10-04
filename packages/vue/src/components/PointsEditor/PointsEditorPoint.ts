@@ -20,10 +20,12 @@ import {
   selectModifier,
   type InputEventOption,
   type ModifierValue,
+  type ChangeSource,
   type PointPosition,
   type PointsEditorPoint as PointRegistration,
 } from '@tremolo-ui/dom'
 
+import { useChangeGesture } from '../_util/change-gesture'
 import { checkPlacement } from '../_util/placement'
 import { visuallyHiddenRangeInput } from '../_util/visually-hidden-range-input'
 
@@ -49,6 +51,12 @@ const pointsEditorPointProps = {
   disabled: { type: Boolean, default: undefined },
   /** Overrides the `readonly` of `PointsEditor`. */
   readonly: { type: Boolean, default: undefined },
+  /**
+   * How long after the last wheel notch or arrow key a change counts as over,
+   * in milliseconds, for `change-end`.
+   * @default 500
+   */
+  changeEndDelay: { type: Number, default: 500 },
   /** Overrides the `wheel` of `PointsEditor`; `null` turns it off. */
   wheel: {
     type: [Array, Object] as PropType<ModifierValue<InputEventOption> | null>,
@@ -76,8 +84,17 @@ export const PointsEditorPoint = /* @__PURE__ */ defineComponent({
   props: pointsEditorPointProps,
   emits: {
     'update:modelValue': (value: PointPosition) => typeof value === 'object',
-    dragStart: (value: PointPosition) => typeof value === 'object',
-    dragEnd: (value: PointPosition) => typeof value === 'object',
+    /**
+     * A change of this point started — a drag on it, the first wheel notch or
+     * arrow key while it has the focus — with where it is and what the change
+     * is made with. The points that move along with a selection report
+     * through `update:modelValue` only.
+     */
+    changeStart: (value: PointPosition, _source: ChangeSource) =>
+      typeof value === 'object',
+    /** The change ended, with where the point is. */
+    changeEnd: (value: PointPosition, _source: ChangeSource) =>
+      typeof value === 'object',
   },
   setup(props, { slots, attrs, emit }) {
     const points = usePointsEditorContext()
@@ -98,6 +115,14 @@ export const PointsEditorPoint = /* @__PURE__ */ defineComponent({
       clampPoint(props.modelValue, props.min, props.max),
     )
 
+    const gesture = useChangeGesture({
+      value: () => current.value,
+      inactive: () => inactive.value,
+      endDelay: () => props.changeEndDelay,
+      onStart: (value, source) => emit('changeStart', value, source),
+      onEnd: (value, source) => emit('changeEnd', value, source),
+    })
+
     const el = ref<HTMLDivElement | null>(null)
     const x = ref<HTMLInputElement | null>(null)
     const dragging = ref(false)
@@ -109,9 +134,13 @@ export const PointsEditorPoint = /* @__PURE__ */ defineComponent({
       min: props.min,
       max: props.max,
       readonly: inactive.value,
-      onChange: (next) => emit('update:modelValue', next),
+      onChange: (next) => {
+        gesture.changed(next)
+        emit('update:modelValue', next)
+      },
       element: el.value,
       wheel: wheel.value,
+      beforeWheel: () => gesture.pulse('wheel'),
     })
     watch(
       id,
@@ -150,12 +179,12 @@ export const PointsEditorPoint = /* @__PURE__ */ defineComponent({
             origin = { x: px, y: py }
             dragging.value = true
             x.value?.focus()
-            if (!inactive.value) emit('dragStart', current.value)
+            if (!inactive.value) gesture.hold('pointer')
           },
           onDragEnd: () => {
             origin = null
             dragging.value = false
-            if (!inactive.value) emit('dragEnd', current.value)
+            gesture.end()
           },
         })
         const stop = watch(
@@ -242,6 +271,7 @@ export const PointsEditorPoint = /* @__PURE__ */ defineComponent({
                 if (!move) return
                 event.preventDefault()
                 if (inactive.value || !keyboard.value) return
+                gesture.pulse('keyboard')
                 points.editor.nudgePoint(
                   id.value,
                   move.axis === 0 ? 'x' : 'y',

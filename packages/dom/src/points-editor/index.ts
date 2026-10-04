@@ -68,6 +68,11 @@ export interface PointsEditorPoint {
   element?: Element | null
   /** The wheel option the point resolved, `null` for no wheel. */
   wheel?: ModifierValue<InputEventOption> | null
+  /**
+   * Called just before the wheel moves this point as the focused one, so that
+   * it can report its change as started before the value arrives.
+   */
+  beforeWheel?: () => void
 }
 
 export interface PointsEditorOptions {
@@ -326,7 +331,7 @@ export function createPointsEditor(
     nudgePoint,
     nudgeFocusedPoint: (axis, direction, modifiers) => {
       for (const [id, read] of points) {
-        const { element, wheel, readonly, onChange } = read()
+        const { element, wheel, readonly, onChange, beforeWheel } = read()
         // The document the point is in, which need not be the one this script
         // runs in — an editor rendered into an iframe has its own focus.
         const active = element?.ownerDocument.activeElement
@@ -334,6 +339,7 @@ export function createPointsEditor(
         // axes stay part of the same interaction.
         if (!active || !element?.contains(active)) continue
         if (!wheel || readonly || !onChange) return false
+        beforeWheel?.()
         nudgePoint(id, axis, direction, wheel, modifiers)
         return true
       }

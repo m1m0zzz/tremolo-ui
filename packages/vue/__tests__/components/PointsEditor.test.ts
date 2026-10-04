@@ -124,3 +124,21 @@ describe('PointsEditor', () => {
     expect(screen.queryByTestId('box')).toBeNull()
   })
 })
+
+describe('PointsEditorPoint change gesture', () => {
+  test('a drag starts before its first value and ends on release', async () => {
+    const onChangeStart = vi.fn()
+    const onChangeEnd = vi.fn()
+    const { a, onChange } = await setup({}, { onChangeStart, onChangeEnd })
+    a.dispatchEvent(pointerEvent('pointerdown', { clientX: 40, clientY: 50 }))
+    a.dispatchEvent(pointerEvent('pointermove', { clientX: 60, clientY: 40 }))
+    a.dispatchEvent(pointerEvent('pointerup', { clientX: 60, clientY: 40 }))
+    await nextTick()
+
+    expect(onChangeStart).toHaveBeenCalledWith({ x: 0.2, y: 0.5 }, 'pointer')
+    expect(onChangeStart.mock.invocationCallOrder[0]).toBeLessThan(
+      onChange.mock.invocationCallOrder[0],
+    )
+    expect(onChangeEnd).toHaveBeenCalledWith({ x: 0.3, y: 0.4 }, 'pointer')
+  })
+})
