@@ -52,15 +52,15 @@ type SubjectProps = Omit<
 function Subject({
   initial = [50, 50],
   onChange,
-  ref,
+  actionsRef,
   thumb,
   ...props
-}: SubjectProps & { ref?: React.Ref<XYPadMethods> }) {
+}: SubjectProps & { actionsRef?: React.Ref<XYPadMethods> }) {
   const [value, setValue] = useState<XY<number>>(initial)
 
   return (
     <XYPad.Root
-      ref={ref}
+      actionsRef={actionsRef}
       value={value}
       min={0}
       max={100}
@@ -78,7 +78,9 @@ function Subject({
   )
 }
 
-function setup(props: SubjectProps & { ref?: React.Ref<XYPadMethods> } = {}) {
+function setup(
+  props: SubjectProps & { actionsRef?: React.Ref<XYPadMethods> } = {},
+) {
   const onChange = vi.fn()
   const { container } = render(<Subject onChange={onChange} {...props} />)
   fakeLayout(container)
@@ -312,9 +314,9 @@ describe('XYPad', () => {
     expect(onChange).toHaveBeenLastCalledWith([80, 60])
   })
 
-  test('the ref focuses and blurs the thumb', () => {
+  test('actionsRef focuses and blurs the thumb', () => {
     const ref = createRef<XYPadMethods>()
-    setup({ ref })
+    setup({ actionsRef: ref })
 
     act(() => ref.current?.focus())
     expect(axisInput('x')).toHaveFocus()

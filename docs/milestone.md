@@ -230,7 +230,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
 
 props・パート・命令的メソッドは 3 つでほぼ揃っている（Svelte / Vue の `PointsEditor` に `defaultSelection` が無いのは `bind:` / `v-model:selection` があるためで、不足ではない）。
 
-- [ ] **React の `ref` を全パートで DOM 要素にし、メソッドは `actionsRef` に移す。** `Knob` / `Slider` / `XYPad` / `NumberInput` / `Piano` の `ref` は `focus` / `blur` や `playNote` を持つオブジェクトで、要素に届かない。`XYPad` だけが `original` で要素を渡していたので、これは消す。Svelte（`bind:ref` / `bind:this`）と Vue（`$el` / `expose`）は元から両方に届く
+- [x] **React の `ref` を全パートで DOM 要素にし、メソッドは `actionsRef` に移す。** `Knob` / `Slider` / `XYPad` / `NumberInput` / `Piano` の `ref` は `focus` / `blur` や `playNote` を持つオブジェクトで、要素に届かない。`XYPad` だけが `original` で要素を渡していたので、これは消す。Svelte（`bind:ref` / `bind:this`）と Vue（`$el` / `expose`）は元から両方に届く
   - **`focus` / `blur` も `actionsRef` に置く。** 要素の `focus()` で代わりにはならない。今の `focus()` は無効のときに何もしないが、要素の `focus()` は `tabIndex={-1}` でもフォーカスを当てる。また、フォーカスを受けるのが root なのは `Knob` だけで、`Slider` / `XYPad` は thumb の中の range input、`NumberInput` は `InputField` の input なので、root の要素の `focus()` はこれらに届かない。`actionsRef` なら、どこにフォーカスを当てるかを利用者が知らなくて済み、Svelte / Vue の `focus` / `blur` とも揃う
   - パートの ref（`Slider.Thumb` / `XYPad.Thumb` の `*ThumbMethods`）も同じ。`__stories__/combined/ControlFocus.stories.tsx` / `Piano.stories.tsx` / `useMIDIInput.stories.tsx` / WavetableSynth の `KeyboardSection` がメソッドの ref を使っている
 - [x] **Vue も props の型を公開する。** React / Svelte と同じ名前（`KnobProps` など）にする

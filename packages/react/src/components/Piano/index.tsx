@@ -3,6 +3,7 @@ import {
   CSSProperties,
   forwardRef,
   ReactNode,
+  Ref,
   useEffect,
   useImperativeHandle,
   useMemo,
@@ -24,6 +25,8 @@ import {
   type PianoLayout,
 } from '@tremolo-ui/dom'
 import { isWhiteKey, noteKey } from '@tremolo-ui/functions'
+
+import { useComposedRefs } from '../../compose-refs'
 
 /**
  * What {@link PianoProps.keyProps} may return for one key.
@@ -155,6 +158,12 @@ export interface PianoProps {
   onPlayNote?: (note: number, velocity?: number) => void
   /** Called once everything holding a note has let go of it. */
   onStopNote?: (note: number) => void
+
+  /**
+   * Receives `playNote` and `stopNote`, which press and release a key as the
+   * pointer or the keyboard would. `ref` reaches the root element itself.
+   */
+  actionsRef?: Ref<PianoMethods>
 }
 
 export interface PianoMethods {
@@ -165,7 +174,7 @@ export interface PianoMethods {
 type Props = PianoProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof PianoProps>
 
-export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
+export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   function Root(
     {
       noteRange,
@@ -185,6 +194,7 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
       classes,
       onPlayNote,
       onStopNote,
+      actionsRef,
       ...props
     },
     forwardedRef,
@@ -295,8 +305,13 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
       return () => resizeObserver.disconnect()
     }, [resizable, node, first, last, keyGap, blackKeyWidthRatio])
 
-    useImperativeHandle(
+    const rootRefCallback = useComposedRefs<HTMLDivElement>(
       forwardedRef,
+      setNode,
+    )
+
+    useImperativeHandle(
+      actionsRef,
       () => ({
         playNote: (note, velocity) =>
           instanceRef.current?.noteOn(note, { source: 'api', velocity }),
@@ -308,7 +323,7 @@ export const Root = /* @__PURE__ */ forwardRef<PianoMethods, Props>(
 
     return (
       <div
-        ref={setNode}
+        ref={rootRefCallback}
         className={className}
         data-resizable={resizable ? '' : undefined}
         role="group"

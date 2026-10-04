@@ -3,6 +3,7 @@ import {
   CSSProperties,
   forwardRef,
   ReactNode,
+  Ref,
   useCallback,
   useImperativeHandle,
   useMemo,
@@ -26,6 +27,7 @@ import {
 } from '@tremolo-ui/dom'
 import { linearScale, type Scale } from '@tremolo-ui/functions'
 
+import { useComposedRefs } from '../../compose-refs'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useWheel } from '../../hooks/useWheel'
 
@@ -250,6 +252,13 @@ export interface NumberInputProps {
    * </NumberInput.Root>
    */
   children: ReactNode
+
+  /**
+   * Receives `focus` and `blur`, which act on the input of `InputField` — the
+   * element that takes the focus — and do nothing while
+   * the input is disabled. `ref` reaches the root element itself.
+   */
+  actionsRef?: Ref<NumberInputMethods>
 }
 
 export interface NumberInputMethods {
@@ -262,7 +271,7 @@ const defaultFormat = (value: number) => String(value)
 type Props = NumberInputProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof NumberInputProps>
 
-export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
+export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   (
     {
       value,
@@ -289,6 +298,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
       style,
       onChange,
       children,
+      actionsRef,
       ...props
     }: Props,
     forwardedRef,
@@ -467,7 +477,14 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
       ],
     )
 
-    useImperativeHandle(forwardedRef, () => {
+    // Composed once, so React attaches the refs a single time instead of
+    // detaching and re-attaching on every render.
+    const rootRefCallback = useComposedRefs<HTMLDivElement>(
+      forwardedRef,
+      wheelRefCallback,
+    )
+
+    useImperativeHandle(actionsRef, () => {
       return {
         focus() {
           if (!disabled) inputRef.current?.focus()
@@ -481,7 +498,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
     return (
       <NumberInputProvider value={context}>
         <div
-          ref={wheelRefCallback}
+          ref={rootRefCallback}
           className={className}
           data-disabled={disabled ? '' : undefined}
           data-readonly={readOnly ? '' : undefined}

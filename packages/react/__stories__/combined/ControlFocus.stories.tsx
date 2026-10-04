@@ -41,7 +41,7 @@ export const ControlFocus = () => {
       >
         <Knob.Root
           className={knobTheme.root}
-          ref={refs.current.knob}
+          actionsRef={refs.current.knob}
           value={value}
           min={0}
           max={100}
@@ -58,7 +58,7 @@ export const ControlFocus = () => {
         </Knob.Root>
         <NumberInput.Root
           className={numberInputTheme.root}
-          ref={refs.current.numberInput}
+          actionsRef={refs.current.numberInput}
           value={value}
           min={0}
           max={100}
@@ -68,7 +68,7 @@ export const ControlFocus = () => {
         </NumberInput.Root>
         <Slider.Root
           className={sliderTheme.root}
-          ref={refs.current.slider}
+          actionsRef={refs.current.slider}
           value={value}
           min={0}
           max={100}
@@ -80,7 +80,7 @@ export const ControlFocus = () => {
         </Slider.Root>
         <XYPad.Root
           className={xyPadTheme.root}
-          ref={refs.current.xyPad}
+          actionsRef={refs.current.xyPad}
           value={[value, value2]}
           min={0}
           max={100}

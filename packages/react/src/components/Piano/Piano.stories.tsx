@@ -385,7 +385,7 @@ export const WithWebMidiAPI: Story = {
               keyType === 'white' ? pianoTheme.whiteKey : pianoTheme.blackKey,
           })}
           {...args}
-          ref={pianoRef} // emit midi event
+          actionsRef={pianoRef} // emit midi event
           onPlayNote={(noteNumber, velocity) => {
             synth.triggerAttack(noteName(noteNumber), 0, velocity)
           }}

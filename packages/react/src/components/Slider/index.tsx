@@ -3,6 +3,7 @@ import React, {
   CSSProperties,
   forwardRef,
   ReactNode,
+  Ref,
   useCallback,
   useImperativeHandle,
   useMemo,
@@ -159,6 +160,13 @@ export interface SliderProps {
    * </Slider.Root>
    */
   children: ReactNode
+
+  /**
+   * Receives `focus` and `blur`, which act on the range input inside the thumb —
+   * the element that takes the focus — and do nothing while the slider is
+   * disabled. `ref` reaches the root element itself.
+   */
+  actionsRef?: Ref<SliderMethods>
 }
 
 export interface SliderMethods {
@@ -175,7 +183,7 @@ type Props = SliderProps &
  */
 const WHEEL_OPTIONS = { requireFocus: true }
 
-export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
+export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   (
     {
       value,
@@ -201,6 +209,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
       onBlur,
       onPointerDown,
       onKeyDown,
+      actionsRef,
       ...props
     }: Props,
     forwardedRef,
@@ -291,6 +300,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
     // Composed once, so React attaches the refs a single time instead of
     // detaching and re-attaching on every render.
     const rootRefCallback = useComposedRefs<HTMLDivElement>(
+      forwardedRef,
       dragRefCallback,
       wheelRefCallback,
     )
@@ -326,7 +336,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
       ],
     )
 
-    useImperativeHandle(forwardedRef, () => {
+    useImperativeHandle(actionsRef, () => {
       return {
         focus() {
           if (!disabled) thumbRef.current?.focus()

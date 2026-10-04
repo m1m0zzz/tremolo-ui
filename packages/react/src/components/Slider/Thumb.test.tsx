@@ -89,7 +89,7 @@ describe('Slider.Thumb', () => {
     expect(thumb()).toHaveStyle({ left: '25%' })
   })
 
-  test('focuses through the ref with children in place', () => {
+  test('focuses through actionsRef with children in place', () => {
     function WithRef() {
       const ref = useRef<SliderThumbMethods>(null)
       return (
@@ -97,7 +97,7 @@ describe('Slider.Thumb', () => {
           <button onClick={() => ref.current?.focus()}>focus</button>
           <Slider.Root value={0} min={0} max={100}>
             <Slider.Track data-testid="track">
-              <Slider.Thumb ref={ref} data-testid="thumb">
+              <Slider.Thumb actionsRef={ref} data-testid="thumb">
                 <span>custom</span>
               </Slider.Thumb>
             </Slider.Track>
