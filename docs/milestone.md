@@ -217,7 +217,7 @@ React 依存のロジックを framework-agnostic なコアへ切り出し、Vue
   - `drawingState` 一式は、Phase 4.2 で rAF のループを `createAnimationCanvas` に移した時点でラッパーから使われなくなり、export だけが残っていた。`isDrawingState` は `dom` の中でも使われていない
   - **関数を外すと、それにしか出てこない型が残る。** `isArrowKey` の `ArrowKey`、`createSelectionBox` の `SelectionBoxBeginOptions` / `SelectionBoxInstance` / `SelectionBoxOptions` も一緒に外す。`SelectionBoxRect` は `createPointsEditor` と 3 つのラッパーの context に出てくるので残す。`mapModifier` を外しても、`Modifier` / `ModifierMap` は `ModifierValue` の一部なので残す
   - `isDrawingState` はテスト（`__tests__/canvas/context.test.ts`）しか呼んでいないので、実装ごと消す。`__tests__/selection/box.test.ts` と `context.test.ts` は `src/index` から import しているので、実装のファイルから import する形に直す
-- [ ] **MIDI のエラーの定数をやめ、`PITCH_BEND_CENTER` を `functions` に移す。** トップレベルの `NOT_SUPPORTED` / `PERMISSION_DENIED` / `UNAVAILABLE` は何のエラーか名前から分からない
+- [x] **MIDI のエラーの定数をやめ、`PITCH_BEND_CENTER` を `functions` に移す。** トップレベルの `NOT_SUPPORTED` / `PERMISSION_DENIED` / `UNAVAILABLE` は何のエラーか名前から分からない
   - **名前空間にまとめるのではなく、定数をやめて型だけにする。** 値は `'NOT_SUPPORTED'` などの文字列で、`MIDIAccessError` は文字列リテラルの union。`error === 'NOT_SUPPORTED'` と書けば型で検査されるので、定数が無くても打ち間違いは拾える。`web-midi-api` のページの説明も合わせて直す
   - **`PITCH_BEND_CENTER` は、ピッチベンドを -1〜1 に直す関数と一緒に `functions` の midi に置く。** MIDI の仕様の値で DOM と関係が無い。`dom` の中ではコメント（`createMIDIInput` の JSDoc）にしか出てこず、使っているのは story とドキュメントの例だけ。その 2 つは計算が食い違っている（story は中心の上下で割る数を変え、ドキュメントの例は 8192 で割るだけ）ので、どちらも新しい関数を使う形にする
 - [x] **React の `useInterval` を消す。** どのコンポーネントも story も使っていなかった。`useAnimationFrame` / `useEventListener` は残し、形を直してドキュメントのページを作った

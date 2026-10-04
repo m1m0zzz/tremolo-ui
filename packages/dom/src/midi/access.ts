@@ -1,15 +1,16 @@
-/** @private */
-export const PERMISSION_DENIED = 'PERMISSION_DENIED'
-/** @private */
-export const NOT_SUPPORTED = 'NOT_SUPPORTED'
-/** @private */
-export const UNAVAILABLE = 'UNAVAILABLE'
-
-/** @private */
+/**
+ * Why MIDI access could not be had.
+ *
+ * - `'NOT_SUPPORTED'`: the browser has no Web MIDI API, and asking again will
+ *   not change that
+ * - `'PERMISSION_DENIED'`: the user or the browser said no. Asking again is
+ *   worthwhile
+ * - `'UNAVAILABLE'`: anything else
+ */
 export type MIDIAccessError =
-  | typeof PERMISSION_DENIED
-  | typeof NOT_SUPPORTED
-  | typeof UNAVAILABLE
+  | 'NOT_SUPPORTED'
+  | 'PERMISSION_DENIED'
+  | 'UNAVAILABLE'
 
 export type MIDIAccessOptions = {
   /**
@@ -65,13 +66,13 @@ function toError(reason: unknown): MIDIAccessError {
       : ''
 
   if (name === 'SecurityError' || name === 'NotAllowedError') {
-    return PERMISSION_DENIED
+    return 'PERMISSION_DENIED'
   }
   if (name === 'NotSupportedError' || name === 'TypeError') {
-    return NOT_SUPPORTED
+    return 'NOT_SUPPORTED'
   }
   // AbortError, InvalidStateError, and anything a browser makes up.
-  return UNAVAILABLE
+  return 'UNAVAILABLE'
 }
 
 /**
@@ -110,7 +111,7 @@ export function createMIDIAccess(): MIDIAccessInstance {
     if (destroyed) return
     const generation = ++requestGeneration
     if (typeof navigator === 'undefined' || !navigator.requestMIDIAccess) {
-      setState({ ...state, error: NOT_SUPPORTED })
+      setState({ ...state, error: 'NOT_SUPPORTED' })
       return
     }
     navigator.requestMIDIAccess({ sysex: options.sysex ?? false }).then(
