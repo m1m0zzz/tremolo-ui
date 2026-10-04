@@ -1,10 +1,12 @@
 import {
+  type ComponentObjectPropsOptions,
   defineComponent,
+  type ExtractPublicPropTypes,
   h,
   onBeforeUnmount,
+  type PropType,
   ref,
   watchEffect,
-  type PropType,
 } from 'vue'
 
 import { toXY, type XYInput } from '@tremolo-ui/dom'
@@ -16,22 +18,26 @@ import { useXYPadContext } from './context'
 
 type PerAxis = XYInput<string | undefined>
 
+const xyPadThumbProps = {
+  /** Sets `--color`, for the theme to colour the thumb with. */
+  color: String,
+  /** The accessible name of each axis, as `[x, y]`. */
+  ariaLabel: [String, Array] as PropType<PerAxis>,
+  /** The ids of what labels each axis, as `[x, y]` or one for both. */
+  ariaLabelledby: [String, Array] as PropType<PerAxis>,
+  /** The ids of what describes each axis, as `[x, y]` or one for both. */
+  ariaDescribedby: [String, Array] as PropType<PerAxis>,
+  /** What the value of each axis means, as `[x, y]` or one for both. */
+  ariaValuetext: [String, Array] as PropType<PerAxis>,
+} satisfies ComponentObjectPropsOptions
+
+export type XYPadThumbProps = ExtractPublicPropTypes<typeof xyPadThumbProps>
+
 /** The thumb, placed at the value, with one range input per axis inside. */
 export const XYPadThumb = /* @__PURE__ */ defineComponent({
   name: 'XYPadThumb',
   inheritAttrs: false,
-  props: {
-    /** Sets `--color`, for the theme to colour the thumb with. */
-    color: String,
-    /** The accessible name of each axis, as `[x, y]`. */
-    ariaLabel: [String, Array] as PropType<PerAxis>,
-    /** The ids of what labels each axis, as `[x, y]` or one for both. */
-    ariaLabelledby: [String, Array] as PropType<PerAxis>,
-    /** The ids of what describes each axis, as `[x, y]` or one for both. */
-    ariaDescribedby: [String, Array] as PropType<PerAxis>,
-    /** What the value of each axis means, as `[x, y]` or one for both. */
-    ariaValuetext: [String, Array] as PropType<PerAxis>,
-  },
+  props: xyPadThumbProps,
   setup(props, { slots, attrs, expose }) {
     const pad = useXYPadContext()
     checkPlacement('XYPadThumb', 'XYPadArea')

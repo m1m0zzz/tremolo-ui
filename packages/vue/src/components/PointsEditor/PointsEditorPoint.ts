@@ -1,12 +1,14 @@
 import {
+  type ComponentObjectPropsOptions,
   computed,
   defineComponent,
+  type ExtractPublicPropTypes,
   h,
   mergeProps,
+  type PropType,
   ref,
   useId,
   watch,
-  type PropType,
 } from 'vue'
 
 import {
@@ -32,40 +34,46 @@ type PerAxis = string | Partial<Record<'x' | 'y', string>>
 const perAxis = (setting: PerAxis | undefined, axis: 'x' | 'y') =>
   typeof setting === 'string' ? setting : setting?.[axis]
 
+const pointsEditorPointProps = {
+  /** Where the point is, with `y` growing downwards. Bind it with `v-model`. */
+  modelValue: { type: Object as PropType<PointPosition>, required: true },
+  /** How the selection refers to this point. One is generated when left out. */
+  id: String,
+  /** The lowest position the point can take, per axis. */
+  min: Object as PropType<Partial<PointPosition>>,
+  /** The highest position the point can take, per axis. */
+  max: Object as PropType<Partial<PointPosition>>,
+  /** Sets `--color`, for the theme to colour the point with. */
+  color: String,
+  /** Overrides the `disabled` of `PointsEditor`. */
+  disabled: { type: Boolean, default: undefined },
+  /** Overrides the `readonly` of `PointsEditor`. */
+  readonly: { type: Boolean, default: undefined },
+  /** Overrides the `wheel` of `PointsEditor`; `null` turns it off. */
+  wheel: {
+    type: [Array, Object] as PropType<ModifierValue<InputEventOption> | null>,
+    default: undefined,
+  },
+  /** Overrides the `keyboard` of `PointsEditor`; `null` turns it off. */
+  keyboard: {
+    type: [Array, Object] as PropType<ModifierValue<InputEventOption> | null>,
+    default: undefined,
+  },
+  /** The accessible name of each axis, or one for both. */
+  ariaLabel: [String, Object] as PropType<PerAxis>,
+  /** What the value of each axis means, or one for both. */
+  ariaValuetext: [String, Object] as PropType<PerAxis>,
+} satisfies ComponentObjectPropsOptions
+
+export type PointsEditorPointProps = ExtractPublicPropTypes<
+  typeof pointsEditorPointProps
+>
+
 /** One point, bound with `v-model` as `{ x, y }` from 0 to 1. */
 export const PointsEditorPoint = /* @__PURE__ */ defineComponent({
   name: 'PointsEditorPoint',
   inheritAttrs: false,
-  props: {
-    /** Where the point is, with `y` growing downwards. Bind it with `v-model`. */
-    modelValue: { type: Object as PropType<PointPosition>, required: true },
-    /** How the selection refers to this point. One is generated when left out. */
-    id: String,
-    /** The lowest position the point can take, per axis. */
-    min: Object as PropType<Partial<PointPosition>>,
-    /** The highest position the point can take, per axis. */
-    max: Object as PropType<Partial<PointPosition>>,
-    /** Sets `--color`, for the theme to colour the point with. */
-    color: String,
-    /** Overrides the `disabled` of `PointsEditor`. */
-    disabled: { type: Boolean, default: undefined },
-    /** Overrides the `readonly` of `PointsEditor`. */
-    readonly: { type: Boolean, default: undefined },
-    /** Overrides the `wheel` of `PointsEditor`; `null` turns it off. */
-    wheel: {
-      type: [Array, Object] as PropType<ModifierValue<InputEventOption> | null>,
-      default: undefined,
-    },
-    /** Overrides the `keyboard` of `PointsEditor`; `null` turns it off. */
-    keyboard: {
-      type: [Array, Object] as PropType<ModifierValue<InputEventOption> | null>,
-      default: undefined,
-    },
-    /** The accessible name of each axis, or one for both. */
-    ariaLabel: [String, Object] as PropType<PerAxis>,
-    /** What the value of each axis means, or one for both. */
-    ariaValuetext: [String, Object] as PropType<PerAxis>,
-  },
+  props: pointsEditorPointProps,
   emits: {
     'update:modelValue': (value: PointPosition) => typeof value === 'object',
     dragStart: (value: PointPosition) => typeof value === 'object',

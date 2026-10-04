@@ -1,4 +1,10 @@
-import { defineComponent, h, type PropType } from 'vue'
+import {
+  type ComponentObjectPropsOptions,
+  defineComponent,
+  type ExtractPublicPropTypes,
+  h,
+  type PropType,
+} from 'vue'
 
 import { KNOB_VIEWBOX_SIZE } from '@tremolo-ui/dom'
 import { clamp } from '@tremolo-ui/functions'
@@ -7,23 +13,27 @@ import { checkPlacement } from '../_util/placement'
 
 import { useKnobContext } from './context'
 
+const knobThumbProps = {
+  /** Fill colour of the circle. @default 'currentColor' */
+  color: { type: String, default: 'currentColor' },
+  /** Colour of the line that points at the value. @default 'currentColor' */
+  lineColor: { type: String, default: 'currentColor' },
+  /** Diameter of the circle, as a percentage of the knob. @default 84 */
+  size: { type: Number, default: 84 },
+  /** Thickness of the line, as a percentage of the knob. @default 6 */
+  lineWeight: { type: Number, default: 6 },
+  /** How far down the line reaches, as a percentage. @default 35 */
+  lineLength: { type: Number, default: 35 },
+  /** Classes for the line that points at the value. */
+  classes: Object as PropType<{ line?: string }>,
+} satisfies ComponentObjectPropsOptions
+
+export type KnobThumbProps = ExtractPublicPropTypes<typeof knobThumbProps>
+
 /** The circle that turns with the value, and the line on it that points at it. */
 export const KnobThumb = /* @__PURE__ */ defineComponent({
   name: 'KnobThumb',
-  props: {
-    /** Fill colour of the circle. @default 'currentColor' */
-    color: { type: String, default: 'currentColor' },
-    /** Colour of the line that points at the value. @default 'currentColor' */
-    lineColor: { type: String, default: 'currentColor' },
-    /** Diameter of the circle, as a percentage of the knob. @default 84 */
-    size: { type: Number, default: 84 },
-    /** Thickness of the line, as a percentage of the knob. @default 6 */
-    lineWeight: { type: Number, default: 6 },
-    /** How far down the line reaches, as a percentage. @default 35 */
-    lineLength: { type: Number, default: 35 },
-    /** Classes for the line that points at the value. */
-    classes: Object as PropType<{ line?: string }>,
-  },
+  props: knobThumbProps,
   setup(props) {
     checkPlacement('KnobThumb', 'KnobSVGRoot')
     const knob = useKnobContext()

@@ -1,6 +1,9 @@
 export { useSliderContext, type SliderContextValue } from './context'
-export { Slider } from './Slider'
-export { SliderMarks } from './SliderMarks'
-export { SliderMarksOption } from './SliderMarksOption'
-export { SliderThumb } from './SliderThumb'
-export { SliderTrack } from './SliderTrack'
+export { Slider, type SliderProps } from './Slider'
+export { SliderMarks, type SliderMarksProps } from './SliderMarks'
+export {
+  SliderMarksOption,
+  type SliderMarksOptionProps,
+} from './SliderMarksOption'
+export { SliderThumb, type SliderThumbProps } from './SliderThumb'
+export { SliderTrack, type SliderTrackProps } from './SliderTrack'

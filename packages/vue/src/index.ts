@@ -1,11 +1,15 @@
 // components
-export { AnimationCanvas } from './components/AnimationCanvas'
-export { DropZone } from './components/DropZone'
+export {
+  AnimationCanvas,
+  type AnimationCanvasProps,
+} from './components/AnimationCanvas'
+export { DropZone, type DropZoneProps } from './components/DropZone'
 export {
   FileInput,
   FileInputTrigger,
   useFileInputContext,
   type FileInputContextValue,
+  type FileInputProps,
 } from './components/FileInput'
 export {
   Knob,
@@ -15,6 +19,8 @@ export {
   KnobThumb,
   useKnobContext,
   type KnobContextValue,
+  type KnobProps,
+  type KnobThumbProps,
 } from './components/Knob'
 export {
   NumberInput,
@@ -24,8 +30,14 @@ export {
   NumberInputStepper,
   useNumberInputContext,
   type NumberInputContextValue,
+  type NumberInputProps,
 } from './components/NumberInput'
-export { Piano, type KeyAttributes, type KeyState } from './components/Piano'
+export {
+  Piano,
+  type KeyAttributes,
+  type KeyState,
+  type PianoProps,
+} from './components/Piano'
 export {
   PointsEditor,
   PointsEditorBackground,
@@ -34,6 +46,8 @@ export {
   PointsEditorSelectionBox,
   usePointsEditorContext,
   type PointsEditorContextValue,
+  type PointsEditorPointProps,
+  type PointsEditorProps,
 } from './components/PointsEditor'
 export {
   Slider,
@@ -43,6 +57,11 @@ export {
   SliderTrack,
   useSliderContext,
   type SliderContextValue,
+  type SliderMarksOptionProps,
+  type SliderMarksProps,
+  type SliderProps,
+  type SliderThumbProps,
+  type SliderTrackProps,
 } from './components/Slider'
 export {
   XYPad,
@@ -50,6 +69,8 @@ export {
   XYPadThumb,
   useXYPadContext,
   type XYPadContextValue,
+  type XYPadProps,
+  type XYPadThumbProps,
 } from './components/XYPad'
 
 // composables

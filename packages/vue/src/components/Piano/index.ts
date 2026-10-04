@@ -1,1 +1,6 @@
-export { Piano, type KeyAttributes, type KeyState } from './Piano'
+export {
+  Piano,
+  type KeyAttributes,
+  type KeyState,
+  type PianoProps,
+} from './Piano'

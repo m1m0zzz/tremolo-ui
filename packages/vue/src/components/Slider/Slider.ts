@@ -1,4 +1,13 @@
-import { computed, defineComponent, h, provide, ref, type PropType } from 'vue'
+import {
+  type ComponentObjectPropsOptions,
+  computed,
+  defineComponent,
+  type ExtractPublicPropTypes,
+  h,
+  type PropType,
+  provide,
+  ref,
+} from 'vue'
 
 import {
   applyDelta,
@@ -19,40 +28,44 @@ import { useCheckSteps } from '../_util/useCheckSteps'
 
 import { SliderKey } from './context'
 
+const sliderProps = {
+  /** The current value. Bind it with `v-model`. */
+  modelValue: { type: Number, required: true },
+  /** The value at the start of the travel. */
+  min: { type: Number, required: true },
+  /** The value at the end of the travel. */
+  max: { type: Number, required: true },
+  /** Granularity of the value. @default 1 */
+  step: { type: Number, default: 1 },
+  /** How the value is distributed across the travel. @default linearScale */
+  scale: { type: Object as PropType<Scale>, default: () => linearScale },
+  /**
+   * Which way the slider runs. A vertical slider grows upwards.
+   * @default 'horizontal'
+   */
+  orientation: {
+    type: String as PropType<'horizontal' | 'vertical'>,
+    default: 'horizontal',
+  },
+  /** Grow the value the other way. */
+  reverse: Boolean,
+  /** The cursor to show while dragging. @default 'pointer' */
+  dragCursor: { type: String, default: 'pointer' },
+  wheel: wheelProp,
+  keyboard: keyboardProp,
+  dragSensitivity: dragSensitivityProp,
+  /** Make the slider unchangeable and remove it from the tab order. */
+  disabled: Boolean,
+  /** Make the value unchangeable. */
+  readonly: Boolean,
+} satisfies ComponentObjectPropsOptions
+
+export type SliderProps = ExtractPublicPropTypes<typeof sliderProps>
+
 /** Customizable slider. Bind the value with `v-model`. */
 export const Slider = /* @__PURE__ */ defineComponent({
   name: 'Slider',
-  props: {
-    /** The current value. Bind it with `v-model`. */
-    modelValue: { type: Number, required: true },
-    /** The value at the start of the travel. */
-    min: { type: Number, required: true },
-    /** The value at the end of the travel. */
-    max: { type: Number, required: true },
-    /** Granularity of the value. @default 1 */
-    step: { type: Number, default: 1 },
-    /** How the value is distributed across the travel. @default linearScale */
-    scale: { type: Object as PropType<Scale>, default: () => linearScale },
-    /**
-     * Which way the slider runs. A vertical slider grows upwards.
-     * @default 'horizontal'
-     */
-    orientation: {
-      type: String as PropType<'horizontal' | 'vertical'>,
-      default: 'horizontal',
-    },
-    /** Grow the value the other way. */
-    reverse: Boolean,
-    /** The cursor to show while dragging. @default 'pointer' */
-    dragCursor: { type: String, default: 'pointer' },
-    wheel: wheelProp,
-    keyboard: keyboardProp,
-    dragSensitivity: dragSensitivityProp,
-    /** Make the slider unchangeable and remove it from the tab order. */
-    disabled: Boolean,
-    /** Make the value unchangeable. */
-    readonly: Boolean,
-  },
+  props: sliderProps,
   emits: {
     'update:modelValue': (value: number) => typeof value === 'number',
     /** A drag started, with the value where the track was pressed. */

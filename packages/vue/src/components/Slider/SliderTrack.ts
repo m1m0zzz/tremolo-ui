@@ -1,4 +1,12 @@
-import { defineComponent, h, onBeforeUnmount, ref, watchEffect } from 'vue'
+import {
+  type ComponentObjectPropsOptions,
+  defineComponent,
+  type ExtractPublicPropTypes,
+  h,
+  onBeforeUnmount,
+  ref,
+  watchEffect,
+} from 'vue'
 
 import { cssLength } from '@tremolo-ui/dom'
 
@@ -6,19 +14,23 @@ import { providePlacement } from '../_util/placement'
 
 import { useSliderContext } from './context'
 
+const sliderTrackProps = {
+  /** How long the track is along the axis the slider runs. Sets `--length`. */
+  length: [Number, String],
+  /** How thick the track is across that axis. Sets `--thickness`. */
+  thickness: [Number, String],
+  /** Colour of the part from `min` to the value. Sets `--active-color`. */
+  activeColor: String,
+  /** Colour of the rest of the track. Sets `--inactive-color`. */
+  inactiveColor: String,
+} satisfies ComponentObjectPropsOptions
+
+export type SliderTrackProps = ExtractPublicPropTypes<typeof sliderTrackProps>
+
 /** The track the thumb runs along, and what the pointer is measured against. */
 export const SliderTrack = /* @__PURE__ */ defineComponent({
   name: 'SliderTrack',
-  props: {
-    /** How long the track is along the axis the slider runs. Sets `--length`. */
-    length: [Number, String],
-    /** How thick the track is across that axis. Sets `--thickness`. */
-    thickness: [Number, String],
-    /** Colour of the part from `min` to the value. Sets `--active-color`. */
-    activeColor: String,
-    /** Colour of the rest of the track. Sets `--inactive-color`. */
-    inactiveColor: String,
-  },
+  props: sliderTrackProps,
   setup(props, { slots }) {
     const slider = useSliderContext()
     providePlacement('SliderTrack')

@@ -1,18 +1,28 @@
-import { defineComponent, h, ref } from 'vue'
+import {
+  type ComponentObjectPropsOptions,
+  defineComponent,
+  type ExtractPublicPropTypes,
+  h,
+  ref,
+} from 'vue'
 
 import { useDropZone } from '../../composables/useDropZone'
+
+const dropZoneProps = {
+  /** Which files to take, as the `accept` attribute of a file input. */
+  accept: String,
+  /** Take every file dropped, rather than the first. */
+  multiple: Boolean,
+  /** Ignore drops. The zone carries `data-disabled`. */
+  disabled: Boolean,
+} satisfies ComponentObjectPropsOptions
+
+export type DropZoneProps = ExtractPublicPropTypes<typeof dropZoneProps>
 
 /** A region that takes dropped files. */
 export const DropZone = /* @__PURE__ */ defineComponent({
   name: 'DropZone',
-  props: {
-    /** Which files to take, as the `accept` attribute of a file input. */
-    accept: String,
-    /** Take every file dropped, rather than the first. */
-    multiple: Boolean,
-    /** Ignore drops. The zone carries `data-disabled`. */
-    disabled: Boolean,
-  },
+  props: dropZoneProps,
   emits: {
     /** The dropped files that satisfy `accept`. */
     drop: (files: File[], _event: DragEvent) => Array.isArray(files),

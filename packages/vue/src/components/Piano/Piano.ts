@@ -1,12 +1,14 @@
 import {
+  type ComponentObjectPropsOptions,
   computed,
   defineComponent,
+  type ExtractPublicPropTypes,
   h,
-  ref,
-  watch,
   type HTMLAttributes,
   type PropType,
+  ref,
   type SlotsType,
+  watch,
 } from 'vue'
 
 import {
@@ -39,49 +41,53 @@ export interface KeyState {
 export type KeyAttributes = HTMLAttributes &
   Record<`data-${string}`, string | number | boolean | undefined>
 
+const pianoProps = {
+  /** The notes drawn, from `first` to `last`. */
+  noteRange: { type: Object as PropType<NoteRange>, required: true },
+  /** Let a pointer slide from one key to the next. @default true */
+  glissando: { type: Boolean, default: true },
+  /** Highest note that can sound. @default 127 */
+  midiMax: { type: Number, default: 127 },
+  /** Play notes from the computer keyboard. See `SHORTCUTS` in `@tremolo-ui/dom`. */
+  keyboardShortcuts: Object as PropType<KeyboardShortcuts>,
+  /** Where keyboard shortcuts listen. @default 'root' */
+  keyboardShortcutsScope: {
+    type: String as PropType<KeyboardShortcutsScope>,
+    default: 'root',
+  },
+  /** Follow the width of the parent element. */
+  resizable: Boolean,
+  /** Width of a white key in pixels. @default 40 */
+  whiteKeyWidth: { type: Number, default: 40 },
+  /** Space between two white keys, in pixels. @default 1 */
+  keyGap: { type: Number, default: 1 },
+  /** Width of a black key, as a fraction of a white one. @default 0.65 */
+  blackKeyWidthRatio: { type: Number, default: 0.65 },
+  /** Height of a black key, as a fraction of the keyboard. @default 0.6 */
+  blackKeyHeightRatio: { type: Number, default: 0.6 },
+  /** Classes for the label inside each key. */
+  classes: Object as PropType<{
+    keyLabelWrapper?: string
+    keyLabel?: string
+  }>,
+  /**
+   * Extra attributes for one key, by note. The geometry of the key is
+   * applied after the returned style and cannot be overridden.
+   */
+  keyProps: Function as PropType<
+    (note: number, state: KeyState) => KeyAttributes
+  >,
+} satisfies ComponentObjectPropsOptions
+
+export type PianoProps = ExtractPublicPropTypes<typeof pianoProps>
+
 /**
  * Customizable piano. The keys are drawn by the component; what goes inside
  * one is the `label` slot, which receives the note and its state.
  */
 export const Piano = /* @__PURE__ */ defineComponent({
   name: 'Piano',
-  props: {
-    /** The notes drawn, from `first` to `last`. */
-    noteRange: { type: Object as PropType<NoteRange>, required: true },
-    /** Let a pointer slide from one key to the next. @default true */
-    glissando: { type: Boolean, default: true },
-    /** Highest note that can sound. @default 127 */
-    midiMax: { type: Number, default: 127 },
-    /** Play notes from the computer keyboard. See `SHORTCUTS` in `@tremolo-ui/dom`. */
-    keyboardShortcuts: Object as PropType<KeyboardShortcuts>,
-    /** Where keyboard shortcuts listen. @default 'root' */
-    keyboardShortcutsScope: {
-      type: String as PropType<KeyboardShortcutsScope>,
-      default: 'root',
-    },
-    /** Follow the width of the parent element. */
-    resizable: Boolean,
-    /** Width of a white key in pixels. @default 40 */
-    whiteKeyWidth: { type: Number, default: 40 },
-    /** Space between two white keys, in pixels. @default 1 */
-    keyGap: { type: Number, default: 1 },
-    /** Width of a black key, as a fraction of a white one. @default 0.65 */
-    blackKeyWidthRatio: { type: Number, default: 0.65 },
-    /** Height of a black key, as a fraction of the keyboard. @default 0.6 */
-    blackKeyHeightRatio: { type: Number, default: 0.6 },
-    /** Classes for the label inside each key. */
-    classes: Object as PropType<{
-      keyLabelWrapper?: string
-      keyLabel?: string
-    }>,
-    /**
-     * Extra attributes for one key, by note. The geometry of the key is
-     * applied after the returned style and cannot be overridden.
-     */
-    keyProps: Function as PropType<
-      (note: number, state: KeyState) => KeyAttributes
-    >,
-  },
+  props: pianoProps,
   emits: {
     /** A note started sounding. */
     playNote: (note: number, _velocity?: number) => typeof note === 'number',
