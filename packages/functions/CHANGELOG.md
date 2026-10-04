@@ -1,5 +1,19 @@
 # @tremolo-ui/functions
 
+## 0.9.0
+
+### Minor Changes
+
+- [#391](https://github.com/m1m0zzz/tremolo-ui/pull/391) [`62a07a4`](https://github.com/m1m0zzz/tremolo-ui/commit/62a07a48d08e8b12d884517f2d5321008df05c7d) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Drop the MIDI error constants `NOT_SUPPORTED`, `PERMISSION_DENIED` and
+  `UNAVAILABLE` from `@tremolo-ui/dom`. `MIDIAccessError` is a union of those
+  strings, so compare `error` with `'NOT_SUPPORTED'` and the rest directly: the
+  type still catches a misspelling.
+  
+  `PITCH_BEND_CENTER` moves from `@tremolo-ui/dom` to `@tremolo-ui/functions`,
+  next to a new `normalizePitchBend`, which turns a 14-bit pitch bend into -1 to
+  1. It divides each side of the centre by its own length, so both ends are
+  reached exactly.
+
 ## 0.8.0
 
 No changes in this release.

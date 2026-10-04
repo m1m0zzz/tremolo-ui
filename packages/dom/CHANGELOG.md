@@ -1,5 +1,112 @@
 # @tremolo-ui/dom
 
+## 0.9.0
+
+### Minor Changes
+
+- [#403](https://github.com/m1m0zzz/tremolo-ui/pull/403) [`1001907`](https://github.com/m1m0zzz/tremolo-ui/commit/1001907b2f9cfda1dc78dd1878f82ee25fb7ffa3) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Report when a change of value starts and ends, whatever makes it, for hosts
+  that record automation and need to know when a control is touched.
+  
+  `Knob`, `Slider` and `XYPad` take `onChangeStart(value, source)` and
+  `onChangeEnd(value, source)` (`change-start` / `change-end` in Vue). The start
+  gets the value before the change, the end the value it ended on, and `source`
+  says what made it: `'pointer'`, `'wheel'`, `'keyboard'` or `'doubleClick'`.
+  
+  - A drag starts on the press and ends on release
+  - The wheel and the arrow keys have no end of their own, so the change ends
+    `changeEndDelay` (default 500 ms) after the last notch or key press
+  - A double click on `Knob` that resets the value starts and ends around it
+  
+  These replace `onDragStart` / `onDragEnd` on `Slider` and `XYPad`
+  (`drag-start` / `drag-end` in Vue): a drag is now one of the sources. To keep
+  reacting to drags only, check `source === 'pointer'`.
+  
+  The tracking lives in `@tremolo-ui/dom` as `createChangeGesture`, with the
+  `ChangeSource` type. `createDragValue` now calls `onDragStart` before the
+  `onChange` of the press with `updateOnPointerDown`, so that a drag is reported
+  as started before its first value.
+
+- [#390](https://github.com/m1m0zzz/tremolo-ui/pull/390) [`ecabb23`](https://github.com/m1m0zzz/tremolo-ui/commit/ecabb23ff3cacea5beceb93cc4bcea44ae97cd95) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Stop exporting what no wrapper uses: `drawingState`, `isDrawingState` and the
+  `DrawingContext` / `DrawingState` / `DrawingStateValue` types, `knobArcPoint`,
+  `isArrowKey` and `ArrowKey`, `mapModifier`, `noteAt`, `createSelectionBox`,
+  `selectionBoxCovers` and their option and instance types, and
+  `matchesAccept`. `SelectionBoxRect` stays, as the shape of a points editor's
+  selection box. `isDrawingState` is removed outright.
+
+- [#406](https://github.com/m1m0zzz/tremolo-ui/pull/406) [`c9df5f4`](https://github.com/m1m0zzz/tremolo-ui/commit/c9df5f4e461bfb3244ece5ede42c7cb76351ff10) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Split `@tremolo-ui/dom` into two entries before 1.0, when everything in the
+  main one comes under semver.
+  
+  The main entry keeps what users of the components and of this package write:
+  the `create*` interactions, the values and types that appear in props (the
+  default input options, `SHORTCUTS`, the mappings, `XY` and so on), and the
+  geometry a part of your own needs to draw (`KNOB_VIEWBOX_SIZE`, `knobArcPath`,
+  `knobArcRadius`, `knobAngles`, `valuePercent`, `notePosition`).
+  
+  What only the wrappers use moves to `@tremolo-ui/dom/internal`, which is not
+  covered by semver: the number input's text and draft handling
+  (`parseNumberText`, `numberSpan`, `commitNumberInputText`,
+  `nudgeNumberInput`, ...), `createStepperDrag`, the key and wheel direction
+  helpers, `applyDelta` and `selectModifier`, the piano layout apart from
+  `notePosition`, `clampPoint` / `POINT_AXIS` / `POINTS_EDITOR_DEFAULT_*`,
+  `sliderMarks`, `partitionByAccept`, `replaceOptions`, `checkSteps`,
+  `cssLength`, `visuallyHiddenStyle` and `toXY`.
+  
+  The wrappers now depend on `@tremolo-ui/dom` at the exact version rather than
+  a caret range, since they use the internal entry.
+
+- [#397](https://github.com/m1m0zzz/tremolo-ui/pull/397) [`885853f`](https://github.com/m1m0zzz/tremolo-ui/commit/885853f7a53c0c82b4dd06a63533b65321ccb24d) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Replace `externalStyles: { cursor }` with a `dragCursor` string on `Knob`,
+  `Slider`, `XYPad` and `PointsEditor`. The object only ever held the cursor
+  shown while dragging. The defaults stay as they were: `'grabbing'` for `Knob`
+  and the points of `PointsEditor`, `'pointer'` for `Slider` and `XYPad`.
+  
+  - `externalStyles={{ cursor: 'move' }}` → `dragCursor="move"`
+  
+  `NumberInput` takes a `dragCursor` too, for dragging a `Stepper`, where the
+  cursor was fixed to `'ns-resize'`. `createStepperDrag` in `@tremolo-ui/dom`
+  takes the matching `cursor` option.
+  
+  The `PointsEditor` context carries it as `dragCursor`, in place of
+  `externalStyles` in React and `cursor` in Svelte and Vue.
+
+- [#391](https://github.com/m1m0zzz/tremolo-ui/pull/391) [`62a07a4`](https://github.com/m1m0zzz/tremolo-ui/commit/62a07a48d08e8b12d884517f2d5321008df05c7d) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - Drop the MIDI error constants `NOT_SUPPORTED`, `PERMISSION_DENIED` and
+  `UNAVAILABLE` from `@tremolo-ui/dom`. `MIDIAccessError` is a union of those
+  strings, so compare `error` with `'NOT_SUPPORTED'` and the rest directly: the
+  type still catches a misspelling.
+  
+  `PITCH_BEND_CENTER` moves from `@tremolo-ui/dom` to `@tremolo-ui/functions`,
+  next to a new `normalizePitchBend`, which turns a 14-bit pitch bend into -1 to
+  1. It divides each side of the centre by its own length, so both ends are
+  reached exactly.
+
+- [#405](https://github.com/m1m0zzz/tremolo-ui/pull/405) [`3126d10`](https://github.com/m1m0zzz/tremolo-ui/commit/3126d10c7dae76582bcf16fec31e964ccf9688d5) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - `PointsEditor.Point` reports when a change of it starts and ends, like the
+  other controls, in place of `onDragStart` / `onDragEnd` (`drag-start` /
+  `drag-end` in Vue): `onChangeStart(value, source)` / `onChangeEnd(value,
+  source)` (`change-start` / `change-end`), with `changeEndDelay`. A drag, the
+  wheel while the point has the focus, and the arrow keys all count.
+  
+  The change belongs to the point being operated: the points that move along
+  with a selection report through `onChange` only, as they did before.
+  
+  `PointsEditorPoint` in `@tremolo-ui/dom` takes an optional `beforeWheel`, which
+  `nudgeFocusedPoint` calls just before the wheel moves the point.
+
+- [#394](https://github.com/m1m0zzz/tremolo-ui/pull/394) [`d623e55`](https://github.com/m1m0zzz/tremolo-ui/commit/d623e55ef75b396dfec85391e86574d92a21a44b) Thanks [@m1m0zzz](https://github.com/m1m0zzz)! - `createWheel` takes its handler as a required `onWheel` option, like
+  `createLongPress` takes `onPress`: `createWheel(element, { onWheel, requireFocus })`
+  instead of `createWheel(element, onWheel, { requireFocus })`. The handler was
+  given twice before, once as an argument and once as an option for `update()`.
+  
+  The Svelte `wheel` action takes those same options, so `WheelActionOptions` is
+  gone; the object passed to `use:wheel` does not change.
+  
+  The Vue `useWheel` no longer accepts `onWheel` among its options. Passing one
+  replaced the handler given as the second argument on the next update, and
+  taking it out again left no handler at all.
+
+### Patch Changes
+
+- Updated dependencies [[`62a07a4`](https://github.com/m1m0zzz/tremolo-ui/commit/62a07a48d08e8b12d884517f2d5321008df05c7d)]:
+  - @tremolo-ui/functions@0.9.0
+
 ## 0.8.0
 
 ### Minor Changes
