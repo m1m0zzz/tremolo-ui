@@ -21,11 +21,19 @@ export interface AnimationFrame {
   fps: number
 }
 
+/**
+ * Draws one frame, given the 2D context and the frame: the size in CSS pixels,
+ * `count`, `deltaTime`, `elapsedTime` and `fps`.
+ */
 export type CanvasDrawFunction = (
   context: CanvasRenderingContext2D,
   frame: AnimationFrame,
 ) => void
 
+/**
+ * Sets up what every frame shares. Called once, with the context and the size
+ * in CSS pixels, before the first frame; not again on a resize.
+ */
 export type CanvasInitFunction = (
   context: CanvasRenderingContext2D,
   size: { width: number; height: number },

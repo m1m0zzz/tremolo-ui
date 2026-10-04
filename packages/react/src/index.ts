@@ -4,8 +4,6 @@ export {
   type AnimationCanvasFixedProps,
   type AnimationCanvasProps,
   type AnimationCanvasResizableProps,
-  type DrawFunction,
-  type InitFunction,
 } from './components/AnimationCanvas'
 export { DropZone, type DropZoneProps } from './components/DropZone'
 export {

@@ -9,25 +9,11 @@ import {
 import {
   createAnimationCanvas,
   type AnimationCanvasInstance,
-  type AnimationFrame,
+  type CanvasDrawFunction,
+  type CanvasInitFunction,
 } from '@tremolo-ui/dom'
 
 import { useComposedRefs } from '../../compose-refs'
-
-export type InitFunction = (
-  context: CanvasRenderingContext2D,
-  option: {
-    /** current canvas width */
-    width: number
-    /** current canvas height */
-    height: number
-  },
-) => void
-
-export type DrawFunction = (
-  context: CanvasRenderingContext2D,
-  option: AnimationFrame,
-) => void
 
 export interface AnimationCanvasCommonProps {
   /**
@@ -37,12 +23,12 @@ export interface AnimationCanvasCommonProps {
    * A new function replaces the old one in place, so writing it inline does
    * not restart anything.
    */
-  draw: DrawFunction
+  draw: CanvasDrawFunction
   /**
    * Called once before the first frame, with the context and the size in CSS
    * pixels. Set up what every frame shares here.
    */
-  init?: InitFunction
+  init?: CanvasInitFunction
   /**
    * Redraw on every animation frame. Turn it off to draw only when there is a
    * reason to: when the canvas mounts, when it is resized, and when the

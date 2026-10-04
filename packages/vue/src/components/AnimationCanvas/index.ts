@@ -1,5 +1,1 @@
-export {
-  AnimationCanvas,
-  type DrawFunction,
-  type InitFunction,
-} from './AnimationCanvas'
+export { AnimationCanvas } from './AnimationCanvas'

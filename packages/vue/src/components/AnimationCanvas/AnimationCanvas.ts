@@ -11,20 +11,9 @@ import {
 import {
   createAnimationCanvas,
   type AnimationCanvasInstance,
-  type AnimationFrame,
+  type CanvasDrawFunction,
+  type CanvasInitFunction,
 } from '@tremolo-ui/dom'
-
-/** Called once the canvas is ready, and again whenever it is resized. */
-export type InitFunction = (
-  context: CanvasRenderingContext2D,
-  size: { width: number; height: number },
-) => void
-
-/** Called on every frame while `animate` is on, and once otherwise. */
-export type DrawFunction = (
-  context: CanvasRenderingContext2D,
-  frame: AnimationFrame,
-) => void
 
 /** A `<canvas>` drawn by `draw` on every animation frame. */
 export const AnimationCanvas = /* @__PURE__ */ defineComponent({
@@ -32,9 +21,9 @@ export const AnimationCanvas = /* @__PURE__ */ defineComponent({
   inheritAttrs: false,
   props: {
     /** Draws a frame. */
-    draw: { type: Function as PropType<DrawFunction>, required: true },
-    /** Sets the canvas up before the first frame and after a resize. */
-    init: Function as PropType<InitFunction>,
+    draw: { type: Function as PropType<CanvasDrawFunction>, required: true },
+    /** Sets the canvas up, once, before the first frame. */
+    init: Function as PropType<CanvasInitFunction>,
     /** Draw on every animation frame. @default true */
     animate: { type: Boolean, default: true },
     /** Settings for the 2D context. Read once, when the canvas is created. */

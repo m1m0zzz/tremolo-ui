@@ -1,22 +1,10 @@
-import type { AnimationFrame } from '@tremolo-ui/dom'
-
-/** Called once the canvas is ready, and again whenever it is resized. */
-export type InitFunction = (
-  context: CanvasRenderingContext2D,
-  size: { width: number; height: number },
-) => void
-
-/** Called on every frame while `animate` is on, and once otherwise. */
-export type DrawFunction = (
-  context: CanvasRenderingContext2D,
-  frame: AnimationFrame,
-) => void
+import type { CanvasDrawFunction, CanvasInitFunction } from '@tremolo-ui/dom'
 
 export interface AnimationCanvasProps {
   /** Draws a frame. */
-  draw: DrawFunction
-  /** Sets the canvas up before the first frame and after a resize. */
-  init?: InitFunction
+  draw: CanvasDrawFunction
+  /** Sets the canvas up, once, before the first frame. */
+  init?: CanvasInitFunction
   /**
    * Draw on every animation frame. Off, `draw` runs once and again after a
    * resize.

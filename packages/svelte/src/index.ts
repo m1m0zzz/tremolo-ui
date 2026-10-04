@@ -7,11 +7,7 @@ export { wheel, type WheelActionOptions } from './actions/wheel.js'
 
 // components
 export { default as AnimationCanvas } from './components/AnimationCanvas/AnimationCanvas.svelte'
-export type {
-  AnimationCanvasProps,
-  DrawFunction,
-  InitFunction,
-} from './components/AnimationCanvas/types.js'
+export type { AnimationCanvasProps } from './components/AnimationCanvas/types.js'
 export * as DropZone from './components/DropZone/index.js'
 export type { DropZoneProps } from './components/DropZone/types.js'
 export * as FileInput from './components/FileInput/index.js'

@@ -3,10 +3,13 @@
 
   import { AnimationCanvas } from '../src/index.js'
 
-  import type { DrawFunction } from '../src/index.js'
+  import type { CanvasDrawFunction } from '@tremolo-ui/dom'
 
   /** A sine wave that scrolls with time. */
-  const draw: DrawFunction = (context, { width, height, elapsedTime }) => {
+  const draw: CanvasDrawFunction = (
+    context,
+    { width, height, elapsedTime },
+  ) => {
     context.clearRect(0, 0, width, height)
     context.beginPath()
     for (let x = 0; x <= width; x++) {
