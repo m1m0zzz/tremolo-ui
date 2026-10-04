@@ -100,8 +100,8 @@ describe('Knob input guards', () => {
     expect(knob).toHaveAttribute('tabindex', '-1')
   })
 
-  test('readonly also blocks double-click while leaving the knob focusable', () => {
-    const { knob, onChange } = setup({ readonly: true })
+  test('readOnly also blocks double-click while leaving the knob focusable', () => {
+    const { knob, onChange } = setup({ readOnly: true })
 
     fireEvent.doubleClick(knob)
 

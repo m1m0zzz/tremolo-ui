@@ -229,10 +229,10 @@ describe('value changes', () => {
     expect(input().value).toBe('10')
   })
 
-  test('readonly blocks every path', () => {
+  test('readOnly blocks every path', () => {
     const onChange = vi.fn()
     render(
-      <Subject initial={5} min={0} max={10} readonly onChange={onChange} />,
+      <Subject initial={5} min={0} max={10} readOnly onChange={onChange} />,
     )
 
     fireEvent.keyDown(input(), { key: 'ArrowUp' })

@@ -14,7 +14,7 @@ export type SliderContextValue = {
   orientation: 'horizontal' | 'vertical'
   reverse: boolean
   disabled: boolean
-  readonly: boolean
+  readOnly: boolean
   onChange?: (value: number) => void
   /**
    * Position of the thumb, 0-100, already accounting for the display direction

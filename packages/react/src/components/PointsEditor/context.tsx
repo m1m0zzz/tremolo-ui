@@ -9,7 +9,7 @@ import {
 
 export type PointsEditorContextValue = {
   disabled: boolean
-  readonly: boolean
+  readOnly: boolean
   /** Inherited by every `Point`; `null` turns the wheel off. */
   wheel: ModifierValue<InputEventOption> | null
   /** Inherited by every `Point`; `null` turns the keyboard off. */

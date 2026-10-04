@@ -227,7 +227,7 @@ export interface NumberInputProps {
    * Make the value unchangeable.
    * The parts carry `data-readonly` while it is set.
    */
-  readonly?: boolean
+  readOnly?: boolean
 
   /**
    * Called with the new value. While the user types, it is called for every
@@ -284,7 +284,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
       keepCaretOnStep = false,
       blurOnEnter = true,
       disabled = false,
-      readonly = false,
+      readOnly = false,
       className,
       style,
       onChange,
@@ -300,7 +300,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
      * but the half-finished entry that has no value to be derived from yet.
      */
     const [draft, setDraft] = useState<string | null>(null)
-    const inactive = disabled || readonly
+    const inactive = disabled || readOnly
 
     // --- interpret props ---
     const format = formatProp ?? defaultFormat
@@ -407,7 +407,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         step,
         scale,
         disabled,
-        readonly,
+        readOnly,
         clampValue,
         range,
         rawRange,
@@ -440,7 +440,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         step,
         scale,
         disabled,
-        readonly,
+        readOnly,
         clampValue,
         range,
         rawRange,
@@ -484,7 +484,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
           ref={wheelRefCallback}
           className={className}
           data-disabled={disabled ? '' : undefined}
-          data-readonly={readonly ? '' : undefined}
+          data-readonly={readOnly ? '' : undefined}
           style={style}
           {...props}
         >

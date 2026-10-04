@@ -37,7 +37,7 @@ export function StepperButton({
   variant: 'increment' | 'decrement'
   icon: ReactNode
 }) {
-  const { step, disabled, readonly, atMin, atMax, nudge } =
+  const { step, disabled, readOnly, atMin, atMax, nudge } =
     useNumberInputContext()
   const stepper = useStepperContext()
 
@@ -64,10 +64,10 @@ export function StepperButton({
       data-disabled={
         disabled || (direction > 0 ? atMax : atMin) ? '' : undefined
       }
-      data-readonly={readonly ? '' : undefined}
+      data-readonly={readOnly ? '' : undefined}
       style={style}
       onPointerDown={(event) => {
-        if (!disabled && !readonly) press(event)
+        if (!disabled && !readOnly) press(event)
         onPointerDown?.(event)
       }}
       {...props}

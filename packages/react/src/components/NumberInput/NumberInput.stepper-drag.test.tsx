@@ -143,8 +143,8 @@ describe('dragging the Stepper', () => {
     expect(input().value).toBe('0')
   })
 
-  test('readonly blocks the drag', () => {
-    const { container } = render(<Subject initial={0} readonly />)
+  test('readOnly blocks the drag', () => {
+    const { container } = render(<Subject initial={0} readOnly />)
     fakePointerCapture(container)
 
     dragY(screen.getByTestId('stepper'), [100, 99, 89])

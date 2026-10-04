@@ -99,7 +99,7 @@
     "message": "ノブを変更できなくし、タブ順から外します。設定している間、パートは `data-disabled` を持ちます。",
     "source": "9ed216b7"
   },
-  "KnobProps.readonly": {
+  "KnobProps.readOnly": {
     "message": "フォーカスは受け取れるまま、ノブを変更できなくします。設定している間、パートは `data-readonly` を持ちます。",
     "source": "6c46ee02"
   },
@@ -219,7 +219,7 @@
     "message": "入力欄を変更できなくし、タブ順から外します。設定している間、パートは `data-disabled` を持ちます。",
     "source": "4a26d988"
   },
-  "NumberInputProps.readonly": {
+  "NumberInputProps.readOnly": {
     "message": "値を変更できなくします。設定している間、パートは `data-readonly` を持ちます。",
     "source": "69a3289d"
   },
@@ -295,7 +295,7 @@
     "message": "点を変更できなくし、タブ順から外します。設定している間、パートは `data-disabled` を持ちます。",
     "source": "3300c410"
   },
-  "PointsEditorProps.readonly": {
+  "PointsEditorProps.readOnly": {
     "message": "点を動かせなくします。設定している間、パートは `data-readonly` を持ちます。",
     "source": "e6d699cc"
   },
@@ -359,9 +359,9 @@
     "message": "`PointsEditor.Root` の `disabled` を上書きします。",
     "source": "7cece666"
   },
-  "PointsEditorPointProps.readonly": {
-    "message": "`PointsEditor.Root` の `readonly` を上書きします。",
-    "source": "0470cb06"
+  "PointsEditorPointProps.readOnly": {
+    "message": "`PointsEditor.Root` の `readOnly` を上書きします。",
+    "source": "5b975bbb"
   },
   "PointsEditorPointProps.wheel": {
     "message": "`PointsEditor.Root` の `wheel` を上書きします。",
@@ -479,7 +479,7 @@
     "message": "スライダーを変更できなくし、タブ順から外します。設定している間、パートは `data-disabled` を持ちます。",
     "source": "93291891"
   },
-  "SliderProps.readonly": {
+  "SliderProps.readOnly": {
     "message": "値を変更できなくします。設定している間、パートは `data-readonly` を持ちます。",
     "source": "69a3289d"
   },
@@ -563,7 +563,7 @@
     "message": "パッドを変更できなくし、つまみをタブ順から外します。設定している間、パートは `data-disabled` を持ちます。",
     "source": "f7212e0f"
   },
-  "XYPadProps.readonly": {
+  "XYPadProps.readOnly": {
     "message": "つまみはフォーカスを受け取れるまま、パッドを変更できなくします。設定している間、パートは `data-readonly` を持ちます。",
     "source": "7e52dfcd"
   },

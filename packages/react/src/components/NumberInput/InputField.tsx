@@ -43,7 +43,7 @@ export const InputField = /* @__PURE__ */ forwardRef<HTMLInputElement, Props>(
       max,
       step,
       disabled,
-      readonly,
+      readOnly,
       keyboard,
       selectOnFocus,
       unformatOnFocus,
@@ -119,11 +119,11 @@ export const InputField = /* @__PURE__ */ forwardRef<HTMLInputElement, Props>(
         role="spinbutton"
         value={shown}
         disabled={disabled}
-        readOnly={readonly}
+        readOnly={readOnly}
         aria-disabled={disabled}
-        aria-readonly={readonly}
+        aria-readonly={readOnly}
         data-disabled={disabled ? '' : undefined}
-        data-readonly={readonly ? '' : undefined}
+        data-readonly={readOnly ? '' : undefined}
         aria-valuenow={value}
         aria-valuemin={min}
         aria-valuemax={max}
@@ -159,7 +159,7 @@ export const InputField = /* @__PURE__ */ forwardRef<HTMLInputElement, Props>(
           } else if (
             keyboard &&
             !disabled &&
-            !readonly &&
+            !readOnly &&
             (key === 'ArrowUp' || key === 'ArrowDown') &&
             // Arrow keys pick a candidate while an IME is converting. Stepping
             // the value there would fight the conversion, and moving the caret

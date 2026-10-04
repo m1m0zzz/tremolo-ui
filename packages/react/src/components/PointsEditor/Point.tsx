@@ -49,8 +49,8 @@ export interface PointsEditorPointProps<T extends PointPosition> {
 
   /** Overrides the `disabled` of `PointsEditor.Root`. */
   disabled?: boolean
-  /** Overrides the `readonly` of `PointsEditor.Root`. */
-  readonly?: boolean
+  /** Overrides the `readOnly` of `PointsEditor.Root`. */
+  readOnly?: boolean
 
   /** Overrides the `wheel` of `PointsEditor.Root`. */
   wheel?: ModifierValue<InputEventOption> | null
@@ -98,7 +98,7 @@ export function Point<T extends PointPosition>({
   color,
 
   disabled: _disabled,
-  readonly: _readonly,
+  readOnly: _readOnly,
   wheel: _wheel,
   keyboard: _keyboard,
   'aria-label': ariaLabel,
@@ -120,7 +120,7 @@ export function Point<T extends PointPosition>({
     containerRef,
     dragCursor,
     disabled: rootDisabled,
-    readonly: rootReadonly,
+    readOnly: rootReadOnly,
     wheel: rootWheel,
     keyboard: rootKeyboard,
     dragSensitivity,
@@ -133,8 +133,8 @@ export function Point<T extends PointPosition>({
   const selected = selection.includes(id)
 
   const disabled = _disabled ?? rootDisabled
-  const readonly = _readonly ?? rootReadonly
-  const inactive = disabled || readonly
+  const readOnly = _readOnly ?? rootReadOnly
+  const inactive = disabled || readOnly
   // `null` means "no event" and has to survive the fallback, so `??` is not
   // enough: only an omitted prop inherits from the root.
   const wheel = _wheel === undefined ? rootWheel : _wheel
@@ -248,7 +248,7 @@ export function Point<T extends PointPosition>({
       ref={refCallback}
       className={className}
       data-disabled={disabled ? '' : undefined}
-      data-readonly={readonly ? '' : undefined}
+      data-readonly={readOnly ? '' : undefined}
       // A press lands on the point, which cannot hold focus, and the browser
       // answers that by clearing the focus to the body — undoing the focus the
       // drag just gave the input. Taking the focus here keeps it inside, and
@@ -294,12 +294,12 @@ export function Point<T extends PointPosition>({
           max={max?.[axis] ?? 1}
           step="any"
           disabled={disabled}
-          aria-readonly={readonly}
+          aria-readonly={readOnly}
           aria-orientation={axis === 'x' ? 'horizontal' : 'vertical'}
           aria-label={perAxis(ariaLabel, axis) ?? axis}
           aria-valuetext={perAxis(ariaValuetext, axis)}
           onChange={(event) => {
-            if (readonly) {
+            if (readOnly) {
               event.currentTarget.value = String(current[axis])
               return
             }

@@ -116,8 +116,8 @@ describe('Slider input guards', () => {
     expect(input).toBeDisabled()
   })
 
-  test('readonly blocks every input while leaving the thumb focusable', () => {
-    const { root, input, onChange } = setup({ readonly: true })
+  test('readOnly blocks every input while leaving the thumb focusable', () => {
+    const { root, input, onChange } = setup({ readOnly: true })
 
     fireEvent.keyDown(root, { key: 'ArrowRight' })
     drag(root)

@@ -60,7 +60,7 @@ export const Thumb = /* @__PURE__ */ forwardRef<SliderThumbMethods, Props>(
       step,
       orientation,
       disabled,
-      readonly,
+      readOnly,
       onChange,
       percent,
       thumbRef,
@@ -86,7 +86,7 @@ export const Thumb = /* @__PURE__ */ forwardRef<SliderThumbMethods, Props>(
       <div
         className={className}
         data-disabled={disabled ? '' : undefined}
-        data-readonly={readonly ? '' : undefined}
+        data-readonly={readOnly ? '' : undefined}
         {...props}
         style={{
           ...{ '--color': color },
@@ -112,14 +112,14 @@ export const Thumb = /* @__PURE__ */ forwardRef<SliderThumbMethods, Props>(
           max={max}
           step={step}
           disabled={disabled}
-          aria-readonly={readonly}
+          aria-readonly={readOnly}
           aria-orientation={orientation}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledby}
           aria-describedby={ariaDescribedby}
           aria-valuetext={ariaValuetext}
           onChange={(event) => {
-            if (readonly) {
+            if (readOnly) {
               event.currentTarget.value = String(value)
               return
             }

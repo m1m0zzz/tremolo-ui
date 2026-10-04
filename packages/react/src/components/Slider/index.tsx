@@ -140,7 +140,7 @@ export interface SliderProps {
    * Make the value unchangeable.
    * The parts carry `data-readonly` while it is set.
    */
-  readonly?: boolean
+  readOnly?: boolean
   /** Called with the new value when a drag, the wheel or an arrow key moves it. */
   onChange?: (value: number) => void
   /** Called when a drag starts, with the value where the track was pressed. */
@@ -190,7 +190,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
       keyboard = DEFAULT_KEYBOARD_OPTIONS,
       dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
       disabled = false,
-      readonly = false,
+      readOnly = false,
       onChange,
       onDragStart,
       onDragEnd,
@@ -209,7 +209,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
     const trackRef = useRef<HTMLDivElement>(null)
     const thumbRef = useRef<SliderThumbMethods>(null)
     // --- interpret props ---
-    const inactive = disabled || readonly
+    const inactive = disabled || readOnly
 
     // Measured from the left or the top, as CSS places things:
     // normal -> normal (right)
@@ -305,7 +305,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
         orientation,
         reverse,
         disabled,
-        readonly,
+        readOnly,
         onChange,
         percent,
         trackRef,
@@ -320,7 +320,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
         orientation,
         reverse,
         disabled,
-        readonly,
+        readOnly,
         onChange,
         percent,
       ],
@@ -351,7 +351,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
           tabIndex={-1}
           data-orientation={orientation}
           data-disabled={disabled ? '' : undefined}
-          data-readonly={readonly ? '' : undefined}
+          data-readonly={readOnly ? '' : undefined}
           style={style}
           onPointerDown={onPointerDown}
           onKeyDown={(event) => {

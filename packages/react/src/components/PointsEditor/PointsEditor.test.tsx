@@ -43,7 +43,7 @@ function fakeLayout(container: Element) {
 type SubjectProps = Partial<
   Pick<
     React.ComponentProps<typeof PointsEditor.Root>,
-    'disabled' | 'readonly' | 'wheel' | 'keyboard'
+    'disabled' | 'readOnly' | 'wheel' | 'keyboard'
   >
 > & {
   // The props the part takes, not only its own: `children` comes from the
@@ -205,8 +205,8 @@ describe('PointsEditor', () => {
     expect(onChange).toHaveBeenLastCalledWith({ x: 0.4, y: 0.6 })
   })
 
-  test('readonly on Root reaches the points', () => {
-    const { point, onChange } = setup({ readonly: true })
+  test('readOnly on Root reaches the points', () => {
+    const { point, onChange } = setup({ readOnly: true })
 
     expect(point).toHaveAttribute('data-readonly')
     expect(pointInput(point, 'x')).not.toBeDisabled()
@@ -215,10 +215,10 @@ describe('PointsEditor', () => {
     expect(onChange).not.toHaveBeenCalled()
   })
 
-  test('a point can override the readonly of Root', () => {
+  test('a point can override the readOnly of Root', () => {
     const { point, onChange } = setup({
-      readonly: true,
-      point: { readonly: false },
+      readOnly: true,
+      point: { readOnly: false },
     })
 
     expect(point).not.toHaveAttribute('data-readonly')
@@ -323,8 +323,8 @@ describe('PointsEditor', () => {
     expect(onChange).toHaveBeenLastCalledWith({ x: 0.6, y: 0.5 })
   })
 
-  test('readonly leaves the arrow keys inert', () => {
-    const { point, onChange } = setup({ readonly: true })
+  test('readOnly leaves the arrow keys inert', () => {
+    const { point, onChange } = setup({ readOnly: true })
 
     keyDown(point, 'ArrowRight')
     expect(onChange).not.toHaveBeenCalled()

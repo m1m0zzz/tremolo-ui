@@ -28,7 +28,7 @@ export const Stepper = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
     const {
       value,
       disabled,
-      readonly,
+      readOnly,
       drag,
       dragSensitivity,
       pointerLock,
@@ -39,7 +39,7 @@ export const Stepper = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
     // Only attached while it can do something: `createDrag` puts
     // `touch-action: none` on the element, and a stepper that cannot be
     // dragged has no reason to stop the page scrolling under a finger.
-    const enabled = drag !== null && !disabled && !readonly
+    const enabled = drag !== null && !disabled && !readOnly
 
     // See useDrag for why the node is held in state rather than a ref.
     const [node, setNode] = useState<HTMLDivElement | null>(null)

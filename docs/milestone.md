@@ -260,7 +260,7 @@ props・パート・命令的メソッドは 3 つでほぼ揃っている（Sve
 - [x] **`Slider` の `vertical` を `orientation: 'horizontal' | 'vertical'` にする。** 出している `data-orientation` と揃える（Radix / Base UI と同じ）。3 つのフレームワークとも
   - `SliderContextValue` の `vertical` も公開している（自作のパートが読む）。context も `orientation` にする
   - `reverse` との組み合わせ（`data-flipped`）はそのまま。Radix では同じものを `inverted` と呼ぶ
-- [ ] **React だけ `readonly` を `readOnly` にする。** React の DOM の属性の慣習に合わせる。Svelte / Vue は `readonly` のまま
+- [x] **React だけ `readonly` を `readOnly` にする。** React の DOM の属性の慣習に合わせる。Svelte / Vue は `readonly` のまま
   - context の `readonly`（`NumberInput` / `PointsEditor` / `Slider` / `XYPad` の `*ContextValue`）も公開しているので一緒に直す。`data-readonly` は属性の契約なのでそのまま
 - [x] **`useAnimationFrame` の第 2 引数を `deltaTime` と呼ぶ。** `AnimationCanvas` の `draw` が受ける `AnimationFrame` は同じものを `deltaTime`（と `elapsedTime`）と呼んでいるので、そちらに揃える。位置引数なので利用者のコードは壊れず、変わるのは JSDoc とドキュメント
 
