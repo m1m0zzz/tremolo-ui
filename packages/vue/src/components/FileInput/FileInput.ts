@@ -1,8 +1,30 @@
-import { defineComponent, h, provide, useId } from 'vue'
+import {
+  type ComponentObjectPropsOptions,
+  defineComponent,
+  type ExtractPublicPropTypes,
+  h,
+  provide,
+  useId,
+} from 'vue'
 
 import { partitionByAccept, visuallyHiddenStyle } from '@tremolo-ui/dom'
 
 import { FileInputKey } from './context'
+
+const fileInputProps = {
+  /**
+   * Which files to take: extensions, MIME types and type groups. It is
+   * checked again when the files arrive, since the picker only takes it as
+   * a hint.
+   */
+  accept: String,
+  /** Let several files be picked at once. */
+  multiple: Boolean,
+  /** Make the input unusable. The parts carry `data-disabled`. */
+  disabled: Boolean,
+} satisfies ComponentObjectPropsOptions
+
+export type FileInputProps = ExtractPublicPropTypes<typeof fileInputProps>
 
 /**
  * Picks files. The control is the native file input, out of sight but in the
@@ -11,18 +33,7 @@ import { FileInputKey } from './context'
 export const FileInput = /* @__PURE__ */ defineComponent({
   name: 'FileInput',
   inheritAttrs: false,
-  props: {
-    /**
-     * Which files to take: extensions, MIME types and type groups. It is
-     * checked again when the files arrive, since the picker only takes it as
-     * a hint.
-     */
-    accept: String,
-    /** Let several files be picked at once. */
-    multiple: Boolean,
-    /** Make the input unusable. The parts carry `data-disabled`. */
-    disabled: Boolean,
-  },
+  props: fileInputProps,
   emits: {
     /** The picked files that satisfy `accept`. */
     change: (files: File[]) => Array.isArray(files),

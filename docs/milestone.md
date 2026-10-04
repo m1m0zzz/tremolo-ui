@@ -233,7 +233,7 @@ props・パート・命令的メソッドは 3 つでほぼ揃っている（Sve
 - [ ] **React の `ref` を全パートで DOM 要素にし、メソッドは `actionsRef` に移す。** `Knob` / `Slider` / `XYPad` / `NumberInput` / `Piano` の `ref` は `focus` / `blur` や `playNote` を持つオブジェクトで、要素に届かない。`XYPad` だけが `original` で要素を渡していたので、これは消す。Svelte（`bind:ref` / `bind:this`）と Vue（`$el` / `expose`）は元から両方に届く
   - **`focus` / `blur` も `actionsRef` に置く。** 要素の `focus()` で代わりにはならない。今の `focus()` は無効のときに何もしないが、要素の `focus()` は `tabIndex={-1}` でもフォーカスを当てる。また、フォーカスを受けるのが root なのは `Knob` だけで、`Slider` / `XYPad` は thumb の中の range input、`NumberInput` は `InputField` の input なので、root の要素の `focus()` はこれらに届かない。`actionsRef` なら、どこにフォーカスを当てるかを利用者が知らなくて済み、Svelte / Vue の `focus` / `blur` とも揃う
   - パートの ref（`Slider.Thumb` / `XYPad.Thumb` の `*ThumbMethods`）も同じ。`__stories__/combined/ControlFocus.stories.tsx` / `Piano.stories.tsx` / `useMIDIInput.stories.tsx` / WavetableSynth の `KeyboardSection` がメソッドの ref を使っている
-- [ ] **Vue も props の型を公開する。** React / Svelte と同じ名前（`KnobProps` など）にする
+- [x] **Vue も props の型を公開する。** React / Svelte と同じ名前（`KnobProps` など）にする
   - Vue の props は `defineComponent` の実行時の宣言（`{ type: Number, required: true }`）で、JSDoc もそこにある。宣言を定数に出して `ExtractPublicPropTypes<typeof knobProps>` で型を作れば、宣言と型が二重にならない。パートの props（`KnobThumbProps` など）も Svelte と同じだけ出す
 - [x] **Svelte の `wheel` action の引数を他の action と同じ形にし、`WheelActionOptions` を消す。** `wheel` だけハンドラを options に入れていたので、名前付きの型が必要になっていた
   - **原因は `dom` の `createWheel` の形にある。** `createWheel(element, onWheel, options)` はハンドラを位置引数で受け、`WheelOptions` にも `update()` 用の `onWheel` がある。`createDrag(element, options)` や `createLongPress({ onPress, … })` のようにハンドラを必須のオプションにすれば、Svelte の action は `WheelOptions` をそのまま受けられ、`WheelActionOptions` は要らなくなる

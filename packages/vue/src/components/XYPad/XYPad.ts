@@ -1,4 +1,13 @@
-import { computed, defineComponent, h, provide, ref, type PropType } from 'vue'
+import {
+  type ComponentObjectPropsOptions,
+  computed,
+  defineComponent,
+  type ExtractPublicPropTypes,
+  h,
+  type PropType,
+  provide,
+  ref,
+} from 'vue'
 
 import {
   applyDelta,
@@ -25,50 +34,54 @@ import { useCheckSteps } from '../_util/useCheckSteps'
 
 import { XYPadKey } from './context'
 
+const xYPadProps = {
+  /** The current value as `[x, y]`. Bind it with `v-model`. */
+  modelValue: {
+    type: Array as unknown as PropType<XY<number>>,
+    required: true,
+  },
+  /** The value at the start of the travel, per axis. */
+  min: {
+    type: [Number, Array] as PropType<XYInput<number>>,
+    required: true,
+  },
+  /** The value at the end of the travel, per axis. */
+  max: {
+    type: [Number, Array] as PropType<XYInput<number>>,
+    required: true,
+  },
+  /** Granularity of the value, per axis. @default 1 */
+  step: { type: [Number, Array] as PropType<XYInput<number>>, default: 1 },
+  /** How the value is distributed, per axis. @default linearScale */
+  scale: {
+    type: [Object, Array] as PropType<XYInput<Scale>>,
+    default: () => linearScale,
+  },
+  /** Grow the value the other way, per axis. `y` grows downwards unless reversed. */
+  reverse: {
+    type: [Boolean, Array] as PropType<XYInput<boolean>>,
+    default: false,
+  },
+  /** The cursor to show while dragging. @default 'pointer' */
+  dragCursor: { type: String, default: 'pointer' },
+  wheel: wheelProp,
+  keyboard: keyboardProp,
+  dragSensitivity: dragSensitivityProp,
+  /** Make the pad unchangeable and remove it from the tab order. */
+  disabled: Boolean,
+  /** Make the value unchangeable. */
+  readonly: Boolean,
+} satisfies ComponentObjectPropsOptions
+
+export type XYPadProps = ExtractPublicPropTypes<typeof xYPadProps>
+
 /**
  * Two-dimensional slider. The per-axis settings are `[x, y]` tuples, and a
  * plain value applies to both axes. Bind the value with `v-model`.
  */
 export const XYPad = /* @__PURE__ */ defineComponent({
   name: 'XYPad',
-  props: {
-    /** The current value as `[x, y]`. Bind it with `v-model`. */
-    modelValue: {
-      type: Array as unknown as PropType<XY<number>>,
-      required: true,
-    },
-    /** The value at the start of the travel, per axis. */
-    min: {
-      type: [Number, Array] as PropType<XYInput<number>>,
-      required: true,
-    },
-    /** The value at the end of the travel, per axis. */
-    max: {
-      type: [Number, Array] as PropType<XYInput<number>>,
-      required: true,
-    },
-    /** Granularity of the value, per axis. @default 1 */
-    step: { type: [Number, Array] as PropType<XYInput<number>>, default: 1 },
-    /** How the value is distributed, per axis. @default linearScale */
-    scale: {
-      type: [Object, Array] as PropType<XYInput<Scale>>,
-      default: () => linearScale,
-    },
-    /** Grow the value the other way, per axis. `y` grows downwards unless reversed. */
-    reverse: {
-      type: [Boolean, Array] as PropType<XYInput<boolean>>,
-      default: false,
-    },
-    /** The cursor to show while dragging. @default 'pointer' */
-    dragCursor: { type: String, default: 'pointer' },
-    wheel: wheelProp,
-    keyboard: keyboardProp,
-    dragSensitivity: dragSensitivityProp,
-    /** Make the pad unchangeable and remove it from the tab order. */
-    disabled: Boolean,
-    /** Make the value unchangeable. */
-    readonly: Boolean,
-  },
+  props: xYPadProps,
   emits: {
     'update:modelValue': (value: XY<number>) => Array.isArray(value),
     dragStart: (value: XY<number>) => Array.isArray(value),

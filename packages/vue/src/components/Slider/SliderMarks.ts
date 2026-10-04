@@ -1,4 +1,11 @@
-import { computed, defineComponent, h, type PropType } from 'vue'
+import {
+  type ComponentObjectPropsOptions,
+  computed,
+  defineComponent,
+  type ExtractPublicPropTypes,
+  h,
+  type PropType,
+} from 'vue'
 
 import { cssLength, sliderMarks, type MarksOptions } from '@tremolo-ui/dom'
 
@@ -7,19 +14,23 @@ import { providePlacement } from '../_util/placement'
 import { useSliderContext } from './context'
 import { SliderMarksOption } from './SliderMarksOption'
 
+const sliderMarksProps = {
+  /** Space between the marks and the track. Sets `--gap`. */
+  gap: [Number, String],
+  /**
+   * Build the marks instead of writing `SliderMarksOption` out: a number
+   * puts one every that many, `'step'` one every `step`. The default slot
+   * is ignored while it is set.
+   */
+  options: [String, Number, Object] as PropType<MarksOptions>,
+} satisfies ComponentObjectPropsOptions
+
+export type SliderMarksProps = ExtractPublicPropTypes<typeof sliderMarksProps>
+
 /** The marks along the slider: written out as options, or built from `options`. */
 export const SliderMarks = /* @__PURE__ */ defineComponent({
   name: 'SliderMarks',
-  props: {
-    /** Space between the marks and the track. Sets `--gap`. */
-    gap: [Number, String],
-    /**
-     * Build the marks instead of writing `SliderMarksOption` out: a number
-     * puts one every that many, `'step'` one every `step`. The default slot
-     * is ignored while it is set.
-     */
-    options: [String, Number, Object] as PropType<MarksOptions>,
-  },
+  props: sliderMarksProps,
   setup(props, { slots }) {
     const slider = useSliderContext()
     providePlacement('SliderMarks')

@@ -1,1 +1,1 @@
-export { AnimationCanvas } from './AnimationCanvas'
+export { AnimationCanvas, type AnimationCanvasProps } from './AnimationCanvas'

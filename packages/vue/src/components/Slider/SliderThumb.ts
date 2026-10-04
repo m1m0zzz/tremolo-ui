@@ -1,9 +1,24 @@
-import { defineComponent, h, onBeforeUnmount, ref, watchEffect } from 'vue'
+import {
+  type ComponentObjectPropsOptions,
+  defineComponent,
+  type ExtractPublicPropTypes,
+  h,
+  onBeforeUnmount,
+  ref,
+  watchEffect,
+} from 'vue'
 
 import { checkPlacement } from '../_util/placement'
 import { visuallyHiddenRangeInput } from '../_util/visually-hidden-range-input'
 
 import { useSliderContext } from './context'
+
+const sliderThumbProps = {
+  /** Sets `--color`, for the theme to colour the thumb with. */
+  color: String,
+} satisfies ComponentObjectPropsOptions
+
+export type SliderThumbProps = ExtractPublicPropTypes<typeof sliderThumbProps>
 
 /**
  * The thumb, placed at the value. The ARIA (`aria-label` and friends) lands
@@ -12,10 +27,7 @@ import { useSliderContext } from './context'
 export const SliderThumb = /* @__PURE__ */ defineComponent({
   name: 'SliderThumb',
   inheritAttrs: false,
-  props: {
-    /** Sets `--color`, for the theme to colour the thumb with. */
-    color: String,
-  },
+  props: sliderThumbProps,
   setup(props, { slots, attrs, expose }) {
     const slider = useSliderContext()
     checkPlacement('SliderThumb', 'SliderTrack')

@@ -1,4 +1,13 @@
-import { computed, defineComponent, h, provide, ref, type PropType } from 'vue'
+import {
+  type ComponentObjectPropsOptions,
+  computed,
+  defineComponent,
+  type ExtractPublicPropTypes,
+  h,
+  type PropType,
+  provide,
+  ref,
+} from 'vue'
 
 import {
   commitNumberInputText,
@@ -16,57 +25,61 @@ import { useCheckSteps } from '../_util/useCheckSteps'
 
 import { NumberInputKey } from './context'
 
+const numberInputProps = {
+  /** The current value. Bind it with `v-model`. */
+  modelValue: { type: Number, required: true },
+  /** The lowest value. Leave it out for no lower end. */
+  min: Number,
+  /** The highest value. Leave it out for no upper end. */
+  max: Number,
+  /** Granularity of the value. @default 1 */
+  step: { type: Number, default: 1 },
+  /** How the value is distributed, for a `normalized` amount. */
+  scale: { type: Object as PropType<Scale>, default: () => linearScale },
+  /** The text shown for a value. @default String */
+  format: {
+    type: Function as PropType<(value: number) => string>,
+    default: String,
+  },
+  /** Read a value back out of the text. Has to undo `format`. */
+  parse: {
+    type: Function as PropType<(text: string) => number>,
+    default: parseNumberText,
+  },
+  /** Keep the value within `min` and `max` when committed or stepped. */
+  clampValue: { type: Boolean, default: true },
+  wheel: wheelProp,
+  keyboard: keyboardProp,
+  dragSensitivity: dragSensitivityProp,
+  /** Pixels of vertical drag on the stepper per `step`. `null` turns it off. */
+  drag: { type: Number as PropType<number | null>, default: 1 },
+  /** Hide the cursor while dragging the stepper. */
+  pointerLock: Boolean,
+  /** The cursor to show while dragging the stepper. @default 'ns-resize' */
+  dragCursor: { type: String, default: 'ns-resize' },
+  /** Select the text when the field takes focus. @default 'none' */
+  selectOnFocus: {
+    type: String as PropType<'all' | 'number' | 'none'>,
+    default: 'none',
+  },
+  /** Show the plain value while the field has focus. */
+  unformatOnFocus: Boolean,
+  /** Put the caret back at the same digit after an arrow key step. */
+  keepCaretOnStep: Boolean,
+  /** Commit and leave the field on Enter. @default true */
+  blurOnEnter: { type: Boolean, default: true },
+  /** Make the input unchangeable and remove it from the tab order. */
+  disabled: Boolean,
+  /** Make the value unchangeable while leaving the field focusable. */
+  readonly: Boolean,
+} satisfies ComponentObjectPropsOptions
+
+export type NumberInputProps = ExtractPublicPropTypes<typeof numberInputProps>
+
 /** Input with some useful functions for entering numbers. Bind it with `v-model`. */
 export const NumberInput = /* @__PURE__ */ defineComponent({
   name: 'NumberInput',
-  props: {
-    /** The current value. Bind it with `v-model`. */
-    modelValue: { type: Number, required: true },
-    /** The lowest value. Leave it out for no lower end. */
-    min: Number,
-    /** The highest value. Leave it out for no upper end. */
-    max: Number,
-    /** Granularity of the value. @default 1 */
-    step: { type: Number, default: 1 },
-    /** How the value is distributed, for a `normalized` amount. */
-    scale: { type: Object as PropType<Scale>, default: () => linearScale },
-    /** The text shown for a value. @default String */
-    format: {
-      type: Function as PropType<(value: number) => string>,
-      default: String,
-    },
-    /** Read a value back out of the text. Has to undo `format`. */
-    parse: {
-      type: Function as PropType<(text: string) => number>,
-      default: parseNumberText,
-    },
-    /** Keep the value within `min` and `max` when committed or stepped. */
-    clampValue: { type: Boolean, default: true },
-    wheel: wheelProp,
-    keyboard: keyboardProp,
-    dragSensitivity: dragSensitivityProp,
-    /** Pixels of vertical drag on the stepper per `step`. `null` turns it off. */
-    drag: { type: Number as PropType<number | null>, default: 1 },
-    /** Hide the cursor while dragging the stepper. */
-    pointerLock: Boolean,
-    /** The cursor to show while dragging the stepper. @default 'ns-resize' */
-    dragCursor: { type: String, default: 'ns-resize' },
-    /** Select the text when the field takes focus. @default 'none' */
-    selectOnFocus: {
-      type: String as PropType<'all' | 'number' | 'none'>,
-      default: 'none',
-    },
-    /** Show the plain value while the field has focus. */
-    unformatOnFocus: Boolean,
-    /** Put the caret back at the same digit after an arrow key step. */
-    keepCaretOnStep: Boolean,
-    /** Commit and leave the field on Enter. @default true */
-    blurOnEnter: { type: Boolean, default: true },
-    /** Make the input unchangeable and remove it from the tab order. */
-    disabled: Boolean,
-    /** Make the value unchangeable while leaving the field focusable. */
-    readonly: Boolean,
-  },
+  props: numberInputProps,
   emits: {
     'update:modelValue': (value: number) => typeof value === 'number',
   },

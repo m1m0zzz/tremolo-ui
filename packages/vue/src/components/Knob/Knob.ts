@@ -1,4 +1,13 @@
-import { computed, defineComponent, h, provide, ref, type PropType } from 'vue'
+import {
+  type ComponentObjectPropsOptions,
+  computed,
+  defineComponent,
+  type ExtractPublicPropTypes,
+  h,
+  type PropType,
+  provide,
+  ref,
+} from 'vue'
 
 import {
   applyDelta,
@@ -24,61 +33,65 @@ import { useCheckSteps } from '../_util/useCheckSteps'
 
 import { KnobKey } from './context'
 
+const knobProps = {
+  /** The current value. Bind it with `v-model`. */
+  modelValue: { type: Number, required: true },
+  /** The value with the knob turned all the way down. */
+  min: { type: Number, required: true },
+  /** The value with the knob turned all the way up. */
+  max: { type: Number, required: true },
+  /** Granularity of the value. @default 1 */
+  step: { type: Number, default: 1 },
+  /** How the value is distributed across the travel. @default linearScale */
+  scale: { type: Object as PropType<Scale>, default: () => linearScale },
+  /**
+   * The value a double click restores. `null` turns the double click off.
+   * @default startValue
+   */
+  resetValue: {
+    type: Number as PropType<number | null>,
+    default: undefined,
+  },
+  /** Where the active arc starts. @default min */
+  startValue: Number,
+  /** Width and height of the knob. Sets `--knob-size`. */
+  size: [Number, String],
+  /** The cursor to show while dragging. @default 'grabbing' */
+  dragCursor: { type: String, default: 'grabbing' },
+  /** How much one notch of the wheel moves the value. `null` turns it off. */
+  wheel: {
+    type: [Array, Object] as PropType<ModifierValue<InputEventOption> | null>,
+    default: () => DEFAULT_WHEEL_OPTIONS,
+  },
+  /** How much one arrow key press moves the value. `null` turns it off. */
+  keyboard: {
+    type: [Array, Object] as PropType<ModifierValue<InputEventOption> | null>,
+    default: () => DEFAULT_KEYBOARD_OPTIONS,
+  },
+  /** How much a drag moves the value, per modifier key. */
+  dragSensitivity: {
+    type: [Number, Object] as PropType<ModifierValue<number>>,
+    default: () => DEFAULT_DRAG_SENSITIVITY,
+  },
+  /** Hide the cursor while dragging and read the movement directly. */
+  pointerLock: Boolean,
+  /** Make the knob unchangeable and remove it from the tab order. */
+  disabled: Boolean,
+  /** Make the knob unchangeable while leaving it focusable. */
+  readonly: Boolean,
+  /** How far the knob turns from `min` to `max`, in degrees. @default 270 */
+  angleRange: { type: Number, default: 270 },
+} satisfies ComponentObjectPropsOptions
+
+export type KnobProps = ExtractPublicPropTypes<typeof knobProps>
+
 /**
  * Interactive rotary knob, drawn in SVG by `KnobSVGRoot` and the parts inside
  * it. Bind the value with `v-model`.
  */
 export const Knob = /* @__PURE__ */ defineComponent({
   name: 'Knob',
-  props: {
-    /** The current value. Bind it with `v-model`. */
-    modelValue: { type: Number, required: true },
-    /** The value with the knob turned all the way down. */
-    min: { type: Number, required: true },
-    /** The value with the knob turned all the way up. */
-    max: { type: Number, required: true },
-    /** Granularity of the value. @default 1 */
-    step: { type: Number, default: 1 },
-    /** How the value is distributed across the travel. @default linearScale */
-    scale: { type: Object as PropType<Scale>, default: () => linearScale },
-    /**
-     * The value a double click restores. `null` turns the double click off.
-     * @default startValue
-     */
-    resetValue: {
-      type: Number as PropType<number | null>,
-      default: undefined,
-    },
-    /** Where the active arc starts. @default min */
-    startValue: Number,
-    /** Width and height of the knob. Sets `--knob-size`. */
-    size: [Number, String],
-    /** The cursor to show while dragging. @default 'grabbing' */
-    dragCursor: { type: String, default: 'grabbing' },
-    /** How much one notch of the wheel moves the value. `null` turns it off. */
-    wheel: {
-      type: [Array, Object] as PropType<ModifierValue<InputEventOption> | null>,
-      default: () => DEFAULT_WHEEL_OPTIONS,
-    },
-    /** How much one arrow key press moves the value. `null` turns it off. */
-    keyboard: {
-      type: [Array, Object] as PropType<ModifierValue<InputEventOption> | null>,
-      default: () => DEFAULT_KEYBOARD_OPTIONS,
-    },
-    /** How much a drag moves the value, per modifier key. */
-    dragSensitivity: {
-      type: [Number, Object] as PropType<ModifierValue<number>>,
-      default: () => DEFAULT_DRAG_SENSITIVITY,
-    },
-    /** Hide the cursor while dragging and read the movement directly. */
-    pointerLock: Boolean,
-    /** Make the knob unchangeable and remove it from the tab order. */
-    disabled: Boolean,
-    /** Make the knob unchangeable while leaving it focusable. */
-    readonly: Boolean,
-    /** How far the knob turns from `min` to `max`, in degrees. @default 270 */
-    angleRange: { type: Number, default: 270 },
-  },
+  props: knobProps,
   emits: {
     'update:modelValue': (value: number) => typeof value === 'number',
   },

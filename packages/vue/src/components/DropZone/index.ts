@@ -1,1 +1,1 @@
-export { DropZone } from './DropZone'
+export { DropZone, type DropZoneProps } from './DropZone'

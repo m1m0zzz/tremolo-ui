@@ -1,11 +1,13 @@
 import {
+  type ComponentObjectPropsOptions,
   defineComponent,
+  type ExtractPublicPropTypes,
   h,
+  type PropType,
   ref,
   shallowRef,
   watch,
   watchEffect,
-  type PropType,
 } from 'vue'
 
 import {
@@ -15,28 +17,34 @@ import {
   type CanvasInitFunction,
 } from '@tremolo-ui/dom'
 
+const animationCanvasProps = {
+  /** Draws a frame. */
+  draw: { type: Function as PropType<CanvasDrawFunction>, required: true },
+  /** Sets the canvas up, once, before the first frame. */
+  init: Function as PropType<CanvasInitFunction>,
+  /** Draw on every animation frame. @default true */
+  animate: { type: Boolean, default: true },
+  /** Settings for the 2D context. Read once, when the canvas is created. */
+  options: Object as PropType<CanvasRenderingContext2DSettings>,
+  /** Keep the drawing while the canvas is resized. @default true */
+  reduceFlickering: { type: Boolean, default: true },
+  /** Follow the size of the parent element; `width` and `height` are ignored. */
+  resizable: Boolean,
+  /** Width in CSS pixels, while not `resizable`. @default 100 */
+  width: { type: Number, default: 100 },
+  /** Height in CSS pixels, while not `resizable`. @default 100 */
+  height: { type: Number, default: 100 },
+} satisfies ComponentObjectPropsOptions
+
+export type AnimationCanvasProps = ExtractPublicPropTypes<
+  typeof animationCanvasProps
+>
+
 /** A `<canvas>` drawn by `draw` on every animation frame. */
 export const AnimationCanvas = /* @__PURE__ */ defineComponent({
   name: 'AnimationCanvas',
   inheritAttrs: false,
-  props: {
-    /** Draws a frame. */
-    draw: { type: Function as PropType<CanvasDrawFunction>, required: true },
-    /** Sets the canvas up, once, before the first frame. */
-    init: Function as PropType<CanvasInitFunction>,
-    /** Draw on every animation frame. @default true */
-    animate: { type: Boolean, default: true },
-    /** Settings for the 2D context. Read once, when the canvas is created. */
-    options: Object as PropType<CanvasRenderingContext2DSettings>,
-    /** Keep the drawing while the canvas is resized. @default true */
-    reduceFlickering: { type: Boolean, default: true },
-    /** Follow the size of the parent element; `width` and `height` are ignored. */
-    resizable: Boolean,
-    /** Width in CSS pixels, while not `resizable`. @default 100 */
-    width: { type: Number, default: 100 },
-    /** Height in CSS pixels, while not `resizable`. @default 100 */
-    height: { type: Number, default: 100 },
-  },
+  props: animationCanvasProps,
   setup(props, { attrs }) {
     const canvas = ref<HTMLCanvasElement | null>(null)
     const instance = shallowRef<AnimationCanvasInstance | null>(null)

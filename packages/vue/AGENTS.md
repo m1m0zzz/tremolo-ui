@@ -7,6 +7,7 @@
 - **SFC（`.vue`）ではなく、TypeScript の `defineComponent` と `h()` で書く。** Headless UI の Vue 版と同じ形。ビルドを dom / react と同じ tsdown に揃えられ、`.vue` 用のビルド（`vue-tsc` / プラグイン）を持たずに済む
 - 名前はフラットにし、Root はコンポーネント名そのもの（`Knob` / `KnobThumb`）。ドット付きの名前はグローバル登録・Nuxt の auto-import・in-DOM テンプレートで使えないため
 - 対応するのは Vue 3.5 以降（`useTemplateRef` / `useId` を使う）
+- **props の宣言はコンポーネントの外の定数に出し、`satisfies ComponentObjectPropsOptions` を付けて、`ExtractPublicPropTypes` で `<Component>Props` 型を作る。** 宣言と型を二重に持たないため。`as const` にしないこと: `type: [Number, String]` が readonly のタプルになり、`defineComponent` が props を 1 つも認識しなくなる。何も付けない素の定数でもいけない: `required: true` が `boolean` に広がり、型の上で必須でなくなる。`satisfies` なら、文脈の型が `boolean` なので `true` のまま残る
 
 ## dom との関係
 

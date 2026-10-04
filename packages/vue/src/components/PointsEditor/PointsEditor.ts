@@ -1,12 +1,14 @@
 import {
+  type ComponentObjectPropsOptions,
   computed,
   defineComponent,
+  type ExtractPublicPropTypes,
   h,
   onScopeDispose,
+  type PropType,
   provide,
   shallowRef,
   watchEffect,
-  type PropType,
 } from 'vue'
 
 import {
@@ -23,42 +25,46 @@ import { PointsEditorKey } from './context'
 
 const EMPTY: readonly string[] = []
 
+const pointsEditorProps = {
+  /** Make the points unchangeable and remove them from the tab order. */
+  disabled: Boolean,
+  /** Make the points unmovable. */
+  readonly: Boolean,
+  /** The cursor to show while dragging a point. @default 'grabbing' */
+  dragCursor: { type: String, default: 'grabbing' },
+  /** How much one wheel notch moves the focused point. */
+  wheel: {
+    type: [Array, Object] as PropType<ModifierValue<InputEventOption> | null>,
+    default: () => POINTS_EDITOR_DEFAULT_WHEEL,
+  },
+  /** How much one arrow key press moves a point. */
+  keyboard: {
+    type: [Array, Object] as PropType<ModifierValue<InputEventOption> | null>,
+    default: () => POINTS_EDITOR_DEFAULT_KEYBOARD,
+  },
+  /** How much a drag moves a point, per modifier key. */
+  dragSensitivity: {
+    type: [Number, Object] as PropType<ModifierValue<number>>,
+    default: () => DEFAULT_DRAG_SENSITIVITY,
+  },
+  /**
+   * Let points be selected, and a selection be moved as one. A selection
+   * updates several points in the same tick.
+   */
+  selectable: Boolean,
+  /** Ids of the selected points. Bind it with `v-model:selection`. */
+  selection: Array as PropType<string[]>,
+} satisfies ComponentObjectPropsOptions
+
+export type PointsEditorProps = ExtractPublicPropTypes<typeof pointsEditorProps>
+
 /**
  * Multiple point controller. Bind the selection with `v-model:selection` to
  * hold it yourself; the editor keeps its own otherwise.
  */
 export const PointsEditor = /* @__PURE__ */ defineComponent({
   name: 'PointsEditor',
-  props: {
-    /** Make the points unchangeable and remove them from the tab order. */
-    disabled: Boolean,
-    /** Make the points unmovable. */
-    readonly: Boolean,
-    /** The cursor to show while dragging a point. @default 'grabbing' */
-    dragCursor: { type: String, default: 'grabbing' },
-    /** How much one wheel notch moves the focused point. */
-    wheel: {
-      type: [Array, Object] as PropType<ModifierValue<InputEventOption> | null>,
-      default: () => POINTS_EDITOR_DEFAULT_WHEEL,
-    },
-    /** How much one arrow key press moves a point. */
-    keyboard: {
-      type: [Array, Object] as PropType<ModifierValue<InputEventOption> | null>,
-      default: () => POINTS_EDITOR_DEFAULT_KEYBOARD,
-    },
-    /** How much a drag moves a point, per modifier key. */
-    dragSensitivity: {
-      type: [Number, Object] as PropType<ModifierValue<number>>,
-      default: () => DEFAULT_DRAG_SENSITIVITY,
-    },
-    /**
-     * Let points be selected, and a selection be moved as one. A selection
-     * updates several points in the same tick.
-     */
-    selectable: Boolean,
-    /** Ids of the selected points. Bind it with `v-model:selection`. */
-    selection: Array as PropType<string[]>,
-  },
+  props: pointsEditorProps,
   emits: {
     'update:selection': (selection: string[]) => Array.isArray(selection),
   },
