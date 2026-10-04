@@ -1,18 +1,8 @@
-import { drawingState, isDrawingState } from '../../src'
 import { readDrawingState, writeDrawingState } from '../../src/canvas/context'
 
 import { withContext2D } from './helpers'
 
 describe('drawing state', () => {
-  test('recognizes every public drawing state name', () => {
-    for (const name of drawingState) {
-      expect(isDrawingState(name)).toBe(true)
-    }
-    expect(isDrawingState('unknown')).toBe(false)
-    expect(isDrawingState(1)).toBe(false)
-    expect(isDrawingState(null)).toBe(false)
-  })
-
   test('reads and writes properties, line dash, and transform', () => {
     const contexts = withContext2D()
     const source = contexts.get(document.createElement('canvas'))

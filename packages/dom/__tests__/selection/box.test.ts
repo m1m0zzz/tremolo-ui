@@ -1,8 +1,5 @@
-import {
-  createSelectionBox,
-  selectionBoxCovers,
-  type XY,
-} from '../../src/index'
+import { createSelectionBox, selectionBoxCovers } from '../../src/selection/box'
+import { type XY } from '../../src/xy'
 
 /** Four items, one in each quarter of the 0..1 space. */
 const items: [string, XY<number>][] = [
