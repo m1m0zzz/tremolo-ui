@@ -14,6 +14,7 @@ import {
   applyDelta,
   arrowKeyMove,
   type AxisOptions,
+  type ChangeSource,
   DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
@@ -30,6 +31,7 @@ import {
 import { linearScale, type Scale } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
+import { useChangeGesture } from '../../hooks/_internal/useChangeGesture'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
@@ -147,10 +149,25 @@ export interface XYPadProps {
 
   /** Called with the new value when a drag, the wheel or an arrow key moves it. */
   onChange?: (value: XY<number>) => void
-  /** Called when a drag starts, with the value where the area was pressed. */
-  onDragStart?: (value: XY<number>) => void
-  /** Called when the drag ends, with the value it ended on. */
-  onDragEnd?: (value: XY<number>) => void
+  /**
+   * Called when a change of the value starts — a press on the area, the first wheel notch
+   * or arrow key — with the value
+   * before it and what it is made with. A host recording automation can treat
+   * the control as touched from here until `onChangeEnd`.
+   */
+  onChangeStart?: (value: XY<number>, source: ChangeSource) => void
+  /**
+   * Called when the change ends, with the value it ended on: on release, or
+   * `changeEndDelay` after the last wheel notch or arrow key.
+   */
+  onChangeEnd?: (value: XY<number>, source: ChangeSource) => void
+  /**
+   * How long after the last wheel notch or arrow key the change counts as
+   * over, in milliseconds. Neither has an event that says it is done.
+   *
+   * @default 500
+   */
+  changeEndDelay?: number
 
   /**
    * The pad renders exactly what you compose here; there is no default
@@ -205,8 +222,9 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       disabled = false,
       readOnly = false,
       onChange,
-      onDragStart,
-      onDragEnd,
+      onChangeStart,
+      onChangeEnd,
+      changeEndDelay,
       onPointerDown,
       onKeyDown,
       onFocus,
@@ -224,6 +242,19 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
 
     // --- interpret props ---
     const inactive = disabled || readOnly
+
+    const gesture = useChangeGesture(
+      value,
+      { onChangeStart, onChangeEnd, changeEndDelay },
+      inactive,
+    )
+    const change = useCallback(
+      (next: XY<number>) => {
+        gesture.changed(next)
+        onChange?.(next)
+      },
+      [gesture, onChange],
+    )
 
     const min = useMemo(() => toXY(_min), [_min])
     const max = useMemo(() => toXY(_max), [_max])
@@ -306,9 +337,10 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         event.preventDefault()
         if (!onChange || inactive || !keyboard) return
         const { axis: i, direction } = move
-        onChange(nudge(i, reverse[i] ? -direction : direction, keyboard, event))
+        gesture.pulse('keyboard')
+        change(nudge(i, reverse[i] ? -direction : direction, keyboard, event))
       },
-      [onChange, inactive, keyboard, reverse, nudge],
+      [onChange, inactive, keyboard, reverse, nudge, gesture, change],
     )
 
     // --- hooks ---
@@ -323,17 +355,14 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       shouldStart: () => !inactive,
       onChange: (v) => {
         if (inactive) return
-        onChange?.(v)
+        change(v)
       },
-      onDragStart: (v) => {
+      onDragStart: () => {
         if (inactive) return
+        gesture.hold('pointer')
         thumbRef.current?.focus()
-        onDragStart?.(v)
       },
-      onDragEnd: (v) => {
-        if (inactive) return
-        onDragEnd?.(v)
-      },
+      onDragEnd: () => gesture.end(),
     })
 
     const wheelRefCallback = useWheel<HTMLDivElement>((event) => {
@@ -342,7 +371,8 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       if (!move) return
       event.preventDefault()
       const { axis: i, direction } = move
-      onChange(nudge(i, reverse[i] ? -direction : direction, wheel, event))
+      gesture.pulse('wheel')
+      change(nudge(i, reverse[i] ? -direction : direction, wheel, event))
     }, WHEEL_OPTIONS)
 
     // Composed once, so React attaches the refs a single time instead of

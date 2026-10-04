@@ -17,12 +17,14 @@ import {
   valuePercent,
   wheelDirection,
   type AxisOptions,
+  type ChangeSource,
   type XY,
 } from '@tremolo-ui/dom'
 import { linearScale, type Scale } from '@tremolo-ui/functions'
 
 import { useDragValue } from '../../composables/useDragValue'
 import { useWheel } from '../../composables/useWheel'
+import { useChangeGesture } from '../_util/change-gesture'
 import { dragSensitivityProp, keyboardProp, wheelProp } from '../_util/props'
 import { useCheckSteps } from '../_util/useCheckSteps'
 
@@ -58,6 +60,12 @@ const sliderProps = {
   disabled: Boolean,
   /** Make the value unchangeable. */
   readonly: Boolean,
+  /**
+   * How long after the last wheel notch or arrow key a change counts as over,
+   * in milliseconds, for `change-end`.
+   * @default 500
+   */
+  changeEndDelay: { type: Number, default: 500 },
 } satisfies ComponentObjectPropsOptions
 
 export type SliderProps = ExtractPublicPropTypes<typeof sliderProps>
@@ -68,10 +76,15 @@ export const Slider = /* @__PURE__ */ defineComponent({
   props: sliderProps,
   emits: {
     'update:modelValue': (value: number) => typeof value === 'number',
-    /** A drag started, with the value where the track was pressed. */
-    dragStart: (value: number) => typeof value === 'number',
-    /** The drag ended, with the value it ended on. */
-    dragEnd: (value: number) => typeof value === 'number',
+    /**
+     * A change of the value started, with the value before it and what it is
+     * made with.
+     */
+    changeStart: (value: number, _source: ChangeSource) =>
+      typeof value === 'number',
+    /** The change ended, with the value it ended on. */
+    changeEnd: (value: number, _source: ChangeSource) =>
+      typeof value === 'number',
   },
   setup(props, { slots, emit, expose }) {
     const root = ref<HTMLDivElement | null>(null)
@@ -105,7 +118,17 @@ export const Slider = /* @__PURE__ */ defineComponent({
       wheel: props.wheel,
     }))
 
-    const change = (next: number) => emit('update:modelValue', next)
+    const gesture = useChangeGesture({
+      value: () => props.modelValue,
+      inactive: () => inactive.value,
+      endDelay: () => props.changeEndDelay,
+      onStart: (value, source) => emit('changeStart', value, source),
+      onEnd: (value, source) => emit('changeEnd', value, source),
+    })
+    const change = (next: number) => {
+      gesture.changed(next)
+      emit('update:modelValue', next)
+    }
 
     provide(SliderKey, {
       get value() {
@@ -161,14 +184,12 @@ export const Slider = /* @__PURE__ */ defineComponent({
       onChange: (v) => {
         if (!inactive.value) change(valueOf(v))
       },
-      onDragStart: (v) => {
+      onDragStart: () => {
         if (inactive.value) return
+        gesture.hold('pointer')
         thumb?.focus()
-        emit('dragStart', valueOf(v))
       },
-      onDragEnd: (v) => {
-        if (!inactive.value) emit('dragEnd', valueOf(v))
-      },
+      onDragEnd: () => gesture.end(),
     }))
 
     useWheel(
@@ -180,6 +201,7 @@ export const Slider = /* @__PURE__ */ defineComponent({
         const direction = wheelDirection(event, { horizontal: !vertical.value })
         if (direction === null) return
         event.preventDefault()
+        gesture.pulse('wheel')
         change(
           applyDelta(
             props.modelValue,
@@ -221,6 +243,7 @@ export const Slider = /* @__PURE__ */ defineComponent({
             if (direction === null) return
             event.preventDefault()
             if (!props.keyboard || inactive.value) return
+            gesture.pulse('keyboard')
             change(
               applyDelta(
                 props.modelValue,

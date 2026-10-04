@@ -1,4 +1,8 @@
-import type { InputEventOption, ModifierValue } from '@tremolo-ui/dom'
+import type {
+  ChangeSource,
+  InputEventOption,
+  ModifierValue,
+} from '@tremolo-ui/dom'
 import type { Scale } from '@tremolo-ui/functions'
 
 import type { Snippet } from 'svelte'
@@ -92,6 +96,24 @@ export interface KnobProps {
    * double click moves it.
    */
   onChange?: (value: number) => void
+  /**
+   * Called when a change of the value starts — a drag, a double
+   * click, the first wheel notch or arrow key — with the value before it and
+   * what it is made with. A host recording automation can treat the control
+   * as touched from here until `onChangeEnd`.
+   */
+  onChangeStart?: (value: number, source: ChangeSource) => void
+  /**
+   * Called when the change ends, with the value it ended on: on release, or
+   * `changeEndDelay` after the last wheel notch or arrow key.
+   */
+  onChangeEnd?: (value: number, source: ChangeSource) => void
+  /**
+   * How long after the last wheel notch or arrow key the change counts as
+   * over, in milliseconds.
+   * @default 500
+   */
+  changeEndDelay?: number
   /** The root element, bound with `bind:ref`. */
   ref?: HTMLDivElement | null
   /**

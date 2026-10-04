@@ -333,3 +333,42 @@ describe('XYPad', () => {
     expect(axisInput('x')).toHaveFocus()
   })
 })
+
+describe('XYPad change gesture', () => {
+  test('a press starts before the value jumps there, and ends on release', () => {
+    const onChangeStart = vi.fn()
+    const onChangeEnd = vi.fn()
+    const { root, onChange } = setup({ onChangeStart, onChangeEnd })
+
+    drag(root, { clientX: 20, clientY: 40 })
+    act(() => {
+      root.dispatchEvent(
+        pointerEvent('pointerup', { clientX: 20, clientY: 40 }),
+      )
+    })
+
+    expect(onChangeStart).toHaveBeenCalledWith([50, 50], 'pointer')
+    expect(onChangeStart.mock.invocationCallOrder[0]).toBeLessThan(
+      onChange.mock.invocationCallOrder[0],
+    )
+    expect(onChangeEnd).toHaveBeenCalledWith(
+      onChange.mock.lastCall?.[0],
+      'pointer',
+    )
+  })
+
+  test('the wheel is a gesture of its own', () => {
+    vi.useFakeTimers()
+    const onChangeStart = vi.fn()
+    const onChangeEnd = vi.fn()
+    const { root } = setup({ onChangeStart, onChangeEnd })
+    act(() => axisInput('x').focus())
+
+    wheel(root, { deltaY: -1 })
+    act(() => vi.advanceTimersByTime(500))
+    vi.useRealTimers()
+
+    expect(onChangeStart).toHaveBeenCalledWith([50, 50], 'wheel')
+    expect(onChangeEnd).toHaveBeenCalledTimes(1)
+  })
+})

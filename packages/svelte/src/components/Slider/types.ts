@@ -1,4 +1,5 @@
 import type {
+  ChangeSource,
   InputEventOption,
   MarksOptions,
   ModifierValue,
@@ -72,10 +73,24 @@ export interface SliderProps {
   readonly?: boolean
   /** Called with the new value when a drag, the wheel or an arrow key moves it. */
   onChange?: (value: number) => void
-  /** Called when a drag starts, with the value where the track was pressed. */
-  onDragStart?: (value: number) => void
-  /** Called when the drag ends, with the value it ended on. */
-  onDragEnd?: (value: number) => void
+  /**
+   * Called when a change of the value starts — a press on the
+   * track, the first wheel notch or arrow key — with the value before it and
+   * what it is made with. A host recording automation can treat the control
+   * as touched from here until `onChangeEnd`.
+   */
+  onChangeStart?: (value: number, source: ChangeSource) => void
+  /**
+   * Called when the change ends, with the value it ended on: on release, or
+   * `changeEndDelay` after the last wheel notch or arrow key.
+   */
+  onChangeEnd?: (value: number, source: ChangeSource) => void
+  /**
+   * How long after the last wheel notch or arrow key the change counts as
+   * over, in milliseconds.
+   * @default 500
+   */
+  changeEndDelay?: number
   /** The root element, bound with `bind:ref`. */
   ref?: HTMLDivElement | null
   /** The slider renders exactly what you compose here. */

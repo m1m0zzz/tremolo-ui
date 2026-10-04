@@ -1,4 +1,5 @@
 import type {
+  ChangeSource,
   InputEventOption,
   ModifierValue,
   XY,
@@ -62,8 +63,24 @@ export interface XYPadProps {
   /** Make the value unchangeable. */
   readonly?: boolean
   onChange?: (value: XY<number>) => void
-  onDragStart?: (value: XY<number>) => void
-  onDragEnd?: (value: XY<number>) => void
+  /**
+   * Called when a change of the value starts — a press on the
+   * area, the first wheel notch or arrow key — with the value before it and
+   * what it is made with. A host recording automation can treat the control
+   * as touched from here until `onChangeEnd`.
+   */
+  onChangeStart?: (value: XY<number>, source: ChangeSource) => void
+  /**
+   * Called when the change ends, with the value it ended on: on release, or
+   * `changeEndDelay` after the last wheel notch or arrow key.
+   */
+  onChangeEnd?: (value: XY<number>, source: ChangeSource) => void
+  /**
+   * How long after the last wheel notch or arrow key the change counts as
+   * over, in milliseconds.
+   * @default 500
+   */
+  changeEndDelay?: number
   /** The root element, bound with `bind:ref`. */
   ref?: HTMLDivElement | null
   /** The pad renders exactly what you compose here. */

@@ -324,8 +324,10 @@ export function createDragValue(
       if (!position) return
       active = true
       lastValue = valueOf(position)
-      if (opts.updateOnPointerDown) opts.onChange?.(lastValue, state)
+      // Reported before the value it pressed: whoever records the drag hears
+      // that it began before the first value of it arrives.
       opts.onDragStart?.(lastValue, state)
+      if (opts.updateOnPointerDown) opts.onChange?.(lastValue, state)
     },
     onDrag: (state) => {
       if (!active) return

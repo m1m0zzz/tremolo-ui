@@ -118,3 +118,22 @@ describe('Slider', () => {
     ])
   })
 })
+
+describe('Slider change gesture', () => {
+  test('a press on the track starts before the value jumps there', async () => {
+    const onChangeStart = vi.fn()
+    const onChangeEnd = vi.fn()
+    const { root, onChange } = setup({ onChangeStart, onChangeEnd })
+    root.dispatchEvent(
+      pointerEvent('pointerdown', { clientX: 150, clientY: 0 }),
+    )
+    root.dispatchEvent(pointerEvent('pointerup', { clientX: 150, clientY: 0 }))
+    await tick()
+
+    expect(onChangeStart).toHaveBeenCalledWith(50, 'pointer')
+    expect(onChangeStart.mock.invocationCallOrder[0]).toBeLessThan(
+      onChange.mock.invocationCallOrder[0],
+    )
+    expect(onChangeEnd).toHaveBeenCalledWith(75, 'pointer')
+  })
+})

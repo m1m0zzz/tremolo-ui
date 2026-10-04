@@ -61,8 +61,10 @@ export const Basic: Story = {
           {...args}
           value={value}
           onChange={(v) => setValue(v)}
-          onDragStart={(v) => console.log('drag start: ', v)}
-          onDragEnd={(v) => console.log('drag end: ', v)}
+          onChangeStart={(v, source) =>
+            console.log('change start: ', v, source)
+          }
+          onChangeEnd={(v, source) => console.log('change end: ', v, source)}
         >
           <Slider.Track className={sliderTheme.track}>
             {thumb && <Slider.Thumb className={sliderTheme.thumb} />}

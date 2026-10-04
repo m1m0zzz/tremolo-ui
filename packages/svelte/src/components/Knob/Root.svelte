@@ -17,6 +17,7 @@
 
   import { dragValue } from '../../actions/drag-value.js'
   import { wheel as wheelAction } from '../../actions/wheel.js'
+  import { useChangeGesture } from '../_util/change-gesture.svelte.js'
   import { useCheckSteps } from '../_util/check-steps.svelte.js'
 
   import { setKnobContext } from './context.js'
@@ -44,6 +45,9 @@
     readonly = false,
     angleRange = 270,
     onChange,
+    onChangeStart,
+    onChangeEnd,
+    changeEndDelay,
     ref = $bindable(null),
     children,
     style,
@@ -100,6 +104,14 @@
     onChange?.(next)
   }
 
+  const gesture = useChangeGesture(() => ({
+    value,
+    inactive,
+    onChangeStart,
+    onChangeEnd,
+    changeEndDelay,
+  }))
+
   // The knob has no travel of its own: the value moves away from where it
   // stood when the drag started, 100px of movement spanning the whole range.
   // Only the vertical axis carries a value, reversed so that dragging up
@@ -122,9 +134,11 @@
     },
     onDragStart: () => {
       dragging = true
+      if (!inactive) gesture.hold('pointer')
     },
     onDragEnd: () => {
       dragging = false
+      gesture.end()
     },
   })
 
@@ -137,6 +151,7 @@
       const direction = wheelDirection(event)
       if (direction === null) return
       event.preventDefault()
+      gesture.pulse('wheel')
       change(applyDelta(value, direction, wheel, range, event))
     },
   })
@@ -173,6 +188,7 @@
       const direction = arrowKeyDirection(event.key)
       if (direction !== null) {
         event.preventDefault()
+        gesture.pulse('keyboard')
         change(applyDelta(value, direction, keyboard, range, event))
       }
     }
@@ -180,7 +196,9 @@
   }}
   ondblclick={(event) => {
     if (!inactive && resetValue !== null) {
-      change(resetValue ?? startValue ?? min)
+      gesture.instant('doubleClick', () =>
+        change(resetValue ?? startValue ?? min),
+      )
     }
     ondblclick?.(event)
   }}

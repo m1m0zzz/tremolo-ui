@@ -21,6 +21,7 @@ import {
   selectModifier,
   wheelDirection,
   type AxisOptions,
+  type ChangeSource,
   type InputEventOption,
   type ModifierValue,
   type XY,
@@ -29,6 +30,7 @@ import { linearScale, type Scale } from '@tremolo-ui/functions'
 
 import { useDragValue } from '../../composables/useDragValue'
 import { useWheel } from '../../composables/useWheel'
+import { useChangeGesture } from '../_util/change-gesture'
 import { useCheckSteps } from '../_util/useCheckSteps'
 
 import { KnobKey } from './context'
@@ -79,6 +81,12 @@ const knobProps = {
   disabled: Boolean,
   /** Make the knob unchangeable while leaving it focusable. */
   readonly: Boolean,
+  /**
+   * How long after the last wheel notch or arrow key a change counts as over,
+   * in milliseconds, for `change-end`.
+   * @default 500
+   */
+  changeEndDelay: { type: Number, default: 500 },
   /** How far the knob turns from `min` to `max`, in degrees. @default 270 */
   angleRange: { type: Number, default: 270 },
 } satisfies ComponentObjectPropsOptions
@@ -94,6 +102,15 @@ export const Knob = /* @__PURE__ */ defineComponent({
   props: knobProps,
   emits: {
     'update:modelValue': (value: number) => typeof value === 'number',
+    /**
+     * A change of the value started, with the value before it and what it is
+     * made with.
+     */
+    changeStart: (value: number, _source: ChangeSource) =>
+      typeof value === 'number',
+    /** The change ended, with the value it ended on. */
+    changeEnd: (value: number, _source: ChangeSource) =>
+      typeof value === 'number',
   },
   setup(props, { slots, emit, expose }) {
     const root = ref<HTMLDivElement | null>(null)
@@ -150,7 +167,17 @@ export const Knob = /* @__PURE__ */ defineComponent({
       },
     })
 
-    const change = (next: number) => emit('update:modelValue', next)
+    const gesture = useChangeGesture({
+      value: () => props.modelValue,
+      inactive: () => inactive.value,
+      endDelay: () => props.changeEndDelay,
+      onStart: (value, source) => emit('changeStart', value, source),
+      onEnd: (value, source) => emit('changeEnd', value, source),
+    })
+    const change = (next: number) => {
+      gesture.changed(next)
+      emit('update:modelValue', next)
+    }
 
     // The knob has no travel of its own: 100px of movement spans the whole
     // range, and only the vertical axis carries a value, reversed so that
@@ -172,9 +199,11 @@ export const Knob = /* @__PURE__ */ defineComponent({
       },
       onDragStart: () => {
         dragging.value = true
+        if (!inactive.value) gesture.hold('pointer')
       },
       onDragEnd: () => {
         dragging.value = false
+        gesture.end()
       },
     }))
 
@@ -187,6 +216,7 @@ export const Knob = /* @__PURE__ */ defineComponent({
         const direction = wheelDirection(event)
         if (direction === null) return
         event.preventDefault()
+        gesture.pulse('wheel')
         change(
           applyDelta(
             props.modelValue,
@@ -230,6 +260,7 @@ export const Knob = /* @__PURE__ */ defineComponent({
             const direction = arrowKeyDirection(event.key)
             if (direction === null) return
             event.preventDefault()
+            gesture.pulse('keyboard')
             change(
               applyDelta(
                 props.modelValue,
@@ -242,7 +273,9 @@ export const Knob = /* @__PURE__ */ defineComponent({
           },
           onDblclick: () => {
             if (!inactive.value && props.resetValue !== null) {
-              change(props.resetValue ?? props.startValue ?? props.min)
+              gesture.instant('doubleClick', () =>
+                change(props.resetValue ?? props.startValue ?? props.min),
+              )
             }
           },
         },
