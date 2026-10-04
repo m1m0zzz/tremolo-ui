@@ -6,7 +6,7 @@
   } from '@tremolo-ui/dom'
   import { tick } from 'svelte'
 
-  import { useNumberInputContext } from './context.js'
+  import { useNumberInputContext, useNumberInputGesture } from './context.js'
 
   import type { HTMLInputAttributes } from 'svelte/elements'
 
@@ -25,6 +25,7 @@
   }: Props = $props()
 
   const field = useNumberInputContext()
+  const gesture = useNumberInputGesture()
 
   $effect(() => {
     field.setInput(ref)
@@ -62,6 +63,7 @@
       field.keepCaretOnStep && input.selectionStart !== null
         ? caretDecimalOffset(from, input.selectionStart)
         : null
+    gesture?.key()
     field.nudge(direction, field.keyboard!, event)
     if (offset === null) return
     await tick()

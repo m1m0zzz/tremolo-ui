@@ -2,6 +2,7 @@ import {
   computed,
   defineComponent,
   h,
+  inject,
   nextTick,
   onBeforeUnmount,
   ref,
@@ -14,7 +15,7 @@ import {
   numberSpan,
 } from '@tremolo-ui/dom'
 
-import { useNumberInputContext } from './context'
+import { NumberInputGestureKey, useNumberInputContext } from './context'
 
 /**
  * The text field, and the only place the value can be typed. While the user
@@ -24,6 +25,7 @@ export const NumberInputField = /* @__PURE__ */ defineComponent({
   name: 'NumberInputField',
   setup(_, { expose }) {
     const field = useNumberInputContext()
+    const gesture = inject(NumberInputGestureKey, null)
     const input = ref<HTMLInputElement | null>(null)
     const focused = ref(false)
     watchEffect(() => field.setInput(input.value))
@@ -58,6 +60,7 @@ export const NumberInputField = /* @__PURE__ */ defineComponent({
         field.keepCaretOnStep && element.selectionStart !== null
           ? caretDecimalOffset(from, element.selectionStart)
           : null
+      gesture?.key()
       field.nudge(direction, field.keyboard!, event)
       if (offset === null) return
       await nextTick()

@@ -59,6 +59,17 @@ export function useNumberInputContext(): NumberInputContextValue {
   return injectContext(NumberInputKey, 'NumberInput')
 }
 
+/** @internal The change gesture of `NumberInput`, for the parts that change the value. */
+export interface NumberInputGestureValue {
+  /** A press on a stepper, held until the pointer is released anywhere. */
+  press: () => void
+  /** An arrow key in `NumberInputField`. */
+  key: () => void
+}
+
+export const NumberInputGestureKey: InjectionKey<NumberInputGestureValue> =
+  Symbol('NumberInputGesture')
+
 /** @internal Whether the drag on `NumberInputStepper` has moved the value. */
 export const StepperKey: InjectionKey<{ moved: () => boolean }> =
   Symbol('NumberInputStepper')

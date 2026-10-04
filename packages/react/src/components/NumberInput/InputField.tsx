@@ -15,7 +15,7 @@ import {
 
 import { useComposedRefs } from '../../compose-refs'
 
-import { useNumberInputContext } from './context'
+import { useNumberInputContext, useNumberInputGesture } from './context'
 
 // The value belongs to `NumberInput.Root`, and the field is always text.
 type Props = Omit<
@@ -58,6 +58,7 @@ export const InputField = /* @__PURE__ */ forwardRef<HTMLInputElement, Props>(
       inputRef,
     } = useNumberInputContext()
 
+    const gesture = useNumberInputGesture()
     const [focused, setFocused] = useState(false)
 
     // Only until the first keystroke: from then on the draft is the user's own
@@ -174,6 +175,7 @@ export const InputField = /* @__PURE__ */ forwardRef<HTMLInputElement, Props>(
                 from: input.value,
               }
             }
+            gesture?.key()
             nudge(key === 'ArrowUp' ? 1 : -1, keyboard, event)
           }
           onKeyDown?.(event)

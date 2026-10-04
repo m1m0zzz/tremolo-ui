@@ -1,4 +1,8 @@
-import type { InputEventOption, ModifierValue } from '@tremolo-ui/dom'
+import type {
+  ChangeSource,
+  InputEventOption,
+  ModifierValue,
+} from '@tremolo-ui/dom'
 import type { Scale } from '@tremolo-ui/functions'
 
 import type { Snippet } from 'svelte'
@@ -103,6 +107,25 @@ export interface NumberInputProps {
    * committed or stepped.
    */
   onChange?: (value: number) => void
+  /**
+   * Called when a change of the value starts — a press on a stepper, the
+   * first wheel notch, arrow key or typed character — with the value before
+   * it and what it is made with. A host recording automation can treat the
+   * input as touched from here until `onChangeEnd`.
+   */
+  onChangeStart?: (value: number, source: ChangeSource) => void
+  /**
+   * Called when the change ends, with the value it ended on: when the stepper
+   * is released, when typed text is committed, or `changeEndDelay` after the
+   * last wheel notch or arrow key.
+   */
+  onChangeEnd?: (value: number, source: ChangeSource) => void
+  /**
+   * How long after the last wheel notch, arrow key or typed character the
+   * change counts as over, in milliseconds.
+   * @default 500
+   */
+  changeEndDelay?: number
   /** The root element, bound with `bind:ref`. */
   ref?: HTMLDivElement | null
   /** The input renders exactly what you compose here. */

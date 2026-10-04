@@ -2,7 +2,11 @@ import { ComponentPropsWithoutRef, ReactNode, CSSProperties } from 'react'
 
 import { useLongPress } from '../../hooks/useLongPress'
 
-import { useNumberInputContext, useStepperContext } from './context'
+import {
+  useNumberInputContext,
+  useNumberInputGesture,
+  useStepperContext,
+} from './context'
 
 import type { CSSVariables } from '../../css-variables'
 
@@ -40,6 +44,7 @@ export function StepperButton({
   const { step, disabled, readOnly, atMin, atMax, nudge } =
     useNumberInputContext()
   const stepper = useStepperContext()
+  const gesture = useNumberInputGesture()
 
   // Not memoized: `useLongPress` only ever calls it through a ref, so a fresh
   // identity per render costs nothing.
@@ -67,7 +72,10 @@ export function StepperButton({
       data-readonly={readOnly ? '' : undefined}
       style={style}
       onPointerDown={(event) => {
-        if (!disabled && !readOnly) press(event)
+        if (!disabled && !readOnly) {
+          gesture?.press()
+          press(event)
+        }
         onPointerDown?.(event)
       }}
       {...props}

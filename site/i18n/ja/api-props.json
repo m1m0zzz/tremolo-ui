@@ -251,6 +251,18 @@
     "message": "`focus` と `blur` を受け取ります。フォーカスを受ける要素である `InputField` の input に働き、入力が無効の間は何もしません。`ref` はルート要素そのものに届きます。",
     "source": "1cdc6cbd"
   },
+  "NumberInputProps.onChangeStart": {
+    "message": "値の変更が始まったとき（ステッパーの押下、最初のホイールのノッチ、矢印キー、入力した文字）に、変更前の値と何で操作したかを受け取って呼ばれます。オートメーションを記録するホストは、ここから `onChangeEnd` までを入力に触れている間として扱えます。",
+    "source": "e5ff88b2"
+  },
+  "NumberInputProps.onChangeEnd": {
+    "message": "変更が終わったときに、終わった時点の値を受け取って呼ばれます。ステッパーを離したとき、入力した文字を確定したとき、または最後のホイールのノッチや矢印キーから `changeEndDelay` が経ったときです。",
+    "source": "fe01b222"
+  },
+  "NumberInputProps.changeEndDelay": {
+    "message": "最後のホイールのノッチ、矢印キー、入力した文字から、変更が終わったとみなすまでのミリ秒。どれにも終わりを知らせるイベントがありません。",
+    "source": "89bf05d4"
+  },
   "PianoProps.classes": {
     "message": "鍵盤が中に描くもののクラス。`keyLabelWrapper` と、`label` が返したものを包む `keyLabel` です。鍵盤そのもののクラスは `keyProps` から渡します。ノートとその状態を受け取れるのもそちらです。",
     "source": "f9a2682b"

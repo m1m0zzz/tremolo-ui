@@ -2,7 +2,11 @@
   import { createStepperDrag, type StepperDragInstance } from '@tremolo-ui/dom'
   import { untrack } from 'svelte'
 
-  import { setStepperContext, useNumberInputContext } from './context.js'
+  import {
+    setStepperContext,
+    useNumberInputContext,
+    useNumberInputGesture,
+  } from './context.js'
 
   import type { Snippet } from 'svelte'
   import type { HTMLAttributes } from 'svelte/elements'
@@ -12,9 +16,15 @@
     children?: Snippet
   }
 
-  let { ref = $bindable(null), children, ...rest }: Props = $props()
+  let {
+    ref = $bindable(null),
+    children,
+    onpointerdown,
+    ...rest
+  }: Props = $props()
 
   const field = useNumberInputContext()
+  const gesture = useNumberInputGesture()
 
   // Only attached while it can do something: `createDrag` puts
   // `touch-action: none` on the element, and a stepper that cannot be dragged
@@ -57,6 +67,15 @@
 
 <!-- The area the steppers sit in, and a drag handle in its own right:
   dragging it up and down moves the value one `step` every `drag` pixels. -->
-<div bind:this={ref} {...rest}>
+<div
+  bind:this={ref}
+  onpointerdown={(event) => {
+    // A drag on the stepper is a press like any other: held from here until
+    // the pointer is released.
+    if (enabled) gesture?.press()
+    onpointerdown?.(event)
+  }}
+  {...rest}
+>
   {@render children?.()}
 </div>

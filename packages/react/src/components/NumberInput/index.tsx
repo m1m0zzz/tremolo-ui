@@ -12,6 +12,7 @@ import {
 } from 'react'
 
 import {
+  type ChangeSource,
   DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
@@ -28,10 +29,11 @@ import {
 import { linearScale, type Scale } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
+import { useChangeGesture } from '../../hooks/_internal/useChangeGesture'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useWheel } from '../../hooks/useWheel'
 
-import { NumberInputProvider } from './context'
+import { NumberInputGestureProvider, NumberInputProvider } from './context'
 import { DecrementStepper } from './DecrementStepper'
 import { IncrementStepper } from './IncrementStepper'
 import { InputField } from './InputField'
@@ -237,6 +239,27 @@ export interface NumberInputProps {
    * again if clamping changes the value.
    */
   onChange?: (value: number) => void
+  /**
+   * Called when a change of the value starts — a press on a stepper, the
+   * first wheel notch, arrow key or typed character — with the value before
+   * it and what it is made with. A host recording automation can treat the
+   * input as touched from here until `onChangeEnd`.
+   */
+  onChangeStart?: (value: number, source: ChangeSource) => void
+  /**
+   * Called when the change ends, with the value it ended on: when the stepper
+   * is released, when typed text is committed, or `changeEndDelay` after the
+   * last wheel notch or arrow key.
+   */
+  onChangeEnd?: (value: number, source: ChangeSource) => void
+  /**
+   * How long after the last wheel notch, arrow key or typed character the
+   * change counts as over, in milliseconds. None of them has an event that
+   * says it is done.
+   *
+   * @default 500
+   */
+  changeEndDelay?: number
 
   /**
    * The input renders exactly what you compose here; there is no default
@@ -297,6 +320,9 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       className,
       style,
       onChange,
+      onChangeStart,
+      onChangeEnd,
+      changeEndDelay,
       children,
       actionsRef,
       ...props
@@ -311,6 +337,12 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
      */
     const [draft, setDraft] = useState<string | null>(null)
     const inactive = disabled || readOnly
+
+    const gesture = useChangeGesture(
+      value,
+      { onChangeStart, onChangeEnd, changeEndDelay },
+      inactive,
+    )
 
     // --- interpret props ---
     const format = formatProp ?? defaultFormat
@@ -358,18 +390,25 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         // Deliberately unclamped: clamping here would make "1500" impossible
         // to type into an input whose max is 100.
         const parsed = parse(next)
-        if (Number.isFinite(parsed)) onChange?.(parsed)
+        if (!Number.isFinite(parsed)) return
+        if (parsed !== value) {
+          gesture.pulse('keyboard')
+          gesture.changed(parsed)
+        }
+        onChange?.(parsed)
       },
-      [inactive, parse, onChange],
+      [inactive, parse, onChange, value, gesture],
     )
 
     const changeValue = useCallback(
       (next: number) => {
         if (inactive) return
         setDraft(null)
-        if (next !== value) onChange?.(next)
+        if (next === value) return
+        gesture.changed(next)
+        onChange?.(next)
       },
-      [inactive, value, onChange],
+      [inactive, value, onChange, gesture],
     )
 
     const commitDraft = useCallback(() => {
@@ -381,9 +420,25 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       })
       // Text with no number in it is not a value. Dropping the draft puts the
       // input back to what it was showing.
-      if (committed === null) setDraft(null)
-      else changeValue(committed)
-    }, [draft, inactive, parse, clampValue, min, max, changeValue])
+      if (committed === null) {
+        setDraft(null)
+        return
+      }
+      // The typing was a gesture of its own, and committing is where it ends.
+      if (committed !== value) gesture.pulse('keyboard')
+      changeValue(committed)
+      gesture.end()
+    }, [
+      draft,
+      inactive,
+      parse,
+      clampValue,
+      min,
+      max,
+      changeValue,
+      value,
+      gesture,
+    ])
 
     const nudge = useCallback(
       (
@@ -404,6 +459,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         const direction = wheelDirection(event)
         if (!wheel || inactive || direction === null) return
         event.preventDefault()
+        gesture.pulse('wheel')
         nudge(direction, wheel, event)
       },
       { requireFocus: true },
@@ -495,18 +551,47 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       }
     }, [disabled])
 
+    const pressed = useRef(false)
+    const gestureContext = useMemo(
+      () => ({
+        press: () => {
+          if (inactive) return
+          gesture.hold('pointer')
+          // A press on a stepper reaches `Stepper` too; one release will do.
+          if (pressed.current) return
+          pressed.current = true
+          // Released wherever the pointer ends up: the stepper drag captures
+          // it, and a press that wanders off the button still ends.
+          const release = () => {
+            pressed.current = false
+            gesture.end()
+            window.removeEventListener('pointerup', release)
+            window.removeEventListener('pointercancel', release)
+          }
+          window.addEventListener('pointerup', release)
+          window.addEventListener('pointercancel', release)
+        },
+        key: () => {
+          if (!inactive) gesture.pulse('keyboard')
+        },
+      }),
+      [gesture, inactive],
+    )
+
     return (
       <NumberInputProvider value={context}>
-        <div
-          ref={rootRefCallback}
-          className={className}
-          data-disabled={disabled ? '' : undefined}
-          data-readonly={readOnly ? '' : undefined}
-          style={style}
-          {...props}
-        >
-          {children}
-        </div>
+        <NumberInputGestureProvider value={gestureContext}>
+          <div
+            ref={rootRefCallback}
+            className={className}
+            data-disabled={disabled ? '' : undefined}
+            data-readonly={readOnly ? '' : undefined}
+            style={style}
+            {...props}
+          >
+            {children}
+          </div>
+        </NumberInputGestureProvider>
       </NumberInputProvider>
     )
   },

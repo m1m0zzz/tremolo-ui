@@ -2,7 +2,11 @@ import { computed, defineComponent, h, inject } from 'vue'
 
 import { useLongPress } from '../../composables/useLongPress'
 
-import { StepperKey, useNumberInputContext } from './context'
+import {
+  NumberInputGestureKey,
+  StepperKey,
+  useNumberInputContext,
+} from './context'
 
 /** The body of `NumberInputIncrementStepper` and `NumberInputDecrementStepper`. */
 export function stepperButton(name: string, direction: 1 | -1) {
@@ -11,12 +15,15 @@ export function stepperButton(name: string, direction: 1 | -1) {
     setup(_, { slots }) {
       const field = useNumberInputContext()
       const stepper = inject(StepperKey, null)
+      const gesture = inject(NumberInputGestureKey, null)
       const blocked = computed(
         () => field.disabled || (direction > 0 ? field.atMax : field.atMin),
       )
       const press = useLongPress({
         onPress: () => {
           if (field.disabled || field.readonly) return
+          // On every press and repeat; the gesture is held from the first.
+          gesture?.press()
           // Once the pointer has actually travelled, the drag on the stepper
           // owns the value; repeating on top of it would move it twice.
           if (stepper?.moved()) return

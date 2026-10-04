@@ -10,6 +10,7 @@ import {
 } from 'vue'
 
 import {
+  type ChangeSource,
   commitNumberInputText,
   numberInputBounds,
   numberInputRanges,
@@ -20,10 +21,11 @@ import {
 import { linearScale, type Scale } from '@tremolo-ui/functions'
 
 import { useWheel } from '../../composables/useWheel'
+import { useChangeGesture } from '../_util/change-gesture'
 import { dragSensitivityProp, keyboardProp, wheelProp } from '../_util/props'
 import { useCheckSteps } from '../_util/useCheckSteps'
 
-import { NumberInputKey } from './context'
+import { NumberInputGestureKey, NumberInputKey } from './context'
 
 const numberInputProps = {
   /** The current value. Bind it with `v-model`. */
@@ -72,6 +74,12 @@ const numberInputProps = {
   disabled: Boolean,
   /** Make the value unchangeable while leaving the field focusable. */
   readonly: Boolean,
+  /**
+   * How long after the last wheel notch, arrow key or typed character a change
+   * counts as over, in milliseconds, for `change-end`.
+   * @default 500
+   */
+  changeEndDelay: { type: Number, default: 500 },
 } satisfies ComponentObjectPropsOptions
 
 export type NumberInputProps = ExtractPublicPropTypes<typeof numberInputProps>
@@ -82,6 +90,16 @@ export const NumberInput = /* @__PURE__ */ defineComponent({
   props: numberInputProps,
   emits: {
     'update:modelValue': (value: number) => typeof value === 'number',
+    /**
+     * A change of the value started — a press on a stepper, the first wheel
+     * notch, arrow key or typed character — with the value before it and what
+     * it is made with.
+     */
+    changeStart: (value: number, _source: ChangeSource) =>
+      typeof value === 'number',
+    /** The change ended, with the value it ended on. */
+    changeEnd: (value: number, _source: ChangeSource) =>
+      typeof value === 'number',
   },
   setup(props, { slots, emit, expose }) {
     const root = ref<HTMLDivElement | null>(null)
@@ -130,11 +148,45 @@ export const NumberInput = /* @__PURE__ */ defineComponent({
       format: props.format,
     }))
 
+    const gesture = useChangeGesture({
+      value: () => props.modelValue,
+      inactive: () => inactive.value,
+      endDelay: () => props.changeEndDelay,
+      onStart: (value, source) => emit('changeStart', value, source),
+      onEnd: (value, source) => emit('changeEnd', value, source),
+    })
+
     function changeValue(next: number) {
       if (inactive.value) return
       draft.value = null
-      if (next !== props.modelValue) emit('update:modelValue', next)
+      if (next === props.modelValue) return
+      gesture.changed(next)
+      emit('update:modelValue', next)
     }
+
+    let pressed = false
+    provide(NumberInputGestureKey, {
+      press: () => {
+        if (inactive.value) return
+        gesture.hold('pointer')
+        // Called again by every repeat of a held stepper; one release will do.
+        if (pressed) return
+        pressed = true
+        // Released wherever the pointer ends up: the stepper drag captures
+        // it, and a press that wanders off the button still ends.
+        const release = () => {
+          pressed = false
+          gesture.end()
+          window.removeEventListener('pointerup', release)
+          window.removeEventListener('pointercancel', release)
+        }
+        window.addEventListener('pointerup', release)
+        window.addEventListener('pointercancel', release)
+      },
+      key: () => {
+        if (!inactive.value) gesture.pulse('keyboard')
+      },
+    })
 
     provide(NumberInputKey, {
       get value() {
@@ -206,7 +258,12 @@ export const NumberInput = /* @__PURE__ */ defineComponent({
         // Deliberately unclamped: clamping here would make "1500" impossible
         // to type into an input whose max is 100.
         const parsed = props.parse(next)
-        if (Number.isFinite(parsed)) emit('update:modelValue', parsed)
+        if (!Number.isFinite(parsed)) return
+        if (parsed !== props.modelValue) {
+          gesture.pulse('keyboard')
+          gesture.changed(parsed)
+        }
+        emit('update:modelValue', parsed)
       },
       commitDraft: () => {
         if (draft.value === null || inactive.value) return
@@ -217,8 +274,15 @@ export const NumberInput = /* @__PURE__ */ defineComponent({
         })
         // Text with no number is not a value: the field goes back to what it
         // was showing.
-        if (committed === null) draft.value = null
-        else changeValue(committed)
+        if (committed === null) {
+          draft.value = null
+          return
+        }
+        // The typing was a gesture of its own, and committing is where it
+        // ends.
+        if (committed !== props.modelValue) gesture.pulse('keyboard')
+        changeValue(committed)
+        gesture.end()
       },
       changeValue,
       nudge: (direction, option, modifiers) =>
@@ -242,6 +306,7 @@ export const NumberInput = /* @__PURE__ */ defineComponent({
         const direction = wheelDirection(event)
         if (!props.wheel || inactive.value || direction === null) return
         event.preventDefault()
+        gesture.pulse('wheel')
         changeValue(
           nudgeNumberInput(
             props.modelValue,
