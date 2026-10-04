@@ -16,7 +16,7 @@ describe('createWheel', () => {
     const element = document.createElement('div')
     document.body.appendChild(element)
     const onWheel = vi.fn()
-    createWheel(element, onWheel)
+    createWheel(element, { onWheel })
 
     element.dispatchEvent(wheelEvent(120))
 
@@ -27,7 +27,7 @@ describe('createWheel', () => {
   test('the handler can preventDefault, so the listener is not passive', () => {
     const element = document.createElement('div')
     document.body.appendChild(element)
-    createWheel(element, (event) => event.preventDefault())
+    createWheel(element, { onWheel: (event) => event.preventDefault() })
 
     const event = wheelEvent(120)
     element.dispatchEvent(event)
@@ -39,7 +39,7 @@ describe('createWheel', () => {
     const element = document.createElement('div')
     document.body.appendChild(element)
     const onWheel = vi.fn()
-    const instance = createWheel(element, onWheel)
+    const instance = createWheel(element, { onWheel })
 
     instance.destroy()
     element.dispatchEvent(wheelEvent(120))
@@ -52,7 +52,7 @@ describe('createWheel', () => {
     document.body.appendChild(element)
     const first = vi.fn()
     const second = vi.fn()
-    const instance = createWheel(element, first)
+    const instance = createWheel(element, { onWheel: first })
 
     instance.update({ onWheel: second })
     element.dispatchEvent(wheelEvent(120))
@@ -68,7 +68,7 @@ describe('createWheel', () => {
       element.appendChild(child)
       document.body.appendChild(element)
       const onWheel = vi.fn()
-      const instance = createWheel(element, onWheel, { requireFocus: true })
+      const instance = createWheel(element, { onWheel, requireFocus: true })
       return { element, child, onWheel, instance }
     }
 

@@ -3,7 +3,7 @@ export { drag } from './actions/drag.js'
 export { dragValue } from './actions/drag-value.js'
 export { dropZone } from './actions/drop-zone.js'
 export { longPress } from './actions/long-press.js'
-export { wheel, type WheelActionOptions } from './actions/wheel.js'
+export { wheel } from './actions/wheel.js'
 
 // components
 export { default as AnimationCanvas } from './components/AnimationCanvas/AnimationCanvas.svelte'

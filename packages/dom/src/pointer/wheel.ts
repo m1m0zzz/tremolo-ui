@@ -1,6 +1,10 @@
 export interface WheelOptions {
-  /** Replace the callback through {@link WheelInstance.update}. */
-  onWheel?: (event: WheelEvent) => void
+  /**
+   * Called for every wheel event that `requireFocus` lets through. The
+   * listener is not passive, so this may call `preventDefault()` to keep the
+   * page from scrolling.
+   */
+  onWheel: (event: WheelEvent) => void
   /**
    * Only report events while the focus is inside the element.
    *
@@ -19,7 +23,7 @@ export interface WheelOptions {
 
 export interface WheelInstance {
   /** Replace the given options, keeping the listener in place. */
-  update: (options: WheelOptions) => void
+  update: (options: Partial<WheelOptions>) => void
   destroy: () => void
 }
 
@@ -31,10 +35,9 @@ export interface WheelInstance {
  */
 export function createWheel(
   element: Element,
-  onWheel: (event: WheelEvent) => void,
-  options: WheelOptions = {},
+  options: WheelOptions,
 ): WheelInstance {
-  let opts = { ...options, onWheel }
+  let opts = options
 
   function hasFocus() {
     const active = element.ownerDocument?.activeElement
@@ -43,7 +46,7 @@ export function createWheel(
 
   const handler = (event: Event) => {
     if (opts.requireFocus && !hasFocus()) return
-    opts.onWheel?.(event as WheelEvent)
+    opts.onWheel(event as WheelEvent)
   }
 
   element.addEventListener('wheel', handler, { passive: false })

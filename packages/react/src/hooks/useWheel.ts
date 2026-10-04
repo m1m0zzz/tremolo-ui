@@ -4,9 +4,8 @@ import { createWheel, type WheelOptions } from '@tremolo-ui/dom'
 
 import { useCallbackRef } from './_internal/useCallbackRef'
 
-// `onWheel` is left out: `createWheel` takes it so that `update()` can replace
-// the callback, but this hook takes the handler as its first argument and the
-// option would be silently ignored.
+// `onWheel` is left out: this hook takes the handler as its first argument, so
+// the option would be a second way to say the same thing.
 export interface UseWheelOptions extends Omit<WheelOptions, 'onWheel'> {
   /**
    * Listen on this element rather than on the one the returned ref callback is
@@ -43,7 +42,8 @@ export function useWheel<T extends Element>(
     const element = target ? target.current : node
     if (!element) return
 
-    const instance = createWheel(element, (event) => wheelHandler(event), {
+    const instance = createWheel(element, {
+      onWheel: (event) => wheelHandler(event),
       requireFocus,
     })
 

@@ -12,12 +12,15 @@ import { useInstance } from './useInstance'
 export function useWheel(
   target: MaybeRefOrGetter<Element | null | undefined>,
   onWheel: (event: WheelEvent) => void,
-  options: MaybeRefOrGetter<WheelOptions> = {},
+  // `onWheel` is left out: the handler is the second argument, and an option
+  // of the same name would replace it on the first update.
+  options: MaybeRefOrGetter<Omit<WheelOptions, 'onWheel'>> = {},
 ) {
   useInstance(
     target,
     options,
-    (element, opts) => createWheel(element, (event) => onWheel(event), opts),
+    (element, opts) =>
+      createWheel(element, { ...opts, onWheel: (event) => onWheel(event) }),
     (instance, next) => instance.update(next),
   )
 }

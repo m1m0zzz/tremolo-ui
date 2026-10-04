@@ -235,9 +235,10 @@ props・パート・命令的メソッドは 3 つでほぼ揃っている（Sve
   - パートの ref（`Slider.Thumb` / `XYPad.Thumb` の `*ThumbMethods`）も同じ。`__stories__/combined/ControlFocus.stories.tsx` / `Piano.stories.tsx` / `useMIDIInput.stories.tsx` / WavetableSynth の `KeyboardSection` がメソッドの ref を使っている
 - [ ] **Vue も props の型を公開する。** React / Svelte と同じ名前（`KnobProps` など）にする
   - Vue の props は `defineComponent` の実行時の宣言（`{ type: Number, required: true }`）で、JSDoc もそこにある。宣言を定数に出して `ExtractPublicPropTypes<typeof knobProps>` で型を作れば、宣言と型が二重にならない。パートの props（`KnobThumbProps` など）も Svelte と同じだけ出す
-- [ ] **Svelte の `wheel` action の引数を他の action と同じ形にし、`WheelActionOptions` を消す。** `wheel` だけハンドラを options に入れていたので、名前付きの型が必要になっていた
+- [x] **Svelte の `wheel` action の引数を他の action と同じ形にし、`WheelActionOptions` を消す。** `wheel` だけハンドラを options に入れていたので、名前付きの型が必要になっていた
   - **原因は `dom` の `createWheel` の形にある。** `createWheel(element, onWheel, options)` はハンドラを位置引数で受け、`WheelOptions` にも `update()` 用の `onWheel` がある。`createDrag(element, options)` や `createLongPress({ onPress, … })` のようにハンドラを必須のオプションにすれば、Svelte の action は `WheelOptions` をそのまま受けられ、`WheelActionOptions` は要らなくなる
   - **Vue の `useWheel` にも同じ穴がある。** 第 2 引数のハンドラで作ったあと、`options` に `onWheel` を入れて変えるとそちらに差し替わり、外すとハンドラごと消える（`replaceOptions` が `undefined` で上書きする）。React の `useWheel` は 6 章で `Omit` して塞いだ。`createWheel` を直せばまとめて片付く
+  - `createWheel(element, { onWheel, … })` にした。Vue の `useWheel` は React と同じくハンドラを第 2 引数で受けたまま、オプションの型から `onWheel` を外して塞いだ
 
 ### API の形
 
