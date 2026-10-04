@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { AnimationCanvas, type DrawFunction } from '@tremolo-ui/vue'
+import { type CanvasDrawFunction } from '@tremolo-ui/dom'
+import { AnimationCanvas } from '@tremolo-ui/vue'
 
-const draw: DrawFunction = (ctx, { width, height, count }) => {
+const draw: CanvasDrawFunction = (ctx, { width, height, count }) => {
   ctx.clearRect(0, 0, width, height)
   ctx.fillText(`frame: ${count}`, 0, 16)
   // draw sine wave

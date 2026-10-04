@@ -1,9 +1,11 @@
-import { AnimationCanvas, type DrawFunction } from '../src'
+import { type CanvasDrawFunction } from '@tremolo-ui/dom'
+
+import { AnimationCanvas } from '../src'
 
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
 /** A sine wave that scrolls with time. */
-const draw: DrawFunction = (context, { width, height, elapsedTime }) => {
+const draw: CanvasDrawFunction = (context, { width, height, elapsedTime }) => {
   context.clearRect(0, 0, width, height)
   context.beginPath()
   for (let x = 0; x <= width; x++) {

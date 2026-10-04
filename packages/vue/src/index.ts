@@ -1,9 +1,5 @@
 // components
-export {
-  AnimationCanvas,
-  type DrawFunction,
-  type InitFunction,
-} from './components/AnimationCanvas'
+export { AnimationCanvas } from './components/AnimationCanvas'
 export { DropZone } from './components/DropZone'
 export {
   FileInput,
