@@ -47,7 +47,10 @@ npm run test:watch -w packages/react
 
 ### PR を作る前に
 
-**パッケージだけでなく、成果物を全てビルドすること。** `lint` / `format:check` / `test` / `build:sb` / `build:docs` を手元で通してから push する。CI も同じものを回すが、1 つの job を直列に流すので、docs のビルド失敗に気づくまで数分かかる。
+**パッケージだけでなく、成果物を全てビルドすること。** `lint` / `format:check` / `test` / `build:sb` / `build:docs` と、テンプレートの 2 つ（下）を手元で通してから push する。CI も同じものを回すが、1 つの job を直列に流すので、docs のビルド失敗に気づくまで数分かかる。
+
+- **テンプレートも成果物に含める。** `templates/` は workspaces に入っていて手元の dist を見るので、API を変えるとテンプレートが壊れる。`npm run build -w templates/vite-react-ts -w templates/next-ts` で確かめる
+- **`shared/css/` を変えたら `templates/*/src/theme/` の写しも直す。** degit で取り出したテンプレートが単体で動くように写してあり、CI が `cmp` で中身の一致を確かめる
 
 - **`ci.yml` と `pull-request.yml` は、ビルドまでの手順が同じものの重複。** trigger 単位で読めるように分けてあるので、**片方にステップを足したらもう片方にも足すこと**（`paths` フィルタも同様。YAML のアンカーはファイルをまたげない）
 - `paths` フィルタの結果、**changeset だけを足した PR は CI 信号がゼロになる**
