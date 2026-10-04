@@ -54,9 +54,9 @@ export interface XYPadProps {
   keyboard?: ModifierValue<InputEventOption> | null
   /**
    * The cursor to show while dragging.
-   * @default { cursor: 'pointer' }
+   * @default 'pointer'
    */
-  externalStyles?: { cursor?: string }
+  dragCursor?: string
   /** Make the pad unchangeable and remove it from the tab order. */
   disabled?: boolean
   /** Make the value unchangeable. */

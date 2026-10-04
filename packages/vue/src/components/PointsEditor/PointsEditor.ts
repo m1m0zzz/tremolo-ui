@@ -34,8 +34,8 @@ export const PointsEditor = /* @__PURE__ */ defineComponent({
     disabled: Boolean,
     /** Make the points unmovable. */
     readonly: Boolean,
-    /** The cursor to show while dragging a point. @default { cursor: 'grabbing' } */
-    externalStyles: Object as PropType<{ cursor?: string }>,
+    /** The cursor to show while dragging a point. @default 'grabbing' */
+    dragCursor: { type: String, default: 'grabbing' },
     /** How much one wheel notch moves the focused point. */
     wheel: {
       type: [Array, Object] as PropType<ModifierValue<InputEventOption> | null>,
@@ -110,8 +110,8 @@ export const PointsEditor = /* @__PURE__ */ defineComponent({
       get dragSensitivity() {
         return props.dragSensitivity
       },
-      get cursor() {
-        return props.externalStyles?.cursor ?? 'grabbing'
+      get dragCursor() {
+        return props.dragCursor
       },
       get selectable() {
         return props.selectable

@@ -53,8 +53,8 @@ export const Knob = /* @__PURE__ */ defineComponent({
     startValue: Number,
     /** Width and height of the knob. Sets `--knob-size`. */
     size: [Number, String],
-    /** The cursor to show while dragging. @default { cursor: 'grabbing' } */
-    externalStyles: Object as PropType<{ cursor?: string }>,
+    /** The cursor to show while dragging. @default 'grabbing' */
+    dragCursor: { type: String, default: 'grabbing' },
     /** How much one notch of the wheel moves the value. `null` turns it off. */
     wheel: {
       type: [Array, Object] as PropType<ModifierValue<InputEventOption> | null>,
@@ -151,9 +151,7 @@ export const Knob = /* @__PURE__ */ defineComponent({
       }),
       getValue: (): XY<number> => [props.modelValue, props.modelValue],
       threshold: 1,
-      cursor: inactive.value
-        ? undefined
-        : (props.externalStyles?.cursor ?? 'grabbing'),
+      cursor: inactive.value ? undefined : props.dragCursor,
       pointerLock: inactive.value ? false : props.pointerLock,
       shouldStart: () => !inactive.value,
       onChange: (v) => {

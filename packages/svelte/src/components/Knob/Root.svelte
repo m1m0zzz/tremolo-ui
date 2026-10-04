@@ -35,7 +35,7 @@
     resetValue,
     startValue,
     size,
-    externalStyles,
+    dragCursor = 'grabbing',
     wheel = DEFAULT_WHEEL_OPTIONS,
     keyboard = DEFAULT_KEYBOARD_OPTIONS,
     dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
@@ -114,7 +114,7 @@
     }),
     getValue: (): XY<number> => [value, value],
     threshold: 1,
-    cursor: inactive ? undefined : (externalStyles?.cursor ?? 'grabbing'),
+    cursor: inactive ? undefined : dragCursor,
     pointerLock: inactive ? false : pointerLock,
     shouldStart: () => !inactive,
     onChange: (v: XY<number>) => {

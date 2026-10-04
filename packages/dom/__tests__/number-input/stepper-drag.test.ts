@@ -74,3 +74,19 @@ test('shift moves a tenth as much, without jumping when pressed', () => {
   expect(onChange).toHaveBeenLastCalledWith(61)
   instance.destroy()
 })
+
+test('shows ns-resize while dragging unless a cursor is given', () => {
+  const { at, element, instance } = setup()
+  at('pointerdown', 100)
+  at('pointermove', 99)
+  expect(element.style.cursor).toBe('ns-resize')
+  at('pointerup', 99)
+  expect(element.style.cursor).toBe('')
+
+  instance.update({ cursor: 'grabbing' })
+  at('pointerdown', 100)
+  at('pointermove', 99)
+  expect(element.style.cursor).toBe('grabbing')
+  at('pointerup', 99)
+  instance.destroy()
+})

@@ -1,4 +1,4 @@
-import { createContext, RefObject, useContext } from 'react'
+import { createContext, CSSProperties, RefObject, useContext } from 'react'
 
 import {
   type InputEventOption,
@@ -40,6 +40,8 @@ export type NumberInputContextValue = {
   dragSensitivity: ModifierValue<number>
   /** Whether a `Stepper` drag hides the pointer and reads its movement. */
   pointerLock: boolean
+  /** The cursor shown while a `Stepper` is dragged. */
+  dragCursor: CSSProperties['cursor']
 
   /** What `InputField` selects when it takes focus. */
   selectOnFocus: 'all' | 'number' | 'none'

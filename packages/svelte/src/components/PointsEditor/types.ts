@@ -13,9 +13,9 @@ export interface PointsEditorProps {
   readonly?: boolean
   /**
    * The cursor to show while dragging a point.
-   * @default { cursor: 'grabbing' }
+   * @default 'grabbing'
    */
-  externalStyles?: { cursor?: string }
+  dragCursor?: string
   /**
    * How much one notch of the wheel moves the focused `Point`. Scrolling
    * sideways, or with shift held, moves x. A `Point` can override it.

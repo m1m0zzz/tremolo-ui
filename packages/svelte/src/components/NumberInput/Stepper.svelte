@@ -27,6 +27,7 @@
     pixels: field.drag ?? 1,
     sensitivity: field.dragSensitivity,
     pointerLock: field.pointerLock,
+    cursor: field.dragCursor,
   })
 
   let instance: StepperDragInstance | null = null

@@ -44,11 +44,9 @@ export interface PointsEditorProps {
    * The cursor to show while dragging a point. It is set on the dragged
    * point, so it stays while the pointer is outside it.
    *
-   * @default { cursor: 'grabbing' }
+   * @default 'grabbing'
    */
-  externalStyles?: {
-    cursor?: CSSProperties['cursor']
-  }
+  dragCursor?: CSSProperties['cursor']
 
   /**
    * How much one notch of the wheel moves the focused `Point`. Scrolling
@@ -163,7 +161,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       selection: selectionProp,
       defaultSelection,
       onSelectionChange,
-      externalStyles,
+      dragCursor = 'grabbing',
       style,
       className,
       children,
@@ -174,7 +172,6 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
     const containerRef = useRef<HTMLDivElement>(null)
     // Picked apart so that the memo below depends on values rather than on the
     // object literal a caller writes inline, which is new on every render.
-    const { cursor = 'grabbing' } = externalStyles ?? {}
 
     // --- selection ---
     // The selection lives here, where React state can hold it; which points a
@@ -218,7 +215,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         wheel,
         keyboard,
         dragSensitivity,
-        externalStyles: { cursor },
+        dragCursor,
         containerRef,
         selectable,
         selection,
@@ -231,7 +228,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         wheel,
         keyboard,
         dragSensitivity,
-        cursor,
+        dragCursor,
         selectable,
         selection,
         editor,

@@ -16,7 +16,7 @@ export interface PointsEditorContextValue {
   readonly wheel: ModifierValue<InputEventOption> | null
   readonly keyboard: ModifierValue<InputEventOption> | null
   readonly dragSensitivity: ModifierValue<number>
-  readonly cursor: string
+  readonly dragCursor: string
   readonly selectable: boolean
   /** Ids of the selected points. Always empty while `selectable` is off. */
   readonly selection: readonly string[]
