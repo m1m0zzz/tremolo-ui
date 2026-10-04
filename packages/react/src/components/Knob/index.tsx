@@ -3,6 +3,7 @@ import {
   CSSProperties,
   forwardRef,
   ReactNode,
+  Ref,
   useCallback,
   useImperativeHandle,
   useMemo,
@@ -193,6 +194,13 @@ export interface KnobProps {
   children: ReactNode
 
   style?: CSSProperties & CSSVariables<'knob-size'>
+
+  /**
+   * Receives `focus` and `blur`. They do nothing while the knob is disabled,
+   * where the element's own `focus()` would still focus it. `ref` reaches the
+   * root element itself.
+   */
+  actionsRef?: Ref<KnobMethods>
 }
 
 export interface KnobMethods {
@@ -208,7 +216,7 @@ type Props = KnobProps & Omit<ComponentPropsWithoutRef<'div'>, keyof KnobProps>
  */
 const WHEEL_OPTIONS = { requireFocus: true }
 
-export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
+export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   (
     {
       value,
@@ -234,11 +242,12 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
       className,
       style,
       children,
+      actionsRef,
       ...props
     }: Props,
     forwardedRef,
   ) => {
-    const elmRef = useRef<HTMLElement | SVGElement>(null)
+    const elmRef = useRef<HTMLDivElement>(null)
 
     const inactive = disabled || readOnly
 
@@ -301,7 +310,8 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
 
     // Composed once, so React attaches the refs a single time instead of
     // detaching and re-attaching on every render.
-    const rootRefCallback = useComposedRefs<HTMLElement | SVGElement>(
+    const rootRefCallback = useComposedRefs<HTMLDivElement>(
+      forwardedRef,
       elmRef,
       dragRefCallback,
       wheelRefCallback,
@@ -312,7 +322,7 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
       return { ...config, ...knobAngles(config) }
     }, [value, min, max, step, scale, startValue, angleRange])
 
-    useImperativeHandle(forwardedRef, () => {
+    useImperativeHandle(actionsRef, () => {
       return {
         focus() {
           if (!disabled) elmRef.current?.focus()

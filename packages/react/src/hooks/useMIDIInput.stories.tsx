@@ -121,7 +121,7 @@ export const Basic = () => {
             className:
               keyType === 'white' ? pianoTheme.whiteKey : pianoTheme.blackKey,
           })}
-          ref={pianoRef}
+          actionsRef={pianoRef}
           noteRange={{ first: noteNumber('A0'), last: noteNumber('C8') }}
           label={(note) => (note % 12 === 0 ? noteName(note) : undefined)}
           onPlayNote={(note, velocity) =>

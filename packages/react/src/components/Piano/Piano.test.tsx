@@ -38,7 +38,7 @@ function setup(props: Partial<PianoProps> = {}) {
 
   const rendered = render(
     <Piano.Root
-      ref={ref}
+      actionsRef={ref}
       noteRange={range}
       data-testid="piano"
       // The key type and the label have no class of their own, so the test
@@ -64,7 +64,7 @@ function setup(props: Partial<PianoProps> = {}) {
   const rerender = (nextProps: Partial<PianoProps>) =>
     rendered.rerender(
       <Piano.Root
-        ref={ref}
+        actionsRef={ref}
         noteRange={range}
         data-testid="piano"
         keyProps={(_note, { keyType }) => ({ 'data-key-type': keyType })}

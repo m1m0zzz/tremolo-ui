@@ -1,9 +1,10 @@
 import {
   ComponentPropsWithoutRef,
+  CSSProperties,
   forwardRef,
+  Ref,
   useImperativeHandle,
   useRef,
-  CSSProperties,
 } from 'react'
 
 import { useCheckPlacement } from '../_util/Placement'
@@ -22,6 +23,12 @@ export interface SliderThumbProps {
   color?: string
 
   style?: CSSProperties & CSSVariables<'color' | 'translate'>
+
+  /**
+   * Receives `focus` and `blur` for the range input inside, which do nothing
+   * while the slider is disabled. `ref` reaches the thumb element itself.
+   */
+  actionsRef?: Ref<SliderThumbMethods>
 }
 
 export interface SliderThumbMethods {
@@ -32,7 +39,7 @@ export interface SliderThumbMethods {
 type Props = SliderThumbProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof SliderThumbProps>
 
-export const Thumb = /* @__PURE__ */ forwardRef<SliderThumbMethods, Props>(
+export const Thumb = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   function Thumb(
     {
       color,
@@ -48,6 +55,7 @@ export const Thumb = /* @__PURE__ */ forwardRef<SliderThumbMethods, Props>(
       'aria-labelledby': ariaLabelledby,
       'aria-describedby': ariaDescribedby,
       'aria-valuetext': ariaValuetext,
+      actionsRef,
       ...props
     },
     forwardedRef,
@@ -78,12 +86,13 @@ export const Thumb = /* @__PURE__ */ forwardRef<SliderThumbMethods, Props>(
       },
     })
 
-    useImperativeHandle(forwardedRef, methods, [disabled])
+    useImperativeHandle(actionsRef, methods, [disabled])
     // Root focuses the thumb when a drag starts, wherever the user placed it.
     useImperativeHandle(thumbRef, methods, [disabled])
 
     return (
       <div
+        ref={forwardedRef}
         className={className}
         data-disabled={disabled ? '' : undefined}
         data-readonly={readOnly ? '' : undefined}

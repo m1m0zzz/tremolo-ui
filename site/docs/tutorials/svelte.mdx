@@ -45,7 +45,7 @@ What differs from React:
 | Read-only | `readOnly` | `readonly` |
 | A style | an object | a string, as for any element |
 | The element | `ref` | `bind:ref` |
-| Methods (`focus`, `playNote`, …) | through `ref` | through `bind:this` |
+| Methods (`focus`, `playNote`, …) | through `actionsRef` | through `bind:this` |
 | Content given as a function (`Piano`'s `label`) | a function returning JSX | a snippet |
 | A part of your own | `useKnobContext(selector)` | `useKnobContext()`, whose fields follow the value |
 

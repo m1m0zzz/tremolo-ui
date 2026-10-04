@@ -164,12 +164,18 @@ export interface XYPadProps {
    * </XYPad.Root>
    */
   children: ReactNode
+
+  /**
+   * Receives `focus` and `blur`, which act on the range inputs inside the thumb —
+   * the elements that take the focus — and do nothing while
+   * the pad is disabled. `ref` reaches the root element itself.
+   */
+  actionsRef?: Ref<XYPadMethods>
 }
 
 export interface XYPadMethods {
   focus: () => void
   blur: () => void
-  original: Ref<HTMLDivElement>
 }
 
 type Props = XYPadProps &
@@ -181,7 +187,7 @@ type Props = XYPadProps &
  */
 const WHEEL_OPTIONS = { requireFocus: true }
 
-export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
+export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   (
     {
       value,
@@ -206,6 +212,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
       onFocus,
       onBlur,
       children,
+      actionsRef,
       ...props
     }: Props,
     forwardedRef,
@@ -341,6 +348,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
     // Composed once, so React attaches the refs a single time instead of
     // detaching and re-attaching on every render.
     const rootRefCallback = useComposedRefs<HTMLDivElement>(
+      forwardedRef,
       rootRef,
       dragRefCallback,
       wheelRefCallback,
@@ -375,7 +383,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
       ],
     )
 
-    useImperativeHandle(forwardedRef, () => {
+    useImperativeHandle(actionsRef, () => {
       return {
         focus() {
           if (!disabled) thumbRef.current?.focus()
@@ -383,7 +391,6 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
         blur() {
           thumbRef.current?.blur()
         },
-        original: rootRef,
       }
     }, [disabled])
 

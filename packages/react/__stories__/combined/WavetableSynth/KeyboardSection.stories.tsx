@@ -171,7 +171,7 @@ export function KeyboardSection({
         </div>
       </div>
       <Piano.Root
-        ref={pianoRef}
+        actionsRef={pianoRef}
         className={`${pianoTheme.root} ${styles.piano}`}
         classes={{
           keyLabelWrapper: pianoTheme.keyLabelWrapper,

@@ -10,7 +10,8 @@
 - **Piano だけはサブコンポーネントを持たない。** 鍵盤は `Root` が描き、per-key のカスタマイズはコールバックで受ける。鍵盤の数は `noteRange` で変わるので、children で書かせると最小構成が map のボイラープレートになる。children による合成に戻さないこと
 - サブコンポーネントは props のバケツリレーではなく `context.tsx` から読む。**中身は素の React context だけで、外部ストアも同期する state も置かない。** `useEffect(..., [props])` で流し込む形は、値が変わったフレームで古い値を返す不具合を生んで除去した経緯がある
 - **`Root` は `export const Root = forwardRef(...)` の形で export すること。** react-docgen は export されたコンポーネント定義しか拾わないため、`const Root` のままだと Controls パネルに props が 1 つも出ない
-- **peer に React 18 を含むので、ref を受けるパートも `forwardRef` で書く**（React 19 の ref-as-prop に頼らない）。足したら `__tests__/forward-refs.test.ts` に加える
+- **`ref` は常にそのパートが描く要素に渡す。メソッド（`focus` / `playNote` など）は `actionsRef` で渡す。** ref がメソッドのオブジェクトだと、利用者は要素に届く手段を失う。`focus` / `blur` を要素の `focus()` で代えないのは、無効のときに何もしないことと、フォーカスを受ける中の input に届けることを、コンポーネントが受け持つため
+- **peer に React 18 を含むので、ref を受けるパートも `forwardRef` で書く**（React 19 の ref-as-prop に頼らない）。足したら `__tests__/forward-refs.test.ts` に加え、要素に届くことを `__tests__/element-refs.test.tsx` に加える
 
 ## インタラクション用 hooks
 
@@ -26,7 +27,7 @@
 
 ## 命名
 
-- **公開する型はコンポーネント名で始める。** `Root` の props は `<Component>Props`、パートの props は `<Component><Part>Props`。ref で公開するメソッドは `<Component>Methods` / `<Component><Part>Methods`。`src/index.ts` に全コンポーネントの型が並ぶので、`ThumbProps` のような名前は衝突する
+- **公開する型はコンポーネント名で始める。** `Root` の props は `<Component>Props`、パートの props は `<Component><Part>Props`。`actionsRef` で公開するメソッドは `<Component>Methods` / `<Component><Part>Methods`。`src/index.ts` に全コンポーネントの型が並ぶので、`ThumbProps` のような名前は衝突する
 - **hook の公開する型は hook 名を大文字で始めた形にする。** オプションは `Use<Hook>Options`、それ以外の引数は `Use<Hook><Name>`（`UseEventListenerTarget`）。コンポーネントの型と同じく、`src/index.ts` で衝突させないため
 - 公開する props の型には独自の props だけを書く。描く要素の属性はファイル内で `type Props = XProps & Omit<ComponentPropsWithoutRef<'div'>, keyof XProps>` と合わせる。ネイティブの属性を API ページや Controls に並べないため
   - **要素の属性と同じ型のもの（`className` / `style` / `children` / `aria-*`）は、内側の別の要素へ渡すときでも宣言しない。** 行き先を変えているのは分割代入で、型ではない。宣言しても `Omit` で抜けて同じ型で戻ってくるだけになる。行き先はテストで固定する

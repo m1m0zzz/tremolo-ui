@@ -115,6 +115,10 @@
     "message": "ここに組み立てたものがそのまま描画されます。フォールバックする既定のマークアップはありません。",
     "source": "85fffa79"
   },
+  "KnobProps.actionsRef": {
+    "message": "`focus` と `blur` を受け取ります。ノブが無効の間は何もしません（要素そのものの `focus()` だと、無効でもフォーカスが当たります）。`ref` はルート要素そのものに届きます。",
+    "source": "97e12e07"
+  },
   "KnobSVGRootProps.children": {
     "message": "`<Knob.InactiveLine />`、`<Knob.ActiveLine />`、`<Knob.Thumb />` をここに、描きたい順に置きます。",
     "source": "1c1d6ce0"
@@ -231,6 +235,10 @@
     "message": "ここに組み立てたものがそのまま描画されます。フォールバックする既定のマークアップはありません。",
     "source": "0983e6bd"
   },
+  "NumberInputProps.actionsRef": {
+    "message": "`focus` と `blur` を受け取ります。フォーカスを受ける要素である `InputField` の input に働き、入力が無効の間は何もしません。`ref` はルート要素そのものに届きます。",
+    "source": "1cdc6cbd"
+  },
   "PianoProps.classes": {
     "message": "鍵盤が中に描くもののクラス。`keyLabelWrapper` と、`label` が返したものを包む `keyLabel` です。鍵盤そのもののクラスは `keyProps` から渡します。ノートとその状態を受け取れるのもそちらです。",
     "source": "f9a2682b"
@@ -290,6 +298,10 @@
   "PianoProps.onStopNote": {
     "message": "ノートを押していたすべての入力元が離したときに呼ばれます。",
     "source": "fd1cf17a"
+  },
+  "PianoProps.actionsRef": {
+    "message": "`playNote` と `stopNote` を受け取ります。ポインタやキーボードで弾いたときと同じように鍵盤を押し、離します。`ref` はルート要素そのものに届きます。",
+    "source": "6743ee8c"
   },
   "PointsEditorProps.disabled": {
     "message": "点を変更できなくし、タブ順から外します。設定している間、パートは `data-disabled` を持ちます。",
@@ -499,9 +511,17 @@
     "message": "ここに組み立てたものがそのまま描画されます。フォールバックする既定のマークアップはありません。",
     "source": "2c7c75ce"
   },
+  "SliderProps.actionsRef": {
+    "message": "`focus` と `blur` を受け取ります。フォーカスを受ける要素であるつまみの中の range input に働き、スライダーが無効の間は何もしません。`ref` はルート要素そのものに届きます。",
+    "source": "36de5902"
+  },
   "SliderThumbProps.color": {
     "message": "`--color` を設定します。テーマがつまみの色に使います。大きさはここではなく `Slider.Root` の `--thumb-size` で決まり、ルートはそれに合わせてトラックの周りに余白を取れます。",
     "source": "f0f8ae7e"
+  },
+  "SliderThumbProps.actionsRef": {
+    "message": "中の range input に対する `focus` と `blur` を受け取ります。スライダーが無効の間は何もしません。`ref` はつまみの要素そのものに届きます。",
+    "source": "38152d24"
   },
   "SliderTrackProps.length": {
     "message": "スライダーの向きに沿ったトラックの長さ。`--length` を設定します。省略するとテーマが与えた大きさになります。",
@@ -583,6 +603,10 @@
     "message": "ここに組み立てたものがそのまま描画されます。フォールバックする既定のマークアップはありません。",
     "source": "76b82a66"
   },
+  "XYPadProps.actionsRef": {
+    "message": "`focus` と `blur` を受け取ります。フォーカスを受ける要素であるつまみの中の range input に働き、パッドが無効の間は何もしません。`ref` はルート要素そのものに届きます。",
+    "source": "ad8545f6"
+  },
   "XYPadThumbProps.color": {
     "message": "`--color` を設定します。テーマがつまみの色に使います。大きさはここではなく `XYPad.Root` の `--thumb-size` で決まり、ルートはそれに合わせてエリアの周りに余白を取れます。",
     "source": "73f8585f"
@@ -602,6 +626,10 @@
   "XYPadThumbProps.aria-valuetext": {
     "message": "数字だけでは伝わらないときに、各軸の値が何を意味するか。`[x, y]` か、両軸に共通の値 1 つで指定します。",
     "source": "19032897"
+  },
+  "XYPadThumbProps.actionsRef": {
+    "message": "中の range input に対する `focus` と `blur` を受け取ります。パッドが無効の間は何もしません。`ref` はつまみの要素そのものに届きます。",
+    "source": "4ff5d5ae"
   },
   "UseAnimationFrameOptions.disabled": {
     "message": "ループを止めます。戻すと新しいループが始まり、その最初のフレームの `deltaTime` は `0` になります。",

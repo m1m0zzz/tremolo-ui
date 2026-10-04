@@ -42,7 +42,7 @@ React との違い:
 | 読み取り専用 | `readOnly` | `readonly` |
 | スタイル | オブジェクト | 文字列（ふつうの要素と同じ） |
 | 要素 | `ref` | `bind:ref` |
-| メソッド（`focus`、`playNote` など） | `ref` から | `bind:this` から |
+| メソッド（`focus`、`playNote` など） | `actionsRef` から | `bind:this` から |
 | 関数で渡す中身（`Piano` の `label`） | JSX を返す関数 | snippet |
 | 自分で作るパーツ | `useKnobContext(selector)` | `useKnobContext()`。各フィールドが値に追従する |
 
