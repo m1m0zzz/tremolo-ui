@@ -41,8 +41,14 @@ export const Knob = /* @__PURE__ */ defineComponent({
     step: { type: Number, default: 1 },
     /** How the value is distributed across the travel. @default linearScale */
     scale: { type: Object as PropType<Scale>, default: () => linearScale },
-    /** The value a double click restores. @default min */
-    defaultValue: Number,
+    /**
+     * The value a double click restores. `null` turns the double click off.
+     * @default startValue
+     */
+    resetValue: {
+      type: Number as PropType<number | null>,
+      default: undefined,
+    },
     /** Where the active arc starts. @default min */
     startValue: Number,
     /** Width and height of the knob. Sets `--knob-size`. */
@@ -66,8 +72,6 @@ export const Knob = /* @__PURE__ */ defineComponent({
     },
     /** Hide the cursor while dragging and read the movement directly. */
     pointerLock: Boolean,
-    /** Restore `defaultValue` on a double click. @default true */
-    enableDoubleClickDefault: { type: Boolean, default: true },
     /** Make the knob unchangeable and remove it from the tab order. */
     disabled: Boolean,
     /** Make the knob unchangeable while leaving it focusable. */
@@ -226,8 +230,8 @@ export const Knob = /* @__PURE__ */ defineComponent({
             )
           },
           onDblclick: () => {
-            if (!inactive.value && props.enableDoubleClickDefault) {
-              change(props.defaultValue ?? props.min)
+            if (!inactive.value && props.resetValue !== null) {
+              change(props.resetValue ?? props.startValue ?? props.min)
             }
           },
         },

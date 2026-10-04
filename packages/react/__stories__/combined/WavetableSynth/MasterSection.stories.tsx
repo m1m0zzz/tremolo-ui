@@ -42,7 +42,7 @@ export function MasterSection({ themeColor = 'rgb(67, 170, 248)' }: Props) {
           value={masterVolume}
           min={MIN_MASTER_VOLUME}
           max={MAX_MASTER_VOLUME}
-          defaultValue={0}
+          resetValue={0}
           onChange={(v) => setMasterVolume(v)}
           size={30}
           scale={curveScale(

@@ -32,7 +32,7 @@
     max,
     step = 1,
     scale = linearScale,
-    defaultValue,
+    resetValue,
     startValue,
     size,
     externalStyles,
@@ -40,7 +40,6 @@
     keyboard = DEFAULT_KEYBOARD_OPTIONS,
     dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
     pointerLock = false,
-    enableDoubleClickDefault = true,
     disabled = false,
     readonly = false,
     angleRange = 270,
@@ -180,7 +179,9 @@
     onkeydown?.(event)
   }}
   ondblclick={(event) => {
-    if (!inactive && enableDoubleClickDefault) change(defaultValue ?? min)
+    if (!inactive && resetValue !== null) {
+      change(resetValue ?? startValue ?? min)
+    }
     ondblclick?.(event)
   }}
   {...rest}
