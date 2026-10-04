@@ -90,7 +90,7 @@ export const VolumeFader = () => {
           if (!gainNode) return
           gainNode.gain.value = scale.normalize(v, min, max)
         }}
-        vertical
+        orientation="vertical"
         wheel={['normalized', 0.1]}
       >
         <Slider.Track

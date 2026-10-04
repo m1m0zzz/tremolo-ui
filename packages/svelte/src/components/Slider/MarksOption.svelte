@@ -32,23 +32,23 @@
     valuePercent(
       value,
       { min: slider.min, max: slider.max, scale: slider.scale },
-      slider.vertical !== slider.reverse,
+      (slider.orientation === 'vertical') !== slider.reverse,
     ),
   )
-  const orientation = $derived(slider.vertical ? 'vertical' : 'horizontal')
+  const orientation = $derived(slider.orientation)
 </script>
 
 <div
   data-orientation={orientation}
   {...rest}
-  style="position: absolute; translate: {slider.vertical
+  style="position: absolute; translate: {slider.orientation === 'vertical'
     ? 'var(--translate, 0 -50%)'
     : 'var(--translate, -50% 0)'}; z-index: 10; {style ?? ''}"
   style:--thickness={cssLength(thickness)}
   style:--length={cssLength(length)}
   style:--gap={cssLength(gap)}
-  style:left={slider.vertical ? undefined : `${percent}%`}
-  style:top={slider.vertical ? `${percent}%` : undefined}
+  style:left={slider.orientation === 'vertical' ? undefined : `${percent}%`}
+  style:top={slider.orientation === 'vertical' ? `${percent}%` : undefined}
 >
   {#if mark}
     <div

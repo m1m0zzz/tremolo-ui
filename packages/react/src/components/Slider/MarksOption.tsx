@@ -62,7 +62,7 @@ export function MarksOption({
   const min = useSliderContext((s) => s.min)
   const max = useSliderContext((s) => s.max)
   const scale = useSliderContext((s) => s.scale)
-  const vertical = useSliderContext((s) => s.vertical)
+  const vertical = useSliderContext((s) => s.orientation === 'vertical')
   const reverse = useSliderContext((s) => s.reverse)
 
   // The marks have to sit on the same curve the thumb runs along.

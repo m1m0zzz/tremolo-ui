@@ -32,7 +32,7 @@
     max,
     step = 1,
     scale = linearScale,
-    vertical = false,
+    orientation = 'horizontal',
     reverse = false,
     dragCursor = 'pointer',
     wheel = DEFAULT_WHEEL_OPTIONS,
@@ -57,6 +57,7 @@
   // vertical -> reversed (up)
   // reverse -> reversed (left)
   // vertical & reverse -> normal (down)
+  const vertical = $derived(orientation === 'vertical')
   const displayReversed = $derived(vertical !== reverse)
   const percent = $derived(
     valuePercent(value, { min, max, scale }, displayReversed),
@@ -97,8 +98,8 @@
     get scale() {
       return scale
     },
-    get vertical() {
-      return vertical
+    get orientation() {
+      return orientation
     },
     get reverse() {
       return reverse
@@ -180,7 +181,7 @@
   bind:this={ref}
   role="group"
   tabindex="-1"
-  data-orientation={vertical ? 'vertical' : 'horizontal'}
+  data-orientation={orientation}
   data-disabled={disabled ? '' : undefined}
   data-readonly={readonly ? '' : undefined}
   use:dragValue={dragOptions}

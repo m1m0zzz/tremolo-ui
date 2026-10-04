@@ -34,7 +34,7 @@
   {/snippet}
 </Story>
 
-<Story name="Vertical" args={{ vertical: true }}>
+<Story name="Vertical" args={{ orientation: 'vertical' }}>
   {#snippet template({ children: _children, ...args })}
     <Slider.Root class={sliderTheme.root} {...args}>
       <Slider.Track class={sliderTheme.track}>

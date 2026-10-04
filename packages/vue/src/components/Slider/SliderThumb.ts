@@ -56,8 +56,14 @@ export const SliderThumb = /* @__PURE__ */ defineComponent({
             },
             style,
             {
-              top: slider.vertical ? `${slider.percent}%` : '50%',
-              left: slider.vertical ? '50%' : `${slider.percent}%`,
+              top:
+                slider.orientation === 'vertical'
+                  ? `${slider.percent}%`
+                  : '50%',
+              left:
+                slider.orientation === 'vertical'
+                  ? '50%'
+                  : `${slider.percent}%`,
             },
           ],
         },
@@ -70,7 +76,7 @@ export const SliderThumb = /* @__PURE__ */ defineComponent({
             step: slider.step,
             disabled: slider.disabled,
             'aria-readonly': slider.readonly,
-            'aria-orientation': slider.vertical ? 'vertical' : 'horizontal',
+            'aria-orientation': slider.orientation,
             'aria-label': ariaLabel,
             'aria-labelledby': ariaLabelledby,
             'aria-describedby': ariaDescribedby,

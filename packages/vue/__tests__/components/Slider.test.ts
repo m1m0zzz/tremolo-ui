@@ -49,7 +49,7 @@ describe('Slider', () => {
   })
 
   test('every part says which way it runs, and the track the percent', async () => {
-    const { root, track } = await setup({ vertical: true })
+    const { root, track } = await setup({ orientation: 'vertical' })
     expect(root).toHaveAttribute('data-orientation', 'vertical')
     expect(track.style.getPropertyValue('--percent')).toBe('50%')
   })
@@ -74,7 +74,7 @@ describe('Slider', () => {
   })
 
   test('a vertical slider leaves a sideways scroll to the page', async () => {
-    const { root, input, onChange } = await setup({ vertical: true })
+    const { root, input, onChange } = await setup({ orientation: 'vertical' })
     input.focus()
     const event = new WheelEvent('wheel', {
       deltaX: 100,

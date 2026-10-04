@@ -142,7 +142,7 @@ export const LogarithmicParameter: Story = {
     max: 0,
     step: 0.1,
     scale: curveScale(curveWithCenterValue(-10, -100, 0)),
-    vertical: true,
+    orientation: 'vertical',
     wheel: ['normalized', 0.1],
     keyboard: ['normalized', 0.1],
   },
@@ -336,7 +336,7 @@ export const Flex: Story = {
             value={value}
             onChange={(v) => setValue(v)}
             // The point of the second one, so it is not left to Controls.
-            vertical
+            orientation="vertical"
             style={{ flex: '1 1 auto' }}
           >
             <Slider.Track
@@ -388,7 +388,7 @@ export const ConfigScale: Story = {
             {...args}
             value={value}
             onChange={(v) => setValue(v)}
-            vertical
+            orientation="vertical"
           >
             <Slider.Track className={sliderTheme.track}>
               <Slider.Thumb className={sliderTheme.thumb} />
@@ -486,7 +486,7 @@ export const ConfigScale: Story = {
             max={35}
             step={10}
             onChange={(v) => setValue3(v)}
-            vertical
+            orientation="vertical"
           >
             <Slider.Track className={sliderTheme.track}>
               <Slider.Thumb className={sliderTheme.thumb} />

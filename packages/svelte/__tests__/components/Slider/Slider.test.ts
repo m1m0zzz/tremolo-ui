@@ -34,7 +34,7 @@ describe('Slider', () => {
   })
 
   test('every part says which way it runs, and the track the percent', () => {
-    const { root, track } = setup({ vertical: true })
+    const { root, track } = setup({ orientation: 'vertical' })
     expect(root).toHaveAttribute('data-orientation', 'vertical')
     expect(track).toHaveAttribute('data-orientation', 'vertical')
     // Vertical grows upwards, so 50 of 0..100 is 50% from the top.
@@ -70,7 +70,7 @@ describe('Slider', () => {
   })
 
   test('a vertical slider leaves a sideways scroll to the page', () => {
-    const { root, input, onChange } = setup({ vertical: true })
+    const { root, input, onChange } = setup({ orientation: 'vertical' })
     input.focus()
     const event = new WheelEvent('wheel', {
       deltaX: 100,

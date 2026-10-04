@@ -21,13 +21,15 @@
     if (!options) return []
     const list = sliderMarks(options, slider.min, slider.max, slider.step)
     // In the order they are on screen.
-    return slider.vertical !== slider.reverse ? list.reverse() : list
+    return (slider.orientation === 'vertical') !== slider.reverse
+      ? list.reverse()
+      : list
   })
 </script>
 
 <!-- Each option inside is placed against this box. -->
 <div
-  data-orientation={slider.vertical ? 'vertical' : 'horizontal'}
+  data-orientation={slider.orientation}
   style="position: relative; {style ?? ''}"
   style:--gap={cssLength(gap)}
   {...rest}

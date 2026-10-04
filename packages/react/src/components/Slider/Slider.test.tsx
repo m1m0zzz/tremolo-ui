@@ -81,7 +81,7 @@ describe('Slider state attributes', () => {
   })
 
   test('and says so when it runs vertically', () => {
-    const { root } = setup({ vertical: true })
+    const { root } = setup({ orientation: 'vertical' })
 
     expect(root).toHaveAttribute('data-orientation', 'vertical')
     expect(screen.getByTestId('track')).toHaveAttribute(
@@ -157,10 +157,10 @@ describe('Slider wheel direction', () => {
     ['horizontal', {}, { deltaY: -1 }, 51],
     ['reversed horizontal', { reverse: true }, { deltaY: -1 }, 49],
     ['reversed horizontal deltaX', { reverse: true }, { deltaX: 1 }, 49],
-    ['vertical', { vertical: true }, { deltaY: -1 }, 51],
+    ['vertical', { orientation: 'vertical' as const }, { deltaY: -1 }, 51],
     [
       'reversed vertical',
-      { vertical: true, reverse: true },
+      { orientation: 'vertical' as const, reverse: true },
       { deltaY: -1 },
       49,
     ],
@@ -174,7 +174,7 @@ describe('Slider wheel direction', () => {
   })
 
   test('a vertical slider leaves a sideways scroll to the page', () => {
-    const { root, input, onChange } = setup({ vertical: true })
+    const { root, input, onChange } = setup({ orientation: 'vertical' })
     act(() => input.focus())
 
     const event = new WheelEvent('wheel', {
@@ -196,7 +196,7 @@ describe('Slider accessibility', () => {
         value={50}
         min={0}
         max={100}
-        vertical
+        orientation="vertical"
         aria-label="Levels"
         data-testid="root"
       >

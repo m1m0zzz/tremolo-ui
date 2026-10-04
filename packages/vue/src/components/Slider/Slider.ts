@@ -33,8 +33,14 @@ export const Slider = /* @__PURE__ */ defineComponent({
     step: { type: Number, default: 1 },
     /** How the value is distributed across the travel. @default linearScale */
     scale: { type: Object as PropType<Scale>, default: () => linearScale },
-    /** Run the slider vertically, with the value growing upwards. */
-    vertical: Boolean,
+    /**
+     * Which way the slider runs. A vertical slider grows upwards.
+     * @default 'horizontal'
+     */
+    orientation: {
+      type: String as PropType<'horizontal' | 'vertical'>,
+      default: 'horizontal',
+    },
     /** Grow the value the other way. */
     reverse: Boolean,
     /** The cursor to show while dragging. @default 'pointer' */
@@ -62,7 +68,8 @@ export const Slider = /* @__PURE__ */ defineComponent({
     const inactive = computed(() => props.disabled || props.readonly)
     // Measured from the left or the top, as CSS places things: vertical and
     // reverse each flip it, and together they cancel out.
-    const displayReversed = computed(() => props.vertical !== props.reverse)
+    const vertical = computed(() => props.orientation === 'vertical')
+    const displayReversed = computed(() => vertical.value !== props.reverse)
     const percent = computed(() =>
       valuePercent(
         props.modelValue,
@@ -103,8 +110,8 @@ export const Slider = /* @__PURE__ */ defineComponent({
       get scale() {
         return props.scale
       },
-      get vertical() {
-        return props.vertical
+      get orientation() {
+        return props.orientation
       },
       get reverse() {
         return props.reverse
@@ -127,7 +134,7 @@ export const Slider = /* @__PURE__ */ defineComponent({
       },
     })
 
-    const valueOf = (v: XY<number>) => v[props.vertical ? 1 : 0]
+    const valueOf = (v: XY<number>) => v[vertical.value ? 1 : 0]
 
     useDragValue(root, () => ({
       axis: axis.value,
@@ -157,7 +164,7 @@ export const Slider = /* @__PURE__ */ defineComponent({
         if (!props.wheel || inactive.value) return
         // A notch the slider does not read — a sideways scroll on a vertical
         // slider — is left to the page rather than swallowed.
-        const direction = wheelDirection(event, { horizontal: !props.vertical })
+        const direction = wheelDirection(event, { horizontal: !vertical.value })
         if (direction === null) return
         event.preventDefault()
         change(
@@ -193,7 +200,7 @@ export const Slider = /* @__PURE__ */ defineComponent({
           ref: root,
           role: 'group',
           tabindex: -1,
-          'data-orientation': props.vertical ? 'vertical' : 'horizontal',
+          'data-orientation': props.orientation,
           'data-disabled': props.disabled ? '' : undefined,
           'data-readonly': props.readonly ? '' : undefined,
           onKeydown: (event: KeyboardEvent) => {
