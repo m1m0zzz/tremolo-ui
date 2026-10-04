@@ -21,6 +21,7 @@
 
   import { dragValue } from '../../actions/drag-value.js'
   import { wheel as wheelAction } from '../../actions/wheel.js'
+  import { useChangeGesture } from '../_util/change-gesture.svelte.js'
   import { useCheckSteps } from '../_util/check-steps.svelte.js'
 
   import { setXYPadContext } from './context.js'
@@ -45,8 +46,9 @@
     disabled = false,
     readonly = false,
     onChange,
-    onDragStart,
-    onDragEnd,
+    onChangeStart,
+    onChangeEnd,
+    changeEndDelay,
     ref = $bindable(null),
     children,
     onkeydown,
@@ -105,6 +107,14 @@
     value = next
     onChange?.(next)
   }
+
+  const gesture = useChangeGesture(() => ({
+    value,
+    inactive,
+    onChangeStart,
+    onChangeEnd,
+    changeEndDelay,
+  }))
 
   /** Move one axis by one press of `option`, in screen coordinates. */
   function nudge(
@@ -171,14 +181,12 @@
     onChange: (v: XY<number>) => {
       if (!inactive) change(v)
     },
-    onDragStart: (v: XY<number>) => {
+    onDragStart: () => {
       if (inactive) return
+      gesture.hold('pointer')
       thumb?.focus()
-      onDragStart?.(v)
     },
-    onDragEnd: (v: XY<number>) => {
-      if (!inactive) onDragEnd?.(v)
-    },
+    onDragEnd: () => gesture.end(),
   })
 
   const wheelOptions = $derived({
@@ -188,6 +196,7 @@
       const move = wheelMove(event)
       if (!move) return
       event.preventDefault()
+      gesture.pulse('wheel')
       nudge(move, wheel, event)
     },
   })
@@ -220,7 +229,10 @@
     const move = arrowKeyMove(event.key)
     if (move) {
       event.preventDefault()
-      if (keyboard && !inactive) nudge(move, keyboard, event)
+      if (keyboard && !inactive) {
+        gesture.pulse('keyboard')
+        nudge(move, keyboard, event)
+      }
     }
     onkeydown?.(event)
   }}

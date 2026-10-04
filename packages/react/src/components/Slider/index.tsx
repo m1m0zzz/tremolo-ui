@@ -14,6 +14,7 @@ import {
   applyDelta,
   arrowKeyDirection,
   type AxisOptions,
+  type ChangeSource,
   DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
   DEFAULT_WHEEL_OPTIONS,
@@ -27,6 +28,7 @@ import {
 import { linearScale, type Scale } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
+import { useChangeGesture } from '../../hooks/_internal/useChangeGesture'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
@@ -144,10 +146,25 @@ export interface SliderProps {
   readOnly?: boolean
   /** Called with the new value when a drag, the wheel or an arrow key moves it. */
   onChange?: (value: number) => void
-  /** Called when a drag starts, with the value where the track was pressed. */
-  onDragStart?: (value: number) => void
-  /** Called when the drag ends, with the value it ended on. */
-  onDragEnd?: (value: number) => void
+  /**
+   * Called when a change of the value starts — a press on the track, the first wheel notch
+   * or arrow key — with the value
+   * before it and what it is made with. A host recording automation can treat
+   * the control as touched from here until `onChangeEnd`.
+   */
+  onChangeStart?: (value: number, source: ChangeSource) => void
+  /**
+   * Called when the change ends, with the value it ended on: on release, or
+   * `changeEndDelay` after the last wheel notch or arrow key.
+   */
+  onChangeEnd?: (value: number, source: ChangeSource) => void
+  /**
+   * How long after the last wheel notch or arrow key the change counts as
+   * over, in milliseconds. Neither has an event that says it is done.
+   *
+   * @default 500
+   */
+  changeEndDelay?: number
   /**
    * The slider renders exactly what you compose here; there is no default
    * markup to fall back to.
@@ -200,8 +217,9 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       disabled = false,
       readOnly = false,
       onChange,
-      onDragStart,
-      onDragEnd,
+      onChangeStart,
+      onChangeEnd,
+      changeEndDelay,
       className,
       style,
       children,
@@ -240,13 +258,27 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
 
     useCheckSteps({ component: 'Slider', range: axis, keyboard, wheel })
 
+    const gesture = useChangeGesture(
+      value,
+      { onChangeStart, onChangeEnd, changeEndDelay },
+      inactive,
+    )
+    const change = useCallback(
+      (next: number) => {
+        gesture.changed(next)
+        onChange?.(next)
+      },
+      [gesture, onChange],
+    )
+
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
         const direction = arrowKeyDirection(event.key)
         if (direction === null) return
         event.preventDefault()
         if (!keyboard || !onChange || inactive) return
-        onChange(
+        gesture.pulse('keyboard')
+        change(
           applyDelta(
             value,
             reverse ? -direction : direction,
@@ -256,7 +288,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
           ),
         )
       },
-      [keyboard, onChange, inactive, reverse, value, axis],
+      [keyboard, onChange, inactive, reverse, value, axis, gesture, change],
     )
 
     // --- hooks ---
@@ -272,17 +304,14 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       updateOnPointerDown: true,
       onChange: (v) => {
         if (inactive) return
-        onChange?.(valueOf(v))
+        change(valueOf(v))
       },
-      onDragStart: (v) => {
+      onDragStart: () => {
         if (inactive) return
+        gesture.hold('pointer')
         thumbRef.current?.focus()
-        onDragStart?.(valueOf(v))
       },
-      onDragEnd: (v) => {
-        if (inactive) return
-        onDragEnd?.(valueOf(v))
-      },
+      onDragEnd: () => gesture.end(),
     })
 
     const wheelRefCallback = useWheel<HTMLDivElement>((event) => {
@@ -292,7 +321,8 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       const direction = wheelDirection(event, { horizontal: !vertical })
       if (direction === null) return
       event.preventDefault()
-      onChange(
+      gesture.pulse('wheel')
+      change(
         applyDelta(value, reverse ? -direction : direction, wheel, axis, event),
       )
     }, WHEEL_OPTIONS)

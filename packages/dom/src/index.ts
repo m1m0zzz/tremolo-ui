@@ -14,6 +14,12 @@ export {
   type DropZoneState,
 } from './file/drop-zone'
 export { applyDelta } from './input/apply-delta'
+export {
+  createChangeGesture,
+  type ChangeGestureInstance,
+  type ChangeGestureOptions,
+  type ChangeSource,
+} from './input/change-gesture'
 export { checkSteps, type CheckStepsOptions } from './input/check-steps'
 export {
   DEFAULT_DRAG_SENSITIVITY,

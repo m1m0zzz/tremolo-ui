@@ -530,6 +530,10 @@ describe('createDragValue', () => {
 
     expect(lastValue(onChange)).toEqual([30, 30])
     expect(lastValue(onDragStart)).toEqual([30, 30])
+    // A recorder hears that the drag began before its first value.
+    expect(onDragStart.mock.invocationCallOrder[0]).toBeLessThan(
+      onChange.mock.invocationCallOrder[0],
+    )
   })
 
   test('ends with the last reported value', () => {

@@ -58,8 +58,12 @@ export const Basic: Story = {
             setValueX(x)
             setValueY(y)
           }}
-          onDragStart={([x, y]) => console.log(`drag start: x=${x}, y=${y}`)}
-          onDragEnd={([x, y]) => console.log(`drag end: x=${x}, y=${y}`)}
+          onChangeStart={([x, y], source) =>
+            console.log(`change start: x=${x}, y=${y} (${source})`)
+          }
+          onChangeEnd={([x, y], source) =>
+            console.log(`change end: x=${x}, y=${y} (${source})`)
+          }
         >
           <XYPad.Area className={xyPadTheme.area}>
             {thumb && <XYPad.Thumb className={xyPadTheme.thumb} />}

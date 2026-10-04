@@ -116,3 +116,54 @@ describe('Knob', () => {
     warn.mockRestore()
   })
 })
+
+describe('Knob change gesture', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  test('a drag starts before its first value and ends after its last', async () => {
+    const onChangeStart = vi.fn()
+    const onChangeEnd = vi.fn()
+    const { knob, onChange } = setup({ onChangeStart, onChangeEnd })
+    knob.dispatchEvent(pointerEvent('pointerdown', { screenY: 100 }))
+    knob.dispatchEvent(pointerEvent('pointermove', { screenY: 90 }))
+    knob.dispatchEvent(pointerEvent('pointerup', { screenY: 90 }))
+    await tick()
+
+    expect(onChangeStart).toHaveBeenCalledWith(50, 'pointer')
+    expect(onChangeEnd).toHaveBeenCalledWith(60, 'pointer')
+    expect(onChangeStart.mock.invocationCallOrder[0]).toBeLessThan(
+      onChange.mock.invocationCallOrder[0],
+    )
+  })
+
+  test('the arrow keys end changeEndDelay after the last press', async () => {
+    vi.useFakeTimers()
+    const onChangeStart = vi.fn()
+    const onChangeEnd = vi.fn()
+    const { knob } = setup({ onChangeStart, onChangeEnd, changeEndDelay: 200 })
+    await fireEvent.keyDown(knob, { key: 'ArrowUp' })
+    await fireEvent.keyDown(knob, { key: 'ArrowUp' })
+    expect(onChangeStart).toHaveBeenCalledTimes(1)
+    expect(onChangeStart).toHaveBeenCalledWith(50, 'keyboard')
+
+    vi.advanceTimersByTime(200)
+    expect(onChangeEnd).toHaveBeenCalledWith(52, 'keyboard')
+  })
+
+  test('a double click brackets the reset', async () => {
+    const onChangeStart = vi.fn()
+    const onChangeEnd = vi.fn()
+    const { knob, onChange } = setup({
+      resetValue: 20,
+      onChangeStart,
+      onChangeEnd,
+    })
+    await fireEvent.dblClick(knob)
+
+    expect(onChangeStart).toHaveBeenCalledWith(50, 'doubleClick')
+    expect(onChange).toHaveBeenCalledWith(20)
+    expect(onChangeEnd).toHaveBeenCalledWith(20, 'doubleClick')
+  })
+})

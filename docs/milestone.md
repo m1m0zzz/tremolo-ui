@@ -248,6 +248,7 @@ props・パート・命令的メソッドは 3 つでほぼ揃っている（Sve
   - **ホイールとキーには終わりのイベントが無いので、待ち時間で判定する。** 最後の入力から待ち時間のあいだ次が来なければ終わり。合う値は DAW ごとに違うので、待ち時間は prop で渡せるようにする（既定値は持つ）
   - ダブルクリックでの復帰は、変える前に開始、変えた後に終了を続けて送る
   - 開始と終了の判定は 3 つのフレームワークで同じでなければならないので、`dom` に書く。`createStepperDrag` には今 `onDragStart` / `onDragEnd` のオプションも無い
+  - `dom` の `createChangeGesture` と、`Knob` / `Slider` / `XYPad` は済んだ。`createDragValue` は `updateOnPointerDown` の押下で `onDragStart` を `onChange` より先に呼ぶようにした（記録する側がドラッグの始まりを最初の値より先に聞くため）
 - [x] **`Knob` の `defaultValue` と `enableDoubleClickDefault` を、`resetValue?: number | null` の 1 つにする。** React の慣習でも `PointsEditor` の `defaultSelection` でも、`default*` は非制御のときの初期値を指す。ダブルクリックで戻す機能は `Knob` だけのままにする
   - **`null` でダブルクリックの復帰を切る。** ほかの入力も `wheel={null}` / `keyboard={null}` / `drag={null}` のように `null` で切るので、`resetOnDoubleClick` は作らない
   - **既定を `min` から `startValue` にする（`startValue` の既定が `min`）。** `startValue` を中央に置く両極のノブ（パンなど）が、ダブルクリックで端に飛ばなくなる

@@ -132,3 +132,101 @@ describe('Knob input guards', () => {
     expect(onChange).toHaveBeenCalled()
   })
 })
+
+describe('Knob change gesture', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  function events() {
+    const log: unknown[][] = []
+    return {
+      log,
+      onChangeStart: vi.fn((...args) => log.push(['start', ...args])),
+      onChangeEnd: vi.fn((...args) => log.push(['end', ...args])),
+    }
+  }
+
+  test('a drag starts before its first value and ends after its last', () => {
+    const { onChangeStart, onChangeEnd } = events()
+    const { knob, onChange } = setup({ onChangeStart, onChangeEnd })
+
+    drag(knob)
+
+    expect(onChangeStart).toHaveBeenCalledWith(50, 'pointer')
+    expect(onChangeEnd).toHaveBeenCalledWith(
+      onChange.mock.lastCall?.[0],
+      'pointer',
+    )
+    expect(onChangeStart.mock.invocationCallOrder[0]).toBeLessThan(
+      onChange.mock.invocationCallOrder[0],
+    )
+    expect(onChange.mock.invocationCallOrder.at(-1)).toBeLessThan(
+      onChangeEnd.mock.invocationCallOrder[0],
+    )
+  })
+
+  test('the wheel ends changeEndDelay after the last notch', () => {
+    vi.useFakeTimers()
+    const { onChangeStart, onChangeEnd } = events()
+    const { knob, onChange } = setup({
+      onChangeStart,
+      onChangeEnd,
+      changeEndDelay: 200,
+    })
+    act(() => knob.focus())
+
+    fireEvent.wheel(knob, { deltaY: -1 })
+    fireEvent.wheel(knob, { deltaY: -1 })
+    expect(onChangeStart).toHaveBeenCalledTimes(1)
+    expect(onChangeStart).toHaveBeenCalledWith(50, 'wheel')
+    expect(onChangeEnd).not.toHaveBeenCalled()
+
+    act(() => vi.advanceTimersByTime(200))
+    expect(onChangeEnd).toHaveBeenCalledWith(
+      onChange.mock.lastCall?.[0],
+      'wheel',
+    )
+  })
+
+  test('the arrow keys are a keyboard gesture', () => {
+    vi.useFakeTimers()
+    const { onChangeStart, onChangeEnd } = events()
+    const { knob } = setup({ onChangeStart, onChangeEnd })
+
+    fireEvent.keyDown(knob, { key: 'ArrowUp' })
+    act(() => vi.advanceTimersByTime(500))
+
+    expect(onChangeStart).toHaveBeenCalledWith(50, 'keyboard')
+    expect(onChangeEnd).toHaveBeenCalledWith(51, 'keyboard')
+  })
+
+  test('a double click brackets the reset', () => {
+    const { onChangeStart, onChangeEnd } = events()
+    const { knob, onChange } = setup({
+      resetValue: 20,
+      onChangeStart,
+      onChangeEnd,
+    })
+
+    fireEvent.doubleClick(knob)
+
+    expect(onChangeStart).toHaveBeenCalledWith(50, 'doubleClick')
+    expect(onChange).toHaveBeenCalledWith(20)
+    expect(onChangeEnd).toHaveBeenCalledWith(20, 'doubleClick')
+    const [start, change, end] = [onChangeStart, onChange, onChangeEnd].map(
+      (fn) => fn.mock.invocationCallOrder[0],
+    )
+    expect(start).toBeLessThan(change)
+    expect(change).toBeLessThan(end)
+  })
+
+  test('nothing starts while disabled', () => {
+    const { onChangeStart } = events()
+    const { knob } = setup({ disabled: true, onChangeStart })
+
+    useEveryInput(knob)
+
+    expect(onChangeStart).not.toHaveBeenCalled()
+  })
+})

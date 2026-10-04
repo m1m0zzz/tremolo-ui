@@ -119,6 +119,18 @@
     "message": "`focus` と `blur` を受け取ります。ノブが無効の間は何もしません（要素そのものの `focus()` だと、無効でもフォーカスが当たります）。`ref` はルート要素そのものに届きます。",
     "source": "97e12e07"
   },
+  "KnobProps.onChangeStart": {
+    "message": "値の変更が始まったとき（ドラッグ、ダブルクリック、最初のホイールのノッチや矢印キー）に、変更前の値と何で操作したかを受け取って呼ばれます。オートメーションを記録するホストは、ここから `onChangeEnd` までをコントロールに触れている間として扱えます。",
+    "source": "f32655e3"
+  },
+  "KnobProps.onChangeEnd": {
+    "message": "変更が終わったときに、終わった時点の値を受け取って呼ばれます。離したとき、または最後のホイールのノッチや矢印キーから `changeEndDelay` が経ったときです。",
+    "source": "bc8dff26"
+  },
+  "KnobProps.changeEndDelay": {
+    "message": "最後のホイールのノッチや矢印キーから、変更が終わったとみなすまでのミリ秒。どちらにも終わりを知らせるイベントがありません。",
+    "source": "1d45e100"
+  },
   "KnobSVGRootProps.children": {
     "message": "`<Knob.InactiveLine />`、`<Knob.ActiveLine />`、`<Knob.Thumb />` をここに、描きたい順に置きます。",
     "source": "1c1d6ce0"
@@ -499,14 +511,6 @@
     "message": "ドラッグ・ホイール・矢印キーで値が動いたときに、新しい値を渡して呼ばれます。",
     "source": "84db5c60"
   },
-  "SliderProps.onDragStart": {
-    "message": "ドラッグが始まったときに、トラックを押した位置の値を渡して呼ばれます。",
-    "source": "951280e8"
-  },
-  "SliderProps.onDragEnd": {
-    "message": "ドラッグが終わったときに、終わった位置の値を渡して呼ばれます。",
-    "source": "9c5a1888"
-  },
   "SliderProps.children": {
     "message": "ここに組み立てたものがそのまま描画されます。フォールバックする既定のマークアップはありません。",
     "source": "2c7c75ce"
@@ -514,6 +518,18 @@
   "SliderProps.actionsRef": {
     "message": "`focus` と `blur` を受け取ります。フォーカスを受ける要素であるつまみの中の range input に働き、スライダーが無効の間は何もしません。`ref` はルート要素そのものに届きます。",
     "source": "36de5902"
+  },
+  "SliderProps.onChangeStart": {
+    "message": "値の変更が始まったとき（トラックの押下、最初のホイールのノッチや矢印キー）に、変更前の値と何で操作したかを受け取って呼ばれます。オートメーションを記録するホストは、ここから `onChangeEnd` までをコントロールに触れている間として扱えます。",
+    "source": "c4be00ee"
+  },
+  "SliderProps.onChangeEnd": {
+    "message": "変更が終わったときに、終わった時点の値を受け取って呼ばれます。離したとき、または最後のホイールのノッチや矢印キーから `changeEndDelay` が経ったときです。",
+    "source": "bc8dff26"
+  },
+  "SliderProps.changeEndDelay": {
+    "message": "最後のホイールのノッチや矢印キーから、変更が終わったとみなすまでのミリ秒。どちらにも終わりを知らせるイベントがありません。",
+    "source": "1d45e100"
   },
   "SliderThumbProps.color": {
     "message": "`--color` を設定します。テーマがつまみの色に使います。大きさはここではなく `Slider.Root` の `--thumb-size` で決まり、ルートはそれに合わせてトラックの周りに余白を取れます。",
@@ -591,14 +607,6 @@
     "message": "ドラッグ・ホイール・矢印キーで値が動いたときに、新しい値を渡して呼ばれます。",
     "source": "84db5c60"
   },
-  "XYPadProps.onDragStart": {
-    "message": "ドラッグが始まったときに、エリアを押した位置の値を渡して呼ばれます。",
-    "source": "aadd17dd"
-  },
-  "XYPadProps.onDragEnd": {
-    "message": "ドラッグが終わったときに、終わった位置の値を渡して呼ばれます。",
-    "source": "9c5a1888"
-  },
   "XYPadProps.children": {
     "message": "ここに組み立てたものがそのまま描画されます。フォールバックする既定のマークアップはありません。",
     "source": "76b82a66"
@@ -606,6 +614,18 @@
   "XYPadProps.actionsRef": {
     "message": "`focus` と `blur` を受け取ります。フォーカスを受ける要素であるつまみの中の range input に働き、パッドが無効の間は何もしません。`ref` はルート要素そのものに届きます。",
     "source": "ad8545f6"
+  },
+  "XYPadProps.onChangeStart": {
+    "message": "値の変更が始まったとき（エリアの押下、最初のホイールのノッチや矢印キー）に、変更前の値と何で操作したかを受け取って呼ばれます。オートメーションを記録するホストは、ここから `onChangeEnd` までをコントロールに触れている間として扱えます。",
+    "source": "fb3f7b06"
+  },
+  "XYPadProps.onChangeEnd": {
+    "message": "変更が終わったときに、終わった時点の値を受け取って呼ばれます。離したとき、または最後のホイールのノッチや矢印キーから `changeEndDelay` が経ったときです。",
+    "source": "bc8dff26"
+  },
+  "XYPadProps.changeEndDelay": {
+    "message": "最後のホイールのノッチや矢印キーから、変更が終わったとみなすまでのミリ秒。どちらにも終わりを知らせるイベントがありません。",
+    "source": "1d45e100"
   },
   "XYPadThumbProps.color": {
     "message": "`--color` を設定します。テーマがつまみの色に使います。大きさはここではなく `XYPad.Root` の `--thumb-size` で決まり、ルートはそれに合わせてエリアの周りに余白を取れます。",

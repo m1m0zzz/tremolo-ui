@@ -16,6 +16,7 @@
 
   import { dragValue } from '../../actions/drag-value.js'
   import { wheel as wheelAction } from '../../actions/wheel.js'
+  import { useChangeGesture } from '../_util/change-gesture.svelte.js'
   import { useCheckSteps } from '../_util/check-steps.svelte.js'
 
   import { setSliderContext } from './context.js'
@@ -41,8 +42,9 @@
     disabled = false,
     readonly = false,
     onChange,
-    onDragStart,
-    onDragEnd,
+    onChangeStart,
+    onChangeEnd,
+    changeEndDelay,
     ref = $bindable(null),
     children,
     onkeydown,
@@ -81,6 +83,14 @@
     value = next
     onChange?.(next)
   }
+
+  const gesture = useChangeGesture(() => ({
+    value,
+    inactive,
+    onChangeStart,
+    onChangeEnd,
+    changeEndDelay,
+  }))
 
   setSliderContext({
     get value() {
@@ -136,14 +146,12 @@
     onChange: (v: XY<number>) => {
       if (!inactive) change(valueOf(v))
     },
-    onDragStart: (v: XY<number>) => {
+    onDragStart: () => {
       if (inactive) return
+      gesture.hold('pointer')
       thumb?.focus()
-      onDragStart?.(valueOf(v))
     },
-    onDragEnd: (v: XY<number>) => {
-      if (!inactive) onDragEnd?.(valueOf(v))
-    },
+    onDragEnd: () => gesture.end(),
   })
 
   const wheelOptions = $derived({
@@ -155,6 +163,7 @@
       const direction = wheelDirection(event, { horizontal: !vertical })
       if (direction === null) return
       event.preventDefault()
+      gesture.pulse('wheel')
       change(
         applyDelta(value, reverse ? -direction : direction, wheel, axis, event),
       )
@@ -191,6 +200,7 @@
     if (direction !== null) {
       event.preventDefault()
       if (keyboard && !inactive) {
+        gesture.pulse('keyboard')
         change(
           applyDelta(
             value,

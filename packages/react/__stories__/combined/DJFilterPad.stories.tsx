@@ -220,8 +220,14 @@ export const DJFilterPad = () => {
                 setQ(y)
                 updateAudio(x, y)
               }}
-              onDragStart={(value) => press(true, value)}
-              onDragEnd={(value) => press(false, value)}
+              // Held by the pointer only: the wheel and the keys move the
+              // thumb, but nothing presses the pad down for them.
+              onChangeStart={(value, source) => {
+                if (source === 'pointer') press(true, value)
+              }}
+              onChangeEnd={(value, source) => {
+                if (source === 'pointer') press(false, value)
+              }}
             >
               <XYPad.Area className={styles.area}>
                 <XYPad.Thumb

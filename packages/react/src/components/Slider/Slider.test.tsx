@@ -233,3 +233,35 @@ describe('Slider accessibility', () => {
     expect(onChange).toHaveBeenLastCalledWith(75)
   })
 })
+
+describe('Slider change gesture', () => {
+  test('a press on the track starts before the value jumps there', () => {
+    const onChangeStart = vi.fn()
+    const onChangeEnd = vi.fn()
+    const { root, onChange } = setup({ onChangeStart, onChangeEnd })
+
+    drag(root)
+
+    expect(onChangeStart).toHaveBeenCalledWith(50, 'pointer')
+    expect(onChange).toHaveBeenCalledWith(20)
+    expect(onChangeEnd).toHaveBeenCalledWith(20, 'pointer')
+    expect(onChangeStart.mock.invocationCallOrder[0]).toBeLessThan(
+      onChange.mock.invocationCallOrder[0],
+    )
+  })
+
+  test('the arrow keys are a keyboard gesture', () => {
+    vi.useFakeTimers()
+    const onChangeStart = vi.fn()
+    const onChangeEnd = vi.fn()
+    const { input } = setup({ onChangeStart, onChangeEnd })
+    act(() => input.focus())
+
+    fireEvent.keyDown(input, { key: 'ArrowRight' })
+    act(() => vi.advanceTimersByTime(500))
+    vi.useRealTimers()
+
+    expect(onChangeStart).toHaveBeenCalledWith(50, 'keyboard')
+    expect(onChangeEnd).toHaveBeenCalledWith(51, 'keyboard')
+  })
+})

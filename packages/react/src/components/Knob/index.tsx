@@ -14,6 +14,7 @@ import {
   applyDelta,
   arrowKeyDirection,
   type AxisOptions,
+  type ChangeSource,
   cssLength,
   DEFAULT_DRAG_SENSITIVITY,
   DEFAULT_KEYBOARD_OPTIONS,
@@ -28,6 +29,7 @@ import {
 import { linearScale, type Scale, type ValueRange } from '@tremolo-ui/functions'
 
 import { useComposedRefs } from '../../compose-refs'
+import { useChangeGesture } from '../../hooks/_internal/useChangeGesture'
 import { useCheckSteps } from '../../hooks/_internal/useCheckSteps'
 import { useDragValue } from '../../hooks/useDragValue'
 import { useWheel } from '../../hooks/useWheel'
@@ -177,6 +179,25 @@ export interface KnobProps {
    * click moves it.
    */
   onChange?: (value: number) => void
+  /**
+   * Called when a change of the value starts — a drag, a double click, the first wheel notch
+   * or arrow key — with the value
+   * before it and what it is made with. A host recording automation can treat
+   * the control as touched from here until `onChangeEnd`.
+   */
+  onChangeStart?: (value: number, source: ChangeSource) => void
+  /**
+   * Called when the change ends, with the value it ended on: on release, or
+   * `changeEndDelay` after the last wheel notch or arrow key.
+   */
+  onChangeEnd?: (value: number, source: ChangeSource) => void
+  /**
+   * How long after the last wheel notch or arrow key the change counts as
+   * over, in milliseconds. Neither has an event that says it is done.
+   *
+   * @default 500
+   */
+  changeEndDelay?: number
 
   /**
    * The knob renders exactly what you compose here; there is no default
@@ -236,6 +257,9 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       readOnly = false,
       angleRange = 270,
       onChange,
+      onChangeStart,
+      onChangeEnd,
+      changeEndDelay,
       onKeyDown,
       onPointerDown,
       onDoubleClick,
@@ -259,15 +283,29 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
 
     useCheckSteps({ component: 'Knob', range, keyboard, wheel })
 
+    const gesture = useChangeGesture(
+      value,
+      { onChangeStart, onChangeEnd, changeEndDelay },
+      inactive,
+    )
+    const change = useCallback(
+      (next: number) => {
+        gesture.changed(next)
+        onChange?.(next)
+      },
+      [gesture, onChange],
+    )
+
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLOrSVGElement>) => {
         if (!keyboard || !onChange || inactive) return
         const direction = arrowKeyDirection(event.key)
         if (direction === null) return
         event.preventDefault()
-        onChange(applyDelta(value, direction, keyboard, range, event))
+        gesture.pulse('keyboard')
+        change(applyDelta(value, direction, keyboard, range, event))
       },
-      [keyboard, onChange, inactive, value, range],
+      [keyboard, onChange, inactive, value, range, gesture, change],
     )
 
     // --- hooks ---
@@ -293,8 +331,12 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       shouldStart: () => !inactive,
       onChange: (v) => {
         if (inactive) return
-        onChange?.(v[1])
+        change(v[1])
       },
+      onDragStart: () => {
+        if (!inactive) gesture.hold('pointer')
+      },
+      onDragEnd: () => gesture.end(),
     })
 
     const wheelRefCallback = useWheel<HTMLElement>((event) => {
@@ -305,7 +347,8 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       if (direction === null) return
       event.preventDefault()
       if (!onChange) return
-      onChange(applyDelta(value, direction, wheel, range, event))
+      gesture.pulse('wheel')
+      change(applyDelta(value, direction, wheel, range, event))
     }, WHEEL_OPTIONS)
 
     // Composed once, so React attaches the refs a single time instead of
@@ -357,7 +400,9 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
           onPointerDown={onPointerDown}
           onDoubleClick={(event) => {
             if (!inactive && resetValue !== null && onChange) {
-              onChange(resetValue ?? startValue)
+              gesture.instant('doubleClick', () =>
+                change(resetValue ?? startValue),
+              )
             }
             onDoubleClick?.(event)
           }}
