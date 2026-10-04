@@ -37,7 +37,7 @@ const knob = () =>
     h(KnobActiveLine, { class: knobTheme.activeLine }),
     h(KnobThumb, {
       class: knobTheme.thumb,
-      classes: { thumbLine: knobTheme.thumbLine },
+      classes: { line: knobTheme.thumbLine },
     }),
   ])
 

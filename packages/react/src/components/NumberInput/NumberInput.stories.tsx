@@ -181,7 +181,7 @@ export const WithAnotherComponents: Story = {
               <Knob.ActiveLine className={knobTheme.activeLine} />
               <Knob.Thumb
                 className={knobTheme.thumb}
-                classes={{ thumbLine: knobTheme.thumbLine }}
+                classes={{ line: knobTheme.thumbLine }}
               />
             </Knob.SVGRoot>
           </Knob.Root>

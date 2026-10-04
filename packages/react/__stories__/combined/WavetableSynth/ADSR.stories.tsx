@@ -148,7 +148,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
               <Knob.InactiveLine className={knobTheme.inactiveLine} />
               <Knob.Thumb
                 className={knobTheme.thumb}
-                classes={{ thumbLine: knobTheme.thumbLine }}
+                classes={{ line: knobTheme.thumbLine }}
               />
             </Knob.SVGRoot>
           </Knob.Root>
@@ -174,7 +174,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
               <Knob.InactiveLine className={knobTheme.inactiveLine} />
               <Knob.Thumb
                 className={knobTheme.thumb}
-                classes={{ thumbLine: knobTheme.thumbLine }}
+                classes={{ line: knobTheme.thumbLine }}
               />
             </Knob.SVGRoot>
           </Knob.Root>
@@ -199,7 +199,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
               <Knob.InactiveLine className={knobTheme.inactiveLine} />
               <Knob.Thumb
                 className={knobTheme.thumb}
-                classes={{ thumbLine: knobTheme.thumbLine }}
+                classes={{ line: knobTheme.thumbLine }}
               />
             </Knob.SVGRoot>
           </Knob.Root>
@@ -229,7 +229,7 @@ export function ADSR({ themeColor = 'rgb(67, 170, 248)', keyState }: Props) {
               <Knob.InactiveLine className={knobTheme.inactiveLine} />
               <Knob.Thumb
                 className={knobTheme.thumb}
-                classes={{ thumbLine: knobTheme.thumbLine }}
+                classes={{ line: knobTheme.thumbLine }}
               />
             </Knob.SVGRoot>
           </Knob.Root>

@@ -24,4 +24,25 @@ describe('Knob.Thumb', () => {
     fireEvent.click(thumb)
     expect(onClick).toHaveBeenCalledTimes(1)
   })
+
+  test('color fills the circle, and lineColor and classes.line go to the line', () => {
+    render(
+      <Knob.Root value={50} min={0} max={100}>
+        <Knob.SVGRoot>
+          <Knob.Thumb
+            data-testid="thumb"
+            color="red"
+            lineColor="blue"
+            classes={{ line: 'custom-line' }}
+          />
+        </Knob.SVGRoot>
+      </Knob.Root>,
+    )
+
+    const thumb = screen.getByTestId('thumb')
+    expect(thumb.querySelector('circle')).toHaveAttribute('fill', 'red')
+    const line = thumb.querySelector('line')
+    expect(line).toHaveAttribute('stroke', 'blue')
+    expect(line).toHaveClass('custom-line')
+  })
 })

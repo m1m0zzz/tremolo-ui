@@ -18,13 +18,15 @@ export interface SliderTrackProps {
   /** How thick the track is across that axis. Sets `--thickness`. */
   thickness?: number | string
 
-  /** Colour of the part from `min` to the value. Sets `--active`. */
-  active?: string
-  /** Colour of the rest of the track. Sets `--inactive`. */
-  inactive?: string
+  /** Colour of the part from `min` to the value. Sets `--active-color`. */
+  activeColor?: string
+  /** Colour of the rest of the track. Sets `--inactive-color`. */
+  inactiveColor?: string
 
   style?: CSSProperties &
-    CSSVariables<'length' | 'thickness' | 'active' | 'inactive' | 'percent'>
+    CSSVariables<
+      'length' | 'thickness' | 'active-color' | 'inactive-color' | 'percent'
+    >
 }
 
 type Props = SliderTrackProps &
@@ -35,8 +37,8 @@ export const Track = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
     {
       length,
       thickness,
-      active,
-      inactive,
+      activeColor,
+      inactiveColor,
       children,
       className,
       style,
@@ -62,8 +64,8 @@ export const Track = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         data-flipped={vertical !== reverse ? '' : undefined}
         style={
           {
-            '--active': active,
-            '--inactive': inactive,
+            '--active-color': activeColor,
+            '--inactive-color': inactiveColor,
             '--length': cssLength(length),
             '--thickness': cssLength(thickness),
             // Where the value sits, for the theme to paint the fill with. The

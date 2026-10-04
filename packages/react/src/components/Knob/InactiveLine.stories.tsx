@@ -40,7 +40,7 @@ export const Basic: Story = {
             <Knob.InactiveLine className={knobTheme.inactiveLine} {...args} />
             <Knob.Thumb
               className={knobTheme.thumb}
-              classes={{ thumbLine: knobTheme.thumbLine }}
+              classes={{ line: knobTheme.thumbLine }}
             />
           </Knob.SVGRoot>
         </Knob.Root>

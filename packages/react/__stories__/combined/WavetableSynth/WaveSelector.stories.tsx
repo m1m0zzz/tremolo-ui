@@ -220,7 +220,7 @@ export const WaveSelector = ({
             className={sliderTheme.track}
             thickness={6}
             length="100%"
-            active={themeColor}
+            activeColor={themeColor}
           >
             <Slider.Thumb
               className={sliderTheme.thumb}

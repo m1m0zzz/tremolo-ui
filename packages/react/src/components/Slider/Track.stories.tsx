@@ -53,8 +53,8 @@ export const Colors: Story = {
   args: {
     length: 200,
     thickness: 14,
-    active: '#e0699f',
-    inactive: '#f3d9e6',
+    activeColor: '#e0699f',
+    inactiveColor: '#f3d9e6',
   },
   render: (args) => {
     const [value, setValue] = useState(70)

@@ -13,11 +13,11 @@
     Omit<SVGAttributes<SVGSVGElement>, keyof KnobThumbProps>
 
   let {
-    thumb = 'currentColor',
-    thumbLine = 'currentColor',
-    thumbSize = 84,
-    thumbLineWeight = 6,
-    thumbLineLength = 35,
+    color = 'currentColor',
+    lineColor = 'currentColor',
+    size = 84,
+    lineWeight = 6,
+    lineLength = 35,
     classes,
     ...rest
   }: Props = $props()
@@ -28,15 +28,15 @@
 </script>
 
 <svg {...rest}>
-  <circle cx="50%" cy="50%" r="{thumbSize / 2}%" fill={thumb} />
+  <circle cx="50%" cy="50%" r="{size / 2}%" fill={color} />
   <line
-    class={classes?.thumbLine}
+    class={classes?.line}
     x1="50%"
-    y1="{(KNOB_VIEWBOX_SIZE - clamp(thumbSize, 0, 100)) / 2}%"
+    y1="{(KNOB_VIEWBOX_SIZE - clamp(size, 0, 100)) / 2}%"
     x2="50%"
-    y2="{thumbLineLength}%"
-    stroke={thumbLine}
-    stroke-width="{thumbLineWeight}%"
+    y2="{lineLength}%"
+    stroke={lineColor}
+    stroke-width="{lineWeight}%"
     style:transform="rotate({angle}deg)"
     style:transform-origin="50% 50%"
   />

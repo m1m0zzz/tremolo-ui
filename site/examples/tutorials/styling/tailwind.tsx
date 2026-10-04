@@ -25,7 +25,7 @@ function App() {
           <Knob.ActiveLine className="text-red-500 group-hover:text-red-600 group-focus:text-red-600 dark:text-red-600 dark:group-hover:text-red-500 dark:group-focus:text-red-500" />
           <Knob.Thumb
             className="text-neutral-300 group-hover:text-neutral-400 dark:text-neutral-600 dark:group-hover:text-neutral-500"
-            classes={{ thumbLine: 'text-neutral-50 dark:text-neutral-300' }}
+            classes={{ line: 'text-neutral-50 dark:text-neutral-300' }}
           />
         </Knob.SVGRoot>
       </Knob.Root>

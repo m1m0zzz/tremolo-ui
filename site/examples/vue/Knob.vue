@@ -29,7 +29,7 @@ const value = ref(64)
       <KnobInactiveLine :class="knobTheme.inactiveLine" />
       <KnobThumb
         :class="knobTheme.thumb"
-        :classes="{ thumbLine: knobTheme.thumbLine }"
+        :classes="{ line: knobTheme.thumbLine }"
       />
     </KnobSVGRoot>
   </Knob>
