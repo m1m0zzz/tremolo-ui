@@ -55,6 +55,20 @@ const [get, set] = createContext<NumberInputContextValue>()
 export const useNumberInputContext = get
 export const setNumberInputContext = set
 
+/** @internal The change gesture of `Root`, for the parts that change the value. */
+export interface NumberInputGestureValue {
+  /** A press on a stepper, held until the pointer is released anywhere. */
+  press: () => void
+  /** An arrow key in `InputField`. */
+  key: () => void
+}
+
+const [getGesture, setGesture, hasGesture] =
+  createContext<NumberInputGestureValue>()
+
+export const useNumberInputGesture = () => (hasGesture() ? getGesture() : null)
+export const setNumberInputGesture = setGesture
+
 /** @internal Whether the drag on `Stepper` has moved the value. */
 export interface StepperContextValue {
   moved: () => boolean

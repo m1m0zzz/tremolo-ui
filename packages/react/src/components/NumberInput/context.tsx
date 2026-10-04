@@ -103,6 +103,26 @@ export function useNumberInputContext<T>(
   return selector ? selector(context) : context
 }
 
+/**
+ * The change gesture of `Root`, for the parts that change the value. Not on
+ * the public context: it is how the parts report, not something to read.
+ */
+export type NumberInputGestureValue = {
+  /** A press on a stepper, held until the pointer is released anywhere. */
+  press: () => void
+  /** An arrow key in `InputField`. */
+  key: () => void
+}
+
+const NumberInputGestureContext =
+  /* @__PURE__ */ createContext<NumberInputGestureValue | null>(null)
+
+export const NumberInputGestureProvider = NumberInputGestureContext.Provider
+
+export function useNumberInputGesture(): NumberInputGestureValue | null {
+  return useContext(NumberInputGestureContext)
+}
+
 /** Set by `Stepper` once a drag has actually moved, so the steppers stand down. */
 export type StepperContextValue = {
   /** Whether the drag in progress has moved the value. */

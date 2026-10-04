@@ -1,7 +1,11 @@
 <script lang="ts">
   import { longPress } from '../../actions/long-press.js'
 
-  import { useNumberInputContext, useStepperContext } from './context.js'
+  import {
+    useNumberInputContext,
+    useNumberInputGesture,
+    useStepperContext,
+  } from './context.js'
 
   import type { Snippet } from 'svelte'
   import type { HTMLAttributes } from 'svelte/elements'
@@ -15,6 +19,7 @@
 
   const field = useNumberInputContext()
   const stepper = useStepperContext()
+  const gesture = useNumberInputGesture()
 
   const blocked = $derived(
     field.disabled || (direction > 0 ? field.atMax : field.atMin),
@@ -23,6 +28,9 @@
   const pressOptions = {
     onPress: () => {
       if (field.disabled || field.readonly) return
+      // Here rather than on pointerdown: the press moves the value from the
+      // action's own listener, which runs before a delegated one would.
+      gesture?.press()
       // Once the pointer has actually travelled, the drag on `Stepper` owns
       // the value; repeating on top of it would move it twice.
       if (stepper?.moved()) return

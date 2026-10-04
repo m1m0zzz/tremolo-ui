@@ -134,3 +134,31 @@ describe('NumberInput', () => {
     expect(onChange).not.toHaveBeenCalled()
   })
 })
+
+describe('NumberInput change gesture', () => {
+  test('a stepper press is held until the pointer is released', async () => {
+    const onChangeStart = vi.fn()
+    const onChangeEnd = vi.fn()
+    const { up, onChange } = setup({ onChangeStart, onChangeEnd })
+    up.dispatchEvent(pointerEvent('pointerdown'))
+    await tick()
+    expect(onChangeStart).toHaveBeenCalledWith(50, 'pointer')
+    expect(onChange).toHaveBeenLastCalledWith(51)
+    expect(onChangeEnd).not.toHaveBeenCalled()
+
+    window.dispatchEvent(pointerEvent('pointerup'))
+    expect(onChangeEnd).toHaveBeenCalledWith(51, 'pointer')
+  })
+
+  test('typing starts a gesture, and committing ends it', async () => {
+    const onChangeStart = vi.fn()
+    const onChangeEnd = vi.fn()
+    const { input } = setup({ onChangeStart, onChangeEnd })
+    await fireEvent.input(input, { target: { value: '8' } })
+    expect(onChangeStart).toHaveBeenCalledWith(50, 'keyboard')
+    await fireEvent.input(input, { target: { value: '80' } })
+    await fireEvent.keyDown(input, { key: 'Enter' })
+    expect(onChangeStart).toHaveBeenCalledTimes(1)
+    expect(onChangeEnd).toHaveBeenCalledWith(80, 'keyboard')
+  })
+})

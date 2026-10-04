@@ -11,7 +11,11 @@ import { createStepperDrag, type StepperDragInstance } from '@tremolo-ui/dom'
 
 import { useComposedRefs } from '../../compose-refs'
 
-import { StepperProvider, useNumberInputContext } from './context'
+import {
+  StepperProvider,
+  useNumberInputContext,
+  useNumberInputGesture,
+} from './context'
 
 type Props = ComponentPropsWithoutRef<'div'>
 
@@ -24,7 +28,10 @@ type Props = ComponentPropsWithoutRef<'div'>
  * off text selection on whatever element it is attached to.
  */
 export const Stepper = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
-  function Stepper({ className, style, children, ...props }, forwardedRef) {
+  function Stepper(
+    { className, style, children, onPointerDown, ...props },
+    forwardedRef,
+  ) {
     const {
       value,
       disabled,
@@ -75,6 +82,7 @@ export const Stepper = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       }
     }, [node, enabled])
 
+    const gesture = useNumberInputGesture()
     const composedRef = useComposedRefs<HTMLDivElement>(forwardedRef, setNode)
 
     const context = useMemo(
@@ -84,7 +92,18 @@ export const Stepper = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
 
     return (
       <StepperProvider value={context}>
-        <div ref={composedRef} className={className} style={style} {...props}>
+        <div
+          ref={composedRef}
+          className={className}
+          style={style}
+          onPointerDown={(event) => {
+            // A drag on the stepper is a press like any other: held from here
+            // until the pointer is released.
+            if (enabled) gesture?.press()
+            onPointerDown?.(event)
+          }}
+          {...props}
+        >
           {children}
         </div>
       </StepperProvider>

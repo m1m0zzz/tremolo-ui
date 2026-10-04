@@ -13,9 +13,10 @@
   import { linearScale } from '@tremolo-ui/functions'
 
   import { wheel as wheelAction } from '../../actions/wheel.js'
+  import { useChangeGesture } from '../_util/change-gesture.svelte.js'
   import { useCheckSteps } from '../_util/check-steps.svelte.js'
 
-  import { setNumberInputContext } from './context.js'
+  import { setNumberInputContext, setNumberInputGesture } from './context.js'
   import type { NumberInputProps } from './types.js'
 
   import type { HTMLAttributes } from 'svelte/elements'
@@ -45,6 +46,9 @@
     disabled = false,
     readonly = false,
     onChange,
+    onChangeStart,
+    onChangeEnd,
+    changeEndDelay,
     ref = $bindable(null),
     children,
     ...rest
@@ -74,6 +78,14 @@
     keyboard,
     wheel,
     format,
+  }))
+
+  const gesture = useChangeGesture(() => ({
+    value,
+    inactive,
+    onChangeStart,
+    onChangeEnd,
+    changeEndDelay,
   }))
 
   function changeValue(next: number) {
@@ -155,6 +167,7 @@
       // to type into an input whose max is 100.
       const parsed = parse(next)
       if (Number.isFinite(parsed)) {
+        if (parsed !== value) gesture.pulse('keyboard')
         value = parsed
         onChange?.(parsed)
       }
@@ -168,8 +181,14 @@
       })
       // Text with no number is not a value: the field goes back to what it
       // was showing.
-      if (committed === null) draft = null
-      else changeValue(committed)
+      if (committed === null) {
+        draft = null
+        return
+      }
+      // The typing was a gesture of its own, and committing is where it ends.
+      if (committed !== value) gesture.pulse('keyboard')
+      changeValue(committed)
+      gesture.end()
     },
     changeValue,
     nudge: (direction, option, modifiers) =>
@@ -181,12 +200,37 @@
     },
   })
 
+  let pressed = false
+  setNumberInputGesture({
+    press: () => {
+      if (inactive) return
+      gesture.hold('pointer')
+      // Called again by every repeat of a held stepper; one release will do.
+      if (pressed) return
+      pressed = true
+      // Released wherever the pointer ends up: the stepper drag captures it,
+      // and a press that wanders off the button still ends.
+      const release = () => {
+        pressed = false
+        gesture.end()
+        window.removeEventListener('pointerup', release)
+        window.removeEventListener('pointercancel', release)
+      }
+      window.addEventListener('pointerup', release)
+      window.addEventListener('pointercancel', release)
+    },
+    key: () => {
+      if (!inactive) gesture.pulse('keyboard')
+    },
+  })
+
   const wheelOptions = $derived({
     requireFocus: true,
     onWheel: (event: WheelEvent) => {
       const direction = wheelDirection(event)
       if (!wheel || inactive || direction === null) return
       event.preventDefault()
+      gesture.pulse('wheel')
       changeValue(nudgeNumberInput(value, direction, wheel, ranges, event))
     },
   })

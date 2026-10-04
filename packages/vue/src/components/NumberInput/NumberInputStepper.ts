@@ -1,8 +1,12 @@
-import { computed, defineComponent, h, provide, ref, watch } from 'vue'
+import { computed, defineComponent, h, inject, provide, ref, watch } from 'vue'
 
 import { createStepperDrag, type StepperDragInstance } from '@tremolo-ui/dom'
 
-import { StepperKey, useNumberInputContext } from './context'
+import {
+  NumberInputGestureKey,
+  StepperKey,
+  useNumberInputContext,
+} from './context'
 
 /**
  * The area the steppers sit in, and a drag handle in its own right: dragging
@@ -12,6 +16,7 @@ export const NumberInputStepper = /* @__PURE__ */ defineComponent({
   name: 'NumberInputStepper',
   setup(_, { slots }) {
     const field = useNumberInputContext()
+    const gesture = inject(NumberInputGestureKey, null)
     const el = ref<HTMLDivElement | null>(null)
     let instance: StepperDragInstance | null = null
 
@@ -50,6 +55,18 @@ export const NumberInputStepper = /* @__PURE__ */ defineComponent({
 
     provide(StepperKey, { moved: () => instance?.moved() ?? false })
 
-    return () => h('div', { ref: el }, slots.default?.())
+    return () =>
+      h(
+        'div',
+        {
+          ref: el,
+          // A drag on the stepper is a press like any other: held from here
+          // until the pointer is released.
+          onPointerdown: () => {
+            if (enabled.value) gesture?.press()
+          },
+        },
+        slots.default?.(),
+      )
   },
 })
