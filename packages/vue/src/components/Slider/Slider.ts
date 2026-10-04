@@ -37,8 +37,8 @@ export const Slider = /* @__PURE__ */ defineComponent({
     vertical: Boolean,
     /** Grow the value the other way. */
     reverse: Boolean,
-    /** The cursor to show while dragging. @default { cursor: 'pointer' } */
-    externalStyles: Object as PropType<{ cursor?: string }>,
+    /** The cursor to show while dragging. @default 'pointer' */
+    dragCursor: { type: String, default: 'pointer' },
     wheel: wheelProp,
     keyboard: keyboardProp,
     dragSensitivity: dragSensitivityProp,
@@ -135,9 +135,7 @@ export const Slider = /* @__PURE__ */ defineComponent({
         sensitivity: (state) =>
           selectModifier(props.dragSensitivity, state.event).value,
       }),
-      cursor: inactive.value
-        ? undefined
-        : (props.externalStyles?.cursor ?? 'pointer'),
+      cursor: inactive.value ? undefined : props.dragCursor,
       shouldStart: () => !inactive.value,
       updateOnPointerDown: true,
       onChange: (v) => {

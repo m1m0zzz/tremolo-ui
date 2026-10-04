@@ -1,5 +1,6 @@
 import {
   ComponentPropsWithoutRef,
+  CSSProperties,
   forwardRef,
   ReactNode,
   useCallback,
@@ -162,6 +163,13 @@ export interface NumberInputProps {
    * @default false
    */
   pointerLock?: boolean
+  /**
+   * The cursor to show while dragging a `Stepper`. It is set on the stepper
+   * being dragged, so it stays while the pointer is outside it.
+   *
+   * @default 'ns-resize'
+   */
+  dragCursor?: CSSProperties['cursor']
 
   /**
    * Select the text when `InputField` takes focus: `'all'` selects all of it,
@@ -270,6 +278,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
       drag = 1,
       dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
       pointerLock = false,
+      dragCursor = 'ns-resize',
       selectOnFocus = 'none',
       unformatOnFocus = false,
       keepCaretOnStep = false,
@@ -408,6 +417,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         outOfRange,
         dragSensitivity,
         pointerLock,
+        dragCursor,
         selectOnFocus,
         unformatOnFocus,
         keepCaretOnStep,
@@ -443,6 +453,7 @@ export const Root = /* @__PURE__ */ forwardRef<NumberInputMethods, Props>(
         drag,
         dragSensitivity,
         pointerLock,
+        dragCursor,
         selectOnFocus,
         unformatOnFocus,
         keepCaretOnStep,

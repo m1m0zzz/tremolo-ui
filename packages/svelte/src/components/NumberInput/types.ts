@@ -68,6 +68,11 @@ export interface NumberInputProps {
    */
   pointerLock?: boolean
   /**
+   * The cursor to show while dragging a `Stepper`.
+   * @default 'ns-resize'
+   */
+  dragCursor?: string
+  /**
    * Select the text when `InputField` takes focus: all of it, only the
    * number without its unit, or nothing.
    * @default 'none'

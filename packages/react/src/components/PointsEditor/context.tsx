@@ -16,9 +16,8 @@ export type PointsEditorContextValue = {
   keyboard: ModifierValue<InputEventOption> | null
   /** Inherited by every `Point`. See `PointsEditorProps.dragSensitivity`. */
   dragSensitivity: ModifierValue<number>
-  externalStyles: {
-    cursor?: CSSProperties['cursor']
-  }
+  /** Inherited by every `Point`. See `PointsEditorProps.dragCursor`. */
+  dragCursor: CSSProperties['cursor']
   /**
    * `Container` registers its element here; `Point` normalizes the pointer
    * against it, so a point is placed by its position within the container.

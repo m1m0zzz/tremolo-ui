@@ -125,7 +125,7 @@ export const PointsEditorPoint = /* @__PURE__ */ defineComponent({
             sensitivity: (state) =>
               selectModifier(points.dragSensitivity, state.event).value,
           }),
-          cursor: inactive.value ? undefined : points.cursor,
+          cursor: inactive.value ? undefined : points.dragCursor,
           shouldStart: () => !disabled.value,
           // A move rather than a position: the point keeps the offset it was
           // grabbed at, and everything else selected moves with it.
@@ -151,7 +151,7 @@ export const PointsEditorPoint = /* @__PURE__ */ defineComponent({
           },
         })
         const stop = watch(
-          () => (inactive.value ? undefined : points.cursor),
+          () => (inactive.value ? undefined : points.dragCursor),
           (cursor) => drag.update({ cursor }),
         )
         onCleanup(() => {

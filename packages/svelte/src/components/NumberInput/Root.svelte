@@ -37,6 +37,7 @@
     drag = 1,
     dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
     pointerLock = false,
+    dragCursor = 'ns-resize',
     selectOnFocus = 'none',
     unformatOnFocus = false,
     keepCaretOnStep = false,
@@ -113,6 +114,9 @@
     },
     get pointerLock() {
       return pointerLock
+    },
+    get dragCursor() {
+      return dragCursor
     },
     get selectOnFocus() {
       return selectOnFocus

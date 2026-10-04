@@ -92,7 +92,7 @@
         sensitivity: (state) =>
           selectModifier(points.dragSensitivity, state.event).value,
       }),
-      cursor: untrack(() => (inactive ? undefined : points.cursor)),
+      cursor: untrack(() => (inactive ? undefined : points.dragCursor)),
       shouldStart: () => !disabled,
       // The value is a move rather than a position: the point keeps the
       // offset it was grabbed at, and everything else selected moves with it.
@@ -114,7 +114,7 @@
       },
     })
     $effect(() => {
-      drag.update({ cursor: inactive ? undefined : points.cursor })
+      drag.update({ cursor: inactive ? undefined : points.dragCursor })
     })
     return () => drag.destroy()
   })

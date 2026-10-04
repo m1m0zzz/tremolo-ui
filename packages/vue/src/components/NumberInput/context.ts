@@ -21,6 +21,7 @@ export interface NumberInputContextValue {
   readonly drag: number | null
   readonly dragSensitivity: ModifierValue<number>
   readonly pointerLock: boolean
+  readonly dragCursor: string
   readonly selectOnFocus: 'all' | 'number' | 'none'
   readonly unformatOnFocus: boolean
   readonly keepCaretOnStep: boolean

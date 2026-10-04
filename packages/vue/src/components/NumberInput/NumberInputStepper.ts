@@ -26,6 +26,7 @@ export const NumberInputStepper = /* @__PURE__ */ defineComponent({
       pixels: field.drag ?? 1,
       sensitivity: field.dragSensitivity,
       pointerLock: field.pointerLock,
+      cursor: field.dragCursor,
     })
 
     watch(

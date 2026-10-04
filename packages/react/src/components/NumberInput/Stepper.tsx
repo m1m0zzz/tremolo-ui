@@ -32,6 +32,7 @@ export const Stepper = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       drag,
       dragSensitivity,
       pointerLock,
+      dragCursor,
       rawRange,
       changeValue,
     } = useNumberInputContext()
@@ -49,6 +50,7 @@ export const Stepper = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       pixels: drag ?? 1,
       sensitivity: dragSensitivity,
       pointerLock,
+      cursor: dragCursor,
     }
     const optionsRef = useRef(options)
 

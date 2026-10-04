@@ -49,6 +49,8 @@ export const NumberInput = /* @__PURE__ */ defineComponent({
     drag: { type: Number as PropType<number | null>, default: 1 },
     /** Hide the cursor while dragging the stepper. */
     pointerLock: Boolean,
+    /** The cursor to show while dragging the stepper. @default 'ns-resize' */
+    dragCursor: { type: String, default: 'ns-resize' },
     /** Select the text when the field takes focus. @default 'none' */
     selectOnFocus: {
       type: String as PropType<'all' | 'number' | 'none'>,
@@ -151,6 +153,9 @@ export const NumberInput = /* @__PURE__ */ defineComponent({
       },
       get pointerLock() {
         return props.pointerLock
+      },
+      get dragCursor() {
+        return props.dragCursor
       },
       get selectOnFocus() {
         return props.selectOnFocus

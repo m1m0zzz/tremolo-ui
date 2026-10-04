@@ -118,7 +118,7 @@ export function Point<T extends PointPosition>({
   Omit<ComponentPropsWithoutRef<'div'>, keyof PointsEditorPointProps<T>>) {
   const {
     containerRef,
-    externalStyles,
+    dragCursor,
     disabled: rootDisabled,
     readonly: rootReadonly,
     wheel: rootWheel,
@@ -186,7 +186,7 @@ export function Point<T extends PointPosition>({
       baseElementRef: containerRef,
       sensitivity: (state) =>
         selectModifier(dragSensitivity, state.event).value,
-      cursor: inactive ? undefined : externalStyles.cursor,
+      cursor: inactive ? undefined : dragCursor,
       shouldStart: () => !disabled,
       // The value is a move rather than a position: the point keeps the offset
       // it was grabbed at, and everything else selected moves with it by the

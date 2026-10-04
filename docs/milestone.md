@@ -251,7 +251,7 @@ props・パート・命令的メソッドは 3 つでほぼ揃っている（Sve
 - [x] **`Knob` の `defaultValue` と `enableDoubleClickDefault` を、`resetValue?: number | null` の 1 つにする。** React の慣習でも `PointsEditor` の `defaultSelection` でも、`default*` は非制御のときの初期値を指す。ダブルクリックで戻す機能は `Knob` だけのままにする
   - **`null` でダブルクリックの復帰を切る。** ほかの入力も `wheel={null}` / `keyboard={null}` / `drag={null}` のように `null` で切るので、`resetOnDoubleClick` は作らない
   - **既定を `min` から `startValue` にする（`startValue` の既定が `min`）。** `startValue` を中央に置く両極のノブ（パンなど）が、ダブルクリックで端に飛ばなくなる
-- [ ] **`externalStyles: { cursor }` を `dragCursor: string` にする。** 中身はドラッグ中のカーソルだけ
+- [x] **`externalStyles: { cursor }` を `dragCursor: string` にする。** 中身はドラッグ中のカーソルだけ
   - **既定はコンポーネントごとのまま。** つまんで回すもの（`Knob` / `PointsEditor` の点）は `'grabbing'`、トラックを押して動かすもの（`Slider` / `XYPad`）は `'pointer'`
   - **`NumberInput` にも足す。** ステッパーのドラッグは今 `'ns-resize'` に固定で変えられない。ドラッグできるコンポーネントはどれも `dragCursor` を持つ形に揃え、既定は `'ns-resize'`
 - [ ] **色を受ける prop の名前を `*Color` に揃える。** SVG の属性に直接渡るもの（`Knob.ActiveLine` / `InactiveLine` の `stroke` / `strokeWidth`）はそのまま。それ以外は `Slider.Thumb` / `XYPad.Thumb` の `color` に合わせ、`Knob.Thumb` の `thumb` / `thumbLine` を `color` / `lineColor`、`Slider.Track` の `active` / `inactive` を `activeColor` / `inactiveColor` にする

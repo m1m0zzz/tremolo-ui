@@ -39,10 +39,6 @@ import { Thumb } from './Thumb'
 
 import type { CSSVariables } from '../../css-variables'
 
-const defaultExternalStyles: KnobProps['externalStyles'] = {
-  cursor: 'grabbing',
-}
-
 export interface KnobProps {
   /** The current value. The knob shows only this, so update it from `onChange`. */
   value: number
@@ -91,11 +87,9 @@ export interface KnobProps {
    * The cursor to show while dragging. It is set on the dragged element, so it
    * stays while the pointer is outside the knob.
    *
-   * @default { cursor: 'grabbing' }
+   * @default 'grabbing'
    */
-  externalStyles?: {
-    cursor?: CSSProperties['cursor']
-  }
+  dragCursor?: CSSProperties['cursor']
   /**
    * How much one notch of the wheel moves the value. It only acts while the
    * focus is inside, so that scrolling the page past the knob leaves it alone.
@@ -225,7 +219,7 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
       resetValue,
       startValue = min,
       size,
-      externalStyles: _externalStyles,
+      dragCursor = 'grabbing',
       wheel = DEFAULT_WHEEL_OPTIONS,
       keyboard = DEFAULT_KEYBOARD_OPTIONS,
       dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
@@ -246,7 +240,6 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
   ) => {
     const elmRef = useRef<HTMLElement | SVGElement>(null)
 
-    const externalStyles = { ...defaultExternalStyles, ..._externalStyles }
     const inactive = disabled || readonly
 
     // --- internal functions ---
@@ -286,7 +279,7 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
       sensitivity: (state) =>
         selectModifier(dragSensitivity, state.event).value,
       threshold: 1,
-      cursor: inactive ? undefined : externalStyles.cursor,
+      cursor: inactive ? undefined : dragCursor,
       pointerLock: inactive ? false : pointerLock,
       shouldStart: () => !inactive,
       onChange: (v) => {

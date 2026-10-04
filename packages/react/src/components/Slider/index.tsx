@@ -36,10 +36,6 @@ import { MarksOption } from './MarksOption'
 import { Thumb, SliderThumbMethods } from './Thumb'
 import { Track } from './Track'
 
-const defaultExternalStyles: SliderProps['externalStyles'] = {
-  cursor: 'pointer',
-}
-
 export interface SliderProps {
   /** The current value. The slider shows only this, so update it from `onChange`. */
   value: number
@@ -84,11 +80,9 @@ export interface SliderProps {
    * The cursor to show while dragging. It is set on the dragged element, so it
    * stays while the pointer is outside the slider.
    *
-   * @default { cursor: 'pointer' }
+   * @default 'pointer'
    */
-  externalStyles?: {
-    cursor?: CSSProperties['cursor']
-  }
+  dragCursor?: CSSProperties['cursor']
   /**
    * How much one notch of the wheel moves the value. It only acts while the
    * focus is inside, so that scrolling the page past the slider leaves it
@@ -190,7 +184,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
       scale = linearScale,
       vertical = false,
       reverse = false,
-      externalStyles: _externalStyles,
+      dragCursor = 'pointer',
       wheel = DEFAULT_WHEEL_OPTIONS,
       keyboard = DEFAULT_KEYBOARD_OPTIONS,
       dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
@@ -214,7 +208,6 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
     const trackRef = useRef<HTMLDivElement>(null)
     const thumbRef = useRef<SliderThumbMethods>(null)
     // --- interpret props ---
-    const externalStyles = { ...defaultExternalStyles, ..._externalStyles }
     const inactive = disabled || readonly
 
     // Measured from the left or the top, as CSS places things:
@@ -261,7 +254,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
     const { refCallback: dragRefCallback } = useDragValue<HTMLDivElement>({
       axis,
       baseElementRef: trackRef,
-      cursor: inactive ? undefined : externalStyles.cursor,
+      cursor: inactive ? undefined : dragCursor,
       shouldStart: () => !inactive,
       sensitivity: (state) =>
         selectModifier(dragSensitivity, state.event).value,

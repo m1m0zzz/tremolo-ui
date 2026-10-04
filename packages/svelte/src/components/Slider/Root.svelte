@@ -34,7 +34,7 @@
     scale = linearScale,
     vertical = false,
     reverse = false,
-    externalStyles,
+    dragCursor = 'pointer',
     wheel = DEFAULT_WHEEL_OPTIONS,
     keyboard = DEFAULT_KEYBOARD_OPTIONS,
     dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
@@ -129,7 +129,7 @@
       sensitivity: (state) =>
         selectModifier(dragSensitivity, state.event).value,
     }),
-    cursor: inactive ? undefined : (externalStyles?.cursor ?? 'pointer'),
+    cursor: inactive ? undefined : dragCursor,
     shouldStart: () => !inactive,
     updateOnPointerDown: true,
     onChange: (v: XY<number>) => {

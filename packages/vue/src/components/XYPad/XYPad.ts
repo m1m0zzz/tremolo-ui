@@ -59,8 +59,8 @@ export const XYPad = /* @__PURE__ */ defineComponent({
       type: [Boolean, Array] as PropType<XYInput<boolean>>,
       default: false,
     },
-    /** The cursor to show while dragging. @default { cursor: 'pointer' } */
-    externalStyles: Object as PropType<{ cursor?: string }>,
+    /** The cursor to show while dragging. @default 'pointer' */
+    dragCursor: { type: String, default: 'pointer' },
     wheel: wheelProp,
     keyboard: keyboardProp,
     dragSensitivity: dragSensitivityProp,
@@ -184,9 +184,7 @@ export const XYPad = /* @__PURE__ */ defineComponent({
           selectModifier(props.dragSensitivity, state.event).value,
       }),
       updateOnPointerDown: true,
-      cursor: inactive.value
-        ? undefined
-        : (props.externalStyles?.cursor ?? 'pointer'),
+      cursor: inactive.value ? undefined : props.dragCursor,
       shouldStart: () => !inactive.value,
       onChange: (v) => {
         if (!inactive.value) change(v)

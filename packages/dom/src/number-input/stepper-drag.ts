@@ -34,6 +34,13 @@ export interface StepperDragOptions {
   sensitivity?: ModifierValue<number>
   /** Hide the pointer and keep it from hitting the edge of the screen. */
   pointerLock?: boolean
+  /**
+   * The cursor to show while dragging. Applied to the element itself, as
+   * `createDrag` does.
+   *
+   * @default 'ns-resize'
+   */
+  cursor?: string
   /** Called with the new value whenever the drag moves it. */
   onChange: (value: number) => void
 }
@@ -77,7 +84,7 @@ export function createStepperDrag(
 
   const drag = createDrag(element, {
     threshold: 1,
-    cursor: 'ns-resize',
+    cursor: opts.cursor ?? 'ns-resize',
     pointerLock: opts.pointerLock,
     onDragStart: (state) => {
       origin = null
@@ -132,6 +139,7 @@ export function createStepperDrag(
     update: (next) => {
       opts = { ...opts, ...next }
       if ('pointerLock' in next) drag.update({ pointerLock: opts.pointerLock })
+      if ('cursor' in next) drag.update({ cursor: opts.cursor ?? 'ns-resize' })
     },
     moved: () => moved,
     destroy: () => drag.destroy(),

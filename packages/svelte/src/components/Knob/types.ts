@@ -44,9 +44,9 @@ export interface KnobProps {
   size?: number | string
   /**
    * The cursor to show while dragging.
-   * @default { cursor: 'grabbing' }
+   * @default 'grabbing'
    */
-  externalStyles?: { cursor?: string }
+  dragCursor?: string
   /**
    * How much one notch of the wheel moves the value, while the focus is
    * inside. `null` turns the wheel off.

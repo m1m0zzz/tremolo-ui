@@ -18,7 +18,7 @@
   let {
     disabled = false,
     readonly = false,
-    externalStyles,
+    dragCursor = 'grabbing',
     wheel = POINTS_EDITOR_DEFAULT_WHEEL,
     keyboard = POINTS_EDITOR_DEFAULT_KEYBOARD,
     dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
@@ -73,8 +73,8 @@
     get dragSensitivity() {
       return dragSensitivity
     },
-    get cursor() {
-      return externalStyles?.cursor ?? 'grabbing'
+    get dragCursor() {
+      return dragCursor
     },
     get selectable() {
       return selectable

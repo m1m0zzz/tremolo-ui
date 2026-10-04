@@ -38,10 +38,6 @@ import { Area } from './Area'
 import { XYPadProvider } from './context'
 import { Thumb, XYPadThumbMethods } from './Thumb'
 
-const defaultExternalStyles: XYPadProps['externalStyles'] = {
-  cursor: 'pointer',
-}
-
 /**
  * Two-dimensional slider component.
  *
@@ -134,11 +130,9 @@ export interface XYPadProps {
    * The cursor to show while dragging. It is set on the dragged element, so it
    * stays while the pointer is outside the pad.
    *
-   * @default { cursor: 'pointer' }
+   * @default 'pointer'
    */
-  externalStyles?: {
-    cursor?: CSSProperties['cursor']
-  }
+  dragCursor?: CSSProperties['cursor']
 
   /**
    * Make the pad unchangeable and remove its thumb from the tab order.
@@ -201,7 +195,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
       dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
       className,
       style,
-      externalStyles: _externalStyles,
+      dragCursor = 'pointer',
       disabled = false,
       readonly = false,
       onChange,
@@ -222,7 +216,6 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
     const thumbRef = useRef<XYPadThumbMethods>(null)
 
     // --- interpret props ---
-    const externalStyles = { ...defaultExternalStyles, ..._externalStyles }
     const inactive = disabled || readonly
 
     const min = useMemo(() => toXY(_min), [_min])
@@ -319,7 +312,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
       sensitivity: (state) =>
         selectModifier(dragSensitivity, state.event).value,
       updateOnPointerDown: true,
-      cursor: inactive ? undefined : externalStyles.cursor,
+      cursor: inactive ? undefined : dragCursor,
       shouldStart: () => !inactive,
       onChange: (v) => {
         if (inactive) return
