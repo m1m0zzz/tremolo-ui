@@ -10,11 +10,11 @@ function App() {
   const [fps, setFps] = useState(0)
 
   useAnimationFrame(
-    (_timestamp, delta) => {
-      // `delta` is 0 on the first frame after a start, so a pause is not
+    (_timestamp, deltaTime) => {
+      // `deltaTime` is 0 on the first frame after a start, so a pause is not
       // counted as one long frame.
-      setElapsed((elapsed) => elapsed + delta)
-      if (delta > 0) setFps(Math.round(1000 / delta))
+      setElapsed((elapsed) => elapsed + deltaTime)
+      if (deltaTime > 0) setFps(Math.round(1000 / deltaTime))
     },
     { disabled: !running },
   )

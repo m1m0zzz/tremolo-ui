@@ -5,7 +5,7 @@ import { useCallbackRef } from './_internal/useCallbackRef'
 export interface UseAnimationFrameOptions {
   /**
    * Stop the loop. Turning it back on starts a new one, whose first frame has
-   * a `delta` of `0`.
+   * a `deltaTime` of `0`.
    * @default false
    */
   disabled?: boolean
@@ -22,7 +22,7 @@ export interface UseAnimationFrameOptions {
  * the previous frame, which is `0` on the first one
  */
 export function useAnimationFrame(
-  callback: (timestamp: DOMHighResTimeStamp, delta: number) => void,
+  callback: (timestamp: DOMHighResTimeStamp, deltaTime: number) => void,
   { disabled = false }: UseAnimationFrameOptions = {},
 ) {
   // Read through a ref rather than depended on: `useAnimationFrame(() => ...)`
