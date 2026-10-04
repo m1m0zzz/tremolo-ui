@@ -14,7 +14,7 @@ export type XYPadContextValue = {
   scale: XY<Scale>
   reverse: XY<boolean>
   disabled: boolean
-  readonly: boolean
+  readOnly: boolean
   onChange?: (value: XY<number>) => void
 
   /**

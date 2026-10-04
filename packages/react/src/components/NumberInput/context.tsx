@@ -22,7 +22,7 @@ export type NumberInputContextValue = {
   scale: Scale
 
   disabled: boolean
-  readonly: boolean
+  readOnly: boolean
   clampValue: boolean
 
   /**

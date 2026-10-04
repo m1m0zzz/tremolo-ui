@@ -162,7 +162,7 @@ export interface KnobProps {
    * Make the knob unchangeable while leaving it focusable.
    * The parts carry `data-readonly` while it is set.
    */
-  readonly?: boolean
+  readOnly?: boolean
 
   /**
    * How far the knob turns from `min` to `max`, in degrees, centred on the
@@ -225,7 +225,7 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
       dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
       pointerLock = false,
       disabled = false,
-      readonly = false,
+      readOnly = false,
       angleRange = 270,
       onChange,
       onKeyDown,
@@ -240,7 +240,7 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
   ) => {
     const elmRef = useRef<HTMLElement | SVGElement>(null)
 
-    const inactive = disabled || readonly
+    const inactive = disabled || readOnly
 
     // --- internal functions ---
     const range: ValueRange = useMemo(
@@ -334,9 +334,9 @@ export const Root = /* @__PURE__ */ forwardRef<KnobMethods, Props>(
           aria-valuemin={min}
           aria-valuemax={max}
           aria-disabled={disabled}
-          aria-readonly={readonly}
+          aria-readonly={readOnly}
           data-disabled={disabled ? '' : undefined}
-          data-readonly={readonly ? '' : undefined}
+          data-readonly={readOnly ? '' : undefined}
           data-dragging={dragging ? '' : undefined}
           style={
             {

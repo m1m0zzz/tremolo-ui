@@ -143,7 +143,7 @@ export interface XYPadProps {
    * Make the pad unchangeable while leaving its thumb focusable.
    * The parts carry `data-readonly` while it is set.
    */
-  readonly?: boolean
+  readOnly?: boolean
 
   /** Called with the new value when a drag, the wheel or an arrow key moves it. */
   onChange?: (value: XY<number>) => void
@@ -197,7 +197,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
       style,
       dragCursor = 'pointer',
       disabled = false,
-      readonly = false,
+      readOnly = false,
       onChange,
       onDragStart,
       onDragEnd,
@@ -216,7 +216,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
     const thumbRef = useRef<XYPadThumbMethods>(null)
 
     // --- interpret props ---
-    const inactive = disabled || readonly
+    const inactive = disabled || readOnly
 
     const min = useMemo(() => toXY(_min), [_min])
     const max = useMemo(() => toXY(_max), [_max])
@@ -355,7 +355,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
         scale,
         reverse,
         disabled,
-        readonly,
+        readOnly,
         onChange,
         percent,
         areaRef,
@@ -369,7 +369,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
         scale,
         reverse,
         disabled,
-        readonly,
+        readOnly,
         onChange,
         percent,
       ],
@@ -396,7 +396,7 @@ export const Root = /* @__PURE__ */ forwardRef<XYPadMethods, Props>(
           role="group"
           tabIndex={-1}
           data-disabled={disabled ? '' : undefined}
-          data-readonly={readonly ? '' : undefined}
+          data-readonly={readOnly ? '' : undefined}
           style={style}
           onPointerDown={onPointerDown}
           onKeyDown={(event) => {

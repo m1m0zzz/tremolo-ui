@@ -74,7 +74,7 @@ export const Thumb = /* @__PURE__ */ forwardRef<XYPadThumbMethods, Props>(
       max,
       step,
       disabled,
-      readonly,
+      readOnly,
       onChange,
       percent,
       thumbRef,
@@ -107,7 +107,7 @@ export const Thumb = /* @__PURE__ */ forwardRef<XYPadThumbMethods, Props>(
       <div
         className={className}
         data-disabled={disabled ? '' : undefined}
-        data-readonly={readonly ? '' : undefined}
+        data-readonly={readOnly ? '' : undefined}
         {...props}
         style={{
           ...{ '--color': color },
@@ -135,14 +135,14 @@ export const Thumb = /* @__PURE__ */ forwardRef<XYPadThumbMethods, Props>(
             max={max[axis]}
             step={step[axis]}
             disabled={disabled}
-            aria-readonly={readonly}
+            aria-readonly={readOnly}
             aria-orientation={axis === 0 ? 'horizontal' : 'vertical'}
             aria-label={labels[axis] ?? (axis === 0 ? 'x' : 'y')}
             aria-labelledby={labelledby[axis]}
             aria-describedby={describedby[axis]}
             aria-valuetext={valueText[axis]}
             onChange={(event) => {
-              if (readonly) {
+              if (readOnly) {
                 event.currentTarget.value = String(value[axis])
                 return
               }

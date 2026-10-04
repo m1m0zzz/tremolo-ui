@@ -38,7 +38,7 @@ export interface PointsEditorProps {
    * Make the points unmovable.
    * The parts carry `data-readonly` while it is set.
    */
-  readonly?: boolean
+  readOnly?: boolean
 
   /**
    * The cursor to show while dragging a point. It is set on the dragged
@@ -153,7 +153,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
   (
     {
       disabled = false,
-      readonly = false,
+      readOnly = false,
       wheel = POINTS_EDITOR_DEFAULT_WHEEL,
       keyboard = POINTS_EDITOR_DEFAULT_KEYBOARD,
       dragSensitivity = DEFAULT_DRAG_SENSITIVITY,
@@ -211,7 +211,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
     const context = useMemo(
       () => ({
         disabled,
-        readonly,
+        readOnly,
         wheel,
         keyboard,
         dragSensitivity,
@@ -224,7 +224,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
       }),
       [
         disabled,
-        readonly,
+        readOnly,
         wheel,
         keyboard,
         dragSensitivity,
@@ -242,7 +242,7 @@ export const Root = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
           ref={forwardedRef}
           className={className}
           data-disabled={disabled ? '' : undefined}
-          data-readonly={readonly ? '' : undefined}
+          data-readonly={readOnly ? '' : undefined}
           style={
             {
               // The layers inside are placed against this box.

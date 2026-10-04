@@ -266,8 +266,8 @@ describe('XYPad', () => {
     expect(onChange).not.toHaveBeenCalled()
   })
 
-  test('readonly leaves every input inert', () => {
-    const { onChange, root } = setup({ readonly: true })
+  test('readOnly leaves every input inert', () => {
+    const { onChange, root } = setup({ readOnly: true })
 
     drag(root, { clientX: 20, clientY: 40 })
     keyDown(root, 'ArrowRight')
