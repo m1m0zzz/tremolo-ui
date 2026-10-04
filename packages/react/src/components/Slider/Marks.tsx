@@ -40,7 +40,7 @@ export function Marks({
   const min = useSliderContext((s) => s.min)
   const max = useSliderContext((s) => s.max)
   const step = useSliderContext((s) => s.step)
-  const vertical = useSliderContext((s) => s.vertical)
+  const vertical = useSliderContext((s) => s.orientation === 'vertical')
   const reverse = useSliderContext((s) => s.reverse)
 
   const optionsList = options ? sliderMarks(options, min, max, step) : []

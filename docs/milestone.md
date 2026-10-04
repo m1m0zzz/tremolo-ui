@@ -257,7 +257,7 @@ props・パート・命令的メソッドは 3 つでほぼ揃っている（Sve
 - [x] **色を受ける prop の名前を `*Color` に揃える。** SVG の属性に直接渡るもの（`Knob.ActiveLine` / `InactiveLine` の `stroke` / `strokeWidth`）はそのまま。それ以外は `Slider.Thumb` / `XYPad.Thumb` の `color` に合わせ、`Knob.Thumb` の `thumb` / `thumbLine` を `color` / `lineColor`、`Slider.Track` の `active` / `inactive` を `activeColor` / `inactiveColor` にする
   - **CSS カスタムプロパティの名前も変わる。** `Slider.Track` の `active` / `inactive` は `--active` / `--inactive` を書き、`shared/css/Slider.module.css` がそれを読む。prop に合わせて変数も `--active-color` / `--inactive-color` にし、`CSSVariables` の型・テーマ・`styling.mdx` を合わせて直す。`Slider.Thumb` / `XYPad.Thumb` / `PointsEditor.Point` の `color` は `--color` のまま
   - **`Knob.Thumb` のほかの prop からも `thumb` を外す。** `thumbSize` / `thumbLineWeight` / `thumbLineLength` / `classes.thumbLine` を `size` / `lineWeight` / `lineLength` / `classes.line` にする。パート名が `Thumb` なので、頭の `thumb` は何も言っていない
-- [ ] **`Slider` の `vertical` を `orientation: 'horizontal' | 'vertical'` にする。** 出している `data-orientation` と揃える（Radix / Base UI と同じ）。3 つのフレームワークとも
+- [x] **`Slider` の `vertical` を `orientation: 'horizontal' | 'vertical'` にする。** 出している `data-orientation` と揃える（Radix / Base UI と同じ）。3 つのフレームワークとも
   - `SliderContextValue` の `vertical` も公開している（自作のパートが読む）。context も `orientation` にする
   - `reverse` との組み合わせ（`data-flipped`）はそのまま。Radix では同じものを `inverted` と呼ぶ
 - [ ] **React だけ `readonly` を `readOnly` にする。** React の DOM の属性の慣習に合わせる。Svelte / Vue は `readonly` のまま

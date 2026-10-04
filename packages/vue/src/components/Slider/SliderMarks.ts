@@ -32,14 +32,16 @@ export const SliderMarks = /* @__PURE__ */ defineComponent({
         slider.step,
       )
       // In the order they are on screen.
-      return slider.vertical !== slider.reverse ? list.reverse() : list
+      return (slider.orientation === 'vertical') !== slider.reverse
+        ? list.reverse()
+        : list
     })
     // Each option inside is placed against this box.
     return () =>
       h(
         'div',
         {
-          'data-orientation': slider.vertical ? 'vertical' : 'horizontal',
+          'data-orientation': slider.orientation,
           style: { '--gap': cssLength(props.gap), position: 'relative' },
         },
         props.options !== undefined

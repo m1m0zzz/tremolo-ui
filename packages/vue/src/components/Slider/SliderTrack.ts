@@ -33,8 +33,11 @@ export const SliderTrack = /* @__PURE__ */ defineComponent({
         {
           ref: el,
           'data-disabled': slider.disabled ? '' : undefined,
-          'data-orientation': slider.vertical ? 'vertical' : 'horizontal',
-          'data-flipped': slider.vertical !== slider.reverse ? '' : undefined,
+          'data-orientation': slider.orientation,
+          'data-flipped':
+            (slider.orientation === 'vertical') !== slider.reverse
+              ? ''
+              : undefined,
           style: {
             '--active-color': props.activeColor,
             '--inactive-color': props.inactiveColor,

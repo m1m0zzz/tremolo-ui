@@ -451,13 +451,13 @@
     "message": "値を移動量にどう配分するか。\n\n`@tremolo-ui/functions` のスケールから選びます: `linearScale`、`exponentialScale`、`curveScale(n)`、`symmetricSkewScale(n)`。JUCE のパラメータと値を一致させる必要があるときは `skewScale(n)` を使います。",
     "source": "f48cfb3c"
   },
-  "SliderProps.vertical": {
-    "message": "スライダーを縦にし、値が上に向かって増えるようにします。つまみの中の range input の `aria-orientation` もこれに従います。",
-    "source": "13c049d3"
+  "SliderProps.orientation": {
+    "message": "スライダーの向き。縦のスライダーは上へ増えます。すべてのパートが同じ値を `data-orientation` に持ち、つまみの中の range input はこれを `aria-orientation` にします。",
+    "source": "624e02cf"
   },
   "SliderProps.reverse": {
-    "message": "値の増える向きを逆にします。横なら左へ、`vertical` なら下へ増えます。矢印キーは画面上の向きに従います。",
-    "source": "ce098808"
+    "message": "値の増える向きを逆にします。横なら左へ、縦なら下へ増えます。矢印キーは画面上の向きに従います。",
+    "source": "667080b0"
   },
   "SliderProps.dragCursor": {
     "message": "ドラッグ中に表示するカーソル。ドラッグしている要素に設定するので、ポインタがスライダーの外に出ても変わりません。",

@@ -41,11 +41,11 @@ export const SliderMarksOption = /* @__PURE__ */ defineComponent({
       valuePercent(
         props.value,
         { min: slider.min, max: slider.max, scale: slider.scale },
-        slider.vertical !== slider.reverse,
+        (slider.orientation === 'vertical') !== slider.reverse,
       ),
     )
     return () => {
-      const orientation = slider.vertical ? 'vertical' : 'horizontal'
+      const orientation = slider.orientation
       return h(
         'div',
         {
@@ -55,12 +55,19 @@ export const SliderMarksOption = /* @__PURE__ */ defineComponent({
             '--length': cssLength(props.length),
             '--gap': cssLength(props.gap),
             position: 'absolute',
-            translate: slider.vertical
-              ? 'var(--translate, 0 -50%)'
-              : 'var(--translate, -50% 0)',
+            translate:
+              slider.orientation === 'vertical'
+                ? 'var(--translate, 0 -50%)'
+                : 'var(--translate, -50% 0)',
             zIndex: 10,
-            left: slider.vertical ? undefined : `${percent.value}%`,
-            top: slider.vertical ? `${percent.value}%` : undefined,
+            left:
+              slider.orientation === 'vertical'
+                ? undefined
+                : `${percent.value}%`,
+            top:
+              slider.orientation === 'vertical'
+                ? `${percent.value}%`
+                : undefined,
           },
         },
         [

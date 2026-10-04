@@ -27,12 +27,13 @@ export interface SliderProps {
    */
   scale?: Scale
   /**
-   * Run the slider vertically, with the value growing upwards.
-   * @default false
+   * Which way the slider runs. A vertical slider grows upwards, and every
+   * part carries the same value as `data-orientation`.
+   * @default 'horizontal'
    */
-  vertical?: boolean
+  orientation?: 'horizontal' | 'vertical'
   /**
-   * Grow the value the other way: leftwards, or downwards when `vertical`.
+   * Grow the value the other way: leftwards, or downwards when vertical.
    * @default false
    */
   reverse?: boolean

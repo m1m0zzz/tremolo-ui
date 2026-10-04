@@ -55,8 +55,8 @@
   style="position: absolute; translate: var(--translate, -50% -50%); z-index: 100; {style ??
     ''}"
   style:--color={color}
-  style:top={slider.vertical ? `${slider.percent}%` : '50%'}
-  style:left={slider.vertical ? '50%' : `${slider.percent}%`}
+  style:top={slider.orientation === 'vertical' ? `${slider.percent}%` : '50%'}
+  style:left={slider.orientation === 'vertical' ? '50%' : `${slider.percent}%`}
 >
   <VisuallyHiddenRangeInput
     bind:ref={input}
@@ -66,7 +66,7 @@
     step={slider.step}
     disabled={slider.disabled}
     aria-readonly={slider.readonly}
-    aria-orientation={slider.vertical ? 'vertical' : 'horizontal'}
+    aria-orientation={slider.orientation}
     aria-label={ariaLabel}
     aria-labelledby={ariaLabelledby}
     aria-describedby={ariaDescribedby}

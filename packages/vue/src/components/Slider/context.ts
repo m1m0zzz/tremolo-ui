@@ -11,7 +11,7 @@ export interface SliderContextValue {
   readonly max: number
   readonly step: number
   readonly scale: Scale
-  readonly vertical: boolean
+  readonly orientation: 'horizontal' | 'vertical'
   readonly reverse: boolean
   readonly disabled: boolean
   readonly readonly: boolean

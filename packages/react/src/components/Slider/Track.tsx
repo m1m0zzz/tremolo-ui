@@ -46,7 +46,7 @@ export const Track = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
     },
     forwardedRef,
   ) {
-    const { vertical, reverse, disabled, percent, trackRef } =
+    const { orientation, reverse, disabled, percent, trackRef } =
       useSliderContext()
 
     // The track is what the pointer position is normalized against, so the
@@ -58,10 +58,10 @@ export const Track = /* @__PURE__ */ forwardRef<HTMLDivElement, Props>(
         ref={composedRef}
         className={className}
         data-disabled={disabled ? '' : undefined}
-        data-orientation={vertical ? 'vertical' : 'horizontal'}
+        data-orientation={orientation}
         // Which end the value grows from. `percent` is already the position on
         // screen, so this only says which side of it is the filled one.
-        data-flipped={vertical !== reverse ? '' : undefined}
+        data-flipped={(orientation === 'vertical') !== reverse ? '' : undefined}
         style={
           {
             '--active-color': activeColor,

@@ -62,7 +62,10 @@ function drag(
   })
 }
 
-function SliderSubject(props: { vertical?: boolean; reverse?: boolean }) {
+function SliderSubject(props: {
+  orientation?: 'horizontal' | 'vertical'
+  reverse?: boolean
+}) {
   const [value, setValue] = useState(0)
   return (
     <Slider.Root
@@ -93,7 +96,9 @@ describe('Slider', () => {
   })
 
   test('a vertical slider takes its value from the y axis, upwards', () => {
-    const { getByTestId, container } = render(<SliderSubject vertical />)
+    const { getByTestId, container } = render(
+      <SliderSubject orientation="vertical" />,
+    )
     fakeLayout(container)
     const root = getByTestId('root')
 

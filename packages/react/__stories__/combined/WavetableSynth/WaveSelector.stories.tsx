@@ -93,7 +93,7 @@ export const WaveSelector = ({
           min={0}
           max={100}
           onChange={(v) => setPosition(v)}
-          vertical
+          orientation="vertical"
           style={{
             margin: 0,
           }}
@@ -208,7 +208,7 @@ export const WaveSelector = ({
           min={0}
           max={100}
           onChange={(v) => setPosition(v)}
-          vertical
+          orientation="vertical"
           style={{
             width: 'min-content',
             flex: 1,

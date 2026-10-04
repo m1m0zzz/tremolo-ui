@@ -58,7 +58,7 @@ export const Thumb = /* @__PURE__ */ forwardRef<SliderThumbMethods, Props>(
       min,
       max,
       step,
-      vertical,
+      orientation,
       disabled,
       readonly,
       onChange,
@@ -101,8 +101,8 @@ export const Thumb = /* @__PURE__ */ forwardRef<SliderThumbMethods, Props>(
           // Where the thumb sits is the component's decision, not a style: a
           // `left` from the caller would take it off the track, so it is
           // written after theirs.
-          top: vertical ? `${percent}%` : '50%',
-          left: !vertical ? `${percent}%` : '50%',
+          top: orientation === 'vertical' ? `${percent}%` : '50%',
+          left: orientation === 'vertical' ? '50%' : `${percent}%`,
         }}
       >
         <VisuallyHiddenRangeInput
@@ -113,7 +113,7 @@ export const Thumb = /* @__PURE__ */ forwardRef<SliderThumbMethods, Props>(
           step={step}
           disabled={disabled}
           aria-readonly={readonly}
-          aria-orientation={vertical ? 'vertical' : 'horizontal'}
+          aria-orientation={orientation}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledby}
           aria-describedby={ariaDescribedby}

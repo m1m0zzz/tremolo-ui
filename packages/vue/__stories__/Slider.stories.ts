@@ -38,7 +38,7 @@ export const Marks: Story = {
 }
 
 export const Vertical: Story = {
-  args: { vertical: true },
+  args: { orientation: 'vertical' },
   render: (args) =>
     withModel(Slider, { class: sliderTheme.root, ...args }, track),
 }

@@ -62,14 +62,15 @@ export interface SliderProps {
    */
   scale?: Scale
   /**
-   * Run the slider vertically, with the value growing upwards. The range input
-   * inside the thumb takes its `aria-orientation` from this.
+   * Which way the slider runs. A vertical slider grows upwards. Every part
+   * carries the same value as `data-orientation`, and the range input inside
+   * the thumb takes its `aria-orientation` from it.
    *
-   * @default false
+   * @default 'horizontal'
    */
-  vertical?: boolean
+  orientation?: 'horizontal' | 'vertical'
   /**
-   * Grow the value the other way: leftwards, or downwards when `vertical`.
+   * Grow the value the other way: leftwards, or downwards when vertical.
    * The arrow keys follow the direction on screen.
    *
    * @default false
@@ -182,7 +183,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
       max,
       step = 1,
       scale = linearScale,
-      vertical = false,
+      orientation = 'horizontal',
       reverse = false,
       dragCursor = 'pointer',
       wheel = DEFAULT_WHEEL_OPTIONS,
@@ -215,6 +216,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
     // vertical -> reversed (up)
     // reverse -> reversed (left)
     // vertical & reverse -> normal (down)
+    const vertical = orientation === 'vertical'
     const displayReversed = vertical !== reverse
     const percent = valuePercent(value, { min, max, scale }, displayReversed)
 
@@ -300,7 +302,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
         max,
         step,
         scale,
-        vertical,
+        orientation,
         reverse,
         disabled,
         readonly,
@@ -315,7 +317,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
         max,
         step,
         scale,
-        vertical,
+        orientation,
         reverse,
         disabled,
         readonly,
@@ -347,7 +349,7 @@ export const Root = /* @__PURE__ */ forwardRef<SliderMethods, Props>(
           // body — undoing the focus the drag just gave the input. Taking the
           // focus here keeps it inside, and `onFocus` passes it to the input.
           tabIndex={-1}
-          data-orientation={vertical ? 'vertical' : 'horizontal'}
+          data-orientation={orientation}
           data-disabled={disabled ? '' : undefined}
           data-readonly={readonly ? '' : undefined}
           style={style}
