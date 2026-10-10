@@ -1,0 +1,46 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.control {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Wide enough for the longest range, so the row does not shift as it changes. */
+.range {
+  width: 4.5rem;
+  opacity: 0.7;
+}
+
+.velocity {
+  width: 1.75rem;
+}
+
+.hint {
+  margin: 0;
+  opacity: 0.7;
+}
+
+.midi {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-left: auto;
+}
+
+/* The shortcuts listen on the window, so focusing the keyboard means nothing
+   and the ring would only be noise. */
+.piano {
+  outline: none;
+}

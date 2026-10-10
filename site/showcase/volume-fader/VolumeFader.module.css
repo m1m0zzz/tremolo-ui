@@ -1,0 +1,145 @@
+/* A channel strip: a long-throw fader with a stereo LED meter beside it. */
+
+.demo {
+  --travel: 260px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  color: var(--ifm-font-color-base, #222);
+}
+
+.strip {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 18px 12px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #202226, #2b2e33 50%, #202226);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.12) inset,
+    0 14px 30px rgb(0 0 0 / 0.4);
+  color: #c9ced6;
+  font-family: system-ui, sans-serif;
+}
+
+.readout {
+  min-width: 96px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #0b0c0e;
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.08);
+  color: #ffb340;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-size: 1rem;
+  text-align: right;
+  text-shadow: 0 0 6px rgb(255 179 64 / 0.5);
+
+  & small {
+    opacity: 0.6;
+    font-size: 0.7rem;
+  }
+}
+
+.body {
+  display: flex;
+  /* The cap overhangs the slot by 19px either side. */
+  gap: 24px;
+  align-items: center;
+  /* Room above and below for half of the cap at either end. */
+  padding: 12px 0;
+}
+
+/* The scale on the left of the slot rather than on the right. */
+.root {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 24px;
+  outline: none;
+  cursor: pointer;
+  touch-action: none;
+}
+
+/* The slot the fader runs in. */
+.track {
+  width: 6px;
+  height: var(--travel);
+  border-radius: 3px;
+  background: #050506;
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.1),
+    0 0 0 1px rgb(0 0 0 / 0.6);
+}
+
+/* A fader cap: ridged on top, with a line across where the value is. */
+.cap {
+  width: 44px;
+  height: 26px;
+  border-radius: 3px;
+  outline: none;
+  background:
+    linear-gradient(
+      transparent calc(50% - 1px),
+      #f2f2f2 calc(50% - 1px) calc(50% + 1px),
+      transparent calc(50% + 1px)
+    ),
+    repeating-linear-gradient(transparent 0 3px, rgb(0 0 0 / 0.25) 3px 4px),
+    linear-gradient(#6a6f77, #3b3f45 45%, #24272b 55%, #4a4f56);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.3) inset,
+    0 6px 10px rgb(0 0 0 / 0.6),
+    0 1px 2px rgb(0 0 0 / 0.8);
+  cursor: grab;
+
+  &:focus-within {
+    box-shadow:
+      0 0 0 2px rgb(255 179 64 / 0.6),
+      0 6px 10px rgb(0 0 0 / 0.6);
+  }
+}
+
+.marks {
+  position: relative;
+  width: 22px;
+  height: var(--travel);
+}
+
+.marksOption {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 3px;
+  align-items: center;
+  width: 100%;
+}
+
+.mark {
+  width: 5px;
+  height: 1px;
+  background: currentColor;
+}
+
+.label {
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+}
+
+.meter {
+  width: 14px;
+  height: var(--travel);
+  padding: 0;
+  border-radius: 2px;
+  background: #050506;
+  box-shadow: 0 0 0 2px #050506;
+}
+
+.name {
+  padding: 2px 10px;
+  border-radius: 3px;
+  background: #e9e4d6;
+  color: #1b1c1f;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}

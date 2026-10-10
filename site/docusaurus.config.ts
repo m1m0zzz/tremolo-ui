@@ -213,6 +213,11 @@ const config: Config = {
           position: 'left',
           label: 'API',
         },
+        {
+          to: '/showcase/',
+          position: 'left',
+          label: 'Showcase',
+        },
         // {
         //   label: 'Templates',
         //   to: '/templates/',

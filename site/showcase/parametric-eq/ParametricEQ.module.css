@@ -1,0 +1,196 @@
+.eq {
+  --panel: #15181d;
+  --panel-raised: #1d2128;
+  --line: rgb(255 255 255 / 0.08);
+  --text: #d7dce4;
+  --text-dim: #7d8694;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(880px, 100%);
+  min-width: 520px;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.06) inset,
+    0 12px 32px rgb(0 0 0 / 0.35);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+}
+
+/* The graph. The editor is the box both layers inside fill. */
+.editor {
+  height: 280px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: radial-gradient(ellipse at 50% 0%, #222832, #0d0f13 70%);
+  touch-action: none;
+}
+
+.point {
+  --size: 22px;
+
+  display: grid;
+  place-items: center;
+  width: var(--size);
+  height: var(--size);
+  border: 2px solid var(--color);
+  border-radius: 50%;
+  outline: none;
+  background: color-mix(in srgb, var(--color) 30%, #0d0f13);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: grab;
+  user-select: none;
+  transition:
+    scale 120ms ease-out,
+    box-shadow 120ms ease-out;
+
+  &:hover {
+    scale: 1.1;
+  }
+
+  &[data-active] {
+    background: var(--color);
+    color: #0d0f13;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color) 30%, transparent);
+  }
+
+  &[data-dragging] {
+    cursor: inherit;
+    scale: 1.15;
+  }
+
+  &:focus-within {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color) 45%, transparent);
+  }
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bands {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.bandButton {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 4px 10px 4px 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel-raised);
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--text);
+  }
+
+  &[aria-pressed='true'] {
+    border-color: var(--band-color);
+    color: var(--text);
+  }
+}
+
+.bandNumber {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--band-color);
+  color: #0d0f13;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.knobs {
+  display: flex;
+  gap: 20px;
+}
+
+.knob {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  width: 64px;
+}
+
+.knobLabel {
+  color: var(--text-dim);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.knobValue {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.knobRoot {
+  width: 48px;
+  height: 48px;
+  outline: none;
+  cursor: grab;
+
+  &[data-dragging] {
+    cursor: inherit;
+  }
+
+  &[data-disabled] {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--band-color) 60%, transparent);
+  }
+}
+
+.knobInactive {
+  color: #2a3039;
+}
+
+.knobActive {
+  color: var(--band-color);
+}
+
+.knobThumb {
+  color: #363d48;
+}
+
+.knobThumbLine {
+  color: var(--text);
+}

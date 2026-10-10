@@ -608,5 +608,35 @@
   },
   "apiReference.props.more": {
     "message": "すべての説明: {link}"
+  },
+  "showcase.code": {
+    "message": "コード"
+  },
+  "showcase.title": {
+    "message": "Showcase"
+  },
+  "showcase.description": {
+    "message": "tremolo-ui で作り、ブラウザで動くオーディオのインターフェース。"
+  },
+  "showcase.lead": {
+    "message": "tremolo-ui と React で作ったオーディオのインターフェースが、このページでそのまま動きます。見た目はすべてデモ自身が付けたもので、コンポーネントが持ち込むのは振る舞いだけです。"
+  },
+  "showcase.parametric-eq.description": {
+    "message": "バンドをドラッグして周波数とゲインを決め、細かいところはノブで詰めます。カーブは本物の BiquadFilterNode の特性で、再生中の音のスペクトルに重ねて描いています。"
+  },
+  "showcase.wavetable-synth.description": {
+    "message": "マウス、PC のキーボード、MIDI キーボードで弾けるポリフォニックシンセ。波形をサインから矩形までモーフィングし、エンベロープを整え、デチューンしたボイスを重ねられます。"
+  },
+  "showcase.realistic-knobs.description": {
+    "message": "ドライブペダルに並んだ 3 種類のハードウェアノブ。削り出しのアルミ、ベークライトのポインター、LED リング。ノブが伝えるのは角度だけで、質感はすべて CSS です。"
+  },
+  "showcase.adsr.description": {
+    "message": "ハンドルをドラッグするかノブを回してから鍵盤を弾くと、光る点が音の進み具合に合わせてエンベロープをアタックからリリースまでたどります。"
+  },
+  "showcase.dj-filter-pad.description": {
+    "message": "パッドを押さえたまま左へ動かすとローパス、右へ動かすとハイパス、上下でレゾナンスが変わります。離すと中央に戻ります。"
+  },
+  "showcase.volume-fader.description": {
+    "message": "ロングストロークのフェーダーと、同じ目盛りのステレオ LED メーター。キャップをダブルクリックすると 0 dB に戻ります。"
   }
 }
