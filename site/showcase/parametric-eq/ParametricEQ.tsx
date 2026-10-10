@@ -163,28 +163,32 @@ export function ParametricEQ() {
 
     ctx.clearRect(0, 0, width, height)
 
+    // The colours come from the theme, through the stylesheet, so the graph
+    // follows light and dark like everything around it.
+    const css = getComputedStyle(ctx.canvas)
+    const color = (name: string) => css.getPropertyValue(name).trim()
+
     // The grid, and what it measures.
     ctx.font = '10px system-ui, sans-serif'
     ctx.lineWidth = 1
     for (const hz of GRID_FREQUENCIES) {
       const x = Math.round(xOf(hz)) + 0.5
-      ctx.strokeStyle = 'rgb(255 255 255 / 0.07)'
+      ctx.strokeStyle = color('--graph-grid')
       ctx.beginPath()
       ctx.moveTo(x, 0)
       ctx.lineTo(x, height)
       ctx.stroke()
-      ctx.fillStyle = 'rgb(255 255 255 / 0.35)'
+      ctx.fillStyle = color('--graph-label')
       ctx.fillText(hz < 1000 ? `${hz}` : `${hz / 1000}k`, x + 3, height - 5)
     }
     for (const db of GRID_GAINS) {
       const y = Math.round(yOf(db)) + 0.5
-      ctx.strokeStyle =
-        db === 0 ? 'rgb(255 255 255 / 0.2)' : 'rgb(255 255 255 / 0.07)'
+      ctx.strokeStyle = color(db === 0 ? '--graph-zero' : '--graph-grid')
       ctx.beginPath()
       ctx.moveTo(0, y)
       ctx.lineTo(width, y)
       ctx.stroke()
-      ctx.fillStyle = 'rgb(255 255 255 / 0.35)'
+      ctx.fillStyle = color('--graph-label')
       ctx.fillText(`${db > 0 ? '+' : ''}${db}`, 4, y - 3)
     }
 
@@ -203,7 +207,7 @@ export function ParametricEQ() {
         ctx.lineTo(xOf(hz), height * (1 - Math.min(Math.max(level, 0), 1)))
       }
       ctx.lineTo(width, height)
-      ctx.fillStyle = 'rgb(255 255 255 / 0.08)'
+      ctx.fillStyle = color('--graph-spectrum')
       ctx.fill()
     }
 
@@ -229,7 +233,7 @@ export function ParametricEQ() {
     })
     curve(total)
     ctx.lineWidth = 2.5
-    ctx.strokeStyle = '#f5f7fa'
+    ctx.strokeStyle = color('--graph-curve')
     ctx.stroke()
   }
 

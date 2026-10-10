@@ -19,7 +19,6 @@ import {
 import styles from './ADSR.module.css'
 
 const INITIAL: Envelope = { attack: 30, decay: 400, sustain: 0.5, release: 800 }
-const ACCENT = '#3ee6c1'
 
 export function ADSR() {
   const [envelope, setEnvelope] = useState(INITIAL)
@@ -91,8 +90,14 @@ export function ADSR() {
       [x * width, y * height] as const
     ctx.clearRect(0, 0, width, height)
 
+    // The colours come from the theme, through the stylesheet, so the graph
+    // follows light and dark like everything around it.
+    const css = getComputedStyle(ctx.canvas)
+    const color = (name: string) => css.getPropertyValue(name).trim()
+    const accent = color('--accent')
+
     // A grid in quarters of the level.
-    ctx.strokeStyle = 'rgb(255 255 255 / 0.06)'
+    ctx.strokeStyle = color('--graph-grid')
     ctx.lineWidth = 1
     for (let i = 1; i < 4; i++) {
       const y = Math.round((height * i) / 4) + 0.5
@@ -112,14 +117,14 @@ export function ADSR() {
     path()
     ctx.closePath()
     const fill = ctx.createLinearGradient(0, 0, 0, height)
-    fill.addColorStop(0, `${ACCENT}40`)
-    fill.addColorStop(1, `${ACCENT}00`)
+    fill.addColorStop(0, `${accent}40`)
+    fill.addColorStop(1, `${accent}00`)
     ctx.fillStyle = fill
     ctx.fill()
 
     // The sustain stretch is a level held for as long as the key is.
     ctx.setLineDash([3, 4])
-    ctx.strokeStyle = `${ACCENT}66`
+    ctx.strokeStyle = `${accent}66`
     ctx.beginPath()
     ctx.moveTo(...px(c.sustainEnd))
     ctx.lineTo(c.sustainEnd.x * width, height)
@@ -127,7 +132,7 @@ export function ADSR() {
     ctx.setLineDash([])
 
     path()
-    ctx.strokeStyle = ACCENT
+    ctx.strokeStyle = accent
     ctx.lineWidth = 2
     ctx.lineJoin = 'round'
     ctx.stroke()
@@ -143,11 +148,11 @@ export function ADSR() {
       )
       if (!head.done) {
         const [x, y] = px({ x: head.x, y: 1 - head.level })
-        ctx.fillStyle = `${ACCENT}22`
+        ctx.fillStyle = `${accent}22`
         ctx.fillRect(x - 0.5, 0, 1, height)
-        ctx.shadowColor = ACCENT
+        ctx.shadowColor = accent
         ctx.shadowBlur = 16
-        ctx.fillStyle = '#eafff9'
+        ctx.fillStyle = color('--graph-playhead')
         ctx.beginPath()
         ctx.arc(x, y, 5, 0, Math.PI * 2)
         ctx.fill()
@@ -291,7 +296,7 @@ function EnvelopeKnob({
           <Knob.ActiveLine className={styles.knobValue} strokeWidth={5} />
           <Knob.Thumb
             className={styles.knobThumb}
-            lineColor={ACCENT}
+            classes={{ line: styles.knobThumbLine }}
             size={66}
             lineWeight={7}
             lineLength={26}

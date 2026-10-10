@@ -307,5 +307,21 @@
 .divider {
   width: 1px;
   height: 80%;
-  background: #666;
+  background: currentColor;
+  opacity: 0.4;
+}
+
+/*
+ * Dark mode follows whatever marks the page — `.dark` and `[data-theme=dark]`
+ * are what this site and Storybook set. The surface goes dark and the border
+ * lights up towards the thumb instead of darkening.
+ */
+:global(.dark) .pad,
+:global([data-theme='dark']) .pad {
+  --surface: rgb(22, 17, 36);
+  --circle-outer: rgb(200, 90, 255);
+  --circle-inner: rgb(120, 70, 255);
+  --border: rgb(74, 58, 120);
+  --border-near: rgb(176, 140, 255);
+  --thumb-color: rgb(176, 150, 245);
 }
