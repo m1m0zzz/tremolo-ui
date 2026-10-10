@@ -26,6 +26,13 @@
   align-items: center;
 }
 
+.hint {
+  margin-right: auto;
+  margin-left: 16px;
+  color: var(--text-dim);
+  font-size: 0.7rem;
+}
+
 .brand {
   color: var(--text-dim);
   font-size: 0.75rem;
@@ -76,6 +83,11 @@
   &[data-dragging] {
     cursor: inherit;
     scale: 1.15;
+  }
+
+  /* With Alt held, a drag on a bell turns its Q. */
+  .editor[data-alt] &[data-bell] {
+    cursor: ns-resize;
   }
 
   &:focus-within {

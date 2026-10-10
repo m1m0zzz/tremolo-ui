@@ -1,6 +1,7 @@
 import {
   type ComponentProps,
   type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
   useEffect,
   useMemo,
   useRef,
@@ -8,8 +9,13 @@ import {
 } from 'react'
 import * as Tone from 'tone'
 
-import { exponentialScale } from '@tremolo-ui/functions'
-import { AnimationCanvas, Knob, PointsEditor } from '@tremolo-ui/react'
+import { clamp, exponentialScale } from '@tremolo-ui/functions'
+import {
+  AnimationCanvas,
+  Knob,
+  PointsEditor,
+  useEventListener,
+} from '@tremolo-ui/react'
 
 import { AudioSource } from '../shared/AudioSource'
 
@@ -40,6 +46,9 @@ const GRID_GAINS = [12, 6, 0, -6, -12]
 const SPECTRUM_MIN = -110
 const SPECTRUM_MAX = -10
 
+/** How far an Alt + drag goes to take Q across its whole range, in pixels. */
+const Q_DRAG_RANGE = 200
+
 const TYPE_LABELS = {
   lowshelf: 'Low shelf',
   peaking: 'Bell',
@@ -58,6 +67,47 @@ export function ParametricEQ() {
     setBands((prev) =>
       prev.map((band, i) => (i === index ? { ...band, ...change } : band)),
     )
+
+  // Held Alt changes what a drag on a bell does, so the cursor says so.
+  const [alt, setAlt] = useState(false)
+  useEventListener(window, 'keydown', (e) => setAlt(e.altKey))
+  useEventListener(window, 'keyup', (e) => setAlt(e.altKey))
+  useEventListener(window, 'blur', () => setAlt(false))
+
+  /**
+   * Alt + drag on a bell turns its Q instead of moving it: up narrows it,
+   * down widens it. This runs in the capture phase, so the press is stopped
+   * on its way down, before the point's own drag ever sees it.
+   */
+  const startQDrag = (event: ReactPointerEvent) => {
+    if (!event.altKey || event.button !== 0) return
+    const point = (event.target as Element).closest<HTMLElement>('[data-band]')
+    if (!point) return
+    const index = Number(point.dataset.band)
+    if (bands[index].type !== 'peaking') return
+    event.stopPropagation()
+    event.preventDefault()
+    // Selected, as a drag on it would.
+    point.focus()
+
+    const startY = event.clientY
+    const start = exponentialScale.normalize(bands[index].q, Q_MIN, Q_MAX)
+    const move = (e: PointerEvent) => {
+      const position = clamp(start + (startY - e.clientY) / Q_DRAG_RANGE, 0, 1)
+      const q = exponentialScale.denormalize(position, Q_MIN, Q_MAX)
+      updateBand(index, { q: Math.round(q * 100) / 100 })
+    }
+    const end = () => {
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', end)
+      window.removeEventListener('pointercancel', end)
+      document.body.style.removeProperty('cursor')
+    }
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', end)
+    window.addEventListener('pointercancel', end)
+    document.body.style.cursor = 'ns-resize'
+  }
 
   // The audio follows the bands; the curves below are worked out from them.
   useEffect(() => {
@@ -189,10 +239,17 @@ export function ParametricEQ() {
     <div className={styles.eq}>
       <div className={styles.header}>
         <span className={styles.brand}>PARAMETRIC EQ</span>
+        <span className={styles.hint}>
+          Double-click: flat · Alt + drag a bell: Q
+        </span>
         <AudioSource connect={connect} />
       </div>
 
-      <PointsEditor.Root className={styles.editor}>
+      <PointsEditor.Root
+        className={styles.editor}
+        data-alt={alt ? '' : undefined}
+        onPointerDownCapture={startQDrag}
+      >
         <PointsEditor.Background>
           {/* Redrawn every frame while audio plays, for the analyser. */}
           <AnimationCanvas resizable draw={draw} />
@@ -204,7 +261,9 @@ export function ParametricEQ() {
               className={styles.point}
               value={bandToPoint(band)}
               color={band.color}
+              data-band={i}
               data-active={i === selected ? '' : undefined}
+              data-bell={band.type === 'peaking' ? '' : undefined}
               aria-label={{
                 x: `Band ${i + 1} frequency`,
                 y: `Band ${i + 1} gain`,
@@ -215,8 +274,13 @@ export function ParametricEQ() {
               }}
               onFocus={() => setSelected(i)}
               onChange={(point) => updateBand(i, pointToBand(point))}
-              // A double click flattens the band.
-              onDoubleClick={() => updateBand(i, { gain: 0 })}
+              // A double click flattens the band; with Alt, it resets the Q.
+              onDoubleClick={(e) =>
+                updateBand(
+                  i,
+                  e.altKey ? { q: INITIAL_BANDS[i].q } : { gain: 0 },
+                )
+              }
             >
               {i + 1}
             </PointsEditor.Point>
