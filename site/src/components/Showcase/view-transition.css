@@ -1,0 +1,48 @@
+/*
+ * How the showcase cards move when the grid changes around them. Plain CSS
+ * rather than a module: the pseudo-elements of a view transition hang off the
+ * document, and a module would rename the class they are picked out by.
+ */
+
+/* Each card slides and resizes from where it was to where it lands. */
+::view-transition-group(.showcase-item) {
+  animation-duration: 400ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* A card that grows taller, as its code opens, would otherwise show the new
+   snapshot spilling out of the box before the box has grown to it. */
+::view-transition-image-pair(.showcase-item) {
+  overflow: hidden;
+}
+
+/* The snapshots keep their own size, pinned to the top left, rather than
+   being stretched to the box: a card is text and panels, which look wrong
+   squashed. The box growing or shrinking around the new one reveals it. */
+::view-transition-old(.showcase-item),
+::view-transition-new(.showcase-item) {
+  inline-size: auto;
+  block-size: auto;
+}
+
+/* The new one is there from the start; the old one only fades off it, fast,
+   so the two are never seen on top of each other for long. */
+::view-transition-new(.showcase-item) {
+  animation: none;
+}
+
+::view-transition-old(.showcase-item) {
+  animation-duration: 120ms;
+}
+
+/* The navbar stays on top of the cards that pass under it. Named, it is
+   lifted into the transition too, above them in paint order. */
+.navbar {
+  view-transition-name: navbar;
+}
+
+/* It does not change, so it is shown as it is rather than faded across. */
+::view-transition-old(navbar),
+::view-transition-new(navbar) {
+  animation: none;
+}

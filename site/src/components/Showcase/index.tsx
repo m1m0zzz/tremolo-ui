@@ -6,10 +6,12 @@ import CodeBlock from '@theme/CodeBlock'
 import Heading from '@theme/Heading'
 import clsx from 'clsx'
 import { useId, useState, type ReactNode } from 'react'
+import { flushSync } from 'react-dom'
 import { FiGithub } from 'react-icons/fi'
 import { RiCodeSSlashLine } from 'react-icons/ri'
 
 import styles from './styles.module.css'
+import './view-transition.css'
 
 export interface ShowcaseFile {
   /** The name the tab shows, as the file is named in the demo's directory. */
@@ -40,6 +42,24 @@ const LANGUAGES: Record<string, string> = {
 
 const GITHUB = 'https://github.com/m1m0zzz/tremolo-ui/tree/main/site/showcase'
 
+/**
+ * Apply a change that moves the cards around, animating each of them from
+ * where it was to where it lands. The browser snapshots the page on either
+ * side of the change; where it cannot, or motion is reduced, the change is
+ * simply applied.
+ */
+function moveCards(update: () => void) {
+  if (
+    !document.startViewTransition ||
+    matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    update()
+    return
+  }
+  // Rendered synchronously, so the snapshot after the change has it.
+  document.startViewTransition(() => flushSync(update))
+}
+
 /** A demo on the stage, with its source behind a button. */
 export function ShowcaseItem({
   id,
@@ -59,7 +79,15 @@ export function ShowcaseItem({
   const file = files[active]
 
   return (
-    <section id={id} className={clsx(styles.item, wide && styles.wide)}>
+    // A half-width card takes the whole row while its code is open.
+    <section
+      id={id}
+      className={clsx(styles.item, (wide || showCode) && styles.wide)}
+      style={{
+        viewTransitionName: `showcase-${id}`,
+        viewTransitionClass: 'showcase-item',
+      }}
+    >
       {/* The corner is outside the stage, which scrolls sideways on a narrow
           screen: it stays put while the demo moves under it. */}
       <div className={styles.stageFrame}>
@@ -99,7 +127,7 @@ export function ShowcaseItem({
             )}
             aria-expanded={showCode}
             aria-controls={codeId}
-            onClick={() => setShowCode((show) => !show)}
+            onClick={() => moveCards(() => setShowCode((show) => !show))}
           >
             <RiCodeSSlashLine aria-hidden />
             <Translate id="showcase.code">Code</Translate>
@@ -131,11 +159,11 @@ export function ShowcaseItem({
                     styles.tab,
                     index === active && 'tabs__item--active',
                   )}
-                  onClick={() => setActive(index)}
+                  onClick={() => moveCards(() => setActive(index))}
                   onKeyDown={(event) => {
                     if (event.key !== 'Enter' && event.key !== ' ') return
                     event.preventDefault()
-                    setActive(index)
+                    moveCards(() => setActive(index))
                   }}
                 >
                   {name}
