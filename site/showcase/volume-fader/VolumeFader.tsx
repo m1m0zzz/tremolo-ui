@@ -5,6 +5,7 @@ import { curveScale, curveWithCenterValue } from '@tremolo-ui/functions'
 import { AnimationCanvas, Slider } from '@tremolo-ui/react'
 
 import { AudioSource } from '../shared/AudioSource'
+import { Segments } from '../shared/Segments'
 
 import styles from './VolumeFader.module.css'
 
@@ -25,6 +26,10 @@ const FALL = 24
 
 const formatDb = (db: number) =>
   db <= MIN ? '-∞' : `${db > 0 ? '+' : ''}${db.toFixed(1)}`
+
+/** The same on a seven-segment display, which has no ∞ and no +. */
+const displayDb = (db: number) =>
+  (db <= MIN ? '-InF' : db.toFixed(1)).padStart(5)
 
 export function VolumeFader() {
   const [volume, setVolume] = useState(0)
@@ -59,8 +64,8 @@ export function VolumeFader() {
       <AudioSource connect={connect} />
       <div className={styles.strip}>
         <output className={styles.readout}>
-          {formatDb(volume)}
-          <small> dB</small>
+          <Segments value={displayDb(volume)} />
+          <small>dB</small>
         </output>
 
         <div className={styles.body}>

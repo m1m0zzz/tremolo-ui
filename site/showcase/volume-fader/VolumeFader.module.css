@@ -26,20 +26,20 @@
 }
 
 .readout {
-  min-width: 96px;
-  padding: 4px 8px;
+  display: flex;
+  gap: 4px;
+  align-items: baseline;
+  padding: 6px 8px;
   border-radius: 4px;
   background: #0b0c0e;
   box-shadow: 0 1px 0 rgb(255 255 255 / 0.08);
   color: #ffb340;
-  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
   font-size: 1rem;
-  text-align: right;
   text-shadow: 0 0 6px rgb(255 179 64 / 0.5);
 
   & small {
     opacity: 0.6;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
   }
 }
 

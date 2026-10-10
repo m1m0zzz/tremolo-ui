@@ -6,6 +6,7 @@ import parametricEqTsx from '!!raw-loader!@site/showcase/parametric-eq/Parametri
 import realisticKnobsTsx from '!!raw-loader!@site/showcase/realistic-knobs/RealisticKnobs.tsx'
 import audioSourceTsx from '!!raw-loader!@site/showcase/shared/AudioSource.tsx'
 import demoLoopTs from '!!raw-loader!@site/showcase/shared/demo-loop.ts'
+import segmentsTsx from '!!raw-loader!@site/showcase/shared/Segments.tsx'
 import stageCornerTs from '!!raw-loader!@site/showcase/shared/stage-corner.ts'
 import volumeFaderTsx from '!!raw-loader!@site/showcase/volume-fader/VolumeFader.tsx'
 import wsADSRTsx from '!!raw-loader!@site/showcase/wavetable-synth/ADSR.tsx'
@@ -33,6 +34,7 @@ import djFilterPadCss from '!!raw-loader!@site/showcase/dj-filter-pad/DJFilterPa
 import parametricEqCss from '!!raw-loader!@site/showcase/parametric-eq/ParametricEQ.module.css'
 import realisticKnobsCss from '!!raw-loader!@site/showcase/realistic-knobs/RealisticKnobs.module.css'
 import audioSourceCss from '!!raw-loader!@site/showcase/shared/AudioSource.module.css'
+import segmentsCss from '!!raw-loader!@site/showcase/shared/Segments.module.css'
 import volumeFaderCss from '!!raw-loader!@site/showcase/volume-fader/VolumeFader.module.css'
 import wsADSRCss from '!!raw-loader!@site/showcase/wavetable-synth/ADSR.module.css'
 import wsFlushedNumberInputCss from '!!raw-loader!@site/showcase/wavetable-synth/FlushedNumberInput.module.css'
@@ -152,6 +154,8 @@ export default function Showcase() {
             files={[
               { name: 'RealisticKnobs.tsx', code: realisticKnobsTsx },
               { name: 'RealisticKnobs.module.css', code: realisticKnobsCss },
+              { name: 'Segments.tsx', code: segmentsTsx },
+              { name: 'Segments.module.css', code: segmentsCss },
               ...audioSourceFiles,
             ]}
           >
@@ -207,6 +211,8 @@ export default function Showcase() {
             files={[
               { name: 'VolumeFader.tsx', code: volumeFaderTsx },
               { name: 'VolumeFader.module.css', code: volumeFaderCss },
+              { name: 'Segments.tsx', code: segmentsTsx },
+              { name: 'Segments.module.css', code: segmentsCss },
               ...audioSourceFiles,
             ]}
           >

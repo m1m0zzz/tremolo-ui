@@ -5,6 +5,7 @@ import { exponentialScale } from '@tremolo-ui/functions'
 import { Knob, useKnobContext } from '@tremolo-ui/react'
 
 import { AudioSource } from '../shared/AudioSource'
+import { Segments } from '../shared/Segments'
 
 import styles from './RealisticKnobs.module.css'
 
@@ -86,8 +87,10 @@ export function RealisticKnobs() {
           <span className={styles.model}>OVERDRIVE · T-1</span>
         </div>
         <output className={styles.lcd}>
-          <span>{LABELS[touched].toUpperCase()}</span>
-          <span>{values[touched].toFixed(1)}</span>
+          <Segments
+            segments={14}
+            value={`${LABELS[touched].toUpperCase().padEnd(5)} ${values[touched].toFixed(1).padStart(4)}`}
+          />
         </output>
       </div>
 
