@@ -87,10 +87,12 @@ export function RealisticKnobs() {
           <span className={styles.model}>OVERDRIVE · T-1</span>
         </div>
         <output className={styles.lcd}>
+          {/* Fourteen segments spell the name; the number takes seven. */}
           <Segments
             segments={14}
-            value={`${LABELS[touched].toUpperCase().padEnd(5)} ${values[touched].toFixed(1).padStart(4)}`}
+            value={LABELS[touched].toUpperCase().padEnd(5)}
           />
+          <Segments value={values[touched].toFixed(1).padStart(4)} />
         </output>
       </div>
 

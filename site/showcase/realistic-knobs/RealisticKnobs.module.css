@@ -94,6 +94,9 @@
 
 /* A backlit LCD that shows whichever knob was turned last. */
 .lcd {
+  display: flex;
+  gap: 0.75em;
+  align-items: baseline;
   padding: 6px 10px;
   border-radius: 4px;
   background: linear-gradient(#0f2a17, #0b2012);

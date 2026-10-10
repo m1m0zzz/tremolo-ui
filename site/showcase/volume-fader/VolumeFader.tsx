@@ -65,7 +65,8 @@ export function VolumeFader() {
       <div className={styles.strip}>
         <output className={styles.readout}>
           <Segments value={displayDb(volume)} />
-          <small>dB</small>
+          {/* Fourteen segments, for the B that seven cannot tell from an 8. */}
+          <Segments segments={14} value="dB" className={styles.unit} />
         </output>
 
         <div className={styles.body}>

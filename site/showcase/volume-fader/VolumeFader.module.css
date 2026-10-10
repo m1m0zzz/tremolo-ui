@@ -36,11 +36,10 @@
   color: #ffb340;
   font-size: 1rem;
   text-shadow: 0 0 6px rgb(255 179 64 / 0.5);
+}
 
-  & small {
-    opacity: 0.6;
-    font-size: 0.65rem;
-  }
+.unit {
+  font-size: 0.6rem;
 }
 
 .body {
