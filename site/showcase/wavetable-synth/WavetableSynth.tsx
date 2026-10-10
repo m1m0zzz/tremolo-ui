@@ -171,6 +171,8 @@ function generateAndAssignSource(
 
 export const WavetableSynth = () => {
   const [out, setOut] = useState(output)
+  /** Whether the focus is inside the synth, where its keyboard shortcuts work. */
+  const [focused, setFocused] = useState(false)
   const pressedCount = useRef(0)
   const [keyState, setKeyState] = useState<KeyState>({
     trigger: 'release',
@@ -261,12 +263,29 @@ export const WavetableSynth = () => {
 
   // keyState changes on every note, and the keyboard need not follow it.
   const keyboardMemo = useMemo(
-    () => <KeyboardSection onPlayNote={handlePlay} onStopNote={handleStop} />,
-    [handlePlay, handleStop],
+    () => (
+      <KeyboardSection
+        shortcuts={focused}
+        onPlayNote={handlePlay}
+        onStopNote={handleStop}
+      />
+    ),
+    [focused, handlePlay, handleStop],
   )
 
   return (
-    <div className={styles.container}>
+    // Focusable, so that a click anywhere on the synth hands it the keyboard.
+    <div
+      className={styles.container}
+      tabIndex={-1}
+      data-focused={focused ? '' : undefined}
+      onFocus={() => setFocused(true)}
+      onBlur={(event) => {
+        // Moving between the controls inside keeps it.
+        if (!event.currentTarget.contains(event.relatedTarget))
+          setFocused(false)
+      }}
+    >
       <div className={styles.header}>
         <p className={styles.heading}>Wavetable</p>
         <div className={styles.header_right}>

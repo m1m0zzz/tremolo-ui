@@ -44,6 +44,11 @@ function isEditableTarget(target: EventTarget | null) {
 
 interface Props {
   themeColor?: string
+  /**
+   * Whether the computer keyboard plays the synth: only while the focus is
+   * inside it, so that other things on the page keep their keys.
+   */
+  shortcuts?: boolean
   /** `velocity` is 0-1: from the MIDI keyboard, or the velocity knob otherwise. */
   onPlayNote?: (note: number, velocity: number) => void
   onStopNote?: (note: number) => void
@@ -51,6 +56,7 @@ interface Props {
 
 export function KeyboardSection({
   themeColor = 'rgb(67, 170, 248)',
+  shortcuts = true,
   onPlayNote,
   onStopNote,
 }: Props) {
@@ -80,6 +86,7 @@ export function KeyboardSection({
   // The note shortcuts are on the home row, which leaves Z X C V free. They
   // listen where the piano's do, and like them stay out of the text fields.
   useEventListener(window, 'keydown', (e) => {
+    if (!shortcuts) return
     if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return
     if (isEditableTarget(e.target)) return
     switch (e.key) {
@@ -142,7 +149,11 @@ export function KeyboardSection({
           </Knob.Root>
           <span className={`label ${styles.velocity}`}>{velocity}</span>
         </div>
-        <p className={`label ${styles.hint}`}>Z / X: octave, C / V: velocity</p>
+        <p className={`label ${styles.hint}`}>
+          {shortcuts
+            ? 'Z / X: octave, C / V: velocity'
+            : 'Click the synth to play it from the keyboard'}
+        </p>
         <div className={styles.midi}>
           {midiAccess ? (
             <span className="label">
@@ -179,8 +190,10 @@ export function KeyboardSection({
             keyType === 'white' ? pianoTheme.whiteKey : pianoTheme.blackKey,
         })}
         noteRange={noteRange}
+        // On the window, but only while the synth has the focus: turning them
+        // off when it leaves lets go of any note still held.
         keyboardShortcutsScope={'window'}
-        keyboardShortcuts={SHORTCUTS.HOME_ROW}
+        keyboardShortcuts={shortcuts ? SHORTCUTS.HOME_ROW : undefined}
         label={(_, { index }) => SHORTCUTS.HOME_ROW.keys[index]?.toUpperCase()}
         style={{ height: 120 }}
         // Only the MIDI keyboard carries a velocity; the mouse and the computer

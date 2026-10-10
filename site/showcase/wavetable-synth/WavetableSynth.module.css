@@ -6,6 +6,15 @@
   background: var(--ifm-background-surface-color, white);
   box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
   color: var(--ifm-font-color-base, #222);
+  outline: none;
+  transition: box-shadow 150ms;
+
+  /* The computer keyboard plays the synth while it holds the focus. */
+  &[data-focused] {
+    box-shadow:
+      0 0 0 2px rgb(67 170 248 / 0.6),
+      0 8px 24px rgb(0 0 0 / 0.12);
+  }
 }
 
 /* The small labels every section uses. */
