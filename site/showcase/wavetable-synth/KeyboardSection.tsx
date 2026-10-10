@@ -165,6 +165,7 @@ export function KeyboardSection({
           ) : (
             <button
               type="button"
+              className={styles.connect}
               onClick={() => {
                 // A MIDI message is not a user gesture, so the audio context
                 // would stay suspended until something is clicked. This is one.

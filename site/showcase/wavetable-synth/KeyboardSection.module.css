@@ -39,6 +39,28 @@
   margin-left: auto;
 }
 
+/* The same rounded button as the transport of the showcase. */
+.connect {
+  height: 2rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--ifm-color-emphasis-300, #ccc);
+  border-radius: 6px;
+  background: var(--ifm-background-surface-color, white);
+  color: inherit;
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--ifm-color-emphasis-100, #f2f2f2);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ifm-color-primary, #3578e5);
+    outline-offset: 1px;
+  }
+}
+
 /* The shortcuts listen on the window, so focusing the keyboard means nothing
    and the ring would only be noise. */
 .piano {
