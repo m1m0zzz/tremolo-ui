@@ -1,0 +1,30 @@
+/*
+ * DSEG by keshikan (https://github.com/keshikan/DSEG), under the SIL Open
+ * Font License 1.1. The file comes from the `dseg` package.
+ */
+@font-face {
+  font-family: 'DSEG7 Classic';
+  font-weight: 700;
+  font-display: block;
+  src: url('~dseg/fonts/DSEG7-Classic/DSEG7Classic-Bold.woff2') format('woff2');
+}
+
+/* The two layers on top of each other, the lit one over the unlit. */
+.display {
+  display: inline-grid;
+  font-family: 'DSEG7 Classic', monospace;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: 0.05em;
+  white-space: pre;
+
+  & > * {
+    grid-area: 1 / 1;
+    text-align: right;
+  }
+}
+
+.unlit {
+  opacity: 0.12;
+  text-shadow: none;
+}

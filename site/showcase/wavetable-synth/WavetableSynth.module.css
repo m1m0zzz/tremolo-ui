@@ -1,0 +1,54 @@
+.container {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  background: var(--ifm-background-surface-color, white);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+  color: var(--ifm-font-color-base, #222);
+  outline: none;
+  transition: box-shadow 150ms;
+
+  /* The computer keyboard plays the synth while it holds the focus. */
+  &[data-focused] {
+    box-shadow:
+      0 0 0 2px rgb(67 170 248 / 0.6),
+      0 8px 24px rgb(0 0 0 / 0.12);
+  }
+}
+
+/* The small labels every section uses. */
+.container :global(.label) {
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.header {
+  display: flex;
+  height: 40px;
+  margin-bottom: 0.5rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header_right {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.heading {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.parameters {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.piano {
+  margin-top: 1.5rem;
+}

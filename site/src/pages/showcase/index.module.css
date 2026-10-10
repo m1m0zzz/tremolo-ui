@@ -1,0 +1,22 @@
+.header {
+  padding: 3rem 0 2rem;
+  text-align: center;
+}
+
+.lead {
+  max-width: 40rem;
+  margin: 0 auto;
+  color: var(--ifm-color-emphasis-800);
+  font-size: 1.1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  padding-bottom: 4rem;
+
+  @media (max-width: 996px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

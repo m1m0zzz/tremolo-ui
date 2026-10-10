@@ -1,0 +1,185 @@
+import BrowserOnly from '@docusaurus/BrowserOnly'
+import Link from '@docusaurus/Link'
+import Translate from '@docusaurus/Translate'
+import { StageCorner } from '@site/showcase/shared/stage-corner'
+import CodeBlock from '@theme/CodeBlock'
+import Heading from '@theme/Heading'
+import clsx from 'clsx'
+import { useId, useState, type ReactNode } from 'react'
+import { flushSync } from 'react-dom'
+import { FiGithub } from 'react-icons/fi'
+import { RiCodeSSlashLine } from 'react-icons/ri'
+
+import styles from './styles.module.css'
+import './view-transition.css'
+
+export interface ShowcaseFile {
+  /** The name the tab shows, as the file is named in the demo's directory. */
+  name: string
+  code: string
+}
+
+interface Props {
+  /** The anchor of the section, and the directory of the demo under `site/showcase/`. */
+  id: string
+  title: ReactNode
+  description: ReactNode
+  /** The components the demo is built from, each linked to its page. */
+  components: string[]
+  /** The demo's own files first, then whatever it shares with the others. */
+  files: ShowcaseFile[]
+  /** Span the whole row of the grid, for a demo wider than half of it. */
+  wide?: boolean
+  /** The demo itself, rendered in the browser only: it plays audio. */
+  children: () => ReactNode
+}
+
+const LANGUAGES: Record<string, string> = {
+  css: 'css',
+  ts: 'ts',
+  tsx: 'tsx',
+}
+
+const GITHUB = 'https://github.com/m1m0zzz/tremolo-ui/tree/main/site/showcase'
+
+/**
+ * Apply a change that moves the cards around, animating each of them from
+ * where it was to where it lands. The browser snapshots the page on either
+ * side of the change; where it cannot, or motion is reduced, the change is
+ * simply applied.
+ */
+function moveCards(update: () => void) {
+  if (
+    !document.startViewTransition ||
+    matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    update()
+    return
+  }
+  // Rendered synchronously, so the snapshot after the change has it.
+  document.startViewTransition(() => flushSync(update))
+}
+
+/** A demo on the stage, with its source behind a button. */
+export function ShowcaseItem({
+  id,
+  title,
+  description,
+  components,
+  files,
+  wide = false,
+  children,
+}: Props) {
+  const [showCode, setShowCode] = useState(false)
+  const [active, setActive] = useState(0)
+  // Where a demo's transport is drawn: held in state, so the demo renders
+  // again once it exists.
+  const [corner, setCorner] = useState<HTMLDivElement | null>(null)
+  const codeId = useId()
+  const file = files[active]
+
+  return (
+    // A half-width card takes the whole row while its code is open.
+    <section
+      id={id}
+      className={clsx(styles.item, (wide || showCode) && styles.wide)}
+      style={{
+        viewTransitionName: `showcase-${id}`,
+        viewTransitionClass: 'showcase-item',
+      }}
+    >
+      {/* The corner is outside the stage, which scrolls sideways on a narrow
+          screen: it stays put while the demo moves under it. */}
+      <div className={styles.stageFrame}>
+        <div ref={setCorner} className={styles.corner} />
+        <div className={styles.stage}>
+          <BrowserOnly
+            fallback={<div className={styles.loading}>Loading…</div>}
+          >
+            {() => (
+              <StageCorner.Provider value={corner}>
+                {children()}
+              </StageCorner.Provider>
+            )}
+          </BrowserOnly>
+        </div>
+      </div>
+      <div className={styles.meta}>
+        <div className={styles.text}>
+          <Heading as="h2" className={styles.title}>
+            {title}
+          </Heading>
+          <p className={styles.description}>{description}</p>
+          <ul className={styles.components}>
+            {components.map((name) => (
+              <li key={name}>
+                <Link to={`/docs/components/${name}/`}>{name}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className={styles.actions}>
+          <button
+            type="button"
+            className={clsx(
+              'button button--sm',
+              showCode ? 'button--primary' : 'button--secondary',
+            )}
+            aria-expanded={showCode}
+            aria-controls={codeId}
+            onClick={() => moveCards(() => setShowCode((show) => !show))}
+          >
+            <RiCodeSSlashLine aria-hidden />
+            <Translate id="showcase.code">Code</Translate>
+          </button>
+          <a
+            className={styles.github}
+            href={`${GITHUB}/${id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="GitHub"
+            aria-label="GitHub"
+          >
+            <FiGithub />
+          </a>
+        </div>
+      </div>
+      <div id={codeId} className={styles.code} hidden={!showCode}>
+        {showCode && (
+          <>
+            <ul className={clsx('tabs', styles.tabs)} role="tablist">
+              {files.map(({ name }, index) => (
+                <li
+                  key={name}
+                  role="tab"
+                  tabIndex={index === active ? 0 : -1}
+                  aria-selected={index === active}
+                  className={clsx(
+                    'tabs__item',
+                    styles.tab,
+                    index === active && 'tabs__item--active',
+                  )}
+                  onClick={() => moveCards(() => setActive(index))}
+                  onKeyDown={(event) => {
+                    if (event.key !== 'Enter' && event.key !== ' ') return
+                    event.preventDefault()
+                    moveCards(() => setActive(index))
+                  }}
+                >
+                  {name}
+                </li>
+              ))}
+            </ul>
+            <CodeBlock
+              className={styles.codeBlock}
+              language={LANGUAGES[file.name.split('.').pop() ?? ''] ?? 'text'}
+              showLineNumbers
+            >
+              {file.code.trim()}
+            </CodeBlock>
+          </>
+        )}
+      </div>
+    </section>
+  )
+}

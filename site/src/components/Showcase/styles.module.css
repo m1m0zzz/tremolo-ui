@@ -1,0 +1,167 @@
+.item {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: var(--ifm-card-border-radius);
+  background: var(--ifm-card-background-color);
+  /* Below the navbar when the anchor of a section is followed. */
+  scroll-margin-top: calc(var(--ifm-navbar-height) + 1rem);
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+.stageFrame {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+/* Where a demo that plays audio puts its transport. */
+.corner {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 1;
+
+  &:empty {
+    display: none;
+  }
+}
+
+/* The demo is the point, so it gets the room: centred, and scrolled sideways
+   rather than squeezed on a narrow screen. */
+.stage {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  min-height: 320px;
+  padding: 2rem 1rem;
+
+  /* Room under the transport, so the demo does not start beneath it. */
+  .stageFrame:has(.corner:not(:empty)) & {
+    padding-top: 3.5rem;
+  }
+
+  overflow-x: auto;
+  background-color: var(--ifm-color-emphasis-100);
+  background-image: radial-gradient(
+    circle,
+    var(--ifm-color-emphasis-300) 1px,
+    transparent 1.5px
+  );
+  background-size: 16px 16px;
+
+  & > * {
+    max-width: 100%;
+  }
+}
+
+.loading {
+  color: var(--ifm-color-emphasis-600);
+}
+
+.meta {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.text {
+  min-width: 0;
+}
+
+.title {
+  margin: 0 0 0.25rem;
+  font-size: 1.25rem;
+}
+
+.description {
+  margin: 0 0 0.5rem;
+  color: var(--ifm-color-emphasis-800);
+  font-size: 0.9rem;
+}
+
+.components {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & a {
+    display: inline-block;
+    padding: 0 0.5rem;
+    border-radius: 999px;
+    background: var(--ifm-color-emphasis-200);
+    color: var(--ifm-color-emphasis-800);
+    font-size: 0.75rem;
+    line-height: 1.6;
+
+    &:hover {
+      background: var(--ifm-color-primary-lightest);
+      color: var(--ifm-color-gray-900);
+      text-decoration: none;
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.5rem;
+  align-items: center;
+
+  & button {
+    display: inline-flex;
+    gap: 0.375rem;
+    align-items: center;
+  }
+}
+
+.github {
+  display: inline-flex;
+  padding: 0.375rem;
+  border-radius: var(--ifm-button-border-radius);
+  color: var(--ifm-color-emphasis-700);
+  font-size: 1.1rem;
+
+  &:hover {
+    background: var(--ifm-color-emphasis-200);
+    color: var(--ifm-color-emphasis-900);
+  }
+}
+
+.code {
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.tabs {
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  padding: 0 0.5rem;
+}
+
+.tab {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.codeBlock {
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+
+  & pre {
+    max-height: 32rem;
+  }
+}

@@ -1,0 +1,287 @@
+.eq {
+  /* Light by default; the dark set is at the end. The canvas reads the
+     `--graph-*` ones, so the curves follow the theme too. */
+  --panel: #f4f5f7;
+  --panel-raised: #ffffff;
+  --line: rgb(0 0 0 / 0.1);
+  --text: #1f2329;
+  --text-dim: #6b7480;
+  --shadow: 0 12px 32px rgb(0 0 0 / 0.12);
+  --graph-top: #ffffff;
+  --graph-bottom: #eef0f3;
+  --graph-grid: rgb(0 0 0 / 0.07);
+  --graph-zero: rgb(0 0 0 / 0.25);
+  --graph-label: rgb(0 0 0 / 0.4);
+  --graph-spectrum: rgb(0 0 0 / 0.07);
+  --graph-curve: #1f2329;
+  --knob-track: #e2e5e9;
+  --knob-thumb: #ffffff;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(880px, 100%);
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow:
+    0 0 0 1px var(--line),
+    var(--shadow);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  align-items: baseline;
+}
+
+.hint {
+  color: var(--text-dim);
+  font-size: 0.7rem;
+}
+
+.brand {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+}
+
+/* The graph. The editor is the box both layers inside fill. */
+.editor {
+  height: 280px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    var(--graph-top),
+    var(--graph-bottom) 70%
+  );
+  touch-action: none;
+}
+
+.point {
+  --size: 22px;
+
+  display: grid;
+  place-items: center;
+  width: var(--size);
+  height: var(--size);
+  border: 2px solid var(--color);
+  border-radius: 50%;
+  outline: none;
+  background: color-mix(in srgb, var(--color) 30%, var(--graph-bottom));
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: grab;
+  user-select: none;
+  transition:
+    scale 120ms ease-out,
+    box-shadow 120ms ease-out;
+
+  &:hover {
+    scale: 1.1;
+  }
+
+  &[data-active] {
+    background: var(--color);
+    color: #0d0f13;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color) 30%, transparent);
+  }
+
+  &[data-dragging] {
+    cursor: inherit;
+    scale: 1.15;
+  }
+
+  /* Off: still there to move, but out of what is heard. */
+  &[data-off] {
+    opacity: 0.4;
+  }
+
+  /* In the selection, which moves together. */
+  &[data-selected] {
+    outline: 2px solid var(--color);
+    outline-offset: 2px;
+  }
+
+  /* With Alt held, a drag on a band with a Q turns it. */
+  .editor[data-alt] &[data-q] {
+    cursor: ns-resize;
+  }
+
+  &:focus-within {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color) 45%, transparent);
+  }
+}
+
+/* The box dragged across empty space to select several bands. */
+.selectionBox {
+  border: 1px solid var(--text-dim);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--text-dim) 15%, transparent);
+}
+
+/* One row per band: four across where there is room, fewer on a phone. A
+   column never narrower than a fifth of the width caps it at four. */
+.bands {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(max(8.5rem, 21%), 1fr));
+  gap: 6px;
+}
+
+.bandRow {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-raised);
+
+  /* The band the knobs edit. */
+  &[data-active] {
+    border-color: var(--band-color);
+    box-shadow: 0 0 0 1px var(--band-color);
+  }
+}
+
+/* On: filled with the band's colour. Off: only its outline. */
+.bandSwitch {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 2px solid var(--band-color);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+
+  &[aria-checked='true'] {
+    background: var(--band-color);
+    color: #0d0f13;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--band-color);
+    outline-offset: 2px;
+  }
+}
+
+.bandType {
+  flex: 1;
+  min-width: 0;
+  height: 1.625rem;
+  padding: 0 0.25rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel-raised);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.knobs {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.knob {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  width: 64px;
+}
+
+.knobLabel {
+  color: var(--text-dim);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.knobValue {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.knobRoot {
+  width: 48px;
+  height: 48px;
+  outline: none;
+  cursor: grab;
+
+  &[data-dragging] {
+    cursor: inherit;
+  }
+
+  &[data-disabled] {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--band-color) 60%, transparent);
+  }
+}
+
+.knobInactive {
+  color: var(--knob-track);
+}
+
+.knobActive {
+  color: var(--band-color);
+}
+
+.knobThumb {
+  color: var(--knob-thumb);
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.2));
+}
+
+.knobThumbLine {
+  color: var(--text);
+}
+
+/*
+ * Dark mode follows whatever marks the page — `.dark` and `[data-theme=dark]`
+ * are what this site and Storybook set.
+ */
+:global(.dark) .eq,
+:global([data-theme='dark']) .eq {
+  --panel: #15181d;
+  --panel-raised: #1d2128;
+  --line: rgb(255 255 255 / 0.08);
+  --text: #d7dce4;
+  --text-dim: #7d8694;
+  --shadow: 0 12px 32px rgb(0 0 0 / 0.35);
+  --graph-top: #222832;
+  --graph-bottom: #0d0f13;
+  --graph-grid: rgb(255 255 255 / 0.07);
+  --graph-zero: rgb(255 255 255 / 0.2);
+  --graph-label: rgb(255 255 255 / 0.35);
+  --graph-spectrum: rgb(255 255 255 / 0.08);
+  --graph-curve: #f5f7fa;
+  --knob-track: #2a3039;
+  --knob-thumb: #363d48;
+}

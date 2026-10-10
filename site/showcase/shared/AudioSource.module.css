@@ -1,0 +1,80 @@
+/* The transport of the demos that play audio. On the showcase it sits on the
+   page rather than on a demo, so it takes the page's colours. */
+.source {
+  --border: var(--ifm-color-emphasis-300, #ccc);
+  --surface: var(--ifm-background-surface-color, white);
+  --hover: var(--ifm-color-emphasis-100, #f2f2f2);
+
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  color: var(--ifm-font-color-base, #222);
+  font-size: 0.8rem;
+}
+
+.button {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--hover);
+  }
+
+  &:focus-visible,
+  &:has(:focus-visible) {
+    /* Above the name beside it, which would cover the ring's right edge. */
+    position: relative;
+    z-index: 1;
+    outline: 2px solid var(--ifm-color-primary, #3578e5);
+    outline-offset: 1px;
+  }
+
+  &[data-playing] {
+    border-color: var(--ifm-color-primary, #3578e5);
+    color: var(--ifm-color-primary, #3578e5);
+  }
+}
+
+/* The folder button and the name, joined into one rounded box. */
+.group {
+  display: flex;
+  align-items: stretch;
+  height: 2rem;
+
+  & .button {
+    border-radius: 6px 0 0 6px;
+  }
+}
+
+.name {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  max-width: 12rem;
+  padding: 0 0.625rem;
+  border: 1px solid var(--border);
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+  background: var(--surface);
+  color: var(--ifm-color-emphasis-700, #555);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

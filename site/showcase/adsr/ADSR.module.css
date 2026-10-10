@@ -1,0 +1,216 @@
+.adsr {
+  /* Light by default; the dark set is at the end. The canvas reads
+     `--accent` and the `--graph-*` ones, so the envelope follows the theme
+     too. `--accent` stays a six-digit hex: the canvas adds alpha to it. */
+  --accent: #0f9f80;
+  --panel-from: #ffffff;
+  --panel: #f2f4f6;
+  --line: rgb(0 0 0 / 0.08);
+  --text: #1f2329;
+  --text-dim: #6b7480;
+  --shadow: 0 14px 30px rgb(0 0 0 / 0.12);
+  --graph-bg: #ffffff;
+  --graph-grid: rgb(0 0 0 / 0.07);
+  --graph-playhead: #0b7a62;
+  --knob-track: #e2e5e9;
+  --knob-thumb: #ffffff;
+  --key-border: #9aa2ad;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 420px;
+  padding: 16px;
+  border-radius: 12px;
+  background: linear-gradient(160deg, var(--panel-from), var(--panel));
+  box-shadow:
+    0 0 0 1px var(--line),
+    var(--shadow);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.title {
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+}
+
+.hint {
+  color: var(--text-dim);
+  font-size: 0.7rem;
+}
+
+/* The room around the editor is for the handles at its edges. */
+.graph {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--graph-bg);
+}
+
+.editor {
+  height: 140px;
+  touch-action: none;
+}
+
+.handle {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  outline: none;
+  background: var(--graph-bg);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: grab;
+  user-select: none;
+  transition: background-color 100ms;
+
+  &:hover,
+  &[data-dragging] {
+    background: var(--accent);
+    color: var(--graph-bg);
+  }
+
+  &[data-dragging] {
+    cursor: inherit;
+  }
+
+  &:focus-within {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+}
+
+.knobs {
+  display: flex;
+  justify-content: space-around;
+}
+
+.knob {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  width: 80px;
+}
+
+.knobRoot {
+  width: 46px;
+  height: 46px;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  outline: none;
+  cursor: grab;
+
+  &[data-dragging] {
+    cursor: inherit;
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 60%, transparent);
+  }
+}
+
+.knobTrack {
+  color: var(--knob-track);
+}
+
+.knobValue {
+  color: var(--accent);
+  filter: drop-shadow(
+    0 0 3px color-mix(in srgb, var(--accent) 60%, transparent)
+  );
+}
+
+.knobThumb {
+  color: var(--knob-thumb);
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.2));
+}
+
+.knobThumbLine {
+  color: var(--accent);
+}
+
+.knobLabel {
+  color: var(--text-dim);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.knobDisplay {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.piano {
+  display: block;
+  height: 72px;
+  margin: 0 auto;
+  user-select: none;
+  touch-action: none;
+}
+
+.whiteKey,
+.blackKey {
+  box-sizing: border-box;
+  border-radius: 0 0 4px 4px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.whiteKey {
+  border: 1px solid var(--key-border);
+  background: linear-gradient(#cfd5dc, #f3f5f7 12%);
+
+  &[data-active] {
+    background: linear-gradient(
+      color-mix(in srgb, var(--accent) 40%, white),
+      var(--accent)
+    );
+  }
+}
+
+.blackKey {
+  border: 1px solid #000;
+  background: linear-gradient(#2a2f36, #15181c);
+
+  &[data-active] {
+    background: linear-gradient(
+      color-mix(in srgb, var(--accent) 50%, black),
+      var(--accent)
+    );
+  }
+}
+
+/*
+ * Dark mode follows whatever marks the page — `.dark` and `[data-theme=dark]`
+ * are what this site and Storybook set.
+ */
+:global(.dark) .adsr,
+:global([data-theme='dark']) .adsr {
+  --accent: #3ee6c1;
+  --panel-from: #1a1e24;
+  --panel: #121519;
+  --line: rgb(255 255 255 / 0.07);
+  --text: #d5dbe3;
+  --text-dim: #6f7885;
+  --shadow: 0 14px 30px rgb(0 0 0 / 0.35);
+  --graph-bg: #0b0d10;
+  --graph-grid: rgb(255 255 255 / 0.06);
+  --graph-playhead: #eafff9;
+  --knob-track: #262b33;
+  --knob-thumb: #2e343d;
+  --key-border: #0b0d10;
+}

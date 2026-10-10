@@ -1,0 +1,243 @@
+import { useAtom } from 'jotai'
+
+import { clamp, unitFormat } from '@tremolo-ui/functions'
+import { AnimationCanvas, NumberInput, Slider } from '@tremolo-ui/react'
+
+import {
+  detuneAtom,
+  MAX_DETUNE,
+  MAX_SEMITONE,
+  MIN_DETUNE,
+  MIN_SEMITONE,
+  positionAtom,
+  semitoneAtom,
+} from './atoms'
+import {
+  generateWaveWithFunction,
+  sin,
+  triangle,
+  saw,
+  pulse,
+  middleWave,
+} from './wavetable'
+
+import flushed from './FlushedNumberInput.module.css'
+import sliderTheme from 'shared/css/Slider.module.css'
+
+const sampleLength = 100
+const frameLength = 100
+
+const sineWave = generateWaveWithFunction(sampleLength, sin)
+const triangleWave = generateWaveWithFunction(sampleLength, triangle)
+const sawWave = generateWaveWithFunction(sampleLength, saw)
+const pulseWave = generateWaveWithFunction(sampleLength, pulse)
+const wavetable: Array<Array<number>> = []
+
+for (let i = 0; i < frameLength; i++) {
+  if (i === 0) {
+    wavetable.push(sineWave)
+  } else if (i <= 33) {
+    wavetable.push(middleWave(sineWave, triangleWave, i / 33))
+  } else if (i <= 67) {
+    wavetable.push(middleWave(triangleWave, sawWave, (i - 33) / (67 - 33)))
+  } else {
+    wavetable.push(middleWave(sawWave, pulseWave, (i - 67) / (100 - 67)))
+  }
+}
+
+// const keyframe = {
+//   0: sineWave,
+//   33: triangleWave,
+//   67: sawWave,
+//   100: pulseWave
+// }
+
+export const WaveSelector = ({
+  themeColor = 'rgb(67, 170, 248)',
+}: {
+  themeColor?: string
+}) => {
+  const [position, setPosition] = useAtom(positionAtom)
+  const [semitone, setSemitone] = useAtom(semitoneAtom)
+  const [detune, setDetune] = useAtom(detuneAtom)
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        width: 'min-content',
+        height: 200,
+        gap: 4,
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          height: '100%',
+        }}
+      >
+        <Slider.Root
+          className={sliderTheme.root}
+          value={position}
+          min={0}
+          max={100}
+          onChange={(v) => setPosition(v)}
+          orientation="vertical"
+          style={{
+            margin: 0,
+          }}
+        >
+          <Slider.Track
+            className={sliderTheme.track}
+            length={170}
+            thickness="auto"
+            style={{ background: 'none' }}
+          >
+            <AnimationCanvas
+              width={180}
+              height={170}
+              draw={(ctx, { width, height }) => {
+                const padX = 10
+                const padY = 21
+                const v = clamp(position, 0, 100)
+                ctx.clearRect(0, 0, width, height)
+                ctx.lineWidth = 2
+                function drawWave(wave: number[], pos: number) {
+                  ctx.beginPath()
+                  for (let i = 0; i < wave.length; i++) {
+                    const sig = wave[i]
+                    const arg: [number, number] = [
+                      padX + ((width - padX * 2) * i) / wave.length,
+                      padY +
+                        (height - padY * 2) * (100 - pos) * 0.01 -
+                        sig * 18,
+                    ]
+                    if (i === 0) {
+                      ctx.moveTo(...arg)
+                    } else {
+                      ctx.lineTo(...arg)
+                    }
+                  }
+                  ctx.stroke()
+                }
+                // draw wave placeholder
+                ctx.strokeStyle = 'rgb(128 128 128 / 0.25)'
+                drawWave(sineWave, 0)
+                drawWave(triangleWave, 33)
+                drawWave(sawWave, 67)
+                drawWave(pulseWave, 100)
+                // draw wave
+                ctx.strokeStyle = themeColor
+                drawWave(
+                  wavetable[Math.floor((v / 100) * (frameLength - 1))],
+                  v,
+                )
+              }}
+            />
+
+            {/* This one shows no thumb at all. */}
+            <Slider.Thumb
+              className={sliderTheme.thumb}
+              style={{ display: 'none' }}
+            />
+          </Slider.Track>
+        </Slider.Root>
+        {/* The labels sit beside the fields, so this row is as tall as a field
+            and lines up with the position field at the foot of the next column. */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span className="label">Semi:</span>
+            <NumberInput.Root
+              value={semitone}
+              min={MIN_SEMITONE}
+              max={MAX_SEMITONE}
+              {...unitFormat('st', { prefixes: false })}
+              selectOnFocus="number"
+              className={flushed.root}
+              onChange={(v) => setSemitone(v)}
+            >
+              <NumberInput.InputField className={flushed.field} />
+            </NumberInput.Root>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span className="label">Det:</span>
+            <NumberInput.Root
+              value={detune}
+              min={MIN_DETUNE}
+              max={MAX_DETUNE}
+              {...unitFormat('ct', { prefixes: false })}
+              selectOnFocus="number"
+              className={flushed.root}
+              onChange={(v) => setDetune(v)}
+            >
+              <NumberInput.InputField className={flushed.field} />
+            </NumberInput.Root>
+          </div>
+        </div>
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 4,
+        }}
+      >
+        {/* Takes whatever the field below leaves, so the field sits at the foot. */}
+        <Slider.Root
+          className={sliderTheme.root}
+          value={position}
+          min={0}
+          max={100}
+          onChange={(v) => setPosition(v)}
+          orientation="vertical"
+          style={{
+            width: 'min-content',
+            flex: 1,
+            minHeight: 0,
+            margin: '10px 10px 0',
+          }}
+        >
+          <Slider.Track
+            className={sliderTheme.track}
+            thickness={6}
+            length="100%"
+            activeColor={themeColor}
+          >
+            <Slider.Thumb
+              className={sliderTheme.thumb}
+              style={{
+                border: `solid 4px ${themeColor}`,
+                background: 'white',
+                borderRadius: '50%',
+                width: 12,
+                height: 12,
+              }}
+            />
+          </Slider.Track>
+        </Slider.Root>
+        <NumberInput.Root
+          value={position}
+          min={0}
+          max={100}
+          {...unitFormat('%', { prefixes: false })}
+          selectOnFocus="number"
+          className={flushed.root}
+          onChange={(v) => setPosition(v)}
+        >
+          <NumberInput.InputField className={flushed.field} />
+        </NumberInput.Root>
+      </div>
+    </div>
+  )
+}
