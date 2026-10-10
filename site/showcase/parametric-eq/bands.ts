@@ -16,20 +16,22 @@ export interface Band {
   gain: number
   /** The quality factor, as the knob shows it. The shelves have none. */
   q: number
+  /** Off, the band is left out of the chain and out of the curve. */
+  enabled: boolean
   color: string
 }
 
 /** What each type is called, and which of the parameters it has. */
 export const TYPES: Record<
   BandType,
-  { label: string; short: string; gain: boolean; q: boolean }
+  { label: string; gain: boolean; q: boolean }
 > = {
-  peaking: { label: 'Bell', short: 'Bell', gain: true, q: true },
-  lowshelf: { label: 'Low shelf', short: 'LS', gain: true, q: false },
-  highshelf: { label: 'High shelf', short: 'HS', gain: true, q: false },
-  lowpass: { label: 'Low pass', short: 'LP', gain: false, q: true },
-  highpass: { label: 'High pass', short: 'HP', gain: false, q: true },
-  notch: { label: 'Notch', short: 'Notch', gain: false, q: true },
+  peaking: { label: 'Bell', gain: true, q: true },
+  lowshelf: { label: 'Low shelf', gain: true, q: false },
+  highshelf: { label: 'High shelf', gain: true, q: false },
+  lowpass: { label: 'Low pass', gain: false, q: true },
+  highpass: { label: 'High pass', gain: false, q: true },
+  notch: { label: 'Notch', gain: false, q: true },
 }
 
 /**
@@ -56,22 +58,25 @@ export const Q_MAX = 18
 export const freqScale = exponentialScale
 export const gainScale = linearScale
 
-const makeBand = (
-  type: BandType,
-  frequency: number,
-  gain: number,
-  color: string,
-): Band => ({ type, frequency, gain, q: DEFAULT_Q[type], color })
+/** Every band starts flat: 0 dB, the Q of its type, and on. */
+const makeBand = (type: BandType, frequency: number, color: string): Band => ({
+  type,
+  frequency,
+  gain: 0,
+  q: DEFAULT_Q[type],
+  enabled: true,
+  color,
+})
 
 export const INITIAL_BANDS: Band[] = [
-  makeBand('highpass', 30, 0, '#ff6b6b'),
-  makeBand('lowshelf', 100, 2, '#ff9f5a'),
-  makeBand('peaking', 250, -3, '#ffd166'),
-  makeBand('peaking', 600, 1.5, '#7bd88f'),
-  makeBand('peaking', 1500, 2.5, '#4fd1c5'),
-  makeBand('peaking', 4000, -2, '#4fc3f7'),
-  makeBand('highshelf', 9000, 3, '#9d8cff'),
-  makeBand('lowpass', 18_000, 0, '#e58cff'),
+  makeBand('highpass', 30, '#ff6b6b'),
+  makeBand('lowshelf', 100, '#ff9f5a'),
+  makeBand('peaking', 250, '#ffd166'),
+  makeBand('peaking', 600, '#7bd88f'),
+  makeBand('peaking', 1500, '#4fd1c5'),
+  makeBand('peaking', 4000, '#4fc3f7'),
+  makeBand('highshelf', 9000, '#9d8cff'),
+  makeBand('lowpass', 18_000, '#e58cff'),
 ]
 
 /** The same band as another type, with what that type has no use for reset. */

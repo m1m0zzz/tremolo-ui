@@ -59,9 +59,28 @@ export function ParametricEQ() {
   /** The band the knobs edit: the one last focused, dragged or picked. */
   const [selected, setSelected] = useState(3)
   const graphRef = useRef<{
+    input: Tone.Gain
     filters: Tone.BiquadFilter[]
     analyser: Tone.Analyser
   }>(null)
+
+  /** Chain the bands that are on, in order, and leave the rest out. */
+  const wire = (bands: Band[]) => {
+    const graph = graphRef.current
+    if (!graph) return
+    graph.input.disconnect()
+    for (const filter of graph.filters) filter.disconnect()
+    const on = graph.filters.filter((_, i) => bands[i].enabled)
+    graph.input.chain(...on, graph.analyser)
+  }
+
+  const toggleBand = (index: number) => {
+    const next = bands.map((band, i) =>
+      i === index ? { ...band, enabled: !band.enabled } : band,
+    )
+    setBands(next)
+    wire(next)
+  }
 
   const updateBand = (index: number, change: Partial<Band>) =>
     setBands((prev) =>
@@ -133,18 +152,24 @@ export function ParametricEQ() {
       smoothing: 0.85,
     })
     const input = new Tone.Gain()
-    input.chain(...filters, analyser, Tone.getDestination())
-    graphRef.current = { filters, analyser }
+    analyser.toDestination()
+    graphRef.current = { input, filters, analyser }
+    wire(bands)
     return input
   }
 
   const responses = useMemo(() => bands.map(bandResponse), [bands])
+  // Only the bands that are on add to what is heard.
   const total = useMemo(
     () =>
       FREQUENCIES.map((_, i) =>
-        responses.reduce((sum, response) => sum + response[i], 0),
+        responses.reduce(
+          (sum, response, band) =>
+            bands[band].enabled ? sum + response[i] : sum,
+          0,
+        ),
       ),
-    [responses],
+    [responses, bands],
   )
 
   const draw = (
@@ -217,21 +242,25 @@ export function ParametricEQ() {
       response.forEach((db, i) => ctx.lineTo(xOf(FREQUENCIES[i]), yOf(db)))
     }
 
-    // The selected band on its own, filled down to 0 dB.
+    // The selected band on its own, filled down to 0 dB, while it is on.
     const band = bands[selected]
-    curve(responses[selected])
-    ctx.lineTo(width, yOf(0))
-    ctx.lineTo(0, yOf(0))
-    ctx.fillStyle = `${band.color}33`
-    ctx.fill()
+    if (band.enabled) {
+      curve(responses[selected])
+      ctx.lineTo(width, yOf(0))
+      ctx.lineTo(0, yOf(0))
+      ctx.fillStyle = `${band.color}33`
+      ctx.fill()
+    }
 
-    // Every band, and what they add up to.
+    // Every band, and what they add up to. One that is off is dashed.
     ctx.lineWidth = 1
     responses.forEach((response, i) => {
       curve(response)
+      ctx.setLineDash(bands[i].enabled ? [] : [3, 4])
       ctx.strokeStyle = `${bands[i].color}88`
       ctx.stroke()
     })
+    ctx.setLineDash([])
     curve(total)
     ctx.lineWidth = 2.5
     ctx.strokeStyle = color('--graph-curve')
@@ -275,6 +304,7 @@ export function ParametricEQ() {
               color={band.color}
               data-band={i}
               data-active={i === selected ? '' : undefined}
+              data-off={band.enabled ? undefined : ''}
               data-q={TYPES[band.type].q ? '' : undefined}
               aria-label={{
                 x: `Band ${i + 1} frequency`,
@@ -295,19 +325,47 @@ export function ParametricEQ() {
       </PointsEditor.Root>
 
       <div className={styles.controls}>
-        <div className={styles.bands} role="group" aria-label="Bands">
+        {/* A row per band: on or off, and its type. Focus anywhere in a row
+            hands the band to the knobs. */}
+        <div className={styles.bands}>
           {bands.map((band, i) => (
-            <button
+            <div
               key={i}
-              type="button"
-              className={styles.bandButton}
+              className={styles.bandRow}
               style={{ '--band-color': band.color } as CSSProperties}
-              aria-pressed={i === selected}
-              onClick={() => setSelected(i)}
+              data-active={i === selected ? '' : undefined}
+              onFocus={() => setSelected(i)}
+              onPointerDown={() => setSelected(i)}
             >
-              <span className={styles.bandNumber}>{i + 1}</span>
-              {TYPES[band.type].short}
-            </button>
+              <button
+                type="button"
+                role="switch"
+                className={styles.bandSwitch}
+                aria-checked={band.enabled}
+                aria-label={`Band ${i + 1}`}
+                onClick={() => toggleBand(i)}
+              >
+                {i + 1}
+              </button>
+              <select
+                className={styles.bandType}
+                aria-label={`Band ${i + 1} type`}
+                value={band.type}
+                onChange={(e) =>
+                  setBands((prev) =>
+                    prev.map((b, j) =>
+                      j === i ? changeType(b, e.target.value as BandType) : b,
+                    ),
+                  )
+                }
+              >
+                {(Object.keys(TYPES) as BandType[]).map((type) => (
+                  <option key={type} value={type}>
+                    {TYPES[type].label}
+                  </option>
+                ))}
+              </select>
+            </div>
           ))}
         </div>
 
@@ -315,27 +373,6 @@ export function ParametricEQ() {
           className={styles.knobs}
           style={{ '--band-color': band.color } as CSSProperties}
         >
-          <label className={styles.type}>
-            <span className={styles.knobLabel}>Type</span>
-            <select
-              value={band.type}
-              onChange={(e) =>
-                setBands((prev) =>
-                  prev.map((b, i) =>
-                    i === selected
-                      ? changeType(b, e.target.value as BandType)
-                      : b,
-                  ),
-                )
-              }
-            >
-              {(Object.keys(TYPES) as BandType[]).map((type) => (
-                <option key={type} value={type}>
-                  {TYPES[type].label}
-                </option>
-              ))}
-            </select>
-          </label>
           <EQKnob
             label="Freq"
             display={formatFrequency(band.frequency)}
