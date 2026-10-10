@@ -27,10 +27,11 @@ export const TYPES: Record<
   { label: string; gain: boolean; q: boolean }
 > = {
   peaking: { label: 'Bell', gain: true, q: true },
-  lowshelf: { label: 'Low shelf', gain: true, q: false },
-  highshelf: { label: 'High shelf', gain: true, q: false },
-  lowpass: { label: 'Low pass', gain: false, q: true },
-  highpass: { label: 'High pass', gain: false, q: true },
+  lowshelf: { label: 'LShelf', gain: true, q: false },
+  highshelf: { label: 'HShelf', gain: true, q: false },
+  // A single biquad falls by 12 dB an octave past its cutoff.
+  lowpass: { label: 'LP12', gain: false, q: true },
+  highpass: { label: 'HP12', gain: false, q: true },
   notch: { label: 'Notch', gain: false, q: true },
 }
 

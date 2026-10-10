@@ -21,7 +21,6 @@
   flex-direction: column;
   gap: 12px;
   width: min(880px, 100%);
-  min-width: 520px;
   padding: 14px;
   border-radius: 12px;
   background: var(--panel);
@@ -34,13 +33,12 @@
 
 .header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  align-items: baseline;
 }
 
 .hint {
-  margin-right: auto;
-  margin-left: 16px;
   color: var(--text-dim);
   font-size: 0.7rem;
 }
@@ -129,25 +127,27 @@
   background: color-mix(in srgb, var(--text-dim) 15%, transparent);
 }
 
-/* One row per band, in two columns of four. */
+/* One row per band: four across where there is room, fewer on a phone. A
+   column never narrower than a fifth of the width caps it at four. */
 .bands {
   display: grid;
-  grid-template-columns: repeat(4, auto);
-  gap: 6px 10px;
+  grid-template-columns: repeat(auto-fill, minmax(max(8.5rem, 21%), 1fr));
+  gap: 6px;
 }
 
 .bandRow {
   display: flex;
   gap: 6px;
   align-items: center;
-  padding: 3px 6px 3px 3px;
-  border: 1px solid transparent;
-  border-radius: 999px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-raised);
 
   /* The band the knobs edit. */
   &[data-active] {
     border-color: var(--band-color);
-    background: var(--panel-raised);
+    box-shadow: 0 0 0 1px var(--band-color);
   }
 }
 
@@ -179,6 +179,8 @@
 }
 
 .bandType {
+  flex: 1;
+  min-width: 0;
   height: 1.625rem;
   padding: 0 0.25rem;
   border: 1px solid var(--line);
@@ -192,15 +194,14 @@
 
 .controls {
   display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .knobs {
   display: flex;
   gap: 20px;
+  justify-content: center;
 }
 
 .knob {
