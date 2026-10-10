@@ -1,6 +1,7 @@
 import BrowserOnly from '@docusaurus/BrowserOnly'
 import Link from '@docusaurus/Link'
 import Translate from '@docusaurus/Translate'
+import { StageCorner } from '@site/showcase/shared/stage-corner'
 import CodeBlock from '@theme/CodeBlock'
 import Heading from '@theme/Heading'
 import clsx from 'clsx'
@@ -51,15 +52,29 @@ export function ShowcaseItem({
 }: Props) {
   const [showCode, setShowCode] = useState(false)
   const [active, setActive] = useState(0)
+  // Where a demo's transport is drawn: held in state, so the demo renders
+  // again once it exists.
+  const [corner, setCorner] = useState<HTMLDivElement | null>(null)
   const codeId = useId()
   const file = files[active]
 
   return (
     <section id={id} className={clsx(styles.item, wide && styles.wide)}>
-      <div className={styles.stage}>
-        <BrowserOnly fallback={<div className={styles.loading}>Loading…</div>}>
-          {children}
-        </BrowserOnly>
+      {/* The corner is outside the stage, which scrolls sideways on a narrow
+          screen: it stays put while the demo moves under it. */}
+      <div className={styles.stageFrame}>
+        <div ref={setCorner} className={styles.corner} />
+        <div className={styles.stage}>
+          <BrowserOnly
+            fallback={<div className={styles.loading}>Loading…</div>}
+          >
+            {() => (
+              <StageCorner.Provider value={corner}>
+                {children()}
+              </StageCorner.Provider>
+            )}
+          </BrowserOnly>
+        </div>
       </div>
       <div className={styles.meta}>
         <div className={styles.text}>

@@ -14,6 +14,25 @@
   grid-column: 1 / -1;
 }
 
+.stageFrame {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+/* Where a demo that plays audio puts its transport. */
+.corner {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 1;
+
+  &:empty {
+    display: none;
+  }
+}
+
 /* The demo is the point, so it gets the room: centred, and scrolled sideways
    rather than squeezed on a narrow screen. */
 .stage {
@@ -22,6 +41,12 @@
   place-items: center;
   min-height: 320px;
   padding: 2rem 1rem;
+
+  /* Room under the transport, so the demo does not start beneath it. */
+  .stageFrame:has(.corner:not(:empty)) & {
+    padding-top: 3.5rem;
+  }
+
   overflow-x: auto;
   background-color: var(--ifm-color-emphasis-100);
   background-image: radial-gradient(

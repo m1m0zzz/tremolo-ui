@@ -1,7 +1,17 @@
-import { useEffect, useRef, useState, type ChangeEvent } from 'react'
+import {
+  useContext,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from 'react'
+import { createPortal } from 'react-dom'
+import { RiFolderOpenLine, RiPlayFill, RiStopFill } from 'react-icons/ri'
 import * as Tone from 'tone'
 
 import { demoLoop } from './demo-loop'
+import { StageCorner } from './stage-corner'
 
 import styles from './AudioSource.module.css'
 
@@ -21,6 +31,8 @@ export function AudioSource({ connect }: Props) {
   const playerRef = useRef<Tone.Player | null>(null)
   const [playing, setPlaying] = useState(false)
   const [fileName, setFileName] = useState<string | null>(null)
+  const corner = useContext(StageCorner)
+  const nameId = useId()
 
   const getPlayer = () => {
     playerRef.current ??= new Tone.Player({
@@ -77,21 +89,41 @@ export function AudioSource({ connect }: Props) {
     }
   }, [])
 
-  return (
+  const source = (
     <div className={styles.source}>
       <button
         type="button"
         className={styles.button}
+        aria-label={playing ? 'Stop' : 'Play'}
+        title={playing ? 'Stop' : 'Play'}
+        aria-describedby={nameId}
         data-playing={playing ? '' : undefined}
         onClick={() => (playing ? stop() : void play())}
       >
-        {playing ? '■ Stop' : '▶ Play'}
+        {playing ? <RiStopFill aria-hidden /> : <RiPlayFill aria-hidden />}
       </button>
-      <label className={styles.button}>
-        Open file
-        <input type="file" accept="audio/*" onChange={openFile} hidden />
-      </label>
-      <span className={styles.name}>{fileName ?? 'Demo loop'}</span>
+      {/* The file and what is loaded, as one control. */}
+      <div className={styles.group}>
+        {/* Hidden from sight only, so that the file input still takes focus
+            and the button can be reached from the keyboard. */}
+        <label className={styles.button} title="Open file">
+          <RiFolderOpenLine aria-hidden />
+          <input
+            type="file"
+            accept="audio/*"
+            className={styles.visuallyHidden}
+            aria-label="Open file"
+            aria-describedby={nameId}
+            onChange={openFile}
+          />
+        </label>
+        <span id={nameId} className={styles.name}>
+          {fileName ?? 'Demo loop'}
+        </span>
+      </div>
     </div>
   )
+
+  // On the showcase it sits in the corner of the stage, whatever the demo.
+  return corner ? createPortal(source, corner) : source
 }

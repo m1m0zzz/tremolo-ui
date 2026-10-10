@@ -133,14 +133,6 @@
   text-transform: uppercase;
 }
 
-.bottom {
-  display: flex;
-  justify-content: center;
-  padding-top: 6px;
-  border-top: 1px solid rgb(0 0 0 / 0.35);
-  box-shadow: 0 1px 0 rgb(255 255 255 / 0.06) inset;
-}
-
 /* --- the printed scale ---------------------------------------------------- */
 
 .dial {

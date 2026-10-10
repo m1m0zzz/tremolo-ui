@@ -6,6 +6,7 @@ import parametricEqTsx from '!!raw-loader!@site/showcase/parametric-eq/Parametri
 import realisticKnobsTsx from '!!raw-loader!@site/showcase/realistic-knobs/RealisticKnobs.tsx'
 import audioSourceTsx from '!!raw-loader!@site/showcase/shared/AudioSource.tsx'
 import demoLoopTs from '!!raw-loader!@site/showcase/shared/demo-loop.ts'
+import stageCornerTs from '!!raw-loader!@site/showcase/shared/stage-corner.ts'
 import volumeFaderTsx from '!!raw-loader!@site/showcase/volume-fader/VolumeFader.tsx'
 import wsADSRTsx from '!!raw-loader!@site/showcase/wavetable-synth/ADSR.tsx'
 import wsAtomsTs from '!!raw-loader!@site/showcase/wavetable-synth/atoms.ts'
@@ -45,6 +46,7 @@ const audioSourceFiles: ShowcaseFile[] = [
   { name: 'AudioSource.tsx', code: audioSourceTsx },
   { name: 'AudioSource.module.css', code: audioSourceCss },
   { name: 'demo-loop.ts', code: demoLoopTs },
+  { name: 'stage-corner.ts', code: stageCornerTs },
 ]
 
 export default function Showcase() {

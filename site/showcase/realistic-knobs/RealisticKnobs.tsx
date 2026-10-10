@@ -117,9 +117,7 @@ export function RealisticKnobs() {
         </Control>
       </div>
 
-      <div className={styles.bottom}>
-        <AudioSource connect={connect} />
-      </div>
+      <AudioSource connect={connect} />
     </div>
   )
 }
