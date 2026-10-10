@@ -80,6 +80,11 @@ export function limits(envelope: Envelope) {
 /**
  * Where a note is on the envelope, `held` ms after it started — or, once let
  * go, `released` ms after that. `level` is from 0 to 1.
+ *
+ * A note let go releases from wherever it had got to, straight down to the
+ * end, so the dot never jumps: `from` is that point, for the path to be
+ * drawn. Only a note let go at the very end of the sustain follows the
+ * release line itself.
  */
 export function playhead(
   envelope: Envelope,
@@ -97,7 +102,8 @@ export function playhead(
         ? lerp(1, sustain, (t - attack) / decay)
         : sustain
 
-  if (released === null) {
+  /** Where a note still held has got to. */
+  const holding = (held: number) => {
     if (held < attack)
       return { x: lerp(0, c.peak.x, held / attack), level: levelAt(held) }
     if (held < attack + decay) {
@@ -111,11 +117,14 @@ export function playhead(
     return { x: lerp(c.decayEnd.x, c.sustainEnd.x, t), level: sustain }
   }
 
-  // Released from whatever level the note had reached.
-  const from = levelAt(held)
+  if (released === null) return holding(held)
+
+  const from = holding(held)
+  const t = released / release
   return {
-    x: lerp(c.sustainEnd.x, c.end.x, released / release),
-    level: lerp(from, 0, released / release),
+    x: lerp(from.x, c.end.x, t),
+    level: lerp(from.level, 0, t),
+    from,
     done: released >= release,
   }
 }

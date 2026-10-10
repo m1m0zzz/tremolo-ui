@@ -147,6 +147,17 @@ export function ADSR() {
         off === null ? null : now - off,
       )
       if (!head.done) {
+        // Let go, the note takes a path of its own down to the end.
+        if ('from' in head) {
+          ctx.setLineDash([3, 4])
+          ctx.strokeStyle = `${accent}99`
+          ctx.lineWidth = 1.5
+          ctx.beginPath()
+          ctx.moveTo(...px({ x: head.from.x, y: 1 - head.from.level }))
+          ctx.lineTo(...px(c.end))
+          ctx.stroke()
+          ctx.setLineDash([])
+        }
         const [x, y] = px({ x: head.x, y: 1 - head.level })
         ctx.fillStyle = `${accent}22`
         ctx.fillRect(x - 0.5, 0, 1, height)
