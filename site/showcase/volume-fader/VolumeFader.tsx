@@ -27,9 +27,12 @@ const FALL = 24
 const formatDb = (db: number) =>
   db <= MIN ? '-∞' : `${db > 0 ? '+' : ''}${db.toFixed(1)}`
 
-/** The same on a seven-segment display, which has no ∞ and no +. */
+/**
+ * The same on a seven-segment display, which has no ∞ and no +: silence is a
+ * row of dashes, as on the meters of a desk.
+ */
 const displayDb = (db: number) =>
-  (db <= MIN ? '-InF' : db.toFixed(1)).padStart(5)
+  (db <= MIN ? '----' : db.toFixed(1)).padStart(5)
 
 export function VolumeFader() {
   const [volume, setVolume] = useState(0)
@@ -65,8 +68,7 @@ export function VolumeFader() {
       <div className={styles.strip}>
         <output className={styles.readout}>
           <Segments value={displayDb(volume)} />
-          {/* Fourteen segments, for the B that seven cannot tell from an 8. */}
-          <Segments segments={14} value="dB" className={styles.unit} />
+          <span className={styles.unit}>dB</span>
         </output>
 
         <div className={styles.body}>
