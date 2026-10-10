@@ -63,7 +63,10 @@ export function ParametricEQ() {
   useEffect(() => {
     graphRef.current?.filters.forEach((filter, i) => {
       filter.frequency.rampTo(bands[i].frequency, 0.02)
-      filter.gain.rampTo(bands[i].gain, 0.02)
+      // Linear, not `rampTo`: the gain is in dB and is not converted, so
+      // `rampTo` picks an exponential ramp, which cannot cross 0 and turns
+      // into NaN between a cut and a boost.
+      filter.gain.linearRampTo(bands[i].gain, 0.02)
       filter.Q.rampTo(bands[i].q, 0.02)
     })
   }, [bands])
