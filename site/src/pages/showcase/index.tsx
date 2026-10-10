@@ -81,10 +81,11 @@ export default function Showcase() {
             title="Parametric EQ"
             description={
               <Translate id="showcase.parametric-eq.description">
-                Drag a band to set its frequency and gain, Alt + drag a bell for
-                its Q, and turn the knobs for the details. The curve is the
-                response of real BiquadFilterNodes, drawn over the spectrum of
-                what is playing.
+                Eight bands, each a bell, shelf, pass or notch. Drag a band to
+                set its frequency and gain, drag across empty space to select
+                several, and Alt + drag for the Q. The curve is the response of
+                real BiquadFilterNodes, drawn over the spectrum of what is
+                playing.
               </Translate>
             }
             components={['PointsEditor', 'AnimationCanvas', 'Knob']}

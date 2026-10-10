@@ -101,13 +101,46 @@
     scale: 1.15;
   }
 
-  /* With Alt held, a drag on a bell turns its Q. */
-  .editor[data-alt] &[data-bell] {
+  /* In the selection, which moves together. */
+  &[data-selected] {
+    outline: 2px solid var(--color);
+    outline-offset: 2px;
+  }
+
+  /* With Alt held, a drag on a band with a Q turns it. */
+  .editor[data-alt] &[data-q] {
     cursor: ns-resize;
   }
 
   &:focus-within {
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--color) 45%, transparent);
+  }
+}
+
+/* The box dragged across empty space to select several bands. */
+.selectionBox {
+  border: 1px solid var(--text-dim);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--text-dim) 15%, transparent);
+}
+
+/* The type of the band the knobs edit. */
+.type {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+
+  & select {
+    height: 1.75rem;
+    padding: 0 0.375rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--panel-raised);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
   }
 }
 

@@ -1,16 +1,48 @@
 import { exponentialScale, linearScale } from '@tremolo-ui/functions'
 
-export type BandType = 'lowshelf' | 'peaking' | 'highshelf'
+export type BandType =
+  | 'lowshelf'
+  | 'peaking'
+  | 'highshelf'
+  | 'lowpass'
+  | 'highpass'
+  | 'notch'
 
 export interface Band {
   type: BandType
   /** Hz */
   frequency: number
-  /** dB */
+  /** dB. Only the bell and the shelves have one. */
   gain: number
-  /** Ignored by the shelves: a `BiquadFilterNode` shelf has no Q. */
+  /** The quality factor, as the knob shows it. The shelves have none. */
   q: number
   color: string
+}
+
+/** What each type is called, and which of the parameters it has. */
+export const TYPES: Record<
+  BandType,
+  { label: string; short: string; gain: boolean; q: boolean }
+> = {
+  peaking: { label: 'Bell', short: 'Bell', gain: true, q: true },
+  lowshelf: { label: 'Low shelf', short: 'LS', gain: true, q: false },
+  highshelf: { label: 'High shelf', short: 'HS', gain: true, q: false },
+  lowpass: { label: 'Low pass', short: 'LP', gain: false, q: true },
+  highpass: { label: 'High pass', short: 'HP', gain: false, q: true },
+  notch: { label: 'Notch', short: 'Notch', gain: false, q: true },
+}
+
+/**
+ * The Q a band starts with, and goes back to on a double click on the knob:
+ * one for every bell, and the flat Butterworth response for the passes.
+ */
+export const DEFAULT_Q: Record<BandType, number> = {
+  peaking: 1,
+  notch: 1,
+  lowshelf: 1,
+  highshelf: 1,
+  lowpass: 0.71,
+  highpass: 0.71,
 }
 
 export const FREQ_MIN = 20
@@ -24,15 +56,38 @@ export const Q_MAX = 18
 export const freqScale = exponentialScale
 export const gainScale = linearScale
 
+const makeBand = (
+  type: BandType,
+  frequency: number,
+  gain: number,
+  color: string,
+): Band => ({ type, frequency, gain, q: DEFAULT_Q[type], color })
+
 export const INITIAL_BANDS: Band[] = [
-  { type: 'lowshelf', frequency: 80, gain: 3, q: 0.71, color: '#ff6b6b' },
-  { type: 'peaking', frequency: 300, gain: -4, q: 1.4, color: '#ffb347' },
-  { type: 'peaking', frequency: 1200, gain: 2.5, q: 1, color: '#7bd88f' },
-  { type: 'peaking', frequency: 4500, gain: -3, q: 2.5, color: '#4fc3f7' },
-  { type: 'highshelf', frequency: 10_000, gain: 4, q: 0.71, color: '#c792ea' },
+  makeBand('highpass', 30, 0, '#ff6b6b'),
+  makeBand('lowshelf', 100, 2, '#ff9f5a'),
+  makeBand('peaking', 250, -3, '#ffd166'),
+  makeBand('peaking', 600, 1.5, '#7bd88f'),
+  makeBand('peaking', 1500, 2.5, '#4fd1c5'),
+  makeBand('peaking', 4000, -2, '#4fc3f7'),
+  makeBand('highshelf', 9000, 3, '#9d8cff'),
+  makeBand('lowpass', 18_000, 0, '#e58cff'),
 ]
 
-/** Where a band sits in the editor: frequency across, gain up. */
+/** The same band as another type, with what that type has no use for reset. */
+export function changeType(band: Band, type: BandType): Band {
+  return {
+    ...band,
+    type,
+    gain: TYPES[type].gain ? band.gain : 0,
+    q: DEFAULT_Q[type],
+  }
+}
+
+/**
+ * Where a band sits in the editor: frequency across, gain up. A type without
+ * a gain stays on the 0 dB line.
+ */
 export function bandToPoint({ frequency, gain }: Band) {
   return {
     x: freqScale.normalize(frequency, FREQ_MIN, FREQ_MAX),
@@ -66,13 +121,23 @@ export const FREQUENCIES = Float32Array.from({ length: 256 }, (_, i) =>
 let context: OfflineAudioContext | null = null
 
 /**
+ * The options of the `BiquadFilterNode` for a band. On a lowpass or highpass
+ * its `Q` is the resonance in dB rather than the quality factor the knob
+ * shows (0.71 is flat), so it is converted on the way in.
+ */
+export function filterOptions({ type, frequency, gain, q }: Band) {
+  const pass = type === 'lowpass' || type === 'highpass'
+  return { type, frequency, gain, Q: pass ? 20 * Math.log10(q) : q }
+}
+
+/**
  * The response of one band in dB at each of `FREQUENCIES`, asked of a real
  * `BiquadFilterNode` so the curve is exactly what is heard. An offline
  * context never plays, so it needs no user gesture.
  */
-export function bandResponse({ type, frequency, gain, q }: Band) {
+export function bandResponse(band: Band) {
   context ??= new OfflineAudioContext(1, 1, 48_000)
-  const filter = new BiquadFilterNode(context, { type, frequency, gain, Q: q })
+  const filter = new BiquadFilterNode(context, filterOptions(band))
   const magnitude = new Float32Array(FREQUENCIES.length)
   const phase = new Float32Array(FREQUENCIES.length)
   filter.getFrequencyResponse(FREQUENCIES, magnitude, phase)

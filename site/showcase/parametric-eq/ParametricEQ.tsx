@@ -23,6 +23,10 @@ import {
   type Band,
   bandResponse,
   bandToPoint,
+  type BandType,
+  changeType,
+  DEFAULT_Q,
+  filterOptions,
   formatFrequency,
   formatGain,
   FREQ_MAX,
@@ -36,6 +40,7 @@ import {
   pointToBand,
   Q_MAX,
   Q_MIN,
+  TYPES,
 } from './bands'
 
 import styles from './ParametricEQ.module.css'
@@ -49,15 +54,10 @@ const SPECTRUM_MAX = -10
 /** How far an Alt + drag goes to take Q across its whole range, in pixels. */
 const Q_DRAG_RANGE = 200
 
-const TYPE_LABELS = {
-  lowshelf: 'Low shelf',
-  peaking: 'Bell',
-  highshelf: 'High shelf',
-}
-
 export function ParametricEQ() {
   const [bands, setBands] = useState(INITIAL_BANDS)
-  const [selected, setSelected] = useState(2)
+  /** The band the knobs edit: the one last focused, dragged or picked. */
+  const [selected, setSelected] = useState(3)
   const graphRef = useRef<{
     filters: Tone.BiquadFilter[]
     analyser: Tone.Analyser
@@ -75,8 +75,8 @@ export function ParametricEQ() {
   useEventListener(window, 'blur', () => setAlt(false))
 
   /**
-   * Alt + drag on a bell turns its Q instead of moving it: up narrows it,
-   * down widens it. This runs in the capture phase, so the press is stopped
+   * Alt + drag on a band with a Q turns it instead of moving the band: up
+   * narrows it, down widens it. This runs in the capture phase, so the press is stopped
    * on its way down, before the point's own drag ever sees it.
    */
   const startQDrag = (event: ReactPointerEvent) => {
@@ -84,7 +84,7 @@ export function ParametricEQ() {
     const point = (event.target as Element).closest<HTMLElement>('[data-band]')
     if (!point) return
     const index = Number(point.dataset.band)
-    if (bands[index].type !== 'peaking') return
+    if (!TYPES[bands[index].type].q) return
     event.stopPropagation()
     event.preventDefault()
     // Selected, as a drag on it would.
@@ -112,19 +112,20 @@ export function ParametricEQ() {
   // The audio follows the bands; the curves below are worked out from them.
   useEffect(() => {
     graphRef.current?.filters.forEach((filter, i) => {
-      filter.frequency.rampTo(bands[i].frequency, 0.02)
+      const { type, frequency, gain, Q } = filterOptions(bands[i])
+      filter.type = type
+      filter.frequency.rampTo(frequency, 0.02)
       // Linear, not `rampTo`: the gain is in dB and is not converted, so
       // `rampTo` picks an exponential ramp, which cannot cross 0 and turns
       // into NaN between a cut and a boost.
-      filter.gain.linearRampTo(bands[i].gain, 0.02)
-      filter.Q.rampTo(bands[i].q, 0.02)
+      filter.gain.linearRampTo(gain, 0.02)
+      filter.Q.rampTo(Q, 0.02)
     })
   }, [bands])
 
   const connect = () => {
     const filters = bands.map(
-      ({ type, frequency, gain, q }) =>
-        new Tone.BiquadFilter({ type, frequency, gain, Q: q }),
+      (band) => new Tone.BiquadFilter(filterOptions(band)),
     )
     const analyser = new Tone.Analyser({
       type: 'fft',
@@ -244,13 +245,16 @@ export function ParametricEQ() {
       <div className={styles.header}>
         <span className={styles.brand}>PARAMETRIC EQ</span>
         <span className={styles.hint}>
-          Double-click: flat · Alt + drag a bell: Q
+          Drag on empty space: select · Alt + drag: Q
         </span>
         <AudioSource connect={connect} />
       </div>
 
+      {/* Selectable: a drag across empty space selects several bands, and a
+          drag on one of them moves them all. */}
       <PointsEditor.Root
         className={styles.editor}
+        selectable
         data-alt={alt ? '' : undefined}
         onPointerDownCapture={startQDrag}
       >
@@ -262,12 +266,16 @@ export function ParametricEQ() {
           {bands.map((band, i) => (
             <PointsEditor.Point
               key={i}
+              id={`band-${i}`}
               className={styles.point}
               value={bandToPoint(band)}
+              // A type without a gain stays on the 0 dB line.
+              min={TYPES[band.type].gain ? undefined : { y: 0.5 }}
+              max={TYPES[band.type].gain ? undefined : { y: 0.5 }}
               color={band.color}
               data-band={i}
               data-active={i === selected ? '' : undefined}
-              data-bell={band.type === 'peaking' ? '' : undefined}
+              data-q={TYPES[band.type].q ? '' : undefined}
               aria-label={{
                 x: `Band ${i + 1} frequency`,
                 y: `Band ${i + 1} gain`,
@@ -278,17 +286,11 @@ export function ParametricEQ() {
               }}
               onFocus={() => setSelected(i)}
               onChange={(point) => updateBand(i, pointToBand(point))}
-              // A double click flattens the band; with Alt, it resets the Q.
-              onDoubleClick={(e) =>
-                updateBand(
-                  i,
-                  e.altKey ? { q: INITIAL_BANDS[i].q } : { gain: 0 },
-                )
-              }
             >
               {i + 1}
             </PointsEditor.Point>
           ))}
+          <PointsEditor.SelectionBox className={styles.selectionBox} />
         </PointsEditor.Container>
       </PointsEditor.Root>
 
@@ -304,7 +306,7 @@ export function ParametricEQ() {
               onClick={() => setSelected(i)}
             >
               <span className={styles.bandNumber}>{i + 1}</span>
-              {TYPE_LABELS[band.type]}
+              {TYPES[band.type].short}
             </button>
           ))}
         </div>
@@ -313,6 +315,27 @@ export function ParametricEQ() {
           className={styles.knobs}
           style={{ '--band-color': band.color } as CSSProperties}
         >
+          <label className={styles.type}>
+            <span className={styles.knobLabel}>Type</span>
+            <select
+              value={band.type}
+              onChange={(e) =>
+                setBands((prev) =>
+                  prev.map((b, i) =>
+                    i === selected
+                      ? changeType(b, e.target.value as BandType)
+                      : b,
+                  ),
+                )
+              }
+            >
+              {(Object.keys(TYPES) as BandType[]).map((type) => (
+                <option key={type} value={type}>
+                  {TYPES[type].label}
+                </option>
+              ))}
+            </select>
+          </label>
           <EQKnob
             label="Freq"
             display={formatFrequency(band.frequency)}
@@ -325,25 +348,26 @@ export function ParametricEQ() {
           />
           <EQKnob
             label="Gain"
-            display={formatGain(band.gain)}
+            display={TYPES[band.type].gain ? formatGain(band.gain) : '—'}
             value={band.gain}
             min={GAIN_MIN}
             max={GAIN_MAX}
             step={0.1}
             // The arc grows from the centre, either way.
             startValue={0}
+            disabled={!TYPES[band.type].gain}
             onChange={(gain) => updateBand(selected, { gain })}
           />
           <EQKnob
             label="Q"
-            display={band.type === 'peaking' ? band.q.toFixed(2) : '—'}
+            display={TYPES[band.type].q ? band.q.toFixed(2) : '—'}
             value={band.q}
             min={Q_MIN}
             max={Q_MAX}
             step={0.01}
             scale={exponentialScale}
-            resetValue={INITIAL_BANDS[selected].q}
-            disabled={band.type !== 'peaking'}
+            resetValue={DEFAULT_Q[band.type]}
+            disabled={!TYPES[band.type].q}
             onChange={(q) => updateBand(selected, { q })}
           />
         </div>
