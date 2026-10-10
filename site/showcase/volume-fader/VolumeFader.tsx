@@ -154,8 +154,6 @@ export function VolumeFader() {
             />
           </div>
         </div>
-
-        <span className={styles.name}>MASTER</span>
       </div>
     </div>
   )

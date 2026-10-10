@@ -133,13 +133,3 @@
   background: #050506;
   box-shadow: 0 0 0 2px #050506;
 }
-
-.name {
-  padding: 2px 10px;
-  border-radius: 3px;
-  background: #e9e4d6;
-  color: #1b1c1f;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-}
