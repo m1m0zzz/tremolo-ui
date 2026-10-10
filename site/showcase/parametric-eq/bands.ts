@@ -91,22 +91,29 @@ export function changeType(band: Band, type: BandType): Band {
 }
 
 /**
- * Where a band sits in the editor: frequency across, gain up. A type without
- * a gain stays on the 0 dB line.
+ * Where a band sits in the editor: frequency across, and up the dB scale its
+ * gain — or, for a type without one, its Q in dB. A lowpass or highpass is
+ * exactly Q times as loud at its cutoff, so there the point sits on the peak
+ * of its curve; on a notch, a Q of 1 is the 0 dB line.
  */
-export function bandToPoint({ frequency, gain }: Band) {
+export function bandToPoint({ type, frequency, gain, q }: Band) {
+  const db = TYPES[type].gain ? gain : 20 * Math.log10(q)
   return {
     x: freqScale.normalize(frequency, FREQ_MIN, FREQ_MAX),
-    y: 1 - gainScale.normalize(gain, GAIN_MIN, GAIN_MAX),
+    y: 1 - gainScale.normalize(db, GAIN_MIN, GAIN_MAX),
   }
 }
 
-export function pointToBand({ x, y }: { x: number; y: number }) {
-  return {
-    frequency: Math.round(freqScale.denormalize(x, FREQ_MIN, FREQ_MAX)),
-    gain:
-      Math.round(gainScale.denormalize(1 - y, GAIN_MIN, GAIN_MAX) * 10) / 10,
-  }
+/** A point moved in the editor, back to the band: the reverse of the above. */
+export function pointToBand(
+  { x, y }: { x: number; y: number },
+  type: BandType,
+): Partial<Band> {
+  const frequency = Math.round(freqScale.denormalize(x, FREQ_MIN, FREQ_MAX))
+  const db = gainScale.denormalize(1 - y, GAIN_MIN, GAIN_MAX)
+  return TYPES[type].gain
+    ? { frequency, gain: Math.round(db * 10) / 10 }
+    : { frequency, q: Math.round(10 ** (db / 20) * 100) / 100 }
 }
 
 export function formatFrequency(hz: number) {

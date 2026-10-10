@@ -298,9 +298,6 @@ export function ParametricEQ() {
               id={`band-${i}`}
               className={styles.point}
               value={bandToPoint(band)}
-              // A type without a gain stays on the 0 dB line.
-              min={TYPES[band.type].gain ? undefined : { y: 0.5 }}
-              max={TYPES[band.type].gain ? undefined : { y: 0.5 }}
               color={band.color}
               data-band={i}
               data-active={i === selected ? '' : undefined}
@@ -308,14 +305,17 @@ export function ParametricEQ() {
               data-q={TYPES[band.type].q ? '' : undefined}
               aria-label={{
                 x: `Band ${i + 1} frequency`,
-                y: `Band ${i + 1} gain`,
+                // A type without a gain takes its Q up and down instead.
+                y: `Band ${i + 1} ${TYPES[band.type].gain ? 'gain' : 'Q'}`,
               }}
               aria-valuetext={{
                 x: formatFrequency(band.frequency),
-                y: formatGain(band.gain),
+                y: TYPES[band.type].gain
+                  ? formatGain(band.gain)
+                  : band.q.toFixed(2),
               }}
               onFocus={() => setSelected(i)}
-              onChange={(point) => updateBand(i, pointToBand(point))}
+              onChange={(point) => updateBand(i, pointToBand(point, band.type))}
             >
               {i + 1}
             </PointsEditor.Point>
