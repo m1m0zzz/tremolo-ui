@@ -68,9 +68,10 @@ export default function Showcase() {
           </Heading>
           <p className={styles.lead}>
             <Translate id="showcase.lead">
-              Audio interfaces built with tremolo-ui and React, running right
-              here. Everything you see is styled by the demo itself: the
-              components only bring the behaviour.
+              Take a look at components built with tremolo-ui and React.
+              tremolo-ui is headless: it brings the behaviour and leaves the CSS
+              to you, so you can build on the components below and style them
+              however you like.
             </Translate>
           </p>
         </header>
