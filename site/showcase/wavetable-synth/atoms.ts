@@ -25,8 +25,9 @@ export const MIN_VOICE_DETUNE = 1
 export const MAX_VOICE_DETUNE = 100
 
 // keyboard
-export const MIN_OCTAVE = -3
-export const MAX_OCTAVE = 3
+/** The octave of the lowest key: 3 starts the keyboard at C3. */
+export const MIN_OCTAVE = 0
+export const MAX_OCTAVE = 6
 export const MIN_VELOCITY = 1
 export const MAX_VELOCITY = 127
 
@@ -42,7 +43,7 @@ export const masterVolumeAtom = atom(-6)
 export const voiceAtom = atom(1)
 export const voiceDetuneAtom = atom(15)
 
-export const octaveAtom = atom(0)
+export const octaveAtom = atom(3)
 /** Used by the mouse and the computer keyboard; MIDI brings its own. */
 export const velocityAtom = atom(100)
 

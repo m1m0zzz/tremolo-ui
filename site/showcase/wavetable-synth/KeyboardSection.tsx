@@ -1,9 +1,10 @@
 import { useAtom } from 'jotai'
 import { useMemo, useRef } from 'react'
+import { RiAddLine, RiSubtractLine } from 'react-icons/ri'
 import { start } from 'tone'
 
 import { SHORTCUTS } from '@tremolo-ui/dom'
-import { clamp, noteName, noteNumber } from '@tremolo-ui/functions'
+import { clamp, noteNumber } from '@tremolo-ui/functions'
 import {
   Knob,
   NumberInput,
@@ -23,14 +24,12 @@ import {
   velocityAtom,
 } from './atoms'
 
-import flushed from './FlushedNumberInput.module.css'
 import styles from './KeyboardSection.module.css'
 import knobTheme from 'shared/css/Knob.module.css'
 import pianoTheme from 'shared/css/Piano.module.css'
 
-/** The range drawn at octave 0. Shifting keeps it two octaves from a C. */
-const BASE_FIRST_NOTE = noteNumber('C3')
-const BASE_LAST_NOTE = noteNumber('B4')
+/** How many octaves the keyboard draws, from the C of the chosen octave. */
+const OCTAVES = 2
 
 /** How far C / V move the velocity, as in the computer keyboards of DAWs. */
 const VELOCITY_STEP = 20
@@ -64,13 +63,10 @@ export function KeyboardSection({
   const [octave, setOctave] = useAtom(octaveAtom)
   const [velocity, setVelocity] = useAtom(velocityAtom)
 
-  const noteRange = useMemo(
-    () => ({
-      first: BASE_FIRST_NOTE + octave * 12,
-      last: BASE_LAST_NOTE + octave * 12,
-    }),
-    [octave],
-  )
+  const noteRange = useMemo(() => {
+    const first = noteNumber(`C${octave}`)
+    return { first, last: first + OCTAVES * 12 - 1 }
+  }, [octave])
 
   const { request, midiAccess, error, inputs } = useMIDIAccess(false)
 
@@ -110,19 +106,32 @@ export function KeyboardSection({
       <div className={styles.controls}>
         <div className={styles.control}>
           <span className="label">Octave</span>
+          {/* The octave of the lowest key, so 3 starts the keyboard at C3. */}
           <NumberInput.Root
             value={octave}
             min={MIN_OCTAVE}
             max={MAX_OCTAVE}
             selectOnFocus="number"
-            className={flushed.root}
+            className={styles.octave}
             onChange={(v) => setOctave(v)}
           >
-            <NumberInput.InputField className={flushed.field} />
+            <NumberInput.DecrementStepper
+              className={styles.stepper}
+              aria-label="Octave down"
+            >
+              <RiSubtractLine aria-hidden />
+            </NumberInput.DecrementStepper>
+            <NumberInput.InputField
+              className={styles.octaveField}
+              aria-label="Octave"
+            />
+            <NumberInput.IncrementStepper
+              className={styles.stepper}
+              aria-label="Octave up"
+            >
+              <RiAddLine aria-hidden />
+            </NumberInput.IncrementStepper>
           </NumberInput.Root>
-          <span className={`label ${styles.range}`}>
-            {noteName(noteRange.first)} - {noteName(noteRange.last)}
-          </span>
         </div>
         <div className={styles.control}>
           <span className="label">Velocity</span>
@@ -149,11 +158,7 @@ export function KeyboardSection({
           </Knob.Root>
           <span className={`label ${styles.velocity}`}>{velocity}</span>
         </div>
-        <p className={`label ${styles.hint}`}>
-          {shortcuts
-            ? 'Z / X: octave, C / V: velocity'
-            : 'Click the synth to play it from the keyboard'}
-        </p>
+        <p className={`label ${styles.hint}`}>Z / X: octave, C / V: velocity</p>
         <div className={styles.midi}>
           {midiAccess ? (
             <span className="label">
