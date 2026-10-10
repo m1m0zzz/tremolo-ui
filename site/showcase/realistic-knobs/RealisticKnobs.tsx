@@ -88,7 +88,8 @@ export function RealisticKnobs() {
         </div>
         <output className={styles.lcd}>
           <span className={styles.lcdLabel}>{LABELS[touched]}</span>
-          <Segments value={values[touched].toFixed(1).padStart(4)} />
+          {/* Wide enough for 10.0. */}
+          <Segments value={values[touched].toFixed(1)} layout="88.8" />
         </output>
       </div>
 

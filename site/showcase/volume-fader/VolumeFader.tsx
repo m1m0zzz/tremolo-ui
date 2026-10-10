@@ -31,8 +31,7 @@ const formatDb = (db: number) =>
  * The same on a seven-segment display, which has no ∞ and no +: silence is a
  * row of dashes, as on the meters of a desk.
  */
-const displayDb = (db: number) =>
-  (db <= MIN ? '----' : db.toFixed(1)).padStart(5)
+const displayDb = (db: number) => (db <= MIN ? '----' : db.toFixed(1))
 
 export function VolumeFader() {
   const [volume, setVolume] = useState(0)
@@ -67,7 +66,8 @@ export function VolumeFader() {
       <AudioSource connect={connect} />
       <div className={styles.strip}>
         <output className={styles.readout}>
-          <Segments value={displayDb(volume)} />
+          {/* Wide enough for -60.0. */}
+          <Segments value={displayDb(volume)} layout="888.8" />
           <span className={styles.unit}>dB</span>
         </output>
 
