@@ -24,7 +24,7 @@
     "@storybook/vue3-vite": "10.6.1",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/vue": "8.1.0",
-    "@vitejs/plugin-vue": "6.0.9",
+    "@vitejs/plugin-vue": "6.0.10",
     "@vue/test-utils": "2.5.1",
     "esbuild": "0.28.2",
     "storybook": "10.6.1",
