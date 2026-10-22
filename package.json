@@ -58,7 +58,7 @@
     "tsdown": "0.23.1",
     "typescript": "5.9.3",
     "vitest": "5.0.5",
-    "wrangler": "4.151.1"
+    "wrangler": "4.151.2"
   },
   "engines": {
     "node": ">=22.22.2",
