@@ -28,7 +28,7 @@
     "@testing-library/svelte": "5.4.2",
     "svelte": "5.57.3",
     "storybook": "10.6.5",
-    "svelte-check": "4.7.7"
+    "svelte-check": "4.7.8"
   },
   "peerDependencies": {
     "svelte": "^5.40.0"
