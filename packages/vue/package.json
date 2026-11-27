@@ -22,7 +22,7 @@
     "@storybook/addon-a11y": "10.6.5",
     "@storybook/addon-docs": "10.6.5",
     "@storybook/vue3-vite": "10.6.5",
-    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/jest-dom": "8.0.0",
     "@testing-library/vue": "8.1.0",
     "@vitejs/plugin-vue": "6.0.10",
     "@vue/test-utils": "2.5.1",
